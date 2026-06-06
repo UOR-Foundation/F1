@@ -453,3 +453,31 @@ every piece of the positivity *mechanism* is verified (§0.3), the surrounding `
 (§0.2), and the single open object is the 2-dimensional square with its intersection theory — stated
 here as a definite specification with definite milestones, so that any construction can be checked
 against it stage by stage.
+
+---
+
+## 6. v0.2.0 — mechanization status and the analysis-substrate roadmap
+
+**Mechanized (kernel-checked, axiom-audited).** The function-field Hodge mechanism is a Lean theorem
+(`Mechanism.hodgeType_iff : hodgeType q a ↔ a² ≤ 4q`, flip at `q = 4,9,25`); the §2.2 template's
+ample class and negative-definiteness on `H^⊥` (`Template.lean`); the §2.3 parallel pencil
+`Δ·Γ_n = 0` (`det((1,1),(1,1)) = 0`) and the fan-vs-fiber correction (the fan recession form is
+degenerate, so the `(1,ρ−1)` shape belongs to the fiber form), plus a Babaee–Huh counterexample
+showing the signature is NOT automatic (`Tropical/Signature.lean`); and the §2.3 control (the
+shift-length Gram is PSD for any spectrum ⇒ vacuous, `Bridge.lean`).
+
+**The analysis-substrate roadmap (building the needed analysis the UOR way).** The analytic half of
+the program (Li's `λₙ`, the explicit-formula trace, the cos/sin Weil-Gram over ℝ, T4's trace
+identity) is *blocked on a substrate we are building from first principles* — exact arithmetic,
+canonical forms, realizations, no Mathlib — one brick per release:
+
+- **v0.2.0:** exact ℚ (`Analysis/Rat.lean`) — canonical reduced form = content-address; decidable
+  exact equality/order; the first brick.
+- **v0.3.0:** constructive ℝ (Cauchy-with-modulus / interval arithmetic) and a commutative-ring
+  normalizer for ℤ (the tool that unlocks general algebraic proofs without Mathlib).
+- **v0.4.0:** ℂ = ℝ×ℝ and transcendentals (exp/log/cos via convergent series with rigorous error
+  bounds).
+- **v0.5.0+:** ζ and `λₙ` as exact-bounded objects; the explicit formula as an exact-arithmetic trace.
+
+Each brick makes more of the analytic half *statable and finitely checkable* — never a proof of the
+crux. Proving `λₙ ≥ 0 ∀ n` / Weil positivity / the Hodge index on `𝕊` IS RH, and remains open.

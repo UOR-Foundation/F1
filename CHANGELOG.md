@@ -4,6 +4,35 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html), starting at `v0.0.1`.
 
+## [0.2.0] - 2026-06-06
+
+### Added — finite tropical stack mechanized + first analysis brick (pure Lean 4, no Mathlib, no `sorry`)
+- `F1Square/Tropical/Closure.lean` — tropical (max-plus) matrix closure: the canonical `W*` (matches
+  the companion) and **R2** Kleene-star idempotence `W* ⊗ W* = W*`, by `decide`.
+- `F1Square/Tropical/Spectrum.lean` — the content-address κ and the cycle-mean spectrum: **R3** κ
+  permutation-invariance, **R4** the cycle spectrum, and the headline **R9/R10** κ⊥spectrum
+  counterexample (same κ, different spectrum) with **R11** the κ-fiber.
+- `F1Square/Tropical/Siblings.lean` — the boolean sibling carrier: **R14** κ permutation-invariance,
+  **R15** the faceted `(κ_trop, κ_bool)` address, **R16** boolean-facet degeneracy on a
+  strongly-connected graph.
+- `F1Square/Tropical/Signature.lean` — tropical Hodge-index signatures: the §2.3 parallel pencil
+  `Δ·Γ_n = 0` (`det((1,1),(1,1)) = 0`), the fan-vs-fiber correction (fan recession form degenerate,
+  so `(1,ρ−1)` is the fiber form), and a Babaee–Huh counterexample (the signature is NOT automatic).
+- `F1Square/Analysis/Rat.lean` — the first analysis brick: exact rationals ℚ from ℤ, the **UOR way**
+  (canonical reduced form = content-address; decidable exact equality/order; idempotent `reduce`).
+  The analysis-substrate roadmap (ℚ → constructive ℝ → ℂ+transcendentals → ζ/λₙ) is documented.
+- `scripts/audit_axioms.lean` extended to all new theorems; the honesty gate stays green.
+
+### Changed
+- `docs/`: the finite R1–R16 stack is marked kernel-checked (was runtime-verified); the analysis
+  roadmap and the v0.2.0 mechanization status are recorded. `F1Square.lean` gains a v0.2.0
+  elaboration-checked `example`.
+
+### Note
+- RH remains **open**. v0.2.0 resolves the finite/decidable open questions and lays the ℚ brick; it
+  does not resolve λₙ / Weil-positivity / the crux (those are RH). The analysis substrate makes them
+  *statable and checkable*, not proven.
+
 ## [0.1.0] - 2026-06-06
 
 ### Added — the genuine-proof layer (real Lean 4 theorems, no Mathlib, no `sorry`)
@@ -70,5 +99,6 @@ Initial research base for the 𝔽₁-square / Riemann Hypothesis program.
   solution: the formalization compiles and states the construction problem precisely; it
   does not assert the crux.
 
+[0.2.0]: https://github.com/afflom/F1/releases/tag/v0.2.0
 [0.1.0]: https://github.com/afflom/F1/releases/tag/v0.1.0
 [0.0.1]: https://github.com/afflom/F1/releases/tag/v0.0.1

@@ -71,3 +71,36 @@ open UOR.Bridge.F1Square
 
 -- Crux (the property; proved on the Template, OPEN on the square).
 #print axioms Crux.template_hodgeIndex
+
+-- v0.2.0 — Tropical closure / κ / spectrum (R2, R3, R4, R9, R10, R11).
+#print axioms Tropical.star_matches
+#print axioms Tropical.R2_kleene_idempotent
+#print axioms Tropical.R3_kappa_perm_invariant
+#print axioms Tropical.R4_cycle_spectrum
+#print axioms Tropical.R9_same_kappa
+#print axioms Tropical.R10_diff_spectrum
+#print axioms Tropical.R11_kappa_fiber
+
+-- v0.2.0 — sibling carriers (R14, R15, R16).
+#print axioms Tropical.R14_kappaBool_perm_invariant
+#print axioms Tropical.R15_faceted_address
+#print axioms Tropical.R16_boolean_facet_degenerate
+
+-- v0.2.0 — tropical Hodge-index signatures (§2.3, Babaee–Huh).
+#print axioms Tropical.Signature.parallel_pencil
+#print axioms Tropical.Signature.delta_gamma_zero
+#print axioms Tropical.Signature.fan_degenerate
+#print axioms Tropical.Signature.fan_kernel
+#print axioms Tropical.Signature.fan_basis_nonpos
+#print axioms Tropical.Signature.bh_two_positive_dirs
+
+-- v0.2.0 — exact ℚ analysis brick.
+#print axioms Analysis.Qeq_refl
+#print axioms Analysis.reduce_6_8
+#print axioms Analysis.reduce_idem
+#print axioms Analysis.reduce_idem_neg
+#print axioms Analysis.reduce_preserves_value
+#print axioms Analysis.same_address_iff_eq
+#print axioms Analysis.add_sample
+#print axioms Analysis.mul_sample
+#print axioms Analysis.Qle_sample

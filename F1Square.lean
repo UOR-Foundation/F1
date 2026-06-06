@@ -26,6 +26,11 @@ import F1Square.CharOne
 import F1Square.Bridge
 import F1Square.CycleCounts
 import F1Square.Crux
+import F1Square.Tropical.Closure
+import F1Square.Tropical.Signature
+import F1Square.Tropical.Spectrum
+import F1Square.Tropical.Siblings
+import F1Square.Analysis.Rat
 
 open UOR.Primitives
 
@@ -171,6 +176,14 @@ def f1SquareStatus : F1SquareStatus := {
 --   characteristic 1 (R1,R12) ← CharOne.{tAdd_idem, cycle_reversal_invariant}          (P2)
 --   trace counts (R6)         ← CycleCounts.{N1 … N8}  (exact `Bᵐ`)                    (P3b)
 --   mechanism + §2.3 control  ← Bridge.{hodge_implies_spectral_bound, control_psd}     (P3)
+-- v0.2.0 (finite tropical stack + first analysis brick):
+--   tropical Kleene/κ/spectrum ← Tropical.{R2_kleene_idempotent, R3_kappa_perm_invariant,
+--                                R4_cycle_spectrum, R9_same_kappa, R10_diff_spectrum, R11_kappa_fiber}
+--   sibling carriers (R14–R16) ← Tropical.{R14_kappaBool_perm_invariant, R15_faceted_address,
+--                                R16_boolean_facet_degenerate}
+--   tropical Hodge signatures ← Tropical.Signature.{parallel_pencil, fan_degenerate, fan_kernel,
+--                                bh_two_positive_dirs}
+--   exact ℚ analysis brick    ← Analysis.{reduce_6_8, reduce_idem, same_address_iff_eq}
 -- The crux is NOT backed and stays `none`:
 --   hodgeIndexHolds (= RH)    ← Crux.CruxFor 𝕊 — OPEN. Crux.template_hodgeIndex proves the
 --                               property only on the product-of-curves TEMPLATE, never on 𝕊.
@@ -188,5 +201,18 @@ example :
     ∧ Crux.HodgeIndex Crux.templatePolarized :=
   ⟨Template.H_sq, Mechanism.hasse_q25_a10, Bridge.control_psd 3 5 7 11 2 4,
    CycleCounts.N8, Crux.template_hodgeIndex⟩
+
+/-- Elaboration-checked witness binding the v0.2.0 finite tropical stack and the ℚ brick to the
+    manifest: Kleene idempotence (R2), κ⊥spectrum (R9/R10), the parallel pencil (§2.3), and the
+    canonical ℚ form. -/
+example :
+    Tropical.mulN 4 (Tropical.starN 4 Tropical.W) (Tropical.starN 4 Tropical.W)
+        = Tropical.starN 4 Tropical.W
+    ∧ Tropical.kappa 2 Tropical.WA = Tropical.kappa 2 Tropical.WB
+    ∧ Tropical.spectrum Tropical.WA Tropical.cyc2 ≠ Tropical.spectrum Tropical.WB Tropical.cyc2
+    ∧ Tropical.Signature.det2 1 1 1 1 = 0
+    ∧ Analysis.reduce ⟨6, 8⟩ = ⟨3, 4⟩ :=
+  ⟨Tropical.R2_kleene_idempotent, Tropical.R9_same_kappa, Tropical.R10_diff_spectrum,
+   Tropical.Signature.parallel_pencil, Analysis.reduce_6_8⟩
 
 end UOR.Bridge.F1Square

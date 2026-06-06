@@ -423,3 +423,19 @@ whose construction would close the gap. The positivity is ready; the surface to 
 | R16 | facet orthogonality is object-dependent: boolean facet degenerate (all-ones) on strongly-connected graphs while extremal/metric are rich — facets carry signal exactly where the object has that structure | **PASS** |
 
 All of R1–R16 PASS a clean re-verification; the artifact is complete and closed.
+
+---
+
+## 10. v0.2.0 — the finite stack, now kernel-checked in Lean
+
+The R-results above were "verified in our runtime" (numerics). As of **v0.2.0** the finite ones are
+**mechanized as Lean 4 theorems** (pure, no Mathlib, no `sorry`), kernel-checked and axiom-audited
+(`scripts/honesty_audit.sh`): R1 idempotency, the semiring laws, and R12 reversal
+(`F1Square/CharOne.lean`); R13 tropical positivity + Bézout (`F1Square/Mechanism.lean`); R6
+Bowen–Lanford `N_m = tr(Bᵐ)` (`F1Square/CycleCounts.lean`); R2 Kleene-star idempotence and the
+canonical `W*` (`F1Square/Tropical/Closure.lean`); R3 κ permutation-invariance, R4 the cycle-mean
+spectrum, and the headline **R9/R10 κ⊥spectrum counterexample** with R11 the κ-fiber
+(`F1Square/Tropical/Spectrum.lean`); R14–R16 the boolean sibling carrier, the faceted address, and
+facet degeneracy (`F1Square/Tropical/Siblings.lean`). R7 (zero-temperature limit) and R8
+(prime-orbit asymptotic) are limit/asymptotic statements — only finite approximants are mechanizable,
+and they are left as such pending the constructive-ℝ analysis brick (v0.3.0).
