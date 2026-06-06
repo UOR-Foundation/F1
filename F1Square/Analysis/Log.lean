@@ -733,4 +733,60 @@ theorem tmap_diff_cleared {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den)
   exact Qeq_trans (Qsub_den_pos (Qmul_den_pos hsad hcbd) (Qmul_den_pos hsbd hcad))
     (Qsub_congr hA hB) (tmap_ring a b)
 
+/-- `|a| ≈ a` when `0 ≤ a.num`. -/
+theorem Qabs_of_nonneg {a : Q} (h : 0 ≤ a.num) : Qeq (Qabs a) a := by
+  unfold Qabs Qeq; rw [Int.natAbs_of_nonneg h]
+
+/-- **The t-map Lipschitz bound**: `|tmap a − tmap b| ≤ (2/(L+1)²)·|a − b|` for `a+1, b+1 ≥ L+1 > 0`. -/
+theorem tmap_lipschitz {a b L : Q} (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : 0 < (add a ⟨1, 1⟩).num) (hb : 0 < (add b ⟨1, 1⟩).num) (hLpos : 0 < (add L ⟨1, 1⟩).num)
+    (hLad : 0 < (add L ⟨1, 1⟩).den) (hLa : Qle (add L ⟨1, 1⟩) (add a ⟨1, 1⟩))
+    (hLb : Qle (add L ⟨1, 1⟩) (add b ⟨1, 1⟩)) :
+    Qle (Qabs (Qsub (tmap a) (tmap b)))
+      (mul (mul ⟨2, 1⟩ (Qinv (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)))) (Qabs (Qsub a b))) := by
+  have hcad : 0 < (add a ⟨1, 1⟩).den := add_den_pos had Nat.one_pos
+  have hcbd : 0 < (add b ⟨1, 1⟩).den := add_den_pos hbd Nat.one_pos
+  have hPd : 0 < (Qsub (tmap a) (tmap b)).den := Qsub_den_pos
+    (Qmul_den_pos (Qsub_den_pos had Nat.one_pos) (Qinv_den_pos ha))
+    (Qmul_den_pos (Qsub_den_pos hbd Nat.one_pos) (Qinv_den_pos hb))
+  have hcabd : 0 < (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩)).den := Qmul_den_pos hcad hcbd
+  have hcLLd : 0 < (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)).den := Qmul_den_pos hLad hLad
+  have hcabn : 0 < (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩)).num := by
+    show 0 < (add a ⟨1, 1⟩).num * (add b ⟨1, 1⟩).num; exact Int.mul_pos ha hb
+  have hcLLn : 0 < (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)).num := by
+    show 0 < (add L ⟨1, 1⟩).num * (add L ⟨1, 1⟩).num; exact Int.mul_pos hLpos hLpos
+  -- |P| · (a+1)(b+1) ≈ 2·|a−b|
+  have h1 : Qeq (mul (Qabs (Qsub (tmap a) (tmap b))) (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩)))
+      (mul ⟨2, 1⟩ (Qabs (Qsub a b))) := by
+    have hq := Qabs_Qeq (tmap_diff_cleared had hbd ha hb)
+    rw [Qabs_mul, Qabs_mul, Qabs_mul] at hq
+    -- hq : mul (Qabs P) (mul (Qabs (a+1)) (Qabs (b+1))) ≈ mul (Qabs ⟨2,1⟩) (Qabs (Qsub a b))
+    exact Qeq_trans (Qmul_den_pos (Qabs_den_pos hPd) (Qmul_den_pos (Qabs_den_pos hcad)
+        (Qabs_den_pos hcbd)))
+      (Qmul_congr (Qeq_refl _) (Qmul_congr (Qeq_symm (Qabs_of_nonneg (Int.le_of_lt ha)))
+        (Qeq_symm (Qabs_of_nonneg (Int.le_of_lt hb)))))
+      (Qeq_trans (Qmul_den_pos (Qabs_den_pos Nat.one_pos) (Qabs_den_pos (Qsub_den_pos had hbd)))
+        hq (Qmul_congr (Qabs_of_nonneg (by decide)) (Qeq_refl _)))
+  -- |P| · (L+1)² ≤ 2·|a−b|
+  have hLL_le : Qle (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)) (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩)) :=
+    Qmul_le_mul hLad hcad hLad (Int.le_of_lt hLpos) (Int.le_of_lt hLpos) hLa hLb
+  have h2 : Qle (mul (Qabs (Qsub (tmap a) (tmap b))) (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)))
+      (mul ⟨2, 1⟩ (Qabs (Qsub a b))) :=
+    Qle_trans (Qmul_den_pos (Qabs_den_pos hPd) hcabd)
+      (Qmul_le_mul_left (Qabs_num_nonneg _) hLL_le) (Qeq_le h1)
+  -- cancel (L+1)² to the right via its inverse
+  have hcancel : Qeq (Qabs (Qsub (tmap a) (tmap b)))
+      (mul (mul (Qabs (Qsub (tmap a) (tmap b))) (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)))
+        (Qinv (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)))) := by
+    refine Qeq_trans (Qmul_den_pos (Qabs_den_pos hPd) Nat.one_pos) (mul_one _).symm ?_
+    refine Qeq_trans (Qmul_den_pos (Qabs_den_pos hPd) (Qmul_den_pos hcLLd (Qinv_den_pos hcLLn)))
+      (Qmul_congr (Qeq_refl _) (Qmul_Qinv hcLLn).symm) ?_
+    exact (mul_assoc _ _ _).symm
+  refine Qle_trans (Qmul_den_pos (Qmul_den_pos (Qabs_den_pos hPd) hcLLd) (Qinv_den_pos hcLLn))
+    (Qeq_le hcancel)
+    (Qle_trans (Qmul_den_pos (Qmul_den_pos Nat.one_pos (Qabs_den_pos (Qsub_den_pos had hbd)))
+      (Qinv_den_pos hcLLn)) (Qmul_le_mul_right (Int.le_of_lt (Qinv_num_pos hcLLd)) h2) (Qeq_le ?_))
+  -- (2|a−b|)·(1/(L+1)²) ≈ (2·(1/(L+1)²))·|a−b|
+  exact Qmul_swap_right ⟨2, 1⟩ (Qabs (Qsub a b)) (Qinv (mul (add L ⟨1, 1⟩) (add L ⟨1, 1⟩)))
+
 end UOR.Bridge.F1Square.Analysis

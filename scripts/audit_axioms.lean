@@ -452,6 +452,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Qinv_mul
 #print axioms Analysis.tmap_ring
 #print axioms Analysis.tmap_diff_cleared
+#print axioms Analysis.Qabs_of_nonneg
+#print axioms Analysis.tmap_lipschitz
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one
