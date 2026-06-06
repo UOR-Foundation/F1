@@ -437,6 +437,13 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.qpow_half_value
 #print axioms Analysis.qpow_half_le
 #print axioms Analysis.qpow_geom_bound
+#print axioms Analysis.Qmul_le_cancel_right
+#print axioms Analysis.Qone_mul
+#print axioms Analysis.Qmul_swap_right
+#print axioms Analysis.artanh_reindex
+#print axioms Analysis.Rartanh_diag_le
+#print axioms Analysis.Rartanh_regular
+#print axioms Analysis.Rartanh
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one

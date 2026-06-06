@@ -446,4 +446,212 @@ theorem qpow_geom_bound {ρ : Q} (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
       exact Qle_trans (Qmul_den_pos hρd (Nat.lt_of_lt_of_le hρd (Nat.le_add_right _ _)))
         (Qmul_le_mul_left hρ0 ih) hstep
 
+/-- Right cancellation for `≤` by a strictly positive rational: `a·c ≤ b·c ⟹ a ≤ b`. -/
+theorem Qmul_le_cancel_right {a b c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (h : Qle (mul a c) (mul b c)) : Qle a b := by
+  have hc : (0 : Int) < c.num * (c.den : Int) := Int.mul_pos hcn (by exact_mod_cast hcd)
+  have h' : (a.num * (b.den : Int)) * (c.num * (c.den : Int))
+      ≤ (b.num * (a.den : Int)) * (c.num * (c.den : Int)) := by
+    have e1 : a.num * c.num * ((b.den : Int) * (c.den : Int))
+        = (a.num * (b.den : Int)) * (c.num * (c.den : Int)) := by ring_uor
+    have e2 : b.num * c.num * ((a.den : Int) * (c.den : Int))
+        = (b.num * (a.den : Int)) * (c.num * (c.den : Int)) := by ring_uor
+    have hh : a.num * c.num * ((b.den : Int) * (c.den : Int))
+        ≤ b.num * c.num * ((a.den : Int) * (c.den : Int)) := by
+      simpa only [mul, Qle] using h
+    rw [e1, e2] at hh; exact hh
+  exact Int.le_of_mul_le_mul_right h' hc
+
+/-- `1·a ≈ a`. -/
+theorem Qone_mul (a : Q) : Qeq (mul ⟨1, 1⟩ a) a := by simp only [Qeq, mul]; push_cast; ring_uor
+
+/-- `(a·b)·c ≈ (a·c)·b`. -/
+theorem Qmul_swap_right (a b c : Q) : Qeq (mul (mul a b) c) (mul (mul a c) b) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
+-- ===========================================================================
+-- The artanh diagonal: artanh(t) for a real t with |t.seq n| ≤ ρ < 1.
+-- ===========================================================================
+
+/-- The artanh diagonal reindex: `(q² + 4q)·(j+1)` with `q = ρ.den` (≥ 4q and ≥ q², so both the
+    Lipschitz and the geometric truncation shrink fast enough). -/
+def Rartanh_R (ρ : Q) (j : Nat) : Nat := (ρ.den * ρ.den + 4 * ρ.den) * (j + 1)
+
+/-- The `j`-th artanh diagonal approximant. -/
+def Rartanh_seq (t : Real) (ρ : Q) (j : Nat) : Q := artSum (t.seq (Rartanh_R ρ j)) (Rartanh_R ρ j)
+
+/-- **The artanh reindex inequality**: the truncation `1/(q+(2Rⱼ+3)(q−p))`-bound plus the
+    argument-gap `2/(Rⱼ+1)` is `≤ (1/(j+1))·(1−ρ²)`, so the diagonal gap is `≤ 1/(j+1)`. -/
+theorem artanh_reindex {ρ : Q} (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt : ρ.num.toNat < ρ.den)
+    (j : Nat) :
+    Qle (add (⟨2, Rartanh_R ρ j + 1⟩ : Q)
+        ⟨(ρ.den : Int), ρ.den + (2 * Rartanh_R ρ j + 3) * (ρ.den - ρ.num.toNat)⟩)
+      (mul (⟨1, j + 1⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ))) := by
+  -- abbreviations: q = ρ.den, p = ρ.num.toNat, C = q²+4q, Rⱼ = C(j+1)
+  -- casts: q − p as ℤ, p = ρ.num, and the positivity facts
+  have hsc : ρ.num.toNat + (ρ.den - ρ.num.toNat) = ρ.den := Nat.add_sub_cancel' (Nat.le_of_lt hlt)
+  have h2 : (ρ.num.toNat : Int) + ((ρ.den - ρ.num.toNat : Nat) : Int) = (ρ.den : Int) := by
+    exact_mod_cast hsc
+  have hp : ((ρ.num.toNat : Nat) : Int) = ρ.num := Int.toNat_of_nonneg hρ0
+  have hcs : ((ρ.den - ρ.num.toNat : Nat) : Int) = (ρ.den : Int) - ρ.num := by rw [← hp] at h2 ⊢; omega
+  have hqp1I : (1 : Int) ≤ (ρ.den : Int) - ρ.num := by
+    have : (ρ.num.toNat : Int) < (ρ.den : Int) := by exact_mod_cast hlt
+    omega
+  have hdenpos : (0 : Int) ≤ (ρ.den : Int) := Int.ofNat_nonneg _
+  have hjpos : (0 : Int) ≤ (j : Int) + 1 := by omega
+  -- half1: 2/(Rⱼ+1) ≤ 1/(2q(j+1))
+  have half1 : Qle (⟨2, Rartanh_R ρ j + 1⟩ : Q) ⟨1, 2 * ρ.den * (j + 1)⟩ := by
+    show (2 : Int) * ((2 * ρ.den * (j + 1) : Nat) : Int) ≤ 1 * ((Rartanh_R ρ j + 1 : Nat) : Int)
+    unfold Rartanh_R
+    have hdiff : (1 : Int) * (((ρ.den * ρ.den + 4 * ρ.den) * (j + 1) + 1 : Nat) : Int)
+        - 2 * ((2 * ρ.den * (j + 1) : Nat) : Int)
+        = (ρ.den : Int) * (ρ.den : Int) * ((j : Int) + 1) + 1 := by push_cast; ring_uor
+    have hnn : (0 : Int) ≤ (ρ.den : Int) * (ρ.den : Int) * ((j : Int) + 1) + 1 :=
+      Int.add_nonneg (Int.mul_nonneg (Int.mul_nonneg hdenpos hdenpos) hjpos) (by decide)
+    omega
+  -- half2: 1/(q+(2Rⱼ+3)(q−p)) ≤ 1/(2q(j+1))
+  have half2 : Qle (⟨(ρ.den : Int), ρ.den + (2 * Rartanh_R ρ j + 3) * (ρ.den - ρ.num.toNat)⟩ : Q)
+      ⟨1, 2 * ρ.den * (j + 1)⟩ := by
+    show (ρ.den : Int) * ((2 * ρ.den * (j + 1) : Nat) : Int)
+        ≤ 1 * ((ρ.den + (2 * Rartanh_R ρ j + 3) * (ρ.den - ρ.num.toNat) : Nat) : Int)
+    unfold Rartanh_R
+    have hdiff : (1 : Int)
+          * ((ρ.den + (2 * ((ρ.den * ρ.den + 4 * ρ.den) * (j + 1)) + 3) * (ρ.den - ρ.num.toNat) : Nat) : Int)
+        - (ρ.den : Int) * ((2 * ρ.den * (j + 1) : Nat) : Int)
+        = (ρ.den : Int) + 3 * ((ρ.den : Int) - ρ.num)
+          + 8 * (ρ.den : Int) * ((j : Int) + 1) * ((ρ.den : Int) - ρ.num)
+          + 2 * (ρ.den : Int) * (ρ.den : Int) * ((j : Int) + 1) * (((ρ.den : Int) - ρ.num) - 1) := by
+      push_cast [hcs]; ring_uor
+    have hnn : (0 : Int) ≤ (ρ.den : Int) + 3 * ((ρ.den : Int) - ρ.num)
+        + 8 * (ρ.den : Int) * ((j : Int) + 1) * ((ρ.den : Int) - ρ.num)
+        + 2 * (ρ.den : Int) * (ρ.den : Int) * ((j : Int) + 1) * (((ρ.den : Int) - ρ.num) - 1) := by
+      have hs0 : (0 : Int) ≤ (ρ.den : Int) - ρ.num := by omega
+      have hs1 : (0 : Int) ≤ ((ρ.den : Int) - ρ.num) - 1 := by omega
+      have t1 : (0 : Int) ≤ 3 * ((ρ.den : Int) - ρ.num) := Int.mul_nonneg (by decide) hs0
+      have t2 : (0 : Int) ≤ 8 * (ρ.den : Int) * ((j : Int) + 1) * ((ρ.den : Int) - ρ.num) :=
+        Int.mul_nonneg (Int.mul_nonneg (Int.mul_nonneg (by decide) hdenpos) hjpos) hs0
+      have t3 : (0 : Int) ≤ 2 * (ρ.den : Int) * (ρ.den : Int) * ((j : Int) + 1)
+          * (((ρ.den : Int) - ρ.num) - 1) :=
+        Int.mul_nonneg (Int.mul_nonneg (Int.mul_nonneg (Int.mul_nonneg (by decide) hdenpos)
+          hdenpos) hjpos) hs1
+      omega
+    omega
+  -- 1/(2q(j+1)) + 1/(2q(j+1)) = 1/(q(j+1))
+  have hsum : Qeq (add (⟨1, 2 * ρ.den * (j + 1)⟩ : Q) ⟨1, 2 * ρ.den * (j + 1)⟩)
+      ⟨1, ρ.den * (j + 1)⟩ := by simp only [Qeq, add]; push_cast; ring_uor
+  -- 1/(q(j+1)) ≤ (1/(j+1))·(1−ρ²)   (uses q(q−1) ≥ p², i.e. p < q)
+  have hlast : Qle (⟨1, ρ.den * (j + 1)⟩ : Q) (mul (⟨1, j + 1⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ))) := by
+    have hltI : ρ.num < (ρ.den : Int) := by rw [← hp]; exact_mod_cast hlt
+    simp only [Qle, mul, Qsub, add, neg]
+    push_cast
+    have hdiff : 1 * (1 * ((ρ.den : Int) * (ρ.den : Int)) + -(ρ.num * ρ.num) * 1)
+          * ((ρ.den : Int) * ((j : Int) + 1))
+        - ((j : Int) + 1) * (1 * ((ρ.den : Int) * (ρ.den : Int)))
+        = ((j : Int) + 1) * (ρ.den : Int)
+          * ((ρ.den : Int) * (ρ.den : Int) - (ρ.den : Int) - ρ.num * ρ.num) := by ring_uor
+    have hnn : (0 : Int) ≤ ((j : Int) + 1) * (ρ.den : Int)
+        * ((ρ.den : Int) * (ρ.den : Int) - (ρ.den : Int) - ρ.num * ρ.num) := by
+      have hp2 : ρ.num * ρ.num ≤ ((ρ.den : Int) - 1) * ((ρ.den : Int) - 1) :=
+        Int.mul_le_mul (by omega) (by omega) hρ0 (by omega)
+      have he2 : ((ρ.den : Int) - 1) * ((ρ.den : Int) - 1)
+          = (ρ.den : Int) * (ρ.den : Int) - 2 * (ρ.den : Int) + 1 := by ring_uor
+      have hkey : (0 : Int) ≤ (ρ.den : Int) * (ρ.den : Int) - (ρ.den : Int) - ρ.num * ρ.num := by
+        omega
+      exact Int.mul_nonneg (Int.mul_nonneg hjpos hdenpos) hkey
+    omega
+  refine Qle_trans (add_den_pos (Nat.mul_pos (Nat.mul_pos (by decide) hρd) (Nat.succ_pos j))
+      (Nat.mul_pos (Nat.mul_pos (by decide) hρd) (Nat.succ_pos j))) (Qadd_le_add half1 half2) ?_
+  exact Qle_trans (Nat.mul_pos hρd (Nat.succ_pos j)) (Qeq_le hsum) hlast
+
+set_option maxHeartbeats 1000000 in
+/-- **The artanh diagonal regularity (one side)**: for `j ≤ k`, the gap is `≤ 1/(j+1)`. -/
+theorem Rartanh_diag_le (t : Real) {ρ : Q} (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (hlt : ρ.num.toNat < ρ.den) (hb : ∀ n, Qle (Qabs (t.seq n)) ρ) {j k : Nat} (hjk : j ≤ k) :
+    Qle (Qabs (Qsub (Rartanh_seq t ρ j) (Rartanh_seq t ρ k))) (Qbound j) := by
+  have hltI : ρ.num < (ρ.den : Int) := by rw [← Int.toNat_of_nonneg hρ0]; exact_mod_cast hlt
+  have hd1 : (1 : Int) ≤ (ρ.den : Int) := by exact_mod_cast hρd
+  -- W = 1 − ρ²,  positive
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ρ ρ)).den :=
+    Qsub_den_pos Nat.one_pos (Nat.mul_pos hρd hρd)
+  have hWn : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ρ ρ)).num := by
+    show 0 < 1 * ((ρ.den * ρ.den : Nat) : Int) + -(ρ.num * ρ.num) * ((1 : Nat) : Int)
+    have hp2 : ρ.num * ρ.num ≤ ((ρ.den : Int) - 1) * ((ρ.den : Int) - 1) :=
+      Int.mul_le_mul (by omega) (by omega) hρ0 (by omega)
+    have he2 : ((ρ.den : Int) - 1) * ((ρ.den : Int) - 1)
+        = (ρ.den : Int) * (ρ.den : Int) - 2 * (ρ.den : Int) + 1 := by ring_uor
+    push_cast; omega
+  have hWnn : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ρ ρ)).num := Int.le_of_lt hWn
+  -- reindex monotone, and the argument-gap bound
+  have hRle : Rartanh_R ρ j ≤ Rartanh_R ρ k := by
+    unfold Rartanh_R; exact Nat.mul_le_mul (Nat.le_refl _) (Nat.succ_le_succ hjk)
+  have hDbound : Qle (Qabs (Qsub (t.seq (Rartanh_R ρ j)) (t.seq (Rartanh_R ρ k))))
+      ⟨2, Rartanh_R ρ j + 1⟩ := by
+    have hanti : Qle (Qbound (Rartanh_R ρ k)) (Qbound (Rartanh_R ρ j)) := by
+      show (1 : Int) * ((Rartanh_R ρ j + 1 : Nat) : Int) ≤ 1 * ((Rartanh_R ρ k + 1 : Nat) : Int)
+      rw [Int.one_mul, Int.one_mul]; exact_mod_cast (show Rartanh_R ρ j + 1 ≤ Rartanh_R ρ k + 1 by omega)
+    have hsum : Qeq (add (Qbound (Rartanh_R ρ j)) (Qbound (Rartanh_R ρ j))) ⟨2, Rartanh_R ρ j + 1⟩ := by
+      simp only [Qeq, add, Qbound]; push_cast; ring_uor
+    exact Qle_trans (add_den_pos (Qbound_den_pos _) (Qbound_den_pos _)) (t.reg _ _)
+      (Qle_trans (add_den_pos (Qbound_den_pos _) (Qbound_den_pos _))
+        (Qadd_le_add (Qle_refl _) hanti) (Qeq_le hsum))
+  -- triangle through the midpoint S_{t_{Rk}}(Rj)
+  have htri := Qabs_sub_triangle (a := Rartanh_seq t ρ j)
+    (b := artSum (t.seq (Rartanh_R ρ k)) (Rartanh_R ρ j)) (c := Rartanh_seq t ρ k)
+    (artSum_den_pos (t.den_pos _) _) (artSum_den_pos (t.den_pos _) _) (artSum_den_pos (t.den_pos _) _)
+  -- Lipschitz part:  Lip · W ≤ |t_j − t_k|
+  have hLipW : Qle (mul (Qabs (Qsub (Rartanh_seq t ρ j)
+        (artSum (t.seq (Rartanh_R ρ k)) (Rartanh_R ρ j)))) (Qsub ⟨1, 1⟩ (mul ρ ρ)))
+      (Qabs (Qsub (t.seq (Rartanh_R ρ j)) (t.seq (Rartanh_R ρ k)))) := by
+    have hLS := artSum_Lip_le (t.den_pos (Rartanh_R ρ j)) (t.den_pos (Rartanh_R ρ k))
+      hρd (hb _) (hb _) (Rartanh_R ρ j)
+    refine Qle_trans (Qmul_den_pos (Qmul_den_pos (geoEvenSum_den_pos hρd _)
+        (Qabs_den_pos (Qsub_den_pos (t.den_pos _) (t.den_pos _)))) hWd)
+      (Qmul_le_mul_right hWnn hLS) ?_
+    refine Qle_trans (Qmul_den_pos (Qmul_den_pos (geoEvenSum_den_pos hρd _) hWd)
+        (Qabs_den_pos (Qsub_den_pos (t.den_pos _) (t.den_pos _))))
+      (Qeq_le (Qmul_swap_right _ _ _)) ?_
+    refine Qle_trans (Qmul_den_pos Nat.one_pos (Qabs_den_pos (Qsub_den_pos (t.den_pos _) (t.den_pos _))))
+      (Qmul_le_mul_right (Qabs_num_nonneg _) (geoEven_bound hρ0 hρd _)) (Qeq_le (Qone_mul _))
+  -- truncation part:  trunc · W ≤ ρ^{2Rⱼ+3}
+  have hTrW : Qle (mul (Qabs (Qsub (artSum (t.seq (Rartanh_R ρ k)) (Rartanh_R ρ j))
+        (Rartanh_seq t ρ k))) (Qsub ⟨1, 1⟩ (mul ρ ρ))) (qpow ρ (2 * Rartanh_R ρ j + 3)) := by
+    have hTB := artSum_trunc (t.den_pos (Rartanh_R ρ k)) hρ0 hρd (hb _) hWnn
+      (a := Rartanh_R ρ j) hRle
+    rw [Qabs_Qsub_comm]; exact hTB
+  -- combine and cancel W
+  refine Qmul_le_cancel_right hWn hWd ?_
+  refine Qle_trans (Qmul_den_pos (add_den_pos (Qabs_den_pos (Qsub_den_pos
+      (artSum_den_pos (t.den_pos _) _) (artSum_den_pos (t.den_pos _) _)))
+      (Qabs_den_pos (Qsub_den_pos (artSum_den_pos (t.den_pos _) _)
+        (artSum_den_pos (t.den_pos _) _)))) hWd)
+    (Qmul_le_mul_right hWnn htri) ?_
+  refine Qle_trans (add_den_pos (Qmul_den_pos (Qabs_den_pos (Qsub_den_pos
+      (artSum_den_pos (t.den_pos _) _) (artSum_den_pos (t.den_pos _) _))) hWd)
+      (Qmul_den_pos (Qabs_den_pos (Qsub_den_pos (artSum_den_pos (t.den_pos _) _)
+        (artSum_den_pos (t.den_pos _) _))) hWd))
+    (Qeq_le (Qmul_add_right _ _ _))
+    (Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos (t.den_pos _) (t.den_pos _)))
+      (qpow_den_pos hρd _)) (Qadd_le_add hLipW hTrW)
+      (Qle_trans (add_den_pos (Nat.succ_pos _)
+          (Nat.lt_of_lt_of_le hρd (Nat.le_add_right _ _)))
+        (Qadd_le_add hDbound (qpow_geom_bound hρ0 hρd (Nat.le_of_lt hlt) _))
+        (artanh_reindex hρ0 hρd hlt j)))
+
+/-- The artanh diagonal is Bishop-regular. -/
+theorem Rartanh_regular (t : Real) {ρ : Q} (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (hlt : ρ.num.toNat < ρ.den) (hb : ∀ n, Qle (Qabs (t.seq n)) ρ) : IsRegular (Rartanh_seq t ρ) := by
+  intro j k
+  rcases Nat.le_total j k with h | h
+  · exact Qle_trans (Qbound_den_pos j) (Rartanh_diag_le t hρ0 hρd hlt hb h)
+      (Qle_self_add (by show (0 : Int) ≤ 1; decide))
+  · have hswap := Rartanh_diag_le t hρ0 hρd hlt hb h
+    rw [Qabs_Qsub_comm] at hswap
+    exact Qle_trans (Qbound_den_pos k) hswap (Qle_add_self (by show (0 : Int) ≤ 1; decide))
+
+/-- **`artanh` on `[−ρ, ρ]`** (`ρ < 1`): the diagonal of the artanh series. -/
+def Rartanh (t : Real) (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt : ρ.num.toNat < ρ.den)
+    (hb : ∀ n, Qle (Qabs (t.seq n)) ρ) : Real :=
+  ⟨Rartanh_seq t ρ, Rartanh_regular t hρ0 hρd hlt hb,
+    fun j => artSum_den_pos (t.den_pos _) (Rartanh_R ρ j)⟩
+
 end UOR.Bridge.F1Square.Analysis
