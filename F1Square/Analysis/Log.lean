@@ -408,4 +408,42 @@ theorem qpow_half_le {ρ : Q} (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hρ12 :
   show (1 : Int) * ((m + 1 : Nat) : Int) ≤ 1 * ((npow 2 m : Nat) : Int)
   rw [Int.one_mul, Int.one_mul]; exact_mod_cast two_pow_ge m
 
+/-- **The general Bernoulli bound**: for `0 ≤ ρ < 1` (i.e. `p = ρ.num.toNat ≤ q = ρ.den`),
+    `ρᵐ ≤ q/(q + m(q−p))` — a `1/(linear)` decay, the engine of the geometric reindex. -/
+theorem qpow_geom_bound {ρ : Q} (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (hple : ρ.num.toNat ≤ ρ.den) :
+    ∀ m, Qle (qpow ρ m) ⟨(ρ.den : Int), ρ.den + m * (ρ.den - ρ.num.toNat)⟩
+  | 0 => by
+      show (1 : Int) * ((ρ.den + 0 * (ρ.den - ρ.num.toNat) : Nat) : Int) ≤ (ρ.den : Int) * 1
+      omega
+  | (m + 1) => by
+      have ih := qpow_geom_bound hρ0 hρd hple m
+      have hsc : ρ.num.toNat + (ρ.den - ρ.num.toNat) = ρ.den := Nat.add_sub_cancel' hple
+      have h2 : (ρ.num.toNat : Int) + ((ρ.den - ρ.num.toNat : Nat) : Int) = (ρ.den : Int) := by
+        exact_mod_cast hsc
+      have hcs : ((ρ.den - ρ.num.toNat : Nat) : Int) = (ρ.den : Int) - (ρ.num.toNat : Int) := by
+        rw [← h2]; ring_uor
+      have hp : ((ρ.num.toNat : Nat) : Int) = ρ.num := Int.toNat_of_nonneg hρ0
+      have hqp : (0 : Int) ≤ (ρ.den : Int) - ρ.num := by
+        have h1 : (ρ.num.toNat : Int) ≤ (ρ.den : Int) := by exact_mod_cast hple
+        omega
+      have hstep : Qle (mul ρ ⟨(ρ.den : Int), ρ.den + m * (ρ.den - ρ.num.toNat)⟩)
+          ⟨(ρ.den : Int), ρ.den + (m + 1) * (ρ.den - ρ.num.toNat)⟩ := by
+        show (ρ.num * (ρ.den : Int)) * ((ρ.den + (m + 1) * (ρ.den - ρ.num.toNat) : Nat) : Int)
+            ≤ (ρ.den : Int) * ((ρ.den * (ρ.den + m * (ρ.den - ρ.num.toNat)) : Nat) : Int)
+        have hdiff : (ρ.den : Int)
+              * ((ρ.den * (ρ.den + m * (ρ.den - ρ.num.toNat)) : Nat) : Int)
+            - (ρ.num * (ρ.den : Int))
+              * ((ρ.den + (m + 1) * (ρ.den - ρ.num.toNat) : Nat) : Int)
+            = (ρ.den : Int) * (((ρ.den : Int) - ρ.num)
+              * ((ρ.den : Int) - ρ.num) * ((m : Int) + 1)) := by
+          push_cast [hcs, hp]; ring_uor
+        have hnn : (0 : Int) ≤ (ρ.den : Int) * (((ρ.den : Int) - ρ.num)
+            * ((ρ.den : Int) - ρ.num) * ((m : Int) + 1)) :=
+          Int.mul_nonneg (Int.ofNat_nonneg _)
+            (Int.mul_nonneg (Int.mul_nonneg hqp hqp) (by omega))
+        omega
+      exact Qle_trans (Qmul_den_pos hρd (Nat.lt_of_lt_of_le hρd (Nat.le_add_right _ _)))
+        (Qmul_le_mul_left hρ0 ih) hstep
+
 end UOR.Bridge.F1Square.Analysis
