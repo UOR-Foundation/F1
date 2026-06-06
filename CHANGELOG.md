@@ -4,6 +4,39 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html), starting at `v0.0.1`.
 
+## [0.3.0] - 2026-06-06
+
+### Added — the analysis substrate, brick two: a ℤ ring normalizer + constructive ℝ (pure Lean 4, no Mathlib, no `sorry`)
+- `F1Square/Analysis/RingNF.lean` — a **reflective commutative-ring normalizer over ℤ**: polynomial
+  expressions (`PExpr`) get a **canonical form** (a sorted, merged `(monomial, coefficient)` list —
+  their content-address), with a single soundness theorem `norm_sound : pden ρ (norm e) = denote ρ e`
+  and the decision lemma `nf_eq` (equal canonical forms ⇒ equal as ℤ-functions). This lifts the
+  no-`ring` ceiling: general nonlinear identities — `(a+b)² = a²+2ab+b²`, `(a+b)(a−b) = a²−b²`,
+  `(a+b+c)²`, commuted distributivity — are now genuine theorems for ALL integers, proved by `decide`
+  on the finite normal form. Soundness is built from the core ℤ ring lemmas, never assumed.
+- `F1Square/Analysis/Rat.lean` — the v0.2.0 ℚ brick's field laws are now **general** (all rationals,
+  not just numerals): `add_comm`, `mul_comm`, `add_assoc`, `mul_assoc`, `mul_add` (distributivity),
+  `mul_one`, `add_zero`, `add_neg` — each discharged by the ring normalizer after pushing the
+  `Nat → Int` casts to the leaves. Dogfooding the v0.3.0 tool.
+- `F1Square/Analysis/Real.lean` — **constructive ℝ** as **Bishop regular sequences** over the exact ℚ
+  (`|xₘ − xₙ| ≤ 1/(m+1) + 1/(n+1)`): the `Real` type, the regularity predicate, the canonical
+  embedding ℚ ↪ ℝ (proved regular and value-respecting, `const_regular` / `ofQ_respects`), the Bishop
+  equality setoid (`Req_refl`, `Req_symm`), and the witnessed positivity predicate (`Pos`, `Pos_half`).
+- `scripts/audit_axioms.lean` extended to all 29 new theorems; the honesty gate stays green.
+
+### Changed
+- `docs/`: the analysis-substrate roadmap advances one brick (ℚ → **ℤ ring normalizer + ℝ** →
+  ℂ+transcendentals → ζ/λₙ); the v0.3.0 status is recorded. `F1Square.lean` gains a v0.3.0
+  elaboration-checked `example`. Literature note refreshed (the Feb-2026 Connes–Consani *Jacobian of
+  `Spec ℤ̄`*, arXiv:2602.15941, is Arakelov–Picard — it does **not** construct the square or prove
+  Hodge positivity; RH remains open as of mid-2026).
+
+### Note
+- RH remains **open**. v0.3.0 builds the algebraic tool (the ring normalizer) and the ℝ foundation;
+  ℝ arithmetic (`+`, `·`), `≈`-transitivity (a limiting argument), and completeness are the v0.4.0
+  continuation. The substrate makes the analytic half *statable and checkable*, never proven —
+  proving `λₙ ≥ 0 ∀n` / the Hodge index on 𝕊 is RH.
+
 ## [0.2.0] - 2026-06-06
 
 ### Added — finite tropical stack mechanized + first analysis brick (pure Lean 4, no Mathlib, no `sorry`)
@@ -99,6 +132,7 @@ Initial research base for the 𝔽₁-square / Riemann Hypothesis program.
   solution: the formalization compiles and states the construction problem precisely; it
   does not assert the crux.
 
+[0.3.0]: https://github.com/afflom/F1/releases/tag/v0.3.0
 [0.2.0]: https://github.com/afflom/F1/releases/tag/v0.2.0
 [0.1.0]: https://github.com/afflom/F1/releases/tag/v0.1.0
 [0.0.1]: https://github.com/afflom/F1/releases/tag/v0.0.1

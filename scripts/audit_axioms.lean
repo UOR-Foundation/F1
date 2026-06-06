@@ -104,3 +104,38 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.add_sample
 #print axioms Analysis.mul_sample
 #print axioms Analysis.Qle_sample
+
+-- v0.3.0 — the ℤ ring normalizer (reflective canonical polynomial form) and its soundness.
+#print axioms Analysis.RingNF.minsert_sound
+#print axioms Analysis.RingNF.mmul_sound
+#print axioms Analysis.RingNF.pinsert_sound
+#print axioms Analysis.RingNF.padd_sound
+#print axioms Analysis.RingNF.pscaleMono_sound
+#print axioms Analysis.RingNF.pmul_sound
+#print axioms Analysis.RingNF.pneg_sound
+#print axioms Analysis.RingNF.norm_sound
+#print axioms Analysis.RingNF.nf_eq
+#print axioms Analysis.RingNF.sq_add
+#print axioms Analysis.RingNF.mul_diff
+#print axioms Analysis.RingNF.sq_add3
+#print axioms Analysis.RingNF.distrib_comm
+
+-- v0.3.0 — general ℚ field laws (via the normalizer).
+#print axioms Analysis.add_comm
+#print axioms Analysis.mul_comm
+#print axioms Analysis.mul_assoc
+#print axioms Analysis.add_assoc
+#print axioms Analysis.mul_add
+#print axioms Analysis.mul_one
+#print axioms Analysis.add_zero
+#print axioms Analysis.add_neg
+
+-- v0.3.0 — constructive ℝ (Bishop regular sequences over ℚ).
+#print axioms Analysis.Qsub_self_num
+#print axioms Analysis.Qsub_swap_num
+#print axioms Analysis.Qsub_swap_den
+#print axioms Analysis.const_regular
+#print axioms Analysis.Req_refl
+#print axioms Analysis.Req_symm
+#print axioms Analysis.ofQ_respects
+#print axioms Analysis.Pos_half

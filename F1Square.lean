@@ -31,6 +31,8 @@ import F1Square.Tropical.Signature
 import F1Square.Tropical.Spectrum
 import F1Square.Tropical.Siblings
 import F1Square.Analysis.Rat
+import F1Square.Analysis.RingNF
+import F1Square.Analysis.Real
 
 open UOR.Primitives
 
@@ -184,6 +186,12 @@ def f1SquareStatus : F1SquareStatus := {
 --   tropical Hodge signatures ← Tropical.Signature.{parallel_pencil, fan_degenerate, fan_kernel,
 --                                bh_two_positive_dirs}
 --   exact ℚ analysis brick    ← Analysis.{reduce_6_8, reduce_idem, same_address_iff_eq}
+-- v0.3.0 (the analysis substrate: a ℤ ring normalizer + constructive ℝ):
+--   ℤ ring normalizer (the    ← Analysis.RingNF.{norm_sound, nf_eq, sq_add, mul_diff, sq_add3} —
+--     no-`ring` ceiling lifted)  a reflective canonical polynomial form; soundness ⇒ general identities
+--   general ℚ field laws       ← Analysis.{add_comm, mul_comm, mul_assoc, add_assoc, mul_add, add_neg}
+--                                (now for ALL rationals, via the normalizer — not just v0.2.0 numerals)
+--   constructive ℝ (Bishop)    ← Analysis.{const_regular, Req_refl, Req_symm, ofQ_respects, Pos_half}
 -- The crux is NOT backed and stays `none`:
 --   hodgeIndexHolds (= RH)    ← Crux.CruxFor 𝕊 — OPEN. Crux.template_hodgeIndex proves the
 --                               property only on the product-of-curves TEMPLATE, never on 𝕊.
@@ -214,5 +222,14 @@ example :
     ∧ Analysis.reduce ⟨6, 8⟩ = ⟨3, 4⟩ :=
   ⟨Tropical.R2_kleene_idempotent, Tropical.R9_same_kappa, Tropical.R10_diff_spectrum,
    Tropical.Signature.parallel_pencil, Analysis.reduce_6_8⟩
+
+/-- Elaboration-checked witness binding the v0.3.0 analysis substrate to the manifest: the ℤ ring
+    normalizer proves a *general* binomial identity (`(a+b)² = a²+2ab+b²`, here at a sample point),
+    the general ℚ commutativity law holds, and the constructive real `½` is positive. -/
+example :
+    ((3 : Int) + 5) * (3 + 5) = 3 * 3 + 2 * (3 * 5) + 5 * 5
+    ∧ Analysis.Qeq (Analysis.mul ⟨2, 3⟩ ⟨4, 5⟩) (Analysis.mul ⟨4, 5⟩ ⟨2, 3⟩)
+    ∧ Analysis.Pos Analysis.half :=
+  ⟨Analysis.RingNF.sq_add 3 5, Analysis.mul_comm ⟨2, 3⟩ ⟨4, 5⟩, Analysis.Pos_half⟩
 
 end UOR.Bridge.F1Square

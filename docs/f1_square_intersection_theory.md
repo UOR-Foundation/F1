@@ -471,12 +471,16 @@ the program (Li's `λₙ`, the explicit-formula trace, the cos/sin Weil-Gram ove
 identity) is *blocked on a substrate we are building from first principles* — exact arithmetic,
 canonical forms, realizations, no Mathlib — one brick per release:
 
-- **v0.2.0:** exact ℚ (`Analysis/Rat.lean`) — canonical reduced form = content-address; decidable
-  exact equality/order; the first brick.
-- **v0.3.0:** constructive ℝ (Cauchy-with-modulus / interval arithmetic) and a commutative-ring
-  normalizer for ℤ (the tool that unlocks general algebraic proofs without Mathlib).
-- **v0.4.0:** ℂ = ℝ×ℝ and transcendentals (exp/log/cos via convergent series with rigorous error
-  bounds).
+- **v0.2.0 (done):** exact ℚ (`Analysis/Rat.lean`) — canonical reduced form = content-address;
+  decidable exact equality/order; the first brick.
+- **v0.3.0 (done):** a reflective **commutative-ring normalizer for ℤ** (`Analysis/RingNF.lean`) — a
+  canonical polynomial form (= content-address) with a soundness theorem, the tool that unlocks
+  general algebraic proofs without Mathlib (it retroactively made the ℚ field laws *general*); and
+  **constructive ℝ** as Bishop regular sequences over ℚ (`Analysis/Real.lean`) — the `Real` type, the
+  regularity/positivity predicates, the ℚ↪ℝ embedding, and the equality setoid (refl/symm).
+- **v0.4.0:** ℝ field arithmetic (`+`, `·` with their regularity proofs), `≈`-transitivity and
+  completeness; then ℂ = ℝ×ℝ and transcendentals (exp/log/cos via convergent series with rigorous
+  error bounds, built on the ring normalizer).
 - **v0.5.0+:** ζ and `λₙ` as exact-bounded objects; the explicit formula as an exact-arithmetic trace.
 
 Each brick makes more of the analytic half *statable and finitely checkable* — never a proof of the

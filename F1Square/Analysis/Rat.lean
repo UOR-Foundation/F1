@@ -19,6 +19,8 @@ exact-bounded objects. Each brick makes more of the analytic half statable and c
 crux (proving `λₙ ≥ 0 ∀n` / the Hodge index on 𝕊 is RH).
 -/
 
+import F1Square.Analysis.RingNF
+
 namespace UOR.Bridge.F1Square.Analysis
 
 /-- A rational as a raw fraction `num / den` (denominator intended `> 0`). -/
@@ -83,5 +85,78 @@ theorem mul_sample : reduce (mul ⟨2, 3⟩ ⟨3, 4⟩) = ⟨1, 2⟩ := by decid
 
 /-- Exact order: `1/3 ≤ 1/2`. -/
 theorem Qle_sample : Qle ⟨1, 3⟩ ⟨1, 2⟩ := by decide
+
+-- ===========================================================================
+-- v0.3.0 — GENERAL ℚ field laws, no longer only concrete samples. Each is a polynomial identity in
+-- the numerators and (cast) denominators, discharged by the v0.3.0 ℤ ring normalizer
+-- (`RingNF.nf_eq`): unfold `Qeq`/`add`/`mul`, push the `Nat→Int` casts to the leaves, then reflect.
+-- This is the no-`ring` ceiling lifting: the laws hold for ALL rationals, not just the v0.2.0 numerals.
+-- ===========================================================================
+
+/-- Commutativity of `+` on ℚ (value-level), for ALL rationals. -/
+theorem add_comm (a b : Q) : Qeq (add a b) (add b a) := by
+  unfold Qeq add; simp only [Int.natCast_mul]
+  have h := RingNF.nf_eq (ρ := RingNF.env [a.num, b.num, (a.den : Int), (b.den : Int)])
+    (a := .mul (.add (.mul (.var 0) (.var 3)) (.mul (.var 1) (.var 2))) (.mul (.var 3) (.var 2)))
+    (b := .mul (.add (.mul (.var 1) (.var 2)) (.mul (.var 0) (.var 3))) (.mul (.var 2) (.var 3)))
+    (by decide)
+  simpa [RingNF.denote, RingNF.env] using h
+
+/-- Commutativity of `·` on ℚ (value-level), for ALL rationals. -/
+theorem mul_comm (a b : Q) : Qeq (mul a b) (mul b a) := by
+  unfold Qeq mul; simp only [Int.natCast_mul]
+  have h := RingNF.nf_eq (ρ := RingNF.env [a.num, b.num, (a.den : Int), (b.den : Int)])
+    (a := .mul (.mul (.var 0) (.var 1)) (.mul (.var 3) (.var 2)))
+    (b := .mul (.mul (.var 1) (.var 0)) (.mul (.var 2) (.var 3)))
+    (by decide)
+  simpa [RingNF.denote, RingNF.env] using h
+
+/-- Associativity of `·` on ℚ (value-level), for ALL rationals. -/
+theorem mul_assoc (a b c : Q) : Qeq (mul (mul a b) c) (mul a (mul b c)) := by
+  unfold Qeq mul; simp only [Int.natCast_mul]
+  have h := RingNF.nf_eq
+    (ρ := RingNF.env [a.num, b.num, c.num, (a.den : Int), (b.den : Int), (c.den : Int)])
+    (a := .mul (.mul (.mul (.var 0) (.var 1)) (.var 2)) (.mul (.var 3) (.mul (.var 4) (.var 5))))
+    (b := .mul (.mul (.var 0) (.mul (.var 1) (.var 2))) (.mul (.mul (.var 3) (.var 4)) (.var 5)))
+    (by decide)
+  simpa [RingNF.denote, RingNF.env] using h
+
+/-- Associativity of `+` on ℚ (value-level), for ALL rationals. -/
+theorem add_assoc (a b c : Q) : Qeq (add (add a b) c) (add a (add b c)) := by
+  unfold Qeq add; simp only [Int.natCast_mul]
+  have h := RingNF.nf_eq
+    (ρ := RingNF.env [a.num, b.num, c.num, (a.den : Int), (b.den : Int), (c.den : Int)])
+    (a := .mul (.add (.mul (.add (.mul (.var 0) (.var 4)) (.mul (.var 1) (.var 3))) (.var 5))
+            (.mul (.var 2) (.mul (.var 3) (.var 4)))) (.mul (.var 3) (.mul (.var 4) (.var 5))))
+    (b := .mul (.add (.mul (.var 0) (.mul (.var 4) (.var 5)))
+            (.mul (.add (.mul (.var 1) (.var 5)) (.mul (.var 2) (.var 4))) (.var 3)))
+          (.mul (.mul (.var 3) (.var 4)) (.var 5)))
+    (by decide)
+  simpa [RingNF.denote, RingNF.env] using h
+
+/-- Left distributivity `a·(b+c) = a·b + a·c` on ℚ (value-level), for ALL rationals. -/
+theorem mul_add (a b c : Q) : Qeq (mul a (add b c)) (add (mul a b) (mul a c)) := by
+  unfold Qeq mul add; simp only [Int.natCast_mul]
+  have h := RingNF.nf_eq
+    (ρ := RingNF.env [a.num, b.num, c.num, (a.den : Int), (b.den : Int), (c.den : Int)])
+    (a := .mul (.mul (.var 0) (.add (.mul (.var 1) (.var 5)) (.mul (.var 2) (.var 4))))
+          (.mul (.mul (.var 3) (.var 4)) (.mul (.var 3) (.var 5))))
+    (b := .mul (.add (.mul (.mul (.var 0) (.var 1)) (.mul (.var 3) (.var 5)))
+            (.mul (.mul (.var 0) (.var 2)) (.mul (.var 3) (.var 4))))
+          (.mul (.var 3) (.mul (.var 4) (.var 5))))
+    (by decide)
+  simpa [RingNF.denote, RingNF.env] using h
+
+/-- `a · 1 = a` on ℚ (value-level). -/
+theorem mul_one (a : Q) : Qeq (mul a ⟨1, 1⟩) a := by
+  unfold Qeq mul; simp
+
+/-- `a + 0 = a` on ℚ (value-level). -/
+theorem add_zero (a : Q) : Qeq (add a ⟨0, 1⟩) a := by
+  unfold Qeq add; simp
+
+/-- `a + (−a) = 0` on ℚ (value-level), for ALL rationals: the additive inverse law. -/
+theorem add_neg (a : Q) : Qeq (add a (neg a)) ⟨0, 1⟩ := by
+  unfold Qeq add neg; simp; omega
 
 end UOR.Bridge.F1Square.Analysis

@@ -439,3 +439,39 @@ spectrum, and the headline **R9/R10 κ⊥spectrum counterexample** with R11 the 
 facet degeneracy (`F1Square/Tropical/Siblings.lean`). R7 (zero-temperature limit) and R8
 (prime-orbit asymptotic) are limit/asymptotic statements — only finite approximants are mechanizable,
 and they are left as such pending the constructive-ℝ analysis brick (v0.3.0).
+
+---
+
+## 11. v0.3.0 — the analysis substrate, brick two: a ℤ ring normalizer and constructive ℝ
+
+The finite stack above leans heavily on `decide`/`omega`, which cannot prove *general* nonlinear
+algebraic identities (there is no `ring` tactic without Mathlib). **v0.3.0** removes that ceiling the
+UOR way and lays the next analysis brick:
+
+- **A reflective commutative-ring normalizer over ℤ** (`F1Square/Analysis/RingNF.lean`). Polynomial
+  expressions `PExpr` are given a **canonical form** — a sorted, merged list of `(monomial,
+  coefficient)` pairs, which is exactly their content-address (the same κ idea as ℚ's
+  reduce-to-lowest-terms, one level up). A single soundness theorem `norm_sound : pden ρ (norm e) =
+  denote ρ e` certifies that normalization preserves meaning; the decision lemma `nf_eq` then says
+  *equal canonical forms ⇒ equal as ℤ-valued functions, for every assignment*. So general identities
+  — `(a+b)² = a²+2ab+b²`, `(a+b)(a−b) = a²−b²`, `(a+b+c)²`, freely-commuted distributivity — become
+  genuine theorems for ALL integers, proved by `decide` on the finite normal-form data. Soundness is
+  built from the core ℤ ring lemmas (`Int.mul_assoc`, `Int.add_mul`, `Int.neg_mul`, …), never
+  assumed. This is large-scale computational reflection (à la Coq/Mathlib `ring`), implemented from
+  scratch and axiom-audited.
+- **General ℚ field laws** (`F1Square/Analysis/Rat.lean`). The v0.2.0 ℚ brick verified its laws only
+  on numerals; with the normalizer they now hold for ALL rationals: `add_comm`, `mul_comm`,
+  `add_assoc`, `mul_assoc`, `mul_add`, `mul_one`, `add_zero`, `add_neg` — unfold `Qeq`/`add`/`mul`,
+  push the `Nat→Int` casts to the leaves, reflect.
+- **Constructive ℝ as Bishop regular sequences** (`F1Square/Analysis/Real.lean`). A real is a sequence
+  `x : ℕ → ℚ` with `|xₘ − xₙ| ≤ 1/(m+1) + 1/(n+1)` — the modulus baked into the index, so no choice
+  principle is needed. This release establishes the `Real` type, the regularity predicate, the
+  Bishop equality setoid (`Req_refl`, `Req_symm`), the canonical embedding ℚ ↪ ℝ (proved regular and
+  value-respecting), and witnessed positivity (`Pos`, `Pos_half`). ℝ arithmetic, `≈`-transitivity (a
+  limiting argument), and completeness are the v0.4.0 continuation. R7/R8 — the zero-temperature and
+  prime-orbit limits — become *statable* over this ℝ once its arithmetic lands; proving the limits
+  themselves is still analysis, not the crux.
+
+All v0.3.0 additions are kernel-checked, pure Lean 4 (no Mathlib, no `sorry`), and axiom-audited
+(`scripts/honesty_audit.sh`). RH remains open: the substrate makes the analytic half statable and
+checkable, never proven.
