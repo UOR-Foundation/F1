@@ -502,3 +502,33 @@ into a tactic and uses it to give ℝ its arithmetic:
 ℝ multiplication, `≈`-transitivity (an Archimedean argument), completeness, ℂ = ℝ×ℝ, and the
 transcendentals are the v0.5.0 continuation. All v0.4.0 additions are kernel-checked, pure Lean 4
 (no Mathlib, no `sorry`), and axiom-audited. RH remains open.
+
+---
+
+## 13. v0.5.0 — ℝ's equality is an equivalence, ℝ multiplication, ℂ = ℝ×ℝ
+
+v0.4.0 made ℝ an ordered additive group; **v0.5.0** completes the field arithmetic and the equality:
+
+- **`≈` is an equivalence** (`F1Square/Analysis/QOrder.lean`, `Real.lean`). Reflexivity and symmetry
+  were v0.3.0; transitivity is the genuine limiting argument. For each index `n`, the gap `|xₙ − zₙ|`
+  is bounded — *for every auxiliary index `m`* — by `2/(n+1) + 6/(m+1)` (four triangle steps through
+  `xₘ, yₘ, zₘ`), and the **Archimedean lemma** (`Qarch`: if `p ≤ q + 6/(m+1)` for all `m` then
+  `p ≤ q`) kills the vanishing tail. So Bishop equality on ℝ is a true equivalence relation.
+- **ℝ multiplication** (`Real.lean`). `Rmul` reindexes both factors at `r(n) = 2K(n+1)−1`, where
+  `K = max(K_x, K_y)` bounds both sequences via the canonical bound `|xₙ| ≤ |x₀| + 2` (`canon_bound`);
+  regularity follows because each factor is `≤ K` and the `2K` reindexing cancels it exactly
+  (`2K·(1/(2K(m+1)) + 1/(2K(n+1))) = 1/(m+1)+1/(n+1)`, discharged by `ring_uor`). Multiplication is
+  commutative up to `≈` (`Rmul_comm`). The supporting ℚ multiplication-order library
+  (`Qabs_mul`, `Qmul_le_mul`, the product-difference triangle `Qabs_mul_diff`) lives in `QOrder.lean`.
+- **ℂ = ℝ×ℝ** (`F1Square/Analysis/Complex.lean`). The complex plane as pairs of constructive reals,
+  with componentwise Bishop equality (an equivalence) and **all four operations** — `Cadd`, `Cneg`,
+  `Cmul` (`(ac−bd, ad+bc)`), the constants `0, 1, i`, and the embedding ℝ ↪ ℂ. The additive-group
+  laws hold up to `≈`, and so does **commutative multiplication** (`Cmul_comm`), via the
+  operation-congruences `Rneg_congr`/`Radd_congr`/`Rsub_congr` (the operations are well-defined on the
+  setoid) plus `Rmul_comm`.
+
+The v0.6.0 continuation: the remaining ℂ ring laws — associativity and distributivity — need
+`Rmul`-congruence and `Rmul`-associativity (a reindex-reconciliation argument, harder than the
+additive congruences); then completeness (regular sequences of reals converge) and the
+transcendentals. All v0.5.0 additions are kernel-checked, pure Lean 4 (no Mathlib, no `sorry`), and
+axiom-audited. RH remains open.

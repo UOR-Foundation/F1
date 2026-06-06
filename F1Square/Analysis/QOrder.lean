@@ -142,4 +142,130 @@ theorem Qabs_sub_add4 {a b c d : Q} (ha : 0 < a.den) (hb : 0 < b.den)
     Qabs_den_pos (add_den_pos (Qsub_den_pos ha hc) (Qsub_den_pos hb hd))
   exact Qle_congr_left hpos (Qeq_symm (Qabs_Qeq htel)) h2
 
+/-- ℚ order is total: `a ≤ b` or `b < a`. -/
+theorem Qle_or_Qlt (a b : Q) : Qle a b ∨ Qlt b a := by unfold Qle Qlt; omega
+
+/-- The 3-point triangle inequality on ℚ: `|a − c| ≤ |a − b| + |b − c|`. -/
+theorem Qabs_sub_triangle {a b c : Q} (ha : 0 < a.den) (hb : 0 < b.den) (hc : 0 < c.den) :
+    Qle (Qabs (Qsub a c)) (add (Qabs (Qsub a b)) (Qabs (Qsub b c))) := by
+  have htel : Qeq (Qsub a c) (add (Qsub a b) (Qsub b c)) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  have h2 := Qabs_add_le (Qsub a b) (Qsub b c)
+  have hpos : 0 < (Qabs (add (Qsub a b) (Qsub b c))).den :=
+    Qabs_den_pos (add_den_pos (Qsub_den_pos ha hb) (Qsub_den_pos hb hc))
+  exact Qle_congr_left hpos (Qeq_symm (Qabs_Qeq htel)) h2
+
+-- The pure-ℤ contradiction kernel of the Archimedean lemma.
+private theorem arch_core (N P : Int) (hN : 1 ≤ N) (hP : 1 ≤ P) :
+    ¬ (N * (6 * P + 1) ≤ 6 * P) := by
+  intro h
+  have h1 : P ≤ N * P := by
+    have := Int.mul_le_mul_of_nonneg_right hN (by omega : (0 : Int) ≤ P); simpa using this
+  have h2 : N * (6 * P + 1) = 6 * (N * P) + N := by ring_uor
+  omega
+
+/-- **Archimedean lemma** on ℚ: if `p ≤ q + 6/(m+1)` for every `m`, then `p ≤ q`. The vanishing of
+    the rational tail `6/(m+1)` (no `m` makes it negative) is what makes Bishop `≈` transitive. -/
+theorem Qarch {p q : Q} (hp : 0 < p.den) (hq : 0 < q.den)
+    (H : ∀ m : Nat, Qle p (add q ⟨6, m + 1⟩)) : Qle p q := by
+  rcases Qle_or_Qlt p q with h | h
+  · exact h
+  · exfalso
+    unfold Qlt at h
+    have key := H (6 * (p.den * q.den))
+    unfold Qle add at key
+    push_cast at key h
+    have hP1 : (1 : Int) ≤ (p.den : Int) * (q.den : Int) := by
+      have h0 : 0 < p.den * q.den := Nat.mul_pos hp hq
+      have h1 : (0 : Int) < ((p.den * q.den : Nat) : Int) := by exact_mod_cast h0
+      push_cast at h1; omega
+    have hN1 : (1 : Int) ≤ p.num * (q.den : Int) - q.num * (p.den : Int) := by omega
+    have e1 : p.num * ((q.den : Int) * (6 * ((p.den : Int) * (q.den : Int)) + 1))
+            = p.num * (q.den : Int) * (6 * ((p.den : Int) * (q.den : Int)) + 1) := by ring_uor
+    have e2 : (q.num * (6 * ((p.den : Int) * (q.den : Int)) + 1) + 6 * (q.den : Int)) * (p.den : Int)
+            = q.num * (p.den : Int) * (6 * ((p.den : Int) * (q.den : Int)) + 1)
+              + 6 * ((p.den : Int) * (q.den : Int)) := by ring_uor
+    have e3 : (p.num * (q.den : Int) - q.num * (p.den : Int))
+                * (6 * ((p.den : Int) * (q.den : Int)) + 1)
+            = p.num * (q.den : Int) * (6 * ((p.den : Int) * (q.den : Int)) + 1)
+              - q.num * (p.den : Int) * (6 * ((p.den : Int) * (q.den : Int)) + 1) := by ring_uor
+    have hbig : (p.num * (q.den : Int) - q.num * (p.den : Int))
+                * (6 * ((p.den : Int) * (q.den : Int)) + 1)
+              ≤ 6 * ((p.den : Int) * (q.den : Int)) := by omega
+    exact arch_core _ _ hN1 hP1 hbig
+
+-- ===========================================================================
+-- v0.5.0 — ℚ multiplication and order (the lemmas ℝ multiplication consumes).
+-- ===========================================================================
+
+/-- `|a · b| = |a| · |b|` exactly, as rationals. -/
+theorem Qabs_mul (a b : Q) : Qabs (mul a b) = mul (Qabs a) (Qabs b) := by
+  simp only [Qabs, mul]
+  congr 1
+  rw [Int.natAbs_mul, Int.natCast_mul]
+
+/-- Scaling on the left by a non-negative rational preserves `≤`. -/
+theorem Qmul_le_mul_left {a b c : Q} (hc : 0 ≤ c.num) (hab : Qle a b) :
+    Qle (mul c a) (mul c b) := by
+  simp only [Qle, mul] at hab ⊢
+  push_cast
+  have hcc : 0 ≤ c.num * (c.den : Int) := Int.mul_nonneg hc (Int.ofNat_nonneg _)
+  have e1 : c.num * a.num * ((c.den : Int) * (b.den : Int))
+          = c.num * (c.den : Int) * (a.num * (b.den : Int)) := by ring_uor
+  have e2 : c.num * b.num * ((c.den : Int) * (a.den : Int))
+          = c.num * (c.den : Int) * (b.num * (a.den : Int)) := by ring_uor
+  rw [e1, e2]
+  exact Int.mul_le_mul_of_nonneg_left hab hcc
+
+/-- Scaling on the right by a non-negative rational preserves `≤`. -/
+theorem Qmul_le_mul_right {a b c : Q} (hc : 0 ≤ c.num) (hab : Qle a b) :
+    Qle (mul a c) (mul b c) := by
+  simp only [Qle, mul] at hab ⊢
+  push_cast
+  have hcc : 0 ≤ c.num * (c.den : Int) := Int.mul_nonneg hc (Int.ofNat_nonneg _)
+  have e1 : a.num * c.num * ((b.den : Int) * (c.den : Int))
+          = c.num * (c.den : Int) * (a.num * (b.den : Int)) := by ring_uor
+  have e2 : b.num * c.num * ((a.den : Int) * (c.den : Int))
+          = c.num * (c.den : Int) * (b.num * (a.den : Int)) := by ring_uor
+  rw [e1, e2]
+  exact Int.mul_le_mul_of_nonneg_left hab hcc
+
+/-- Non-negative product monotonicity: `0 ≤ a, 0 ≤ c, a ≤ b, c ≤ d ⟹ a·c ≤ b·d`. -/
+theorem Qmul_le_mul {a b c d : Q} (ha : 0 < a.den) (hb : 0 < b.den) (hc : 0 < c.den)
+    (ha0 : 0 ≤ a.num) (hc0 : 0 ≤ c.num) (hab : Qle a b) (hcd : Qle c d) :
+    Qle (mul a c) (mul b d) := by
+  have hb0 : 0 ≤ b.num := by
+    have hab' := hab; simp only [Qle] at hab'
+    have h1 : (0 : Int) ≤ a.num * (b.den : Int) := Int.mul_nonneg ha0 (Int.ofNat_nonneg _)
+    have h2 : (0 : Int) ≤ b.num * (a.den : Int) := by omega
+    have h2' : 0 * (a.den : Int) ≤ b.num * (a.den : Int) := by simpa using h2
+    exact Int.le_of_mul_le_mul_right h2' (by omega)
+  exact Qle_trans (Qmul_den_pos hb hc) (Qmul_le_mul_right hc0 hab) (Qmul_le_mul_left hb0 hcd)
+
+/-- The product-difference triangle: `|x_a y_a − x_b y_b| ≤ |x_a|·|y_a − y_b| + |y_b|·|x_a − x_b|`.
+    This is the heart of ℝ multiplication's regularity. -/
+theorem Qabs_mul_diff {xa ya xb yb : Q} (hxa : 0 < xa.den) (hya : 0 < ya.den)
+    (hxb : 0 < xb.den) (hyb : 0 < yb.den) :
+    Qle (Qabs (Qsub (mul xa ya) (mul xb yb)))
+        (add (mul (Qabs xa) (Qabs (Qsub ya yb))) (mul (Qabs yb) (Qabs (Qsub xa xb)))) := by
+  have htel : Qeq (Qsub (mul xa ya) (mul xb yb))
+      (add (mul xa (Qsub ya yb)) (mul yb (Qsub xa xb))) := by
+    simp only [Qeq, Qsub, add, mul, neg]; push_cast; ring_uor
+  have h2 := Qabs_add_le (mul xa (Qsub ya yb)) (mul yb (Qsub xa xb))
+  rw [Qabs_mul, Qabs_mul] at h2
+  have hpos : 0 < (Qabs (add (mul xa (Qsub ya yb)) (mul yb (Qsub xa xb)))).den :=
+    Qabs_den_pos (add_den_pos (Qmul_den_pos hxa (Qsub_den_pos hya hyb))
+      (Qmul_den_pos hyb (Qsub_den_pos hxa hxb)))
+  exact Qle_congr_left hpos (Qeq_symm (Qabs_Qeq htel)) h2
+
+/-- `|b| ≤ |a| + |b − a|` — the bound used to derive a uniform `|xₙ| ≤ |x₀| + 2`. -/
+theorem Qabs_le_add {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) :
+    Qle (Qabs b) (add (Qabs a) (Qabs (Qsub b a))) := by
+  have htel : Qeq b (add a (Qsub b a)) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  have h2 := Qabs_add_le a (Qsub b a)
+  have hpos : 0 < (Qabs (add a (Qsub b a))).den :=
+    Qabs_den_pos (add_den_pos ha (Qsub_den_pos hb ha))
+  exact Qle_congr_left hpos (Qeq_symm (Qabs_Qeq htel)) h2
+
 end UOR.Bridge.F1Square.Analysis

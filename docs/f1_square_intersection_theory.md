@@ -482,9 +482,15 @@ canonical forms, realizations, no Mathlib — one brick per release:
   normalizer — no Mathlib); **ℚ as a verified ordered field** (`Analysis/QOrder.lean`: transitivity,
   monotonicity, triangle inequality, order transport); and **ℝ as an ordered additive group**
   (`Analysis/Real.lean`: negation `Rneg` and Bishop addition `Radd`, both with regularity proved).
-- **v0.5.0:** ℝ multiplication, `≈`-transitivity (an Archimedean argument) and completeness; then
-  ℂ = ℝ×ℝ and transcendentals (exp/log/cos via convergent series with rigorous error bounds).
-- **v0.6.0+:** ζ and `λₙ` as exact-bounded objects; the explicit formula as an exact-arithmetic trace.
+- **v0.5.0 (done):** `≈`-transitivity via the **Archimedean lemma** (so Bishop equality on ℝ is an
+  equivalence); **ℝ multiplication** `Rmul` with its regularity proof (canonical bound `|xₙ| ≤ |x₀|+2`
+  + `n ↦ 2K(n+1)−1` reindexing) and commutativity; and **ℂ = ℝ×ℝ with all four operations** (`Cadd`,
+  `Cneg`, `Cmul`, the additive-group laws **and commutative multiplication** `Cmul_comm` up to `≈`,
+  via the operation-congruences `Rneg_congr`/`Radd_congr`/`Rsub_congr`).
+- **v0.6.0:** the remaining ℂ ring laws (associativity, distributivity) via `Rmul`-congruence and
+  `Rmul`-associativity (reindex reconciliation), and **completeness** (every regular sequence of reals
+  converges); then transcendentals (exp/log/cos via convergent series with rigorous error bounds).
+- **v0.7.0+:** ζ and `λₙ` as exact-bounded objects; the explicit formula as an exact-arithmetic trace.
 
 Each brick makes more of the analytic half *statable and finitely checkable* — never a proof of the
 crux. Proving `λₙ ≥ 0 ∀ n` / Weil positivity / the Hodge index on `𝕊` IS RH, and remains open.

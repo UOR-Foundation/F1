@@ -167,3 +167,43 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rneg
 #print axioms Analysis.Radd
 #print axioms Analysis.Rneg_Rneg_seq
+
+-- v0.5.0 — ℚ Archimedean + strict order (for ≈-transitivity).
+#print axioms Analysis.Qle_or_Qlt
+#print axioms Analysis.Qabs_sub_triangle
+#print axioms Analysis.Qarch
+
+-- v0.5.0 — ℚ multiplication and order (consumed by ℝ multiplication).
+#print axioms Analysis.Qabs_mul
+#print axioms Analysis.Qmul_le_mul_left
+#print axioms Analysis.Qmul_le_mul_right
+#print axioms Analysis.Qmul_le_mul
+#print axioms Analysis.Qabs_mul_diff
+#print axioms Analysis.Qabs_le_add
+#print axioms Analysis.Qmul_den_pos
+#print axioms Analysis.Qabs_num_nonneg
+
+-- v0.5.0 — ℝ: ≈ is an equivalence; ℝ multiplication with regularity.
+#print axioms Analysis.Req_of_seq_Qeq
+#print axioms Analysis.Req_trans
+#print axioms Analysis.Radd_comm
+#print axioms Analysis.Radd_neg
+#print axioms Analysis.canon_bound
+#print axioms Analysis.Ridx_succ
+#print axioms Analysis.Rmul
+#print axioms Analysis.Rmul_comm
+
+-- v0.5.0 — operation-congruence over ≈ (well-definedness on the setoid).
+#print axioms Analysis.Rneg_congr
+#print axioms Analysis.Radd_congr
+#print axioms Analysis.Rsub_congr
+
+-- v0.5.0 — ℂ = ℝ×ℝ with all four operations and commutative multiplication.
+#print axioms Analysis.Ceq_refl
+#print axioms Analysis.Ceq_symm
+#print axioms Analysis.Ceq_trans
+#print axioms Analysis.Cadd_comm
+#print axioms Analysis.Cadd_neg
+#print axioms Analysis.Cmul_re
+#print axioms Analysis.Cmul_im
+#print axioms Analysis.Cmul_comm

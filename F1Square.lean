@@ -35,6 +35,7 @@ import F1Square.Analysis.RingNF
 import F1Square.Analysis.RingTac
 import F1Square.Analysis.QOrder
 import F1Square.Analysis.Real
+import F1Square.Analysis.Complex
 
 open UOR.Primitives
 
@@ -199,6 +200,12 @@ def f1SquareStatus : F1SquareStatus := {
 --     `ring`, built on nf_eq)     a reflective decision procedure: reify → nf_eq → decide
 --   ℚ ordered field            ← Analysis.{Qle_trans, Qadd_le_add, Qabs_add_le, Qabs_sub_add4, Qeq_le}
 --   ℝ arithmetic (regular)     ← Analysis.{Rneg, Radd} (negation + Bishop addition, regularity proved)
+-- v0.5.0 (ℝ's Bishop equality is an equivalence; ℝ multiplication; ℂ = ℝ×ℝ with all four operations):
+--   ℚ Archimedean + ≈-trans    ← Analysis.{Qarch, Qabs_sub_triangle, Req_trans} (the limiting argument)
+--   ℚ multiplication/order     ← Analysis.{Qabs_mul, Qmul_le_mul, Qabs_mul_diff} (consumed by Rmul)
+--   ℝ field arithmetic         ← Analysis.{Radd_comm, Radd_neg, Rmul, Rmul_comm} (add/neg/mul, regular)
+--   ≈-congruence (well-defined)← Analysis.{Rneg_congr, Radd_congr, Rsub_congr} (operations respect ≈)
+--   ℂ = ℝ×ℝ (comm. mult.)      ← Analysis.{Ceq_trans, Cadd_comm, Cadd_neg, Cmul, Cmul_comm}
 -- The crux is NOT backed and stays `none`:
 --   hodgeIndexHolds (= RH)    ← Crux.CruxFor 𝕊 — OPEN. Crux.template_hodgeIndex proves the
 --                               property only on the product-of-curves TEMPLATE, never on 𝕊.
@@ -249,5 +256,14 @@ example :
     ∧ ((Analysis.Rneg (Analysis.Rneg Analysis.half)).seq 0).num = (Analysis.half.seq 0).num :=
   ⟨Analysis.RingNF.ring_uor_sq 2 3, fun _ _ _ _ hab hcd => Analysis.Qadd_le_add hab hcd,
    Analysis.Rneg_Rneg_seq Analysis.half 0⟩
+
+/-- Elaboration-checked witness binding the v0.5.0 layer: Bishop equality on ℝ is transitive (an
+    equivalence), ℝ multiplication is commutative up to `≈`, and ℂ multiplication is commutative
+    up to `≈` (via the operation-congruences). -/
+example :
+    (∀ x y z : Analysis.Real, Analysis.Req x y → Analysis.Req y z → Analysis.Req x z)
+    ∧ (∀ x y : Analysis.Real, Analysis.Req (Analysis.Rmul x y) (Analysis.Rmul y x))
+    ∧ (∀ z w : Analysis.Complex, Analysis.Ceq (Analysis.Cmul z w) (Analysis.Cmul w z)) :=
+  ⟨fun _ _ _ => Analysis.Req_trans, Analysis.Rmul_comm, Analysis.Cmul_comm⟩
 
 end UOR.Bridge.F1Square

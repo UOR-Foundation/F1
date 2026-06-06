@@ -4,6 +4,40 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html), starting at `v0.0.1`.
 
+## [0.5.0] - 2026-06-06
+
+### Added — ℝ's equality is an equivalence, ℝ multiplication, ℂ = ℝ×ℝ (pure Lean 4, no Mathlib, no `sorry`)
+- `F1Square/Analysis/QOrder.lean` — the **Archimedean lemma** `Qarch` (if `p ≤ q + 6/(m+1)` for all
+  `m`, then `p ≤ q`), the 3-point triangle inequality, ℚ order totality, and the **ℚ
+  multiplication-order library**: `Qabs_mul` (|ab|=|a||b|), non-negative product monotonicity
+  `Qmul_le_mul`, and the product-difference triangle `Qabs_mul_diff`
+  (`|x_a y_a − x_b y_b| ≤ |x_a||y_a−y_b| + |y_b||x_a−x_b|`).
+- `F1Square/Analysis/Real.lean` — **`≈` is now a full equivalence**: transitivity `Req_trans` via the
+  Archimedean lemma (the `2/(n+1) + 6/(m+1)` four-triangle argument). **ℝ multiplication** `Rmul`:
+  reindex both factors at `r(n) = 2K(n+1)−1` with `K` the canonical bound `|xₙ| ≤ |x₀|+2`
+  (`canon_bound`), regularity proved (the `2K` reindexing cancels the bound, via `ring_uor`);
+  commutativity `Rmul_comm`. Plus `Rsub` and the additive-group laws `Radd_comm`, `Radd_neg`.
+- `F1Square/Analysis/Real.lean` — **operation-congruence over `≈`**: `Rneg_congr`, `Radd_congr`,
+  `Rsub_congr` (the operations are well-defined on the Bishop setoid — the prerequisite for the ℂ ring
+  laws).
+- `F1Square/Analysis/Complex.lean` — **ℂ = ℝ×ℝ** with componentwise Bishop equality (an equivalence,
+  `Ceq_refl/symm/trans`) and **all four operations**: `Cadd`, `Cneg`, `Cmul` (`(ac−bd, ad+bc)`), the
+  constants `0, 1, i`, and the embedding ℝ ↪ ℂ; the additive-group laws (`Cadd_comm`, `Cadd_neg`) and
+  **commutative multiplication** `Cmul_comm` (up to `≈`, via the operation-congruences + `Rmul_comm`).
+- `scripts/audit_axioms.lean` extended to all new theorems; the honesty gate stays green.
+
+### Changed
+- `Qsub`/`Qabs`/`Qlt` and the denominator-positivity helpers now live in `Analysis/Rat.lean` (basic
+  ℚ operations). `docs/` roadmap advances; `F1Square.lean` gains a v0.5.0 `example`.
+
+### Note
+- RH remains **open**. v0.5.0 completes the ℝ/ℂ field arithmetic, makes Bishop equality an
+  equivalence, and gives ℂ a commutative multiplication up to `≈`. The remaining ℂ ring laws
+  (associativity, distributivity) need `Rmul`-congruence and `Rmul`-associativity — a reindex-
+  reconciliation theorem — which, with completeness and the transcendentals, is the v0.6.0
+  continuation. The substrate makes the analytic half *statable and checkable*, never proven —
+  proving `λₙ ≥ 0 ∀n` / the Hodge index on 𝕊 is RH.
+
 ## [0.4.0] - 2026-06-06
 
 ### Added — a from-scratch `ring` tactic; ℚ as an ordered field; ℝ as an ordered additive group (pure Lean 4, no Mathlib, no `sorry`)
@@ -167,6 +201,7 @@ Initial research base for the 𝔽₁-square / Riemann Hypothesis program.
   solution: the formalization compiles and states the construction problem precisely; it
   does not assert the crux.
 
+[0.5.0]: https://github.com/afflom/F1/releases/tag/v0.5.0
 [0.4.0]: https://github.com/afflom/F1/releases/tag/v0.4.0
 [0.3.0]: https://github.com/afflom/F1/releases/tag/v0.3.0
 [0.2.0]: https://github.com/afflom/F1/releases/tag/v0.2.0

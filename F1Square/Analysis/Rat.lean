@@ -39,6 +39,11 @@ def Qle (a b : Q) : Prop := a.num * (b.den : Int) ≤ b.num * (a.den : Int)
 
 instance (a b : Q) : Decidable (Qle a b) := by unfold Qle; infer_instance
 
+/-- Strict order on ℚ: `a < b ⟺ a·d_b < b·d_a` (for positive denominators). -/
+def Qlt (a b : Q) : Prop := a.num * (b.den : Int) < b.num * (a.den : Int)
+
+instance (a b : Q) : Decidable (Qlt a b) := by unfold Qlt; infer_instance
+
 /-- Addition `a/b + c/d = (ad + cb)/(bd)`. -/
 def add (a b : Q) : Q := ⟨a.num * (b.den : Int) + b.num * (a.den : Int), a.den * b.den⟩
 
@@ -67,6 +72,13 @@ theorem Qsub_den_pos {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) : 0 < (Qsub a b
 
 /-- Absolute value preserves the denominator. -/
 theorem Qabs_den_pos {a : Q} (ha : 0 < a.den) : 0 < (Qabs a).den := ha
+
+/-- Multiplication keeps the denominator positive. -/
+theorem Qmul_den_pos {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) : 0 < (mul a b).den :=
+  Nat.mul_pos ha hb
+
+/-- An absolute value has a non-negative numerator. -/
+theorem Qabs_num_nonneg (a : Q) : 0 ≤ (Qabs a).num := Int.ofNat_nonneg _
 
 /-- The canonical form: reduce to lowest terms via `gcd` — ℚ's content-address. -/
 def reduce (a : Q) : Q :=
