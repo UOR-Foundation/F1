@@ -11,6 +11,7 @@ Pure Lean 4, no Mathlib, no `sorry`.
 -/
 
 import F1Square.Analysis.CosSin
+import F1Square.Analysis.Inv
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -653,5 +654,83 @@ def Rartanh (t : Real) (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt :
     (hb : ∀ n, Qle (Qabs (t.seq n)) ρ) : Real :=
   ⟨Rartanh_seq t ρ, Rartanh_regular t hρ0 hρd hlt hb,
     fun j => artSum_den_pos (t.den_pos _) (Rartanh_R ρ j)⟩
+
+-- ===========================================================================
+-- The t-map  q ↦ (q−1)/(q+1)  and its cleared difference identity.
+-- ===========================================================================
+
+/-- `(x·y)·(z·w) ≈ (x·w)·(y·z)` (abstract). -/
+theorem Qmul_rearrange4 (x y z w : Q) :
+    Qeq (mul (mul x y) (mul z w)) (mul (mul x w) (mul y z)) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
+/-- `(x·y)·(z·w) ≈ (x·z)·(y·w)` (abstract). -/
+theorem Qmul_rearrange4b (x y z w : Q) :
+    Qeq (mul (mul x y) (mul z w)) (mul (mul x z) (mul y w)) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
+/-- Right distributivity over subtraction: `(p−q)·r ≈ p·r − q·r`. -/
+theorem Qmul_sub_right (p q r : Q) : Qeq (mul (Qsub p q) r) (Qsub (mul p r) (mul q r)) := by
+  simp only [Qeq, Qsub, mul, add, neg]; push_cast; ring_uor
+
+/-- `−` respects `≈`. -/
+theorem Qneg_congr {q q' : Q} (h : Qeq q q') : Qeq (neg q) (neg q') := by
+  unfold Qeq neg
+  have e1 : (-q.num) * (q'.den : Int) = -(q.num * (q'.den : Int)) := by ring_uor
+  have e2 : (-q'.num) * (q.den : Int) = -(q'.num * (q.den : Int)) := by ring_uor
+  rw [e1, e2, h]
+
+/-- `Qsub` respects `≈`. -/
+theorem Qsub_congr {p p' q q' : Q} (hp : Qeq p p') (hq : Qeq q q') :
+    Qeq (Qsub p q) (Qsub p' q') := Qadd_congr hp (Qneg_congr hq)
+
+/-- `(1/a)·a ≈ 1` for `0 < a.num`, `0 < a.den`. -/
+theorem Qinv_mul {a : Q} (had : 0 < a.den) (ha : 0 < a.num) : Qeq (mul (Qinv a) a) ⟨1, 1⟩ :=
+  Qeq_trans (Qmul_den_pos had (Qinv_den_pos ha)) (mul_comm (Qinv a) a) (Qmul_Qinv ha)
+
+/-- The t-map `q ↦ (q−1)/(q+1)`. -/
+def tmap (q : Q) : Q := mul (Qsub q ⟨1, 1⟩) (Qinv (add q ⟨1, 1⟩))
+
+/-- The final ring identity `(a−1)(b+1) − (b−1)(a+1) = 2(a−b)` (abstract). -/
+theorem tmap_ring (a b : Q) :
+    Qeq (Qsub (mul (Qsub a ⟨1, 1⟩) (add b ⟨1, 1⟩)) (mul (Qsub b ⟨1, 1⟩) (add a ⟨1, 1⟩)))
+      (mul ⟨2, 1⟩ (Qsub a b)) := by
+  simp only [Qeq, Qsub, mul, add, neg]; push_cast; ring_uor
+
+/-- **The cleared t-map difference**: `(tmap a − tmap b)·(a+1)(b+1) = 2(a−b)`,
+    for `a+1, b+1 > 0`. -/
+theorem tmap_diff_cleared {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : 0 < (add a ⟨1, 1⟩).num) (hb : 0 < (add b ⟨1, 1⟩).num) :
+    Qeq (mul (Qsub (tmap a) (tmap b)) (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩)))
+      (mul ⟨2, 1⟩ (Qsub a b)) := by
+  have hcad : 0 < (add a ⟨1, 1⟩).den := add_den_pos had Nat.one_pos
+  have hcbd : 0 < (add b ⟨1, 1⟩).den := add_den_pos hbd Nat.one_pos
+  have hsad : 0 < (Qsub a ⟨1, 1⟩).den := Qsub_den_pos had Nat.one_pos
+  have hsbd : 0 < (Qsub b ⟨1, 1⟩).den := Qsub_den_pos hbd Nat.one_pos
+  -- tmap a · (a+1)(b+1) ≈ (a−1)(b+1)
+  have hA : Qeq (mul (tmap a) (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩)))
+      (mul (Qsub a ⟨1, 1⟩) (add b ⟨1, 1⟩)) := by
+    show Qeq (mul (mul (Qsub a ⟨1, 1⟩) (Qinv (add a ⟨1, 1⟩)))
+        (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩))) (mul (Qsub a ⟨1, 1⟩) (add b ⟨1, 1⟩))
+    refine Qeq_trans (Qmul_den_pos (Qmul_den_pos hsad hcbd) (Qmul_den_pos (Qinv_den_pos ha) hcad))
+      (Qmul_rearrange4 _ _ _ _)
+      (Qeq_trans (Qmul_den_pos (Qmul_den_pos hsad hcbd) Nat.one_pos)
+        (Qmul_congr (Qeq_refl _) (Qinv_mul hcad ha)) (mul_one _))
+  have hB : Qeq (mul (tmap b) (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩)))
+      (mul (Qsub b ⟨1, 1⟩) (add a ⟨1, 1⟩)) := by
+    show Qeq (mul (mul (Qsub b ⟨1, 1⟩) (Qinv (add b ⟨1, 1⟩)))
+        (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩))) (mul (Qsub b ⟨1, 1⟩) (add a ⟨1, 1⟩))
+    -- rearrange so 1/(b+1) meets (b+1)
+    refine Qeq_trans (Qmul_den_pos (Qmul_den_pos hsbd hcad) (Qmul_den_pos (Qinv_den_pos hb) hcbd))
+      (Qmul_rearrange4b _ _ _ _)
+      (Qeq_trans (Qmul_den_pos (Qmul_den_pos hsbd hcad) Nat.one_pos)
+        (Qmul_congr (Qeq_refl _) (Qinv_mul hcbd hb)) (mul_one _))
+  -- combine
+  refine Qeq_trans (Qsub_den_pos
+      (Qmul_den_pos (Qmul_den_pos hsad (Qinv_den_pos ha)) (Qmul_den_pos hcad hcbd))
+      (Qmul_den_pos (Qmul_den_pos hsbd (Qinv_den_pos hb)) (Qmul_den_pos hcad hcbd)))
+    (Qmul_sub_right (tmap a) (tmap b) (mul (add a ⟨1, 1⟩) (add b ⟨1, 1⟩))) ?_
+  exact Qeq_trans (Qsub_den_pos (Qmul_den_pos hsad hcbd) (Qmul_den_pos hsbd hcad))
+    (Qsub_congr hA hB) (tmap_ring a b)
 
 end UOR.Bridge.F1Square.Analysis

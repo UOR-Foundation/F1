@@ -444,6 +444,14 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rartanh_diag_le
 #print axioms Analysis.Rartanh_regular
 #print axioms Analysis.Rartanh
+#print axioms Analysis.Qmul_rearrange4
+#print axioms Analysis.Qmul_rearrange4b
+#print axioms Analysis.Qmul_sub_right
+#print axioms Analysis.Qneg_congr
+#print axioms Analysis.Qsub_congr
+#print axioms Analysis.Qinv_mul
+#print axioms Analysis.tmap_ring
+#print axioms Analysis.tmap_diff_cleared
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one
