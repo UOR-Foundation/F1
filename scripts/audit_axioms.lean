@@ -695,6 +695,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.altPyth_dev_eq_err
 #print axioms Analysis.altErr_abs_le
 #print axioms Analysis.Qsq_diff_le
+#print axioms Analysis.Rcos_sq_diag_le
 #print axioms Analysis.Rmul4_rearrange
 #print axioms Analysis.Rsin_sq_eq
 #print axioms Analysis.altSum_reconcile

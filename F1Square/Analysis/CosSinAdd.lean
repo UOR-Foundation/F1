@@ -749,6 +749,32 @@ theorem Qsq_diff_le (a b : Q) (had : 0 < a.den) (hbd : 0 < b.den) :
   rw [Qabs_mul]
   exact Qmul_le_mul_left (Qabs_num_nonneg _) (Qabs_add_le a b)
 
+/-- **cos² diagonal de-reindex**: the `Rmul` diagonal of `cos²` at `n` is within `2·xBound/(n+1)` of the
+    natural-diagonal square `(RaltReal_seq x 0 n)²`. (Removes `Rmul`'s `Ridx` reindex via the diagonal
+    regularity `RaltReal_diag_le` and the squaring bound `Qsq_diff_le`.) -/
+theorem Rcos_sq_diag_le (x : Real) (n : Nat) :
+    Qle (Qabs (Qsub ((Rmul (Rcos x) (Rcos x)).seq n)
+        (mul (RaltReal_seq x 0 n) (RaltReal_seq x 0 n))))
+      (mul (Qbound n) ⟨(2 * xBound (Rcos x) : Int), 1⟩) := by
+  have hJ : n ≤ Ridx (Rcos x) (Rcos x) n := Ridx_ge (Rcos x) (Rcos x) n
+  have hAd : 0 < (RaltReal_seq x 0 (Ridx (Rcos x) (Rcos x) n)).den := (Rcos x).den_pos _
+  have hBd : 0 < (RaltReal_seq x 0 n).den := (Rcos x).den_pos n
+  show Qle (Qabs (Qsub (mul (RaltReal_seq x 0 (Ridx (Rcos x) (Rcos x) n))
+        (RaltReal_seq x 0 (Ridx (Rcos x) (Rcos x) n)))
+      (mul (RaltReal_seq x 0 n) (RaltReal_seq x 0 n))))
+    (mul (Qbound n) ⟨(2 * xBound (Rcos x) : Int), 1⟩)
+  refine Qle_trans (Qmul_den_pos (Qabs_den_pos (Qsub_den_pos hAd hBd))
+      (add_den_pos (Qabs_den_pos hAd) (Qabs_den_pos hBd)))
+    (Qsq_diff_le (RaltReal_seq x 0 (Ridx (Rcos x) (Rcos x) n)) (RaltReal_seq x 0 n) hAd hBd) ?_
+  refine Qmul_le_mul (Qabs_den_pos (Qsub_den_pos hAd hBd)) (Qbound_den_pos n)
+    (add_den_pos (Qabs_den_pos hAd) (Qabs_den_pos hBd)) (Qabs_num_nonneg _)
+    (Int.add_nonneg (Int.mul_nonneg (Qabs_num_nonneg _) (Int.ofNat_nonneg _))
+      (Int.mul_nonneg (Qabs_num_nonneg _) (Int.ofNat_nonneg _)))
+    (by rw [Qabs_Qsub_comm]; exact RaltReal_diag_le x 0 hJ)
+    (Qle_trans (add_den_pos Nat.one_pos Nat.one_pos)
+      (Qadd_le_add (canon_bound (Rcos x) (Ridx (Rcos x) (Rcos x) n)) (canon_bound (Rcos x) n))
+      (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor)))
+
 /-- Four-factor real rearrangement `(a·b)·(c·d) ≈ (a·c)·(b·d)` (via `Rmul` associativity/commutativity). -/
 theorem Rmul4_rearrange (a b c d : Real) :
     Req (Rmul (Rmul a b) (Rmul c d)) (Rmul (Rmul a c) (Rmul b d)) :=
