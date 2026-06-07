@@ -325,4 +325,14 @@ theorem expSum_eq_Fsum (q : Q) : ∀ N, Qeq (expSum q N) (Fsum (expTerm q) N)
   | 0 => by show Qeq (⟨1, 1⟩ : Q) (mul ⟨1, 1⟩ ⟨1, 1⟩); decide
   | (n + 1) => Qadd_congr (expSum_eq_Fsum q n) (Qeq_refl (expTerm q (n + 1)))
 
+/-- **The diagonal sum of convolutions equals the `exp(x+y)` partial sum**:
+    `Σ_{m=0}^{M} Σ_{i=0}^{m} (xⁱ/i!)·(yᵐ⁻ⁱ/(m−i)!) ≈ Σ_{m=0}^{M} (x+y)ᵐ/m!` — each inner convolution is the
+    `m`-th term of `exp(x+y)` (`expTerm_conv`). This is the triangular part of the Cauchy product. -/
+theorem Fsum_conv_expSum {x y : Q} (hxd : 0 < x.den) (hyd : 0 < y.den) (M : Nat) :
+    Qeq (Fsum (fun m => Fsum (fun i => mul (expTerm x i) (expTerm y (m - i))) m) M)
+      (expSum (add x y) M) :=
+  Qeq_trans (Fsum_den_pos (fun m => expTerm_den_pos (add_den_pos hxd hyd) m) M)
+    (Fsum_congr (fun m => expTerm_conv hxd hyd m) M)
+    (Qeq_symm (expSum_eq_Fsum (add x y) M))
+
 end UOR.Bridge.F1Square.Analysis
