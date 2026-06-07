@@ -647,6 +647,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Qsub_num_nonneg
 #print axioms Analysis.exp_diag_gap
 #print axioms Analysis.Rexp_add
+-- v0.15.0 — the trigonometric Cauchy product (toward cos² + sin² = 1).
+#print axioms Analysis.Qmul_left_comm
+#print axioms Analysis.Qmul4_rearrange
+#print axioms Analysis.qpow_add
+#print axioms Analysis.altTerm_mul
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one
