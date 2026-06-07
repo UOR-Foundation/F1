@@ -260,4 +260,31 @@ theorem bterm_le (D i : Nat) : Qle (bterm D i) (⟨2, i + 2⟩ : Q) := by
   exact Qle_trans (Qmul_den_pos (by show 0 < (1 : Nat); decide) (by show 0 < i + 2; omega))
     hstep (Qeq_le heq)
 
+/-- **Per-term depth bound**: deepening the ζ-approximant moves each γ-term by at most `1/(Dj+1)`
+    (the smaller depth controls it; the `1/(i+2)` factor only helps). -/
+theorem bterm_depth_diff (Dj Dk i : Nat) (hjk : Dj ≤ Dk) :
+    Qle (Qabs (Qsub (bterm Dj i) (bterm Dk i))) (⟨1, Dj + 1⟩ : Q) := by
+  show Qle (Qabs (Qsub (mul (zetaSum (i + 2) Dj) ⟨1, i + 2⟩)
+    (mul (zetaSum (i + 2) Dk) ⟨1, i + 2⟩))) (⟨1, Dj + 1⟩ : Q)
+  have hfac : Qeq (Qsub (mul (zetaSum (i + 2) Dj) ⟨1, i + 2⟩) (mul (zetaSum (i + 2) Dk) ⟨1, i + 2⟩))
+      (mul (Qsub (zetaSum (i + 2) Dj) (zetaSum (i + 2) Dk)) ⟨1, i + 2⟩) :=
+    Qeq_symm (Qmul_sub_right (zetaSum (i + 2) Dj) (zetaSum (i + 2) Dk) ⟨1, i + 2⟩)
+  have hqc : Qabs (⟨1, i + 2⟩ : Q) = ⟨1, i + 2⟩ := rfl
+  have heq : Qeq (Qabs (Qsub (mul (zetaSum (i + 2) Dj) ⟨1, i + 2⟩)
+        (mul (zetaSum (i + 2) Dk) ⟨1, i + 2⟩)))
+      (mul (Qabs (Qsub (zetaSum (i + 2) Dj) (zetaSum (i + 2) Dk))) ⟨1, i + 2⟩) := by
+    have h := Qabs_Qeq hfac; rw [Qabs_mul, hqc] at h; exact h
+  refine Qle_congr_left (Qmul_den_pos (Qabs_den_pos (Qsub_den_pos (zetaSum_den_pos (i + 2) Dj)
+      (zetaSum_den_pos (i + 2) Dk))) (by show 0 < i + 2; omega)) (Qeq_symm heq) ?_
+  have step1 : Qle (Qabs (Qsub (zetaSum (i + 2) Dj) (zetaSum (i + 2) Dk))) (⟨1, Dj + 1⟩ : Q) := by
+    rw [Qabs_Qsub_comm]; exact zetaabs_bound (i + 2) (by omega) hjk
+  have step2 : Qle (mul (Qabs (Qsub (zetaSum (i + 2) Dj) (zetaSum (i + 2) Dk))) ⟨1, i + 2⟩)
+      (mul (⟨1, Dj + 1⟩ : Q) ⟨1, i + 2⟩) := Qmul_le_mul_right (by show (0 : Int) ≤ 1; decide) step1
+  have step3 : Qle (mul (⟨1, Dj + 1⟩ : Q) ⟨1, i + 2⟩) (⟨1, Dj + 1⟩ : Q) := by
+    show Qle (⟨(1 : Int), (Dj + 1) * (i + 2)⟩ : Q) ⟨1, Dj + 1⟩
+    refine Qfrac_le ?_
+    have h : (Dj + 1) * 1 ≤ (Dj + 1) * (i + 2) := Nat.mul_le_mul (Nat.le_refl (Dj + 1)) (by omega)
+    rw [Nat.mul_one] at h; rw [Nat.one_mul]; exact h
+  exact Qle_trans (Qmul_den_pos (show 0 < Dj + 1 by omega) (by show 0 < i + 2; omega)) step2 step3
+
 end UOR.Bridge.F1Square.Analysis
