@@ -115,4 +115,84 @@ theorem altSum_gap (b : Nat → Q) (hnn : ∀ i, 0 ≤ (b i).num) (hden : ∀ i,
         (AltSum_den_pos (fun i => b (i + 1)) (fun i => hden (i + 1)) L)))
       (Qeq_symm e1) ihb
 
+/-! ### ζ-approximant facts for the γ-terms -/
+
+/-- `ζ`'s partial sums are antitone in the exponent (one step): `Σ 1/iˢ⁺¹ ≤ Σ 1/iˢ`. -/
+theorem zetaSum_s_anti_step (s : Nat) : ∀ N, Qle (zetaSum (s + 1) N) (zetaSum s N)
+  | 0 => by
+      show Qle (⟨1, npow 1 (s + 1)⟩ : Q) ⟨1, npow 1 s⟩
+      rw [npow_one, npow_one]; exact Qle_refl _
+  | (N + 1) => by
+      show Qle (add (zetaSum (s + 1) N) ⟨1, npow (N + 2) (s + 1)⟩)
+        (add (zetaSum s N) ⟨1, npow (N + 2) s⟩)
+      have hterm : Qle (⟨1, npow (N + 2) (s + 1)⟩ : Q) ⟨1, npow (N + 2) s⟩ := by
+        show (1 : Int) * ((npow (N + 2) s : Nat) : Int) ≤ 1 * ((npow (N + 2) (s + 1) : Nat) : Int)
+        have := npow_mono (i := N + 2) (by omega) (a := s) (b := s + 1) (by omega)
+        have hc : ((npow (N + 2) s : Nat) : Int) ≤ ((npow (N + 2) (s + 1) : Nat) : Int) := by
+          exact_mod_cast this
+        omega
+      exact Qadd_le_add (zetaSum_s_anti_step s N) hterm
+
+/-- The partial sums are non-negative (sums of positive terms). -/
+theorem zetaSum_num_nonneg (s : Nat) : ∀ N, 0 ≤ (zetaSum s N).num
+  | 0 => by show (0 : Int) ≤ 1; decide
+  | (N + 1) => by
+      show 0 ≤ (add (zetaSum s N) ⟨1, npow (N + 2) s⟩).num
+      simp only [add]
+      have ih := zetaSum_num_nonneg s N
+      have hpI : (0 : Int) ≤ ((npow (N + 2) s : Nat) : Int) := by exact_mod_cast Nat.zero_le _
+      push_cast
+      have hmul : 0 ≤ (zetaSum s N).num * ((npow (N + 2) s : Nat) : Int) :=
+        Int.mul_nonneg ih hpI
+      omega
+
+/-- A uniform bound: every `ζ(s)` partial sum (`s ≥ 2`) is `≤ 2` — since `U(N) := S(N)+1/(N+1)` is
+    decreasing with `U(0) = 1 + 1 = 2`. -/
+theorem zetaSum_le_two (s : Nat) (hs : 2 ≤ s) (N : Nat) : Qle (zetaSum s N) (⟨2, 1⟩ : Q) := by
+  have h1 : Qle (zetaSum s N) (zetaU s N) :=
+    Qle_self_add (by show (0 : Int) ≤ 1; decide)
+  have h2 : Qle (zetaU s N) (zetaU s 0) := zetaU_le s hs (Nat.zero_le N)
+  have h3 : Qeq (zetaU s 0) (⟨2, 1⟩ : Q) := by
+    show Qeq (add (⟨1, npow 1 s⟩ : Q) ⟨1, 1⟩) ⟨2, 1⟩
+    rw [npow_one]; decide
+  exact Qle_trans (zetaU_den_pos s N) h1
+    (Qle_congr_right (zetaU_den_pos s 0) h3 h2)
+
+/-! ### The γ-term `b(i) = ζ(i+2)/(i+2)` at ζ-approximation depth `D` -/
+
+/-- The `i`-th alternating-series magnitude, `ζ(i+2)/(i+2)`, using the depth-`D` ζ-approximant. -/
+def bterm (D i : Nat) : Q := mul (zetaSum (i + 2) D) ⟨1, i + 2⟩
+
+theorem bterm_den_pos (D i : Nat) : 0 < (bterm D i).den :=
+  Qmul_den_pos (zetaSum_den_pos (i + 2) D) (by show 0 < i + 2; omega)
+
+theorem bterm_num_nonneg (D i : Nat) : 0 ≤ (bterm D i).num := by
+  show 0 ≤ (mul (zetaSum (i + 2) D) ⟨1, i + 2⟩).num
+  simp only [mul]
+  have := zetaSum_num_nonneg (i + 2) D
+  omega
+
+/-- The γ-terms are antitone: `ζ(i+3)/(i+3) ≤ ζ(i+2)/(i+2)` (both factors shrink). -/
+theorem bterm_anti (D i : Nat) : Qle (bterm D (i + 1)) (bterm D i) := by
+  show Qle (mul (zetaSum (i + 3) D) ⟨1, i + 3⟩) (mul (zetaSum (i + 2) D) ⟨1, i + 2⟩)
+  have hz : Qle (zetaSum (i + 3) D) (zetaSum (i + 2) D) := zetaSum_s_anti_step (i + 2) D
+  have hf : Qle (⟨1, i + 3⟩ : Q) ⟨1, i + 2⟩ := by
+    show (1 : Int) * ((i + 2 : Nat) : Int) ≤ 1 * ((i + 3 : Nat) : Int); push_cast; omega
+  have h1 : Qle (mul (zetaSum (i + 3) D) ⟨1, i + 3⟩) (mul (zetaSum (i + 2) D) ⟨1, i + 3⟩) :=
+    Qmul_le_mul_right (by show (0 : Int) ≤ 1; decide) hz
+  have h2 : Qle (mul (zetaSum (i + 2) D) ⟨1, i + 3⟩) (mul (zetaSum (i + 2) D) ⟨1, i + 2⟩) :=
+    Qmul_le_mul_left (zetaSum_num_nonneg (i + 2) D) hf
+  exact Qle_trans (Qmul_den_pos (zetaSum_den_pos (i + 2) D) (by show 0 < i + 3; omega)) h1 h2
+
+/-- Each γ-term is bounded by `2/(i+2)` (since `ζ ≤ 2`) — the truncation-tail estimate. -/
+theorem bterm_le (D i : Nat) : Qle (bterm D i) (⟨2, i + 2⟩ : Q) := by
+  show Qle (mul (zetaSum (i + 2) D) ⟨1, i + 2⟩) (⟨2, i + 2⟩ : Q)
+  have hz : Qle (zetaSum (i + 2) D) (⟨2, 1⟩ : Q) := zetaSum_le_two (i + 2) (by omega) D
+  have hstep : Qle (mul (zetaSum (i + 2) D) ⟨1, i + 2⟩) (mul (⟨2, 1⟩ : Q) ⟨1, i + 2⟩) :=
+    Qmul_le_mul_right (by show (0 : Int) ≤ 1; decide) hz
+  have heq : Qeq (mul (⟨2, 1⟩ : Q) ⟨1, i + 2⟩) ⟨2, i + 2⟩ := by
+    simp only [Qeq, mul]; push_cast; ring_uor
+  exact Qle_trans (Qmul_den_pos (by show 0 < (1 : Nat); decide) (by show 0 < i + 2; omega))
+    hstep (Qeq_le heq)
+
 end UOR.Bridge.F1Square.Analysis
