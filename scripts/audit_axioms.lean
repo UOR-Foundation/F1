@@ -532,6 +532,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.artSum_le_geoSum
 #print axioms Analysis.geoSum_cleared_le
 #print axioms Analysis.artSum_le_geo
+#print axioms Analysis.two_artSum_ge
+#print axioms Analysis.two_artSum_le
+#print axioms Analysis.cApprox_den_pos
+#print axioms Analysis.cApprox_num_nonneg
+#print axioms Analysis.cApprox_ub
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one

@@ -97,4 +97,92 @@ theorem artSum_le_geo {t : Q} (ht0 : 0 ≤ t.num) (htd : 0 < t.den)
   exact Qle_trans (Qmul_den_pos (geoSum_den_pos htd N)
     (Qsub_den_pos Nat.one_pos (Nat.mul_pos htd htd))) h1 (geoSum_cleared_le ht0 htd N)
 
+/-! ### Step 2: the γ-term bracket `0 ≤ 1/(n+1) − 2·artSum(1/(2n+3),T) ≤ 1/((n+1)(n+2))` -/
+
+/-- `2·artSum ≥ 1/(n+2)` (from `artSum ≥` its argument `1/(2n+3)`). -/
+theorem two_artSum_ge (n T : Nat) :
+    Qle (⟨1, n + 2⟩ : Q) (mul (⟨2, 1⟩ : Q) (artSum ⟨1, 2 * n + 3⟩ T)) := by
+  have htd : 0 < (⟨1, 2 * n + 3⟩ : Q).den := by show 0 < 2 * n + 3; omega
+  have ht0 : (0 : Int) ≤ (⟨1, 2 * n + 3⟩ : Q).num := by show (0 : Int) ≤ 1; decide
+  have h1 : Qle (⟨1, 2 * n + 3⟩ : Q) (artSum ⟨1, 2 * n + 3⟩ T) := artSum_ge_arg ht0 htd T
+  have h2 := Qmul_le_mul_left (show (0 : Int) ≤ (⟨2, 1⟩ : Q).num by decide) h1
+  refine Qle_trans (Qmul_den_pos (by decide) htd) ?_ h2
+  simp only [Qle, mul]; push_cast; omega
+
+/-- `2·artSum ≤ 1/(n+1)` (from the geometric bound `artSum·(1−t²) ≤ t`, then cancel `1−t²`). -/
+theorem two_artSum_le (n T : Nat) :
+    Qle (mul (⟨2, 1⟩ : Q) (artSum ⟨1, 2 * n + 3⟩ T)) (⟨1, n + 1⟩ : Q) := by
+  have htd : 0 < (⟨1, 2 * n + 3⟩ : Q).den := by show 0 < 2 * n + 3; omega
+  have ht0 : (0 : Int) ≤ (⟨1, 2 * n + 3⟩ : Q).num := by show (0 : Int) ≤ 1; decide
+  have hWn : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)).num := by
+    show 0 < (add (⟨1, 1⟩ : Q) (neg (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩))).num
+    simp only [add, neg, mul]
+    have h9 : ((9 : Nat) : Int) ≤ (((2 * n + 3) * (2 * n + 3) : Nat) : Int) := by
+      exact_mod_cast Nat.mul_le_mul (show 3 ≤ 2 * n + 3 by omega) (show 3 ≤ 2 * n + 3 by omega)
+    push_cast at h9 ⊢; omega
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)).den :=
+    Qsub_den_pos Nat.one_pos (Qmul_den_pos htd htd)
+  refine Qmul_le_cancel_right hWn hWd ?_
+  have hge := artSum_le_geo (t := ⟨1, 2 * n + 3⟩) ht0 htd (Int.le_of_lt hWn) T
+  have hassoc : Qeq
+      (mul (mul (⟨2, 1⟩ : Q) (artSum ⟨1, 2 * n + 3⟩ T))
+        (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))
+      (mul (⟨2, 1⟩ : Q)
+        (mul (artSum ⟨1, 2 * n + 3⟩ T) (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))) := by
+    simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+  have hLHS : Qle
+      (mul (mul (⟨2, 1⟩ : Q) (artSum ⟨1, 2 * n + 3⟩ T))
+        (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))
+      (mul (⟨2, 1⟩ : Q) ⟨1, 2 * n + 3⟩) :=
+    Qle_trans (Qmul_den_pos (by decide) (Qmul_den_pos (artSum_den_pos htd T) hWd))
+      (Qeq_le hassoc) (Qmul_le_mul_left (by decide) hge)
+  refine Qle_trans (Qmul_den_pos (by decide) htd) hLHS ?_
+  have hmono : (2 * (n : Int) + 3) ≤ 2 * (n + 2) := by omega
+  have hnn : (0 : Int) ≤ 2 * ((n : Int) + 1) * (2 * n + 3) :=
+    Int.mul_nonneg (Int.mul_nonneg (by omega) (by omega)) (by omega)
+  have hstep := Int.mul_le_mul_of_nonneg_left hmono hnn
+  have hkey : (2 : Int) * ((n : Int) + 1) * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3))
+      ≤ ((2 * (n : Int) + 3) * (2 * (n : Int) + 3) - 1) * (2 * (n : Int) + 3) := by
+    calc (2 : Int) * ((n : Int) + 1) * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3))
+        = (2 * ((n : Int) + 1) * (2 * (n : Int) + 3)) * (2 * (n : Int) + 3) := by ring_uor
+      _ ≤ (2 * ((n : Int) + 1) * (2 * (n : Int) + 3)) * (2 * ((n : Int) + 2)) := hstep
+      _ = ((2 * (n : Int) + 3) * (2 * (n : Int) + 3) - 1) * (2 * (n : Int) + 3) := by ring_uor
+  have hcmp_int : 2 * (((n : Int) + 1) * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3)))
+      ≤ ((2 * (n : Int) + 3) * (2 * (n : Int) + 3) + -1) * (2 * (n : Int) + 3) := by
+    have hid : ((2 * (n : Int) + 3) * (2 * (n : Int) + 3) + -1) * (2 * (n : Int) + 3)
+        - 2 * (((n : Int) + 1) * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3)))
+        = 2 * ((n : Int) + 1) * (2 * (n : Int) + 3) := by ring_uor
+    have hpos : (0 : Int) ≤ 2 * ((n : Int) + 1) * (2 * (n : Int) + 3) :=
+      Int.mul_nonneg (Int.mul_nonneg (by omega) (by omega)) (by omega)
+    omega
+  show Qle (mul (⟨2, 1⟩ : Q) ⟨1, 2 * n + 3⟩)
+    (mul (⟨1, n + 1⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))
+  simp only [Qle, mul, Qsub, add, neg]
+  push_cast
+  simp only [Int.one_mul]
+  exact hcmp_int
+
+/-- The `n`-th γ-term approximant `cApprox(n,T) = 1/(n+1) − 2·artSum(1/(2n+3),T)` (harmonic index
+    `i = n+1`). Bracketed in `[0, 1/((n+1)(n+2))]` **uniformly in the artanh depth `T`**. -/
+def cApprox (n T : Nat) : Q := Qsub ⟨1, n + 1⟩ (mul ⟨2, 1⟩ (artSum ⟨1, 2 * n + 3⟩ T))
+
+theorem cApprox_den_pos (n T : Nat) : 0 < (cApprox n T).den :=
+  Qsub_den_pos (by show 0 < n + 1; omega)
+    (Qmul_den_pos (by decide) (artSum_den_pos (by show 0 < 2 * n + 3; omega) T))
+
+theorem cApprox_num_nonneg (n T : Nat) : 0 ≤ (cApprox n T).num :=
+  num_nonneg_of_Qzero_le (Qsub_nonneg_of_le (two_artSum_le n T))
+
+theorem cApprox_ub (n T : Nat) : Qle (cApprox n T) (⟨1, (n + 1) * (n + 2)⟩ : Q) := by
+  have hneg : Qle (neg (mul (⟨2, 1⟩ : Q) (artSum ⟨1, 2 * n + 3⟩ T))) (neg ⟨1, n + 2⟩) :=
+    Qneg_le_neg (two_artSum_ge n T)
+  have hstep : Qle (cApprox n T) (Qsub (⟨1, n + 1⟩ : Q) ⟨1, n + 2⟩) := by
+    show Qle (add (⟨1, n + 1⟩ : Q) (neg (mul ⟨2, 1⟩ (artSum ⟨1, 2 * n + 3⟩ T))))
+      (add ⟨1, n + 1⟩ (neg ⟨1, n + 2⟩))
+    exact Qadd_le_add (Qle_refl _) hneg
+  have heq : Qeq (Qsub (⟨1, n + 1⟩ : Q) ⟨1, n + 2⟩) (⟨1, (n + 1) * (n + 2)⟩ : Q) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  exact Qle_trans (Qsub_den_pos (by show 0 < n + 1; omega) (by show 0 < n + 2; omega)) hstep
+    (Qeq_le heq)
+
 end UOR.Bridge.F1Square.Analysis
