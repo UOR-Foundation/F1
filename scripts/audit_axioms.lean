@@ -595,6 +595,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rcos_zero
 #print axioms Analysis.Rsin_zero
 #print axioms Analysis.Cexp_zero
+#print axioms Analysis.choose_zero_right
+#print axioms Analysis.choose_zero_succ
+#print axioms Analysis.choose_succ_succ
+#print axioms Analysis.choose_eq_zero_of_lt
+#print axioms Analysis.choose_self
+#print axioms Analysis.choose_mul_fct_mul_fct
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one
