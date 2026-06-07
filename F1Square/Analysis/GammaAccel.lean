@@ -225,4 +225,107 @@ theorem Ssum_tail_le {f : Nat → Q} (hf : ∀ i, 0 < (f i).den)
       (Qle_congr_left (add_den_pos (Qsub_den_pos (Ssum_den_pos hf K) (Ssum_den_pos hf Mj)) (hf K))
         (Qeq_symm hrew) hstep) (Qeq_le heq)
 
+/-! ### Step 3b: the per-term ζ-depth difference bound -/
+
+/-- Powers are monotone in the base. -/
+theorem npow_base_mono {a b : Nat} (h : a ≤ b) : ∀ m, npow a m ≤ npow b m
+  | 0 => Nat.le_refl 1
+  | (m + 1) => by
+      show a * npow a m ≤ b * npow b m
+      exact Nat.mul_le_mul h (npow_base_mono h m)
+
+/-- `i^{a+b} = i^a · i^b`. -/
+theorem npow_add (i a : Nat) : ∀ b, npow i (a + b) = npow i a * npow i b
+  | 0 => by show npow i a = npow i a * 1; rw [Nat.mul_one]
+  | (b + 1) => by
+      show npow i (a + b + 1) = npow i a * npow i (b + 1)
+      rw [npow_succ, npow_add i a b, npow_succ]
+      simp only [Nat.mul_assoc, Nat.mul_comm, Nat.mul_left_comm]
+
+/-- `(1/d)^m = 1/dᵐ`. -/
+theorem qpow_one_den (d : Nat) : ∀ m, qpow (⟨1, d⟩ : Q) m = ⟨1, npow d m⟩
+  | 0 => rfl
+  | (m + 1) => by rw [qpow_succ, qpow_one_den d m, npow_succ]; rfl
+
+/-- **Per-term depth bound**: deepening the artanh approximant from `Tj` to `Tk` moves the γ-term by
+    at most `1/3^{2Tj+1}` (uniformly in `n`). -/
+theorem cApprox_depth_diff (n : Nat) {Tj Tk : Nat} (hT : Tj ≤ Tk) :
+    Qle (Qabs (Qsub (cApprox n Tj) (cApprox n Tk))) (⟨1, npow 3 (2 * Tj + 1)⟩ : Q) := by
+  have htd : 0 < (⟨1, 2 * n + 3⟩ : Q).den := by show 0 < 2 * n + 3; omega
+  have ht0 : (0 : Int) ≤ (⟨1, 2 * n + 3⟩ : Q).num := by show (0 : Int) ≤ 1; decide
+  have hWn : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)).num := by
+    show 0 < (add (⟨1, 1⟩ : Q) (neg (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩))).num
+    simp only [add, neg, mul]
+    have h9 : ((9 : Nat) : Int) ≤ (((2 * n + 3) * (2 * n + 3) : Nat) : Int) := by
+      exact_mod_cast Nat.mul_le_mul (show 3 ≤ 2 * n + 3 by omega) (show 3 ≤ 2 * n + 3 by omega)
+    push_cast at h9 ⊢; omega
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)).den :=
+    Qsub_den_pos Nat.one_pos (Qmul_den_pos htd htd)
+  -- the ⟨1,n+1⟩ cancels: cApprox-diff = 2·(artSum Tk − artSum Tj)
+  have heq : Qeq (Qsub (cApprox n Tj) (cApprox n Tk))
+      (mul ⟨2, 1⟩ (Qsub (artSum ⟨1, 2 * n + 3⟩ Tk) (artSum ⟨1, 2 * n + 3⟩ Tj))) := by
+    simp only [cApprox, Qeq, Qsub, mul, add, neg]; push_cast
+    generalize (artSum ⟨1, 2 * n + 3⟩ Tj).num = aj; generalize ((artSum ⟨1, 2 * n + 3⟩ Tj).den : Int) = bj
+    generalize (artSum ⟨1, 2 * n + 3⟩ Tk).num = ak; generalize ((artSum ⟨1, 2 * n + 3⟩ Tk).den : Int) = bk
+    ring_uor
+  have habs : Qeq (Qabs (Qsub (cApprox n Tj) (cApprox n Tk)))
+      (mul ⟨2, 1⟩ (Qabs (Qsub (artSum ⟨1, 2 * n + 3⟩ Tk) (artSum ⟨1, 2 * n + 3⟩ Tj)))) := by
+    have h := Qabs_Qeq heq; rw [Qabs_mul] at h; exact h
+  refine Qle_congr_left (Qmul_den_pos (by decide) (Qabs_den_pos (Qsub_den_pos
+      (artSum_den_pos htd Tk) (artSum_den_pos htd Tj)))) (Qeq_symm habs) ?_
+  -- cancel W
+  refine Qmul_le_cancel_right hWn hWd ?_
+  have htrunc := artSum_trunc (t := ⟨1, 2 * n + 3⟩) (ρ := ⟨1, 2 * n + 3⟩) htd ht0 htd
+    (Qle_refl _) (Int.le_of_lt hWn) hT
+  -- htrunc : |artSum Tk − artSum Tj|·W ≤ qpow ⟨1,2n+3⟩ (2Tj+3)
+  have hassoc : Qeq
+      (mul (mul (⟨2, 1⟩ : Q) (Qabs (Qsub (artSum ⟨1, 2 * n + 3⟩ Tk) (artSum ⟨1, 2 * n + 3⟩ Tj))))
+        (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))
+      (mul (⟨2, 1⟩ : Q)
+        (mul (Qabs (Qsub (artSum ⟨1, 2 * n + 3⟩ Tk) (artSum ⟨1, 2 * n + 3⟩ Tj)))
+          (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))) := by
+    simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+  have hLHS : Qle
+      (mul (mul (⟨2, 1⟩ : Q) (Qabs (Qsub (artSum ⟨1, 2 * n + 3⟩ Tk) (artSum ⟨1, 2 * n + 3⟩ Tj))))
+        (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))
+      (mul (⟨2, 1⟩ : Q) (qpow ⟨1, 2 * n + 3⟩ (2 * Tj + 3))) :=
+    Qle_trans (Qmul_den_pos (by decide) (Qmul_den_pos (Qabs_den_pos (Qsub_den_pos
+        (artSum_den_pos htd Tk) (artSum_den_pos htd Tj))) hWd)) (Qeq_le hassoc)
+      (Qmul_le_mul_left (by decide) htrunc)
+  refine Qle_trans (Qmul_den_pos (by decide) (qpow_den_pos htd (2 * Tj + 3))) hLHS ?_
+  -- final power comparison: 2·(1/(2n+3)^{2Tj+3}) ≤ (1/3^{2Tj+1})·W
+  rw [qpow_one_den, show 2 * Tj + 3 = (2 * Tj + 1) + 2 from by omega, npow_add, npow_two]
+  show Qle (mul (⟨2, 1⟩ : Q) ⟨1, npow (2 * n + 3) (2 * Tj + 1) * ((2 * n + 3) * (2 * n + 3))⟩)
+    (mul (⟨1, npow 3 (2 * Tj + 1)⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨1, 2 * n + 3⟩ ⟨1, 2 * n + 3⟩)))
+  have hmonoI : ((npow 3 (2 * Tj + 1) : Nat) : Int) ≤ ((npow (2 * n + 3) (2 * Tj + 1) : Nat) : Int) := by
+    exact_mod_cast npow_base_mono (show 3 ≤ 2 * n + 3 by omega) (2 * Tj + 1)
+  have hAnn : (0 : Int) ≤ ((npow 3 (2 * Tj + 1) : Nat) : Int) := by exact_mod_cast Nat.zero_le _
+  have hBnn : (0 : Int) ≤ ((npow (2 * n + 3) (2 * Tj + 1) : Nat) : Int) := by exact_mod_cast Nat.zero_le _
+  have hm8 : (8 : Int) ≤ (2 * (n : Int) + 3) * (2 * (n : Int) + 3) + -1 := by
+    have h := Int.mul_le_mul (show (3 : Int) ≤ 2 * (n : Int) + 3 by omega)
+      (show (3 : Int) ≤ 2 * (n : Int) + 3 by omega) (by omega) (by omega)
+    omega
+  have hmm : (0 : Int) ≤ (2 * (n : Int) + 3) * (2 * (n : Int) + 3) :=
+    Int.mul_nonneg (by omega) (by omega)
+  have hge : 2 * ((npow 3 (2 * Tj + 1) : Nat) : Int)
+      ≤ ((2 * (n : Int) + 3) * (2 * (n : Int) + 3) + -1) * ((npow (2 * n + 3) (2 * Tj + 1) : Nat) : Int) :=
+    calc 2 * ((npow 3 (2 * Tj + 1) : Nat) : Int)
+        ≤ 8 * ((npow 3 (2 * Tj + 1) : Nat) : Int) := Int.mul_le_mul_of_nonneg_right (by omega) hAnn
+      _ ≤ 8 * ((npow (2 * n + 3) (2 * Tj + 1) : Nat) : Int) :=
+          Int.mul_le_mul_of_nonneg_left hmonoI (by omega)
+      _ ≤ ((2 * (n : Int) + 3) * (2 * (n : Int) + 3) + -1) * ((npow (2 * n + 3) (2 * Tj + 1) : Nat) : Int) :=
+          Int.mul_le_mul_of_nonneg_right hm8 hBnn
+  simp only [Qle, mul, Qsub, add, neg]
+  push_cast
+  simp only [Int.one_mul]
+  calc 2 * (((npow 3 (2 * Tj + 1) : Nat) : Int)
+          * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3)))
+      = (2 * ((npow 3 (2 * Tj + 1) : Nat) : Int))
+          * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3)) := by ring_uor
+    _ ≤ (((2 * (n : Int) + 3) * (2 * (n : Int) + 3) + -1) * ((npow (2 * n + 3) (2 * Tj + 1) : Nat) : Int))
+          * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3)) := Int.mul_le_mul_of_nonneg_right hge hmm
+    _ = ((2 * (n : Int) + 3) * (2 * (n : Int) + 3) + -1)
+          * (((npow (2 * n + 3) (2 * Tj + 1) : Nat) : Int) * ((2 * (n : Int) + 3) * (2 * (n : Int) + 3))) := by
+        ring_uor
+
 end UOR.Bridge.F1Square.Analysis
