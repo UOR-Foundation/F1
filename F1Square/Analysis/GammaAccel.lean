@@ -647,4 +647,41 @@ theorem artSum_le_value {t tail : Q} (ht0 : 0 ≤ t.num) (htd : 0 < t.den) (htai
     (Qmul_add_right (artSum t T) tail (Qsub ⟨1, 1⟩ (mul t t)))
     (Qadd_congr (Qeq_refl _) htail)))
 
+/-! ### Step 5: the log4π upper bound -/
+
+/-- The geometric-tail identity for base `1/3`: `(1/(8·3^{2T+1}))·(1−1/9) = (1/3)^{2T+3}`. -/
+theorem log_tail_eq (T : Nat) :
+    Qeq (mul (⟨1, 8 * npow 3 (2 * T + 1)⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨1, 3⟩ ⟨1, 3⟩)))
+      (qpow (⟨1, 3⟩ : Q) (2 * T + 3)) := by
+  rw [qpow_one_den]
+  have hnp : npow 3 (2 * T + 3) = npow 3 (2 * T + 1) * 9 := by
+    rw [show 2 * T + 3 = (2 * T + 1) + 2 from by omega, npow_add, show npow 3 2 = 9 from by decide]
+  rw [hnp]
+  generalize npow 3 (2 * T + 1) = N
+  simp only [Qeq, mul, Qsub, add, neg]
+  push_cast
+  omega
+
+/-- **log 2 = 2·artanh(1/3)**, built directly from the artanh of the rational `1/3` (exposing the
+    structure for the upper bound), bypassing `RlogPos`'s witness nesting. Same value as `Rlog2`. -/
+def Rlog2c : Real :=
+  Rmul (ofQ ⟨2, 1⟩ (by decide))
+    (Rartanh (ofQ ⟨1, 3⟩ (by decide)) ⟨1, 3⟩ (by decide) (by decide) (by decide)
+      (fun n => Qle_refl ⟨1, 3⟩))
+
+/-- **Upper bound for log 2**: `Rlog2c ≤ 2·(artSum(1/3,8) + 1/(8·3¹⁷))` (`≈ 0.6931`). -/
+theorem Rlog2c_le :
+    Rle Rlog2c (ofQ (mul ⟨2, 1⟩ (add (artSum ⟨1, 3⟩ 8) ⟨1, 8 * npow 3 (2 * 8 + 1)⟩))
+      (Qmul_den_pos (by decide) (add_den_pos (artSum_den_pos (by decide) 8)
+        (by show 0 < 8 * npow 3 (2 * 8 + 1); exact Nat.mul_pos (by decide) (npow_pos (by decide) _))))) := by
+  apply Rmul_ofQ_le (by decide) (by decide)
+    (add_den_pos (artSum_den_pos (by decide) 8) (by show 0 < 8 * npow 3 (2 * 8 + 1); exact Nat.mul_pos (by decide) (npow_pos (by decide) _)))
+  intro m
+  show Qle (artSum ((ofQ ⟨1, 3⟩ (by decide)).seq (Rartanh_R ⟨1, 3⟩ m)) (Rartanh_R ⟨1, 3⟩ m))
+    (add (artSum ⟨1, 3⟩ 8) ⟨1, 8 * npow 3 (2 * 8 + 1)⟩)
+  exact artSum_le_value (by decide) (by decide)
+    (by show 0 < 8 * npow 3 (2 * 8 + 1); exact Nat.mul_pos (by decide) (npow_pos (by decide) _))
+    (by show 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨1, 3⟩ ⟨1, 3⟩)).num; decide) 8 (log_tail_eq 8)
+    (Rartanh_R ⟨1, 3⟩ m)
+
 end UOR.Bridge.F1Square.Analysis
