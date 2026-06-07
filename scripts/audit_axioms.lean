@@ -500,6 +500,28 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rpi_regular
 #print axioms Analysis.Rpi_pos
 
+-- v0.14.0 (wip) — γ₀ (Euler–Mascheroni) via the alternating ζ-series.
+#print axioms Analysis.AltSum_succ
+#print axioms Analysis.Qsub_nonneg_of_le
+#print axioms Analysis.Qzero_le
+#print axioms Analysis.num_nonneg_of_Qzero_le
+#print axioms Analysis.Qsub_zero_eq
+#print axioms Analysis.AltSum_den_pos
+#print axioms Analysis.altSum_bracket
+#print axioms Analysis.altSum_gap
+#print axioms Analysis.zetaSum_s_anti_step
+#print axioms Analysis.zetaSum_num_nonneg
+#print axioms Analysis.zetaSum_le_two
+#print axioms Analysis.altSum_diff_le
+#print axioms Analysis.bterm_den_pos
+#print axioms Analysis.bterm_num_nonneg
+#print axioms Analysis.bterm_anti
+#print axioms Analysis.bterm_le
+#print axioms Analysis.bterm_depth_diff
+#print axioms Analysis.gammaSeq_den_pos
+#print axioms Analysis.gammaSeq_reg_le
+#print axioms Analysis.gammaSeq_regular
+
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one
 #print axioms Li.template_liPositive

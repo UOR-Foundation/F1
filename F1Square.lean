@@ -49,6 +49,7 @@ import F1Square.Analysis.CosSin
 import F1Square.Analysis.Log
 import F1Square.Analysis.Arctan
 import F1Square.Analysis.Pi
+import F1Square.Analysis.Euler
 import F1Square.Li
 
 open UOR.Primitives

@@ -287,4 +287,85 @@ theorem bterm_depth_diff (Dj Dk i : Nat) (hjk : Dj ≤ Dk) :
     rw [Nat.mul_one] at h; rw [Nat.one_mul]; exact h
   exact Qle_trans (Qmul_den_pos (show 0 < Dj + 1 by omega) (by show 0 < i + 2; omega)) step2 step3
 
+/-! ### The γ₀ diagonal -/
+
+/-- Number of alternating terms at diagonal depth `j` (drives the truncation error `2/(N+2)`). -/
+def gammaN (j : Nat) : Nat := 4 * (j + 1)
+
+/-- ζ-approximation depth at diagonal depth `j` (drives the depth error `N/(D+1)`). -/
+def gammaD (j : Nat) : Nat := 8 * (j + 1) * (j + 1)
+
+/-- The `j`-th rational approximant of γ₀: the `gammaN j`-term Leibniz sum of the depth-`gammaD j`
+    ζ-approximants of `(−1)ⁱ ζ(i+2)/(i+2)`. -/
+def gammaSeq (j : Nat) : Q := AltSum (bterm (gammaD j)) (gammaN j)
+
+theorem gammaSeq_den_pos (j : Nat) : 0 < (gammaSeq j).den :=
+  AltSum_den_pos (bterm (gammaD j)) (bterm_den_pos (gammaD j)) (gammaN j)
+
+/-- The one-sided regularity estimate `|γ(j) − γ(k)| ≤ 1/(j+1)` for `j ≤ k`: the depth error (≤
+    `Nⱼ/(Dⱼ+1) ≤ 1/(2(j+1))`) plus the truncation error (≤ `2/(Nⱼ+2) ≤ 1/(2(j+1))`). -/
+theorem gammaSeq_reg_le {j k : Nat} (hjk : j ≤ k) :
+    Qle (Qabs (Qsub (gammaSeq j) (gammaSeq k))) (Qbound j) := by
+  have hDmono : gammaD j ≤ gammaD k := by
+    unfold gammaD
+    exact Nat.mul_le_mul (Nat.mul_le_mul (Nat.le_refl 8) (by omega)) (by omega)
+  -- triangle through the shared midpoint `AltSum (bterm Dk) Nj`
+  have htri := Qabs_sub_triangle
+    (a := AltSum (bterm (gammaD j)) (gammaN j))
+    (b := AltSum (bterm (gammaD k)) (gammaN j))
+    (c := AltSum (bterm (gammaD k)) (gammaN k))
+    (AltSum_den_pos (bterm (gammaD j)) (bterm_den_pos (gammaD j)) (gammaN j))
+    (AltSum_den_pos (bterm (gammaD k)) (bterm_den_pos (gammaD k)) (gammaN j))
+    (AltSum_den_pos (bterm (gammaD k)) (bterm_den_pos (gammaD k)) (gammaN k))
+  -- A: the depth error
+  have hA : Qle (Qabs (Qsub (AltSum (bterm (gammaD j)) (gammaN j))
+      (AltSum (bterm (gammaD k)) (gammaN j)))) (⟨(gammaN j : Int), gammaD j + 1⟩ : Q) :=
+    altSum_diff_le (bterm (gammaD j)) (bterm (gammaD k)) (gammaD j + 1) (by omega)
+      (bterm_den_pos (gammaD j)) (bterm_den_pos (gammaD k))
+      (fun i => bterm_depth_diff (gammaD j) (gammaD k) i hDmono) (gammaN j)
+  have hAbnd : Qle (⟨(gammaN j : Int), gammaD j + 1⟩ : Q) (⟨1, 2 * j + 2⟩ : Q) := by
+    refine Qfrac_le (a := 2 * j + 1) ?_
+    have e : gammaN j * (2 * j + 1 + 1) = gammaD j := by
+      have hI : ((gammaN j * (2 * j + 1 + 1) : Nat) : Int) = ((gammaD j : Nat) : Int) := by
+        unfold gammaN gammaD; push_cast; ring_uor
+      exact_mod_cast hI
+    rw [e]; omega
+  -- B: the truncation error
+  have hsplit : gammaN k = gammaN j + (gammaN k - gammaN j) := by unfold gammaN; omega
+  have hB0 := altSum_gap (bterm (gammaD k)) (bterm_num_nonneg (gammaD k))
+    (bterm_den_pos (gammaD k)) (bterm_anti (gammaD k)) (gammaN j) (gammaN k - gammaN j)
+  rw [← hsplit] at hB0
+  have hB : Qle (Qabs (Qsub (AltSum (bterm (gammaD k)) (gammaN j))
+      (AltSum (bterm (gammaD k)) (gammaN k)))) (bterm (gammaD k) (gammaN j)) := by
+    rw [Qabs_Qsub_comm]; exact hB0
+  have hBbnd : Qle (⟨2, gammaN j + 2⟩ : Q) (⟨1, 2 * j + 2⟩ : Q) := by
+    show (2 : Int) * ((2 * j + 2 : Nat) : Int) ≤ 1 * ((gammaN j + 2 : Nat) : Int)
+    unfold gammaN; push_cast; omega
+  have hsum : Qeq (add (⟨1, 2 * j + 2⟩ : Q) ⟨1, 2 * j + 2⟩) (Qbound j) := by
+    simp only [Qeq, add, Qbound]; push_cast; ring_uor
+  refine Qle_trans (add_den_pos
+      (Qabs_den_pos (Qsub_den_pos (AltSum_den_pos (bterm (gammaD j)) (bterm_den_pos (gammaD j)) (gammaN j))
+        (AltSum_den_pos (bterm (gammaD k)) (bterm_den_pos (gammaD k)) (gammaN j))))
+      (Qabs_den_pos (Qsub_den_pos (AltSum_den_pos (bterm (gammaD k)) (bterm_den_pos (gammaD k)) (gammaN j))
+        (AltSum_den_pos (bterm (gammaD k)) (bterm_den_pos (gammaD k)) (gammaN k))))) htri ?_
+  refine Qle_trans (add_den_pos (by show 0 < 2 * j + 2; omega) (by show 0 < 2 * j + 2; omega))
+    (Qadd_le_add
+      (Qle_trans (show 0 < gammaD j + 1 by omega) hA hAbnd)
+      (Qle_trans (bterm_den_pos (gammaD k) (gammaN j)) hB
+        (Qle_trans (show 0 < gammaN j + 2 by omega) (bterm_le (gammaD k) (gammaN j)) hBbnd)))
+    (Qeq_le hsum)
+
+theorem gammaSeq_regular : IsRegular gammaSeq := by
+  intro m n
+  rcases Nat.le_total m n with h | h
+  · exact Qle_trans (Qbound_den_pos m) (gammaSeq_reg_le h)
+      (Qle_self_add (by show (0 : Int) ≤ 1; decide))
+  · rw [Qabs_Qsub_comm]
+    exact Qle_trans (Qbound_den_pos n) (gammaSeq_reg_le h)
+      (Qle_add_self (by show (0 : Int) ≤ 1; decide))
+
+/-- **The Euler–Mascheroni constant γ₀** as a constructive real, via the alternating series
+    `Σ_{k≥2} (−1)ᵏ ζ(k)/k`, with the explicit Bishop modulus `1/(j+1)`. -/
+def Rgamma0 : Real := ⟨gammaSeq, gammaSeq_regular, gammaSeq_den_pos⟩
+
 end UOR.Bridge.F1Square.Analysis
