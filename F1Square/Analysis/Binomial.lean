@@ -114,7 +114,7 @@ theorem Fsum_front {f : Nat → Q} (hf : ∀ i, 0 < (f i).den) (k : Nat) :
       (Qadd_sub_cancel_left (f 0) (Fsum f (k + 1))))
 
 /-- Commutativity of `Q` multiplication (up to `≈`). -/
-theorem Qmul_comm' (a b : Q) : Qeq (mul a b) (mul b a) := by
+theorem Qmul_swap (a b : Q) : Qeq (mul a b) (mul b a) := by
   simp only [Qeq, mul]; push_cast; ring_uor
 
 /-- The general binomial summand `C(n,i)·xⁱ·yⁿ⁻ⁱ`. -/
@@ -307,7 +307,7 @@ theorem expTerm_conv {x y : Q} (hxd : 0 < x.den) (hyd : 0 < y.den) (k : Nat) :
     (Qeq_symm (Fsum_congr_le (fun i hi => expTerm_conv_term k i hi))) ?_
   refine Qeq_trans (Qmul_den_pos hfk (Fsum_den_pos hbtd k)) (Fsum_mul_left hfk hbtd k) ?_
   refine Qeq_trans (Qmul_den_pos (Fsum_den_pos hbtd k) hfk)
-    (Qmul_comm' ⟨1, fct k⟩ (Fsum (binTerm x y k) k)) ?_
+    (Qmul_swap ⟨1, fct k⟩ (Fsum (binTerm x y k) k)) ?_
   exact Qmul_congr (Qeq_symm (binomial hxd hyd k)) (Qeq_refl (⟨1, fct k⟩ : Q))
 
 end UOR.Bridge.F1Square.Analysis

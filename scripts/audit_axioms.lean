@@ -616,7 +616,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Qadd_zero_right
 #print axioms Analysis.Qadd_swap_left
 #print axioms Analysis.Fsum_congr_le
-#print axioms Analysis.Qmul_comm'
+#print axioms Analysis.Qmul_swap
 #print axioms Analysis.binTerm_succ
 #print axioms Analysis.binomial
 #print axioms Analysis.expTerm_conv_term
