@@ -113,6 +113,10 @@ theorem Fsum_front {f : Nat → Q} (hf : ∀ i, 0 < (f i).den) (k : Nat) :
       (Qadd_congr (Qeq_refl (f 0)) (Fsum_shift hf k))
       (Qadd_sub_cancel_left (f 0) (Fsum f (k + 1))))
 
+/-- Commutativity of `Q` multiplication (up to `≈`). -/
+theorem Qmul_comm' (a b : Q) : Qeq (mul a b) (mul b a) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
 /-- The general binomial summand `C(n,i)·xⁱ·yⁿ⁻ⁱ`. -/
 def binTerm (x y : Q) (n i : Nat) : Q :=
   mul ⟨(choose n i : Int), 1⟩ (mul (qpow x i) (qpow y (n - i)))
@@ -276,5 +280,34 @@ theorem binomial {x y : Q} (hxd : 0 < x.den) (hyd : 0 < y.den) :
       refine Qeq_trans (add_den_pos hxSd hySd) (Qadd_congr h_x h_ypart) ?_
       -- goal: Qeq (add (mul x S) (mul y S)) (mul (add x y) S)
       exact Qeq_symm (Qmul_add_right x y (Fsum (binTerm x y n) n))
+
+-- ===========================================================================
+-- The per-degree convolution of the exponential series (the bridge to exp(x+y)=exp x·exp y).
+-- ===========================================================================
+
+/-- Per-term: `(1/k!)·binTerm k i ≈ (xⁱ/i!)·(yᵏ⁻ⁱ/(k−i)!)`, i.e. `C(k,i)/k! = 1/(i!·(k−i)!)`
+    (the factorial identity, for `i ≤ k`). -/
+theorem expTerm_conv_term {x y : Q} (k i : Nat) (hik : i ≤ k) :
+    Qeq (mul ⟨1, fct k⟩ (binTerm x y k i)) (mul (expTerm x i) (expTerm y (k - i))) := by
+  have hfidZ : (↑(fct k) : Int) = ↑(choose k i) * ↑(fct i) * ↑(fct (k - i)) := by
+    exact_mod_cast (choose_mul_fct_mul_fct hik).symm
+  show Qeq (mul ⟨1, fct k⟩ (mul ⟨(choose k i : Int), 1⟩ (mul (qpow x i) (qpow y (k - i)))))
+    (mul (mul (qpow x i) ⟨1, fct i⟩) (mul (qpow y (k - i)) ⟨1, fct (k - i)⟩))
+  simp only [Qeq, mul]
+  push_cast [hfidZ]
+  ring_uor
+
+/-- **The exp convolution** `Σ_{i=0}^{k} (xⁱ/i!)·(yᵏ⁻ⁱ/(k−i)!) ≈ (x+y)ᵏ/k!` — the per-degree
+    Cauchy-product identity for the exponential series. -/
+theorem expTerm_conv {x y : Q} (hxd : 0 < x.den) (hyd : 0 < y.den) (k : Nat) :
+    Qeq (Fsum (fun i => mul (expTerm x i) (expTerm y (k - i))) k) (expTerm (add x y) k) := by
+  have hfk : 0 < fct k := fct_pos k
+  have hbtd : ∀ i, 0 < (binTerm x y k i).den := binTerm_den_pos hxd hyd k
+  refine Qeq_trans (Fsum_den_pos (fun i => Qmul_den_pos hfk (hbtd i)) k)
+    (Qeq_symm (Fsum_congr_le (fun i hi => expTerm_conv_term k i hi))) ?_
+  refine Qeq_trans (Qmul_den_pos hfk (Fsum_den_pos hbtd k)) (Fsum_mul_left hfk hbtd k) ?_
+  refine Qeq_trans (Qmul_den_pos (Fsum_den_pos hbtd k) hfk)
+    (Qmul_comm' ⟨1, fct k⟩ (Fsum (binTerm x y k) k)) ?_
+  exact Qmul_congr (Qeq_symm (binomial hxd hyd k)) (Qeq_refl (⟨1, fct k⟩ : Q))
 
 end UOR.Bridge.F1Square.Analysis

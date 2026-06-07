@@ -616,8 +616,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Qadd_zero_right
 #print axioms Analysis.Qadd_swap_left
 #print axioms Analysis.Fsum_congr_le
+#print axioms Analysis.Qmul_comm'
 #print axioms Analysis.binTerm_succ
 #print axioms Analysis.binomial
+#print axioms Analysis.expTerm_conv_term
+#print axioms Analysis.expTerm_conv
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one
