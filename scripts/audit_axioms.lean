@@ -626,6 +626,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Fsum_triangle_reindex
 #print axioms Analysis.Fsum_square_decomp
 #print axioms Analysis.Fsum_swap
+#print axioms Analysis.Fsum_split_add
 #print axioms Analysis.Fsum_mono_len
 #print axioms Analysis.Fsum_le_congr
 #print axioms Analysis.Fsum_num_nonneg

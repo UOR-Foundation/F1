@@ -410,6 +410,20 @@ theorem Fsum_swap {g : Nat → Nat → Q} (hg : ∀ i j, 0 < (g i j).den) (N : N
         (Qadd_congr (Fsum_swap hg N M) (Qeq_refl (Fsum (fun j => g (M + 1) j) N)))
         (Qeq_symm (Fsum_add (fun j => Fsum_den_pos (fun i => hg i j) M) (fun j => hg (M + 1) j) N))
 
+/-- **Range split**: `Σ_{i=0}^{K+1+d} fᵢ ≈ (Σ_{i=0}^{K} fᵢ) + (Σ_{i=0}^{d} f_{K+1+i})` — split a finite
+    sum into a low block `[0,K]` and a high block `[K+1, K+1+d]` (reindexed). -/
+theorem Fsum_split_add (f : Nat → Q) (hf : ∀ i, 0 < (f i).den) (K : Nat) :
+    ∀ d, Qeq (Fsum f (K + 1 + d)) (add (Fsum f K) (Fsum (fun i => f (K + 1 + i)) d))
+  | 0 => Qeq_refl _
+  | (d + 1) => by
+      show Qeq (add (Fsum f (K + 1 + d)) (f (K + 1 + (d + 1))))
+        (add (Fsum f K) (add (Fsum (fun i => f (K + 1 + i)) d) (f (K + 1 + (d + 1)))))
+      exact Qeq_trans
+        (add_den_pos (add_den_pos (Fsum_den_pos hf K) (Fsum_den_pos (fun i => hf (K + 1 + i)) d))
+          (hf (K + 1 + (d + 1))))
+        (Qadd_congr (Fsum_split_add f hf K d) (Qeq_refl (f (K + 1 + (d + 1)))))
+        (Qadd_assoc3 (Fsum f K) (Fsum (fun i => f (K + 1 + i)) d) (f (K + 1 + (d + 1))))
+
 /-- A finite sum of non-negative terms grows with its length. -/
 theorem Fsum_mono_len {f : Nat → Q} (hf0 : ∀ i, 0 ≤ (f i).num) (hfd : ∀ i, 0 < (f i).den)
     {M N : Nat} (hMN : M ≤ N) : Qle (Fsum f M) (Fsum f N) := by
