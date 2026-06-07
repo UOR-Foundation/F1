@@ -320,6 +320,21 @@ theorem alternating_binomial (m : Nat) :
     simp only [Qeq]; rw [hnum]; simp
   exact Qeq_trans (qpow_den_pos (by decide) (m + 1)) (Qeq_symm hb) hz
 
+/-- **Square = low-triangle + high-corner**: split each row `i` of the `M×M` square at `j = M−i`.
+    The low part is `Σ_{i+j≤M}` (the triangle); the high part is the corner `Σ_{i+j>M, j≤M}`. Exact. -/
+theorem Fsum_square_decomp {g : Nat → Nat → Q} (hg : ∀ i j, 0 < (g i j).den) (M : Nat) :
+    Qeq (Fsum (fun i => Fsum (fun j => g i j) M) M)
+      (add (Fsum (fun i => Fsum (fun j => g i j) (M - i)) M)
+        (Fsum (fun i => Qsub (Fsum (fun j => g i j) M) (Fsum (fun j => g i j) (M - i))) M)) := by
+  have hlow : ∀ i, 0 < (Fsum (fun j => g i j) (M - i)).den := fun i => Fsum_den_pos (fun j => hg i j) (M - i)
+  have hfull : ∀ i, 0 < (Fsum (fun j => g i j) M).den := fun i => Fsum_den_pos (fun j => hg i j) M
+  have hhigh : ∀ i, 0 < (Qsub (Fsum (fun j => g i j) M) (Fsum (fun j => g i j) (M - i))).den :=
+    fun i => Qsub_den_pos (hfull i) (hlow i)
+  exact Qeq_trans (Fsum_den_pos (fun i => add_den_pos (hlow i) (hhigh i)) M)
+    (Fsum_congr (fun i => Qeq_symm
+      (Qadd_sub_cancel_left (Fsum (fun j => g i j) (M - i)) (Fsum (fun j => g i j) M))) M)
+    (Fsum_add hlow hhigh M)
+
 /-- **Fubini for finite sums**: `Σ_{i≤M} Σ_{j≤N} gᵢⱼ ≈ Σ_{j≤N} Σ_{i≤M} gᵢⱼ`. -/
 theorem Fsum_swap {g : Nat → Nat → Q} (hg : ∀ i j, 0 < (g i j).den) (N : Nat) :
     ∀ M, Qeq (Fsum (fun i => Fsum (fun j => g i j) N) M)

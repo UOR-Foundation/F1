@@ -622,6 +622,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.expTerm_conv_term
 #print axioms Analysis.expTerm_conv
 #print axioms Analysis.alternating_binomial
+#print axioms Analysis.Fsum_square_decomp
 #print axioms Analysis.Fsum_swap
 #print axioms Analysis.Fsum_abs_le
 #print axioms Analysis.Fsum_mul_const_right
