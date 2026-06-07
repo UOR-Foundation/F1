@@ -135,4 +135,29 @@ theorem RexpReal_trunc_le (x : Real) (j : Nat) :
       ≤ ((fct (RexpReal_R x j + 1) : Nat) : Int) := by exact_mod_cast h
   push_cast at hI ⊢; omega
 
+/-- Uniform bound `|expSum q N| ≤ Un = (expM_U M (2M)).num.toNat` for `|q| ≤ M` (any `N`). Via the
+    absolute-difference domination `|expSum q N − expSum q 0| ≤ expSumM M N − expSumM M 0`, then
+    `expSumM M N = LipS M (N+1) ≤ expM_U M (2M) ≤ Un`. -/
+theorem expSum_abs_le_Un {q : Q} {M : Nat} (hqd : 0 < q.den) (hq : Qle (Qabs q) ⟨(M : Int), 1⟩) (N : Nat) :
+    Qle (Qabs (expSum q N)) ⟨((expM_U M (2 * M)).num.toNat : Int), 1⟩ := by
+  have hstep : Qle (Qabs (expSum q N)) (expSumM M N) := by
+    have hdiff := expSum_abs_diff_le_M hqd hq (a := 0) (b := N) (Nat.zero_le N)
+    have hreg : Qeq (expSum q N) (add (Qsub (expSum q N) (expSum q 0)) (expSum q 0)) := by
+      simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+    have h1 : Qle (Qabs (expSum q N))
+        (add (Qabs (Qsub (expSum q N) (expSum q 0))) (Qabs (expSum q 0))) :=
+      Qle_congr_left (Qabs_den_pos (add_den_pos (Qsub_den_pos (expSum_den_pos hqd N) (expSum_den_pos hqd 0))
+          (expSum_den_pos hqd 0))) (Qeq_symm (Qabs_Qeq hreg))
+        (Qabs_add_le (Qsub (expSum q N) (expSum q 0)) (expSum q 0))
+    refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos (expSum_den_pos hqd N) (expSum_den_pos hqd 0)))
+        (Qabs_den_pos (expSum_den_pos hqd 0))) h1 ?_
+    refine Qle_trans (add_den_pos (Qsub_den_pos (expSumM_den_pos M N) (expSumM_den_pos M 0)) Nat.one_pos)
+      (Qadd_le_add hdiff (Qeq_le (show Qeq (Qabs (expSum q 0)) ⟨1, 1⟩ by rfl))) (Qeq_le ?_)
+    show Qeq (add (Qsub (expSumM M N) ⟨1, 1⟩) ⟨1, 1⟩) (expSumM M N)
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  refine Qle_trans (expSumM_den_pos M N) hstep ?_
+  refine Qle_trans (expM_U_den_pos M (2 * M))
+    (Qle_congr_left (LipS_den_pos M (N + 1)) (LipS_shift M N) (LipS_le_U M (N + 1)))
+    (Qle_toNat (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))
+
 end UOR.Bridge.F1Square.Analysis
