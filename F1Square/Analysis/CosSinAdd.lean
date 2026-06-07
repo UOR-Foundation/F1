@@ -974,6 +974,39 @@ theorem Qprodsq_diff_le (p b q d : Q) (hpd : 0 < p.den) (hbd : 0 < b.den) (hqd :
   rw [Qabs_mul (mul b b) (Qsub (mul p p) (mul q q)), Qabs_mul (mul q q) (Qsub (mul b b) (mul d d))]
   exact Qle_refl _
 
+/-- **Reconciliation term decays**: `(2(M²)^{R_m+1}/(R_m+1)!)·(U+U) ≤ 2·Un/(n+1)` for `n ≤ m`
+    (`R_m = RaltReal_R x m`, `Un = U.num.toNat`), via `RaltReal_trunc_le` and `U ≤ ⟨Un,1⟩`. -/
+theorem diagU_le (x : Real) (m n : Nat) (hmn : n ≤ m) :
+    Qle (mul ⟨(2 * npow (xBound x * xBound x) (RaltReal_R x m + 1) : Int), fct (RaltReal_R x m + 1)⟩
+        (add (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x)))
+          (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x)))))
+      ⟨(2 * (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x))).num.toNat : Nat), n + 1⟩ := by
+  have hUn0 := expM_U_num_nonneg (xBound x * xBound x) (2 * (xBound x * xBound x))
+  have hUnd := expM_U_den_pos (xBound x * xBound x) (2 * (xBound x * xBound x))
+  have h2m : 0 < 2 * (m + 1) := Nat.mul_pos (by decide) (Nat.succ_pos m)
+  have hUU : Qle (add (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x)))
+        (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x))))
+      ⟨(2 * (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x))).num.toNat : Nat), 1⟩ :=
+    Qle_trans (add_den_pos Nat.one_pos Nat.one_pos)
+      (Qadd_le_add (Q_le_num_toNat _ hUn0 hUnd) (Q_le_num_toNat _ hUn0 hUnd))
+      (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+  have hstep : Qle (mul ⟨(2 * npow (xBound x * xBound x) (RaltReal_R x m + 1) : Int), fct (RaltReal_R x m + 1)⟩
+        (add (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x)))
+          (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x)))))
+      (mul (⟨1, 2 * (m + 1)⟩ : Q)
+        ⟨(2 * (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x))).num.toNat : Nat), 1⟩) :=
+    Qmul_le_mul (b := (⟨1, 2 * (m + 1)⟩ : Q)) (fct_pos _) h2m (add_den_pos hUnd hUnd)
+      (Int.ofNat_nonneg _)
+      (Int.add_nonneg (Int.mul_nonneg hUn0 (Int.ofNat_nonneg _)) (Int.mul_nonneg hUn0 (Int.ofNat_nonneg _)))
+      (RaltReal_trunc_le x m) hUU
+  refine Qle_trans (Qmul_den_pos h2m Nat.one_pos) hstep
+    (Qle_trans (b := ⟨(2 * (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x))).num.toNat : Nat), 2 * (m + 1)⟩)
+      h2m (Qeq_le (by simp only [Qeq, mul]; push_cast; ring_uor)) ?_)
+  show ((2 * (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x))).num.toNat : Nat) : Int) * ((n + 1 : Nat) : Int)
+      ≤ ((2 * (expM_U (xBound x * xBound x) (2 * (xBound x * xBound x))).num.toNat : Nat) : Int) * ((2 * (m + 1) : Nat) : Int)
+  exact Int.mul_le_mul_of_nonneg_left (by exact_mod_cast (show (n + 1 : Nat) ≤ 2 * (m + 1) by omega))
+    (Int.ofNat_nonneg _)
+
 /-- The diagonal depth dominates its index: `n ≤ RaltReal_R x n`. -/
 theorem n_le_RaltReal_R (x : Real) (n : Nat) : n ≤ RaltReal_R x n := by
   have hK : 0 < RaltReal_K x := by unfold RaltReal_K; omega
