@@ -31,7 +31,7 @@ theorem artTerm_num_nonneg {t : Q} (ht0 : 0 ≤ t.num) (n : Nat) : 0 ≤ (artTer
   omega
 
 /-- The artanh partial sums are monotone (one step), for a non-negative base. -/
-theorem artSum_step {t : Q} (ht0 : 0 ≤ t.num) (htd : 0 < t.den) (N : Nat) :
+theorem artSum_step {t : Q} (ht0 : 0 ≤ t.num) (_htd : 0 < t.den) (N : Nat) :
     Qle (artSum t N) (artSum t (N + 1)) := by
   show Qle (artSum t N) (add (artSum t N) (artTerm t (N + 1)))
   exact Qle_self_add (artTerm_num_nonneg ht0 (N + 1))
@@ -713,23 +713,6 @@ theorem Rpi_seq_lb (n : Nat) :
     arctanSum_diag_le ⟨1, 239⟩ (by decide) (ρ := ⟨1, 2⟩) (U := ⟨1, 5⟩) (by decide) (by decide)
       (by decide) (by decide) (by decide) hcondB (20 * n + 19)
   exact Qsub_le_2 (Qmul_le_mul_left (by decide) hL5) (Qmul_le_mul_left (by decide) hU239)
-
-/-- `Rpi.seq n ≤ 7` pointwise (a loose Machin upper bracket: `16·(2/5) + 4·(1/24) ≤ 7`). -/
-theorem Rpi_seq_ub (n : Nat) : Qle (Rpi_seq n) (⟨7, 1⟩ : Q) := by
-  have hcondU : Qle (qpow (⟨1, 2⟩ : Q) 3)
-      (mul (Qsub (⟨2, 5⟩ : Q) (arctanSum ⟨1, 5⟩ 0)) (Qsub ⟨1, 1⟩ (mul ⟨1, 2⟩ ⟨1, 2⟩))) := by decide
-  have hcondL : Qle (qpow (⟨1, 2⟩ : Q) 5)
-      (mul (Qsub (arctanSum ⟨1, 239⟩ 1) ⟨-1, 24⟩) (Qsub ⟨1, 1⟩ (mul ⟨1, 2⟩ ⟨1, 2⟩))) := by decide
-  have hU5 : Qle (arctanSum ⟨1, 5⟩ (Rpi_g n)) (⟨2, 5⟩ : Q) :=
-    arctanSum_diag_le ⟨1, 5⟩ (by decide) (ρ := ⟨1, 2⟩) (U := ⟨2, 5⟩) (by decide) (by decide)
-      (by decide) (by decide) (by decide) hcondU (20 * n + 19)
-  have hL239 : Qle (⟨-1, 24⟩ : Q) (arctanSum ⟨1, 239⟩ (Rpi_g n)) :=
-    arctanSum_diag_ge ⟨1, 239⟩ (by decide) (ρ := ⟨1, 2⟩) (L := ⟨-1, 24⟩) (by decide) (by decide)
-      (by decide) (by decide) (by decide) hcondL (20 * n + 19)
-  exact Qle_trans (Qsub_den_pos (Qmul_den_pos (by decide) (by decide))
-      (Qmul_den_pos (by decide) (by decide)))
-    (Qsub_le_2 (Qmul_le_mul_left (by decide) hU5) (Qmul_le_mul_left (by decide) hL239))
-    (by decide)
 
 /-! ### Step 5c: a *tight* π upper bound via the alternating arctan truncation -/
 

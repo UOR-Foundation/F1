@@ -284,7 +284,24 @@ def f1SquareStatus : F1SquareStatus := {
 --                               Bernoulli reindex (qpow_geom_bound), and the t-map q↦(q−1)/(q+1) with its
 --                               cleared difference identity (tmap_diff_cleared), Lipschitz (tmap_lipschitz),
 --                               and range bound (tmap_abs_le) — all axiom-clean, no `sorry`
--- The crux is NOT backed and stays `none` (BOTH faces, same RH):
+-- v0.14.0 (the analytic constants of the Li/Keiper bridge, culminating in a positivity certificate
+--          for the first Li coefficient λ₁ — EVIDENCE for RH's analytic face, never the crux):
+--   π                          ← Analysis.Rpi (Machin 16·arctan(1/5) − 4·arctan(1/239), one diagonal),
+--                               with Rpi_lower (π ≥ 6/5) and the tight Rpi_seq_ub_tight (π ≤ 3.142,
+--                               via the alternating arctan truncation arctanSum_deep_le/ge at ρ=t)
+--   log 2, log π               ← Analysis.{Rlog2c, Rlogπc} = 2·artanh((x−1)/(x+1)), clean rational /
+--                               π-argument logs, with kernel-certified upper bounds Rlog2c_le
+--                               (log 2 ≤ 0.6931) and Rlogπc_le (log π ≤ 1.1453) via artSum_le_value +
+--                               artSum_base_mono (varying π-argument dominated by 15/29 = tmap(22/7))
+--   γ (Euler–Mascheroni)       ← Analysis.Rgamma_h, the convergence-accelerated harmonic-telescoped
+--                               γ = Σ(1/i − 2·artanh(1/(2i+1))), with the kernel-certified lower
+--                               bracket Rgamma_h_lower (γ ≥ 0.54) — feasible where the ζ-series γ is not
+--   λ₁ (first Li coefficient)  ← Analysis.Rlambda1 = ½·(2 + γ − log 4π) (Bombieri–Lagarias), with
+--                               **Analysis.Rlambda1_pos : Pos Rlambda1** — λ₁ ≈ 0.0231 > 0, certified
+--                               from γ ≥ 0.54, log 2 ≤ 0.6931, log π ≤ 1.1453 through the ℝ-order
+--                               bridges (Radd_le_add, Rneg_le, Rhalf_ge). This realizes the n = 1 slice
+--                               of Li's criterion as EVIDENCE; it does NOT assert λₙ > 0 for all n.
+-- The crux is NOT backed and stays `none` (BOTH faces, same RH) — λ₁ > 0 is the n=1 case, not RH:
 --   hodgeIndexHolds (= RH, geometric) ← Crux.CruxFor 𝕊 — OPEN. Crux.template_hodgeIndex proves the
 --                               property only on the product-of-curves TEMPLATE, never on 𝕊.
 --   liPositivityHolds (= RH, analytic) ← Li.LiCrux λ for the unconstructed genuine Li sequence λ —
@@ -456,5 +473,14 @@ example :
     ∧ Analysis.IsRegular (Analysis.RlogPos Analysis.twoReal 0 (by decide)).seq :=
   ⟨Analysis.RaltReal_regular, Analysis.Rlog_regular,
    (Analysis.RlogPos Analysis.twoReal 0 (by decide)).reg⟩
+
+/-- Elaboration-checked witness binding the v0.14.0 analytic constants: the first Li/Keiper
+    coefficient `λ₁ = ½·(2 + γ − log 4π)` is a **positivity-certified** constructive real —
+    `Pos Rlambda1` holds (`λ₁ ≈ 0.0231 > 0`), built from the accelerated Euler–Mascheroni constant
+    `γ ≥ 0.54` and the clean logs `log 2 ≤ 0.6931`, `log π ≤ 1.1453`, all choice-free and `sorry`-free.
+    This is the `n = 1` slice of Li's criterion as **evidence**; it is NOT the crux — `λₙ > 0 ∀ n`
+    (= RH) stays open and `liPositivityHolds = none` (witnessed just above). -/
+example : Analysis.Pos Analysis.Rlambda1 ∧ f1SquareStatus.liPositivityHolds = none :=
+  ⟨Analysis.Rlambda1_pos, rfl⟩
 
 end UOR.Bridge.F1Square

@@ -565,7 +565,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.artTerm_base_mono
 #print axioms Analysis.artSum_base_mono
 #print axioms Analysis.Rpi_seq_lb
-#print axioms Analysis.Rpi_seq_ub
 #print axioms Analysis.arctanSum_deep_le
 #print axioms Analysis.arctanSum_deep_ge
 #print axioms Analysis.Rpi_seq_ub_tight
