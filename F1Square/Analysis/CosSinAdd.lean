@@ -925,6 +925,35 @@ theorem Qsq_diff_le (a b : Q) (had : 0 < a.den) (hbd : 0 < b.den) :
   rw [Qabs_mul]
   exact Qmul_le_mul_left (Qabs_num_nonneg _) (Qabs_add_le a b)
 
+/-- Real regularity at a common floor: `|x.seq i − x.seq j| ≤ 2/(n+1)` for `n ≤ i, j`. -/
+theorem xreg_n_le (x : Real) {n i j : Nat} (hi : n ≤ i) (hj : n ≤ j) :
+    Qle (Qabs (Qsub (x.seq i) (x.seq j))) ⟨2, n + 1⟩ := by
+  refine Qle_trans (add_den_pos (Qbound_den_pos i) (Qbound_den_pos j)) (x.reg i j) ?_
+  refine Qle_trans (add_den_pos (Nat.succ_pos n) (Nat.succ_pos n))
+    (Qadd_le_add (a := Qbound i) (b := (⟨1, n + 1⟩ : Q)) (c := Qbound j) (d := (⟨1, n + 1⟩ : Q))
+      (by show (1 : Int) * ((n + 1 : Nat) : Int) ≤ 1 * ((i + 1 : Nat) : Int); omega)
+      (by show (1 : Int) * ((n + 1 : Nat) : Int) ≤ 1 * ((j + 1 : Nat) : Int); omega))
+    (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+
+/-- Squared regularity at a common floor: `|(x.seq i)² − (x.seq j)²| ≤ 4·xBound/(n+1)` for `n ≤ i, j`. -/
+theorem xsq_diff_n_le (x : Real) {n i j : Nat} (hi : n ≤ i) (hj : n ≤ j) :
+    Qle (Qabs (Qsub (mul (x.seq i) (x.seq i)) (mul (x.seq j) (x.seq j)))) ⟨(4 * xBound x : Nat), n + 1⟩ := by
+  refine Qle_trans (Qmul_den_pos (Qabs_den_pos (Qsub_den_pos (x.den_pos i) (x.den_pos j)))
+      (add_den_pos (Qabs_den_pos (x.den_pos i)) (Qabs_den_pos (x.den_pos j))))
+    (Qsq_diff_le (x.seq i) (x.seq j) (x.den_pos i) (x.den_pos j)) ?_
+  have hprod : Qle (mul (Qabs (Qsub (x.seq i) (x.seq j))) (add (Qabs (x.seq i)) (Qabs (x.seq j))))
+      (mul (⟨2, n + 1⟩ : Q) ⟨((2 * xBound x : Nat) : Int), 1⟩) :=
+    Qmul_le_mul (Qabs_den_pos (Qsub_den_pos (x.den_pos i) (x.den_pos j))) (Nat.succ_pos n)
+      (add_den_pos (Qabs_den_pos (x.den_pos i)) (Qabs_den_pos (x.den_pos j))) (Qabs_num_nonneg _)
+      (Int.add_nonneg (Int.mul_nonneg (Qabs_num_nonneg _) (Int.ofNat_nonneg _))
+        (Int.mul_nonneg (Qabs_num_nonneg _) (Int.ofNat_nonneg _)))
+      (xreg_n_le x hi hj)
+      (Qle_trans (add_den_pos Nat.one_pos Nat.one_pos)
+        (Qadd_le_add (canon_bound x i) (canon_bound x j))
+        (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor)))
+  exact Qle_trans (Qmul_den_pos (Nat.succ_pos n) Nat.one_pos) hprod
+    (Qeq_le (by simp only [Qeq, mul]; push_cast; ring_uor))
+
 /-- **Product-of-squares difference**: `|(p·b)² − q²·d²| ≤ |b²|·|p²−q²| + |q²|·|b²−d²|` (over `Q`), via
     `(pb)² − q²d² = b²(p²−q²) + q²(b²−d²)` and the triangle/`|·|`-multiplicativity. -/
 theorem Qprodsq_diff_le (p b q d : Q) (hpd : 0 < p.den) (hbd : 0 < b.den) (hqd : 0 < q.den) (hdd : 0 < d.den) :
