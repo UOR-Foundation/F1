@@ -766,3 +766,9 @@ open UOR.Bridge.F1Square
 -- v0.15.0 payoff — the Cexp modulus identity |Cexp z|² = (exp Re z)² (from cos²+sin²=1).
 #print axioms Analysis.CnormSq
 #print axioms Analysis.Cexp_normSq
+
+-- v0.15.0 payoff — nˢ for integer base n ≥ 2 (Cexp(s·log n)) and its modulus.
+#print axioms Analysis.RofNat
+#print axioms Analysis.RlogNat
+#print axioms Analysis.ncpow
+#print axioms Analysis.ncpow_normSq

@@ -58,6 +58,7 @@ import F1Square.Analysis.CosSinAdd
 import F1Square.Analysis.CosSinBound
 import F1Square.Analysis.ComplexExp
 import F1Square.Analysis.ComplexMod
+import F1Square.Analysis.ComplexPow
 import F1Square.Li
 
 open UOR.Primitives
