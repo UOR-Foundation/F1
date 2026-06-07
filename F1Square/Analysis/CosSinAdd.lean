@@ -952,6 +952,118 @@ theorem altSq_reconcile {q : Q} {M : Nat} (hqd : 0 < q.den) (hq : Qle (Qabs q) �
     (by rw [Qabs_Qsub_comm]; exact altSum_trunc_bound hqd hq off hR2 hRN)
     (Qadd_le_add (altSum_abs_le_U hqd hq off R) (altSum_abs_le_U hqd hq off N))
 
+/-- **The deep Pythagorean error** at the odd reference depth `2K+1`: `|cos²_{2K+1}+q²sinaux²_{2K+1}−1| ≤ 5/(n+1)`
+    once `K` is deep — `altPyth_dev_eq_err` rewrites it to `ERR`, `altErr_abs_le` majorises, `altErr_bound_decay` decays. -/
+theorem deepErr_le {q : Q} {M : Nat} (hqd : 0 < q.den) (hq : Qle (Qabs q) ⟨(M : Int), 1⟩)
+    (hm : 0 < M * M) (K n : Nat) (hKsmall : 2 * (M * M) ≤ K + 2)
+    (hKbig : (expM_U (M * M) (2 * (M * M))).num.toNat * 4 * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (expM_U (M * M) (2 * (M * M))).num.toNat * 2 * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (expM_U (M * M) (2 * (M * M))).num.toNat * (4 * (M * M)) * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (expM_U (M * M) (2 * (M * M))).num.toNat * (2 * (M * M)) * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (M * M) * (n + 1) * npow (2 * (M * M)) (2 * (2 * (M * M)) + 1)
+        + 2 * (M * M) ≤ K) :
+    Qle (Qabs (Qsub (add (mul (altSum q 0 (2 * K + 1)) (altSum q 0 (2 * K + 1)))
+        (mul (mul q q) (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1))))) ⟨1, 1⟩)) ⟨5, n + 1⟩ := by
+  have ha0 : ∀ i, 0 < (altTerm q 0 i).den := altTerm_den_pos hqd 0
+  have ha1 : ∀ i, 0 < (altTerm q 1 i).den := altTerm_den_pos hqd 1
+  have hsqd : 0 < (mul q q).den := Qmul_den_pos hqd hqd
+  have hUd := expM_U_den_pos (M * M) (2 * (M * M))
+  rw [altSum_eq_Fsum q 0 (2 * K + 1), altSum_eq_Fsum q 1 (2 * K + 1)]
+  have hERRd : 0 < (add (mul (mul q q) (Fsum (fun i => mul (altTerm q 1 i) (altTerm q 1 (2 * K + 1 - i))) (2 * K + 1)))
+      (add (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm q 0 i) (altTerm q 0 j)) (2 * K + 1))
+            (Fsum (fun j => mul (altTerm q 0 i) (altTerm q 0 j)) (2 * K + 1 - i))) (2 * K + 1))
+        (mul (mul q q) (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm q 1 i) (altTerm q 1 j)) (2 * K + 1))
+            (Fsum (fun j => mul (altTerm q 1 i) (altTerm q 1 j)) (2 * K + 1 - i))) (2 * K + 1))))).den :=
+    add_den_pos (Qmul_den_pos hsqd (Fsum_den_pos (fun i => Qmul_den_pos (ha1 i) (ha1 (2 * K + 1 - i))) (2 * K + 1)))
+      (add_den_pos
+        (Fsum_den_pos (fun i => Qsub_den_pos (Fsum_den_pos (fun j => Qmul_den_pos (ha0 i) (ha0 j)) (2 * K + 1))
+          (Fsum_den_pos (fun j => Qmul_den_pos (ha0 i) (ha0 j)) (2 * K + 1 - i))) (2 * K + 1))
+        (Qmul_den_pos hsqd (Fsum_den_pos (fun i => Qsub_den_pos
+          (Fsum_den_pos (fun j => Qmul_den_pos (ha1 i) (ha1 j)) (2 * K + 1))
+          (Fsum_den_pos (fun j => Qmul_den_pos (ha1 i) (ha1 j)) (2 * K + 1 - i))) (2 * K + 1))))
+  have hmajd : 0 < (add (mul (⟨((M * M : Nat) : Int), 1⟩ : Q)
+        (expTerm (add (⟨(M * M : Int), 1⟩ : Q) ⟨(M * M : Int), 1⟩) (2 * K + 1)))
+      (add (add (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩)
+            (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M)))))
+        (mul (⟨((M * M : Nat) : Int), 1⟩ : Q)
+          (add (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩)
+            (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M)))))))).den :=
+    add_den_pos (Qmul_den_pos Nat.one_pos (expTerm_den_pos (add_den_pos Nat.one_pos Nat.one_pos) (2 * K + 1)))
+      (add_den_pos (add_den_pos (Qmul_den_pos hUd (fct_pos (K + 2))) (Qmul_den_pos (fct_pos (K + 1)) hUd))
+        (Qmul_den_pos Nat.one_pos (add_den_pos (Qmul_den_pos hUd (fct_pos (K + 2))) (Qmul_den_pos (fct_pos (K + 1)) hUd))))
+  exact Qle_congr_left (Qabs_den_pos hERRd) (Qeq_symm (Qabs_Qeq (altPyth_dev_eq_err hqd (2 * K + 1))))
+    (Qle_trans hmajd (altErr_abs_le hqd hq K hKsmall) (altErr_bound_decay M K n hm hKbig))
+
+set_option maxHeartbeats 1000000 in
+/-- **The rational Pythagorean deviation at a diagonal depth `R`** (with `R ≤ 2K+1`, `K` deep): split
+    `cos²_R + q²·sinaux²_R − 1` through the deep reference `2K+1` — cos-reconciliation `|cos²_R − cos²_{2K+1}|`
+    (`altSq_reconcile`), `q²·`sin-reconciliation, and the deep error `|cos²_{2K+1}+q²sinaux²_{2K+1}−1|`
+    (`altPyth_dev_eq_err` + `altErr_abs_le` + `altErr_bound_decay` ≤ `5/(n+1)`). -/
+theorem ratPyth_le {q : Q} {M : Nat} (hqd : 0 < q.den) (hq : Qle (Qabs q) ⟨(M : Int), 1⟩)
+    (hm : 0 < M * M) (R K n : Nat) (hR2 : 2 * (M * M) ≤ R + 2) (hRK : R ≤ 2 * K + 1)
+    (hKsmall : 2 * (M * M) ≤ K + 2)
+    (hKbig : (expM_U (M * M) (2 * (M * M))).num.toNat * 4 * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (expM_U (M * M) (2 * (M * M))).num.toNat * 2 * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (expM_U (M * M) (2 * (M * M))).num.toNat * (4 * (M * M)) * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (expM_U (M * M) (2 * (M * M))).num.toNat * (2 * (M * M)) * (n + 1) * npow (M * M) (2 * (M * M) + 1)
+        + (M * M) * (n + 1) * npow (2 * (M * M)) (2 * (2 * (M * M)) + 1)
+        + 2 * (M * M) ≤ K) :
+    Qle (Qabs (Qsub (add (mul (altSum q 0 R) (altSum q 0 R))
+        (mul (mul q q) (mul (altSum q 1 R) (altSum q 1 R)))) ⟨1, 1⟩))
+      (add (mul ⟨(2 * npow (M * M) (R + 1) : Int), fct (R + 1)⟩
+            (add (expM_U (M * M) (2 * (M * M))) (expM_U (M * M) (2 * (M * M)))))
+        (add (mul ⟨((M * M : Nat) : Int), 1⟩ (mul ⟨(2 * npow (M * M) (R + 1) : Int), fct (R + 1)⟩
+              (add (expM_U (M * M) (2 * (M * M))) (expM_U (M * M) (2 * (M * M))))))
+          ⟨5, n + 1⟩)) := by
+  have hRd0 := altSum_den_pos hqd 0 R
+  have hRd1 := altSum_den_pos hqd 1 R
+  have hNd0 := altSum_den_pos hqd 0 (2 * K + 1)
+  have hNd1 := altSum_den_pos hqd 1 (2 * K + 1)
+  have hsqd : 0 < (mul q q).den := Qmul_den_pos hqd hqd
+  -- abbreviations
+  have hAd : 0 < (mul (altSum q 0 R) (altSum q 0 R)).den := Qmul_den_pos hRd0 hRd0
+  have hA'd : 0 < (mul (altSum q 0 (2 * K + 1)) (altSum q 0 (2 * K + 1))).den := Qmul_den_pos hNd0 hNd0
+  have hBd : 0 < (mul (mul q q) (mul (altSum q 1 R) (altSum q 1 R))).den :=
+    Qmul_den_pos hsqd (Qmul_den_pos hRd1 hRd1)
+  have hB'd : 0 < (mul (mul q q) (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1)))).den :=
+    Qmul_den_pos hsqd (Qmul_den_pos hNd1 hNd1)
+  -- algebraic three-term split
+  have hsplit : Qeq (Qsub (add (mul (altSum q 0 R) (altSum q 0 R))
+        (mul (mul q q) (mul (altSum q 1 R) (altSum q 1 R)))) ⟨1, 1⟩)
+      (add (Qsub (mul (altSum q 0 R) (altSum q 0 R)) (mul (altSum q 0 (2 * K + 1)) (altSum q 0 (2 * K + 1))))
+        (add (Qsub (mul (mul q q) (mul (altSum q 1 R) (altSum q 1 R)))
+              (mul (mul q q) (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1)))))
+          (Qsub (add (mul (altSum q 0 (2 * K + 1)) (altSum q 0 (2 * K + 1)))
+              (mul (mul q q) (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1))))) ⟨1, 1⟩))) := by
+    generalize mul (altSum q 0 R) (altSum q 0 R) = A
+    generalize mul (altSum q 0 (2 * K + 1)) (altSum q 0 (2 * K + 1)) = A'
+    generalize mul (mul q q) (mul (altSum q 1 R) (altSum q 1 R)) = B
+    generalize mul (mul q q) (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1))) = B'
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos hAd hA'd))
+      (add_den_pos (Qabs_den_pos (Qsub_den_pos hBd hB'd)) (Qabs_den_pos (Qsub_den_pos (add_den_pos hA'd hB'd) Nat.one_pos))))
+    (Qle_congr_left (Qabs_den_pos (add_den_pos (Qsub_den_pos hAd hA'd)
+        (add_den_pos (Qsub_den_pos hBd hB'd) (Qsub_den_pos (add_den_pos hA'd hB'd) Nat.one_pos))))
+      (Qeq_symm (Qabs_Qeq hsplit))
+      (Qabs_add3_le _ _ _ (Qsub_den_pos hAd hA'd) (Qsub_den_pos hBd hB'd)
+        (Qsub_den_pos (add_den_pos hA'd hB'd) Nat.one_pos))) ?_
+  -- bound the three terms
+  refine Qadd_le_add (altSq_reconcile hqd hq 0 R (2 * K + 1) hR2 hRK) (Qadd_le_add ?_ ?_)
+  · -- sin reconciliation: |B − B'| ≤ M²·(sin altSq_reconcile)
+    have hBdist : Qeq (Qsub (mul (mul q q) (mul (altSum q 1 R) (altSum q 1 R)))
+          (mul (mul q q) (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1)))))
+        (mul (mul q q) (Qsub (mul (altSum q 1 R) (altSum q 1 R))
+          (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1))))) :=
+      Qeq_symm (Qmul_sub_distrib (mul q q) (mul (altSum q 1 R) (altSum q 1 R))
+        (mul (altSum q 1 (2 * K + 1)) (altSum q 1 (2 * K + 1))))
+    refine Qle_congr_left (Qabs_den_pos (Qmul_den_pos hsqd
+        (Qsub_den_pos (Qmul_den_pos hRd1 hRd1) (Qmul_den_pos hNd1 hNd1))))
+      (Qeq_symm (Qabs_Qeq hBdist)) ?_
+    exact Qabs_qsq_mul_le hqd hq (Qsub_den_pos (Qmul_den_pos hRd1 hRd1) (Qmul_den_pos hNd1 hNd1))
+      (altSq_reconcile hqd hq 1 R (2 * K + 1) hR2 hRK)
+  · -- deep error: |cos²_{2K+1} + q²sinaux²_{2K+1} − 1| ≤ 5/(n+1)
+    exact deepErr_le hqd hq hm K n hKsmall hKbig
+
 /-- **cos² diagonal de-reindex**: the `Rmul` diagonal of `cos²` at `n` is within `2·xBound/(n+1)` of the
     natural-diagonal square `(RaltReal_seq x 0 n)²`. (Removes `Rmul`'s `Ridx` reindex via the diagonal
     regularity `RaltReal_diag_le` and the squaring bound `Qsq_diff_le`.) -/
