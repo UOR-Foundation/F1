@@ -777,6 +777,44 @@ theorem truncCoef_Q (B c e d : Nat) (hB : 0 < B) (h : c * e * npow B (2 * B + 1)
     exact_mod_cast key
   push_cast at hI ⊢; omega
 
+/-- A non-negative rational is bounded by the integer `⌈num/den⌉`-overestimate `⟨num.toNat, 1⟩`. -/
+theorem Q_le_num_toNat (a : Q) (ha : 0 ≤ a.num) (hd : 0 < a.den) :
+    Qle a ⟨(a.num.toNat : Int), 1⟩ := by
+  show a.num * ((1 : Nat) : Int) ≤ (a.num.toNat : Int) * (a.den : Int)
+  rw [Int.toNat_of_nonneg ha]
+  exact Int.mul_le_mul_of_nonneg_left (by exact_mod_cast hd) ha
+
+/-- `qpow` respects `≈`. -/
+theorem qpow_Qeq {a b : Q} (h : Qeq a b) : ∀ n, Qeq (qpow a n) (qpow b n)
+  | 0 => Qeq_refl _
+  | (n + 1) => by
+      show Qeq (mul a (qpow a n)) (mul b (qpow b n))
+      exact Qmul_congr h (qpow_Qeq h n)
+
+/-- `expTerm` respects `≈` in the base. -/
+theorem expTerm_Qeq {a b : Q} (h : Qeq a b) (i : Nat) : Qeq (expTerm a i) (expTerm b i) := by
+  show Qeq (mul (qpow a i) ⟨1, fct i⟩) (mul (qpow b i) ⟨1, fct i⟩)
+  exact Qmul_congr (qpow_Qeq h i) (Qeq_refl _)
+
+/-- The antidiagonal majorant `expTerm (M²+M²) N` in closed form `(2M²)^N / N!`. -/
+theorem expTerm_2MM (M N : Nat) :
+    Qeq (expTerm (add (⟨(M * M : Int), 1⟩ : Q) ⟨(M * M : Int), 1⟩) N)
+      ⟨(npow (2 * (M * M)) N : Int), fct N⟩ := by
+  have hbase : Qeq (add (⟨(M * M : Int), 1⟩ : Q) ⟨(M * M : Int), 1⟩) ⟨((2 * (M * M) : Nat) : Int), 1⟩ := by
+    simp only [Qeq, add]; push_cast; ring_uor
+  exact Qeq_trans (expTerm_den_pos (q := (⟨((2 * (M * M) : Nat) : Int), 1⟩ : Q)) Nat.one_pos N)
+    (expTerm_Qeq hbase N) (expTerm_natBase (2 * (M * M)) N)
+
+/-- **Coefficient truncation at an explicit exponent**: `c·B^E / E! ≤ 1/e` when `E ≥ 2B+1` and
+    `c·e·Bⁱ ≤ E−(2B+1)+1` (base exp `2B+1`). The caller supplies the linear `hE` and the (nonlinear)
+    coefficient condition. -/
+theorem truncCoef_QE (B c e E : Nat) (hB : 0 < B) (hE : 2 * B + 1 ≤ E)
+    (hcond : c * e * npow B (2 * B + 1) ≤ E - (2 * B + 1) + 1) :
+    Qle (⟨(c * npow B E : Int), fct E⟩ : Q) ⟨1, e⟩ := by
+  have hd : 2 * B + 1 + (E - (2 * B + 1)) = E := by omega
+  have h := truncCoef_Q B c e (E - (2 * B + 1)) hB hcond
+  rw [hd] at h; exact h
+
 /-- **Squaring difference**: `|a² − b²| ≤ |a − b|·(|a| + |b|)` over `Q` (since `a²−b² = (a−b)(a+b)`).
     The vehicle for reconciling `(altSum R)²` to `(altSum R')²` once the partial sums are close. -/
 theorem Qsq_diff_le (a b : Q) (had : 0 < a.den) (hbd : 0 < b.den) :
