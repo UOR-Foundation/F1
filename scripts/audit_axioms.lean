@@ -588,6 +588,13 @@ open UOR.Bridge.F1Square
 -- v0.15.0 — the complex analytic engine (stage A).
 #print axioms Analysis.Cexp_re
 #print axioms Analysis.Cexp_im
+#print axioms Analysis.qpow_num_zero
+#print axioms Analysis.altTerm_cos_zero_num
+#print axioms Analysis.altSum_cos_zero
+#print axioms Analysis.RexpReal_zero
+#print axioms Analysis.Rcos_zero
+#print axioms Analysis.Rsin_zero
+#print axioms Analysis.Cexp_zero
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one
