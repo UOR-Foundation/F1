@@ -422,6 +422,13 @@ theorem altCorner_abs_le {q : Q} (hqd : 0 < q.den) (off N : Nat) :
     (Qeq_symm (Qabs_Qeq (altCorner_factored hqd off N)))
     (Fsum_abs_le hfactterm_den N)
 
+/-- The alternating partial sum is the `Fsum` of its terms (bridge between `altSum` and the `Fsum` library). -/
+theorem altSum_eq_Fsum (q : Q) (off : Nat) : ∀ N, altSum q off N = Fsum (altTerm q off) N
+  | 0 => rfl
+  | (n + 1) => by
+      show add (altSum q off n) (altTerm q off (n + 1)) = add (Fsum (altTerm q off) n) (altTerm q off (n + 1))
+      rw [altSum_eq_Fsum q off n]
+
 /-- The `M`-base exponential partial sum as an `Fsum` of its terms `Mⁱ/i!`. -/
 theorem expSumM_eq_Fsum (M : Nat) : ∀ N, expSumM M N = Fsum (fun i => (⟨(npow M i : Int), fct i⟩ : Q)) N
   | 0 => rfl
