@@ -537,6 +537,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.cApprox_den_pos
 #print axioms Analysis.cApprox_num_nonneg
 #print axioms Analysis.cApprox_ub
+#print axioms Analysis.Ssum_den_pos
+#print axioms Analysis.Ssum_tail_le
 
 -- v0.10.0 — the λₙ / RH proof boundary (analytic face), locked faithfully.
 #print axioms Li.Pos_one

@@ -185,4 +185,44 @@ theorem cApprox_ub (n T : Nat) : Qle (cApprox n T) (⟨1, (n + 1) * (n + 2)⟩ :
   exact Qle_trans (Qsub_den_pos (by show 0 < n + 1; omega) (by show 0 < n + 2; omega)) hstep
     (Qeq_le heq)
 
+/-! ### Step 3a: the plain partial sum and its telescoping truncation tail -/
+
+/-- The plain partial sum `Σ_{i=0}^{M-1} f i`. -/
+def Ssum (f : Nat → Q) : Nat → Q
+  | 0 => ⟨0, 1⟩
+  | (M + 1) => add (Ssum f M) (f M)
+
+theorem Ssum_den_pos {f : Nat → Q} (hf : ∀ i, 0 < (f i).den) : ∀ M, 0 < (Ssum f M).den
+  | 0 => Nat.one_pos
+  | (M + 1) => add_den_pos (Ssum_den_pos hf M) (hf M)
+
+/-- **Telescoping truncation tail**: for `0 ≤ f i ≤ 1/((i+1)(i+2))`, the gap from `Mj` to `Mk`
+    (`Mj ≤ Mk`) is `≤ 1/(Mj+1) − 1/(Mk+1)`. -/
+theorem Ssum_tail_le {f : Nat → Q} (hf : ∀ i, 0 < (f i).den)
+    (hfb : ∀ i, Qle (f i) (⟨1, (i + 1) * (i + 2)⟩ : Q)) (Mj : Nat) :
+    ∀ {Mk}, Mj ≤ Mk →
+      Qle (Qsub (Ssum f Mk) (Ssum f Mj)) (Qsub (⟨1, Mj + 1⟩ : Q) ⟨1, Mk + 1⟩) := by
+  intro Mk hjk
+  induction hjk with
+  | refl =>
+    have h0 : (Qsub (Ssum f Mj) (Ssum f Mj)).num = 0 := Qsub_self_num _
+    have h1 : (Qsub (⟨1, Mj + 1⟩ : Q) ⟨1, Mj + 1⟩).num = 0 := Qsub_self_num _
+    show Qle (Qsub (Ssum f Mj) (Ssum f Mj)) (Qsub (⟨1, Mj + 1⟩ : Q) ⟨1, Mj + 1⟩)
+    unfold Qle; rw [h0, h1]; omega
+  | @step K hK ih =>
+    have hKpos : 0 < (K + 1) * (K + 2) := Nat.mul_pos (by omega) (by omega)
+    have hrew : Qeq (Qsub (Ssum f (K + 1)) (Ssum f Mj))
+        (add (Qsub (Ssum f K) (Ssum f Mj)) (f K)) :=
+      Qsub_add_right (Ssum f K) (f K) (Ssum f Mj)
+    have hstep : Qle (add (Qsub (Ssum f K) (Ssum f Mj)) (f K))
+        (add (Qsub (⟨1, Mj + 1⟩ : Q) ⟨1, K + 1⟩) ⟨1, (K + 1) * (K + 2)⟩) :=
+      Qadd_le_add ih (hfb K)
+    have heq : Qeq (add (Qsub (⟨1, Mj + 1⟩ : Q) ⟨1, K + 1⟩) ⟨1, (K + 1) * (K + 2)⟩)
+        (Qsub (⟨1, Mj + 1⟩ : Q) ⟨1, K + 2⟩) := by
+      simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+    refine Qle_trans (add_den_pos (Qsub_den_pos (by show 0 < Mj + 1; omega) (by show 0 < K + 1; omega))
+        hKpos)
+      (Qle_congr_left (add_den_pos (Qsub_den_pos (Ssum_den_pos hf K) (Ssum_den_pos hf Mj)) (hf K))
+        (Qeq_symm hrew) hstep) (Qeq_le heq)
+
 end UOR.Bridge.F1Square.Analysis
