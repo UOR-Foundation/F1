@@ -731,4 +731,56 @@ theorem Rpi_seq_ub (n : Nat) : Qle (Rpi_seq n) (⟨7, 1⟩ : Q) := by
     (Qsub_le_2 (Qmul_le_mul_left (by decide) hU5) (Qmul_le_mul_left (by decide) hL239))
     (by decide)
 
+/-! ### Step 5c: a *tight* π upper bound via the alternating arctan truncation -/
+
+/-- One-sided arctan truncation (upper): the deep diagonal is `≤` a shallow partial sum plus a tail.
+    Using `ρ = t` (the tightest valid radius) makes the shallow sum small-denominator. -/
+theorem arctanSum_deep_le {t ρ : Q} (htd : 0 < t.den) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (htρ : Qle (Qabs t) ρ) {tail : Q} (htaild : 0 < tail.den)
+    (hWn : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ρ ρ)).num) {a b : Nat} (hab : a ≤ b)
+    (htail : Qle (qpow ρ (2 * a + 3)) (mul tail (Qsub ⟨1, 1⟩ (mul ρ ρ)))) :
+    Qle (arctanSum t b) (add (arctanSum t a) tail) := by
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ρ ρ)).den := Qsub_den_pos Nat.one_pos (Qmul_den_pos hρd hρd)
+  have htrunc := arctanSum_trunc htd hρ0 hρd htρ (Int.le_of_lt hWn) hab
+  have hdiff : Qle (Qabs (Qsub (arctanSum t b) (arctanSum t a))) tail :=
+    Qmul_le_cancel_right hWn hWd
+      (Qle_trans (qpow_den_pos hρd _) htrunc htail)
+  have hsub : Qle (Qsub (arctanSum t b) (arctanSum t a)) tail :=
+    Qle_trans (Qabs_den_pos (Qsub_den_pos (arctanSum_den_pos htd b) (arctanSum_den_pos htd a)))
+      (Qle_self_Qabs _) hdiff
+  exact Qle_add_of_Qsub_le (arctanSum_den_pos htd b) (arctanSum_den_pos htd a) htaild hsub
+
+/-- One-sided arctan truncation (lower): the deep diagonal is `≥` a shallow partial sum minus a tail. -/
+theorem arctanSum_deep_ge {t ρ : Q} (htd : 0 < t.den) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (htρ : Qle (Qabs t) ρ) {tail : Q} (htaild : 0 < tail.den)
+    (hWn : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ρ ρ)).num) {a b : Nat} (hab : a ≤ b)
+    (htail : Qle (qpow ρ (2 * a + 3)) (mul tail (Qsub ⟨1, 1⟩ (mul ρ ρ)))) :
+    Qle (Qsub (arctanSum t a) tail) (arctanSum t b) := by
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ρ ρ)).den := Qsub_den_pos Nat.one_pos (Qmul_den_pos hρd hρd)
+  have htrunc := arctanSum_trunc htd hρ0 hρd htρ (Int.le_of_lt hWn) hab
+  have hdiff : Qle (Qabs (Qsub (arctanSum t b) (arctanSum t a))) tail :=
+    Qmul_le_cancel_right hWn hWd
+      (Qle_trans (qpow_den_pos hρd _) htrunc htail)
+  have hdiff' : Qle (Qabs (Qsub (arctanSum t a) (arctanSum t b))) tail := by
+    rw [Qabs_Qsub_comm]; exact hdiff
+  exact Qabs_lower (arctanSum_den_pos htd a) (arctanSum_den_pos htd b) htaild hdiff'
+
+/-- **`Rpi.seq n ≤ 3.142` pointwise** — a tight Machin upper bracket from shallow arctan partial sums
+    (`16·arctanSum(1/5,3) − 4·arctanSum(1/239,1)` plus `ρ = t` geometric tails). -/
+theorem Rpi_seq_ub_tight (n : Nat) : Qle (Rpi_seq n) (⟨3142, 1000⟩ : Q) := by
+  have hg : Rpi_g n = 12 * (20 * n + 20) := by unfold Rpi_g Rartanh_R; rfl
+  have hge3 : 3 ≤ Rpi_g n := by rw [hg]; omega
+  have hge1 : 1 ≤ Rpi_g n := by rw [hg]; omega
+  have h5 : Qle (arctanSum ⟨1, 5⟩ (Rpi_g n)) (add (arctanSum ⟨1, 5⟩ 3) ⟨1, 1000000⟩) :=
+    arctanSum_deep_le (ρ := ⟨1, 5⟩) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) hge3 (by decide)
+  have h239 : Qle (Qsub (arctanSum ⟨1, 239⟩ 1) ⟨1, 1000000⟩) (arctanSum ⟨1, 239⟩ (Rpi_g n)) :=
+    arctanSum_deep_ge (ρ := ⟨1, 239⟩) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) hge1 (by decide)
+  exact Qle_trans
+    (Qsub_den_pos (Qmul_den_pos (by decide) (add_den_pos (arctanSum_den_pos (by decide) 3) (by decide)))
+      (Qmul_den_pos (by decide) (Qsub_den_pos (arctanSum_den_pos (by decide) 1) (by decide))))
+    (Qsub_le_2 (Qmul_le_mul_left (by decide) h5) (Qmul_le_mul_left (by decide) h239))
+    (by decide)
+
 end UOR.Bridge.F1Square.Analysis
