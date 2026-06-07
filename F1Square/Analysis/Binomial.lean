@@ -105,6 +105,10 @@ theorem Fsum_shift {f : Nat → Q} (hf : ∀ i, 0 < (f i).den) :
 theorem Qadd_sub_cancel_left (a b : Q) : Qeq (add a (Qsub b a)) b := by
   simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
 
+/-- `(X + c) − X ≈ c`. -/
+theorem Qsub_add_left_cancel (X c : Q) : Qeq (Qsub (add X c) X) c := by
+  simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+
 /-- Front-peel: `Σ_{i=0}^{k+1} f i ≈ f 0 + Σ_{i=0}^{k} f (i+1)`. -/
 theorem Fsum_front {f : Nat → Q} (hf : ∀ i, 0 < (f i).den) (k : Nat) :
     Qeq (Fsum f (k + 1)) (add (f 0) (Fsum (fun i => f (i + 1)) k)) :=
@@ -544,5 +548,38 @@ theorem expSum_mul_le {a b : Q} (ha0 : 0 ≤ a.num) (had : 0 < a.den) (hb0 : 0 �
     (Fsum_den_pos (fun i => Fsum_den_pos (fun j => hg i j) M) M) (Qeq_symm hSQ)
     (Qle_congr_right
       (Fsum_den_pos (fun i => Fsum_den_pos (fun j => hg i j) (2 * M - i)) (2 * M)) hTRI hmid)
+
+/-- **The Cauchy-product corner vanishes**: for `a, b ∈ [0,1]` with `a+b ≤ 1`, the corner is bounded by
+    the `exp(a+b)` tail `2/(M+1)!`. Since `corner = expSum a M · expSum b M − expSum(a+b) M`
+    (`expSum_mul_eq`) and `expSum a M · expSum b M ≤ expSum(a+b)(2M)` (`expSum_mul_le`), the corner is
+    `≤ expSum(a+b)(2M) − expSum(a+b) M ≤ 2/(M+1)!` (`expdiff_bound`). -/
+theorem expSum_corner_le {a b : Q} (ha0 : 0 ≤ a.num) (had : 0 < a.den) (hb0 : 0 ≤ b.num) (hbd : 0 < b.den)
+    (hab1 : Qle (add a b) ⟨1, 1⟩) (M : Nat) :
+    Qle (Fsum (fun i => Qsub (Fsum (fun j => mul (expTerm a i) (expTerm b j)) M)
+          (Fsum (fun j => mul (expTerm a i) (expTerm b j)) (M - i))) M) ⟨2, fct (M + 1)⟩ := by
+  have hg : ∀ i j, 0 < (mul (expTerm a i) (expTerm b j)).den :=
+    fun i j => Qmul_den_pos (expTerm_den_pos had i) (expTerm_den_pos hbd j)
+  have haddnn : 0 ≤ (add a b).num := by
+    show 0 ≤ a.num * (b.den : Int) + b.num * (a.den : Int)
+    exact Int.add_nonneg (Int.mul_nonneg ha0 (by exact_mod_cast Nat.zero_le _))
+      (Int.mul_nonneg hb0 (by exact_mod_cast Nat.zero_le _))
+  have hcd : 0 < (expSum (add a b) M).den := expSum_den_pos (add_den_pos had hbd) M
+  have hmuld : 0 < (mul (expSum a M) (expSum b M)).den :=
+    Qmul_den_pos (expSum_den_pos had M) (expSum_den_pos hbd M)
+  have hcornerden : 0 < (Fsum (fun i => Qsub (Fsum (fun j => mul (expTerm a i) (expTerm b j)) M)
+        (Fsum (fun j => mul (expTerm a i) (expTerm b j)) (M - i))) M).den :=
+    Fsum_den_pos (fun i => Qsub_den_pos (Fsum_den_pos (fun j => hg i j) M)
+      (Fsum_den_pos (fun j => hg i j) (M - i))) M
+  have hco : Qeq (Qsub (mul (expSum a M) (expSum b M)) (expSum (add a b) M))
+      (Fsum (fun i => Qsub (Fsum (fun j => mul (expTerm a i) (expTerm b j)) M)
+          (Fsum (fun j => mul (expTerm a i) (expTerm b j)) (M - i))) M) :=
+    Qeq_trans (Qsub_den_pos (add_den_pos hcd hcornerden) hcd)
+      (QsubCongr (expSum_mul_eq had hbd M) (Qeq_refl (expSum (add a b) M)))
+      (Qsub_add_left_cancel (expSum (add a b) M) _)
+  have hbound : Qle (Qsub (mul (expSum a M) (expSum b M)) (expSum (add a b) M)) ⟨2, fct (M + 1)⟩ :=
+    Qle_trans (Qsub_den_pos (expSum_den_pos (add_den_pos had hbd) (2 * M)) hcd)
+      (Qsub_le_sub (expSum_mul_le ha0 had hb0 hbd M))
+      (expdiff_bound haddnn (add_den_pos had hbd) hab1 (by omega : M ≤ 2 * M))
+  exact Qle_congr_left (Qsub_den_pos hmuld hcd) hco hbound
 
 end UOR.Bridge.F1Square.Analysis
