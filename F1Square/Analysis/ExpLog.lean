@@ -1110,6 +1110,29 @@ theorem fcomp_congr_left {a a' b : Nat → Q} (h : ∀ i, Qeq (a i) (a' i)) (k :
     Qeq (fcomp a b k) (fcomp a' b k) :=
   Fsum_congr (fun m => Qmul_congr (h m) (Qeq_refl _)) k
 
+/-- Finite sums distribute over subtraction. -/
+theorem Fsum_sub {f g : Nat → Q} (hf : ∀ i, 0 < (f i).den) (hg : ∀ i, 0 < (g i).den) :
+    ∀ k, Qeq (Fsum (fun i => Qsub (f i) (g i)) k) (Qsub (Fsum f k) (Fsum g k))
+  | 0 => Qeq_refl _
+  | (k + 1) => by
+      show Qeq (add (Fsum (fun i => Qsub (f i) (g i)) k) (Qsub (f (k + 1)) (g (k + 1))))
+        (Qsub (add (Fsum f k) (f (k + 1))) (add (Fsum g k) (g (k + 1))))
+      refine Qeq_trans (add_den_pos (Qsub_den_pos (Fsum_den_pos hf k) (Fsum_den_pos hg k))
+          (Qsub_den_pos (hf _) (hg _))) (Qadd_congr (Fsum_sub hf hg k) (Qeq_refl _)) ?_
+      simp only [Qeq, add, Qsub, neg]; push_cast; ring_uor
+
+/-- **Left-distributivity over subtraction**: `(a−b)·c = a·c − b·c` (formal Cauchy product). -/
+theorem fmul_sub_left {a b c : Nat → Q} (ha : ∀ i, 0 < (a i).den) (hb : ∀ i, 0 < (b i).den)
+    (hc : ∀ i, 0 < (c i).den) (k : Nat) :
+    Qeq (fmul (fun i => Qsub (a i) (b i)) c k) (Qsub (fmul a c k) (fmul b c k)) := by
+  show Qeq (Fsum (fun i => mul (Qsub (a i) (b i)) (c (k - i))) k)
+    (Qsub (Fsum (fun i => mul (a i) (c (k - i))) k) (Fsum (fun i => mul (b i) (c (k - i))) k))
+  refine Qeq_trans (Fsum_den_pos (fun i => Qsub_den_pos (Qmul_den_pos (ha i) (hc (k - i)))
+      (Qmul_den_pos (hb i) (hc (k - i)))) k)
+    (Fsum_congr (fun i => Qmul_sub_right (a i) (b i) (c (k - i))) k)
+    (Fsum_sub (fun i => Qmul_den_pos (ha i) (hc (k - i)))
+      (fun i => Qmul_den_pos (hb i) (hc (k - i))) k)
+
 /-- **The artanh ODE** `(1−t²)·artanh' = 1` at the coefficient level. -/
 theorem artanh_ode (k : Nat) : Qeq (fmul oneMinusSq gcoef k) (fone k) :=
   Qeq_trans (add_den_pos (fmul_den_pos (fun i => fsmono_den Nat.one_pos 0 i) (fun _ => gcoef_den _) k)

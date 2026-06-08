@@ -866,3 +866,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.artanh_main
 #print axioms Analysis.artanh_ode
 #print axioms Analysis.fcomp_congr_left
+#print axioms Analysis.Fsum_sub
+#print axioms Analysis.fmul_sub_left
