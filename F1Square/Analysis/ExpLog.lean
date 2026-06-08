@@ -2081,6 +2081,47 @@ theorem pow2_sum : ∀ k, Qeq (Fsum (fun j => (⟨(2 : Int) ^ j, 1⟩ : Q)) k) �
       rw [show (2 : Int) ^ (k + 1 + 1) = 2 ^ (k + 1) * 2 from by rw [Int.pow_succ]]
       push_cast; ring_uor
 
+/-- **Coefficient bound on the majorant powers**: `(|kdbl|ᵐ)_k ≤ 4ᵐ·2ᵏ` (induction on `m`, using
+    `|kdbl|≤2`, `pow2_sum`, and the geometric inflation `Σ_{i≤k} 2^{k-i} ≤ 2^{k+1}`). -/
+theorem fpow_fabs_kdbl_bound (m k : Nat) : Qle (fpow (fabs kdbl) m k) ⟨(4 : Int) ^ m * 2 ^ k, 1⟩ := by
+  induction m generalizing k with
+  | zero =>
+      show Qle (fone k) ⟨(4 : Int) ^ 0 * 2 ^ k, 1⟩
+      by_cases h : k = 0
+      · subst h; rw [show fone 0 = (⟨1, 1⟩ : Q) from by simp [fone]]; decide
+      · rw [show fone k = (⟨0, 1⟩ : Q) from by simp [fone, h]]
+        show (0 : Int) * 1 ≤ ((4 : Int) ^ 0 * 2 ^ k) * 1
+        have h2 : (0 : Int) ≤ (4 : Int) ^ 0 * 2 ^ k := by exact_mod_cast Nat.zero_le (4 ^ 0 * 2 ^ k)
+        omega
+  | succ m ih =>
+      have hterm : ∀ i, Qle (mul (fabs kdbl i) (fpow (fabs kdbl) m (k - i)))
+          (mul (⟨2 * (4 : Int) ^ m, 1⟩ : Q) ⟨2 ^ (k - i), 1⟩) := by
+        intro i
+        refine Qle_trans (Qmul_den_pos Nat.one_pos Nat.one_pos)
+          (Qmul_le_mul (fabs_den_pos (fun j => kdbl_den j) i) Nat.one_pos
+            (fpow_den_pos (fun j => fabs_den_pos (fun l => kdbl_den l) j) m (k - i))
+            (fabs_nonneg kdbl i) (fpow_num_nonneg (fun j => fabs_nonneg kdbl j) m (k - i))
+            (fabs_kdbl_le2 i) (ih (k - i)))
+          (Qeq_le (by simp only [Qeq, mul]; push_cast; ring_uor))
+      show Qle (Fsum (fun i => mul (fabs kdbl i) (fpow (fabs kdbl) m (k - i))) k)
+        ⟨(4 : Int) ^ (m + 1) * 2 ^ k, 1⟩
+      refine Qle_trans (Fsum_den_pos (fun i => Qmul_den_pos Nat.one_pos Nat.one_pos) k)
+        (Fsum_le_Fsum hterm k) ?_
+      refine Qle_trans (Qmul_den_pos Nat.one_pos (Fsum_den_pos (fun _ => Nat.one_pos) k))
+        (Qeq_le (Fsum_mul_left Nat.one_pos (fun _ => Nat.one_pos) k)) ?_
+      refine Qle_trans (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qeq_le (Qmul_congr (Qeq_refl _) (Qeq_trans (Fsum_den_pos (fun _ => Nat.one_pos) k)
+          (Qeq_symm (Fsum_reverse (f := fun j => (⟨(2 : Int) ^ j, 1⟩ : Q)) (fun _ => Nat.one_pos) k))
+          (pow2_sum k)))) ?_
+      show ((2 * (4 : Int) ^ m) * (2 ^ (k + 1) - 1)) * 1 ≤ ((4 : Int) ^ (m + 1) * 2 ^ k) * 1
+      rw [show (4 : Int) ^ (m + 1) = 4 ^ m * 4 from by rw [Int.pow_succ],
+          show (2 : Int) ^ (k + 1) = 2 ^ k * 2 from by rw [Int.pow_succ]]
+      have hgen : ∀ A B : Int, 0 ≤ A → ((2 * A) * (B * 2 - 1)) * 1 ≤ (A * 4 * B) * 1 := by
+        intro A B hA
+        have key : (A * 4 * B) * 1 - ((2 * A) * (B * 2 - 1)) * 1 = 2 * A := by ring_uor
+        omega
+      exact hgen ((4 : Int) ^ m) ((2 : Int) ^ k) (by exact_mod_cast Nat.zero_le (4 ^ m))
+
 /-- Per-term geometric telescope: `ρ^{2N+1}·(1−ρ²) = ρ^{2N+1} − ρ^{2N+3}`. -/
 theorem geoTerm_tel (ρ : Q) (hρd : 0 < ρ.den) (N : Nat) :
     Qeq (mul (geoTerm ρ N) (Qsub ⟨1, 1⟩ (mul ρ ρ)))
