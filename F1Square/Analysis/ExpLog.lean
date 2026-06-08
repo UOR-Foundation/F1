@@ -3467,4 +3467,8 @@ theorem DN_recip (ρ w : Q) (N n : Nat) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num
   apply Qeq_le
   simp only [Qeq, mul]; push_cast; ring_uor
 
+/-- `add x x ≈ 2·x`. -/
+theorem Qadd_self (x : Q) : Qeq (add x x) (mul ⟨2, 1⟩ x) := by
+  simp only [Qeq, add, mul]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Analysis
