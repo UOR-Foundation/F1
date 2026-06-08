@@ -274,4 +274,52 @@ theorem expSum_add_decay_signed {a b : Q} {Mx My : Nat} (had : 0 < a.den) (hbd :
   Qle_trans (fct_pos _) (expSum_add_le_signed had hbd hqa hqb D (by omega))
     (truncCoef_QE (Mx + My) 2 (n + 1) (D + 1) hMxy (by omega) (by omega))
 
+/-- The exp diagonal depth dominates its index: `j ≤ RexpReal_R x j`. -/
+theorem n_le_RexpReal_R (x : Real) (j : Nat) : j ≤ RexpReal_R x j := by
+  have hK : 1 ≤ RexpReal_K x := by unfold RexpReal_K; omega
+  have h : 4 * (j + 1) * 1 ≤ 4 * (j + 1) * RexpReal_K x := Nat.mul_le_mul (Nat.le_refl _) hK
+  unfold RexpReal_R; omega
+
+/-- Real regularity at a common floor: `|x.seq i − x.seq j| ≤ 2/(n+1)` for `n ≤ i, j`. -/
+theorem xreg_n_le (x : Real) {n i j : Nat} (hi : n ≤ i) (hj : n ≤ j) :
+    Qle (Qabs (Qsub (x.seq i) (x.seq j))) ⟨2, n + 1⟩ := by
+  refine Qle_trans (add_den_pos (Qbound_den_pos i) (Qbound_den_pos j)) (x.reg i j) ?_
+  refine Qle_trans (add_den_pos (Nat.succ_pos n) (Nat.succ_pos n))
+    (Qadd_le_add (a := Qbound i) (b := (⟨1, n + 1⟩ : Q)) (c := Qbound j) (d := (⟨1, n + 1⟩ : Q))
+      (by show (1 : Int) * ((n + 1 : Nat) : Int) ≤ 1 * ((i + 1 : Nat) : Int); omega)
+      (by show (1 : Int) * ((n + 1 : Nat) : Int) ≤ 1 * ((j + 1 : Nat) : Int); omega))
+    (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+
+/-- **Single-factor reconciliation** for `RexpReal_add`: the exp partial sum at a floor index `p ≥ n` and
+    deep depth `D` differs from the `x`-diagonal at the common reindex `J ≥ n` by `≤ (1 + 2Uₓ)/(n+1)`,
+    where `Uₓ = (expM_U (xBound x) (2·xBound x)).num.toNat`. Depth tail (`RexpReal_trunc_le`) + Lipschitz
+    (`expSum_reconcile`, `LipS ≤ Uₓ`, regularity `xreg_n_le`). Used for both the `x`- and `y`-factors. -/
+theorem rexp_factor_reconcile (x : Real) (n p J D : Nat) (hpn : n ≤ p) (hJn : n ≤ J)
+    (hD : RexpReal_R x J ≤ D) :
+    Qle (Qabs (Qsub (expSum (x.seq p) D) (expSum (x.seq (RexpReal_R x J)) (RexpReal_R x J))))
+      ⟨(1 + 2 * (expM_U (xBound x) (2 * xBound x)).num.toNat : Int), n + 1⟩ := by
+  have hR1n : n ≤ RexpReal_R x J := Nat.le_trans hJn (n_le_RexpReal_R x J)
+  have h2M : 2 * xBound x ≤ RexpReal_R x J + 2 := by unfold RexpReal_R; omega
+  have hrec := expSum_reconcile (a := x.seq p) (b := x.seq (RexpReal_R x J)) (M := xBound x)
+    (x.den_pos p) (x.den_pos (RexpReal_R x J)) (canon_bound x p) (canon_bound x (RexpReal_R x J))
+    (R := D) (R' := RexpReal_R x J) h2M hD
+  refine Qle_trans (add_den_pos (fct_pos (RexpReal_R x J + 1))
+      (Qmul_den_pos (LipS_den_pos _ _) (Qabs_den_pos (Qsub_den_pos (x.den_pos p) (x.den_pos _))))) hrec ?_
+  have hmono : Qle (⟨1, 2 * (J + 1)⟩ : Q) ⟨1, n + 1⟩ := by simp only [Qle]; push_cast; omega
+  have hterm1 : Qle (⟨(2 * npow (xBound x) (RexpReal_R x J + 1) : Int), fct (RexpReal_R x J + 1)⟩ : Q) ⟨1, n + 1⟩ :=
+    Qle_trans (a := (⟨(2 * npow (xBound x) (RexpReal_R x J + 1) : Int), fct (RexpReal_R x J + 1)⟩ : Q))
+      (b := (⟨1, 2 * (J + 1)⟩ : Q)) (by omega : (0:Nat) < 2 * (J + 1)) (RexpReal_trunc_le x J) hmono
+  have hLip : Qle (LipS (xBound x) (RexpReal_R x J))
+      ⟨((expM_U (xBound x) (2 * xBound x)).num.toNat : Int), 1⟩ :=
+    Qle_trans (expM_U_den_pos _ _) (LipS_le_U (xBound x) (RexpReal_R x J))
+      (Qle_toNat (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))
+  have hterm2 : Qle (mul (LipS (xBound x) (RexpReal_R x J)) (Qabs (Qsub (x.seq p) (x.seq (RexpReal_R x J)))))
+      (mul ⟨((expM_U (xBound x) (2 * xBound x)).num.toNat : Int), 1⟩ ⟨2, n + 1⟩) :=
+    Qle_trans (Qmul_den_pos Nat.one_pos (Qabs_den_pos (Qsub_den_pos (x.den_pos p) (x.den_pos _))))
+      (Qmul_le_mul_right (Qabs_num_nonneg _) hLip)
+      (Qmul_le_mul_left (Int.ofNat_nonneg _) (xreg_n_le x hpn hR1n))
+  refine Qle_trans (add_den_pos (Nat.succ_pos n) (Qmul_den_pos Nat.one_pos (Nat.succ_pos n)))
+    (Qadd_le_add hterm1 hterm2) (Qeq_le ?_)
+  simp only [Qeq, add, mul]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Analysis
