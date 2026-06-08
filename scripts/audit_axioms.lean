@@ -930,3 +930,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fpow_abs_dom
 #print axioms Analysis.peval_mono
 #print axioms Analysis.peval_abs_le_peval_fabs
+#print axioms Analysis.peval_fone
+#print axioms Analysis.Qmul_num_nonneg
+#print axioms Analysis.fpow_num_nonneg
+#print axioms Analysis.peval_num_nonneg
+#print axioms Analysis.peval_fpow_le_pow

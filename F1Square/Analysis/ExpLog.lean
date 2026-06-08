@@ -440,6 +440,18 @@ theorem peval_mono {c d : Nat → Q} (hcd : ∀ k, Qle (c k) (d k)) (ρ : Q) (h�
     Qle (peval c ρ M) (peval d ρ M) :=
   Fsum_le_Fsum (fun k => Qmul_le_mul_right (qpow_nonneg hρ0 k) (hcd k)) M
 
+/-- **The unit series evaluates to 1.** -/
+theorem peval_fone (ρ : Q) (hρd : 0 < ρ.den) : ∀ M, Qeq (peval fone ρ M) ⟨1, 1⟩
+  | 0 => by
+      show Qeq (mul (fone 0) (qpow ρ 0)) ⟨1, 1⟩
+      rw [show qpow ρ 0 = ⟨1, 1⟩ from rfl]; simp [fone, Qeq, mul]
+  | (M + 1) => by
+      show Qeq (add (peval fone ρ M) (mul (fone (M + 1)) (qpow ρ (M + 1)))) ⟨1, 1⟩
+      have hz : Qeq (mul (fone (M + 1)) (qpow ρ (M + 1))) ⟨0, 1⟩ := by
+        rw [show fone (M + 1) = ⟨0, 1⟩ from by simp [fone]]; simp [Qeq, mul]
+      exact Qeq_trans (add_den_pos Nat.one_pos Nat.one_pos)
+        (Qadd_congr (peval_fone ρ hρd M) hz) (Qadd_zero_right _)
+
 /-- **Per-coefficient abs bound**: `|eval c w M| ≤ eval(|c|, ρ, M)` for `|w| ≤ ρ`. -/
 theorem peval_abs_le_peval_fabs (c : Nat → Q) (hc : ∀ k, 0 < (c k).den) (w : Q) (hwd : 0 < w.den)
     {ρ : Q} (hρd : 0 < ρ.den) (hw : Qle (Qabs w) ρ) (M : Nat) :
@@ -1949,6 +1961,53 @@ theorem peval_fpow_succ (b : Nat → Q) (hb : ∀ i, 0 < (b i).den) (w : Q) (hwd
       (Fsum_den_pos (fun j => Qmul_den_pos (Qmul_den_pos (hb i) (qpow_den_pos hwd i))
         (Qmul_den_pos (fpow_den_pos hb m j) (qpow_den_pos hwd j))) (M - i))) M)
     (peval_mul b (fpow b m) hb (fpow_den_pos hb m) hwd M)
+
+/-- `0 ≤ a.num`, `0 ≤ b.num` ⇒ `0 ≤ (a·b).num`. -/
+theorem Qmul_num_nonneg {a b : Q} (ha : 0 ≤ a.num) (hb : 0 ≤ b.num) : 0 ≤ (mul a b).num :=
+  Int.mul_nonneg ha hb
+
+/-- Powers of a nonnegative-coefficient series have nonnegative coefficients. -/
+theorem fpow_num_nonneg {c : Nat → Q} (hc0 : ∀ k, 0 ≤ (c k).num) :
+    ∀ m k, 0 ≤ (fpow c m k).num
+  | 0, k => by
+      show 0 ≤ (fone k).num
+      by_cases h : k = 0
+      · rw [show fone k = ⟨1, 1⟩ from by simp [fone, h]]; decide
+      · rw [show fone k = ⟨0, 1⟩ from by simp [fone, h]]; decide
+  | (m + 1), k =>
+      Fsum_num_nonneg (fun i => Qmul_num_nonneg (hc0 i) (fpow_num_nonneg hc0 m (k - i))) k
+
+/-- Evaluation of a nonnegative-coefficient series at a nonnegative point is nonnegative. -/
+theorem peval_num_nonneg {c : Nat → Q} (hc0 : ∀ k, 0 ≤ (c k).num) (ρ : Q) (hρ0 : 0 ≤ ρ.num) (M : Nat) :
+    0 ≤ (peval c ρ M).num :=
+  Fsum_num_nonneg (fun k => Qmul_num_nonneg (hc0 k) (qpow_nonneg hρ0 k)) M
+
+/-- **Truncated power ≤ power of truncation** (nonnegative coefficients, nonnegative point): the corner
+    is nonnegative, so dropping it only decreases the value: `eval(cᵐ,ρ,M) ≤ (eval c ρ M)ᵐ`. -/
+theorem peval_fpow_le_pow (c : Nat → Q) (hc : ∀ k, 0 < (c k).den) (hc0 : ∀ k, 0 ≤ (c k).num)
+    (ρ : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (M : Nat) :
+    ∀ m, Qle (peval (fpow c m) ρ M) (qpow (peval c ρ M) m)
+  | 0 => Qeq_le (peval_fone ρ hρd M)
+  | (m + 1) => by
+      have hgd : ∀ i j, 0 < (mul (mul (c i) (qpow ρ i)) (mul (fpow c m j) (qpow ρ j))).den :=
+        fun i j => Qmul_den_pos (Qmul_den_pos (hc i) (qpow_den_pos hρd i))
+          (Qmul_den_pos (fpow_den_pos hc m j) (qpow_den_pos hρd j))
+      have hgn : ∀ i j, 0 ≤ (mul (mul (c i) (qpow ρ i)) (mul (fpow c m j) (qpow ρ j))).num :=
+        fun i j => Qmul_num_nonneg (Qmul_num_nonneg (hc0 i) (qpow_nonneg hρ0 i))
+          (Qmul_num_nonneg (fpow_num_nonneg hc0 m j) (qpow_nonneg hρ0 j))
+      have hcorner_nonneg : 0 ≤ (Fsum (fun i => Qsub
+          (Fsum (fun j => mul (mul (c i) (qpow ρ i)) (mul (fpow c m j) (qpow ρ j))) M)
+          (Fsum (fun j => mul (mul (c i) (qpow ρ i)) (mul (fpow c m j) (qpow ρ j))) (M - i))) M).num :=
+        Fsum_num_nonneg (fun i => Qsub_num_nonneg
+          (Fsum_mono_len (fun j => hgn i j) (fun j => hgd i j) (Nat.sub_le M i))) M
+      refine Qle_trans (Qsub_den_pos (Qmul_den_pos (peval_den_pos hc hρd M)
+          (peval_den_pos (fpow_den_pos hc m) hρd M))
+          (Fsum_den_pos (fun i => Qsub_den_pos (Fsum_den_pos (fun j => hgd i j) M)
+            (Fsum_den_pos (fun j => hgd i j) (M - i))) M))
+        (Qeq_le (peval_fpow_succ c hc ρ hρd m M)) ?_
+      refine Qle_trans (Qmul_den_pos (peval_den_pos hc hρd M) (peval_den_pos (fpow_den_pos hc m) hρd M))
+        (Qsub_le_self hcorner_nonneg) ?_
+      exact Qmul_le_mul_left (peval_num_nonneg hc0 ρ hρ0 M) (peval_fpow_le_pow c hc hc0 ρ hρd hρ0 M m)
 
 /-- `0·x = 0`. -/
 theorem mul_left_zero (x : Q) : Qeq (mul ⟨0, 1⟩ x) ⟨0, 1⟩ := by simp [Qeq, mul]
