@@ -2979,4 +2979,21 @@ theorem sq_le_four_pow : ∀ M : Nat, (M + 1) * (M + 1) ≤ 4 ^ M
       | succ k ih => rw [Nat.pow_succ]; omega
     omega
 
+/-- **Corner-sum bound** (carrying the `(1−2ρ)` factor): `(Σ_{j≤2N+1}|corner_j|)·(1−2ρ) ≤
+    Σ_{j≤2N+1} (2N+2)·2·4ʲ·(2ρ)^{2N+2}` — via `Fsum_mul_const_right` to factor `(1−2ρ)` out, then
+    `corner_bound` termwise. -/
+theorem corner_sum_bound (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (hwd : 0 < w.den)
+    (hw : Qle (Qabs w) ρ) (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num) (N : Nat) :
+    Qle (mul (Fsum (fun j => Qabs (kcorner w j (2 * N + 1))) (2 * N + 1))
+          (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))
+      (Fsum (fun j => Fsum (fun _ => mul (⟨2 * (4 : Int) ^ j, 1⟩ : Q)
+        (qpow (mul ⟨2, 1⟩ ρ) (2 * N + 2))) (2 * N + 1)) (2 * N + 1)) := by
+  have hcd : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).den :=
+    Qsub_den_pos Nat.one_pos (Qmul_den_pos Nat.one_pos hρd)
+  have ha : ∀ j, 0 < (Qabs (kcorner w j (2 * N + 1))).den :=
+    fun j => Qabs_den_pos (kcorner_den w hwd j _)
+  refine Qle_trans (Fsum_den_pos (fun j => Qmul_den_pos (ha j) hcd) (2 * N + 1))
+    (Qeq_le (Fsum_mul_const_right hcd ha (2 * N + 1))) ?_
+  exact Fsum_le_congr (fun j _ => corner_bound ρ w hρd hρ0 hwd hw h2ρ j (2 * N + 1))
+
 end UOR.Bridge.F1Square.Analysis
