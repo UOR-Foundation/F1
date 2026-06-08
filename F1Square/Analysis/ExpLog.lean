@@ -2180,6 +2180,32 @@ theorem fpow_kdbl_term_bound (ρ : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) 
     (Qmul_congr (Qeq_refl _) (Qeq_trans (Qmul_den_pos (qpow_den_pos (by decide) k) (qpow_den_pos hρd k))
       (Qmul_congr (Qeq_symm (qpow_two_nat k)) (Qeq_refl _)) (Qeq_symm (qpow_mul ⟨2, 1⟩ ρ (by decide) hρd k)))))
 
+/-- **The Cauchy gap for `kdblᵐ` evaluation**: for `|w| ≤ ρ`, `M ≤ M'`, the partial-sum gap of
+    `peval(kdblᵐ, w, ·)` is dominated by the geometric gap `Σ 4ᵐ(2ρ)ᵏ`. -/
+theorem peval_kdbl_pow_gap (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (hwd : 0 < w.den)
+    (hw : Qle (Qabs w) ρ) (m : Nat) {M M' : Nat} (hMM : M ≤ M') :
+    Qle (Qabs (Qsub (peval (fpow kdbl m) w M') (peval (fpow kdbl m) w M)))
+      (Qsub (Fsum (fun k => mul (⟨(4 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) k)) M')
+            (Fsum (fun k => mul (⟨(4 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) k)) M)) :=
+  Fsum_abs_diff_le
+    (fun k => Qmul_den_pos (fpow_den_pos (fun i => kdbl_den i) m k) (qpow_den_pos hwd k))
+    (fun k => Qmul_den_pos Nat.one_pos (qpow_den_pos (Qmul_den_pos (by decide) hρd) k))
+    (fun k => Qle_trans (Qmul_den_pos (Qabs_den_pos (fpow_den_pos (fun i => kdbl_den i) m k))
+        (Qabs_den_pos (qpow_den_pos hwd k)))
+      (Qeq_le (by rw [Qabs_mul]; exact Qeq_refl _ : Qeq (Qabs (mul (fpow kdbl m k) (qpow w k)))
+        (mul (Qabs (fpow kdbl m k)) (Qabs (qpow w k)))))
+      (Qle_trans (Qmul_den_pos (fpow_den_pos (fun i => fabs_den_pos (fun j => kdbl_den j) i) m k)
+          (qpow_den_pos hρd k))
+        (Qmul_le_mul (Qabs_den_pos (fpow_den_pos (fun i => kdbl_den i) m k))
+          (fpow_den_pos (fun i => fabs_den_pos (fun j => kdbl_den j) i) m k)
+          (Qabs_den_pos (qpow_den_pos hwd k))
+          (Qabs_num_nonneg _) (Qabs_num_nonneg _)
+          (fpow_abs_dom kdbl (fun i => kdbl_den i) m k)
+          (Qle_trans (qpow_den_pos (Qabs_den_pos hwd) k) (Qeq_le (qpow_abs w k))
+            (qpow_base_mono (Qabs_den_pos hwd) hρd (Qabs_num_nonneg w) hw k)))
+        (fpow_kdbl_term_bound ρ hρd hρ0 m k)))
+    hMM
+
 /-- Per-term geometric telescope: `ρ^{2N+1}·(1−ρ²) = ρ^{2N+1} − ρ^{2N+3}`. -/
 theorem geoTerm_tel (ρ : Q) (hρd : 0 < ρ.den) (N : Nat) :
     Qeq (mul (geoTerm ρ N) (Qsub ⟨1, 1⟩ (mul ρ ρ)))
