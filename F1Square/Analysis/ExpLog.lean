@@ -3195,4 +3195,16 @@ theorem qpow_double (x : Q) (hxd : 0 < x.den) :
       (Qmul_congr (Qeq_refl x) (Qmul_congr (Qeq_refl x) (qpow_double x hxd N)))
       (Qeq_symm (Qmul_assoc x x (qpow (mul x x) N)))
 
+/-- **`qpow` is antitone in the exponent** for `0 ≤ η ≤ 1`: `qpow η (a+d) ≤ qpow η a`. -/
+theorem qpow_mono_exp {η : Q} (hη0 : 0 ≤ η.num) (hηd : 0 < η.den) (hη1 : Qle η ⟨1, 1⟩) :
+    ∀ a d, Qle (qpow η (a + d)) (qpow η a)
+  | a, 0 => Qle_refl _
+  | a, (d + 1) => by
+    have ih := qpow_mono_exp hη0 hηd hη1 a d
+    show Qle (mul η (qpow η (a + d))) (qpow η a)
+    refine Qle_trans (qpow_den_pos hηd (a + d))
+      (Qle_trans (Qmul_den_pos Nat.one_pos (qpow_den_pos hηd (a + d)))
+        (Qmul_le_mul_right (qpow_nonneg hη0 (a + d)) hη1)
+        (Qeq_le (Qone_mul _))) ih
+
 end UOR.Bridge.F1Square.Analysis
