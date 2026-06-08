@@ -2277,6 +2277,25 @@ theorem peval_kdbl_pow_cauchy (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.nu
   exact Qmul_le_mul_left (by show (0 : Int) ≤ (4 : Int) ^ m; exact_mod_cast Nat.zero_le (4 ^ m))
     (gPow_gap_le (mul ⟨2, 1⟩ ρ) hr0 hrd hMM)
 
+/-- The `i`-th inner gap of the `peval_fpow_succ` corner factors as `(kdbl_i·wⁱ)·(p_m gap)`. -/
+theorem corner_inner_eq (w : Q) (hwd : 0 < w.den) (m M i : Nat) :
+    Qeq (Qsub (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) M)
+              (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) (M - i)))
+      (mul (mul (kdbl i) (qpow w i))
+        (Qsub (peval (fpow kdbl m) w M) (peval (fpow kdbl m) w (M - i)))) := by
+  have hC : 0 < (mul (kdbl i) (qpow w i)).den := Qmul_den_pos (kdbl_den i) (qpow_den_pos hwd i)
+  have hterm : ∀ N, Qeq (Fsum (fun j => mul (mul (kdbl i) (qpow w i))
+        (mul (fpow kdbl m j) (qpow w j))) N)
+      (mul (mul (kdbl i) (qpow w i)) (peval (fpow kdbl m) w N)) :=
+    fun N => Fsum_mul_left hC
+      (fun j => Qmul_den_pos (fpow_den_pos (fun l => kdbl_den l) m j) (qpow_den_pos hwd j)) N
+  exact Qeq_trans (Qsub_den_pos
+      (Qmul_den_pos hC (peval_den_pos (fpow_den_pos (fun l => kdbl_den l) m) hwd M))
+      (Qmul_den_pos hC (peval_den_pos (fpow_den_pos (fun l => kdbl_den l) m) hwd (M - i))))
+    (Qsub_congr (hterm M) (hterm (M - i)))
+    (Qeq_symm (Qmul_sub_left_loc (mul (kdbl i) (qpow w i))
+      (peval (fpow kdbl m) w M) (peval (fpow kdbl m) w (M - i))))
+
 /-- Per-term geometric telescope: `ρ^{2N+1}·(1−ρ²) = ρ^{2N+1} − ρ^{2N+3}`. -/
 theorem geoTerm_tel (ρ : Q) (hρd : 0 < ρ.den) (N : Nat) :
     Qeq (mul (geoTerm ρ N) (Qsub ⟨1, 1⟩ (mul ρ ρ)))

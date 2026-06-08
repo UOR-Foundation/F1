@@ -956,3 +956,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Qmul_sub_left_loc
 #print axioms Analysis.peval_kdbl_pow_cauchy
 #print axioms Analysis.peval_kdbl_pow_abs_le
+#print axioms Analysis.corner_inner_eq
