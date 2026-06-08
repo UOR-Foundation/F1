@@ -408,6 +408,25 @@ theorem peval_smul (c : Q) (hcd : 0 < c.den) (a : Nat → Q) (ha : ∀ k, 0 < (a
     (Fsum_congr (fun k => Qmul_assoc c (a k) (qpow w k)) M)
     (Fsum_mul_left hcd (fun k => Qmul_den_pos (ha k) (qpow_den_pos hwd k)) M)
 
+/-- **Termwise sum monotonicity**: `f ≤ g` coordinatewise ⇒ `Σf ≤ Σg`. -/
+theorem Fsum_le_Fsum {f g : Nat → Q} (h : ∀ i, Qle (f i) (g i)) : ∀ M, Qle (Fsum f M) (Fsum g M)
+  | 0 => h 0
+  | (M + 1) => Qadd_le_add (Fsum_le_Fsum h M) (h (M + 1))
+
+/-- **Geometric bound on evaluation**: if `|cₖ| ≤ B` and `|w| ≤ ρ`, then `|eval c w M| ≤ Σ_{k≤M} B·ρᵏ`. -/
+theorem peval_abs_bound (c : Nat → Q) (hc : ∀ k, 0 < (c k).den) (w : Q) (hwd : 0 < w.den)
+    {B ρ : Q} (hBd : 0 < B.den) (hρd : 0 < ρ.den) (hB : ∀ k, Qle (Qabs (c k)) B)
+    (hw : Qle (Qabs w) ρ) (M : Nat) :
+    Qle (Qabs (peval c w M)) (Fsum (fun k => mul B (qpow ρ k)) M) := by
+  refine Qle_trans (Fsum_den_pos (fun k => Qabs_den_pos (Qmul_den_pos (hc k) (qpow_den_pos hwd k))) M)
+    (Fsum_abs_le (fun k => Qmul_den_pos (hc k) (qpow_den_pos hwd k)) M) ?_
+  refine Fsum_le_Fsum (fun k => ?_) M
+  rw [Qabs_mul]
+  exact Qmul_le_mul (Qabs_den_pos (hc k)) hBd (Qabs_den_pos (qpow_den_pos hwd k))
+    (Qabs_num_nonneg _) (Qabs_num_nonneg _) (hB k)
+    (Qle_trans (qpow_den_pos (Qabs_den_pos hwd) k) (Qeq_le (qpow_abs w k))
+      (qpow_base_mono (Qabs_den_pos hwd) hρd (Qabs_num_nonneg w) hw k))
+
 /-- **The target side**: the geometric-coefficient evaluation is `2·(Σ_{k≤N} wᵏ) − 1`. With
     `gPow_telescope` this gives `peval dgeom w N · (1−w) → (1+w)` — the closed form `(1+w)/(1−w)`. -/
 theorem peval_dgeom (w : Q) (hwd : 0 < w.den) :

@@ -918,3 +918,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.mul_left_zero
 #print axioms Analysis.mul_right_zero
 #print axioms Analysis.peval_fcomp_swap
+#print axioms Analysis.Fsum_le_Fsum
+#print axioms Analysis.peval_abs_bound
