@@ -1355,6 +1355,76 @@ theorem fmul_add_right {a b c : Nat → Q} (ha : ∀ i, 0 < (a i).den) (hb : ∀
     (fmul_add_left hb hc ha k) ?_
   exact Qadd_congr (fmul_comm b a hb ha k) (fmul_comm c a hc ha k)
 
+/-- `(1+t²)·2 = 2 + 2t²` (`= twoFone + 2t²`). -/
+theorem oneplusSq_twoFone : ∀ m, Qeq (fmul oneplusSq twoFone m) (add (twoFone m) (fsmono ⟨2, 1⟩ 2 m))
+  | 0 => Qeq_trans (twoFone_den 0) (oneplusSq_eval0 twoFone (fun i => twoFone_den i)) (by decide)
+  | 1 => Qeq_trans (twoFone_den 1) (oneplusSq_eval1 twoFone (fun i => twoFone_den i)) (by decide)
+  | 2 => Qeq_trans (add_den_pos (twoFone_den 2) (twoFone_den 0))
+      (oneplusSq_eval2 twoFone (fun i => twoFone_den i) 0) (by decide)
+  | (j + 3) => by
+      refine Qeq_trans (add_den_pos (twoFone_den (j + 3)) (twoFone_den (j + 1)))
+        (oneplusSq_eval2 twoFone (fun i => twoFone_den i) (j + 1)) ?_
+      have h2 : Qeq (twoFone (j + 1)) (fsmono (⟨2, 1⟩ : Q) 2 (j + 3)) := by
+        have ha : twoFone (j + 1) = ⟨0, 1⟩ := by unfold twoFone; rw [if_neg (by omega)]
+        have hb : fsmono (⟨2, 1⟩ : Q) 2 (j + 3) = ⟨0, 1⟩ := by unfold fsmono; rw [if_neg (by omega)]
+        rw [ha, hb]; exact Qeq_refl _
+      exact Qadd_congr (Qeq_refl _) h2
+
+/-- From `kdbl_deriv_rel`: `(1+t²)·k' = 2 − 2t·k` in sequence form. -/
+theorem oneplusSq_kderiv (m : Nat) :
+    Qeq (fmul oneplusSq (fderiv kdbl) m) (Qsub (twoFone m) (fmul twoT kdbl m)) := by
+  have hr : Qeq (fmul oneplusSq (fderiv kdbl) m)
+      (Qsub (add (fmul twoT kdbl m) (fmul oneplusSq (fderiv kdbl) m)) (fmul twoT kdbl m)) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  refine Qeq_trans (Qsub_den_pos (add_den_pos (fmul_den_pos (fun i => twoT_den i) (fun _ => kdbl_den _) m)
+      (fmul_den_pos (fun i => oneplusSq_den i) (fun i => fderiv_den_pos (fun _ => kdbl_den _) i) m))
+      (fmul_den_pos (fun i => twoT_den i) (fun _ => kdbl_den _) m)) hr ?_
+  exact Qsub_congr (kdbl_deriv_rel m) (Qeq_refl _)
+
+/-- **The `kdbl²` identity, internal form**: `k' + t·k + k² = 2` (`fmul_oneplusSq_cancel` of
+    `(1+t²)(k'+t·k+k²) = 2(1+t²)`, the latter from the three sub-identities). -/
+theorem kdbl_W (k : Nat) :
+    Qeq (add (fderiv kdbl k) (add (fmul (fmono 1) kdbl k) (fmul kdbl kdbl k))) (twoFone k) := by
+  have htk : ∀ i, 0 < (fmul (fmono 1) kdbl i).den :=
+    fun i => fmul_den_pos (fun j => fmono_den 1 j) (fun _ => kdbl_den _) i
+  have hksq : ∀ i, 0 < (fmul kdbl kdbl i).den :=
+    fun i => fmul_den_pos (fun _ => kdbl_den _) (fun _ => kdbl_den _) i
+  have hk' : ∀ i, 0 < (fderiv kdbl i).den := fun i => fderiv_den_pos (fun _ => kdbl_den _) i
+  refine fmul_oneplusSq_cancel
+    (fun i => add_den_pos (hk' i) (add_den_pos (htk i) (hksq i))) (fun i => twoFone_den i) ?_ k
+  intro m
+  -- distribute (1+t²) over W = k' + (t·k + k²)
+  have hdist : Qeq (fmul oneplusSq
+        (fun i => add (fderiv kdbl i) (add (fmul (fmono 1) kdbl i) (fmul kdbl kdbl i))) m)
+      (add (fmul oneplusSq (fderiv kdbl) m)
+        (add (fmul oneplusSq (fmul (fmono 1) kdbl) m) (fmul oneplusSq (fmul kdbl kdbl) m))) := by
+    refine Qeq_trans (add_den_pos (fmul_den_pos (fun i => oneplusSq_den i) hk' m)
+        (fmul_den_pos (fun i => oneplusSq_den i) (fun i => add_den_pos (htk i) (hksq i)) m))
+      (fmul_add_right (fun i => oneplusSq_den i) hk' (fun i => add_den_pos (htk i) (hksq i)) m) ?_
+    exact Qadd_congr (Qeq_refl _) (fmul_add_right (fun i => oneplusSq_den i) htk hksq m)
+  -- substitute the three relations
+  have hsub : Qeq (add (fmul oneplusSq (fderiv kdbl) m)
+        (add (fmul oneplusSq (fmul (fmono 1) kdbl) m) (fmul oneplusSq (fmul kdbl kdbl) m)))
+      (add (Qsub (twoFone m) (fmul twoT kdbl m))
+        (add (fsmono ⟨2, 1⟩ 2 m) (fmul twoT kdbl m))) :=
+    Qadd_congr (oneplusSq_kderiv m) (Qadd_congr (tk_rel m) (ksq_rel m))
+  -- the ±(2t·k) cancel: (C − A) + (B + A) = C + B = 2 + 2t²
+  have hcancel : Qeq (add (Qsub (twoFone m) (fmul twoT kdbl m))
+        (add (fsmono ⟨2, 1⟩ 2 m) (fmul twoT kdbl m)))
+      (add (twoFone m) (fsmono ⟨2, 1⟩ 2 m)) := by
+    simp only [Qeq, add, Qsub, neg]; push_cast; ring_uor
+  -- chain: (1+t²)W ≈ 2+2t² ≈ (1+t²)·2
+  refine Qeq_trans (add_den_pos (fmul_den_pos (fun i => oneplusSq_den i) hk' m)
+      (add_den_pos (fmul_den_pos (fun i => oneplusSq_den i) htk m)
+        (fmul_den_pos (fun i => oneplusSq_den i) hksq m))) hdist ?_
+  refine Qeq_trans (add_den_pos (Qsub_den_pos (twoFone_den m)
+        (fmul_den_pos (fun i => twoT_den i) (fun _ => kdbl_den _) m))
+      (add_den_pos (fsmono_den (c := ⟨2, 1⟩) Nat.one_pos 2 m)
+        (fmul_den_pos (fun i => twoT_den i) (fun _ => kdbl_den _) m))) hsub ?_
+  refine Qeq_trans (add_den_pos (twoFone_den m) (fsmono_den (c := ⟨2, 1⟩) Nat.one_pos 2 m))
+    hcancel ?_
+  exact Qeq_symm (oneplusSq_twoFone m)
+
 /-- **The artanh ODE** `(1−t²)·artanh' = 1` at the coefficient level. -/
 theorem artanh_ode (k : Nat) : Qeq (fmul oneMinusSq gcoef k) (fone k) :=
   Qeq_trans (add_den_pos (fmul_den_pos (fun i => fsmono_den Nat.one_pos 0 i) (fun _ => gcoef_den _) k)

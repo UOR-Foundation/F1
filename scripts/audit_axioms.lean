@@ -884,3 +884,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fmono1_twoT
 #print axioms Analysis.tk_rel
 #print axioms Analysis.fmul_add_right
+#print axioms Analysis.oneplusSq_twoFone
+#print axioms Analysis.oneplusSq_kderiv
+#print axioms Analysis.kdbl_W
