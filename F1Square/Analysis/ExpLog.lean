@@ -1743,4 +1743,70 @@ theorem artanh_ode (k : Nat) : Qeq (fmul oneMinusSq gcoef k) (fone k) :=
       (fun _ => gcoef_den _) k)
     (artanh_main k)
 
+/-- The `2·artanh` side of the ODE: `(1−t²)·(2·artanh)' = 2`. -/
+theorem twoacoef_ode (j : Nat) :
+    Qeq (fmul oneMinusSq (fderiv (fun i => mul ⟨2, 1⟩ (acoef i))) j) (twoFone j) := by
+  have hd2 : ∀ l, Qeq (fderiv (fun i => mul ⟨2, 1⟩ (acoef i)) l) (mul ⟨2, 1⟩ (gcoef l)) := by
+    intro l
+    show Qeq (mul ⟨(l + 1 : Int), 1⟩ (mul ⟨2, 1⟩ (acoef (l + 1)))) (mul ⟨2, 1⟩ (gcoef l))
+    refine Qeq_trans (Qmul_den_pos Nat.one_pos (Qmul_den_pos Nat.one_pos (acoef_den (l + 1)))) ?_
+      (Qmul_congr (Qeq_refl _) (fderiv_acoef l))
+    show Qeq (mul ⟨(l + 1 : Int), 1⟩ (mul ⟨2, 1⟩ (acoef (l + 1))))
+      (mul ⟨2, 1⟩ (mul ⟨(l + 1 : Int), 1⟩ (acoef (l + 1))))
+    simp only [Qeq, mul]; push_cast; ring_uor
+  refine Qeq_trans (fmul_den_pos (fun i => oneMinusSq_den i)
+      (fun i => Qmul_den_pos Nat.one_pos (gcoef_den i)) j) (fmul_congr_right (fun l => hd2 l) j) ?_
+  refine Qeq_trans (Qmul_den_pos Nat.one_pos (fmul_den_pos (fun i => oneMinusSq_den i)
+      (fun i => gcoef_den i) j)) (fmul_smul_right oneMinusSq gcoef ⟨2, 1⟩ Nat.one_pos
+      (fun i => oneMinusSq_den i) (fun i => gcoef_den i) j) ?_
+  refine Qeq_trans (Qmul_den_pos Nat.one_pos (fone_den_pos j))
+    (Qmul_congr (Qeq_refl _) (artanh_ode j)) ?_
+  exact Qeq_symm (twoFone_2fone j)
+
+/-- The `artanh∘kdbl` side of the ODE: `(1−t²)·(artanh∘kdbl)' = 2` (chain rule + `kdbl_sq_id` +
+    `comp_recip`). -/
+theorem fcomp_acoef_ode (j : Nat) :
+    Qeq (fmul oneMinusSq (fderiv (fcomp acoef kdbl)) j) (twoFone j) := by
+  have hgk : ∀ i, 0 < (fcomp gcoef kdbl i).den :=
+    fun i => fcomp_den_pos (fun m => gcoef_den m) (fun m => kdbl_den m) i
+  have hkd : ∀ i, 0 < (fderiv kdbl i).den := fun i => fderiv_den_pos (fun m => kdbl_den m) i
+  have h1k : ∀ i, 0 < (Qsub (fone i) (fmul kdbl kdbl i)).den :=
+    fun i => Qsub_den_pos (fone_den_pos i) (fmul_den_pos (fun m => kdbl_den m) (fun m => kdbl_den m) i)
+  have hsq : ∀ i, 0 < (mul ⟨(2 : Int), 1⟩ (Qsub (fone i) (fmul kdbl kdbl i))).den :=
+    fun i => Qmul_den_pos Nat.one_pos (h1k i)
+  have hchain : ∀ l, Qeq (fderiv (fcomp acoef kdbl) l) (fmul (fcomp gcoef kdbl) (fderiv kdbl) l) :=
+    fun l => Qeq_trans (fmul_den_pos (fun i => fcomp_den_pos
+        (fun m => fderiv_den_pos (fun p => acoef_den p) m) (fun m => kdbl_den m) i) hkd l)
+      (fcomp_chain acoef kdbl (fun m => acoef_den m) (fun m => kdbl_den m) kdbl_zero l)
+      (fmul_congr_left (fun i => fcomp_congr_left (fun m => fderiv_acoef m) i) l)
+  refine Qeq_trans (fmul_den_pos (fun i => oneMinusSq_den i) (fun i => fmul_den_pos hgk hkd i) j)
+    (fmul_congr_right (fun l => hchain l) j) ?_
+  refine Qeq_trans (fmul_den_pos hgk (fun i => fmul_den_pos (fun m => oneMinusSq_den m) hkd i) j)
+    (fmul_swap_left oneMinusSq (fcomp gcoef kdbl) (fderiv kdbl) (fun m => oneMinusSq_den m) hgk hkd j) ?_
+  refine Qeq_trans (fmul_den_pos hgk hsq j) (fmul_congr_right (fun l => kdbl_sq_id l) j) ?_
+  refine Qeq_trans (Qmul_den_pos Nat.one_pos (fmul_den_pos hgk h1k j))
+    (fmul_smul_right (fcomp gcoef kdbl) (fun i => Qsub (fone i) (fmul kdbl kdbl i)) ⟨2, 1⟩
+      Nat.one_pos hgk h1k j) ?_
+  refine Qeq_trans (Qmul_den_pos Nat.one_pos (fone_den_pos j)) (Qmul_congr (Qeq_refl _)
+    (Qeq_trans (fmul_den_pos h1k hgk j) (fmul_comm (fcomp gcoef kdbl)
+      (fun i => Qsub (fone i) (fmul kdbl kdbl i)) hgk h1k j) (comp_recip j))) ?_
+  exact Qeq_symm (twoFone_2fone j)
+
+/-- **THE FORMAL DOUBLING** `artanh∘kdbl = 2·artanh` (as coefficient sequences). Both sides solve the
+    formal ODE `(1−t²)y'=2` with `y(0)=0`, so they are equal by `fderiv_inj` + the `(1−t²)` cancellation. -/
+theorem formal_doubling (k : Nat) :
+    Qeq (fcomp acoef kdbl k) (mul ⟨2, 1⟩ (acoef k)) := by
+  refine fderiv_inj (y := fcomp acoef kdbl) (z := fun i => mul ⟨2, 1⟩ (acoef i)) (fun m => ?_) ?_ k
+  · exact fmul_oneMinusSq_cancel (X := fderiv (fcomp acoef kdbl))
+      (Y := fderiv (fun i => mul ⟨2, 1⟩ (acoef i)))
+      (fun i => fderiv_den_pos (fun p => fcomp_den_pos
+        (fun q => acoef_den q) (fun q => kdbl_den q) p) i)
+      (fun i => fderiv_den_pos (fun p => Qmul_den_pos Nat.one_pos (acoef_den p)) i)
+      (fun j => Qeq_trans (twoFone_den j) (fcomp_acoef_ode j) (Qeq_symm (twoacoef_ode j))) m
+  · refine Qeq_trans (Qmul_den_pos (acoef_den 0) (fpow_den_pos (fun m => kdbl_den m) 0 0))
+      (fcomp_const acoef kdbl) ?_
+    show Qeq (acoef 0) (mul ⟨2, 1⟩ (acoef 0))
+    have h00 : acoef 0 = ⟨0, 1⟩ := by decide
+    rw [h00]; decide
+
 end UOR.Bridge.F1Square.Analysis

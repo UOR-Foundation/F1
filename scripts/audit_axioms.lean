@@ -906,3 +906,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fcomp_gcoef_geoEven
 #print axioms Analysis.comp_recip
 #print axioms Analysis.fderiv_inj
+#print axioms Analysis.twoacoef_ode
+#print axioms Analysis.fcomp_acoef_ode
+#print axioms Analysis.formal_doubling
