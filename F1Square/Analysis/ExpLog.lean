@@ -2367,6 +2367,22 @@ theorem peval_fabs_kdbl_geoSum (ρ : Q) (hρd : 0 < ρ.den) (N : Nat) :
         (Qadd_congr (Qadd_zero_right _) (Qeq_refl _)) ?_
       exact Qeq_symm (Qmul_add_left ⟨2, 1⟩ (geoSum ρ N) (geoTerm ρ (N + 1)))
 
+/-- **Uniform power bound**: `|peval(kdblᵐ, w, M)| ≤ (2·geoSum ρ M)ᵐ` for `|w| ≤ ρ` (the `M`-uniform
+    geometric bound `≤ σᵐ` once `2·geoSum ρ M ≤ σ`). -/
+theorem peval_kdbl_pow_abs_le (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (hwd : 0 < w.den)
+    (hw : Qle (Qabs w) ρ) (m M : Nat) :
+    Qle (Qabs (peval (fpow kdbl m) w M)) (qpow (mul ⟨2, 1⟩ (geoSum ρ M)) m) := by
+  refine Qle_trans (qpow_den_pos (peval_den_pos (fun k => fabs_den_pos (fun i => kdbl_den i) k) hρd M) m)
+    (peval_fpow_abs_bound kdbl (fun i => kdbl_den i) w hwd hρd hρ0 hw m M) ?_
+  refine qpow_base_mono (peval_den_pos (fun k => fabs_den_pos (fun i => kdbl_den i) k) hρd M)
+    (Qmul_den_pos (by decide) (geoSum_den_pos hρd M))
+    (peval_num_nonneg (fun k => fabs_nonneg kdbl k) ρ hρ0 M) ?_ m
+  exact Qle_trans (peval_den_pos (fun k => fabs_den_pos (fun i => kdbl_den i) k) hρd (2 * M + 1))
+    (Fsum_mono_len (fun i => Qmul_num_nonneg (fabs_nonneg kdbl i) (qpow_nonneg hρ0 i))
+      (fun i => Qmul_den_pos (fabs_den_pos (fun j => kdbl_den j) i) (qpow_den_pos hρd i))
+      (by omega : M ≤ 2 * M + 1))
+    (Qeq_le (peval_fabs_kdbl_geoSum ρ hρd M))
+
 /-- **The composed-series evaluation IS twice the artanh sum** (formal_doubling, evaluated): the formal
     series `artanh∘kdbl`, evaluated at `w` and truncated at `2N+1`, equals `2·artSum w N`. This carries
     `formal_doubling` to the analytic `artSum` side; combined with the composition eval bridge
