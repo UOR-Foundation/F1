@@ -959,3 +959,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.corner_inner_eq
 #print axioms Analysis.Qle_rho_two_rho
 #print axioms Analysis.qpow_conv_le
+#print axioms Analysis.mul_rearrange
+#print axioms Analysis.Qabs_C_le
+#print axioms Analysis.corner_term_le

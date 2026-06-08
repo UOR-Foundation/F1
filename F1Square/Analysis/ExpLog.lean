@@ -2296,6 +2296,21 @@ theorem qpow_conv_le (ρ : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (i M : N
   rw [← hexp]
   exact Qeq_symm (qpow_add (mul ⟨2, 1⟩ ρ) h2d i (M - i + 1))
 
+/-- Product rearrange `(a·b)·(c·d) = (a·c)·(b·d)`. -/
+theorem mul_rearrange (a b c d : Q) : Qeq (mul (mul a b) (mul c d)) (mul (mul a c) (mul b d)) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
+/-- `|kdbl_i·wⁱ| ≤ 2·ρⁱ` for `|w| ≤ ρ`. -/
+theorem Qabs_C_le (ρ w : Q) (hρd : 0 < ρ.den) (hwd : 0 < w.den) (hw : Qle (Qabs w) ρ) (i : Nat) :
+    Qle (Qabs (mul (kdbl i) (qpow w i))) (mul ⟨2, 1⟩ (qpow ρ i)) := by
+  refine Qle_trans (Qmul_den_pos (Qabs_den_pos (kdbl_den i)) (Qabs_den_pos (qpow_den_pos hwd i)))
+    (Qeq_le (by rw [Qabs_mul]; exact Qeq_refl _ :
+      Qeq (Qabs (mul (kdbl i) (qpow w i))) (mul (Qabs (kdbl i)) (Qabs (qpow w i)))))
+    (Qmul_le_mul (Qabs_den_pos (kdbl_den i)) (by decide) (Qabs_den_pos (qpow_den_pos hwd i))
+      (Qabs_num_nonneg _) (Qabs_num_nonneg _) (fabs_kdbl_le2 i)
+      (Qle_trans (qpow_den_pos (Qabs_den_pos hwd) i) (Qeq_le (qpow_abs w i))
+        (qpow_base_mono (Qabs_den_pos hwd) hρd (Qabs_num_nonneg w) hw i)))
+
 /-- The `i`-th inner gap of the `peval_fpow_succ` corner factors as `(kdbl_i·wⁱ)·(p_m gap)`. -/
 theorem corner_inner_eq (w : Q) (hwd : 0 < w.den) (m M i : Nat) :
     Qeq (Qsub (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) M)
@@ -2314,6 +2329,52 @@ theorem corner_inner_eq (w : Q) (hwd : 0 < w.den) (m M i : Nat) :
     (Qsub_congr (hterm M) (hterm (M - i)))
     (Qeq_symm (Qmul_sub_left_loc (mul (kdbl i) (qpow w i))
       (peval (fpow kdbl m) w M) (peval (fpow kdbl m) w (M - i))))
+
+/-- **Per-`i` corner term bound**: `|inner_i|·(1−2ρ) ≤ 2·4ᵐ·(2ρ)^{M+1}` for `i ≤ M`. -/
+theorem corner_term_le (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (hwd : 0 < w.den)
+    (hw : Qle (Qabs w) ρ) (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num) (m M i : Nat) (hiM : i ≤ M) :
+    Qle (mul (Qabs (Qsub
+          (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) M)
+          (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) (M - i))))
+          (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))
+      (mul (⟨2 * (4 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1))) := by
+  have hpd : ∀ N, 0 < (peval (fpow kdbl m) w N).den :=
+    fun N => peval_den_pos (fpow_den_pos (fun l => kdbl_den l) m) hwd N
+  have hC : 0 < (mul (kdbl i) (qpow w i)).den := Qmul_den_pos (kdbl_den i) (qpow_den_pos hwd i)
+  have hgap : 0 < (Qsub (peval (fpow kdbl m) w M) (peval (fpow kdbl m) w (M - i))).den :=
+    Qsub_den_pos (hpd M) (hpd (M - i))
+  have h2d : 0 < (mul (⟨2, 1⟩ : Q) ρ).den := Qmul_den_pos (by decide) hρd
+  have hwd1 : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).den := Qsub_den_pos Nat.one_pos h2d
+  have h4n : (0 : Int) ≤ (4 : Int) ^ m := by exact_mod_cast Nat.zero_le (4 ^ m)
+  have hRHSn : 0 ≤ (mul (⟨(4 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M - i + 1))).num :=
+    Qmul_num_nonneg h4n (qpow_nonneg (Qmul_num_nonneg (by decide) hρ0) _)
+  have heq : Qeq (Qabs (Qsub
+        (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) M)
+        (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) (M - i))))
+      (mul (Qabs (mul (kdbl i) (qpow w i)))
+        (Qabs (Qsub (peval (fpow kdbl m) w M) (peval (fpow kdbl m) w (M - i))))) :=
+    Qeq_trans (Qabs_den_pos (Qmul_den_pos hC hgap)) (Qabs_Qeq (corner_inner_eq w hwd m M i))
+      (by rw [Qabs_mul]; exact Qeq_refl _)
+  refine Qle_trans (Qmul_den_pos (Qmul_den_pos (Qabs_den_pos hC) (Qabs_den_pos hgap)) hwd1)
+    (Qeq_le (Qmul_congr heq (Qeq_refl _))) ?_
+  refine Qle_trans (Qmul_den_pos (Qabs_den_pos hC) (Qmul_den_pos (Qabs_den_pos hgap) hwd1))
+    (Qeq_le (Qmul_assoc (Qabs (mul (kdbl i) (qpow w i)))
+      (Qabs (Qsub (peval (fpow kdbl m) w M) (peval (fpow kdbl m) w (M - i))))
+      (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))) ?_
+  refine Qle_trans (Qmul_den_pos (Qabs_den_pos hC) (Qmul_den_pos Nat.one_pos (qpow_den_pos h2d _)))
+    (Qmul_le_mul_left (Qabs_num_nonneg _)
+      (peval_kdbl_pow_cauchy ρ w hρd hρ0 hwd hw h2ρ m (M := M - i) (M' := M) (by omega))) ?_
+  refine Qle_trans (Qmul_den_pos (Qmul_den_pos (by decide) (qpow_den_pos hρd i))
+      (Qmul_den_pos Nat.one_pos (qpow_den_pos h2d _)))
+    (Qmul_le_mul_right hRHSn (Qabs_C_le ρ w hρd hwd hw i)) ?_
+  refine Qle_trans (Qmul_den_pos (Qmul_den_pos (by decide) Nat.one_pos)
+      (Qmul_den_pos (qpow_den_pos hρd i) (qpow_den_pos h2d _)))
+    (Qeq_le (mul_rearrange ⟨2, 1⟩ (qpow ρ i) ⟨(4 : Int) ^ m, 1⟩ (qpow (mul ⟨2, 1⟩ ρ) (M - i + 1)))) ?_
+  refine Qle_trans (Qmul_den_pos Nat.one_pos (Qmul_den_pos (qpow_den_pos hρd i) (qpow_den_pos h2d _)))
+    (Qeq_le (Qmul_congr (by simp [Qeq, mul] :
+      Qeq (mul (⟨2, 1⟩ : Q) ⟨(4 : Int) ^ m, 1⟩) ⟨2 * (4 : Int) ^ m, 1⟩) (Qeq_refl _))) ?_
+  exact Qmul_le_mul_left (by show (0 : Int) ≤ 2 * (4 : Int) ^ m; omega)
+    (qpow_conv_le ρ hρd hρ0 i M hiM)
 
 /-- Per-term geometric telescope: `ρ^{2N+1}·(1−ρ²) = ρ^{2N+1} − ρ^{2N+3}`. -/
 theorem geoTerm_tel (ρ : Q) (hρd : 0 < ρ.den) (N : Nat) :
