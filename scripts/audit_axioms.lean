@@ -806,3 +806,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Qmul_comm
 #print axioms Analysis.Fsum_reverse
 #print axioms Analysis.fmul_comm
+#print axioms Analysis.Qmul_assoc
+#print axioms Analysis.fmul_assoc

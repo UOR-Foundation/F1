@@ -24,6 +24,10 @@ theorem Qadd_comm (a b : Q) : Qeq (add a b) (add b a) := by simp only [Qeq, add]
 /-- Commutativity of `ℚ` multiplication (up to `≈`). -/
 theorem Qmul_comm (a b : Q) : Qeq (mul a b) (mul b a) := by simp only [Qeq, mul]; push_cast; ring_uor
 
+/-- Associativity of `ℚ` multiplication (up to `≈`). -/
+theorem Qmul_assoc (a b c : Q) : Qeq (mul (mul a b) c) (mul a (mul b c)) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
 /-- **`exp` respects Bishop equality**: `x ≈ y ⇒ exp x ≈ exp y`. The two exp diagonals are reconciled
     through a common deep depth `D = Rₓ + R_y`: depth tails on each side (`expSum_trunc_bound`,
     `RexpReal_trunc_le`) and the Lipschitz middle (`expSum_Lip_le`, `LipS ≤ U`) with the argument gap
@@ -256,5 +260,34 @@ theorem fmul_comm (a b : Nat → Q) (ha : ∀ i, 0 < (a i).den) (hb : ∀ i, 0 <
   show Qeq (mul (a (k - i)) (b (k - (k - i)))) (mul (b i) (a (k - i)))
   rw [hidx]
   exact Qmul_comm (a (k - i)) (b i)
+
+/-- **Associativity of the formal Cauchy product**: `(a·b)·c ≈ a·(b·c)` — both are `Σ_{i+j+l=k} aᵢbⱼc_l`,
+    connected by the triangle/antidiagonal reindex. -/
+theorem fmul_assoc (a b c : Nat → Q) (ha : ∀ i, 0 < (a i).den) (hb : ∀ i, 0 < (b i).den)
+    (hc : ∀ i, 0 < (c i).den) (k : Nat) :
+    Qeq (fmul (fmul a b) c k) (fmul a (fmul b c) k) := by
+  have hg : ∀ i j, 0 < (mul (mul (a i) (b j)) (c (k - (i + j)))).den :=
+    fun i j => Qmul_den_pos (Qmul_den_pos (ha i) (hb j)) (hc _)
+  have hLHS : Qeq (fmul (fmul a b) c k)
+      (Fsum (fun m => Fsum (fun i => mul (mul (a i) (b (m - i))) (c (k - (i + (m - i))))) m) k) := by
+    show Qeq (Fsum (fun m => mul (Fsum (fun i => mul (a i) (b (m - i))) m) (c (k - m))) k) _
+    refine Fsum_congr_le (fun m hm => ?_)
+    refine Qeq_trans (Fsum_den_pos (fun i => Qmul_den_pos (Qmul_den_pos (ha i) (hb (m - i))) (hc (k - m))) m)
+      (Fsum_mul_const_right (hc (k - m)) (fun i => Qmul_den_pos (ha i) (hb (m - i))) m)
+      (Fsum_congr_le (fun i hi => ?_))
+    have hidx : k - (i + (m - i)) = k - m := by omega
+    rw [hidx]; exact Qeq_refl _
+  have hRHS : Qeq (fmul a (fmul b c) k)
+      (Fsum (fun i => Fsum (fun j => mul (mul (a i) (b j)) (c (k - (i + j)))) (k - i)) k) := by
+    show Qeq (Fsum (fun i => mul (a i) (Fsum (fun j => mul (b j) (c (k - i - j))) (k - i))) k) _
+    refine Fsum_congr_le (fun i hi => ?_)
+    refine Qeq_trans (Fsum_den_pos (fun j => Qmul_den_pos (ha i) (Qmul_den_pos (hb j) (hc (k - i - j)))) (k - i))
+      (Qeq_symm (Fsum_mul_left (ha i) (fun j => Qmul_den_pos (hb j) (hc (k - i - j))) (k - i)))
+      (Fsum_congr_le (fun j hj => ?_))
+    have hidx : k - i - j = k - (i + j) := by omega
+    rw [hidx]; exact Qeq_symm (Qmul_assoc (a i) (b j) (c (k - (i + j))))
+  exact Qeq_trans (Fsum_den_pos (fun m => Fsum_den_pos (fun i => hg i (m - i)) m) k) hLHS
+    (Qeq_trans (Fsum_den_pos (fun i => Fsum_den_pos (fun j => hg i j) (k - i)) k)
+      (Qeq_symm (Fsum_triangle_reindex hg k)) (Qeq_symm hRHS))
 
 end UOR.Bridge.F1Square.Analysis
