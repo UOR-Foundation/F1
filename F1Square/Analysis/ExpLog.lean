@@ -3315,4 +3315,18 @@ theorem T_pow_le (ρ : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (hρ1 : Qle 
     (Qeq_le (Qadd_4_4_8 (mul (⟨((2 * N + 1 : Nat) : Int) + 1, 1⟩ : Q)
       (qpow (mul ρ ⟨8, 1⟩) (2 * N + 2)))))
 
+/-- `2^{2N+2} = 4·4ᴺ`. -/
+theorem two_pow_2Nplus2 : ∀ N : Nat, (2 : Nat) ^ (2 * N + 2) = 4 * 4 ^ N
+  | 0 => by decide
+  | (N + 1) => by
+    have e : 2 * (N + 1) + 2 = (2 * N + 2) + 2 := by omega
+    rw [e, Nat.pow_add, two_pow_2Nplus2 N, Nat.pow_succ]
+    show (4 * 4 ^ N) * 4 = 4 * (4 ^ N * 4)
+    omega
+
+/-- `c·(8·(c·Y)) ≈ 8·((c·c)·Y)`. -/
+theorem Qmul_8rearr (c Y : Q) :
+    Qeq (mul c (mul ⟨8, 1⟩ (mul c Y))) (mul ⟨8, 1⟩ (mul (mul c c) Y)) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Analysis
