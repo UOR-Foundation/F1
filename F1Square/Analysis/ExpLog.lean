@@ -103,4 +103,44 @@ theorem RexpReal_mul_neg (y : Real) : Req (Rmul (RexpReal (Rneg y)) (RexpReal y)
   Req_trans (Req_symm (RexpReal_add (Rneg y) y))
     (Req_trans (RexpReal_congr (Req_trans (Radd_comm (Rneg y) y) (Radd_neg y))) RexpReal_zero)
 
+/-- The finite geometric sum `Σ_{k=0}^N wᵏ`. -/
+def gPow (w : Q) : Nat → Q
+  | 0 => ⟨1, 1⟩
+  | (n + 1) => add (gPow w n) (qpow w (n + 1))
+
+theorem gPow_den_pos {w : Q} (hwd : 0 < w.den) : ∀ N, 0 < (gPow w N).den
+  | 0 => Nat.one_pos
+  | (n + 1) => add_den_pos (gPow_den_pos hwd n) (qpow_den_pos hwd (n + 1))
+
+theorem gPow_num_nonneg {w : Q} (hw0 : 0 ≤ w.num) : ∀ N, 0 ≤ (gPow w N).num
+  | 0 => by show (0 : Int) ≤ 1; decide
+  | (n + 1) => by
+      show 0 ≤ (gPow w n).num * ((qpow w (n + 1)).den : Int)
+          + (qpow w (n + 1)).num * ((gPow w n).den : Int)
+      exact Int.add_nonneg
+        (Int.mul_nonneg (gPow_num_nonneg hw0 n) (Int.ofNat_nonneg _))
+        (Int.mul_nonneg (qpow_nonneg hw0 (n + 1)) (Int.ofNat_nonneg _))
+
+/-- **The geometric telescoping closed form**: `(Σ_{k=0}^N wᵏ)·(1 − w) = 1 − w^{N+1}`. -/
+theorem gPow_telescope {w : Q} (hwd : 0 < w.den) :
+    ∀ N, Qeq (mul (gPow w N) (Qsub ⟨1, 1⟩ w)) (Qsub ⟨1, 1⟩ (qpow w (N + 1)))
+  | 0 => by
+      show Qeq (mul (⟨1, 1⟩ : Q) (Qsub ⟨1, 1⟩ w)) (Qsub ⟨1, 1⟩ (mul w ⟨1, 1⟩))
+      simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+  | (N + 1) => by
+      show Qeq (mul (add (gPow w N) (qpow w (N + 1))) (Qsub ⟨1, 1⟩ w))
+        (Qsub ⟨1, 1⟩ (mul w (qpow w (N + 1))))
+      have hd1w : 0 < (Qsub (⟨1, 1⟩ : Q) w).den := Qsub_den_pos Nat.one_pos hwd
+      have hqp : 0 < (qpow w (N + 1)).den := qpow_den_pos hwd (N + 1)
+      have hgp : 0 < (gPow w N).den := gPow_den_pos hwd N
+      have hdistrib : Qeq (mul (add (gPow w N) (qpow w (N + 1))) (Qsub ⟨1, 1⟩ w))
+          (add (mul (gPow w N) (Qsub ⟨1, 1⟩ w)) (mul (qpow w (N + 1)) (Qsub ⟨1, 1⟩ w))) := by
+        simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+      have hfin : Qeq (add (Qsub ⟨1, 1⟩ (qpow w (N + 1))) (mul (qpow w (N + 1)) (Qsub ⟨1, 1⟩ w)))
+          (Qsub ⟨1, 1⟩ (mul w (qpow w (N + 1)))) := by
+        simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+      exact Qeq_trans (add_den_pos (Qmul_den_pos hgp hd1w) (Qmul_den_pos hqp hd1w)) hdistrib
+        (Qeq_trans (add_den_pos (Qsub_den_pos Nat.one_pos hqp) (Qmul_den_pos hqp hd1w))
+          (Qadd_congr (gPow_telescope hwd N) (Qeq_refl _)) hfin)
+
 end UOR.Bridge.F1Square.Analysis
