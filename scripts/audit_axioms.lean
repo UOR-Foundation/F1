@@ -1000,3 +1000,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.mul_div2
 #print axioms Analysis.corner_sum_final
 #print axioms Analysis.T_le
+#print axioms Analysis.DN_geom_le
