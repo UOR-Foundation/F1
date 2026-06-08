@@ -1425,6 +1425,54 @@ theorem kdbl_W (k : Nat) :
     hcancel ?_
   exact Qeq_symm (oneplusSq_twoFone m)
 
+/-- `2 = 2·1` (`twoFone = 2·fone`). -/
+theorem twoFone_2fone (m : Nat) : Qeq (twoFone m) (mul ⟨2, 1⟩ (fone m)) := by
+  unfold twoFone fone; by_cases h : m = 0
+  · rw [if_pos h, if_pos h]; decide
+  · rw [if_neg h, if_neg h]; decide
+
+/-- `twoFone = 2·t⁰` as a scaled monomial. -/
+theorem twoFone_fsmono (m : Nat) : Qeq (twoFone m) (fsmono ⟨2, 1⟩ 0 m) := by
+  unfold twoFone fsmono; by_cases h : m = 0
+  · rw [if_pos h, if_pos h]; decide
+  · rw [if_neg h, if_neg h]; decide
+
+/-- `fmul twoFone X = 2·X` (the constant `2` series scales). -/
+theorem fmul_twoFone (X : Nat → Q) (hX : ∀ i, 0 < (X i).den) (m : Nat) :
+    Qeq (fmul twoFone X m) (mul ⟨2, 1⟩ (X m)) := by
+  refine Qeq_trans (fmul_den_pos (fun i => fsmono_den (c := ⟨2, 1⟩) Nat.one_pos 0 i) hX m)
+    (fmul_congr_left (fun i => twoFone_fsmono i) m) ?_
+  have hh := fmul_fsmono (c := ⟨2, 1⟩) Nat.one_pos X hX 0 (Nat.zero_le m)
+  rwa [Nat.sub_zero] at hh
+
+/-- `twoT = 2·t` as a scaled monomial. -/
+theorem twoT_fmono (m : Nat) : Qeq (twoT m) (mul ⟨2, 1⟩ (fmono 1 m)) := by
+  unfold twoT fmono; by_cases h : m = 1
+  · rw [if_pos h, if_pos h]; decide
+  · rw [if_neg h, if_neg h]; decide
+
+/-- `2t·k = 2·(t·k)`. -/
+theorem twoT_2tk (m : Nat) :
+    Qeq (fmul twoT kdbl m) (mul ⟨2, 1⟩ (fmul (fmono 1) kdbl m)) := by
+  refine Qeq_trans (fmul_den_pos (fun _ => kdbl_den _) (fun i => twoT_den i) m)
+    (fmul_comm twoT kdbl (fun i => twoT_den i) (fun _ => kdbl_den _) m) ?_
+  refine Qeq_trans (fmul_den_pos (fun _ => kdbl_den _)
+      (fun i => Qmul_den_pos Nat.one_pos (fmono_den 1 i)) m)
+    (fmul_congr_right (fun i => twoT_fmono i) m) ?_
+  refine Qeq_trans (Qmul_den_pos Nat.one_pos (fmul_den_pos (fun _ => kdbl_den _)
+      (fun i => fmono_den 1 i) m))
+    (fmul_smul_right kdbl (fmono 1) ⟨2, 1⟩ Nat.one_pos (fun _ => kdbl_den _) (fun i => fmono_den 1 i) m) ?_
+  exact Qmul_congr (Qeq_refl _) (fmul_comm kdbl (fmono 1) (fun _ => kdbl_den _) (fun i => fmono_den 1 i) m)
+
+/-- `(1−t²) = 2 − (1+t²)` as a sequence. -/
+theorem oneMinusSq_as_sub (m : Nat) : Qeq (oneMinusSq m) (Qsub (twoFone m) (oneplusSq m)) := by
+  unfold oneMinusSq oneplusSq fsmono fmono twoFone
+  by_cases h0 : m = 0
+  · subst h0; decide
+  · by_cases h2 : m = 2
+    · subst h2; decide
+    · simp only [if_neg h0, if_neg h2]; decide
+
 /-- **The artanh ODE** `(1−t²)·artanh' = 1` at the coefficient level. -/
 theorem artanh_ode (k : Nat) : Qeq (fmul oneMinusSq gcoef k) (fone k) :=
   Qeq_trans (add_den_pos (fmul_den_pos (fun i => fsmono_den Nat.one_pos 0 i) (fun _ => gcoef_den _) k)
