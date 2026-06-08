@@ -901,3 +901,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.geoEvenPow_den
 #print axioms Analysis.fpow_sq_bump
 #print axioms Analysis.geoEven_telescope
+#print axioms Analysis.Fsum_collapse_odd

@@ -1581,6 +1581,29 @@ theorem fcomp_fone {c : Nat → Q} (hc : ∀ i, 0 < (c i).den) (k : Nat) :
 theorem Qsub_telescope3 (A B C : Q) : Qeq (add (Qsub A B) (Qsub B C)) (Qsub A C) := by
   simp only [Qeq, add, Qsub, neg]; push_cast; ring_uor
 
+/-- **Collapse the odd terms**: if `f` vanishes at odd indices then `Σ_{m≤2N+1} f = Σ_{j≤N} f(2j)`. -/
+theorem Fsum_collapse_odd {f : Nat → Q} (hf : ∀ i, 0 < (f i).den)
+    (hodd : ∀ m, Qeq (f (2 * m + 1)) ⟨0, 1⟩) (N : Nat) :
+    Qeq (Fsum f (2 * N + 1)) (Fsum (fun j => f (2 * j)) N) := by
+  induction N with
+  | zero =>
+      show Qeq (add (f 0) (f 1)) (f 0)
+      exact Qeq_trans (add_den_pos (hf 0) Nat.one_pos)
+        (Qadd_congr (Qeq_refl _) (show Qeq (f 1) ⟨0, 1⟩ from hodd 0)) (Qadd_zero_right _)
+  | succ N ih =>
+      rw [show 2 * (N + 1) + 1 = 2 * N + 1 + 1 + 1 from by omega]
+      show Qeq (add (add (Fsum f (2 * N + 1)) (f (2 * N + 1 + 1))) (f (2 * N + 1 + 1 + 1)))
+        (add (Fsum (fun j => f (2 * j)) N) (f (2 * (N + 1))))
+      have ho : Qeq (f (2 * N + 1 + 1 + 1)) ⟨0, 1⟩ := by
+        rw [show 2 * N + 1 + 1 + 1 = 2 * (N + 1) + 1 from by omega]; exact hodd (N + 1)
+      have he : f (2 * N + 1 + 1) = f (2 * (N + 1)) := by
+        rw [show 2 * N + 1 + 1 = 2 * (N + 1) from by omega]
+      refine Qeq_trans (add_den_pos (add_den_pos (Fsum_den_pos hf (2 * N + 1)) (hf _)) Nat.one_pos)
+        (Qadd_congr (Qeq_refl _) ho) ?_
+      refine Qeq_trans (add_den_pos (Fsum_den_pos hf (2 * N + 1)) (hf _)) (Qadd_zero_right _) ?_
+      rw [he]
+      exact Qadd_congr ih (Qeq_refl _)
+
 /-- The even-power geometric partial sum `Σ_{j=0}^{N} c^{2j}` as a coefficient sequence. -/
 def geoEvenPow (c : Nat → Q) (N k : Nat) : Q := Fsum (fun j => fpow c (2 * j) k) N
 
