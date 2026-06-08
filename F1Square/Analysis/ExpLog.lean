@@ -3587,4 +3587,33 @@ theorem geoEvenSum_le_two {ρ : Q} (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
     (mul_div2 (geoEvenSum_num_nonneg hρ0 N) (geoEvenSum_den_pos hρd N) hsd Nat.one_pos hρ2 hab) ?_
   exact Qeq_le (mul_one ⟨2, 1⟩)
 
+set_option maxHeartbeats 800000 in
+/-- **⭐ `Rartanh` argument-congruence**: `Req t t' ⟹ Req (Rartanh t) (Rartanh t')` (same radius `ρ ≤ 1/2`).
+    Via `artSum_Lip_le` (argument-Lipschitz) + `geoEvenSum_le_two` (uniform `≤ 2`): the diagonal gap is
+    `≤ 2·|t.seq(R_n) − t'.seq(R_n)| ≤ 2·2/(R_n+1) ≤ 4/(n+1)`. Lets real arguments be swapped up to `≈`. -/
+theorem Rartanh_congr (t t' : Real) (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (hlt : ρ.num.toNat < ρ.den) (hρ2 : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ)))
+    (hbt : ∀ n, Qle (Qabs (t.seq n)) ρ) (hbt' : ∀ n, Qle (Qabs (t'.seq n)) ρ) (heq : Req t t') :
+    Req (Rartanh t ρ hρ0 hρd hlt hbt) (Rartanh t' ρ hρ0 hρd hlt hbt') := by
+  refine Req_of_lin_bound (C := 4) ?_
+  intro n
+  show Qle (Qabs (Qsub (artSum (t.seq (Rartanh_R ρ n)) (Rartanh_R ρ n))
+      (artSum (t'.seq (Rartanh_R ρ n)) (Rartanh_R ρ n)))) (⟨(4 : Int), n + 1⟩ : Q)
+  have hdiffd : 0 < (Qsub (t.seq (Rartanh_R ρ n)) (t'.seq (Rartanh_R ρ n))).den :=
+    Qsub_den_pos (t.den_pos _) (t'.den_pos _)
+  refine Qle_trans (Qmul_den_pos (geoEvenSum_den_pos hρd _) (Qabs_den_pos hdiffd))
+    (artSum_Lip_le (t.den_pos _) (t'.den_pos _) hρd (hbt _) (hbt' _) (Rartanh_R ρ n)) ?_
+  refine Qle_trans (Qmul_den_pos Nat.one_pos (Qabs_den_pos hdiffd))
+    (Qmul_le_mul_right (Qabs_num_nonneg _) (geoEvenSum_le_two hρ0 hρd hρ2 (Rartanh_R ρ n))) ?_
+  refine Qle_trans (Qmul_den_pos Nat.one_pos (Nat.succ_pos _))
+    (Qmul_le_mul_left (by decide) (heq (Rartanh_R ρ n))) ?_
+  have hRge : n ≤ Rartanh_R ρ n := by
+    unfold Rartanh_R
+    have hk : 1 ≤ ρ.den * ρ.den + 4 * ρ.den :=
+      Nat.le_trans (by omega : 1 ≤ 4 * ρ.den) (Nat.le_add_left _ _)
+    calc n ≤ 1 * (n + 1) := by omega
+      _ ≤ (ρ.den * ρ.den + 4 * ρ.den) * (n + 1) := Nat.mul_le_mul_right _ hk
+  show (2 * 2 : Int) * ((n + 1 : Nat) : Int) ≤ (4 : Int) * ((1 * (Rartanh_R ρ n + 1) : Nat) : Int)
+  push_cast; omega
+
 end UOR.Bridge.F1Square.Analysis
