@@ -3681,4 +3681,24 @@ theorem uval_lip (ρ a b : Q) (hρd : 0 < ρ.den) (hρ1 : Qle ρ ⟨1, 1⟩) (ha
     (Qmul_le_mul_left (by decide) (Qmul_le_mul_left (Qabs_num_nonneg _) hable)) ?_
   apply Qeq_le; simp only [Qeq, mul]; push_cast; ring_uor
 
+/-- **`uvalReal t`**: the real `2t/(1+t²)`, with diagonal `uval(t.seq(4n+3))` — the `4n+3` reindex absorbs
+    `uval`'s Lipschitz-4 into the regularity modulus (`4·Qbound(4n+3) = Qbound n`). -/
+def uvalReal (t : Real) (ρ : Q) (hρd : 0 < ρ.den) (hρ1 : Qle ρ ⟨1, 1⟩)
+    (hb : ∀ n, Qle (Qabs (t.seq n)) ρ) : Real where
+  seq := fun n => uval (t.seq (4 * n + 3))
+  reg := by
+    intro m n
+    refine Qle_trans (Qmul_den_pos Nat.one_pos
+        (Qabs_den_pos (Qsub_den_pos (t.den_pos _) (t.den_pos _))))
+      (uval_lip ρ (t.seq (4 * m + 3)) (t.seq (4 * n + 3)) hρd hρ1 (t.den_pos _) (t.den_pos _)
+        (hb _) (hb _)) ?_
+    refine Qle_trans (Qmul_den_pos Nat.one_pos
+        (add_den_pos (Qbound_den_pos _) (Qbound_den_pos _)))
+      (Qmul_le_mul_left (by decide) (t.reg (4 * m + 3) (4 * n + 3))) ?_
+    apply Qeq_le
+    show Qeq (mul ⟨4, 1⟩ (add (Qbound (4 * m + 3)) (Qbound (4 * n + 3))))
+      (add (Qbound m) (Qbound n))
+    simp only [Qeq, mul, add, Qbound]; push_cast; ring_uor
+  den_pos := fun n => uval_den_pos (t.seq (4 * n + 3)) (t.den_pos _)
+
 end UOR.Bridge.F1Square.Analysis
