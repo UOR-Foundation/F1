@@ -2736,4 +2736,53 @@ theorem dcomp_artSum (w : Q) (hwd : 0 < w.den) (N : Nat) :
     (peval_smul ⟨2, 1⟩ Nat.one_pos acoef (fun k => acoef_den k) w hwd (2 * N + 1)) ?_
   exact Qmul_congr (Qeq_refl _) (peval_acoef_artSum w hwd N)
 
+/-- The `peval_fpow_succ` corner for `kdbl` (abbreviation). -/
+def kcorner (w : Q) (m M : Nat) : Q :=
+  Fsum (fun i => Qsub
+    (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) M)
+    (Fsum (fun j => mul (mul (kdbl i) (qpow w i)) (mul (fpow kdbl m j) (qpow w j))) (M - i))) M
+
+theorem kcorner_den (w : Q) (hwd : 0 < w.den) (m M : Nat) : 0 < (kcorner w m M).den :=
+  Fsum_den_pos (fun i => Qsub_den_pos
+    (Fsum_den_pos (fun j => Qmul_den_pos (Qmul_den_pos (kdbl_den i) (qpow_den_pos hwd i))
+      (Qmul_den_pos (fpow_den_pos (fun l => kdbl_den l) m j) (qpow_den_pos hwd j))) M)
+    (Fsum_den_pos (fun j => Qmul_den_pos (Qmul_den_pos (kdbl_den i) (qpow_den_pos hwd i))
+      (Qmul_den_pos (fpow_den_pos (fun l => kdbl_den l) m j) (qpow_den_pos hwd j))) (M - i))) M
+
+/-- **Per-`m` error recursion step**: `|e_{m+1}| ≤ |q|·|e_m| + |q−u|·|uᵐ| + |corner_m|`,
+    where `e_m = peval(kdblᵐ,w,M) − uᵐ`, `q = peval(kdbl,w,M)`, `u = uval w`. -/
+theorem per_m_step (w : Q) (hwd : 0 < w.den) (m M : Nat) :
+    Qle (Qabs (Qsub (peval (fpow kdbl (m + 1)) w M) (qpow (uval w) (m + 1))))
+      (add (mul (Qabs (peval kdbl w M))
+              (Qabs (Qsub (peval (fpow kdbl m) w M) (qpow (uval w) m))))
+        (add (mul (Qabs (Qsub (peval kdbl w M) (uval w))) (Qabs (qpow (uval w) m)))
+          (Qabs (kcorner w m M)))) := by
+  have hq : 0 < (peval kdbl w M).den := peval_den_pos (fun i => kdbl_den i) hwd M
+  have hpm : 0 < (peval (fpow kdbl m) w M).den := peval_den_pos (fpow_den_pos (fun i => kdbl_den i) m) hwd M
+  have hu : 0 < (uval w).den := uval_den_pos w hwd
+  have hum : 0 < (qpow (uval w) m).den := qpow_den_pos hu m
+  have hem : 0 < (Qsub (peval (fpow kdbl m) w M) (qpow (uval w) m)).den := Qsub_den_pos hpm hum
+  have hqu : 0 < (Qsub (peval kdbl w M) (uval w)).den := Qsub_den_pos hq hu
+  have hcor : 0 < (kcorner w m M).den := kcorner_den w hwd m M
+  -- e_{m+1} = q·e_m + ((q−u)·uᵐ − corner)
+  have hid : Qeq (Qsub (peval (fpow kdbl (m + 1)) w M) (qpow (uval w) (m + 1)))
+      (add (mul (peval kdbl w M) (Qsub (peval (fpow kdbl m) w M) (qpow (uval w) m)))
+        (Qsub (mul (Qsub (peval kdbl w M) (uval w)) (qpow (uval w) m)) (kcorner w m M))) :=
+    Qeq_trans (Qsub_den_pos (Qsub_den_pos (Qmul_den_pos hq hpm) hcor) (qpow_den_pos hu (m + 1)))
+      (Qsub_congr (peval_fpow_succ kdbl (fun i => kdbl_den i) w hwd m M) (Qeq_refl _))
+      (e_rec_alg (peval kdbl w M) (peval (fpow kdbl m) w M) (qpow (uval w) m) (uval w) (kcorner w m M))
+  refine Qle_trans (Qabs_den_pos (add_den_pos (Qmul_den_pos hq hem) (Qsub_den_pos (Qmul_den_pos hqu hum) hcor)))
+    (Qeq_le (Qabs_Qeq hid)) ?_
+  refine Qle_trans (add_den_pos (Qabs_den_pos (Qmul_den_pos hq hem))
+      (Qabs_den_pos (Qsub_den_pos (Qmul_den_pos hqu hum) hcor)))
+    (Qabs_add_le _ _) ?_
+  refine Qadd_le_add (Qeq_le (by rw [Qabs_mul]; exact Qeq_refl _ :
+    Qeq (Qabs (mul (peval kdbl w M) (Qsub (peval (fpow kdbl m) w M) (qpow (uval w) m))))
+      (mul (Qabs (peval kdbl w M)) (Qabs (Qsub (peval (fpow kdbl m) w M) (qpow (uval w) m)))))) ?_
+  refine Qle_trans (add_den_pos (Qabs_den_pos (Qmul_den_pos hqu hum)) (Qabs_den_pos hcor))
+    (Qabs_sub_le_add _ _) ?_
+  exact Qadd_le_add (Qeq_le (by rw [Qabs_mul]; exact Qeq_refl _ :
+    Qeq (Qabs (mul (Qsub (peval kdbl w M) (uval w)) (qpow (uval w) m)))
+      (mul (Qabs (Qsub (peval kdbl w M) (uval w))) (Qabs (qpow (uval w) m))))) (Qle_refl _)
+
 end UOR.Bridge.F1Square.Analysis
