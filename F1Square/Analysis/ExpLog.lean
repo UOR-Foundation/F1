@@ -3624,4 +3624,61 @@ theorem uval_diff_cleared (a b : Q) :
   push_cast [Int.natAbs_mul_self']
   ring_uor
 
+/-- **`uval` Lipschitz**: `|uval a − uval b| ≤ 4·|a − b|` for `|a|, |b| ≤ ρ ≤ 1`. -/
+theorem uval_lip (ρ a b : Q) (hρd : 0 < ρ.den) (hρ1 : Qle ρ ⟨1, 1⟩) (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : Qle (Qabs a) ρ) (hb : Qle (Qabs b) ρ) :
+    Qle (Qabs (Qsub (uval a) (uval b))) (mul ⟨4, 1⟩ (Qabs (Qsub a b))) := by
+  have hsad : 0 < (add (⟨1, 1⟩ : Q) (mul a a)).den := add_den_pos Nat.one_pos (Qmul_den_pos had had)
+  have hsbd : 0 < (add (⟨1, 1⟩ : Q) (mul b b)).den := add_den_pos Nat.one_pos (Qmul_den_pos hbd hbd)
+  have hFd : 0 < (mul (add (⟨1, 1⟩ : Q) (mul a a)) (add (⟨1, 1⟩ : Q) (mul b b))).den :=
+    Qmul_den_pos hsad hsbd
+  have hXd : 0 < (Qsub (uval a) (uval b)).den := Qsub_den_pos (uval_den_pos a had) (uval_den_pos b hbd)
+  have haa0 : 0 ≤ (mul a a).num := by show 0 ≤ a.num * a.num; rw [← Int.natAbs_mul_self]; exact Int.ofNat_nonneg _
+  have hbb0 : 0 ≤ (mul b b).num := by show 0 ≤ b.num * b.num; rw [← Int.natAbs_mul_self]; exact Int.ofNat_nonneg _
+  have hsa1 : Qle (⟨1, 1⟩ : Q) (add ⟨1, 1⟩ (mul a a)) := Qle_self_add haa0
+  have hsb1 : Qle (⟨1, 1⟩ : Q) (add ⟨1, 1⟩ (mul b b)) := Qle_self_add hbb0
+  have hsann : 0 ≤ (add (⟨1, 1⟩ : Q) (mul a a)).num :=
+    Qadd_num_nonneg_loc (by show (0 : Int) ≤ 1; decide) haa0
+  have hsbnn : 0 ≤ (add (⟨1, 1⟩ : Q) (mul b b)).num :=
+    Qadd_num_nonneg_loc (by show (0 : Int) ≤ 1; decide) hbb0
+  have hFnn : 0 ≤ (mul (add (⟨1, 1⟩ : Q) (mul a a)) (add (⟨1, 1⟩ : Q) (mul b b))).num :=
+    Qmul_num_nonneg hsann hsbnn
+  have hF1 : Qle (⟨1, 1⟩ : Q) (mul (add ⟨1, 1⟩ (mul a a)) (add ⟨1, 1⟩ (mul b b))) :=
+    Qle_trans hsad hsa1
+      (Qle_trans (Qmul_den_pos hsad Nat.one_pos) (Qeq_le (Qeq_symm (mul_one _)))
+        (Qmul_le_mul_left hsann hsb1))
+  -- |1 − ab| ≤ 2
+  have habab : Qle (Qabs (mul a b)) ⟨1, 1⟩ := by
+    rw [Qabs_mul]
+    exact Qle_trans (Qmul_den_pos Nat.one_pos Nat.one_pos)
+      (Qmul_le_mul (Qabs_den_pos had) Nat.one_pos (Qabs_den_pos hbd) (Qabs_num_nonneg _)
+        (Qabs_num_nonneg _) (Qle_trans hρd ha hρ1) (Qle_trans hρd hb hρ1))
+      (Qeq_le (mul_one _))
+  have hable : Qle (Qabs (Qsub ⟨1, 1⟩ (mul a b))) ⟨2, 1⟩ := by
+    refine Qle_trans (add_den_pos (Qabs_den_pos Nat.one_pos) (Qabs_den_pos (Qmul_den_pos had hbd)))
+      (Qabs_sub_le_add ⟨1, 1⟩ (mul a b)) ?_
+    refine Qle_trans (add_den_pos Nat.one_pos Nat.one_pos)
+      (Qadd_le_add (Qeq_le (Qabs_of_nonneg (by decide : (0 : Int) ≤ 1))) habab) ?_
+    exact Qeq_le (Qadd_same_den_loc 1 1 1)
+  -- |X| ≤ |X|·F
+  refine Qle_trans (Qmul_den_pos (Qabs_den_pos hXd) hFd)
+    (Qle_trans (Qmul_den_pos (Qabs_den_pos hXd) Nat.one_pos) (Qeq_le (Qeq_symm (mul_one _)))
+      (Qmul_le_mul_left (Qabs_num_nonneg _) hF1)) ?_
+  -- |X|·F = |X·F| = |2(a−b)(1−ab)|
+  have key2 : Qeq (mul (Qabs (Qsub (uval a) (uval b)))
+        (mul (add ⟨1, 1⟩ (mul a a)) (add ⟨1, 1⟩ (mul b b))))
+      (Qabs (mul (Qsub (uval a) (uval b))
+        (mul (add ⟨1, 1⟩ (mul a a)) (add ⟨1, 1⟩ (mul b b))))) := by
+    rw [Qabs_mul]; exact Qmul_congr (Qeq_refl _) (Qeq_symm (Qabs_of_nonneg hFnn))
+  refine Qle_trans (Qabs_den_pos (Qmul_den_pos Nat.one_pos (Qmul_den_pos (Qsub_den_pos had hbd)
+      (Qsub_den_pos Nat.one_pos (Qmul_den_pos had hbd)))))
+    (Qeq_le (Qeq_trans (Qabs_den_pos (Qmul_den_pos hXd hFd)) key2
+      (Qabs_Qeq (uval_diff_cleared a b)))) ?_
+  -- |2(a−b)(1−ab)| ≤ 4|a−b|
+  rw [Qabs_mul, Qabs_mul, show Qabs (⟨2, 1⟩ : Q) = ⟨2, 1⟩ from rfl]
+  refine Qle_trans (Qmul_den_pos Nat.one_pos
+      (Qmul_den_pos (Qabs_den_pos (Qsub_den_pos had hbd)) Nat.one_pos))
+    (Qmul_le_mul_left (by decide) (Qmul_le_mul_left (Qabs_num_nonneg _) hable)) ?_
+  apply Qeq_le; simp only [Qeq, mul]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Analysis

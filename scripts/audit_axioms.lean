@@ -1027,3 +1027,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.geoEvenSum_le_two
 #print axioms Analysis.Rartanh_congr
 #print axioms Analysis.uval_diff_cleared
+#print axioms Analysis.uval_lip
