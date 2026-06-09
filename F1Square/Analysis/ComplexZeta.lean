@@ -32,4 +32,24 @@ theorem Cexp_im_ge (z : Complex) : Rle (Rneg (RexpReal z.re)) ((Cexp z).im) :=
       (Rneg_congr (Rmul_one (RexpReal z.re))))))
     (Rmul_le_Rmul_left (RexpReal_nonneg z.re) (Rneg_one_le_Rsin z.im))
 
+/-- **The `n`-th term `n⁻ˢ = exp(−s·log n)`** of `ζ(s)`, for `n ≥ 1` (`log 1 = 0`, so `1⁻ˢ = e⁰ = 1`).
+    Built on `logN` (the natural-log of `ComplexZeta`/`RealPow`) so the dyadic bounds apply directly. -/
+def czetaTerm (s : Complex) (n : Nat) (hn : 1 ≤ n) : Complex :=
+  Cexp ⟨Rmul (Rneg s.re) (logN n hn), Rmul (Rneg s.im) (logN n hn)⟩
+
+/-- The term's modulus exponent `−Re s · log n` (`= Re` of the `Cexp` argument). -/
+def czetaExpArg (s : Complex) (n : Nat) (hn : 1 ≤ n) : Real := Rmul (Rneg s.re) (logN n hn)
+
+theorem czetaTerm_re_le (s : Complex) (n : Nat) (hn : 1 ≤ n) :
+    Rle ((czetaTerm s n hn).re) (RexpReal (czetaExpArg s n hn)) := Cexp_re_le _
+
+theorem czetaTerm_re_ge (s : Complex) (n : Nat) (hn : 1 ≤ n) :
+    Rle (Rneg (RexpReal (czetaExpArg s n hn))) ((czetaTerm s n hn).re) := Cexp_re_ge _
+
+theorem czetaTerm_im_le (s : Complex) (n : Nat) (hn : 1 ≤ n) :
+    Rle ((czetaTerm s n hn).im) (RexpReal (czetaExpArg s n hn)) := Cexp_im_le _
+
+theorem czetaTerm_im_ge (s : Complex) (n : Nat) (hn : 1 ≤ n) :
+    Rle (Rneg (RexpReal (czetaExpArg s n hn))) ((czetaTerm s n hn).im) := Cexp_im_ge _
+
 end UOR.Bridge.F1Square.Analysis
