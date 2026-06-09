@@ -2196,4 +2196,17 @@ theorem nine3w_peval_dcoef (w : Q) (hwd : 0 < w.den) :
         (Qeq_trans hcanc (inner_step_core (mul ⟨8, 1⟩ w) (dcoef (m + 1)) (dcoef (m + 1 + 1))
           (qpow w (m + 1 + 1)) w) (mul_zero_of_zero (dcoef_shift_cancel m) (qpow w (m + 1 + 1)) hP)))
 
+/-- **`(9+3w)·(peval δ − δ_rat) = 3·δ_M·w^{M+1}`** (the inner error cleared of its denominator). -/
+theorem nine3w_peval_dcoef_sub (w : Q) (hwd : 0 < w.den) (hwn : 0 ≤ w.num) (m : Nat) :
+    Qeq (mul (add ⟨9, 1⟩ (mul ⟨3, 1⟩ w)) (Qsub (peval dcoef w (m + 1)) (drat w)))
+      (mul (mul ⟨3, 1⟩ (dcoef (m + 1))) (qpow w (m + 1 + 1))) := by
+  have h93 : 0 < (add ⟨9, 1⟩ (mul ⟨3, 1⟩ w)).den := add_den_pos Nat.one_pos (Qmul_den_pos (by decide) hwd)
+  refine Qeq_trans (Qsub_den_pos (Qmul_den_pos h93 (peval_den_pos dcoef_den hwd (m + 1)))
+      (Qmul_den_pos h93 (drat_den w hwd hwn))) (Qmul_sub_left _ _ _) ?_
+  refine Qeq_trans (Qsub_den_pos (add_den_pos (Qmul_den_pos (by decide) hwd)
+      (Qmul_den_pos (Qmul_den_pos (by decide) (dcoef_den (m + 1))) (qpow_den_pos hwd (m + 1 + 1))))
+      (Qmul_den_pos (by decide) hwd))
+    (Qsub_congr (nine3w_peval_dcoef w hwd m) (drat_rel w hwd hwn)) ?_
+  exact Qsub_add_left_cancel (mul ⟨8, 1⟩ w) (mul (mul ⟨3, 1⟩ (dcoef (m + 1))) (qpow w (m + 1 + 1)))
+
 end UOR.Bridge.F1Square.Analysis
