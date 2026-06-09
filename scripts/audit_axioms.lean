@@ -1052,3 +1052,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.expSum_eq_peval_ecoef
 #print axioms Analysis.peval_twoacoef_artSum
 #print axioms Analysis.comp_eval_gap_le
+#print axioms Analysis.peval_dgeom_mul_cleared

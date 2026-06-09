@@ -4407,4 +4407,28 @@ theorem comp_eval_gap_le (a b : Nat → Q) (ha : ∀ i, 0 < (a i).den) (hb : ∀
   rw [Qabs_Qsub_comm]
   exact Qabs_of_nonneg hnn
 
+/-- **The geometric closed form, cleared**: `(peval dgeom t N)·(1−t) ≈ (1+t) − 2·t^{N+1}`. So the geometric
+    side of the exp identity converges: `peval dgeom t N → (1+t)/(1−t)` with gap `2t^{N+1}/(1−t)`. Via
+    `peval_dgeom` (`= 2·gPow−1`) + `gPow_telescope` (`gPow·(1−t) = 1−t^{N+1}`). -/
+theorem peval_dgeom_mul_cleared (t : Q) (htd : 0 < t.den) (N : Nat) :
+    Qeq (mul (peval dgeom t N) (Qsub ⟨1, 1⟩ t))
+      (Qsub (add ⟨1, 1⟩ t) (mul ⟨2, 1⟩ (qpow t (N + 1)))) := by
+  have h := gPow_telescope htd N
+  have hGd : 0 < (gPow t N).den := gPow_den_pos htd N
+  have hsd : 0 < (Qsub (⟨1, 1⟩ : Q) t).den := Qsub_den_pos Nat.one_pos htd
+  have hPd : 0 < (qpow t (N + 1)).den := qpow_den_pos htd (N + 1)
+  have I1 : Qeq (mul (Qsub (mul ⟨2, 1⟩ (gPow t N)) ⟨1, 1⟩) (Qsub ⟨1, 1⟩ t))
+      (Qsub (mul ⟨2, 1⟩ (mul (gPow t N) (Qsub ⟨1, 1⟩ t))) (Qsub ⟨1, 1⟩ t)) := by
+    simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+  have I2 : Qeq (Qsub (mul ⟨2, 1⟩ (mul (gPow t N) (Qsub ⟨1, 1⟩ t))) (Qsub ⟨1, 1⟩ t))
+      (Qsub (mul ⟨2, 1⟩ (Qsub ⟨1, 1⟩ (qpow t (N + 1)))) (Qsub ⟨1, 1⟩ t)) :=
+    Qsub_congr (Qmul_congr (Qeq_refl _) h) (Qeq_refl _)
+  have I3 : Qeq (Qsub (mul ⟨2, 1⟩ (Qsub ⟨1, 1⟩ (qpow t (N + 1)))) (Qsub ⟨1, 1⟩ t))
+      (Qsub (add ⟨1, 1⟩ t) (mul ⟨2, 1⟩ (qpow t (N + 1)))) := by
+    simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+  exact Qeq_trans (Qmul_den_pos (Qsub_den_pos (Qmul_den_pos Nat.one_pos hGd) Nat.one_pos) hsd)
+    (Qmul_congr (peval_dgeom t htd N) (Qeq_refl _))
+    (Qeq_trans (Qsub_den_pos (Qmul_den_pos Nat.one_pos (Qmul_den_pos hGd hsd)) hsd) I1
+      (Qeq_trans (Qsub_den_pos (Qmul_den_pos Nat.one_pos (Qsub_den_pos Nat.one_pos hPd)) hsd) I2 I3))
+
 end UOR.Bridge.F1Square.Analysis
