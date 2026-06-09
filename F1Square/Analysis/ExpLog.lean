@@ -4578,4 +4578,21 @@ theorem peval_fpow_pow_eq {c : Nat → Q} (hc : ∀ i, 0 < (c i).den) {t : Q} (h
       exact peval_mul_no_corner c (fpow c m) hc (fpow_den_pos hc m) htd S (m * S) M2
         hcs (fun k hk => fpow_supp hc S hcs m k hk) (by omega)
 
+theorem truncTo_nonneg {b : Nat → Q} (hb0 : ∀ i, 0 ≤ (b i).num) (M k : Nat) :
+    0 ≤ (truncTo b M k).num := by
+  unfold truncTo; split
+  · exact hb0 k
+  · decide
+
+/-- **Monotonicity of formal powers**: `c ≤ d` coeffwise (`c` nonnegative) ⇒ `fpow c m ≤ fpow d m` coeffwise. -/
+theorem fpow_mono {c d : Nat → Q} (hcd : ∀ i, 0 < (c i).den) (hdd : ∀ i, 0 < (d i).den)
+    (hc0 : ∀ i, 0 ≤ (c i).num) (hle : ∀ i, Qle (c i) (d i)) :
+    ∀ m k, Qle (fpow c m k) (fpow d m k)
+  | 0, k => by show Qle (fone k) (fone k); exact Qle_refl _
+  | (m + 1), k => by
+      show Qle (Fsum (fun i => mul (c i) (fpow c m (k - i))) k)
+        (Fsum (fun i => mul (d i) (fpow d m (k - i))) k)
+      exact Fsum_le_Fsum (fun i => Qmul_le_mul (hcd i) (hdd i) (fpow_den_pos hcd m _) (hc0 i)
+        (fpow_num_nonneg hc0 m _) (hle i) (fpow_mono hcd hdd hc0 hle m (k - i))) k
+
 end UOR.Bridge.F1Square.Analysis
