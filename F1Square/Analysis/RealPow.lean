@@ -986,4 +986,54 @@ theorem dcoef_rel (k : Nat) : Qeq (fmul nine3w dcoef k) (eightT k) := by
   exact Qeq_trans (add_den_pos (fmul_den_pos (fsmono_den (by decide) 0) dcoef_den k)
     (fmul_den_pos (fsmono_den (by decide) 1) dcoef_den k)) e1 (dcoef_main k)
 
+-- ===========================================================================
+-- STEP 2b — the **differentiated δ relation** `3δ + (9+3w)·δ' = 8` (Leibniz on `dcoef_rel`, since
+-- `d/dw(9+3w)=3` and `d/dw(8w)=8`). Mirrors `kdbl_deriv_rel`. With `dcoef_rel` this pins `δ` and `δ'`.
+-- ===========================================================================
+
+/-- The constant `3` series `= d/dw(9+3w)`. -/
+def threeFone (k : Nat) : Q := ⟨(if k = 0 then 3 else 0 : Int), 1⟩
+theorem threeFone_den (k : Nat) : 0 < (threeFone k).den := Nat.one_pos
+
+/-- The constant `8` series `= d/dw(8w)`. -/
+def eightFone (k : Nat) : Q := ⟨(if k = 0 then 8 else 0 : Int), 1⟩
+theorem eightFone_den (k : Nat) : 0 < (eightFone k).den := Nat.one_pos
+
+/-- `d/dw(9+3w) = 3`. -/
+theorem fderiv_nine3w : ∀ k, Qeq (fderiv nine3w k) (threeFone k)
+  | 0 => by decide
+  | (k + 1) => by
+      show Qeq (mul ⟨(k + 1 + 1 : Int), 1⟩ (nine3w (k + 1 + 1))) (threeFone (k + 1))
+      have hn : nine3w (k + 1 + 1) = ⟨0, 1⟩ := by
+        unfold nine3w; rw [if_neg (by omega), if_neg (by omega)]
+      have ht : threeFone (k + 1) = ⟨0, 1⟩ := by unfold threeFone; rw [if_neg (by omega)]
+      rw [hn, ht]; simp [Qeq, mul]
+
+/-- `d/dw(8w) = 8`. -/
+theorem fderiv_eightT : ∀ k, Qeq (fderiv eightT k) (eightFone k)
+  | 0 => by decide
+  | (k + 1) => by
+      show Qeq (mul ⟨(k + 1 + 1 : Int), 1⟩ (eightT (k + 1 + 1))) (eightFone (k + 1))
+      have he : eightT (k + 1 + 1) = ⟨0, 1⟩ := by unfold eightT; rw [if_neg (by omega)]
+      have hf : eightFone (k + 1) = ⟨0, 1⟩ := by unfold eightFone; rw [if_neg (by omega)]
+      rw [he, hf]; simp [Qeq, mul]
+
+/-- **The differentiated relation** `3·δ + (9+3w)·δ' = 8` (Leibniz `fderiv_fmul` on `dcoef_rel`). -/
+theorem dcoef_deriv_rel (k : Nat) :
+    Qeq (add (fmul threeFone dcoef k) (fmul nine3w (fderiv dcoef) k)) (eightFone k) := by
+  have e1 : Qeq (fderiv (fmul nine3w dcoef) k)
+      (add (fmul (fderiv nine3w) dcoef k) (fmul nine3w (fderiv dcoef) k)) :=
+    fderiv_fmul nine3w dcoef nine3w_den dcoef_den k
+  have e4 : Qeq (fmul (fderiv nine3w) dcoef k) (fmul threeFone dcoef k) :=
+    fmul_congr_left fderiv_nine3w k
+  have step1 : Qeq (fderiv (fmul nine3w dcoef) k)
+      (add (fmul threeFone dcoef k) (fmul nine3w (fderiv dcoef) k)) :=
+    Qeq_trans (add_den_pos (fmul_den_pos (fun i => fderiv_den_pos nine3w_den i) dcoef_den k)
+        (fmul_den_pos nine3w_den (fun i => fderiv_den_pos dcoef_den i) k)) e1
+      (Qadd_congr e4 (Qeq_refl _))
+  have step2 : Qeq (fderiv (fmul nine3w dcoef) k) (eightFone k) :=
+    Qeq_trans (fderiv_den_pos eightT_den k) (fderiv_congr dcoef_rel k) (fderiv_eightT k)
+  exact Qeq_trans (fderiv_den_pos (fun i => fmul_den_pos nine3w_den dcoef_den i) k)
+    (Qeq_symm step1) step2
+
 end UOR.Bridge.F1Square.Analysis

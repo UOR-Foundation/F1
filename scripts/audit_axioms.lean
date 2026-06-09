@@ -1124,3 +1124,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.dcoef_shift_cancel
 #print axioms Analysis.dcoef_main
 #print axioms Analysis.dcoef_rel
+#print axioms Analysis.threeFone_den
+#print axioms Analysis.eightFone_den
+#print axioms Analysis.fderiv_nine3w
+#print axioms Analysis.fderiv_eightT
+#print axioms Analysis.dcoef_deriv_rel
