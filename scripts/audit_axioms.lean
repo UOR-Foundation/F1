@@ -1298,3 +1298,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.czetaRe_tail_ge
 #print axioms Analysis.czetaIm_tail_le
 #print axioms Analysis.czetaIm_tail_ge
+#print axioms Analysis.Czeta_re_tendsTo
+#print axioms Analysis.Czeta_im_tendsTo
+#print axioms Analysis.czetaRe_RReg
+#print axioms Analysis.czetaIm_RReg

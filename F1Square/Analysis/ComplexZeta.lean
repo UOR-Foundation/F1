@@ -510,4 +510,64 @@ theorem RReg_of_real_bound (X : Nat → Real) (c : Nat → Nat → Q) (hcd : ∀
     exact Qle_trans (add_den_pos (hcd k j) (Nat.succ_pos _)) hkj
       (Qadd_le_add hcb' (Qle_refl _))
 
+/-- `y ≤ x + y` when `0 ≤ x` (the right-summand version of `Qle_self_add`). -/
+private theorem Qle_self_add_left {x y : Q} (hx : 0 ≤ x.num) (hxd : 0 < x.den) (hyd : 0 < y.den) :
+    Qle y (add x y) :=
+  Qle_trans (add_den_pos hyd hxd) (Qle_self_add hx)
+    (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+
+/-- **The reindexed real-part partial sums form a regular sequence of reals** (`RReg`) — the input to
+    Bishop's `Rlim`. Each pairwise difference is `≤ 1/(j+1) + 1/(k+1)` (the symmetric tail bound). -/
+theorem czetaRe_RReg (s : Complex) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hθ : Rle (ofQ τ hτd) (Rmul (Rsub s.re one) (logN 2 (by omega)))) :
+    RReg (fun j => czetaReSum s (2 ^ czetaMidx τ j)) := by
+  refine RReg_of_real_bound _ (fun j k => add ⟨1, j + 1⟩ ⟨1, k + 1⟩)
+    (fun j k => add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (fun j k => Qle_refl _) ?_
+  intro j k
+  rcases Nat.le_total j k with hjk | hkj
+  · refine Rle_trans (Rle_trans (Rle_of_Req (Req_symm (Rneg_Rsub _ _)))
+        (czetaRe_tail_ge s hσ hτn hτd hθ hjk)) ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _ (Qle_self_add (by show (0 : Int) ≤ 1; decide))
+  · refine Rle_trans (czetaRe_tail_le s hσ hτn hτd hθ hkj) ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _
+      (Qle_self_add_left (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _) (Nat.succ_pos _))
+
+/-- **The reindexed imaginary-part partial sums form a regular sequence of reals** (`RReg`). -/
+theorem czetaIm_RReg (s : Complex) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hθ : Rle (ofQ τ hτd) (Rmul (Rsub s.re one) (logN 2 (by omega)))) :
+    RReg (fun j => czetaImSum s (2 ^ czetaMidx τ j)) := by
+  refine RReg_of_real_bound _ (fun j k => add ⟨1, j + 1⟩ ⟨1, k + 1⟩)
+    (fun j k => add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (fun j k => Qle_refl _) ?_
+  intro j k
+  rcases Nat.le_total j k with hjk | hkj
+  · refine Rle_trans (Rle_trans (Rle_of_Req (Req_symm (Rneg_Rsub _ _)))
+        (czetaIm_tail_ge s hσ hτn hτd hθ hjk)) ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _ (Qle_self_add (by show (0 : Int) ≤ 1; decide))
+  · refine Rle_trans (czetaIm_tail_le s hσ hτn hτd hθ hkj) ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _
+      (Qle_self_add_left (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _) (Nat.succ_pos _))
+
+/-- **The Riemann zeta function `ζ(s) = Σ_{n≥1} n⁻ˢ` for `Re s > 1`** — a genuine constructive complex
+    number. `Re s > 1` is witnessed by a rational `τ > 0` with `τ ≤ (Re s − 1)·log 2` (so the dyadic
+    ratio `2^{1−Re s} < 1`); the real and imaginary parts are Bishop diagonal limits of the reindexed
+    partial sums `Σ_{n<2^{M(j)}} Re/Im(n⁻ˢ)`, which converge geometrically (the rigorous complex tail). -/
+def Czeta (s : Complex) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hθ : Rle (ofQ τ hτd) (Rmul (Rsub s.re one) (logN 2 (by omega)))) : Complex :=
+  ⟨Rlim (fun j => czetaReSum s (2 ^ czetaMidx τ j)) (czetaRe_RReg s hσ hτn hτd hθ),
+   Rlim (fun j => czetaImSum s (2 ^ czetaMidx τ j)) (czetaIm_RReg s hσ hτn hτd hθ)⟩
+
+/-- **Convergence of `ζ(s)` (real part)**: the reindexed real partial sums `Σ_{n<2^{M(k)}} Re(n⁻ˢ)`
+    converge to `Re ζ(s)` with the canonical rate `2/(k+1)`. -/
+theorem Czeta_re_tendsTo (s : Complex) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hθ : Rle (ofQ τ hτd) (Rmul (Rsub s.re one) (logN 2 (by omega)))) :
+    RTendsTo (fun j => czetaReSum s (2 ^ czetaMidx τ j)) (Czeta s hσ hτn hτd hθ).re :=
+  Rlim_tendsTo _ (czetaRe_RReg s hσ hτn hτd hθ)
+
+/-- **Convergence of `ζ(s)` (imaginary part)**: the reindexed imaginary partial sums converge to
+    `Im ζ(s)` with rate `2/(k+1)`. -/
+theorem Czeta_im_tendsTo (s : Complex) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hθ : Rle (ofQ τ hτd) (Rmul (Rsub s.re one) (logN 2 (by omega)))) :
+    RTendsTo (fun j => czetaImSum s (2 ^ czetaMidx τ j)) (Czeta s hσ hτn hτd hθ).im :=
+  Rlim_tendsTo _ (czetaIm_RReg s hσ hτn hτd hθ)
+
 end UOR.Bridge.F1Square.Analysis
