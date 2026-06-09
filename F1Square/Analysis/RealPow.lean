@@ -2799,4 +2799,32 @@ theorem logN_2_ge_half : Rle (ofQ (⟨1, 2⟩ : Q) (by decide)) (logN 2 (by omeg
   RexpReal_reflects_le (Rnonneg_logN 2 (by omega))
     (Rle_trans Rexp_half_le (Rle_of_Req (Req_symm (Rexp_logN 2 (by omega)))))
 
+/-- `ofQ c ≥ 0` for `0 ≤ c.num`. -/
+theorem Rnonneg_ofQ {c : Q} (hcd : 0 < c.den) (hcn : 0 ≤ c.num) : Rnonneg (ofQ c hcd) := by
+  intro n
+  show Qle (neg (Qbound n)) c
+  have hd : (0 : Int) ≤ (c.den : Int) := by exact_mod_cast Nat.zero_le c.den
+  have hp : (0 : Int) ≤ c.num * ((n : Int) + 1) := Int.mul_nonneg hcn (by omega)
+  simp only [Qle, neg, Qbound]; push_cast; omega
+
+/-- **Real reciprocal is antitone**: if `a·b ≈ 1`, `b ≥ 0`, and `a ≥ ofQ d` (`d > 0`), then `b ≤ ofQ(1/d)`. -/
+theorem Rle_recip {a b : Real} {d : Q} (hdn : 0 < d.num) (hdd : 0 < d.den)
+    (hab : Req (Rmul a b) one) (hbnn : Rnonneg b) (hda : Rle (ofQ d hdd) a) :
+    Rle b (ofQ (Qinv d) (Qinv_den_pos hdn)) := by
+  have hinv_nn : Rnonneg (ofQ (Qinv d) (Qinv_den_pos hdn)) :=
+    Rnonneg_ofQ (Qinv_den_pos hdn) (by show (0 : Int) ≤ (d.den : Int); exact_mod_cast Nat.zero_le d.den)
+  have h2 : Rle (Rmul b (ofQ d hdd)) one :=
+    Rle_trans (Rmul_le_Rmul_left hbnn hda) (Rle_of_Req (Req_trans (Rmul_comm b a) hab))
+  have h3 : Rle (Rmul (ofQ (Qinv d) (Qinv_den_pos hdn)) (Rmul b (ofQ d hdd)))
+                (Rmul (ofQ (Qinv d) (Qinv_den_pos hdn)) one) := Rmul_le_Rmul_left hinv_nn h2
+  have hL : Req (Rmul (ofQ (Qinv d) (Qinv_den_pos hdn)) (Rmul b (ofQ d hdd))) b :=
+    Req_trans (Rmul_comm _ _)
+      (Req_trans (Rmul_assoc b (ofQ d hdd) (ofQ (Qinv d) (Qinv_den_pos hdn)))
+        (Req_trans (Rmul_congr (Req_refl b)
+            (Req_trans (Rmul_ofQ_ofQ hdd (Qinv_den_pos hdn))
+              (Req_of_seq_Qeq (fun _ => Qmul_Qinv hdn) :
+                Req (ofQ (mul d (Qinv d)) (Qmul_den_pos hdd (Qinv_den_pos hdn))) one)))
+          (Rmul_one b)))
+  exact Rle_trans (Rle_of_Req (Req_symm hL)) (Rle_trans h3 (Rle_of_Req (Rmul_one _)))
+
 end UOR.Bridge.F1Square.Analysis

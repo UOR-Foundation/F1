@@ -1231,3 +1231,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rexp_k_log2
 #print axioms Analysis.Rexp_half_le
 #print axioms Analysis.logN_2_ge_half
+#print axioms Analysis.Rnonneg_ofQ
+#print axioms Analysis.Rle_recip
