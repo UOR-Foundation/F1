@@ -1267,3 +1267,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rnonneg_Rpow
 #print axioms Analysis.Rpow_ofQ
 #print axioms Analysis.Rpow_mono
+#print axioms Analysis.Rmul_Rnsmul
+#print axioms Analysis.Rneg_Rnsmul

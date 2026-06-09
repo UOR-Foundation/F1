@@ -2946,4 +2946,14 @@ theorem Rpow_mono {x y : Real} (hx : Rnonneg x) (hy : Rnonneg y) (h : Rle x y) :
       Rle_trans (Rmul_le_Rmul_right (Rnonneg_Rpow hx k) h)
         (Rmul_le_Rmul_left hy (Rpow_mono hx hy h k))
 
+/-- `a·(k·x) ≈ k·(a·x)`. -/
+theorem Rmul_Rnsmul (a x : Real) : ∀ k, Req (Rmul a (Rnsmul k x)) (Rnsmul k (Rmul a x))
+  | 0 => Rmul_zero a
+  | (k + 1) => Req_trans (Rmul_distrib a x (Rnsmul k x)) (Radd_congr (Req_refl _) (Rmul_Rnsmul a x k))
+
+/-- `−(k·x) ≈ k·(−x)`. -/
+theorem Rneg_Rnsmul (x : Real) : ∀ k, Req (Rneg (Rnsmul k x)) (Rnsmul k (Rneg x))
+  | 0 => Req_of_seq_Qeq (fun _ => by show Qeq (neg (⟨0, 1⟩ : Q)) ⟨0, 1⟩; decide)
+  | (k + 1) => Req_trans (Rneg_Radd x (Rnsmul k x)) (Radd_congr (Req_refl _) (Rneg_Rnsmul x k))
+
 end UOR.Bridge.F1Square.Analysis
