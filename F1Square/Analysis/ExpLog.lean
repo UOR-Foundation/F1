@@ -2051,6 +2051,18 @@ theorem formal_exp_geom (k : Nat) :
     show Qeq (ecoef 0) (dgeom 0)
     decide
 
+/-- **exp partial sum = `peval` of `ecoef`**: `expSum q N ≈ peval ecoef q N`. Connects the analytic `exp`
+    series (`Σ qᵏ/k!`) to the formal-`peval` machinery, so `formal_exp_geom` can drive the eval bridge. -/
+theorem expSum_eq_peval_ecoef (q : Q) (hqd : 0 < q.den) :
+    ∀ N, Qeq (expSum q N) (peval ecoef q N)
+  | 0 => by show Qeq ⟨1, 1⟩ (mul (ecoef 0) (⟨1, 1⟩ : Q)); decide
+  | (N + 1) => by
+      have hterm : Qeq (expTerm q (N + 1)) (mul (ecoef (N + 1)) (qpow q (N + 1))) :=
+        Qmul_comm (qpow q (N + 1)) ⟨1, fct (N + 1)⟩
+      show Qeq (add (expSum q N) (expTerm q (N + 1)))
+        (add (peval ecoef q N) (mul (ecoef (N + 1)) (qpow q (N + 1))))
+      exact Qadd_congr (expSum_eq_peval_ecoef q hqd N) hterm
+
 /-- From `x = p + c` recover `p = x − c`. -/
 theorem Qeq_sub_of_eq_add {x p c : Q} (hp : 0 < p.den) (hc : 0 < c.den) (h : Qeq x (add p c)) :
     Qeq p (Qsub x c) :=

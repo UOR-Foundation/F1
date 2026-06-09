@@ -1049,3 +1049,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fderiv_mul_inj
 #print axioms Analysis.fderiv_twoacoef
 #print axioms Analysis.formal_exp_geom
+#print axioms Analysis.expSum_eq_peval_ecoef
