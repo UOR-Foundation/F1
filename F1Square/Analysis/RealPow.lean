@@ -583,4 +583,18 @@ theorem expSum_le_gPow {q : Q} (hq0 : 0 ≤ q.num) (hqd : 0 < q.den) :
         simp only [Qeq, mul]; push_cast; ring_uor
       exact Qadd_le_add (expSum_le_gPow hq0 hqd N) hterm
 
+/-- **`expSum q N · (1 − q) ≤ 1`** for `0 ≤ q ≤ 1` — the partial-sum form of `exp q ≤ 1/(1−q)`. Via
+    `expSum ≤ Σqⁱ` and the geometric closed form `(Σqⁱ)(1−q) = 1 − q^{N+1} ≤ 1`. -/
+theorem expSum_mul_one_sub_le {q : Q} (hq0 : 0 ≤ q.num) (hqd : 0 < q.den) (hq1 : Qle q ⟨1, 1⟩)
+    (N : Nat) : Qle (mul (expSum q N) (Qsub ⟨1, 1⟩ q)) ⟨1, 1⟩ := by
+  have hsub0 : 0 ≤ (Qsub (⟨1, 1⟩ : Q) q).num := by
+    have h := hq1; simp only [Qle] at h; simp only [Qsub, add, neg]; push_cast at h ⊢; omega
+  have h1 : Qle (mul (expSum q N) (Qsub ⟨1, 1⟩ q)) (mul (gPow q N) (Qsub ⟨1, 1⟩ q)) :=
+    Qmul_le_mul_right hsub0 (expSum_le_gPow hq0 hqd N)
+  have h3 : Qle (Qsub (⟨1, 1⟩ : Q) (qpow q (N + 1))) ⟨1, 1⟩ := by
+    have hqp : 0 ≤ (qpow q (N + 1)).num := qpow_nonneg hq0 (N + 1)
+    simp only [Qle, Qsub, add, neg]; push_cast; omega
+  exact Qle_trans (Qmul_den_pos (gPow_den_pos hqd N) (Qsub_den_pos (by decide) hqd)) h1
+    (Qle_trans (Qsub_den_pos (by decide) (qpow_den_pos hqd (N + 1))) (Qeq_le (gPow_telescope hqd N)) h3)
+
 end UOR.Bridge.F1Square.Analysis
