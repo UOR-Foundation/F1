@@ -400,4 +400,32 @@ theorem RexpReal_nsmul_eq {L N : Real} (h : Req (RexpReal L) N) (k : Nat) :
     Req (RexpReal (Rnsmul k L)) (Rpow N k) :=
   Req_trans (RexpReal_nsmul L k) (Rpow_congr h k)
 
+-- ===========================================================================
+-- `exp(−log n) = 1/n` — the reciprocal of the gate, the basis of the `|n⁻ˢ| ≤ 1/n²` tail.
+-- ===========================================================================
+
+/-- The product of two constant reals is the constant of the product (no reindex content). -/
+theorem Rmul_ofQ_ofQ {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) :
+    Req (Rmul (ofQ a ha) (ofQ b hb)) (ofQ (mul a b) (Qmul_den_pos ha hb)) :=
+  Req_of_seq_Qeq (fun _ => Qeq_refl _)
+
+/-- **`exp(−L) ≈ 1/n`** given `exp L ≈ n` (abstract form). From the reciprocal law
+    `exp(−L)·exp L ≈ 1` (`RexpReal_mul_neg`): `exp(−L) ≈ exp(−L)·(n·(1/n)) ≈ (exp(−L)·n)·(1/n) ≈
+    1·(1/n) ≈ 1/n`. With `L = log n` (`Rexp_log_nat_Rlog`) this is `exp(−log n) = 1/n`. -/
+theorem RexpReal_neg_eq_recip (n : Nat) (hn : 0 < n) {L : Real}
+    (h : Req (RexpReal L) (ofQ ⟨(n : Int), 1⟩ Nat.one_pos)) :
+    Req (RexpReal (Rneg L)) (ofQ ⟨1, n⟩ hn) := by
+  have hnr : Req (Rmul (ofQ (⟨(n : Int), 1⟩ : Q) Nat.one_pos) (ofQ (⟨1, n⟩ : Q) hn)) one :=
+    Req_trans (Rmul_ofQ_ofQ Nat.one_pos hn)
+      (ofQ_respects (Qmul_den_pos Nat.one_pos hn) (by decide)
+        (by simp only [Qeq, mul]; push_cast; ring_uor))
+  have hsub : Req (Rmul (RexpReal (Rneg L)) (ofQ (⟨(n : Int), 1⟩ : Q) Nat.one_pos)) one :=
+    Req_trans (Rmul_congr (Req_refl (RexpReal (Rneg L))) (Req_symm h)) (RexpReal_mul_neg L)
+  exact Req_trans (Req_symm (Rmul_one (RexpReal (Rneg L))))
+    (Req_trans (Rmul_congr (Req_refl (RexpReal (Rneg L))) (Req_symm hnr))
+      (Req_trans (Req_symm (Rmul_assoc (RexpReal (Rneg L))
+          (ofQ (⟨(n : Int), 1⟩ : Q) Nat.one_pos) (ofQ (⟨1, n⟩ : Q) hn)))
+        (Req_trans (Rmul_congr hsub (Req_refl (ofQ (⟨1, n⟩ : Q) hn)))
+          (Req_trans (Rmul_comm one (ofQ (⟨1, n⟩ : Q) hn)) (Rmul_one (ofQ (⟨1, n⟩ : Q) hn))))))
+
 end UOR.Bridge.F1Square.Analysis
