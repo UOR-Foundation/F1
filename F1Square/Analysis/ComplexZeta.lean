@@ -301,6 +301,45 @@ theorem geoFrom_le (r : Q) (hrd : 0 < r.den) (hr0 : 0 ≤ r.num) (hr1 : 0 < (Qsu
     (Qle_trans (add_den_pos (qpow_den_pos hrd j) (qpow_den_pos hrd (j + d)))
       (Qle_self_add hnn) (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor)))
 
+/-- **The geometric reindex**: with `m = (j+1)·q²` (`q = r.den`), `rᵐ/(1−r) ≤ 1/(j+1)`. The Bernoulli
+    `1/(linear)` decay `qpow_geom_bound` plus the quadratic index collapse the geometric tail to the
+    canonical modulus — the bridge that lets the dyadic partial sums satisfy `RReg`. -/
+theorem geom_reindex {r : Q} (hrd : 0 < r.den) (hrn : 0 ≤ r.num) (hple : r.num.toNat ≤ r.den)
+    (hsub : 0 < (Qsub (⟨1, 1⟩ : Q) r).num) (j : Nat) :
+    Qle (mul (qpow r ((j + 1) * (r.den * r.den))) (Qinv (Qsub ⟨1, 1⟩ r))) ⟨1, j + 1⟩ := by
+  have hgb := qpow_geom_bound hrn hrd hple ((j + 1) * (r.den * r.den))
+  have hinn : 0 ≤ (Qinv (Qsub ⟨1, 1⟩ r)).num := by
+    show (0 : Int) ≤ ((Qsub ⟨1, 1⟩ r).den : Int); exact_mod_cast Nat.zero_le _
+  have hstep : Qle (mul (qpow r ((j + 1) * (r.den * r.den))) (Qinv (Qsub ⟨1, 1⟩ r)))
+      (mul ⟨(r.den : Int), r.den + (j + 1) * (r.den * r.den) * (r.den - r.num.toNat)⟩
+        (Qinv (Qsub ⟨1, 1⟩ r))) :=
+    Qmul_le_mul_right hinn hgb
+  refine Qle_trans
+    (Qmul_den_pos (Nat.lt_of_lt_of_le hrd (Nat.le_add_right _ _)) (Qinv_den_pos hsub)) hstep ?_
+  -- the (1−r) field facts
+  have hsnum : (Qsub (⟨1, 1⟩ : Q) r).num = (r.den : Int) - r.num := by
+    simp only [Qsub, add, neg]; push_cast; omega
+  have htoN : (r.num.toNat : Int) = r.num := Int.toNat_of_nonneg hrn
+  have hgpos : 0 < r.den - r.num.toNat := by rw [hsnum] at hsub; omega
+  have hden : (Qsub (⟨1, 1⟩ : Q) r).den = r.den := by simp only [Qsub, add, neg, Nat.one_mul]
+  have hnum : (Qsub (⟨1, 1⟩ : Q) r).num.toNat = r.den - r.num.toNat := by rw [hsnum]; omega
+  -- the core Nat inequality  q²(j+1) ≤ (q + m·g)·g,  m = (j+1)q²,  g = q − p ≥ 1
+  have hkey : r.den * r.den * (j + 1)
+      ≤ (r.den + (j + 1) * (r.den * r.den) * (r.den - r.num.toNat)) * (r.den - r.num.toNat) := by
+    have e1 : r.den * r.den * (j + 1) = (j + 1) * (r.den * r.den) := Nat.mul_comm _ _
+    have e2 : (j + 1) * (r.den * r.den)
+        ≤ (j + 1) * (r.den * r.den) * (r.den - r.num.toNat) := Nat.le_mul_of_pos_right _ hgpos
+    have e3 : (j + 1) * (r.den * r.den) * (r.den - r.num.toNat)
+        ≤ (j + 1) * (r.den * r.den) * (r.den - r.num.toNat) * (r.den - r.num.toNat) :=
+      Nat.le_mul_of_pos_right _ hgpos
+    have heq : (r.den + (j + 1) * (r.den * r.den) * (r.den - r.num.toNat)) * (r.den - r.num.toNat)
+        = r.den * (r.den - r.num.toNat)
+          + (j + 1) * (r.den * r.den) * (r.den - r.num.toNat) * (r.den - r.num.toNat) :=
+      Nat.add_mul _ _ _
+    omega
+  -- discharge the rational ≤ via the Nat inequality
+  simp only [Qle, mul, Qinv, hden, hnum, Int.one_mul]
+  exact_mod_cast hkey
 /-- **The dyadic tail telescopes to a geometric partial sum**: `E(2^{j+d}) − E(2ʲ) ≤ ofQ(Σ_{k=j}^{j+d−1} rᵏ)`. -/
 theorem czetaExp_tail (s : Complex) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
     (hθ : Rle (ofQ τ hτd) (Rmul (Rsub s.re one) (logN 2 (by omega)))) (j : Nat) : ∀ d,

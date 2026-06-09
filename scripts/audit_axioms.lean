@@ -1289,3 +1289,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.geoFrom_le
 #print axioms Analysis.seq_diff_le
 #print axioms Analysis.RReg_of_real_bound
+#print axioms Analysis.geom_reindex
