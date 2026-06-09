@@ -1159,3 +1159,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.p2_split
 #print axioms Analysis.sacD_cancel
 #print axioms Analysis.sacD_ode
+#print axioms Analysis.sacoef_zero
+#print axioms Analysis.sacoef_den
+#print axioms Analysis.fderiv_sacoef

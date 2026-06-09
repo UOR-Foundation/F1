@@ -1530,4 +1530,29 @@ theorem sacD_ode (k : Nat) : Qeq (fmul p2 sacD k) (mul ⟨9, 1⟩ (fone k)) := b
       rw [hf]
       exact Qeq_trans Nat.one_pos (sacD_cancel (sacD (m + 1)) (sacD m)) (by decide)
 
+/-- **The shifted-artanh series `sacoef`** (formal antiderivative of `sacD`), with the IRRATIONAL constant
+    `sacoef₀=artanh(⅓)` REPLACED by `0` — legitimate since neither `fderiv` nor `fcomp` (degree ≥1) reads
+    the constant; the true constant is restored only at the real-eval level (STEP 3). -/
+def sacoef (k : Nat) : Q := if k = 0 then ⟨0, 1⟩ else mul ⟨1, k⟩ (sacD (k - 1))
+
+theorem sacoef_zero : sacoef 0 = ⟨0, 1⟩ := rfl
+
+theorem sacoef_den (k : Nat) : 0 < (sacoef k).den := by
+  unfold sacoef; split
+  · exact Nat.one_pos
+  · next h => exact Qmul_den_pos (Nat.pos_of_ne_zero h) (sacD_den (k - 1))
+
+/-- Fresh-`Int`-var core for `fderiv_sacoef` (dodges `ring_uor`'s cast-reifier issue). -/
+private theorem fderiv_sacoef_core (K sn sd : Int) :
+    (K + 1) * (1 * sn) * sd = sn * (1 * ((K + 1) * sd)) := by ring_uor
+
+/-- **`fderiv sacoef = sacD`** — `sacoef` integrates `sacoef' = sacD` (the `(k+1)` and `1/(k+1)` cancel). -/
+theorem fderiv_sacoef (k : Nat) : Qeq (fderiv sacoef k) (sacD k) := by
+  show Qeq (mul ⟨(k + 1 : Int), 1⟩ (sacoef (k + 1))) (sacD k)
+  have hs : sacoef (k + 1) = mul ⟨1, k + 1⟩ (sacD k) := by
+    show (if k + 1 = 0 then (⟨0, 1⟩ : Q) else mul ⟨1, k + 1⟩ (sacD (k + 1 - 1))) = mul ⟨1, k + 1⟩ (sacD k)
+    rw [if_neg (Nat.succ_ne_zero k), Nat.add_sub_cancel]
+  rw [hs]; simp only [Qeq, mul]; push_cast
+  exact fderiv_sacoef_core (k : Int) (sacD k).num ((sacD k).den : Int)
+
 end UOR.Bridge.F1Square.Analysis
