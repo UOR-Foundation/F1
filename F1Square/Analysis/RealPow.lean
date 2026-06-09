@@ -2972,4 +2972,26 @@ theorem Rpow_mul_dist (a b : Real) : ∀ k, Req (Rpow (Rmul a b) k) (Rmul (Rpow 
       Req_trans (Rmul_congr (Req_refl _) (Rpow_mul_dist a b k))
         (Rmul_mul_mul a b (Rpow a k) (Rpow b k))
 
+/-- `ofQ a + ofQ b ≈ ofQ(a+b)`. -/
+theorem Radd_ofQ_ofQ {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) :
+    Req (Radd (ofQ a ha) (ofQ b hb)) (ofQ (add a b) (add_den_pos ha hb)) :=
+  Req_of_seq_Qeq (fun _ => Qeq_refl _)
+
+/-- `ofQ` respects `≈`. -/
+theorem ofQ_congr {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) (h : Qeq a b) :
+    Req (ofQ a ha) (ofQ b hb) := Req_of_seq_Qeq (fun _ => h)
+
+/-- `k·x ≈ ⟨k,1⟩·x` (the natural multiple is the `ofQ`-scalar multiple). -/
+theorem Rnsmul_eq_Rmul_ofQ (x : Real) : ∀ n,
+    Req (Rnsmul n x) (Rmul (ofQ (⟨(n : Int), 1⟩ : Q) Nat.one_pos) x)
+  | 0 => Req_symm (Req_trans (Rmul_comm _ x) (Rmul_zero x))
+  | (n + 1) =>
+      Req_trans (Radd_congr (Req_refl x) (Rnsmul_eq_Rmul_ofQ x n))
+        (Req_trans (Radd_congr (Req_symm (Rone_mul x)) (Req_refl _))
+          (Req_trans (Req_symm (Rmul_distrib_right (ofQ ⟨1, 1⟩ Nat.one_pos)
+              (ofQ (⟨(n : Int), 1⟩ : Q) Nat.one_pos) x))
+            (Rmul_congr (Req_trans (Radd_ofQ_ofQ Nat.one_pos Nat.one_pos)
+              (ofQ_congr (add_den_pos Nat.one_pos Nat.one_pos) Nat.one_pos
+                (by simp only [Qeq, add]; push_cast; ring_uor))) (Req_refl x))))
+
 end UOR.Bridge.F1Square.Analysis

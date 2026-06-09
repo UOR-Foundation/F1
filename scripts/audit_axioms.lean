@@ -1271,3 +1271,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rneg_Rnsmul
 #print axioms Analysis.Rmul_mul_mul
 #print axioms Analysis.Rpow_mul_dist
+#print axioms Analysis.Radd_ofQ_ofQ
+#print axioms Analysis.ofQ_congr
+#print axioms Analysis.Rnsmul_eq_Rmul_ofQ
