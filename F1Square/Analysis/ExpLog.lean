@@ -689,7 +689,7 @@ theorem fmul_fmono {c : Nat → Q} (hc : ∀ i, 0 < (c i).den) (d : Nat) {k : Na
   exact Qeq_trans (hg d) (Fsum_single hg hz hdk) hgd
 
 /-- Below the monomial degree, the shift is zero: `fmul (tᵈ) c k = 0` for `k < d`. -/
-theorem fmul_fmono_zero {c : Nat → Q} (hc : ∀ i, 0 < (c i).den) {d k : Nat} (hdk : k < d) :
+theorem fmul_fmono_zero {c : Nat → Q} (_hc : ∀ i, 0 < (c i).den) {d k : Nat} (hdk : k < d) :
     Qeq (fmul (fmono d) c k) ⟨0, 1⟩ := by
   show Qeq (Fsum (fun i => mul (fmono d i) (c (k - i))) k) ⟨0, 1⟩
   refine Qeq_trans (Fsum_den_pos (fun _ => Nat.one_pos) k)
@@ -907,7 +907,7 @@ theorem fsmul_den {c : Q} (hc : 0 < c.den) {a : Nat → Q} (ha : ∀ i, 0 < (a i
     0 < (fsmul c a k).den := Qmul_den_pos hc (ha k)
 
 /-- `fmul a (zero series) = 0`. -/
-theorem fmul_zero_right (a : Nat → Q) (ha : ∀ i, 0 < (a i).den) (k : Nat) :
+theorem fmul_zero_right (a : Nat → Q) (_ha : ∀ i, 0 < (a i).den) (k : Nat) :
     Qeq (fmul a (fun _ => (⟨0, 1⟩ : Q)) k) ⟨0, 1⟩ := by
   show Qeq (Fsum (fun i => mul (a i) ((fun _ => (⟨0, 1⟩ : Q)) (k - i))) k) ⟨0, 1⟩
   refine Qeq_trans (Fsum_den_pos (fun _ => Nat.one_pos) k)
@@ -1152,7 +1152,7 @@ theorem fmul_fsmono {c : Q} (hc : 0 < c.den) (e : Nat → Q) (he : ∀ i, 0 < (e
   show Qeq (Fsum (fun i => mul (fsmono c d i) (e (k - i))) k) (mul c (e (k - d)))
   exact Qeq_trans (hg d) (Fsum_single hg hz hdk) hgd
 
-theorem fmul_fsmono_zero {c : Q} (hc : 0 < c.den) (e : Nat → Q) (he : ∀ i, 0 < (e i).den) (d : Nat)
+theorem fmul_fsmono_zero {c : Q} (_hc : 0 < c.den) (e : Nat → Q) (_he : ∀ i, 0 < (e i).den) (d : Nat)
     {k : Nat} (hk : k < d) : Qeq (fmul (fsmono c d) e k) ⟨0, 1⟩ := by
   show Qeq (Fsum (fun i => mul (fsmono c d i) (e (k - i))) k) ⟨0, 1⟩
   refine Qeq_trans (Fsum_den_pos (fun _ => Nat.one_pos) k)
@@ -2301,7 +2301,7 @@ theorem Qsub_sub_one (A B : Q) :
   simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
 
 /-- **Geometric gap bound**: `(gPow r M' − gPow r M)·(1−r) ≤ r^{M+1}` for `M ≤ M'`, `0 ≤ r`. -/
-theorem gPow_gap_le (r : Q) (hr0 : 0 ≤ r.num) (hrd : 0 < r.den) {M M' : Nat} (hMM : M ≤ M') :
+theorem gPow_gap_le (r : Q) (hr0 : 0 ≤ r.num) (hrd : 0 < r.den) {M M' : Nat} (_hMM : M ≤ M') :
     Qle (mul (Qsub (gPow r M') (gPow r M)) (Qsub ⟨1, 1⟩ r)) (qpow r (M + 1)) := by
   have hw : 0 < (Qsub (⟨1, 1⟩ : Q) r).den := Qsub_den_pos Nat.one_pos hrd
   have e1 : Qeq (mul (Qsub (gPow r M') (gPow r M)) (Qsub ⟨1, 1⟩ r))
@@ -2461,7 +2461,7 @@ theorem uval_den_pos (w : Q) (hwd : 0 < w.den) : 0 < (uval w).den := by
   omega
 
 /-- The defining relation `(1+w²)·u = 2w`. -/
-theorem uval_rel (w : Q) (hwd : 0 < w.den) :
+theorem uval_rel (w : Q) (_hwd : 0 < w.den) :
     Qeq (mul (add ⟨1, 1⟩ (mul w w)) (uval w)) (mul ⟨2, 1⟩ w) := by
   simp only [Qeq, mul, add, uval]; push_cast; rw [Int.natAbs_mul_self' w.num]; ring_uor
 
@@ -3207,7 +3207,7 @@ theorem Qmul_swap_outer (a c F : Q) : Qeq (mul a (mul c F)) (mul c (mul a F)) :=
   simp only [Qeq, mul]; push_cast; ring_uor
 
 /-- **Divide out a factor `F ≥ 1/2`**: `a·F ≤ B` with `a ≥ 0` gives `a ≤ 2·B`. -/
-theorem mul_div2 {a B F : Q} (ha : 0 ≤ a.num) (had : 0 < a.den) (hFd : 0 < F.den) (hBd : 0 < B.den)
+theorem mul_div2 {a B F : Q} (ha : 0 ≤ a.num) (had : 0 < a.den) (hFd : 0 < F.den) (_hBd : 0 < B.den)
     (hF : Qle (⟨1, 2⟩ : Q) F) (hab : Qle (mul a F) B) : Qle a (mul ⟨2, 1⟩ B) := by
   have h2F : Qle (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ F) :=
     Qle_trans (Qmul_den_pos Nat.one_pos (by decide : 0 < (⟨1, 2⟩ : Q).den))
