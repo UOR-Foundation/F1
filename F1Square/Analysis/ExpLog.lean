@@ -4945,4 +4945,27 @@ theorem Rexp_two_artanh_via (X : Real) (τ g K : Q) (M' L C : Nat) (ψ : Nat →
       (Qmul_den_pos Nat.one_pos hjd))) (Qmul_den_pos hKd (Qmul_den_pos Nat.one_pos hjd)))
     (Qadd_le_add hPmatch hPexp) (hBC j)
 
+/-- **Geometric magnitude**: `2·gPow τ N ≤ M'` whenever `2/(1−τ) ≤ M'` (`hM2 : K·2 ≤ M'`, `K = 1/(1−τ)`).
+    The `M'` argument bound for the reconciliation. Via `gPow_telescope` (`gPow·(1−τ) = 1−τ^{N+1} ≤ 1`) + `mul_div_gen`. -/
+theorem two_gPow_le (τ K : Q) (M' : Nat) (hτd : 0 < τ.den) (hτ0 : 0 ≤ τ.num)
+    (hKd : 0 < K.den) (hK0 : 0 ≤ K.num) (hKF : Qle (⟨1, 1⟩ : Q) (mul K (Qsub ⟨1, 1⟩ τ)))
+    (hM2 : Qle (mul K ⟨2, 1⟩) ⟨(M' : Int), 1⟩) (N : Nat) :
+    Qle (mul ⟨2, 1⟩ (gPow τ N)) ⟨(M' : Int), 1⟩ := by
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) τ).den := Qsub_den_pos Nat.one_pos hτd
+  have hgd : 0 < (gPow τ N).den := gPow_den_pos hτd N
+  have hstep : Qeq (mul (mul ⟨2, 1⟩ (gPow τ N)) (Qsub ⟨1, 1⟩ τ))
+      (mul ⟨2, 1⟩ (Qsub ⟨1, 1⟩ (qpow τ (N + 1)))) :=
+    Qeq_trans (Qmul_den_pos Nat.one_pos (Qmul_den_pos hgd hWd))
+      (Qmul_assoc ⟨2, 1⟩ (gPow τ N) (Qsub ⟨1, 1⟩ τ))
+      (Qmul_congr (Qeq_refl _) (gPow_telescope hτd N))
+  have haF : Qle (mul (mul ⟨2, 1⟩ (gPow τ N)) (Qsub ⟨1, 1⟩ τ)) ⟨2, 1⟩ :=
+    Qle_trans (Qmul_den_pos Nat.one_pos (Qsub_den_pos Nat.one_pos (qpow_den_pos hτd (N + 1))))
+      (Qeq_le hstep)
+      (Qle_trans (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_le_mul_left (by decide) (Qsub_le_self (qpow_nonneg hτ0 (N + 1))))
+        (Qeq_le (mul_one ⟨2, 1⟩)))
+  have hdiv := mul_div_gen (a := mul ⟨2, 1⟩ (gPow τ N)) (B := (⟨2, 1⟩ : Q)) (F := Qsub ⟨1, 1⟩ τ) (K := K)
+    (Qmul_num_nonneg (by decide) (gPow_num_nonneg hτ0 N)) (Qmul_den_pos Nat.one_pos hgd) hWd hKd hK0 hKF haF
+  exact Qle_trans (Qmul_den_pos hKd (by decide)) hdiv hM2
+
 end UOR.Bridge.F1Square.Analysis
