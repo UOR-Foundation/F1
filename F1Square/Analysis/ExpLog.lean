@@ -4840,4 +4840,22 @@ theorem peval_twoacoef_cauchy (τ : Q) (hτd : 0 < τ.den) (hτ0 : 0 ≤ τ.num)
   refine Qle_trans (Qmul_den_pos Nat.one_pos (Qmul_den_pos (Qsub_den_pos hgb hga) hWd)) (Qeq_le hstep23) ?_
   exact Qmul_le_mul_left (by decide) (gPow_gap_le τ hτ0 hτd hab)
 
+/-- **`peval(2·acoef)` magnitude**: `|peval (2·acoef) τ N| ≤ 2·gPow τ N` (`≤ 2/(1−τ)`). The argument bound
+    feeding `expSum_Lip_le` in the real reconciliation. (`peval_abs_bound` with `|2·acoefₖ| ≤ 2` + `Fsum_smul`.) -/
+theorem peval_twoacoef_abs_le_gpow (τ : Q) (hτd : 0 < τ.den) (hτ0 : 0 ≤ τ.num) (N : Nat) :
+    Qle (Qabs (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ N)) (mul ⟨2, 1⟩ (gPow τ N)) := by
+  have hgd : ∀ k, 0 < (mul ⟨2, 1⟩ (qpow τ k)).den := fun k => Qmul_den_pos Nat.one_pos (qpow_den_pos hτd k)
+  have hb2 : ∀ k, Qle (Qabs (mul ⟨2, 1⟩ (acoef k))) ⟨2, 1⟩ := fun k => by
+    rw [Qabs_mul, show Qabs (⟨2, 1⟩ : Q) = ⟨2, 1⟩ from rfl]
+    refine Qle_trans (Qmul_den_pos Nat.one_pos Nat.one_pos) (Qmul_le_mul_left (by decide)
+      (Qle_trans (acoef_den k) (Qeq_le (Qabs_of_nonneg (acoef_num_nonneg k))) (acoef_le_one k))) ?_
+    exact Qeq_le (mul_one ⟨2, 1⟩)
+  have hFsumg : Qeq (Fsum (fun k => mul ⟨2, 1⟩ (qpow τ k)) N) (mul ⟨2, 1⟩ (gPow τ N)) :=
+    Qeq_trans (Qmul_den_pos Nat.one_pos (Fsum_den_pos (fun k => qpow_den_pos hτd k) N))
+      (Fsum_smul ⟨2, 1⟩ (fun k => qpow τ k) Nat.one_pos (fun k => qpow_den_pos hτd k) N)
+      (Qmul_congr (Qeq_refl _) (gPow_eq_Fsum τ N))
+  exact Qle_trans (Fsum_den_pos hgd N)
+    (peval_abs_bound (fun i => mul ⟨2, 1⟩ (acoef i)) (fun i => Qmul_den_pos Nat.one_pos (acoef_den i))
+      τ hτd Nat.one_pos hτd hb2 (Qeq_le (Qabs_of_nonneg hτ0)) N) (Qeq_le hFsumg)
+
 end UOR.Bridge.F1Square.Analysis
