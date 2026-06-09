@@ -2392,4 +2392,27 @@ theorem peval_dcoef_pow_gap (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num)
         (fpow_fabs_dcoef_term ρ hρd hρ0 m k)))
     hMM
 
+/-- **The δ-power Cauchy modulus**: `|peval(δᵐ,w,M') − peval(δᵐ,w,M)|·(1−2ρ) ≤ (2ρ)^{M+1}` for `|w|≤ρ`,
+    `2ρ≤1`, `M≤M'` (m-INDEPENDENT — the explicit modulus making `peval(δᵐ,w,·)` regular). -/
+theorem peval_dcoef_pow_cauchy (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (hwd : 0 < w.den)
+    (hw : Qle (Qabs w) ρ) (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num) (m : Nat)
+    {M M' : Nat} (hMM : M ≤ M') :
+    Qle (mul (Qabs (Qsub (peval (fpow dcoef m) w M') (peval (fpow dcoef m) w M)))
+          (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))
+      (qpow (mul ⟨2, 1⟩ ρ) (M + 1)) := by
+  have hrd : 0 < (mul (⟨2, 1⟩ : Q) ρ).den := Qmul_den_pos (by decide) hρd
+  have hr0 : 0 ≤ (mul (⟨2, 1⟩ : Q) ρ).num := Qmul_num_nonneg (by decide) hρ0
+  have hFd : ∀ N, 0 < (Fsum (fun k => qpow (mul ⟨2, 1⟩ ρ) k) N).den :=
+    fun N => Fsum_den_pos (fun k => qpow_den_pos hrd k) N
+  have hwd1 : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).den := Qsub_den_pos Nat.one_pos hrd
+  have eGap : Qeq (Qsub (Fsum (fun k => qpow (mul ⟨2, 1⟩ ρ) k) M')
+        (Fsum (fun k => qpow (mul ⟨2, 1⟩ ρ) k) M))
+      (Qsub (gPow (mul ⟨2, 1⟩ ρ) M') (gPow (mul ⟨2, 1⟩ ρ) M)) :=
+    Qsub_congr (gPow_eq_Fsum (mul ⟨2, 1⟩ ρ) M') (gPow_eq_Fsum (mul ⟨2, 1⟩ ρ) M)
+  refine Qle_trans (Qmul_den_pos (Qsub_den_pos (hFd M') (hFd M)) hwd1)
+    (Qmul_le_mul_right h2ρ (peval_dcoef_pow_gap ρ w hρd hρ0 hwd hw m hMM)) ?_
+  refine Qle_trans (Qmul_den_pos (Qsub_den_pos (gPow_den_pos hrd M') (gPow_den_pos hrd M)) hwd1)
+    (Qeq_le (Qmul_congr eGap (Qeq_refl _))) ?_
+  exact gPow_gap_le (mul ⟨2, 1⟩ ρ) hr0 hrd hMM
+
 end UOR.Bridge.F1Square.Analysis
