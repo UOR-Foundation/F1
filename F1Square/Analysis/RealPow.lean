@@ -1211,4 +1211,33 @@ theorem nine3w_eightT_val (j : Nat) :
           have h2 : eightT (m + 2) = ⟨0, 1⟩ := by unfold eightT; rw [if_neg (by omega)]
           rw [h1, h2]; simp only [Qeq, add, mul]; split <;> omega
 
+/-- **The δ-free collapse** `648(1−w²) = 8(9+3w)² − 6(9+3w)·8w − 9·(8w)²` (both `= 648 − 648w²`).
+    This is `9(1−w²)δ' = 8−6δ−9δ²` after clearing `A²=(9+3w)²` (STEP 2c). -/
+theorem g2_final (j : Nat) :
+    Qeq (mul ⟨648, 1⟩ (oneMinusSq j))
+      (Qsub (Qsub (mul ⟨8, 1⟩ (fmul nine3w nine3w j)) (mul ⟨6, 1⟩ (fmul nine3w eightT j)))
+        (mul ⟨9, 1⟩ (fmul eightT eightT j))) := by
+  have hR : Qeq
+      (Qsub (Qsub (mul ⟨8, 1⟩ ⟨(if j = 0 then 81 else if j = 1 then 54 else if j = 2 then 9 else 0 : Int), 1⟩)
+                  (mul ⟨6, 1⟩ ⟨(if j = 1 then 72 else if j = 2 then 24 else 0 : Int), 1⟩))
+            (mul ⟨9, 1⟩ ⟨(if j = 2 then 64 else 0 : Int), 1⟩))
+      (Qsub (Qsub (mul ⟨8, 1⟩ (fmul nine3w nine3w j)) (mul ⟨6, 1⟩ (fmul nine3w eightT j)))
+        (mul ⟨9, 1⟩ (fmul eightT eightT j))) :=
+    Qsub_congr (Qsub_congr (Qmul_congr (Qeq_refl _) (Qeq_symm (nine3w_sq_val j)))
+        (Qmul_congr (Qeq_refl _) (Qeq_symm (nine3w_eightT_val j))))
+      (Qmul_congr (Qeq_refl _) (Qeq_symm (eightT_sq_val j)))
+  refine Qeq_trans (Qsub_den_pos (Qsub_den_pos (Qmul_den_pos Nat.one_pos Nat.one_pos)
+    (Qmul_den_pos Nat.one_pos Nat.one_pos)) (Qmul_den_pos Nat.one_pos Nat.one_pos)) ?_ hR
+  match j with
+  | 0 => decide
+  | 1 => decide
+  | 2 => decide
+  | (m + 3) =>
+      have ho : oneMinusSq (m + 3) = ⟨0, 1⟩ := by
+        unfold oneMinusSq fsmono; rw [if_neg (by omega), if_neg (by omega)]; decide
+      rw [ho, if_neg (show ¬(m + 3 = 0) by omega), if_neg (show ¬(m + 3 = 1) by omega),
+        if_neg (show ¬(m + 3 = 2) by omega), if_neg (show ¬(m + 3 = 1) by omega),
+        if_neg (show ¬(m + 3 = 2) by omega), if_neg (show ¬(m + 3 = 2) by omega)]
+      decide
+
 end UOR.Bridge.F1Square.Analysis
