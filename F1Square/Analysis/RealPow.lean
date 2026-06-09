@@ -559,4 +559,28 @@ theorem RexpReal_neg_sigma_le {n : Nat} (hn : 0 < n) {L σ : Real}
     RexpReal_congr (Req_trans (Rneg_congr (Rmul_two_eq_add L)) (Rneg_Radd L L))
   exact Rle_trans hmono (Rle_of_Req (Req_trans halg (RexpReal_neg_two_eq hn hrec)))
 
+-- ===========================================================================
+-- Toward `Re s ∈ (1,2)`: the exp-convexity tower. First the geometric upper bound `exp t ≤ 1/(1−t)`
+-- (`0 ≤ t < 1`), whose rational core is the termwise domination `qⁱ/i! ≤ qⁱ`, i.e. `expSum q N ≤ Σqⁱ`.
+-- ===========================================================================
+
+/-- **`expSum q N ≤ Σ_{i≤N} qⁱ`** for `q ≥ 0` — termwise, since `qⁱ/i! ≤ qⁱ` (`i! ≥ 1`). The rational
+    seed of the geometric upper bound `exp t ≤ 1/(1−t)`. -/
+theorem expSum_le_gPow {q : Q} (hq0 : 0 ≤ q.num) (hqd : 0 < q.den) :
+    ∀ N, Qle (expSum q N) (gPow q N)
+  | 0 => Qle_refl _
+  | (N + 1) => by
+      show Qle (add (expSum q N) (expTerm q (N + 1))) (add (gPow q N) (qpow q (N + 1)))
+      have hterm : Qle (expTerm q (N + 1)) (qpow q (N + 1)) := by
+        show Qle (mul (qpow q (N + 1)) ⟨1, fct (N + 1)⟩) (qpow q (N + 1))
+        have hfle : Qle (⟨1, fct (N + 1)⟩ : Q) ⟨1, 1⟩ := by
+          have hf : 1 ≤ fct (N + 1) := fct_pos (N + 1)
+          show (1 : Int) * 1 ≤ 1 * ((fct (N + 1) : Nat) : Int)
+          have : (1 : Int) ≤ ((fct (N + 1) : Nat) : Int) := by exact_mod_cast hf
+          omega
+        refine Qle_trans (Qmul_den_pos (qpow_den_pos hqd _) (by decide))
+          (Qmul_le_mul_left (qpow_nonneg hq0 _) hfle) (Qeq_le ?_)
+        simp only [Qeq, mul]; push_cast; ring_uor
+      exact Qadd_le_add (expSum_le_gPow hq0 hqd N) hterm
+
 end UOR.Bridge.F1Square.Analysis

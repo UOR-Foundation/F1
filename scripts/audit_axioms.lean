@@ -1106,3 +1106,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rmul_two_le_Rmul
 #print axioms Analysis.RexpReal_neg_two_eq
 #print axioms Analysis.RexpReal_neg_sigma_le
+#print axioms Analysis.expSum_le_gPow
