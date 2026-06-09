@@ -4,6 +4,39 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html), starting at `v0.0.1`.
 
+## [0.15.2] - 2026-06-09
+
+### Added — ζ(s) = Σ n⁻ˢ for **complex** s with Re s > 1, as a genuine constructive ℂ (pure Lean 4, no Mathlib, no `sorry`)
+- **The Riemann zeta function for complex argument** (`F1Square/Analysis/ComplexZeta.lean`) — `Czeta s hσ … hθ`:
+  for any complex `s` with `Re s ≥ 0` and a rational witness `τ > 0` of `Re s > 1` (`τ ≤ (Re s − 1)·log 2`),
+  `ζ(s) = Σ_{n≥1} n⁻ˢ` is a genuine constructive complex number — its real and imaginary parts are Bishop
+  diagonal limits (`Rlim`) of the reindexed dyadic partial sums `Σ_{n<2^{M(j)}} Re/Im(n⁻ˢ)`. This replaces
+  the previous integer-only `ζ(s)` (`Σ 1/iˢ`, `s ≥ 2`): convergence now holds across the **full half-plane
+  `Re s > 1`**, with `s` genuinely complex.
+- **Convergence with a rate** — `Czeta_re_tendsTo` / `Czeta_im_tendsTo`: the partial sums converge to
+  `Re/Im ζ(s)` with the canonical Bishop modulus `2/(k+1)` (`Rlim_tendsTo`). The rigorous complex geometric
+  tail, certified.
+- **The dyadic-geometric convergence proof**, built from scratch:
+  - **exp injectivity → log-multiplicativity** (`F1Square/Analysis/RealPow.lean`) — `RexpReal_inj`,
+    `logN_mul`, `logN_pow_two` (`log(2ᵏ) = k·log 2`), re-routing around the artanh addition boundary wall.
+  - **dyadic block bound** — `czetaExp_block_geo`: the `[2ᵏ, 2ᵏ⁺¹)` block modulus `≤ ofQ(rᵏ)`,
+    `r = 1/(1+τ) < 1` (the ratio `2·exp(−σ log2) = exp(−θ) ≤ r`, from `Re s > 1`).
+  - **geometric tail** — `geoFrom_telescope` (`Σ_{k=j}^{j+d−1} rᵏ·(1−r) = rʲ − r^{j+d}`), `geoFrom_le`
+    (`≤ rʲ/(1−r)`), and the dyadic telescoping `czetaExp_tail` (`E(2^{j+d}) − E(2ʲ) ≤ ofQ(Σ rᵏ)`).
+  - **the geometric reindex** — `geom_reindex`: the Bernoulli `1/(linear)` decay `qpow_geom_bound` with the
+    quadratic index `M(j) = (j+1)·r.den²` collapses `r^{M(j)}/(1−r) ≤ 1/(j+1)` (`czetaExp_tail_reindex`).
+  - **the completeness bridge** — `seq_diff_le` (a real upper bound `a − b ≤ c` gives the same-index rational
+    bound `aₙ − bₙ ≤ c + 2/(n+1)`, via regularity + the generalized Archimedean lemma) and `RReg_of_real_bound`
+    (pairwise real differences `≤ 1/(j+1)+1/(k+1)` ⟹ a regular sequence of reals), feeding Bishop's `Rlim`.
+  - **the Cauchy partial sums** — `czetaRe_RReg` / `czetaIm_RReg`: the reindexed real/imaginary partial sums
+    are regular sequences of reals (the four two-sided tail bounds `czetaRe/Im_tail_le/ge`, case-split on `j ≤ k`).
+- **`F1Square.lean` witness** binding `Czeta_re_tendsTo` / `Czeta_im_tendsTo` for all complex `s` with `Re s > 1`.
+- Choice-free throughout (`{propext, Quot.sound}` only), `sorry`-free, `#print axioms`-audited at every commit.
+
+### Unchanged — the honesty audit
+- The crux `liPositivityHolds = none` (= RH) stays open; ζ ships in its convergent half-plane `Re s > 1`
+  (where it has no zeros), and the analytic continuation to the critical strip is not built.
+
 ## [0.15.1] - 2026-06-09
 
 ### Added — the ζ-convergence gate `exp∘log = id` via genuine power-series composition (pure Lean 4, no Mathlib, no `sorry`)

@@ -265,10 +265,11 @@ def f1SquareStatus : F1SquareStatus := {
 --                                numerically positive yet that is NOT a proof)
 --   ζ-layer substrate (interfaces, never asserted for the genuine λ) ← Li.{LiDecomposition (BL),
 --                                ExplicitFormulaTrace (Weil 1952/Connes 1999), LiAgreesWith}
---   ζ(s) as an exact-bounded object ← Analysis.{zeta (Σ1/iˢ, integer s≥2), zeta_pos, zetadiff_bound
---                                (the rigorous rational tail certificate)}; λₙ typed as
+--   ζ(s) as a constructive object ← Analysis.{Czeta (Σ n⁻ˢ, complex s, Re s>1; Bishop Rlim of the dyadic
+--                                partial sums), Czeta_re/im_tendsTo (convergence with rate 2/(k+1)); and the
+--                                integer-s exact-bounded ζ (zeta, zeta_pos, zetadiff_bound)}; λₙ typed as
 --                                Nat → ExactBoundedReal (Analysis.ExactBounded). HONEST SCOPE: ζ here
---                                is the convergent regime Re(s)>1 (no zeros, not the critical strip);
+--                                is the convergent half-plane Re(s)>1 (no zeros, not the critical strip);
 --                                the genuine λₙ values need analytic continuation + log (deferred).
 -- v0.11.0 (the order ≤ on ℝ — the foundation for the transcendentals):
 --   Bishop order ≤            ← Analysis.{Rle (xₙ ≤ yₙ + 2/(n+1)), Rle_refl, Rle_of_Req, Rle_antisymm,

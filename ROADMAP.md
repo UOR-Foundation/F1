@@ -49,7 +49,7 @@ stage A (ζ for complex argument) builds on. **Shipped:**
   (`ncpow_normSq`), the analytic payoff of `cos² + sin² = 1`.
 - **De-hedges:** "exp/cos/sin without addition laws" → "exp is a homomorphism; `|cos|,|sin| ≤ 1`; the complex
   exponential and `nˢ` with their modulus".
-- **Stays open:** ζ at complex `s` (the convergence gate `exp∘log = id`, see v0.15.1); critical strip; zeros; crux.
+- **Stays open:** the critical strip; zeros; crux. (ζ at complex `s` with `Re s > 1` shipped in v0.15.2.)
 
 ## The v0.15.x series — (A, continued) completing ζ for complex argument
 
@@ -72,10 +72,14 @@ core is not held hostage to it.
   reconciliation is required. The honesty gate is met — the identity closes **axiom-clean**
   (`{propext, Quot.sound}`), so the ζ-complex tail (v0.15.2) need not ship its convergence as an interface.
   Remaining for v0.15.2: lifting to real exponents `c·log n` (`exp(c·log n) = nᶜ`) and `Czeta`.
-- **v0.15.2 — real powers `nᶜ` + `Analysis/ZetaC.lean`.** `exp(c·log n) = nᶜ` (v0.15.1 + `RexpReal_add`), the
-  tail bound `|n^{-s}| = n^{-Re s}` (uses `|cos|,|sin| ≤ 1`, shipped), and `Czeta s` for `Re(s) > 1` as
-  `Σ n^{-s}` with a rigorous complex tail, mirroring `Zeta.lean`. **De-hedges:** "ζ only at integer `s ≥ 2`"
-  → "ζ(s), complex `s`, `Re(s) > 1`".
+- **v0.15.2 — ζ(s) for complex `Re(s) > 1` (`Analysis/ComplexZeta.lean`) [shipped].** `Czeta s` for `Re(s) > 1`
+  as `Σ n^{-s}` with a rigorous complex tail: the dyadic block modulus `≤ ofQ(rᵏ)` (`czetaExp_block_geo`,
+  `r = 1/(1+τ) < 1`), the geometric tail `geoFrom_le` (`Σ rᵏ ≤ rʲ/(1−r)`), the Bernoulli reindex
+  `geom_reindex` (`r^{M(j)}/(1−r) ≤ 1/(j+1)`, `M(j) = (j+1)·r.den²`), the completeness bridge
+  `seq_diff_le`/`RReg_of_real_bound` (real bound → `RReg`), and `czetaRe/Im_RReg` → Bishop `Rlim`. `Czeta_re/
+  im_tendsTo` certify convergence with rate `2/(k+1)`. **De-hedged:** "ζ only at integer `s ≥ 2`" →
+  "ζ(s), complex `s`, `Re(s) > 1`". (The log-multiplicativity `log(2ᵏ) = k·log 2` came via exp injectivity
+  `RexpReal_inj`, re-routing the artanh addition boundary wall — `exp∘log = id` of v0.15.1 was the gate.)
 - **v0.15.3 — `Analysis/Mangoldt.lean` + the `n = 1` decomposition.** von Mangoldt `Λ` and the
   explicit-formula **prime side** `Σ_p Σ_k log p · h(k log p)` as a real (finite for compactly-supported `h`),
   and the **Bombieri–Lagarias `λₙ = λₙ^{arith} + λₙ^{∞}` for `n = 1`** as a theorem (uses the `γ`/`log 4π`/`λ₁`
