@@ -4451,4 +4451,36 @@ theorem peval_dgeom_tail_cleared (t : Q) (htd : 0 < t.den) (M M2 : Nat) :
   refine Qeq_trans (Qsub_den_pos (hrd (M2 + 1)) (hrd (M + 1))) (Qsub_congr hAc hBc) ?_
   simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
 
+/-- **Truncated coefficient series** `truncTo b M`: keeps `b k` for `k ≤ M`, zero above. Finite support
+    `≤ M` — essential for the no-corner power identity (`2·acoef` has infinite support). -/
+def truncTo (b : Nat → Q) (M : Nat) (k : Nat) : Q := if k ≤ M then b k else ⟨0, 1⟩
+
+theorem truncTo_den {b : Nat → Q} (hb : ∀ i, 0 < (b i).den) (M k : Nat) : 0 < (truncTo b M k).den := by
+  unfold truncTo; split
+  · exact hb k
+  · exact Nat.one_pos
+
+theorem truncTo_le {b : Nat → Q} (hb0 : ∀ i, 0 ≤ (b i).num) (M k : Nat) : Qle (truncTo b M k) (b k) := by
+  unfold truncTo; split
+  · exact Qle_refl _
+  · exact Qzero_le_loc (hb0 k)
+
+/-- The truncation evaluated past its support equals the original partial sum: `peval (truncTo b M) t (M+d)
+    ≈ peval b t M`. -/
+theorem peval_truncTo {b : Nat → Q} (hb : ∀ i, 0 < (b i).den) (t : Q) (htd : 0 < t.den) (M : Nat) :
+    ∀ d, Qeq (peval (truncTo b M) t (M + d)) (peval b t M)
+  | 0 => by
+      refine Fsum_congr_le (fun i hi => ?_)
+      show Qeq (mul (truncTo b M i) (qpow t i)) (mul (b i) (qpow t i))
+      have hbi : truncTo b M i = b i := by unfold truncTo; rw [if_pos (by omega : i ≤ M)]
+      rw [hbi]; exact Qeq_refl _
+  | (d + 1) => by
+      rw [Nat.add_succ]
+      have hz : truncTo b M (M + d + 1) = ⟨0, 1⟩ := by unfold truncTo; rw [if_neg (by omega)]
+      show Qeq (add (peval (truncTo b M) t (M + d))
+        (mul (truncTo b M (M + d + 1)) (qpow t (M + d + 1)))) (peval b t M)
+      refine Qeq_trans (add_den_pos (peval_den_pos hb htd M) Nat.one_pos)
+        (Qadd_congr (peval_truncTo hb t htd M d) ?_) (Qadd_zero_right _)
+      rw [hz]; exact mul_left_zero _
+
 end UOR.Bridge.F1Square.Analysis

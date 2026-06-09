@@ -1054,3 +1054,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.comp_eval_gap_le
 #print axioms Analysis.peval_dgeom_mul_cleared
 #print axioms Analysis.peval_dgeom_tail_cleared
+#print axioms Analysis.truncTo_den
+#print axioms Analysis.truncTo_le
+#print axioms Analysis.peval_truncTo
