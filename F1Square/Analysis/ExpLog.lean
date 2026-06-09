@@ -4431,4 +4431,24 @@ theorem peval_dgeom_mul_cleared (t : Q) (htd : 0 < t.den) (N : Nat) :
     (Qeq_trans (Qsub_den_pos (Qmul_den_pos Nat.one_pos (Qmul_den_pos hGd hsd)) hsd) I1
       (Qeq_trans (Qsub_den_pos (Qmul_den_pos Nat.one_pos (Qsub_den_pos Nat.one_pos hPd)) hsd) I2 I3))
 
+/-- **The geometric tail, cleared**: `(peval dgeom t M2 − peval dgeom t M)·(1−t) ≈ 2·(t^{M+1} − t^{M2+1})`
+    for `M ≤ M2`. The exp eval-bridge corner `Σ_{m≤M}(1/m!)·Cₘ` is bounded by this geometric tail
+    `Σ_{M<k≤M2} dgeom_k tᵏ → 2t^{M+1}/(1−t)`. Two applications of `peval_dgeom_mul_cleared`. -/
+theorem peval_dgeom_tail_cleared (t : Q) (htd : 0 < t.den) (M M2 : Nat) :
+    Qeq (mul (Qsub (peval dgeom t M2) (peval dgeom t M)) (Qsub ⟨1, 1⟩ t))
+      (mul ⟨2, 1⟩ (Qsub (qpow t (M + 1)) (qpow t (M2 + 1)))) := by
+  have hAc := peval_dgeom_mul_cleared t htd M2
+  have hBc := peval_dgeom_mul_cleared t htd M
+  have hpM2 : 0 < (peval dgeom t M2).den := peval_den_pos (fun k => dgeom_den k) htd M2
+  have hpM : 0 < (peval dgeom t M).den := peval_den_pos (fun k => dgeom_den k) htd M
+  have hcd : 0 < (Qsub (⟨1, 1⟩ : Q) t).den := Qsub_den_pos Nat.one_pos htd
+  have hrd : ∀ k, 0 < (Qsub (add (⟨1, 1⟩ : Q) t) (mul ⟨2, 1⟩ (qpow t k))).den :=
+    fun k => Qsub_den_pos (add_den_pos Nat.one_pos htd) (Qmul_den_pos Nat.one_pos (qpow_den_pos htd k))
+  have step1 : Qeq (mul (Qsub (peval dgeom t M2) (peval dgeom t M)) (Qsub ⟨1, 1⟩ t))
+      (Qsub (mul (peval dgeom t M2) (Qsub ⟨1, 1⟩ t)) (mul (peval dgeom t M) (Qsub ⟨1, 1⟩ t))) := by
+    simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+  refine Qeq_trans (Qsub_den_pos (Qmul_den_pos hpM2 hcd) (Qmul_den_pos hpM hcd)) step1 ?_
+  refine Qeq_trans (Qsub_den_pos (hrd (M2 + 1)) (hrd (M + 1))) (Qsub_congr hAc hBc) ?_
+  simp only [Qeq, mul, Qsub, add, neg]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Analysis
