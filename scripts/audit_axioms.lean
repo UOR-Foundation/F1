@@ -1280,3 +1280,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.czetaU_2u_eq
 #print axioms Analysis.czetaU_2u_le_of_theta
 #print axioms Analysis.czeta_theta_ge
+#print axioms Analysis.czetaExp_block_geo

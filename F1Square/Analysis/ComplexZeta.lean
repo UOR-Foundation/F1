@@ -233,4 +233,20 @@ theorem czeta_theta_ge (s : Complex) (hs : Pos (Rsub s.re one)) :
   exact Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ hεd (Int.le_of_lt hεn)) logN_2_ge_half)
     (Rmul_le_Rmul_right (Rnonneg_logN 2 (by omega)) hε)
 
+/-- **The dyadic block as a rational geometric term**: `E(2ᵏ⁺¹) − E(2ᵏ) ≤ ofQ(rᵏ)`, `r = 1/(1+τ) < 1`,
+    for `θ = (Re s−1)·log2 ≥ ofQ τ` (`τ > 0`) and `Re s ≥ 0`. -/
+theorem czetaExp_block_geo (s : Complex) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hθ : Rle (ofQ τ hτd) (Rmul (Rsub s.re one) (logN 2 (by omega)))) (k : Nat) :
+    Rle (Rsub (czetaExpSum s (2 ^ (k + 1))) (czetaExpSum s (2 ^ k)))
+        (ofQ (qpow (Qinv (add ⟨1, 1⟩ τ)) k)
+          (qpow_den_pos (Qinv_den_pos (by simp only [add]; push_cast; omega)) k)) := by
+  have hrd : 0 < (Qinv (add (⟨1, 1⟩ : Q) τ)).den := Qinv_den_pos (by simp only [add]; push_cast; omega)
+  have hrn : 0 ≤ (Qinv (add (⟨1, 1⟩ : Q) τ)).num := by
+    show (0 : Int) ≤ ((add (⟨1, 1⟩ : Q) τ).den : Int); exact_mod_cast Nat.zero_le _
+  refine Rle_trans (czetaExp_block_pow s hσ k) ?_
+  refine Rle_trans (Rpow_mono
+      (Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide)) (RexpReal_nonneg _))
+      (Rnonneg_ofQ hrd hrn) (czetaU_2u_le_of_theta s hτn hτd hθ) k) ?_
+  exact Rle_of_Req (Rpow_ofQ hrd k)
+
 end UOR.Bridge.F1Square.Analysis
