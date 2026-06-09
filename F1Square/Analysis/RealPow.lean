@@ -2776,6 +2776,42 @@ theorem Pos_Rmul {a b : Real} (ha : Pos a) (hb : Pos b) : Pos (Rmul a b) := by
     (Rle_trans (Rmul_le_Rmul_right (Rnonneg_ofQ hdd (Int.le_of_lt hdn)) hca)
       (Rmul_le_Rmul_left (Rnonneg_of_Pos ha) hdb))
 
+/-- `(X+Y) − Y ≈ X`. -/
+private theorem Radd_sub_cancel (X Y : Real) : Req (Rsub (Radd X Y) Y) X :=
+  Req_trans (Radd_assoc X Y (Rneg Y))
+    (Req_trans (Radd_congr (Req_refl X) (Radd_neg Y)) (Radd_zero X))
+
+/-- **Difference of squares**: `(a−b)(a+b) ≈ a² − b²`. -/
+theorem Rmul_sub_add_self (a b : Real) :
+    Req (Rmul (Rsub a b) (Radd a b)) (Rsub (Rmul a a) (Rmul b b)) :=
+  Req_trans (Rmul_sub_distrib_right a b (Radd a b))
+    (Req_trans (Rsub_congr (Rmul_distrib a a b) (Rmul_distrib b a b))
+      (Req_trans (Rsub_congr (Req_refl _) (Radd_congr (Rmul_comm b a) (Req_refl _)))
+        (Req_trans (Rsub_Radd_eq (Radd (Rmul a a) (Rmul a b)) (Rmul a b) (Rmul b b))
+          (Rsub_congr (Radd_sub_cancel (Rmul a a) (Rmul a b)) (Req_refl _)))))
+
+/-- `(a+b) − (a−b) ≈ b + b`. -/
+private theorem Rsub_add_sub_self (a b : Real) :
+    Req (Rsub (Radd a b) (Rsub a b)) (Radd b b) :=
+  Req_trans (Rsub_Radd_Radd a b a (Rneg b))
+    (Req_trans (Radd_congr (Radd_neg a)
+        (Req_trans (Radd_congr (Req_refl b) (Rneg_neg b)) (Req_refl _)))
+      (Req_trans (Radd_comm zero (Radd b b)) (Radd_zero (Radd b b))))
+
+set_option maxHeartbeats 1000000 in
+/-- **Square reflects `≤`**: `a² ≤ b²` and `b ≥ 0` give `a ≤ b`. -/
+theorem Rle_of_Rmul_self_le {a b : Real} (hb : Rnonneg b)
+    (h : Rle (Rmul a a) (Rmul b b)) : Rle a b := by
+  refine Rle_of_Rnonneg_Rsub
+    (Rnonneg_congr (Rneg_Rsub a b) (Rnonneg_neg_of_not_Pos (fun hP => ?_)))
+  have hsum : Pos (Radd a b) :=
+    Pos_mono (Rle_of_Rnonneg_Rsub
+      (Rnonneg_congr (Req_symm (Rsub_add_sub_self a b)) (Rnonneg_Radd hb hb))) hP
+  have hdiff : Pos (Rsub (Rmul a a) (Rmul b b)) :=
+    Pos_congr (Rmul_sub_add_self a b) (Pos_Rmul hP hsum)
+  exact not_Pos_of_Rnonneg_neg
+    (Rnonneg_congr (Req_symm (Rneg_Rsub (Rmul a a) (Rmul b b))) (Rnonneg_Rsub_of_Rle h)) hdiff
+
 /-- **The dyadic block modulus bound**: for `σ ≥ 0` and `2ᵏ ≤ n`, `exp(−σ·log n) ≤ exp(−σ·k·log 2)`.
     The per-term bound that makes block `B_k` sum to `≤ 2ᵏ·exp(−σ·k·log 2) = (exp(−θ))ᵏ`. -/
 theorem exp_block_bound {σ : Real} (hσ : Rnonneg σ) {k n : Nat} (hn : 2 ^ k ≤ n) :

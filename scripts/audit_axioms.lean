@@ -1236,3 +1236,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rexp_neg_le_ratio
 #print axioms Analysis.Rmul_le_Rmul_right
 #print axioms Analysis.Pos_Rmul
+#print axioms Analysis.Rmul_sub_add_self
+#print axioms Analysis.Rle_of_Rmul_self_le
