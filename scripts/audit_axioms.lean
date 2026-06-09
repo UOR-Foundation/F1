@@ -1129,3 +1129,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fderiv_nine3w
 #print axioms Analysis.fderiv_eightT
 #print axioms Analysis.dcoef_deriv_rel
+#print axioms Analysis.mul9_eq_zero
+#print axioms Analysis.nine3w_eval0
+#print axioms Analysis.nine3w_eval_succ
+#print axioms Analysis.nine3w_zero_cancel
+#print axioms Analysis.fmul_nine3w_cancel

@@ -1036,4 +1036,89 @@ theorem dcoef_deriv_rel (k : Nat) :
   exact Qeq_trans (fderiv_den_pos (fun i => fmul_den_pos nine3w_den dcoef_den i) k)
     (Qeq_symm step1) step2
 
+-- ===========================================================================
+-- STEP 2c-pre — **`(9+3w)` is a unit**: `fmul nine3w` is injective (cancellation). The defining
+-- denominator of `δ` and `g`; needed to clear `A=(9+3w)` in the formal δ-ODE identity (STEP 2c).
+-- First-order recurrence `9·Z_k + 3·Z_{k−1} = 0`, `Z₀=0 ⇒ Z≡0`. Mirrors `fmul_oneplusSq_cancel`.
+-- ===========================================================================
+
+/-- `9·X ≈ 0 ⇒ X ≈ 0`. -/
+theorem mul9_eq_zero {X : Q} (h : Qeq (mul ⟨9, 1⟩ X) ⟨0, 1⟩) : Qeq X ⟨0, 1⟩ := by
+  simp only [Qeq, mul] at h ⊢; push_cast at h ⊢; omega
+
+/-- `((9+3w)·X)_0 = 9·X_0`. -/
+theorem nine3w_eval0 (X : Nat → Q) (hX : ∀ i, 0 < (X i).den) :
+    Qeq (fmul nine3w X 0) (mul ⟨9, 1⟩ (X 0)) := by
+  have e0 : Qeq (fmul nine3w X 0)
+      (add (fmul (fsmono ⟨9, 1⟩ 0) X 0) (fmul (fsmono ⟨3, 1⟩ 1) X 0)) :=
+    Qeq_trans (fmul_den_pos (fun i => add_den_pos (fsmono_den (by decide) 0 i)
+        (fsmono_den (by decide) 1 i)) hX 0) (fmul_congr_left nine3w_split 0)
+      (fmul_add_left (fsmono_den (by decide) 0) (fsmono_den (by decide) 1) hX 0)
+  have h9 : Qeq (fmul (fsmono ⟨9, 1⟩ 0) X 0) (mul ⟨9, 1⟩ (X 0)) :=
+    fmul_fsmono (by decide) X hX 0 (by omega)
+  have h3 : Qeq (fmul (fsmono ⟨3, 1⟩ 1) X 0) ⟨0, 1⟩ := fmul_fsmono_zero (by decide) X hX 1 (by omega)
+  refine Qeq_trans (add_den_pos (fmul_den_pos (fsmono_den (by decide) 0) hX 0)
+    (fmul_den_pos (fsmono_den (by decide) 1) hX 0)) e0 ?_
+  exact Qeq_trans (add_den_pos (Qmul_den_pos (by decide) (hX 0)) Nat.one_pos)
+    (Qadd_congr h9 h3) (Qadd_zero_right _)
+
+/-- `((9+3w)·X)_{n+1} = 9·X_{n+1} + 3·X_n`. -/
+theorem nine3w_eval_succ (X : Nat → Q) (hX : ∀ i, 0 < (X i).den) (n : Nat) :
+    Qeq (fmul nine3w X (n + 1)) (add (mul ⟨9, 1⟩ (X (n + 1))) (mul ⟨3, 1⟩ (X n))) := by
+  have e0 : Qeq (fmul nine3w X (n + 1))
+      (add (fmul (fsmono ⟨9, 1⟩ 0) X (n + 1)) (fmul (fsmono ⟨3, 1⟩ 1) X (n + 1))) :=
+    Qeq_trans (fmul_den_pos (fun i => add_den_pos (fsmono_den (by decide) 0 i)
+        (fsmono_den (by decide) 1 i)) hX (n + 1)) (fmul_congr_left nine3w_split (n + 1))
+      (fmul_add_left (fsmono_den (by decide) 0) (fsmono_den (by decide) 1) hX (n + 1))
+  have h9 : Qeq (fmul (fsmono ⟨9, 1⟩ 0) X (n + 1)) (mul ⟨9, 1⟩ (X (n + 1))) := by
+    have hh := fmul_fsmono (c := ⟨9, 1⟩) (by decide) X hX 0 (show 0 ≤ n + 1 by omega)
+    rwa [Nat.sub_zero] at hh
+  have h3 : Qeq (fmul (fsmono ⟨3, 1⟩ 1) X (n + 1)) (mul ⟨3, 1⟩ (X n)) := by
+    have hh := fmul_fsmono (c := ⟨3, 1⟩) (by decide) X hX 1 (show 1 ≤ n + 1 by omega)
+    rwa [show n + 1 - 1 = n from by omega] at hh
+  refine Qeq_trans (add_den_pos (fmul_den_pos (fsmono_den (by decide) 0) hX (n + 1))
+    (fmul_den_pos (fsmono_den (by decide) 1) hX (n + 1))) e0 ?_
+  exact Qadd_congr h9 h3
+
+/-- `(9+3w)·Z = 0 ⇒ Z = 0`. -/
+theorem nine3w_zero_cancel {Z : Nat → Q} (hZ : ∀ i, 0 < (Z i).den)
+    (h : ∀ k, Qeq (fmul nine3w Z k) ⟨0, 1⟩) : ∀ k, Qeq (Z k) ⟨0, 1⟩ := by
+  intro k
+  induction k with
+  | zero => exact mul9_eq_zero (Qeq_trans (fmul_den_pos nine3w_den hZ 0)
+      (Qeq_symm (nine3w_eval0 Z hZ)) (h 0))
+  | succ n ih =>
+      have hev : Qeq (add (mul ⟨9, 1⟩ (Z (n + 1))) (mul ⟨3, 1⟩ (Z n))) ⟨0, 1⟩ :=
+        Qeq_trans (fmul_den_pos nine3w_den hZ (n + 1))
+          (Qeq_symm (nine3w_eval_succ Z hZ n)) (h (n + 1))
+      have h9z : Qeq (mul ⟨9, 1⟩ (Z (n + 1))) ⟨0, 1⟩ := by
+        have hrw : Qeq (mul ⟨9, 1⟩ (Z (n + 1)))
+            (Qsub (add (mul ⟨9, 1⟩ (Z (n + 1))) (mul ⟨3, 1⟩ (Z n))) (mul ⟨3, 1⟩ (Z n))) := by
+          simp only [Qeq, add, Qsub, neg, mul]; push_cast; ring_uor
+        have h3z : Qeq (mul ⟨3, 1⟩ (Z n)) ⟨0, 1⟩ := by
+          have hin := ih; simp only [Qeq, mul] at hin ⊢; push_cast at hin ⊢; omega
+        exact Qeq_trans (Qsub_den_pos (add_den_pos (Qmul_den_pos (by decide) (hZ (n + 1)))
+            (Qmul_den_pos (by decide) (hZ n))) (Qmul_den_pos (by decide) (hZ n))) hrw
+          (Qeq_trans (Qsub_den_pos Nat.one_pos Nat.one_pos) (Qsub_congr hev h3z)
+            (by simp [Qeq, Qsub, add, neg]))
+      exact mul9_eq_zero h9z
+
+/-- **`fmul nine3w` is injective**: the `(9+3w)`-cancellation. -/
+theorem fmul_nine3w_cancel {X Y : Nat → Q} (hX : ∀ i, 0 < (X i).den) (hY : ∀ i, 0 < (Y i).den)
+    (h : ∀ k, Qeq (fmul nine3w X k) (fmul nine3w Y k)) (k : Nat) : Qeq (X k) (Y k) := by
+  have hZ : ∀ i, 0 < (Qsub (X i) (Y i)).den := fun i => Qsub_den_pos (hX i) (hY i)
+  have hzero : ∀ m, Qeq (fmul nine3w (fun i => Qsub (X i) (Y i)) m) ⟨0, 1⟩ := by
+    intro m
+    have hXc : Qeq (fmul (fun i => Qsub (X i) (Y i)) nine3w m)
+        (Qsub (fmul X nine3w m) (fmul Y nine3w m)) := fmul_sub_left hX hY nine3w_den m
+    refine Qeq_trans (fmul_den_pos hZ nine3w_den m)
+      (fmul_comm nine3w (fun i => Qsub (X i) (Y i)) nine3w_den hZ m) ?_
+    refine Qeq_trans (Qsub_den_pos (fmul_den_pos hX nine3w_den m) (fmul_den_pos hY nine3w_den m))
+      hXc ?_
+    refine Qeq_trans (Qsub_den_pos (fmul_den_pos nine3w_den hX m) (fmul_den_pos nine3w_den hY m))
+      (Qsub_congr (fmul_comm X nine3w hX nine3w_den m) (fmul_comm Y nine3w hY nine3w_den m)) ?_
+    exact Qeq_trans (Qsub_den_pos (fmul_den_pos nine3w_den hX m) (fmul_den_pos nine3w_den hX m))
+      (Qsub_congr (Qeq_refl _) (Qeq_symm (h m))) (by simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor)
+  exact Qeq_of_Qsub_zero (nine3w_zero_cancel hZ hzero k)
+
 end UOR.Bridge.F1Square.Analysis
