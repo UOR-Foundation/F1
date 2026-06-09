@@ -4624,4 +4624,77 @@ theorem Fsum_le_extend {f : Nat → Q} (hf : ∀ i, 0 < (f i).den) (hf0 : ∀ i,
       exact Qle_trans (Fsum_den_pos hf (M + d)) (Fsum_le_extend hf hf0 M d)
         (Qle_add_right_nonneg (hf0 (M + d + 1)))
 
+/-- **★ The exp eval-bridge corner bound**: `|peval(exp∘2artanh) t M − peval exp (peval 2artanh t M) M| ≤
+    peval dgeom t M² − peval dgeom t M` (the geometric tail). Combines `comp_eval_gap_le` (gap ≤ Σ corners),
+    `qpow_peval_le` (each corner ≤ a higher-truncation difference), and `formal_exp_geom` (the sums collapse
+    to `peval dgeom`). The convergence of the exp series at the doubled-artanh partial sum. -/
+theorem exp_corner_le {t : Q} (htd : 0 < t.den) (ht0 : 0 ≤ t.num) (M : Nat) :
+    Qle (Qabs (Qsub (peval (fcomp ecoef (fun i => mul ⟨2, 1⟩ (acoef i))) t M)
+          (peval ecoef (peval (fun i => mul ⟨2, 1⟩ (acoef i)) t M) M)))
+      (Qsub (peval dgeom t (M * M)) (peval dgeom t M)) := by
+  have hbd : ∀ i, 0 < ((fun i => mul ⟨2, 1⟩ (acoef i)) i).den :=
+    fun i => Qmul_den_pos Nat.one_pos (acoef_den i)
+  have hb0n : ∀ i, 0 ≤ ((fun i => mul ⟨2, 1⟩ (acoef i)) i).num :=
+    fun i => Qmul_num_nonneg (by decide) (acoef_num_nonneg i)
+  have hb0 : Qeq ((fun i => mul ⟨2, 1⟩ (acoef i)) 0) ⟨0, 1⟩ := by
+    show Qeq (mul ⟨2, 1⟩ (acoef 0)) ⟨0, 1⟩
+    have h00 : acoef 0 = ⟨0, 1⟩ := by decide
+    rw [h00]; decide
+  have hec0 : ∀ i, 0 ≤ (ecoef i).num := fun _ => by show (0 : Int) ≤ 1; decide
+  have hpAd : ∀ m, 0 ≤ (mul (ecoef m) (peval (fpow (fun i => mul ⟨2, 1⟩ (acoef i)) m) t (M * M))).num :=
+    fun m => Qmul_num_nonneg (hec0 m) (peval_num_nonneg (fpow_num_nonneg hb0n m) t ht0 (M * M))
+  have hMMle : M ≤ M * M := by
+    rcases Nat.eq_zero_or_pos M with h | h
+    · subst h; decide
+    · calc M = 1 * M := (Nat.one_mul M).symm
+        _ ≤ M * M := Nat.mul_le_mul_right M h
+  -- Step 1: comp_eval_gap_le
+  refine Qle_trans (Fsum_den_pos (fun m => Qmul_den_pos (Qabs_den_pos (ecoef_den m))
+      (Qsub_den_pos (qpow_den_pos (peval_den_pos hbd htd M) m)
+        (peval_den_pos (fpow_den_pos hbd m) htd M))) M)
+    (comp_eval_gap_le ecoef (fun i => mul ⟨2, 1⟩ (acoef i)) (fun i => ecoef_den i) hbd hb0 hb0n t htd ht0 M) ?_
+  -- Step 2: termwise corner ≤ higher-truncation difference
+  refine Qle_trans (Fsum_den_pos (fun m => Qmul_den_pos (ecoef_den m)
+      (Qsub_den_pos (peval_den_pos (fpow_den_pos hbd m) htd (M * M))
+        (peval_den_pos (fpow_den_pos hbd m) htd M))) M)
+    (Fsum_le_congr (fun m hm => ?_)) ?_
+  · refine Qle_congr_left (Qmul_den_pos (Qabs_den_pos (ecoef_den m))
+        (Qsub_den_pos (qpow_den_pos (peval_den_pos hbd htd M) m) (peval_den_pos (fpow_den_pos hbd m) htd M)))
+      (Qmul_congr (Qabs_of_nonneg (hec0 m)) (Qeq_refl _)) ?_
+    exact Qmul_le_mul_left (hec0 m) (Qsub_le_sub
+      (qpow_peval_le hbd hb0n htd ht0 M m (M * M) hMMle (Nat.mul_le_mul_right M hm)))
+  -- Step 3: Σ ecoef m (A_m − B_m) ≤ peval dgeom (M*M) − peval dgeom M
+  have hfM : Qeq (Fsum (fun m => mul (ecoef m)
+      (peval (fpow (fun i => mul ⟨2, 1⟩ (acoef i)) m) t M)) M) (peval dgeom t M) :=
+    Qeq_trans (peval_den_pos (fun k => fcomp_den_pos (fun i => ecoef_den i) hbd k) htd M)
+      (Qeq_symm (peval_fcomp_swap ecoef (fun i => mul ⟨2, 1⟩ (acoef i)) (fun i => ecoef_den i) hbd hb0 t htd M))
+      (peval_congr (fun k => formal_exp_geom k) t M)
+  have hfMM : Qle (Fsum (fun m => mul (ecoef m)
+      (peval (fpow (fun i => mul ⟨2, 1⟩ (acoef i)) m) t (M * M))) M) (peval dgeom t (M * M)) := by
+    have hext : Qle (Fsum (fun m => mul (ecoef m)
+          (peval (fpow (fun i => mul ⟨2, 1⟩ (acoef i)) m) t (M * M))) M)
+        (Fsum (fun m => mul (ecoef m)
+          (peval (fpow (fun i => mul ⟨2, 1⟩ (acoef i)) m) t (M * M))) (M * M)) := by
+      have h := Fsum_le_extend (fun m => Qmul_den_pos (ecoef_den m)
+        (peval_den_pos (fpow_den_pos hbd m) htd (M * M))) hpAd M (M * M - M)
+      rw [show M + (M * M - M) = M * M from by omega] at h; exact h
+    refine Qle_trans (Fsum_den_pos (fun m => Qmul_den_pos (ecoef_den m)
+        (peval_den_pos (fpow_den_pos hbd m) htd (M * M))) (M * M)) hext ?_
+    exact Qeq_le (Qeq_trans (peval_den_pos (fun k => fcomp_den_pos (fun i => ecoef_den i) hbd k) htd (M * M))
+      (Qeq_symm (peval_fcomp_swap ecoef (fun i => mul ⟨2, 1⟩ (acoef i)) (fun i => ecoef_den i) hbd hb0 t htd (M * M)))
+      (peval_congr (fun k => formal_exp_geom k) t (M * M)))
+  -- assemble Step 3
+  refine Qle_trans (Fsum_den_pos (fun m => Qsub_den_pos
+      (Qmul_den_pos (ecoef_den m) (peval_den_pos (fpow_den_pos hbd m) htd (M * M)))
+      (Qmul_den_pos (ecoef_den m) (peval_den_pos (fpow_den_pos hbd m) htd M))) M)
+    (Qeq_le (Fsum_congr (fun m => Qmul_sub_distrib (ecoef m) _ _) M)) ?_
+  refine Qle_trans (Qsub_den_pos (Fsum_den_pos (fun m => Qmul_den_pos (ecoef_den m)
+        (peval_den_pos (fpow_den_pos hbd m) htd (M * M))) M)
+      (Fsum_den_pos (fun m => Qmul_den_pos (ecoef_den m) (peval_den_pos (fpow_den_pos hbd m) htd M)) M))
+    (Qeq_le (Fsum_sub (fun m => Qmul_den_pos (ecoef_den m) (peval_den_pos (fpow_den_pos hbd m) htd (M * M)))
+      (fun m => Qmul_den_pos (ecoef_den m) (peval_den_pos (fpow_den_pos hbd m) htd M)) M)) ?_
+  exact Qle_trans (Qsub_den_pos (Fsum_den_pos (fun m => Qmul_den_pos (ecoef_den m)
+        (peval_den_pos (fpow_den_pos hbd m) htd (M * M))) M) (peval_den_pos (fun k => dgeom_den k) htd M))
+    (Qeq_le (Qsub_congr (Qeq_refl _) hfM)) (Qsub_le_sub hfMM)
+
 end UOR.Bridge.F1Square.Analysis
