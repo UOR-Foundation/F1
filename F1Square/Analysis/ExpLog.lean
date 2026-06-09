@@ -4878,4 +4878,71 @@ theorem exp_artanh_recip (τ g K : Q) (hτd : 0 < τ.den) (hτ0 : 0 ≤ τ.num) 
     (Qmul_le_mul_left hK0 (Qmul_le_mul_left (by decide)
       (qpow_le_recip hτ0 hτd hτlt (by omega : n + 1 ≤ M + 1))))
 
+/-- **The real reconciliation (abstract)**: if a real `X` has diagonal values `X.seq (R_j) ≈ peval(2acoef) τ (ψ R_j)`
+    (with `ψ` non-decreasing past identity) and both the diagonal args and the clean exp args are `≤ M'`, then
+    `RexpReal X` converges to `g = (1+τ)/(1−τ)`. The diagonal triangle: a Lipschitz `P_match` (matching the
+    artanh inner depth `ψ R_j` to the exp outer depth `R_j` via `peval_twoacoef_cauchy` + `expSum_Lip_le`/`LipS_le_U`)
+    plus the `exp_artanh_recip` tail `P_exp`. Mirrors `RexpReal_congr`. `L = (expM_U M' (2M')).num.toNat`. -/
+theorem Rexp_two_artanh_via (X : Real) (τ g K : Q) (M' L C : Nat) (ψ : Nat → Nat)
+    (hτd : 0 < τ.den) (hτ0 : 0 ≤ τ.num) (hτ1 : Qle τ ⟨1, 1⟩) (hτlt : τ.num.toNat < τ.den)
+    (hgd : 0 < g.den) (hg : Qeq (mul g (Qsub ⟨1, 1⟩ τ)) (add ⟨1, 1⟩ τ))
+    (hKd : 0 < K.den) (hK0 : 0 ≤ K.num) (hKF : Qle (⟨1, 1⟩ : Q) (mul K (Qsub ⟨1, 1⟩ τ)))
+    (hL : L = (expM_U M' (2 * M')).num.toNat) (hψ : ∀ m, m ≤ ψ m)
+    (hXseq : ∀ j, Qeq (X.seq (RexpReal_R X j))
+      (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (ψ (RexpReal_R X j))))
+    (hXb : ∀ m, Qle (Qabs (X.seq m)) ⟨(M' : Int), 1⟩)
+    (hpb : ∀ N, Qle (Qabs (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ N)) ⟨(M' : Int), 1⟩)
+    (hBC : ∀ j, Qle (add (mul ⟨(L : Int), 1⟩ (mul K (mul ⟨2, 1⟩ (⟨(τ.den : Int), j + 1⟩ : Q))))
+        (mul K (mul ⟨4, 1⟩ (⟨(τ.den : Int), j + 1⟩ : Q)))) (⟨(C : Int), j + 1⟩ : Q)) :
+    Req (RexpReal X) (ofQ g hgd) := by
+  refine Req_of_lin_bound (C := C) ?_
+  intro j
+  show Qle (Qabs (Qsub (expSum (X.seq (RexpReal_R X j)) (RexpReal_R X j)) g)) (⟨(C : Int), j + 1⟩ : Q)
+  have htwd : ∀ k, 0 < ((fun i => mul ⟨2, 1⟩ (acoef i)) k).den :=
+    fun k => Qmul_den_pos Nat.one_pos (acoef_den k)
+  have hpd : ∀ N, 0 < (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ N).den := fun N => peval_den_pos htwd hτd N
+  have hRj : j ≤ RexpReal_R X j := n_le_RexpReal_R X j
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) τ).den := Qsub_den_pos Nat.one_pos hτd
+  have hjd : 0 < (⟨(τ.den : Int), j + 1⟩ : Q).den := Nat.succ_pos j
+  have hgap' : Qle (Qabs (Qsub (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (ψ (RexpReal_R X j)))
+        (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (RexpReal_R X j))))
+      (mul K (mul ⟨2, 1⟩ (⟨(τ.den : Int), j + 1⟩ : Q))) := by
+    have hdiv := mul_div_gen
+      (a := Qabs (Qsub (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (ψ (RexpReal_R X j)))
+        (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (RexpReal_R X j))))
+      (B := mul ⟨2, 1⟩ (qpow τ (RexpReal_R X j + 1))) (F := Qsub ⟨1, 1⟩ τ) (K := K)
+      (Qabs_num_nonneg _) (Qabs_den_pos (Qsub_den_pos (hpd _) (hpd _))) hWd hKd hK0 hKF
+      (peval_twoacoef_cauchy τ hτd hτ0 hτ1 (hψ (RexpReal_R X j)))
+    exact Qle_trans (Qmul_den_pos hKd (Qmul_den_pos Nat.one_pos (qpow_den_pos hτd _))) hdiv
+      (Qmul_le_mul_left hK0 (Qmul_le_mul_left (by decide)
+        (qpow_le_recip hτ0 hτd hτlt (by omega : j + 1 ≤ RexpReal_R X j + 1))))
+  have hgap : Qle (Qabs (Qsub (X.seq (RexpReal_R X j))
+        (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (RexpReal_R X j))))
+      (mul K (mul ⟨2, 1⟩ (⟨(τ.den : Int), j + 1⟩ : Q))) :=
+    Qle_congr_left (Qabs_den_pos (Qsub_den_pos (hpd _) (hpd _)))
+      (Qabs_Qeq (Qsub_congr (Qeq_symm (hXseq j)) (Qeq_refl _))) hgap'
+  have hLipL : Qle (LipS M' (RexpReal_R X j)) ⟨(L : Int), 1⟩ := by
+    rw [hL]
+    exact Qle_trans (expM_U_den_pos _ _) (LipS_le_U _ _)
+      (Qle_toNat (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))
+  have hPmatch : Qle (Qabs (Qsub (expSum (X.seq (RexpReal_R X j)) (RexpReal_R X j))
+        (expSum (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (RexpReal_R X j)) (RexpReal_R X j))))
+      (mul ⟨(L : Int), 1⟩ (mul K (mul ⟨2, 1⟩ (⟨(τ.den : Int), j + 1⟩ : Q)))) :=
+    Qle_trans (Qmul_den_pos (LipS_den_pos _ _) (Qabs_den_pos (Qsub_den_pos (X.den_pos _) (hpd _))))
+      (expSum_Lip_le (X.den_pos _) (hpd _) (hXb _) (hpb _) _)
+      (Qle_trans (Qmul_den_pos Nat.one_pos (Qabs_den_pos (Qsub_den_pos (X.den_pos _) (hpd _))))
+        (Qmul_le_mul_right (Qabs_num_nonneg _) hLipL)
+        (Qmul_le_mul_left (Int.ofNat_nonneg _) hgap))
+  have hPexp := exp_artanh_recip τ g K hτd hτ0 hτ1 hτlt hgd hg hKd hK0 hKF (RexpReal_R X j) j hRj
+  have hbd : 0 < (expSum (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (RexpReal_R X j)) (RexpReal_R X j)).den :=
+    expSum_den_pos (hpd (RexpReal_R X j)) (RexpReal_R X j)
+  refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos
+      (expSum_den_pos (X.den_pos (RexpReal_R X j)) (RexpReal_R X j)) hbd))
+      (Qabs_den_pos (Qsub_den_pos hbd hgd)))
+    (Qabs_sub_triangle (b := expSum (peval (fun i => mul ⟨2, 1⟩ (acoef i)) τ (RexpReal_R X j)) (RexpReal_R X j))
+      (expSum_den_pos (X.den_pos (RexpReal_R X j)) (RexpReal_R X j)) hbd hgd) ?_
+  exact Qle_trans (add_den_pos (Qmul_den_pos Nat.one_pos (Qmul_den_pos hKd
+      (Qmul_den_pos Nat.one_pos hjd))) (Qmul_den_pos hKd (Qmul_den_pos Nat.one_pos hjd)))
+    (Qadd_le_add hPmatch hPexp) (hBC j)
+
 end UOR.Bridge.F1Square.Analysis
