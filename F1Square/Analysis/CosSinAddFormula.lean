@@ -610,4 +610,40 @@ theorem cosAdd_resid_eq {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (N : Nat) 
   exact resid_rearrange (Fsum (cosConv a b) (N + 1)) (Fsum (sinConv a b) N)
     (sinConv a b (N + 1)) (cornerCos a b (N + 1)) (cornerSin a b (N + 1))
 
+-- ===========================================================================
+-- The **assembled decay bound** `|altSum(a+b) − (cos·cos − sin·sin partial)| → 0` at `N = 2K+1`.
+-- ===========================================================================
+
+/-- **Factor `a·b` out of `cornerSin`**: `cornerSin a b N = (a·b)·(off=1 alternating corner)`, reducing
+    the `sin·sin` corner to the `altTerm`-form corner that `cornerMertens2` (`off = 1`) bounds. -/
+theorem cornerSin_factored {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (N : Nat) :
+    Qeq (cornerSin a b N)
+      (mul (mul a b) (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 1 j)) N)
+        (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 1 j)) (N - i))) N)) := by
+  have hat1 : ∀ i, 0 < (altTerm a 1 i).den := altTerm_den_pos had 1
+  have hbt1 : ∀ j, 0 < (altTerm b 1 j).den := altTerm_den_pos hbd 1
+  have habd : 0 < (mul a b).den := Qmul_den_pos had hbd
+  have haltd : ∀ i j, 0 < (mul (altTerm a 1 i) (altTerm b 1 j)).den :=
+    fun i j => Qmul_den_pos (hat1 i) (hbt1 j)
+  have hsubd : ∀ i, 0 < (Qsub (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 1 j)) N)
+      (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 1 j)) (N - i))).den :=
+    fun i => Qsub_den_pos (Fsum_den_pos (fun j => haltd i j) N) (Fsum_den_pos (fun j => haltd i j) (N - i))
+  have hsterm : ∀ i j, Qeq (mul (sinTerm a i) (sinTerm b j))
+      (mul (mul a b) (mul (altTerm a 1 i) (altTerm b 1 j))) := fun i j => by
+    rw [sinTerm, sinTerm]; exact Qmul4_rearrange a (altTerm a 1 i) b (altTerm b 1 j)
+  have hrow : ∀ i K, Qeq (Fsum (fun j => mul (sinTerm a i) (sinTerm b j)) K)
+      (mul (mul a b) (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 1 j)) K)) := fun i K =>
+    Qeq_trans (Fsum_den_pos (fun j => Qmul_den_pos habd (haltd i j)) K)
+      (Fsum_congr (fun j => hsterm i j) K) (Fsum_mul_left habd (fun j => haltd i j) K)
+  simp only [cornerSin]
+  refine Qeq_trans (Fsum_den_pos (fun i => Qmul_den_pos habd (hsubd i)) N)
+    (Fsum_congr (fun i => Qeq_trans
+      (Qsub_den_pos (Qmul_den_pos habd (Fsum_den_pos (fun j => haltd i j) N))
+        (Qmul_den_pos habd (Fsum_den_pos (fun j => haltd i j) (N - i))))
+      (QsubCongr (hrow i N) (hrow i (N - i)))
+      (Qeq_symm (Qmul_sub_distrib (mul a b)
+        (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 1 j)) N)
+        (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 1 j)) (N - i))))) N)
+    (Fsum_mul_left habd hsubd N)
+
 end UOR.Bridge.F1Square.Analysis

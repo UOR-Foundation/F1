@@ -1530,4 +1530,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sinTerm_abs_le
 #print axioms Analysis.sinConv_abs_le
 #print axioms Analysis.cosAdd_resid_eq
+#print axioms Analysis.cornerSin_factored
 #print axioms Analysis.altSum_add_eq
