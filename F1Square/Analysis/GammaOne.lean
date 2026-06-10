@@ -104,4 +104,57 @@ theorem deltaLog_upper (p : Nat) (hp : 1 ≤ p) :
   exact RexpReal_reflects_le (Rnonneg_ofQ hpp (by show (0:Int) ≤ 1; decide))
     (Rle_trans (Rle_of_Req hexpDelta) hge)
 
+-- ===========================================================================
+-- The consecutive-log difference LOWER bound `δ ≥ 1/(p+1)` (the sign + tail input for |d_k|).
+-- ===========================================================================
+
+/-- `exp(δ) = exp(log(p+1) − log p) ≈ (p+1)/p` (shared by the lower/upper δ bounds). -/
+theorem expDelta_eq (p : Nat) (hp : 1 ≤ p) :
+    Req (RexpReal (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))
+      (ofQ (⟨(p : Int) + 1, p⟩ : Q) hp) := by
+  have hpp : 0 < p := hp
+  have hexpNeg : Req (RexpReal (Rneg (logN p hp))) (ofQ (⟨1, p⟩ : Q) hpp) :=
+    RexpReal_neg_eq_recip p hpp (Rexp_logN p hp)
+  refine Req_trans (RexpReal_add (logN (p + 1) (Nat.succ_pos p)) (Rneg (logN p hp))) ?_
+  refine Req_trans (Rmul_congr (Rexp_logN (p + 1) (Nat.succ_pos p)) hexpNeg) ?_
+  refine Req_trans (Rmul_ofQ_ofQ Nat.one_pos hpp) ?_
+  exact ofQ_respects (Qmul_den_pos Nat.one_pos hpp) hpp (by simp only [Qeq, mul]; push_cast; ring_uor)
+
+/-- **`expSum(1/(p+1), N) ≤ (p+1)/p`** — the geometric `exp(q) ≤ 1/(1−q)` at `q = 1/(p+1)`
+    (`expSum_mul_one_sub_le` + cancel by `(1−q) = p/(p+1)`). -/
+theorem expRecip_le (p : Nat) (hp : 1 ≤ p) (N : Nat) :
+    Qle (expSum (⟨1, p + 1⟩ : Q) N) (⟨(p : Int) + 1, p⟩ : Q) := by
+  have hpp : 0 < p := hp
+  have hpInt : (0 : Int) < (p : Int) := by exact_mod_cast hpp
+  have hq1 : Qle (⟨1, p + 1⟩ : Q) ⟨1, 1⟩ := by
+    show (1 : Int) * 1 ≤ 1 * ((p + 1 : Nat) : Int); push_cast; omega
+  have hbase := expSum_mul_one_sub_le (q := ⟨1, p + 1⟩) (by show (0:Int) ≤ 1; decide)
+    (Nat.succ_pos p) hq1 N
+  refine Qmul_le_cancel_right (c := ⟨(p : Int), p + 1⟩) hpInt (Nat.succ_pos p) ?_
+  have hceq : Qeq (mul (⟨(p : Int) + 1, p⟩ : Q) ⟨(p : Int), p + 1⟩) (⟨1, 1⟩ : Q) := by
+    simp only [Qeq, mul]; push_cast; ring_uor
+  have hseq : Qeq (mul (expSum (⟨1, p + 1⟩ : Q) N) (⟨(p : Int), p + 1⟩ : Q))
+      (mul (expSum (⟨1, p + 1⟩ : Q) N) (Qsub (⟨1, 1⟩ : Q) ⟨1, p + 1⟩)) := by
+    apply Qmul_congr (Qeq_refl _); simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  refine Qle_congr_left
+    (Qmul_den_pos (expSum_den_pos (Nat.succ_pos p) N) (Qsub_den_pos (by decide) (Nat.succ_pos p)))
+    (Qeq_symm hseq) ?_
+  exact Qle_trans Nat.one_pos hbase (Qeq_le (Qeq_symm hceq))
+
+/-- **`exp(1/(p+1)) ≤ (p+1)/p`** (the real geometric bound, the diagonal of `expRecip_le`). -/
+theorem Rexp_recip_le (p : Nat) (hp : 1 ≤ p) :
+    Rle (RexpReal (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p))) (ofQ (⟨(p : Int) + 1, p⟩ : Q) hp) := by
+  have hpp : 0 < p := hp
+  intro j
+  show Qle (expSum (⟨1, p + 1⟩ : Q) (RexpReal_R (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)) j))
+    (add (⟨(p : Int) + 1, p⟩ : Q) ⟨2, j + 1⟩)
+  exact Qle_trans hpp (expRecip_le p hp _) (Qle_self_add (by show (0 : Int) ≤ 2; decide))
+
+/-- **`log(p+1) − log p ≥ 1/(p+1)`** (`p ≥ 1`): `exp(1/(p+1)) ≤ (p+1)/p = exp(δ)` + `exp` reflects `≤`.
+    With `deltaLog_upper`, `δ ∈ [1/(p+1), 1/p]`. -/
+theorem deltaLog_lower (p : Nat) (hp : 1 ≤ p) :
+    Rle (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)) (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)) :=
+  RexpReal_reflects_le (Rnonneg_Rsub_of_Rle (logN_mono hp (Nat.le_succ p)))
+    (Rle_trans (Rexp_recip_le p hp) (Rle_of_Req (Req_symm (expDelta_eq p hp))))
+
 end UOR.Bridge.F1Square.Analysis
