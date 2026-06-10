@@ -1361,6 +1361,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.dPlusQ_den_pos
 #print axioms Analysis.logBound_den_pos
 #print axioms Analysis.logN_le_logBound
+#print axioms Analysis.lnSumBound_den_pos
+#print axioms Analysis.lnSum_le_lnSumBound
 #print axioms Analysis.deltaLog_upper
 #print axioms Analysis.expDelta_eq
 #print axioms Analysis.expRecip_le

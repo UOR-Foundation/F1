@@ -371,6 +371,39 @@ theorem logN_le_logBound (T D : Nat) (hD : 0 < D) :
     exact Rle_ofQ_ofQ hadd (logBound_den_pos T D hD (k + 1))
       (qRoundUp_ge (add (logBound T D k) (dPlusQ T (k + 1))) hadd D)
 
+/-- `lnSumBound T D k` is a rational upper bound for `lnSum k = Σ_{i=1}^k (log i)/i`, at fixed
+    denominator `D` (each new term `(log(k+1))/(k+1) ≤ logBound k · 1/(k+1)`, then round up). -/
+def lnSumBound (T D : Nat) : Nat → Q
+  | 0 => ⟨0, D⟩
+  | (k + 1) => qRoundUp (add (lnSumBound T D k) (mul (logBound T D k) ⟨1, k + 1⟩)) D
+
+theorem lnSumBound_den_pos (T D : Nat) (hD : 0 < D) : ∀ k, 0 < (lnSumBound T D k).den
+  | 0 => hD
+  | (_ + 1) => hD
+
+/-- **`lnSum k ≤ ofQ(lnSumBound T D k)`** — the partial-sum `Σ (log i)/i` bounded term-by-term via
+    `logN_le_logBound`, accumulated at fixed denominator `D` (no `.seq`). The `g(N)`-numeric input. -/
+theorem lnSum_le_lnSumBound (T D : Nat) (hD : 0 < D) :
+    ∀ k, Rle (lnSum k) (ofQ (lnSumBound T D k) (lnSumBound_den_pos T D hD k)) := by
+  intro k
+  induction k with
+  | zero =>
+    have h0 : Req (ofQ (lnSumBound T D 0) (lnSumBound_den_pos T D hD 0)) zero :=
+      Req_of_seq_Qeq (fun n => by show Qeq (⟨0, D⟩ : Q) ⟨0, 1⟩; simp only [Qeq]; push_cast; ring_uor)
+    exact Rle_of_Req (Req_symm h0)
+  | succ k ih =>
+    have hbk := logBound_den_pos T D hD k
+    have hmuld : 0 < (mul (logBound T D k) (⟨1, k + 1⟩ : Q)).den := Qmul_den_pos hbk (Nat.succ_pos k)
+    have hadd := add_den_pos (lnSumBound_den_pos T D hD k) hmuld
+    -- the new term `(log(k+1))/(k+1) ≤ ofQ(logBound k · 1/(k+1))`
+    have hov : Rle (lnOver (k + 1) (Nat.succ_pos k)) (ofQ (mul (logBound T D k) ⟨1, k + 1⟩) hmuld) :=
+      Rle_trans (Rmul_le_Rmul_right (Rnonneg_ofQ (Nat.succ_pos k) (by show (0 : Int) ≤ 1; decide))
+        (logN_le_logBound T D hD k)) (Rle_of_Req (Rmul_ofQ_ofQ hbk (Nat.succ_pos k)))
+    refine Rle_trans (Radd_le_add ih hov) ?_
+    refine Rle_trans (Rle_of_Req (Radd_ofQ_ofQ (lnSumBound_den_pos T D hD k) hmuld)) ?_
+    exact Rle_ofQ_ofQ hadd (lnSumBound_den_pos T D hD (k + 1))
+      (qRoundUp_ge (add (lnSumBound T D k) (mul (logBound T D k) ⟨1, k + 1⟩)) hadd D)
+
 -- ===========================================================================
 -- Real-algebra helpers for the per-step bound on `d = (ln m)/m − ½((ln m)² − (ln(m−1))²)`.
 -- ===========================================================================
