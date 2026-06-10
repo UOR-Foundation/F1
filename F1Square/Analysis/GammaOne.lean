@@ -458,4 +458,48 @@ theorem gSeq_step_ge_block (a j : Nat) (hj : j + 2 ≤ 2 ^ (a + 2)) :
   exact Rle_of_Req (Req_trans (Rmul_ofQ_ofQ Nat.one_pos (Nat.mul_pos (Nat.succ_pos j) (by omega)))
     (ofQ_congr _ _ (by simp only [mul, Qeq]; push_cast; ring_uor)))
 
+/-- Rational partial sum `Σ_{p≤j} (a+2)/(p(p+1))` of the per-step block lower bounds. -/
+def Vsum (a : Nat) : Nat → Q
+  | 0 => ⟨0, 1⟩
+  | (j + 1) => add (Vsum a j) ⟨(a + 2 : Int), (j + 1) * (j + 2)⟩
+
+theorem Vsum_den_pos (a : Nat) : ∀ j, 0 < (Vsum a j).den
+  | 0 => Nat.one_pos
+  | (j + 1) => add_den_pos (Vsum_den_pos a j) (Nat.mul_pos (Nat.succ_pos j) (Nat.succ_pos (j + 1)))
+
+/-- **Inner block lower gap bound** (`d`-induction within block `a`): for `N+d+1 ≤ 2^{a+2}`,
+    `gSeq(N+d) − gSeq N ≥ −(Vsum a (N+d) − Vsum a N)`. Each step uses the rational per-step block
+    bound `gSeq_step_ge_block`; the structure mirrors `gSeq_diff_le_U` (Rsub_split + Rneg of the
+    ofQ-sum). -/
+theorem gSeq_diff_ge_block (a N : Nat) : ∀ (d : Nat), N + d + 1 ≤ 2 ^ (a + 2) →
+    Rle (Rneg (ofQ (Qsub (Vsum a (N + d)) (Vsum a N))
+          (Qsub_den_pos (Vsum_den_pos a (N + d)) (Vsum_den_pos a N))))
+        (Rsub (gSeq (N + d)) (gSeq N)) := by
+  intro d
+  induction d with
+  | zero =>
+      intro _
+      simp only [Nat.add_zero]
+      apply Rle_of_Req
+      refine Req_trans ?_ (Req_symm (Radd_neg (gSeq N)))
+      apply Req_of_seq_Qeq; intro n
+      simp only [Rneg, ofQ, zero, Qsub, add, neg, Qeq]; push_cast; ring_uor
+  | succ d ih =>
+      intro hd
+      have ihd := ih (by omega)
+      have hstepd : 0 < (⟨(a + 2 : Int), (N + d + 1) * (N + d + 2)⟩ : Q).den :=
+        Nat.mul_pos (Nat.succ_pos (N + d)) (Nat.succ_pos (N + d + 1))
+      have hgapd : 0 < (Qsub (Vsum a (N + d)) (Vsum a N)).den :=
+        Qsub_den_pos (Vsum_den_pos a (N + d)) (Vsum_den_pos a N)
+      have heq : Req (Rneg (ofQ (Qsub (Vsum a (N + d + 1)) (Vsum a N))
+            (Qsub_den_pos (Vsum_den_pos a (N + d + 1)) (Vsum_den_pos a N))))
+          (Radd (Rneg (ofQ (⟨(a + 2 : Int), (N + d + 1) * (N + d + 2)⟩ : Q) hstepd))
+                (Rneg (ofQ (Qsub (Vsum a (N + d)) (Vsum a N)) hgapd))) :=
+        Req_trans (Rneg_congr (Req_trans
+          (ofQ_congr _ _ (Qeq_symm (Qadd_Qsub_comm _ (Vsum a (N + d)) (Vsum a N))))
+          (Req_symm (Radd_ofQ_ofQ hstepd hgapd)))) (Rneg_Radd _ _)
+      exact Rle_trans (Rle_of_Req heq)
+        (Rle_trans (Radd_le_add (gSeq_step_ge_block a (N + d) (by omega)) ihd)
+          (Rle_of_Req (Rsub_split (gSeq (N + d + 1)) (gSeq (N + d)) (gSeq N))))
+
 end UOR.Bridge.F1Square.Analysis
