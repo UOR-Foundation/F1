@@ -1352,6 +1352,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.logN_four_ge_one
 #print axioms Analysis.logN_ge_one
 #print axioms Analysis.twoArtanhRecip_le
+#print axioms Analysis.Rnonneg_RartanhConst
+#print axioms Analysis.Rexp_twoArtanhRecip
+#print axioms Analysis.deltaLog_eq_twoArtanh
+#print axioms Analysis.deltaLog_upper_tight
 #print axioms Analysis.deltaLog_upper
 #print axioms Analysis.expDelta_eq
 #print axioms Analysis.expRecip_le

@@ -198,6 +198,109 @@ theorem twoArtanhRecip_le (p T : Nat) (hp : 1 ≤ p) :
   exact artSum_le_value (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _) htaild hWn T
     (deltaTail_eq p T) (Rartanh_R ⟨1, 2 * p + 1⟩ m)
 
+-- The pure-`Int` polynomial identities behind the `exp(2·artanh(1/(2p+1))) = (p+1)/p` instantiation
+-- (clean atoms for `ring_uor`, no `Nat.cast` — `g·(1−τ) = 1+τ` and `K·(1−τ) = 1` at `τ = 1/(2p+1)`).
+
+/-- `g·(1−τ) = 1+τ` cleared, `g = (p+1)/p`, `τ = 1/(2p+1)`: `(p+1)·2p·(2p+1) = (2p+2)·(p·(2p+1))`. -/
+private theorem twoArtanh_hg_int (P : Int) :
+    (P + 1) * (1 * (2 * P + 1) + -1) * (1 * (2 * P + 1))
+      = (1 * (2 * P + 1) + 1) * (P * (1 * (2 * P + 1))) := by ring_uor
+
+/-- `K·(1−τ) = 1` cleared, `K = (2p+1)/(2p)`, `τ = 1/(2p+1)`: `2p·(2p+1) = (2p+1)·2p`. -/
+private theorem twoArtanh_hKF_int (P : Int) :
+    1 * (2 * P * (1 * (2 * P + 1)))
+      = (2 * P + 1) * (1 * (2 * P + 1) + -1) * 1 := by ring_uor
+
+/-- The cleared per-index regularity budget `hBC` for the `exp(2·artanh(1/(2p+1)))` instantiation,
+    `C = (L+2)(2p+1)²`: the slack `RHS − LHS = 4(L+2)(2p+1)²(j+1)²·p(p−1) ≥ 0` (the `p(p−1) ≥ 0`
+    factor is exactly the `p ≥ 1` margin). Pure `Int` so `ring_uor` sees clean atoms. -/
+private theorem twoArtanh_hBC_int (L P J : Int) (hP : 1 ≤ P) (hL : 0 ≤ L) (hJ : 0 ≤ J) :
+    (L * ((2 * P + 1) * (2 * (2 * P + 1))) * (2 * P * (1 * (J + 1)))
+        + (2 * P + 1) * (4 * (2 * P + 1)) * (1 * (2 * P * (1 * (J + 1))))) * (J + 1)
+      ≤ (L + 2) * (2 * P + 1) * (2 * P + 1)
+          * (1 * (2 * P * (1 * (J + 1))) * (2 * P * (1 * (J + 1)))) := by
+  have key : (L + 2) * (2 * P + 1) * (2 * P + 1)
+        * (1 * (2 * P * (1 * (J + 1))) * (2 * P * (1 * (J + 1))))
+      - (L * ((2 * P + 1) * (2 * (2 * P + 1))) * (2 * P * (1 * (J + 1)))
+        + (2 * P + 1) * (4 * (2 * P + 1)) * (1 * (2 * P * (1 * (J + 1))))) * (J + 1)
+      = 4 * (L + 2) * ((2 * P + 1) * (2 * P + 1)) * ((J + 1) * (J + 1)) * (P * (P - 1)) := by ring_uor
+  have hprod : 0 ≤ 4 * (L + 2) * ((2 * P + 1) * (2 * P + 1)) * ((J + 1) * (J + 1)) * (P * (P - 1)) :=
+    Int.mul_nonneg (Int.mul_nonneg (Int.mul_nonneg
+      (by omega : (0 : Int) ≤ 4 * (L + 2))
+      (Int.mul_nonneg (by omega) (by omega)))
+      (Int.mul_nonneg (by omega) (by omega)))
+      (Int.mul_nonneg (by omega) (by omega))
+  omega
+
+/-- **`exp(2·artanh(1/(2p+1))) = (p+1)/p`** (`p ≥ 1`) — the exp/artanh real identity at the small base
+    `τ = 1/(2p+1)`, with `g = (p+1)/p`, `K = (2p+1)/(2p)`, `M' = 3`. Instantiates `Rexp_two_artanh_ofQ`
+    (the `Rexp_log_nat` pattern, at a base that is *not* `tmap` of a nat). Paired with `expDelta_eq`
+    (`exp(δ) = (p+1)/p`) and `RexpReal_inj`, this pins `δ = log(p+1) − log p = 2·artanh(1/(2p+1))`. -/
+theorem Rexp_twoArtanhRecip (p : Nat) (hp : 1 ≤ p) :
+    Req (RexpReal (TwoArtanhConst (⟨1, 2 * p + 1⟩ : Q) ⟨1, 2 * p + 1⟩ (Nat.succ_pos _)
+          (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _)
+          (by show (1 : Int).toNat < 2 * p + 1; omega) (Qle_refl _)))
+      (ofQ (⟨(p : Int) + 1, p⟩ : Q) hp) := by
+  refine Rexp_two_artanh_ofQ (⟨1, 2 * p + 1⟩ : Q) ⟨1, 2 * p + 1⟩ ⟨(p : Int) + 1, p⟩ ⟨2 * (p : Int) + 1, 2 * p⟩
+    3 ((expM_U 3 (2 * 3)).num.toNat)
+    (((expM_U 3 (2 * 3)).num.toNat + 2) * (2 * p + 1) * (2 * p + 1))
+    (Nat.succ_pos _) (by show (0 : Int) ≤ 1; decide)
+    (by show Qle (⟨1, 2 * p + 1⟩ : Q) ⟨1, 1⟩; simp only [Qle]; push_cast; omega)
+    (by show (1 : Int).toNat < 2 * p + 1; omega)
+    (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _)
+    (by show (1 : Int).toNat < 2 * p + 1; omega) (Qle_refl _)
+    hp ?_ (Nat.mul_pos (by decide) hp) (by show (0 : Int) ≤ 2 * (p : Int) + 1; omega) ?_
+    rfl ?_ ?_
+  · -- hg : g·(1−τ) = 1+τ
+    simp only [Qeq, mul, Qsub, add, neg]; push_cast; exact twoArtanh_hg_int p
+  · -- hKF : 1 ≤ K·(1−τ)   (in fact = 1)
+    refine Qeq_le ?_
+    simp only [Qeq, mul, Qsub, add, neg]; push_cast; exact twoArtanh_hKF_int p
+  · -- hM2 : K·2 ≤ ⟨3,1⟩
+    simp only [Qle, mul]; push_cast; omega
+  · -- hBC : the per-index regularity budget
+    intro j
+    simp only [Qle, add, mul]
+    push_cast
+    exact twoArtanh_hBC_int (↑(expM_U 3 6).num.toNat) (p : Int) (j : Int)
+      (by exact_mod_cast hp) (Int.ofNat_nonneg _) (Int.ofNat_nonneg _)
+
+/-- **`artanh τ ≥ 0`** (for `τ ≥ 0`): each artanh partial sum has non-negative numerator
+    (`artSum_nonneg`), so every approximant clears the regularity floor `−1/(n+1)`. -/
+theorem Rnonneg_RartanhConst (τ ρ : Q) (hτd : 0 < τ.den) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (hρlt : ρ.num.toNat < ρ.den) (hb : Qle (Qabs τ) ρ) (hτ0 : 0 ≤ τ.num) :
+    Rnonneg (RartanhConst τ ρ hτd hρ0 hρd hρlt hb) := by
+  intro n
+  show Qle (neg (Qbound n)) (artSum τ (Rartanh_R ρ n))
+  have hnum : 0 ≤ (artSum τ (Rartanh_R ρ n)).num := artSum_nonneg hτ0 hτd _
+  have hpp : (0 : Int) ≤ (artSum τ (Rartanh_R ρ n)).num * ((n : Int) + 1) :=
+    Int.mul_nonneg hnum (by omega)
+  simp only [Qle, neg, Qbound]; push_cast; omega
+
+/-- **`log(p+1) − log p = 2·artanh(1/(2p+1))`** (`p ≥ 1`) — pinned by `exp` injectivity on non-negatives:
+    both sides are `≥ 0` and exponentiate to `(p+1)/p` (`expDelta_eq` and `Rexp_twoArtanhRecip`). -/
+theorem deltaLog_eq_twoArtanh (p : Nat) (hp : 1 ≤ p) :
+    Req (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+        (TwoArtanhConst (⟨1, 2 * p + 1⟩ : Q) ⟨1, 2 * p + 1⟩ (Nat.succ_pos _)
+          (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _)
+          (by show (1 : Int).toNat < 2 * p + 1; omega) (Qle_refl _)) := by
+  refine RexpReal_inj (Rnonneg_Rsub_of_Rle (logN_mono hp (Nat.le_succ p)))
+    (Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by show (0 : Int) ≤ 2; decide))
+      (Rnonneg_RartanhConst _ _ _ _ _ _ _ (by show (0 : Int) ≤ 1; decide))) ?_
+  exact Req_trans (expDelta_eq p hp) (Req_symm (Rexp_twoArtanhRecip p hp))
+
+/-- **Tight upper bound on the consecutive-log difference**: `log(p+1) − log p ≤ 2·(artSum(1/(2p+1), T) + tail)`
+    (`p ≥ 1`), `tail = 1/((2p+1)^{2T+1}·4p(p+1))` — the `deltaLog_eq_twoArtanh` identity composed with
+    `twoArtanhRecip_le`. The summably-tight (`Θ(1/p⁵)` overshoot) replacement for `deltaLog_upper`. -/
+theorem deltaLog_upper_tight (p T : Nat) (hp : 1 ≤ p) :
+    Rle (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+        (ofQ (mul (⟨2, 1⟩ : Q) (add (artSum (⟨1, 2 * p + 1⟩ : Q) T)
+              ⟨1, npow (2 * p + 1) (2 * T + 1) * (4 * p * (p + 1))⟩))
+          (Qmul_den_pos (by decide) (add_den_pos (artSum_den_pos (Nat.succ_pos _) T)
+            (Nat.mul_pos (npow_pos (Nat.succ_pos _) _)
+              (Nat.mul_pos (Nat.mul_pos (by decide) hp) (Nat.succ_pos _)))))) :=
+  Rle_trans (Rle_of_Req (deltaLog_eq_twoArtanh p hp)) (twoArtanhRecip_le p T hp)
+
 -- ===========================================================================
 -- Real-algebra helpers for the per-step bound on `d = (ln m)/m − ½((ln m)² − (ln(m−1))²)`.
 -- ===========================================================================
