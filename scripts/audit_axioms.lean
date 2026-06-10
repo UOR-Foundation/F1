@@ -1495,3 +1495,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.bernPoly_two_at_zero
 #print axioms Analysis.bernPoly_one_at_one
 #print axioms Analysis.bernPoly_two_at_one
+#print axioms Analysis.bernPoly_two_form
+#print axioms Analysis.bernPoly_two_abs_le
