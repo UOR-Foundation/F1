@@ -16,8 +16,12 @@ Pure Lean 4, no Mathlib, no `sorry`/`native_decide`, choice-free.
 
 import F1Square.Analysis.Bernoulli
 import F1Square.Analysis.ComplexPow
+import F1Square.Analysis.ComplexInv
 
 namespace UOR.Bridge.F1Square.Analysis
+
+/-- Complex subtraction `z − w = z + (−w)`. -/
+def Csub (z w : Complex) : Complex := Cadd z (Cneg w)
 
 /-- The complex embedding of a natural number `n` (`= n + 0·i`). -/
 def Cnat (n : Nat) : Complex := ⟨ofQ (⟨(n : Int), 1⟩ : Q) Nat.one_pos, zero⟩
@@ -53,5 +57,31 @@ theorem emCoeff_two : Qeq (emCoeff 2) ⟨-1, 720⟩ := by decide
 
 /-- `B₆/6! = 1/30240`. -/
 theorem emCoeff_three : Qeq (emCoeff 3) ⟨1, 30240⟩ := by decide
+
+-- ===========================================================================
+-- The Euler–Maclaurin correction terms and their sum, as complex values.
+-- ===========================================================================
+
+/-- The exponent `−s − (2k−1)` of `N` in the `k`-th correction term `…·N^{−s−2k+1}`. -/
+def emExp (s : Complex) (k : Nat) : Complex := Cneg (Cadd s (Cnat (2 * k - 1)))
+
+/-- **The `k`-th Euler–Maclaurin correction term** `(B_{2k}/(2k)!)·(s)_{2k−1}·N^{−s−2k+1}` (`N ≥ 2`). -/
+def emTerm (s : Complex) (N : Nat) (hN : 2 ≤ N) (k : Nat) : Complex :=
+  Cmul (Cmul (ofReal (ofQ (emCoeff k) (emCoeff_den_pos k))) (Cpoch s (2 * k - 1)))
+    (ncpow N hN (emExp s k))
+
+/-- **The Euler–Maclaurin correction sum** `Σ_{k=1}^{K} (B_{2k}/(2k)!)·(s)_{2k−1}·N^{−s−2k+1}` — the
+    analytic-continuation correction that, added to `Σ_{n<N} n⁻ˢ + N^{1−s}/(s−1) + ½N⁻ˢ`, continues `ζ`
+    to `Re s > 1 − 2K` (modulo the periodic-Bernoulli remainder, still to bound). -/
+def emCorrSum (s : Complex) (N : Nat) (hN : 2 ≤ N) : Nat → Complex
+  | 0 => Czero
+  | (K + 1) => Cadd (emCorrSum s N hN K) (emTerm s N hN (K + 1))
+
+/-- `emCorrSum … 0 = 0`. -/
+theorem emCorrSum_zero (s : Complex) (N : Nat) (hN : 2 ≤ N) : emCorrSum s N hN 0 = Czero := rfl
+
+/-- `emCorrSum … (K+1) = emCorrSum … K + emTerm … (K+1)`. -/
+theorem emCorrSum_succ (s : Complex) (N : Nat) (hN : 2 ≤ N) (K : Nat) :
+    emCorrSum s N hN (K + 1) = Cadd (emCorrSum s N hN K) (emTerm s N hN (K + 1)) := rfl
 
 end UOR.Bridge.F1Square.Analysis
