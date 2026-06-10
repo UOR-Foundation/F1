@@ -1541,3 +1541,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sinMul_diag_le
 #print axioms Analysis.altSum_add_eq
 #print axioms Analysis.altDiag_to_deep
+#print axioms Analysis.cosMulDeep_le

@@ -1005,4 +1005,42 @@ theorem altDiag_to_deep (x : Real) (off N s K : Nat) (hNs : N ≤ s)
   refine Qle_trans (add_den_pos (Nat.succ_pos N) (Nat.succ_pos N)) (Qadd_le_add hLip hTr) ?_
   exact Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor)
 
+/-- **`cos·cos` product reconcile to the deep reference.** The natural `cos·cos` diagonal product
+    `RaltReal_seq a 0 (2N+1) · RaltReal_seq b 0 (2N+1)` is within `C/(N+1)` of the deep product
+    `altSum (a.seq s) 0 (2K+1) · altSum (b.seq s) 0 (2K+1)`. `Qprod_diff_le` splits into the two factor
+    reconciles (`altDiag_to_deep`), each weighted by the other factor's uniform `expM_U`-bound. -/
+theorem cosMulDeep_le (a b : Real) (N s K : Nat) (hNs : N ≤ s)
+    (hda : RaltReal_R a (2 * N + 1) ≤ 2 * K + 1) (hdb : RaltReal_R b (2 * N + 1) ≤ 2 * K + 1) :
+    Qle (Qabs (Qsub (mul (RaltReal_seq a 0 (2 * N + 1)) (RaltReal_seq b 0 (2 * N + 1)))
+        (mul (altSum (a.seq s) 0 (2 * K + 1)) (altSum (b.seq s) 0 (2 * K + 1)))))
+      ⟨((expM_U (xBound b * xBound b) (2 * (xBound b * xBound b))).num.toNat
+            * ((expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat * (4 * xBound a) + 1)
+          + (expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat
+            * ((expM_U (xBound b * xBound b) (2 * (xBound b * xBound b))).num.toNat * (4 * xBound b) + 1) : Int),
+        N + 1⟩ := by
+  have hUa' : Qle (Qabs (altSum (a.seq s) 0 (2 * K + 1)))
+      ⟨((expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat : Int), 1⟩ :=
+    Qle_trans (expM_U_den_pos _ _) (altSum_abs_le_U (a.den_pos _) (canon_bound a _) 0 _)
+      (Q_le_num_toNat _ (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))
+  have hUb : Qle (Qabs (RaltReal_seq b 0 (2 * N + 1)))
+      ⟨((expM_U (xBound b * xBound b) (2 * (xBound b * xBound b))).num.toNat : Int), 1⟩ :=
+    Qle_trans (expM_U_den_pos _ _) (altSum_abs_le_U (b.den_pos _) (canon_bound b _) 0 _)
+      (Q_le_num_toNat _ (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))
+  have hAd : 0 < (RaltReal_seq a 0 (2 * N + 1)).den := altSum_den_pos (a.den_pos _) 0 _
+  have hA'd : 0 < (altSum (a.seq s) 0 (2 * K + 1)).den := altSum_den_pos (a.den_pos _) 0 _
+  have hBd : 0 < (RaltReal_seq b 0 (2 * N + 1)).den := altSum_den_pos (b.den_pos _) 0 _
+  have hB'd : 0 < (altSum (b.seq s) 0 (2 * K + 1)).den := altSum_den_pos (b.den_pos _) 0 _
+  refine Qle_trans (add_den_pos (Qmul_den_pos (Qabs_den_pos hBd) (Qabs_den_pos (Qsub_den_pos hAd hA'd)))
+      (Qmul_den_pos (Qabs_den_pos hA'd) (Qabs_den_pos (Qsub_den_pos hBd hB'd))))
+    (Qprod_diff_le (RaltReal_seq a 0 (2 * N + 1)) (altSum (a.seq s) 0 (2 * K + 1))
+      (RaltReal_seq b 0 (2 * N + 1)) (altSum (b.seq s) 0 (2 * K + 1)) hAd hA'd hBd hB'd) ?_
+  refine Qle_trans (add_den_pos (Qmul_den_pos Nat.one_pos (Nat.succ_pos N))
+      (Qmul_den_pos Nat.one_pos (Nat.succ_pos N)))
+    (Qadd_le_add
+      (Qmul_le_mul (Qabs_den_pos hBd) Nat.one_pos (Qabs_den_pos (Qsub_den_pos hAd hA'd))
+        (Qabs_num_nonneg _) (Int.ofNat_nonneg _) hUb (altDiag_to_deep a 0 N s K hNs hda))
+      (Qmul_le_mul (Qabs_den_pos hA'd) Nat.one_pos (Qabs_den_pos (Qsub_den_pos hBd hB'd))
+        (Qabs_num_nonneg _) (Int.ofNat_nonneg _) hUa' (altDiag_to_deep b 0 N s K hNs hdb)))
+    (Qeq_le (by simp only [Qeq, add, mul]; push_cast; ring_uor))
+
 end UOR.Bridge.F1Square.Analysis
