@@ -1527,5 +1527,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.altCorner_factored2
 #print axioms Analysis.altCorner_abs_le2
 #print axioms Analysis.cornerMertens2
+#print axioms Analysis.sinTerm_abs_le
+#print axioms Analysis.sinConv_abs_le
 #print axioms Analysis.cosAdd_resid_eq
 #print axioms Analysis.altSum_add_eq

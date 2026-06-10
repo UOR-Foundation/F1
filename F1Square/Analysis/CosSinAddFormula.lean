@@ -500,6 +500,63 @@ theorem altSum_add_eq {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) :
         (Qadd_congr ih hstep) (Qadd_sub_sub _ _ _ _)
 
 -- ===========================================================================
+-- The **`sinConv` top-diagonal bound** `|sinConv N| ≤ M²·(2M²)^N/N! → 0` (the boundary diagonal vanishes).
+-- ===========================================================================
+
+/-- `M·M = M²` as a rational. -/
+private theorem MM_eq (M : Nat) : Qeq (mul (⟨(M : Int), 1⟩ : Q) ⟨(M : Int), 1⟩) ⟨(M * M : Int), 1⟩ := by
+  simp only [Qeq, mul]
+
+/-- `|sinTermⱼ| ≤ M·(M²)ʲ/j!` (for `|a| ≤ M`). -/
+theorem sinTerm_abs_le {a : Q} {M : Nat} (had : 0 < a.den) (ha : Qle (Qabs a) ⟨(M : Int), 1⟩)
+    (j : Nat) : Qle (Qabs (sinTerm a j)) (mul (⟨(M : Int), 1⟩ : Q) (expTerm (⟨(M * M : Int), 1⟩ : Q) j)) := by
+  rw [sinTerm, Qabs_mul]
+  exact Qmul_le_mul (Qabs_den_pos had) Nat.one_pos (Qabs_den_pos (altTerm_den_pos had 1 j))
+    (Qabs_num_nonneg _) (Qabs_num_nonneg _) ha (altTerm_abs_le_exp had ha 1 j)
+
+/-- **The `sin·sin` top-diagonal bound**: `|sinConv N| ≤ M²·(2M²)^N/N!` (for `M` bounding `|a|,|b|`),
+    which `→ 0` as `N → ∞`. Each term `|sinTermⱼ·sinT_{N−j}| ≤ M²·(M²)ʲ/j!·(M²)^{N−j}/(N−j)!`; summed
+    (`expTerm_conv`) it is `M²·expTerm(2M²)(N)`. -/
+theorem sinConv_abs_le {a b : Q} {M : Nat} (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : Qle (Qabs a) ⟨(M : Int), 1⟩) (hb : Qle (Qabs b) ⟨(M : Int), 1⟩) (N : Nat) :
+    Qle (Qabs (sinConv a b N))
+      (mul (⟨(M * M : Int), 1⟩ : Q) (expTerm (add (⟨(M * M : Int), 1⟩ : Q) ⟨(M * M : Int), 1⟩) N)) := by
+  have heT : ∀ k, 0 < (expTerm (⟨(M * M : Int), 1⟩ : Q) k).den := fun k => expTerm_den_pos Nat.one_pos k
+  have hMeT : ∀ k, 0 < (mul (⟨(M : Int), 1⟩ : Q) (expTerm (⟨(M * M : Int), 1⟩ : Q) k)).den :=
+    fun k => Qmul_den_pos Nat.one_pos (heT k)
+  have hstd : ∀ j, 0 < (mul (sinTerm a j) (sinTerm b (N - j))).den :=
+    fun j => Qmul_den_pos (sinTerm_den_pos had j) (sinTerm_den_pos hbd (N - j))
+  simp only [sinConv]
+  -- step 1: `|sinConv N| ≤ Σ |sinTermⱼ·sinT_{N−j}|`.
+  refine Qle_trans (Fsum_den_pos (fun j => Qabs_den_pos (hstd j)) N)
+    (Fsum_abs_le hstd N) ?_
+  -- step 2: per term `≤ (M·eTⱼ)(M·eT_{N−j})`, then sum.
+  refine Qle_trans (Fsum_den_pos (fun j => Qmul_den_pos (hMeT j) (hMeT (N - j))) N)
+    (Fsum_le_congr (fun j _ => by
+      rw [Qabs_mul]
+      exact Qmul_le_mul (Qabs_den_pos (sinTerm_den_pos had j)) (hMeT j)
+        (Qabs_den_pos (sinTerm_den_pos hbd (N - j))) (Qabs_num_nonneg _) (Qabs_num_nonneg _)
+        (sinTerm_abs_le had ha j) (sinTerm_abs_le hbd hb (N - j)))) ?_
+  -- step 3: `Σ (M·eTⱼ)(M·eT_{N−j}) ≈ M²·Σ eTⱼ·eT_{N−j} = M²·expTerm(2M²)(N)`.
+  have hfactor : Qeq (Fsum (fun j => mul (mul (⟨(M : Int), 1⟩ : Q) (expTerm (⟨(M * M : Int), 1⟩ : Q) j))
+        (mul (⟨(M : Int), 1⟩ : Q) (expTerm (⟨(M * M : Int), 1⟩ : Q) (N - j)))) N)
+      (mul (⟨(M * M : Int), 1⟩ : Q)
+        (Fsum (fun j => mul (expTerm (⟨(M * M : Int), 1⟩ : Q) j)
+          (expTerm (⟨(M * M : Int), 1⟩ : Q) (N - j))) N)) := by
+    refine Qeq_trans (Fsum_den_pos (fun j => Qmul_den_pos Nat.one_pos
+        (Qmul_den_pos (heT j) (heT (N - j)))) N)
+      (Fsum_congr (fun j => Qeq_trans (Qmul_den_pos (Qmul_den_pos Nat.one_pos Nat.one_pos)
+          (Qmul_den_pos (heT j) (heT (N - j))))
+        (Qmul4_rearrange (⟨(M : Int), 1⟩ : Q) (expTerm (⟨(M * M : Int), 1⟩ : Q) j)
+          (⟨(M : Int), 1⟩ : Q) (expTerm (⟨(M * M : Int), 1⟩ : Q) (N - j)))
+        (Qmul_congr (MM_eq M) (Qeq_refl _))) N) ?_
+    exact Fsum_mul_left Nat.one_pos (fun j => Qmul_den_pos (heT j) (heT (N - j))) N
+  refine Qle_trans (Qmul_den_pos Nat.one_pos (Fsum_den_pos (fun j => Qmul_den_pos (heT j) (heT (N - j))) N))
+    (Qeq_le hfactor) ?_
+  exact Qeq_le (Qmul_congr (Qeq_refl _)
+    (expTerm_conv (x := (⟨(M * M : Int), 1⟩ : Q)) (y := (⟨(M * M : Int), 1⟩ : Q)) Nat.one_pos Nat.one_pos N))
+
+-- ===========================================================================
 -- The **residual identity** `altSum(a+b) − (cos·cos − sin·sin partials) = sinConv N − corner_cos + corner_sin`,
 -- whose RHS is a sum of terms that each `→ 0` (the gateway to the `Real` reconciliation).
 -- ===========================================================================
