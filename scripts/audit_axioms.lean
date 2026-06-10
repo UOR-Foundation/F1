@@ -1524,3 +1524,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fsum_cauchy
 #print axioms Analysis.cosCauchy_eq
 #print axioms Analysis.sinCauchy_eq
+#print axioms Analysis.altSum_add_eq

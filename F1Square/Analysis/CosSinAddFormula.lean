@@ -357,4 +357,50 @@ theorem altTerm_add_eq {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (m' : Nat) 
   refine Qeq_trans (add_den_pos (Qmul_den_pos hS1d hEd) (Qmul_den_pos hS1d hOd)) hstep1 ?_
   exact Qadd_congr hcos hsin
 
+-- ===========================================================================
+-- The **partial-sum diagonal identity** `altSum(a+b,0,N) = ΣcosConv − ΣsinConv` (summing the diagonal).
+-- ===========================================================================
+
+/-- `(A−B)+(c−d) ≈ (A+c)−(B+d)`. -/
+private theorem Qadd_sub_sub (A B c d : Q) :
+    Qeq (add (Qsub A B) (Qsub c d)) (Qsub (add A c) (add B d)) := by
+  simp only [Qeq, Qsub, add, neg]; push_cast
+  generalize A.num = an; generalize (A.den : Int) = ad
+  generalize B.num = bn; generalize (B.den : Int) = bd
+  generalize c.num = cn; generalize (c.den : Int) = cd
+  generalize d.num = dn; generalize (d.den : Int) = dd
+  ring_uor
+
+/-- `A+(c−d) ≈ (A+c)−d`. -/
+private theorem Qadd_sub_assoc (A c d : Q) : Qeq (add A (Qsub c d)) (Qsub (add A c) d) := by
+  simp only [Qeq, Qsub, add, neg]; push_cast
+  generalize A.num = an; generalize (A.den : Int) = ad
+  generalize c.num = cn; generalize (c.den : Int) = cd
+  generalize d.num = dn; generalize (d.den : Int) = dd
+  ring_uor
+
+/-- **The partial-sum diagonal identity**: `altSum(a+b,0,N+1) = Σ_{m≤N+1} cosConv(m) − Σ_{m≤N} sinConv(m)`
+    — summing the per-degree `altTerm_add_eq` over `m ≤ N+1` (the `m=0` term is `cosConv 0`, and the
+    `sin·sin` diagonals reindex by `−1`). This is the `Q`-level partial-sum form of `cos(a+b) =
+    cos a cos b − sin a sin b`; the `Real` reconciliation (corner→0) builds on top. -/
+theorem altSum_add_eq {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) :
+    ∀ N, Qeq (altSum (add a b) 0 (N + 1))
+      (Qsub (Fsum (cosConv a b) (N + 1)) (Fsum (sinConv a b) N))
+  | 0 => by
+      have hbase : Qeq (altTerm (add a b) 0 0) (cosConv a b 0) := by
+        simp only [cosConv, Fsum, altTerm, qpow]; decide
+      have h1 := altTerm_add_eq had hbd 0
+      refine Qeq_trans (add_den_pos (cosConv_den_pos had hbd 0)
+          (Qsub_den_pos (cosConv_den_pos had hbd 1) (sinConv_den_pos had hbd 0)))
+        (Qadd_congr hbase h1) (Qadd_sub_assoc _ _ _)
+  | (N + 1) => by
+      have ih := altSum_add_eq had hbd N
+      have hstep := altTerm_add_eq had hbd (N + 1)
+      have hCd : ∀ m, 0 < (cosConv a b m).den := fun m => cosConv_den_pos had hbd m
+      have hSd : ∀ m, 0 < (sinConv a b m).den := fun m => sinConv_den_pos had hbd m
+      -- `altSum(…,N+2) = altSum(…,N+1) + altTerm(…,N+2) ≈ (Σcos − Σsin) + (cosConv − sinConv)`.
+      refine Qeq_trans (add_den_pos (Qsub_den_pos (Fsum_den_pos hCd (N + 1)) (Fsum_den_pos hSd N))
+          (Qsub_den_pos (hCd (N + 2)) (hSd (N + 1))))
+        (Qadd_congr ih hstep) (Qadd_sub_sub _ _ _ _)
+
 end UOR.Bridge.F1Square.Analysis
