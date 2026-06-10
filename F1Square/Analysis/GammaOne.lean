@@ -502,4 +502,38 @@ theorem gSeq_diff_ge_block (a N : Nat) : ∀ (d : Nat), N + d + 1 ≤ 2 ^ (a + 2
         (Rle_trans (Radd_le_add (gSeq_step_ge_block a (N + d) (by omega)) ihd)
           (Rle_of_Req (Rsub_split (gSeq (N + d + 1)) (gSeq (N + d)) (gSeq N))))
 
+/-- The Vsum increment telescopes exactly: `(a+2)/((m+1)(m+2)) = (a+2)/(m+1) − (a+2)/(m+2)`. -/
+theorem Vsum_step_eq (a m : Nat) :
+    Qeq (⟨(a + 2 : Int), (m + 1) * (m + 2)⟩ : Q)
+        (Qsub (⟨(a + 2 : Int), m + 1⟩ : Q) ⟨(a + 2 : Int), m + 2⟩) := by
+  simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+
+/-- **Rational telescoping tail bound** `Vsum a (N+d) − Vsum a N = (a+2)/(N+1) − (a+2)/(N+d+1)`. -/
+theorem Vsum_tail_le (a N : Nat) (d : Nat) :
+    Qle (Qsub (Vsum a (N + d)) (Vsum a N))
+        (Qsub (⟨(a + 2 : Int), N + 1⟩ : Q) ⟨(a + 2 : Int), N + d + 1⟩) := by
+  induction d with
+  | zero =>
+      simp only [Nat.add_zero]
+      apply Qeq_le
+      simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+  | succ d ih =>
+      have hA : 0 < (⟨(a + 2 : Int), (N + d + 1) * (N + d + 2)⟩ : Q).den :=
+        Nat.mul_pos (Nat.succ_pos (N + d)) (Nat.succ_pos (N + d + 1))
+      have hC : 0 < (Qsub (⟨(a + 2 : Int), N + 1⟩ : Q) ⟨(a + 2 : Int), N + d + 1⟩).den :=
+        Qsub_den_pos (Nat.succ_pos N) (Nat.succ_pos (N + d))
+      have hD : 0 < (Qsub (⟨(a + 2 : Int), N + d + 1⟩ : Q) ⟨(a + 2 : Int), N + d + 2⟩).den :=
+        Qsub_den_pos (Nat.succ_pos (N + d)) (Nat.succ_pos (N + d + 1))
+      have hB : 0 < (Qsub (Vsum a (N + d)) (Vsum a N)).den :=
+        Qsub_den_pos (Vsum_den_pos a (N + d)) (Vsum_den_pos a N)
+      have hstep : Qle (add (⟨(a + 2 : Int), (N + d + 1) * (N + d + 2)⟩ : Q)
+            (Qsub (⟨(a + 2 : Int), N + 1⟩ : Q) ⟨(a + 2 : Int), N + d + 1⟩))
+          (Qsub (⟨(a + 2 : Int), N + 1⟩ : Q) ⟨(a + 2 : Int), N + d + 2⟩) :=
+        Qle_trans (add_den_pos hD hC)
+          (Qadd_le_add (Qeq_le (Vsum_step_eq a (N + d))) (Qle_refl _))
+          (Qeq_le (Qadd_Qsub_telescope _ _ _))
+      exact Qle_trans (add_den_pos hA hB)
+        (Qeq_le (Qeq_symm (Qadd_Qsub_comm _ (Vsum a (N + d)) (Vsum a N))))
+        (Qle_trans (add_den_pos hA hC) (Qadd_le_add (Qle_refl _) ih) hstep)
+
 end UOR.Bridge.F1Square.Analysis
