@@ -274,4 +274,33 @@ theorem dStep_ge (p : Nat) (hp : 1 ≤ p) :
   refine Rle_trans (Rle_Rneg (Rmul_le_Rmul_left ha h4)) ?_
   exact Rle_trans (Rle_of_Req (Req_symm heq3)) hstep2
 
+-- ===========================================================================
+-- The per-step gSeq identity and its two-sided bounds (the dyadic-tail input).
+-- ===========================================================================
+
+/-- `(−x) − (−y) ≈ −(x − y)`. -/
+theorem Rsub_Rneg_Rneg (x y : Real) : Req (Rsub (Rneg x) (Rneg y)) (Rneg (Rsub x y)) := by
+  apply Req_of_seq_Qeq; intro n; simp only [Qeq, Rsub, Radd, Rneg, neg, add]; push_cast; ring_uor
+
+/-- **`gSeq(j+1) − gSeq j ≈ dStep(j+1)`** — the consecutive gSeq difference is the per-step `d`. -/
+theorem gSeq_step_eq (j : Nat) :
+    Req (Rsub (gSeq (j + 1)) (gSeq j)) (dStep (j + 1) (Nat.succ_pos j)) := by
+  have hAC : Req (Rsub (lnSum (j + 2)) (lnSum (j + 1)))
+      (lnOver (j + 2) (Nat.succ_pos (j + 1))) := by
+    show Req (Rsub (Radd (lnSum (j + 1)) (lnOver (j + 2) (by omega))) (lnSum (j + 1)))
+             (lnOver (j + 2) (Nat.succ_pos (j + 1)))
+    refine Req_trans (Rsub_congr (Radd_comm (lnSum (j + 1)) (lnOver (j + 2) (by omega)))
+      (Req_refl _)) ?_
+    refine Req_trans (Radd_assoc (lnOver (j + 2) (by omega)) (lnSum (j + 1))
+      (Rneg (lnSum (j + 1)))) ?_
+    exact Req_trans (Radd_congr (Req_refl _) (Radd_neg (lnSum (j + 1)))) (Radd_zero _)
+  unfold gSeq dStep
+  refine Req_trans (Rsub_Radd_Radd (lnSum (j + 2))
+    (Rneg (Rhalf (Rmul (logN (j + 2) (by omega)) (logN (j + 2) (by omega)))))
+    (lnSum (j + 1))
+    (Rneg (Rhalf (Rmul (logN (j + 1) (by omega)) (logN (j + 1) (by omega)))))) ?_
+  -- Radd (Rsub A C) (Rsub (Rneg X) (Rneg Y)) ≈ Radd (lnOver(j+2)) (Rneg (Rsub X Y))
+  --   = Rsub (lnOver(j+2)) (Rsub X Y)  (defeq)
+  exact Radd_congr hAC (Rsub_Rneg_Rneg _ _)
+
 end UOR.Bridge.F1Square.Analysis
