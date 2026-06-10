@@ -358,6 +358,102 @@ theorem altTerm_add_eq {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (m' : Nat) 
   exact Qadd_congr hcos hsin
 
 -- ===========================================================================
+-- The **two-variable corner bound** `|corner(2K+1)| → 0` (Mertens split; the absolute-convergence
+-- step that makes `(Σf)(Σg) → product` and the diagonal sum converge). Mirrors `CosSinAdd`'s
+-- same-variable `altCorner_mertens`, with the `i`-factor from series `a` and the gap from series `b`.
+-- ===========================================================================
+
+/-- **Factored two-variable corner**: factor `altTerm a off i` out of each row of the corner. -/
+theorem altCorner_factored2 {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (off N : Nat) :
+    Qeq (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a off i) (altTerm b off j)) N)
+          (Fsum (fun j => mul (altTerm a off i) (altTerm b off j)) (N - i))) N)
+      (Fsum (fun i => mul (altTerm a off i)
+          (Qsub (Fsum (altTerm b off) N) (Fsum (altTerm b off) (N - i)))) N) := by
+  have hbt : ∀ j, 0 < (altTerm b off j).den := altTerm_den_pos hbd off
+  refine Fsum_congr (fun i => ?_) N
+  exact Qeq_trans
+    (Qsub_den_pos (Qmul_den_pos (altTerm_den_pos had off i) (Fsum_den_pos hbt N))
+      (Qmul_den_pos (altTerm_den_pos had off i) (Fsum_den_pos hbt (N - i))))
+    (QsubCongr (Fsum_mul_left (altTerm_den_pos had off i) hbt N)
+      (Fsum_mul_left (altTerm_den_pos had off i) hbt (N - i)))
+    (Qeq_symm (Qmul_sub_distrib (altTerm a off i) (Fsum (altTerm b off) N)
+      (Fsum (altTerm b off) (N - i))))
+
+/-- `|corner| ≤ Σᵢ |altTerm a i · (Σcos b N − Σcos b (N−i))|`. -/
+theorem altCorner_abs_le2 {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (off N : Nat) :
+    Qle (Qabs (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a off i) (altTerm b off j)) N)
+          (Fsum (fun j => mul (altTerm a off i) (altTerm b off j)) (N - i))) N))
+      (Fsum (fun i => Qabs (mul (altTerm a off i)
+          (Qsub (Fsum (altTerm b off) N) (Fsum (altTerm b off) (N - i))))) N) := by
+  have hbt : ∀ j, 0 < (altTerm b off j).den := altTerm_den_pos hbd off
+  have hh : ∀ i, 0 < (mul (altTerm a off i)
+      (Qsub (Fsum (altTerm b off) N) (Fsum (altTerm b off) (N - i)))).den :=
+    fun i => Qmul_den_pos (altTerm_den_pos had off i)
+      (Qsub_den_pos (Fsum_den_pos hbt N) (Fsum_den_pos hbt (N - i)))
+  exact Qle_congr_left (Qabs_den_pos (Fsum_den_pos hh N))
+    (Qeq_symm (Qabs_Qeq (altCorner_factored2 had hbd off N))) (Fsum_abs_le hh N)
+
+/-- **The two-variable Mertens corner bound** at `N = 2K+1` (for `M` bounding both `|a|,|b|`, `2M² ≤ K+2`):
+    `|corner(2K+1)| ≤ U·(4(M²)^{K+2}/(K+2)!) + (2(M²)^{K+1}/(K+1)!)·U` — both summands `→ 0` as `K → ∞`.
+    Low block (`i ≤ K`): the gap is the deep `b`-tail (`altTail_deep_le`), `Σ|altTerm a i| ≤ U`
+    (`altAbsSum_le_U`). High block (`i = K+1+i'`): `|altTerm a (K+1+i')|` is the small `a`-tail
+    (`altAbsTail_le`), the gap `≤ U` (`altGap_le_U`). -/
+theorem cornerMertens2 {a b : Q} {M : Nat} (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : Qle (Qabs a) ⟨(M : Int), 1⟩) (hb : Qle (Qabs b) ⟨(M : Int), 1⟩) (off K : Nat)
+    (hK : 2 * (M * M) ≤ K + 2) :
+    Qle (Qabs (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a off i) (altTerm b off j)) (2 * K + 1))
+          (Fsum (fun j => mul (altTerm a off i) (altTerm b off j)) (2 * K + 1 - i))) (2 * K + 1)))
+      (add (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩)
+        (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M))))) := by
+  have hat : ∀ i, 0 < (altTerm a off i).den := altTerm_den_pos had off
+  have hbt : ∀ j, 0 < (altTerm b off j).den := altTerm_den_pos hbd off
+  have htd : ∀ i, 0 < (Qsub (Fsum (altTerm b off) (2 * K + 1)) (Fsum (altTerm b off) (2 * K + 1 - i))).den :=
+    fun i => Qsub_den_pos (Fsum_den_pos hbt (2 * K + 1)) (Fsum_den_pos hbt (2 * K + 1 - i))
+  have hh : ∀ i, 0 < (Qabs (mul (altTerm a off i)
+      (Qsub (Fsum (altTerm b off) (2 * K + 1)) (Fsum (altTerm b off) (2 * K + 1 - i))))).den :=
+    fun i => Qabs_den_pos (Qmul_den_pos (hat i) (htd i))
+  have hCnn : (0 : Int) ≤ (4 * npow (M * M) (K + 2) : Int) := Int.ofNat_nonneg _
+  have hUnn : (0 : Int) ≤ (expM_U (M * M) (2 * (M * M))).num := expM_U_num_nonneg _ _
+  -- low block `i ≤ K`: `|altTerm a i|·(deep b-tail ≤ 4(M²)^{K+2}/(K+2)!)`, summed `≤ U·(…)`.
+  have hlow : Qle (Fsum (fun i => Qabs (mul (altTerm a off i)
+        (Qsub (Fsum (altTerm b off) (2 * K + 1)) (Fsum (altTerm b off) (2 * K + 1 - i))))) K)
+      (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩) := by
+    have hmid : Qle (Fsum (fun i => Qabs (mul (altTerm a off i)
+          (Qsub (Fsum (altTerm b off) (2 * K + 1)) (Fsum (altTerm b off) (2 * K + 1 - i))))) K)
+        (Fsum (fun i => mul (Qabs (altTerm a off i))
+          (⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩ : Q)) K) :=
+      Fsum_le_congr (fun i hi => by
+        rw [Qabs_mul]
+        exact Qmul_le_mul_left (Qabs_num_nonneg _) (altTail_deep_le hbd hb off K i hi (by omega)))
+    exact Qle_trans (Fsum_den_pos (fun i => Qmul_den_pos (Qabs_den_pos (hat i)) (fct_pos _)) K) hmid
+      (Qle_trans (Qmul_den_pos (Fsum_den_pos (fun i => Qabs_den_pos (hat i)) K) (fct_pos _))
+        (Qeq_le (Qeq_symm (Fsum_mul_const_right (fct_pos _) (fun i => Qabs_den_pos (hat i)) K)))
+        (Qmul_le_mul_right hCnn (altAbsSum_le_U had ha off K)))
+  -- high block `i = K+1+i'`: `|altTerm a (K+1+i')| (small a-tail)·(gap ≤ U)`, summed `≤ (…)·U`.
+  have hhigh : Qle (Fsum (fun i' => Qabs (mul (altTerm a off (K + 1 + i'))
+        (Qsub (Fsum (altTerm b off) (2 * K + 1)) (Fsum (altTerm b off) (2 * K + 1 - (K + 1 + i')))))) K)
+      (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M)))) := by
+    have hmid : Qle (Fsum (fun i' => Qabs (mul (altTerm a off (K + 1 + i'))
+          (Qsub (Fsum (altTerm b off) (2 * K + 1)) (Fsum (altTerm b off) (2 * K + 1 - (K + 1 + i')))))) K)
+        (Fsum (fun i' => mul (Qabs (altTerm a off (K + 1 + i')))
+          (expM_U (M * M) (2 * (M * M)))) K) :=
+      Fsum_le_congr (fun i' _ => by
+        rw [Qabs_mul]
+        exact Qmul_le_mul_left (Qabs_num_nonneg _)
+          (altGap_le_U hbd hb off (a := 2 * K + 1 - (K + 1 + i')) (b := 2 * K + 1) (by omega)))
+    exact Qle_trans (Fsum_den_pos (fun i' => Qmul_den_pos (Qabs_den_pos (hat (K + 1 + i')))
+        (expM_U_den_pos (M * M) (2 * (M * M)))) K) hmid
+      (Qle_trans (Qmul_den_pos (Fsum_den_pos (fun i' => Qabs_den_pos (hat (K + 1 + i'))) K)
+        (expM_U_den_pos (M * M) (2 * (M * M))))
+        (Qeq_le (Qeq_symm (Fsum_mul_const_right (expM_U_den_pos (M * M) (2 * (M * M)))
+          (fun i' => Qabs_den_pos (hat (K + 1 + i'))) K)))
+        (Qmul_le_mul_right hUnn (altAbsTail_le had ha off K K hK)))
+  refine Qle_trans (Fsum_den_pos hh (2 * K + 1)) (altCorner_abs_le2 had hbd off (2 * K + 1)) ?_
+  refine Qle_trans (add_den_pos (Fsum_den_pos hh K)
+      (Fsum_den_pos (fun i' => hh (K + 1 + i')) K)) (Qeq_le (Fsum_split_at _ hh K)) ?_
+  exact Qadd_le_add hlow hhigh
+
+-- ===========================================================================
 -- The **partial-sum diagonal identity** `altSum(a+b,0,N) = ΣcosConv − ΣsinConv` (summing the diagonal).
 -- ===========================================================================
 
