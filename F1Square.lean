@@ -60,6 +60,7 @@ import F1Square.Analysis.Bernoulli
 import F1Square.Analysis.BernoulliPoly
 import F1Square.Analysis.ExpAdd
 import F1Square.Analysis.CosSinAdd
+import F1Square.Analysis.CosSinAddFormula
 import F1Square.Analysis.CosSinBound
 import F1Square.Analysis.ComplexExp
 import F1Square.Analysis.ComplexMod
