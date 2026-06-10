@@ -238,4 +238,40 @@ theorem dStep_le (p : Nat) (hp : 1 ≤ p) :
   refine Req_trans (Rhalf_congr (Rmul_ofQ_ofQ hpp hpp)) ?_
   apply Req_of_seq_Qeq; intro n; simp only [Rhalf, ofQ, mul, Qeq]; push_cast; ring_uor
 
+/-- **`d_{p+1} ≥ −log(p+1)/(p(p+1))`** — the numeric lower bound. Since `d = lnOver(p+1) −
+    (½a²−½b²)` and `½a²−½b² ≤ a·δ` (the `½δ² ≥ 0` slack), `d ≥ lnOver(p+1) − a·δ = −a·(δ − 1/(p+1))`
+    and `δ − 1/(p+1) ≤ 1/p − 1/(p+1) = 1/(p(p+1))`. -/
+theorem dStep_ge (p : Nat) (hp : 1 ≤ p) :
+    Rle (Rneg (Rmul (logN (p + 1) (Nat.succ_pos p)) (ofQ (⟨1, p * (p + 1)⟩ : Q)
+        (Nat.mul_pos hp (Nat.succ_pos p)))))
+      (dStep p hp) := by
+  have hpp : 0 < p := hp
+  have ha : Rnonneg (logN (p + 1) (Nat.succ_pos p)) := Rnonneg_logN (p + 1) (Nat.succ_pos p)
+  -- abbreviations (defeq to the underlying log terms)
+  let a := logN (p + 1) (Nat.succ_pos p)
+  let b := logN p hp
+  let δ := Rsub a b
+  -- h1 : ½a² − ½b² ≤ a·δ  (slack ½δ² ≥ 0, via half_combine)
+  have h1 : Rle (Rsub (Rhalf (Rmul a a)) (Rhalf (Rmul b b))) (Rmul a δ) :=
+    Rle_trans (Rle_self_Radd_right (Rhalf_nonneg (Rnonneg_Rmul_self δ)))
+      (Rle_of_Req (half_combine a b))
+  -- step2 : lnOver(p+1) − a·δ ≤ dStep
+  have hstep2 : Rle (Rsub (lnOver (p + 1) (Nat.succ_pos p)) (Rmul a δ)) (dStep p hp) :=
+    Rsub_le_sub (Rle_refl _) h1
+  -- heq3 : lnOver(p+1) − a·δ = −(a·(δ − 1/(p+1)))
+  have heq3 : Req (Rsub (lnOver (p + 1) (Nat.succ_pos p)) (Rmul a δ))
+      (Rneg (Rmul a (Rsub δ (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p))))) := by
+    refine Req_trans (Req_symm (Rmul_sub_distrib a (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)) δ)) ?_
+    refine Req_trans (Rmul_congr (Req_refl a)
+      (Req_symm (Rneg_Rsub δ (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p))))) ?_
+    exact Rmul_neg_right a (Rsub δ (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))
+  -- h4 : δ − 1/(p+1) ≤ 1/(p(p+1))
+  have h4 : Rle (Rsub δ (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))
+      (ofQ (⟨1, p * (p + 1)⟩ : Q) (Nat.mul_pos hp (Nat.succ_pos p))) := by
+    refine Rle_trans (Rsub_le_sub (deltaLog_upper p hp) (Rle_refl _)) (Rle_of_Req ?_)
+    apply Req_of_seq_Qeq; intro n; simp only [Rsub, Radd, Rneg, ofQ, add, neg, Qeq]; push_cast; ring_uor
+  -- combine
+  refine Rle_trans (Rle_Rneg (Rmul_le_Rmul_left ha h4)) ?_
+  exact Rle_trans (Rle_of_Req (Req_symm heq3)) hstep2
+
 end UOR.Bridge.F1Square.Analysis

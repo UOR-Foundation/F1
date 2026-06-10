@@ -1095,6 +1095,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rhalf_Rsub
 #print axioms Analysis.Rhalf_congr
 #print axioms Analysis.Rhalf_le_Rhalf
+#print axioms Analysis.Rhalf_nonneg
 #print axioms Analysis.RexpReal_nonneg
 #print axioms Analysis.RexpReal_sub_one_nonneg
 #print axioms Analysis.Rnonneg_Rsub_of_Rle
@@ -1360,6 +1361,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.half_combine
 #print axioms Analysis.dStep_le_half_sq
 #print axioms Analysis.dStep_le
+#print axioms Analysis.dStep_ge
 
 -- ZetaTwo (the ζ(2) ≥ 1.63 lower bracket; v0.16.0, for Pos λ₂).
 #print axioms Analysis.zeta_ge_partial

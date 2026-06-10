@@ -332,6 +332,17 @@ theorem Rhalf_le_Rhalf {x y : Real} (h : Rle x y) : Rle (Rhalf x) (Rhalf y) := b
     (Qle_trans (add_den_pos (Qmul_den_pos (by decide) (y.den_pos n)) (Nat.succ_pos n))
       (Qeq_le heq) hb)
 
+/-- `Rhalf` preserves non-negativity. -/
+theorem Rhalf_nonneg {x : Real} (h : Rnonneg x) : Rnonneg (Rhalf x) := by
+  intro n
+  show Qle (neg (Qbound n)) (mul (⟨1, 2⟩ : Q) (x.seq n))
+  have h1 : Qle (mul (⟨1, 2⟩ : Q) (neg (Qbound n))) (mul (⟨1, 2⟩ : Q) (x.seq n)) :=
+    Qmul_le_mul_left (by decide) (h n)
+  have h2 : Qle (neg (Qbound n)) (mul (⟨1, 2⟩ : Q) (neg (Qbound n))) := by
+    simp only [Qle, neg, Qbound, mul]; push_cast; omega
+  exact Qle_trans (b := mul (⟨1, 2⟩ : Q) (neg (Qbound n)))
+    (Qmul_den_pos (by decide) (Qbound_den_pos n)) h2 h1
+
 /-- **`exp` is non-negative**: `exp t ≥ 0` for every real `t`, because `exp t ≈ (exp(t/2))²` and a
     square is non-negative (`Rnonneg_Rmul_self`). Holds for all `t` (no sign hypothesis). -/
 theorem RexpReal_nonneg (t : Real) : Rnonneg (RexpReal t) := by
