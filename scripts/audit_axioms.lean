@@ -1564,3 +1564,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.altCorner_factored2_mixed
 #print axioms Analysis.altCorner_abs_le2_mixed
 #print axioms Analysis.cornerMertens2_mixed
+#print axioms Analysis.cornerCs_factored
+#print axioms Analysis.cornerSc_factored
+#print axioms Analysis.cornerCs_le
+#print axioms Analysis.cornerSc_le

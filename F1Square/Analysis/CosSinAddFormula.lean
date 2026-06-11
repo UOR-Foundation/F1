@@ -1740,4 +1740,107 @@ theorem cornerMertens2_mixed {a b : Q} {M : Nat} (had : 0 < a.den) (hbd : 0 < b.
       (Fsum_den_pos (fun i' => hh (K + 1 + i')) K)) (Qeq_le (Fsum_split_at _ hh K)) ?_
   exact Qadd_le_add hlow hhigh
 
+/-- **Factor `b` out of the `cos·sin` corner**: `corner_cs = b·(off_a=0, off_b=1 mixed corner)`. -/
+theorem cornerCs_factored {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (N : Nat) :
+    Qeq (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a 0 i) (sinTerm b j)) N)
+          (Fsum (fun j => mul (altTerm a 0 i) (sinTerm b j)) (N - i))) N)
+      (mul b (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) N)
+        (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) (N - i))) N)) := by
+  have hat0 : ∀ i, 0 < (altTerm a 0 i).den := altTerm_den_pos had 0
+  have hbt1 : ∀ j, 0 < (altTerm b 1 j).den := altTerm_den_pos hbd 1
+  have haltd : ∀ i j, 0 < (mul (altTerm a 0 i) (altTerm b 1 j)).den := fun i j => Qmul_den_pos (hat0 i) (hbt1 j)
+  have hsubd : ∀ i, 0 < (Qsub (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) N)
+      (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) (N - i))).den :=
+    fun i => Qsub_den_pos (Fsum_den_pos (fun j => haltd i j) N) (Fsum_den_pos (fun j => haltd i j) (N - i))
+  have hsterm : ∀ i j, Qeq (mul (altTerm a 0 i) (sinTerm b j))
+      (mul b (mul (altTerm a 0 i) (altTerm b 1 j))) := fun i j => by
+    rw [sinTerm]
+    refine Qeq_trans (Qmul_den_pos (Qmul_den_pos (hat0 i) hbd) (hbt1 j))
+      (Qmul_assoc3 (altTerm a 0 i) b (altTerm b 1 j)) ?_
+    refine Qeq_trans (Qmul_den_pos (Qmul_den_pos hbd (hat0 i)) (hbt1 j))
+      (Qmul_congr (Qmul_swap (altTerm a 0 i) b) (Qeq_refl _)) ?_
+    exact Qeq_symm (Qmul_assoc3 b (altTerm a 0 i) (altTerm b 1 j))
+  have hrow : ∀ i K, Qeq (Fsum (fun j => mul (altTerm a 0 i) (sinTerm b j)) K)
+      (mul b (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) K)) := fun i K =>
+    Qeq_trans (Fsum_den_pos (fun j => Qmul_den_pos hbd (haltd i j)) K)
+      (Fsum_congr (fun j => hsterm i j) K) (Fsum_mul_left hbd (fun j => haltd i j) K)
+  refine Qeq_trans (Fsum_den_pos (fun i => Qmul_den_pos hbd (hsubd i)) N)
+    (Fsum_congr (fun i => Qeq_trans
+      (Qsub_den_pos (Qmul_den_pos hbd (Fsum_den_pos (fun j => haltd i j) N))
+        (Qmul_den_pos hbd (Fsum_den_pos (fun j => haltd i j) (N - i))))
+      (QsubCongr (hrow i N) (hrow i (N - i)))
+      (Qeq_symm (Qmul_sub_distrib b (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) N)
+        (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) (N - i))))) N)
+    (Fsum_mul_left hbd hsubd N)
+
+/-- **Factor `a` out of the `sin·cos` corner**: `corner_sc = a·(off_a=1, off_b=0 mixed corner)`. -/
+theorem cornerSc_factored {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (N : Nat) :
+    Qeq (Fsum (fun i => Qsub (Fsum (fun j => mul (sinTerm a i) (altTerm b 0 j)) N)
+          (Fsum (fun j => mul (sinTerm a i) (altTerm b 0 j)) (N - i))) N)
+      (mul a (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) N)
+        (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) (N - i))) N)) := by
+  have hat1 : ∀ i, 0 < (altTerm a 1 i).den := altTerm_den_pos had 1
+  have hbt0 : ∀ j, 0 < (altTerm b 0 j).den := altTerm_den_pos hbd 0
+  have haltd : ∀ i j, 0 < (mul (altTerm a 1 i) (altTerm b 0 j)).den := fun i j => Qmul_den_pos (hat1 i) (hbt0 j)
+  have hsubd : ∀ i, 0 < (Qsub (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) N)
+      (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) (N - i))).den :=
+    fun i => Qsub_den_pos (Fsum_den_pos (fun j => haltd i j) N) (Fsum_den_pos (fun j => haltd i j) (N - i))
+  have hsterm : ∀ i j, Qeq (mul (sinTerm a i) (altTerm b 0 j))
+      (mul a (mul (altTerm a 1 i) (altTerm b 0 j))) := fun i j => by
+    rw [sinTerm]; exact Qeq_symm (Qmul_assoc3 a (altTerm a 1 i) (altTerm b 0 j))
+  have hrow : ∀ i K, Qeq (Fsum (fun j => mul (sinTerm a i) (altTerm b 0 j)) K)
+      (mul a (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) K)) := fun i K =>
+    Qeq_trans (Fsum_den_pos (fun j => Qmul_den_pos had (haltd i j)) K)
+      (Fsum_congr (fun j => hsterm i j) K) (Fsum_mul_left had (fun j => haltd i j) K)
+  refine Qeq_trans (Fsum_den_pos (fun i => Qmul_den_pos had (hsubd i)) N)
+    (Fsum_congr (fun i => Qeq_trans
+      (Qsub_den_pos (Qmul_den_pos had (Fsum_den_pos (fun j => haltd i j) N))
+        (Qmul_den_pos had (Fsum_den_pos (fun j => haltd i j) (N - i))))
+      (QsubCongr (hrow i N) (hrow i (N - i)))
+      (Qeq_symm (Qmul_sub_distrib a (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) N)
+        (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) (N - i))))) N)
+    (Fsum_mul_left had hsubd N)
+
+/-- **Bound on the `cos·sin` corner**: `|corner_cs(2K+1)| ≤ M·(Mertens bound) → 0`. -/
+theorem cornerCs_le {a b : Q} {M : Nat} (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : Qle (Qabs a) ⟨(M : Int), 1⟩) (hb : Qle (Qabs b) ⟨(M : Int), 1⟩) (K : Nat)
+    (hK : 2 * (M * M) ≤ K + 2) :
+    Qle (Qabs (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a 0 i) (sinTerm b j)) (2 * K + 1))
+          (Fsum (fun j => mul (altTerm a 0 i) (sinTerm b j)) (2 * K + 1 - i))) (2 * K + 1)))
+      (mul (⟨(M : Int), 1⟩ : Q)
+        (add (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩)
+          (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M)))))) := by
+  have haltd : ∀ i j, 0 < (mul (altTerm a 0 i) (altTerm b 1 j)).den :=
+    fun i j => Qmul_den_pos (altTerm_den_pos had 0 i) (altTerm_den_pos hbd 1 j)
+  have hcornerd : 0 < (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) (2 * K + 1))
+      (Fsum (fun j => mul (altTerm a 0 i) (altTerm b 1 j)) (2 * K + 1 - i))) (2 * K + 1)).den :=
+    Fsum_den_pos (fun i => Qsub_den_pos (Fsum_den_pos (fun j => haltd i j) _)
+      (Fsum_den_pos (fun j => haltd i j) _)) _
+  refine Qle_congr_left (Qabs_den_pos (Qmul_den_pos hbd hcornerd))
+    (Qeq_symm (Qabs_Qeq (cornerCs_factored had hbd (2 * K + 1)))) ?_
+  rw [Qabs_mul]
+  exact Qmul_le_mul (Qabs_den_pos hbd) Nat.one_pos (Qabs_den_pos hcornerd)
+    (Qabs_num_nonneg _) (Qabs_num_nonneg _) hb (cornerMertens2_mixed had hbd ha hb 0 1 K hK)
+
+/-- **Bound on the `sin·cos` corner**: `|corner_sc(2K+1)| ≤ M·(Mertens bound) → 0`. -/
+theorem cornerSc_le {a b : Q} {M : Nat} (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : Qle (Qabs a) ⟨(M : Int), 1⟩) (hb : Qle (Qabs b) ⟨(M : Int), 1⟩) (K : Nat)
+    (hK : 2 * (M * M) ≤ K + 2) :
+    Qle (Qabs (Fsum (fun i => Qsub (Fsum (fun j => mul (sinTerm a i) (altTerm b 0 j)) (2 * K + 1))
+          (Fsum (fun j => mul (sinTerm a i) (altTerm b 0 j)) (2 * K + 1 - i))) (2 * K + 1)))
+      (mul (⟨(M : Int), 1⟩ : Q)
+        (add (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩)
+          (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M)))))) := by
+  have haltd : ∀ i j, 0 < (mul (altTerm a 1 i) (altTerm b 0 j)).den :=
+    fun i j => Qmul_den_pos (altTerm_den_pos had 1 i) (altTerm_den_pos hbd 0 j)
+  have hcornerd : 0 < (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) (2 * K + 1))
+      (Fsum (fun j => mul (altTerm a 1 i) (altTerm b 0 j)) (2 * K + 1 - i))) (2 * K + 1)).den :=
+    Fsum_den_pos (fun i => Qsub_den_pos (Fsum_den_pos (fun j => haltd i j) _)
+      (Fsum_den_pos (fun j => haltd i j) _)) _
+  refine Qle_congr_left (Qabs_den_pos (Qmul_den_pos had hcornerd))
+    (Qeq_symm (Qabs_Qeq (cornerSc_factored had hbd (2 * K + 1)))) ?_
+  rw [Qabs_mul]
+  exact Qmul_le_mul (Qabs_den_pos had) Nat.one_pos (Qabs_den_pos hcornerd)
+    (Qabs_num_nonneg _) (Qabs_num_nonneg _) ha (cornerMertens2_mixed had hbd ha hb 1 0 K hK)
+
 end UOR.Bridge.F1Square.Analysis
