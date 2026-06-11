@@ -1613,3 +1613,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.deltaLogNat_le_recip
 #print axioms Analysis.Rmul_le_mul_of_abs
 #print axioms Analysis.Rneg_mul_le_of_abs
+#print axioms Analysis.oneSubCexp_re_upper
+#print axioms Analysis.oneSubCexp_re_lower
+#print axioms Analysis.oneSubCexp_im_upper
+#print axioms Analysis.oneSubCexp_im_lower

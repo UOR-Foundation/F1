@@ -1370,4 +1370,184 @@ theorem Rneg_mul_le_of_abs {x y A B : Real}
   -- AB + xy ≥ 0  ⟹  xy − (−AB) ≥ 0  ⟹  −AB ≤ xy.
   exact Rle_of_Rnonneg_Rsub (Rnonneg_congr (Req_symm (Rsub_neg_mul_eq A B x y)) hD)
 
+
+-- ===========================================================================
+-- Two-sided component bounds for u = Cone − Cexp ⟨Rneg d, b⟩ (d∈[0,1/2], b∈[−1,1]): u.re ∈ [0, 4d+3b²]
+-- and |u.im| ≤ (1+3b²)·Bb for −Bb≤b≤Bb. Assembles the tight exp/cos/sin bounds + the two-sided product
+-- keystone. The (1−e^{−s·δ_n}) factor of the per-term η variation D_n = n⁻ˢ·(1−e^{−s·δ_n}).
+-- ===========================================================================
+
+-- Two-sided component bounds for u = Cone − Cexp ⟨Rneg d, b⟩  (a = Rneg d ≤ 0, b the imaginary arg):
+--   u.re = Rsub one (Rmul (RexpReal (Rneg d)) (Rcos b))
+--   u.im = Rneg (Rmul (RexpReal (Rneg d)) (Rsin b))
+-- These feed the per-term η variation bound. All inputs are committed in EtaVariation:
+--   RexpReal_one_sub_neg_le : 1 − e^{−d} ≤ 4d   (d ∈ [0,1/2])
+--   RexpReal_neg_le_one     : e^{−d} ≤ 1        (d ≥ 0)
+--   RexpReal_nonneg         : 0 ≤ e^{−d}
+--   Rcos_le_one             : Rcos b ≤ 1
+--   Rcos_one_sub_le_sq      : 1 − Rcos b ≤ 3b²   (b ∈ [−1,1])
+--   RsinAux_upper_le/lower_ge : RsinAux b ∈ [1−3b², 1+3b²]  (b ∈ [−1,1]);  Rsin b = Rmul b (RsinAux b)
+--   Rmul_le_mul_of_abs / Rneg_mul_le_of_abs : two-sided product bound (the keystone)
+--   Rmul_le_Rmul_left/right, Rmul_one, Rmul_sub_distrib, Rmul_neg_left/right, Radd/Rsub congruences.
+
+-- Additive regrouping helper: (1 − E) + (E − M) ≈ 1 − M  (pointwise in leaf terms one, E, M).
+private theorem oneSubCexp_regroup (E M : Real) :
+    Req (Radd (Rsub one E) (Rsub E M)) (Rsub one M) := by
+  -- (1 + (−E)) + (E + (−M)) ≈ 1 + ((−E) + (E + (−M)))
+  refine Req_trans (Radd_assoc one (Rneg E) (Radd E (Rneg M))) ?_
+  -- inner: (−E) + (E + (−M)) ≈ ((−E) + E) + (−M) ≈ 0 + (−M) ≈ (−M)
+  refine Radd_congr (Req_refl one) ?_
+  refine Req_trans (Req_symm (Radd_assoc (Rneg E) E (Rneg M))) ?_
+  have hcancel : Req (Radd (Rneg E) E) zero :=
+    Req_trans (Radd_comm (Rneg E) E) (Radd_neg E)
+  refine Req_trans (Radd_congr hcancel (Req_refl (Rneg M))) ?_
+  exact Req_trans (Radd_comm zero (Rneg M)) (Radd_zero (Rneg M))
+
+-- u.re ≤ 4d + 3b²   (decompose 1 − e^{−d}cos b = (1−e^{−d}) + e^{−d}(1−cos b) ≤ 4d + 1·3b²).
+theorem oneSubCexp_re_upper {d b : Real} (hd0 : Rnonneg d)
+    (hd1 : Rle d (ofQ (⟨1, 2⟩ : Q) (by decide)))
+    (hb1 : Rle (Rneg one) b) (hb2 : Rle b one) :
+    Rle (Rsub one (Rmul (RexpReal (Rneg d)) (Rcos b)))
+        (Radd (Rmul (ofQ (⟨4, 1⟩ : Q) (by decide)) d)
+              (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))) := by
+  -- 1 − C ≥ 0
+  have hCnn : Rnonneg (Rsub one (Rcos b)) := Rnonneg_Rsub_of_Rle (Rcos_le_one b)
+  -- decomposition: 1 − E·C ≈ (1 − E) + E·(1 − C)
+  have hdecomp : Req (Rsub one (Rmul (RexpReal (Rneg d)) (Rcos b)))
+      (Radd (Rsub one (RexpReal (Rneg d)))
+            (Rmul (RexpReal (Rneg d)) (Rsub one (Rcos b)))) := by
+    have hdist : Req (Rmul (RexpReal (Rneg d)) (Rsub one (Rcos b)))
+        (Rsub (RexpReal (Rneg d)) (Rmul (RexpReal (Rneg d)) (Rcos b))) :=
+      Req_trans (Rmul_sub_distrib (RexpReal (Rneg d)) one (Rcos b))
+        (Rsub_congr (Rmul_one (RexpReal (Rneg d)))
+          (Req_refl (Rmul (RexpReal (Rneg d)) (Rcos b))))
+    refine Req_symm ?_
+    exact Req_trans
+      (Radd_congr (Req_refl (Rsub one (RexpReal (Rneg d)))) hdist)
+      (oneSubCexp_regroup (RexpReal (Rneg d)) (Rmul (RexpReal (Rneg d)) (Rcos b)))
+  -- (1 − E) ≤ 4d
+  have h1 : Rle (Rsub one (RexpReal (Rneg d))) (Rmul (ofQ (⟨4, 1⟩ : Q) (by decide)) d) :=
+    RexpReal_one_sub_neg_le hd0 hd1
+  -- E·(1−C) ≤ 1·(1−C)
+  have hEle1 : Rle (RexpReal (Rneg d)) one := RexpReal_neg_le_one d hd0
+  have h2 : Rle (Rmul (RexpReal (Rneg d)) (Rsub one (Rcos b)))
+      (Rmul one (Rsub one (Rcos b))) :=
+    Rmul_le_Rmul_right hCnn hEle1
+  -- 1·(1−C) ≈ 1 − C  ≤ 3b²
+  have h3 : Rle (Rmul one (Rsub one (Rcos b)))
+      (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b)) :=
+    Rle_trans (Rle_of_Req (Req_trans (Rmul_comm one (Rsub one (Rcos b)))
+        (Rmul_one (Rsub one (Rcos b)))))
+      (Rcos_one_sub_le_sq hb2 hb1)
+  refine Rle_trans (Rle_of_Req hdecomp) ?_
+  exact Radd_le_add h1 (Rle_trans h2 h3)
+
+-- u.re ≥ 0   (e^{−d}cos b ≤ e^{−d}·1 ≤ 1).
+theorem oneSubCexp_re_lower {d b : Real} (hd0 : Rnonneg d) :
+    Rle zero (Rsub one (Rmul (RexpReal (Rneg d)) (Rcos b))) := by
+  -- E·C ≤ E·1 ≈ E ≤ 1
+  have hEC : Rle (Rmul (RexpReal (Rneg d)) (Rcos b)) one :=
+    Rle_trans (Rmul_le_Rmul_left (RexpReal_nonneg (Rneg d)) (Rcos_le_one b))
+      (Rle_trans (Rle_of_Req (Rmul_one (RexpReal (Rneg d)))) (RexpReal_neg_le_one d hd0))
+  -- 0 ≤ 1 − E·C
+  exact Rle_zero_of_Rnonneg (Rnonneg_Rsub_of_Rle hEC)
+
+-- |u.im| ≤ (1 + 3b²)·Bb  given the bound −Bb ≤ b ≤ Bb (Bb ≥ 0).  Via Rsin b = b·RsinAux b,
+-- |RsinAux b| ≤ 1+3b², |e^{−d}| ≤ 1, two applications of the product keystone.
+-- 0 ≤ 1.
+private theorem oneSubCexp_zero_le_one : Rle zero one :=
+  Rle_ofQ_ofQ (by decide) (by decide) (by decide)
+
+-- −1 ≤ zero.
+private theorem oneSubCexp_negone_le_zero :
+    Rle (Rneg one) zero :=
+  Rle_trans (Rle_Rneg oneSubCexp_zero_le_one) (Rle_of_Req Rneg_zero)
+
+-- −1 ≤ 1.
+private theorem oneSubCexp_negone_le_one :
+    Rle (Rneg one) one :=
+  Rle_trans oneSubCexp_negone_le_zero oneSubCexp_zero_le_one
+
+-- −B3 ≤ 1 − 3b²  where B3 = 1 + 3b²  (difference is 2 ≥ 0).
+--   −(1+X) ≈ (−1) + (−X) ≤ 1 + (−X) ≈ 1 − X.
+private theorem oneSubCexp_negB3_le (b : Real) :
+    Rle (Rneg (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))))
+        (Rsub one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))) := by
+  refine Rle_trans
+    (Rle_of_Req (Rneg_Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b)))) ?_
+  -- (−1) + (−X) ≤ 1 + (−X) = 1 − X
+  exact Radd_le_add oneSubCexp_negone_le_one
+    (Rle_refl (Rneg (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))))
+
+-- 1·(Bb·B3) ≈ B3·Bb  (Rmul one collapse + commute).
+private theorem oneSubCexp_oneBbB3 (Bb B3 : Real) :
+    Req (Rmul one (Rmul Bb B3)) (Rmul B3 Bb) := by
+  exact Req_trans (Req_trans (Rmul_comm one (Rmul Bb B3)) (Rmul_one (Rmul Bb B3)))
+    (Rmul_comm Bb B3)
+
+-- Two-sided bound on E·(b·RsinAux b) by ±(Bb·B3), packaged for both im theorems.
+private theorem oneSubCexp_im_core {d b Bb : Real} (hd0 : Rnonneg d)
+    (hb1 : Rle (Rneg one) b) (hb2 : Rle b one)
+    (hbB1 : Rle (Rneg Bb) b) (hbB2 : Rle b Bb) :
+    Rle (Rneg (Rmul one (Rmul Bb
+            (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))))))
+        (Rmul (RexpReal (Rneg d)) (Rsin b))
+  ∧ Rle (Rmul (RexpReal (Rneg d)) (Rsin b))
+        (Rmul one (Rmul Bb
+            (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))))) := by
+  -- abbreviation B3 = 1 + 3b²
+  -- Step 1: bound RsinAux b
+  have hAuxU : Rle (RsinAux b)
+      (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))) :=
+    RsinAux_upper_le hb2 hb1
+  have hAuxL : Rle (Rneg (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))))
+      (RsinAux b) :=
+    Rle_trans (oneSubCexp_negB3_le b) (RsinAux_lower_ge hb2 hb1)
+  -- Step 1 product: Rsin b = b·RsinAux b ∈ ±(Bb·B3)
+  have hSinU : Rle (Rmul b (RsinAux b))
+      (Rmul Bb (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b)))) :=
+    Rmul_le_mul_of_abs hbB1 hbB2 hAuxL hAuxU
+  have hSinL : Rle (Rneg (Rmul Bb (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b)))))
+      (Rmul b (RsinAux b)) :=
+    Rneg_mul_le_of_abs hbB1 hbB2 hAuxL hAuxU
+  -- unfold Rsin
+  have hRsin : Rsin b = Rmul b (RsinAux b) := rfl
+  rw [hRsin]
+  -- Step 2: bound E = e^{−d} ∈ ±1
+  have hEU : Rle (RexpReal (Rneg d)) one := RexpReal_neg_le_one d hd0
+  have hEL : Rle (Rneg one) (RexpReal (Rneg d)) :=
+    Rle_trans oneSubCexp_negone_le_zero (Rle_zero_of_Rnonneg (RexpReal_nonneg (Rneg d)))
+  -- Step 2 product
+  constructor
+  · exact Rneg_mul_le_of_abs hEL hEU hSinL hSinU
+  · exact Rmul_le_mul_of_abs hEL hEU hSinL hSinU
+
+theorem oneSubCexp_im_upper {d b Bb : Real} (hd0 : Rnonneg d)
+    (hb1 : Rle (Rneg one) b) (hb2 : Rle b one)
+    (hbB1 : Rle (Rneg Bb) b) (hbB2 : Rle b Bb) (_hBb : Rnonneg Bb) :
+    Rle (Rneg (Rmul (RexpReal (Rneg d)) (Rsin b)))
+        (Rmul (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))) Bb) := by
+  obtain ⟨hlo, _⟩ := oneSubCexp_im_core hd0 hb1 hb2 hbB1 hbB2
+  -- from −(1·(Bb·B3)) ≤ E·Rsin b  get  −(E·Rsin b) ≤ 1·(Bb·B3) ≈ B3·Bb
+  have hneg : Rle (Rneg (Rmul (RexpReal (Rneg d)) (Rsin b)))
+      (Rneg (Rneg (Rmul one (Rmul Bb
+        (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))))))) :=
+    Rle_Rneg hlo
+  refine Rle_trans hneg ?_
+  refine Rle_of_Req (Req_trans (Rneg_neg _) ?_)
+  exact oneSubCexp_oneBbB3 Bb (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b)))
+
+theorem oneSubCexp_im_lower {d b Bb : Real} (hd0 : Rnonneg d)
+    (hb1 : Rle (Rneg one) b) (hb2 : Rle b one)
+    (hbB1 : Rle (Rneg Bb) b) (hbB2 : Rle b Bb) (_hBb : Rnonneg Bb) :
+    Rle (Rneg (Rmul (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))) Bb))
+        (Rneg (Rmul (RexpReal (Rneg d)) (Rsin b))) := by
+  obtain ⟨_, hhi⟩ := oneSubCexp_im_core hd0 hb1 hb2 hbB1 hbB2
+  -- from E·Rsin b ≤ 1·(Bb·B3) ≈ B3·Bb  get  −(B3·Bb) ≤ −(E·Rsin b)
+  have hbound : Rle (Rmul (RexpReal (Rneg d)) (Rsin b))
+      (Rmul (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))) Bb) :=
+    Rle_trans hhi (Rle_of_Req
+      (oneSubCexp_oneBbB3 Bb (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b)))))
+  exact Rle_Rneg hbound
+
 end UOR.Bridge.F1Square.Analysis
