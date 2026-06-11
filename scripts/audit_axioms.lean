@@ -1561,3 +1561,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.csCauchy_eq
 #print axioms Analysis.scCauchy_eq
 #print axioms Analysis.sinAdd_resid_eq
+#print axioms Analysis.altCorner_factored2_mixed
+#print axioms Analysis.altCorner_abs_le2_mixed
+#print axioms Analysis.cornerMertens2_mixed

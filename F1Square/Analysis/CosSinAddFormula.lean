@@ -1650,4 +1650,94 @@ theorem sinAdd_resid_eq {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (N : Nat) 
       (Qadd_congr (csCauchy_eq had hbd N) (scCauchy_eq had hbd N))) ?_
   exact sinResid_rearrange _ _ _ _
 
+-- ===========================================================================
+-- **Mixed-offset corner Mertens bound** — the cross corners use `off1` for `a`, `off2` for `b`.
+-- ===========================================================================
+
+/-- Mixed-offset factored corner (generalizes `altCorner_factored2` to independent offsets). -/
+theorem altCorner_factored2_mixed {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (off1 off2 N : Nat) :
+    Qeq (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a off1 i) (altTerm b off2 j)) N)
+          (Fsum (fun j => mul (altTerm a off1 i) (altTerm b off2 j)) (N - i))) N)
+      (Fsum (fun i => mul (altTerm a off1 i)
+          (Qsub (Fsum (altTerm b off2) N) (Fsum (altTerm b off2) (N - i)))) N) := by
+  have hbt : ∀ j, 0 < (altTerm b off2 j).den := altTerm_den_pos hbd off2
+  refine Fsum_congr (fun i => ?_) N
+  exact Qeq_trans
+    (Qsub_den_pos (Qmul_den_pos (altTerm_den_pos had off1 i) (Fsum_den_pos hbt N))
+      (Qmul_den_pos (altTerm_den_pos had off1 i) (Fsum_den_pos hbt (N - i))))
+    (QsubCongr (Fsum_mul_left (altTerm_den_pos had off1 i) hbt N)
+      (Fsum_mul_left (altTerm_den_pos had off1 i) hbt (N - i)))
+    (Qeq_symm (Qmul_sub_distrib (altTerm a off1 i) (Fsum (altTerm b off2) N)
+      (Fsum (altTerm b off2) (N - i))))
+
+/-- Mixed-offset `|corner| ≤ Σᵢ |altTerm a off1 i · gap_b|`. -/
+theorem altCorner_abs_le2_mixed {a b : Q} (had : 0 < a.den) (hbd : 0 < b.den) (off1 off2 N : Nat) :
+    Qle (Qabs (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a off1 i) (altTerm b off2 j)) N)
+          (Fsum (fun j => mul (altTerm a off1 i) (altTerm b off2 j)) (N - i))) N))
+      (Fsum (fun i => Qabs (mul (altTerm a off1 i)
+          (Qsub (Fsum (altTerm b off2) N) (Fsum (altTerm b off2) (N - i))))) N) := by
+  have hbt : ∀ j, 0 < (altTerm b off2 j).den := altTerm_den_pos hbd off2
+  have hh : ∀ i, 0 < (mul (altTerm a off1 i)
+      (Qsub (Fsum (altTerm b off2) N) (Fsum (altTerm b off2) (N - i)))).den :=
+    fun i => Qmul_den_pos (altTerm_den_pos had off1 i)
+      (Qsub_den_pos (Fsum_den_pos hbt N) (Fsum_den_pos hbt (N - i)))
+  exact Qle_congr_left (Qabs_den_pos (Fsum_den_pos hh N))
+    (Qeq_symm (Qabs_Qeq (altCorner_factored2_mixed had hbd off1 off2 N))) (Fsum_abs_le hh N)
+
+/-- **Mixed-offset Mertens corner bound** at `2K+1` (`a` at `off1`, `b` at `off2`, `M` bounds both):
+    `|corner| ≤ U·4(M²)^{K+2}/(K+2)! + 2(M²)^{K+1}/(K+1)!·U → 0`. Same shape as `cornerMertens2`, with
+    the `a`-factor sums at `off1` and the `b`-factor tails/gaps at `off2`. -/
+theorem cornerMertens2_mixed {a b : Q} {M : Nat} (had : 0 < a.den) (hbd : 0 < b.den)
+    (ha : Qle (Qabs a) ⟨(M : Int), 1⟩) (hb : Qle (Qabs b) ⟨(M : Int), 1⟩) (off1 off2 K : Nat)
+    (hK : 2 * (M * M) ≤ K + 2) :
+    Qle (Qabs (Fsum (fun i => Qsub (Fsum (fun j => mul (altTerm a off1 i) (altTerm b off2 j)) (2 * K + 1))
+          (Fsum (fun j => mul (altTerm a off1 i) (altTerm b off2 j)) (2 * K + 1 - i))) (2 * K + 1)))
+      (add (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩)
+        (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M))))) := by
+  have hat : ∀ i, 0 < (altTerm a off1 i).den := altTerm_den_pos had off1
+  have hbt : ∀ j, 0 < (altTerm b off2 j).den := altTerm_den_pos hbd off2
+  have htd : ∀ i, 0 < (Qsub (Fsum (altTerm b off2) (2 * K + 1)) (Fsum (altTerm b off2) (2 * K + 1 - i))).den :=
+    fun i => Qsub_den_pos (Fsum_den_pos hbt (2 * K + 1)) (Fsum_den_pos hbt (2 * K + 1 - i))
+  have hh : ∀ i, 0 < (Qabs (mul (altTerm a off1 i)
+      (Qsub (Fsum (altTerm b off2) (2 * K + 1)) (Fsum (altTerm b off2) (2 * K + 1 - i))))).den :=
+    fun i => Qabs_den_pos (Qmul_den_pos (hat i) (htd i))
+  have hCnn : (0 : Int) ≤ (4 * npow (M * M) (K + 2) : Int) := Int.ofNat_nonneg _
+  have hUnn : (0 : Int) ≤ (expM_U (M * M) (2 * (M * M))).num := expM_U_num_nonneg _ _
+  have hlow : Qle (Fsum (fun i => Qabs (mul (altTerm a off1 i)
+        (Qsub (Fsum (altTerm b off2) (2 * K + 1)) (Fsum (altTerm b off2) (2 * K + 1 - i))))) K)
+      (mul (expM_U (M * M) (2 * (M * M))) ⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩) := by
+    have hmid : Qle (Fsum (fun i => Qabs (mul (altTerm a off1 i)
+          (Qsub (Fsum (altTerm b off2) (2 * K + 1)) (Fsum (altTerm b off2) (2 * K + 1 - i))))) K)
+        (Fsum (fun i => mul (Qabs (altTerm a off1 i))
+          (⟨(4 * npow (M * M) (K + 2) : Int), fct (K + 2)⟩ : Q)) K) :=
+      Fsum_le_congr (fun i hi => by
+        rw [Qabs_mul]
+        exact Qmul_le_mul_left (Qabs_num_nonneg _) (altTail_deep_le hbd hb off2 K i hi (by omega)))
+    exact Qle_trans (Fsum_den_pos (fun i => Qmul_den_pos (Qabs_den_pos (hat i)) (fct_pos _)) K) hmid
+      (Qle_trans (Qmul_den_pos (Fsum_den_pos (fun i => Qabs_den_pos (hat i)) K) (fct_pos _))
+        (Qeq_le (Qeq_symm (Fsum_mul_const_right (fct_pos _) (fun i => Qabs_den_pos (hat i)) K)))
+        (Qmul_le_mul_right hCnn (altAbsSum_le_U had ha off1 K)))
+  have hhigh : Qle (Fsum (fun i' => Qabs (mul (altTerm a off1 (K + 1 + i'))
+        (Qsub (Fsum (altTerm b off2) (2 * K + 1)) (Fsum (altTerm b off2) (2 * K + 1 - (K + 1 + i')))))) K)
+      (mul ⟨(2 * npow (M * M) (K + 1) : Int), fct (K + 1)⟩ (expM_U (M * M) (2 * (M * M)))) := by
+    have hmid : Qle (Fsum (fun i' => Qabs (mul (altTerm a off1 (K + 1 + i'))
+          (Qsub (Fsum (altTerm b off2) (2 * K + 1)) (Fsum (altTerm b off2) (2 * K + 1 - (K + 1 + i')))))) K)
+        (Fsum (fun i' => mul (Qabs (altTerm a off1 (K + 1 + i')))
+          (expM_U (M * M) (2 * (M * M)))) K) :=
+      Fsum_le_congr (fun i' _ => by
+        rw [Qabs_mul]
+        exact Qmul_le_mul_left (Qabs_num_nonneg _)
+          (altGap_le_U hbd hb off2 (a := 2 * K + 1 - (K + 1 + i')) (b := 2 * K + 1) (by omega)))
+    exact Qle_trans (Fsum_den_pos (fun i' => Qmul_den_pos (Qabs_den_pos (hat (K + 1 + i')))
+        (expM_U_den_pos (M * M) (2 * (M * M)))) K) hmid
+      (Qle_trans (Qmul_den_pos (Fsum_den_pos (fun i' => Qabs_den_pos (hat (K + 1 + i'))) K)
+        (expM_U_den_pos (M * M) (2 * (M * M))))
+        (Qeq_le (Qeq_symm (Fsum_mul_const_right (expM_U_den_pos (M * M) (2 * (M * M)))
+          (fun i' => Qabs_den_pos (hat (K + 1 + i'))) K)))
+        (Qmul_le_mul_right hUnn (altAbsTail_le had ha off1 K K hK)))
+  refine Qle_trans (Fsum_den_pos hh (2 * K + 1)) (altCorner_abs_le2_mixed had hbd off1 off2 (2 * K + 1)) ?_
+  refine Qle_trans (add_den_pos (Fsum_den_pos hh K)
+      (Fsum_den_pos (fun i' => hh (K + 1 + i')) K)) (Qeq_le (Fsum_split_at _ hh K)) ?_
+  exact Qadd_le_add hlow hhigh
+
 end UOR.Bridge.F1Square.Analysis
