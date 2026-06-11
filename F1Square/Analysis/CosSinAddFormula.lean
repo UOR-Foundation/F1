@@ -2194,4 +2194,81 @@ theorem csMulDeep_le (a b : Real) (N s K : Nat) (hNs : N ≤ s)
           (Qmul_den_pos hbsd hpsd))) (Qabs_num_nonneg _) (Int.ofNat_nonneg _) hA'le hPP'))
     (Qeq_le (by simp only [Qeq, add, mul]; push_cast; ring_uor))
 
+set_option maxHeartbeats 1000000 in
+/-- **`sin·cos` natural → deep reconcile** (mirror of `csMulDeep_le`, nested `sin` factor on the left):
+    `(a.seq R_a · RaltReal_seq a 1 (2N+1)) · RaltReal_seq b 0 (2N+1)` is within `C/(N+1)` of
+    `(a.seq s · altSum (a.seq s) 1 (2K+1)) · altSum (b.seq s) 0 (2K+1)`. -/
+theorem scMulDeep_le (a b : Real) (N s K : Nat) (hNs : N ≤ s)
+    (hda : RaltReal_R a (2 * N + 1) ≤ 2 * K + 1) (hdb : RaltReal_R b (2 * N + 1) ≤ 2 * K + 1) :
+    Qle (Qabs (Qsub
+        (mul (mul (a.seq (RaltReal_R a (2 * N + 1))) (RaltReal_seq a 1 (2 * N + 1)))
+          (RaltReal_seq b 0 (2 * N + 1)))
+        (mul (mul (a.seq s) (altSum (a.seq s) 1 (2 * K + 1)))
+          (altSum (b.seq s) 0 (2 * K + 1)))))
+      ⟨((expM_U (xBound b * xBound b) (2 * (xBound b * xBound b))).num.toNat
+          * (2 * (expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat
+            + xBound a * ((expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat * (4 * xBound a) + 1))
+        + xBound a * (expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat
+          * ((expM_U (xBound b * xBound b) (2 * (xBound b * xBound b))).num.toNat * (4 * xBound b) + 1) : Int),
+        N + 1⟩ := by
+  have hRa : N ≤ RaltReal_R a (2 * N + 1) := Nat.le_trans (by omega) (n_le_RaltReal_R a _)
+  have hUak : ∀ k, Qle (Qabs (RaltReal_seq a 1 k))
+      ⟨((expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat : Int), 1⟩ := fun k =>
+    Qle_trans (expM_U_den_pos _ _) (altSum_abs_le_U (a.den_pos _) (canon_bound a _) 1 _)
+      (Q_le_num_toNat _ (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))
+  have haRd : 0 < (a.seq (RaltReal_R a (2 * N + 1))).den := a.den_pos _
+  have hpNd : 0 < (RaltReal_seq a 1 (2 * N + 1)).den := (RsinAux a).den_pos _
+  have hasd : 0 < (a.seq s).den := a.den_pos _
+  have hpsd : 0 < (altSum (a.seq s) 1 (2 * K + 1)).den := altSum_den_pos (a.den_pos _) 1 _
+  have hBd : 0 < (RaltReal_seq b 0 (2 * N + 1)).den := (Rcos b).den_pos _
+  have hB'd : 0 < (altSum (b.seq s) 0 (2 * K + 1)).den := altSum_den_pos (b.den_pos _) 0 _
+  -- |R| ≤ Ub
+  have hRle : Qle (Qabs (RaltReal_seq b 0 (2 * N + 1)))
+      ⟨((expM_U (xBound b * xBound b) (2 * (xBound b * xBound b))).num.toNat : Int), 1⟩ :=
+    Qle_trans (expM_U_den_pos _ _) (altSum_abs_le_U (b.den_pos _) (canon_bound b _) 0 _)
+      (Q_le_num_toNat _ (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))
+  -- |Q'| ≤ xBa·Ua
+  have hQ'le : Qle (Qabs (mul (a.seq s) (altSum (a.seq s) 1 (2 * K + 1))))
+      ⟨(xBound a * (expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat : Int), 1⟩ := by
+    rw [Qabs_mul]
+    exact Qle_trans (Qmul_den_pos Nat.one_pos Nat.one_pos)
+      (Qmul_le_mul (Qabs_den_pos hasd) Nat.one_pos (Qabs_den_pos hpsd) (Qabs_num_nonneg _)
+        (Qabs_num_nonneg _) (canon_bound a _)
+        (Qle_trans (expM_U_den_pos _ _) (altSum_abs_le_U (a.den_pos _) (canon_bound a _) 1 _)
+          (Q_le_num_toNat _ (expM_U_num_nonneg _ _) (expM_U_den_pos _ _))))
+      (Qeq_le (by simp only [Qeq, mul]))
+  -- |Q − Q'| ≤ ⟨2Ua + xBa·Ua_diag, N+1⟩
+  have hQQ' : Qle (Qabs (Qsub (mul (a.seq (RaltReal_R a (2 * N + 1))) (RaltReal_seq a 1 (2 * N + 1)))
+        (mul (a.seq s) (altSum (a.seq s) 1 (2 * K + 1)))))
+      ⟨(2 * (expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat
+        + xBound a * ((expM_U (xBound a * xBound a) (2 * (xBound a * xBound a))).num.toNat * (4 * xBound a) + 1) : Int),
+        N + 1⟩ := by
+    refine Qle_trans (add_den_pos (Qmul_den_pos (Qabs_den_pos hpNd) (Qabs_den_pos (Qsub_den_pos haRd hasd)))
+        (Qmul_den_pos (Qabs_den_pos hasd) (Qabs_den_pos (Qsub_den_pos hpNd hpsd))))
+      (Qprod_diff_le (a.seq (RaltReal_R a (2 * N + 1))) (a.seq s)
+        (RaltReal_seq a 1 (2 * N + 1)) (altSum (a.seq s) 1 (2 * K + 1)) haRd hasd hpNd hpsd) ?_
+    refine Qle_trans (add_den_pos (Qmul_den_pos Nat.one_pos (Nat.succ_pos N))
+        (Qmul_den_pos Nat.one_pos (Nat.succ_pos N)))
+      (Qadd_le_add
+        (Qmul_le_mul (Qabs_den_pos hpNd) Nat.one_pos (Qabs_den_pos (Qsub_den_pos haRd hasd))
+          (Qabs_num_nonneg _) (Int.ofNat_nonneg _) (hUak _) (xreg_n_le a hRa hNs))
+        (Qmul_le_mul (Qabs_den_pos hasd) Nat.one_pos (Qabs_den_pos (Qsub_den_pos hpNd hpsd))
+          (Qabs_num_nonneg _) (Int.ofNat_nonneg _) (canon_bound a _) (altDiag_to_deep a 1 N s K hNs hda)))
+      (Qeq_le (by simp only [Qeq, add, mul]; push_cast; ring_uor))
+  refine Qle_trans (add_den_pos (Qmul_den_pos (Qabs_den_pos hBd)
+      (Qabs_den_pos (Qsub_den_pos (Qmul_den_pos haRd hpNd) (Qmul_den_pos hasd hpsd))))
+      (Qmul_den_pos (Qabs_den_pos (Qmul_den_pos hasd hpsd)) (Qabs_den_pos (Qsub_den_pos hBd hB'd))))
+    (Qprod_diff_le (mul (a.seq (RaltReal_R a (2 * N + 1))) (RaltReal_seq a 1 (2 * N + 1)))
+      (mul (a.seq s) (altSum (a.seq s) 1 (2 * K + 1)))
+      (RaltReal_seq b 0 (2 * N + 1)) (altSum (b.seq s) 0 (2 * K + 1))
+      (Qmul_den_pos haRd hpNd) (Qmul_den_pos hasd hpsd) hBd hB'd) ?_
+  refine Qle_trans (add_den_pos (Qmul_den_pos Nat.one_pos (Nat.succ_pos N))
+      (Qmul_den_pos Nat.one_pos (Nat.succ_pos N)))
+    (Qadd_le_add
+      (Qmul_le_mul (Qabs_den_pos hBd) Nat.one_pos (Qabs_den_pos (Qsub_den_pos (Qmul_den_pos haRd hpNd)
+          (Qmul_den_pos hasd hpsd))) (Qabs_num_nonneg _) (Int.ofNat_nonneg _) hRle hQQ')
+      (Qmul_le_mul (Qabs_den_pos (Qmul_den_pos hasd hpsd)) Nat.one_pos (Qabs_den_pos (Qsub_den_pos hBd hB'd))
+        (Qabs_num_nonneg _) (Int.ofNat_nonneg _) hQ'le (altDiag_to_deep b 0 N s K hNs hdb)))
+    (Qeq_le (by simp only [Qeq, add, mul]; push_cast; ring_uor))
+
 end UOR.Bridge.F1Square.Analysis
