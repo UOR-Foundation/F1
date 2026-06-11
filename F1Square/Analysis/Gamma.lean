@@ -619,4 +619,111 @@ def Digamma (z : Real) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
     (hBlo : Rle (Rneg (ofQ B hBd)) (Rsub z one)) (hBhi : Rle (Rsub z one) (ofQ B hBd)) : Real :=
   Radd (Rneg Rgamma_h) (digammaCore z hcn hcd hcz hBd hB0 hBlo hBhi)
 
+-- ===========================================================================
+-- **Spouge's Γ approximant** (the computational `Γ` object on the real line `z > 0`).
+--
+-- Spouge's approximation (Spouge 1994, *SIAM J. Numer. Anal.* **31**(3), 931–944; cf. Pugh's thesis,
+-- *An Analysis of the Lanczos Gamma Approximation*, 2004, eqns 2.18–2.19):
+--
+--   `Γ(z+1) = (z+a)^{z+½} · e^{−(z+a)} · ( c₀ + Σ_{k=1}^{N} cₖ/(z+k) ) + ε_S(a,z)`,
+--     `N = ⌈a⌉ − 1`,
+--     `c₀ = √(2π) = exp(½·log 2π)`,
+--     `cₖ = ((−1)^{k−1}/(k−1)!) · (a−k)^{k−½} · e^{a−k}`     (real; `a−k > 0` for `k ≤ N`),
+--
+-- with the KNOWN explicit RELATIVE error bound (`a ≥ 3`, `Re z ≥ 0`)
+--
+--   `|ε_S(a,z)| < √a · (2π)^{−(a+½)} · 1/Re(z+a)`.
+--
+-- The bound is DOCUMENTED here only; we do **not** state it as a Lean theorem, because a rigorous proof
+-- presupposes an independent construction of `Γ` against which to compare. The approximant `SpougeGamma`
+-- below is an axiom-clean `def`, built entirely from `exp`/`log`/reciprocal of positive reals — every
+-- power is `x^y := RrpowPos x _ _ y = exp(y·log x)`, so NO square-root primitive is needed.
+-- ===========================================================================
+
+/-- **`√(2π) = exp(½·log 2π)`** (Spouge's `c₀`), built from `exp`/`log` only (`log 2π = log 2 + log π`). -/
+def spougeSqrt2pi : Real :=
+  RexpReal (Rmul (ofQ ⟨1, 2⟩ (by decide)) (Radd Rlog2c Rlogπc))
+
+/-- The rational scalar `(−1)^{k−1}/(k−1)!` of Spouge's `cₖ` (numerator `±1` via `(-1)^{k-1} : Int`,
+    denominator `(k−1)!`). -/
+def spougeSign (k : Nat) : Q := ⟨(-1 : Int) ^ (k - 1), fct (k - 1)⟩
+
+/-- The denominator `(k−1)!` of `spougeSign k` is positive. -/
+theorem spougeSign_den_pos (k : Nat) : 0 < (spougeSign k).den := fct_pos (k - 1)
+
+/-- `(a − k).den = a.den` (used for the `ofQ` denominator positivity of `a−k`). -/
+theorem Qsub_nat_den_pos {a : Q} (hadp : 0 < a.den) (k : Nat) :
+    0 < (Qsub a (⟨(k : Int), 1⟩ : Q)).den := by
+  show 0 < a.den * 1; omega
+
+/-- **Spouge's coefficient** `cₖ = ((−1)^{k−1}/(k−1)!) · (a−k)^{k−½} · e^{a−k}` (real), for a rational
+    parameter `a` (denominator positive `hadp`) with `a − k > 1` (so the positive base `a−k` of the
+    half-integer power `(a−k)^{k−½} = exp((k−½)·log(a−k))` has the immediate positivity witness
+    `Qbound 0 = ⟨1,1⟩ < a−k` at index `0`). The exponent `k − ½ = (2k−1)/2` is the rational `⟨2k−1, 2⟩`. -/
+@[irreducible] def spougeCoeff (a : Q) (hadp : 0 < a.den) (k : Nat)
+    (hak : Qlt (⟨1, 1⟩ : Q) (Qsub a ⟨(k : Int), 1⟩)) : Real :=
+  Rmul
+    (Rmul
+      (ofQ (spougeSign k) (spougeSign_den_pos k))
+      (RrpowPos (ofQ (Qsub a ⟨(k : Int), 1⟩) (Qsub_nat_den_pos hadp k)) 0 hak
+        (ofQ ⟨2 * (k : Int) - 1, 2⟩ (show 0 < 2 by decide))))
+    (RexpReal (ofQ (Qsub a ⟨(k : Int), 1⟩) (Qsub_nat_den_pos hadp k)))
+
+/-- The Spouge bracket `c₀ + Σ_{k=1}^{N} cₖ · 1/(z+k)`, accumulated downward over `k = N, N−1, …, 1`.
+    The hypothesis `ha k _ _` supplies the per-`k` positivity `a − k > 1`; each reciprocal `1/(z+k)`
+    reuses the `digammaArg`/`digammaArg_witness` enclosure machinery (`z ≥ c > 0 ⟹ z+k > 0`). -/
+def spougeBracketAux (z : Real) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcz : Rle (ofQ c hcd) z) (a : Q) (hadp : 0 < a.den)
+    (ha : ∀ (k : Nat), 1 ≤ k → Qlt (⟨1, 1⟩ : Q) (Qsub a ⟨(k : Int), 1⟩)) : Nat → Real
+  | 0 => spougeSqrt2pi
+  | (k + 1) =>
+      Radd (spougeBracketAux z hcn hcd hcz a hadp ha k)
+        (Rmul (spougeCoeff a hadp (k + 1) (ha (k + 1) (Nat.le_add_left 1 k)))
+          (Rinv (digammaArg z (k + 1)) (digammaArgK c) (digammaArg_witness hcn hcd hcz (k + 1))))
+
+/-- **Spouge's bracket** `c₀ + Σ_{k=1}^{N} cₖ/(z+k)`. -/
+def spougeBracket (z : Real) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcz : Rle (ofQ c hcd) z) (a : Q) (hadp : 0 < a.den)
+    (ha : ∀ (k : Nat), 1 ≤ k → Qlt (⟨1, 1⟩ : Q) (Qsub a ⟨(k : Int), 1⟩)) (N : Nat) : Real :=
+  spougeBracketAux z hcn hcd hcz a hadp ha N
+
+/-- The base `z + a` of Spouge's leading power, as a constructive real. -/
+def spougeBase (z : Real) (a : Q) (hadp : 0 < a.den) : Real := Radd z (ofQ a hadp)
+
+/-- `z + a ≥ c` (the floor `c ≤ z` plus `a > 0`), hence the positivity witness for the base power. -/
+theorem ofQ_le_spougeBase {z : Real} {c : Q} (hcd : 0 < c.den) (hcz : Rle (ofQ c hcd) z)
+    {a : Q} (hadp : 0 < a.den) (han : 0 ≤ a.num) : Rle (ofQ c hcd) (spougeBase z a hadp) :=
+  Rle_trans hcz (Rle_self_Radd_right (Rnonneg_ofQ hadp han))
+
+/-- The positivity witness for `z + a` at index `digammaArgK c`. -/
+theorem spougeBase_witness {z : Real} {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcz : Rle (ofQ c hcd) z) {a : Q} (hadp : 0 < a.den) (han : 0 ≤ a.num) :
+    Qlt (Qbound (digammaArgK c)) ((spougeBase z a hadp).seq (digammaArgK c)) :=
+  Rlt_Qbound_of_Rle_ofQ hcn hcd (ofQ_le_spougeBase hcd hcz hadp han)
+
+/-- **Spouge's Γ approximant** `Γ(z+1) ≈ (z+a)^{z+½} · e^{−(z+a)} · (c₀ + Σ_{k=1}^{N} cₖ/(z+k))`, a
+    genuine constructive real for real `z > 0` (enclosed by the rational floor `c`, `0 < c ≤ z`).
+
+    Built from `exp`/`log`/reciprocal of positive reals ONLY:
+    * `(z+a)^{z+½} = RrpowPos (z+a) _ _ (z + ½)`  (base `z+a > 0`; exponent `z + ½`),
+    * `e^{−(z+a)} = RexpReal (−(z+a))`,
+    * the bracket `c₀ + Σ cₖ/(z+k)` from `spougeBracket`.
+
+    `a : Q` is a free rational parameter `≥ 3` (denominator positive `hadp`, numerator non-negative `han`),
+    `N = ⌈a⌉ − 1`, and `ha` certifies `a − k > 1` for every `1 ≤ k ≤ N` (needed for `(a−k)^{k−½}`).
+
+    The relative error obeys Spouge's bound `|ε_S(a,z)| < √a · (2π)^{−(a+½)} / Re(z+a)` (`a ≥ 3`,
+    `Re z ≥ 0`); see the section header. That bound is documented, not asserted, as a rigorous proof
+    presupposes an independent `Γ`. -/
+def SpougeGamma (z : Real) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcz : Rle (ofQ c hcd) z) (a : Q) (hadp : 0 < a.den) (han : 0 ≤ a.num)
+    (ha : ∀ (k : Nat), 1 ≤ k → Qlt (⟨1, 1⟩ : Q) (Qsub a ⟨(k : Int), 1⟩)) (N : Nat) : Real :=
+  Rmul
+    (Rmul
+      (RrpowPos (spougeBase z a hadp) (digammaArgK c)
+        (spougeBase_witness hcn hcd hcz hadp han)
+        (Radd z (ofQ ⟨1, 2⟩ (by decide))))
+      (RexpReal (Rneg (spougeBase z a hadp))))
+    (spougeBracket z hcn hcd hcz a hadp ha N)
+
 end UOR.Bridge.F1Square.Analysis

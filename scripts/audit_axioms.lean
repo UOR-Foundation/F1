@@ -1701,3 +1701,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rnonneg_RnatQ
 #print axioms Analysis.Rnonneg_of_ofQ_le
 #print axioms Analysis.Rsub_eq_mul_of_inv
+#print axioms Analysis.Qsub_nat_den_pos
+#print axioms Analysis.spougeSign_den_pos
+#print axioms Analysis.ofQ_le_spougeBase
+#print axioms Analysis.spougeBase_witness
