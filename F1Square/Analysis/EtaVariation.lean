@@ -2498,4 +2498,35 @@ theorem EtaVSum_block_geo_le (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 
     exact ofQ_congr _ _ (by simp only [Qeq, mul]; push_cast; ring_uor)
   exact Rle_trans hLHS (Rle_trans ha (Rle_trans hb (Rle_of_Req hfold)))
 
+-- ===========================================================================
+-- Step 7b-ii(β-3/iv) — the dyadic tail telescopes to a geometric partial sum (mirror czetaExp_tail):
+-- E(2^{j+d}) − E(2^j) ≤ ofQ(Vconst · geoFrom r j d). The Vconst prefactor factors through the sum.
+-- ===========================================================================
+
+/-- **The η dyadic tail ≤ `ofQ(Vconst·geoFrom r j d)`** (`j ≥ 1`), given the per-block geometric bound. -/
+theorem EtaVSum_tail (s : Complex) (T : Q) (hTd : 0 < T.den) (sb : Q) (hsbd : 0 < sb.den)
+    {r : Q} (hrd : 0 < r.den)
+    (hblk : ∀ k, 1 ≤ k → Rle (Rsub (EtaVSum s T hTd (2 ^ (k + 1))) (EtaVSum s T hTd (2 ^ k)))
+        (ofQ (mul (Vconst sb T) (qpow r k))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (qpow_den_pos hrd k))))
+    (j : Nat) (hj : 1 ≤ j) : ∀ d,
+    Rle (Rsub (EtaVSum s T hTd (2 ^ (j + d))) (EtaVSum s T hTd (2 ^ j)))
+        (ofQ (mul (Vconst sb T) (geoFrom r j d))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (geoFrom_den_pos r hrd j d)))
+  | 0 =>
+      Rle_of_Req (Req_trans (Radd_neg _)
+        (Req_of_seq_Qeq (fun _ => by
+          show Qeq (⟨0, 1⟩ : Q) (mul (Vconst sb T) (geoFrom r j 0))
+          simp only [geoFrom, Qeq, mul]; push_cast; ring_uor)))
+  | (d + 1) => by
+      refine Rle_trans (Rle_of_Req (Req_symm (Rsub_telescope
+          (EtaVSum s T hTd (2 ^ (j + d + 1))) (EtaVSum s T hTd (2 ^ (j + d)))
+          (EtaVSum s T hTd (2 ^ j))))) ?_
+      refine Rle_trans (Radd_le_add (hblk (j + d) (by omega))
+          (EtaVSum_tail s T hTd sb hsbd hrd hblk j hj d)) ?_
+      refine Rle_of_Req (Req_trans (Radd_ofQ_ofQ _ _) (ofQ_congr _ _ ?_))
+      show Qeq (add (mul (Vconst sb T) (qpow r (j + d))) (mul (Vconst sb T) (geoFrom r j d)))
+          (mul (Vconst sb T) (geoFrom r j (d + 1)))
+      simp only [geoFrom, Qeq, add, mul]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Analysis
