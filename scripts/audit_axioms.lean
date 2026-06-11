@@ -1628,3 +1628,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.czEtaPaired_im_diff_ge
 #print axioms Analysis.cpowNeg_diff_re_tail
 #print axioms Analysis.cpowNeg_diff_im_tail
+#print axioms Analysis.Vterm_le_A_delta

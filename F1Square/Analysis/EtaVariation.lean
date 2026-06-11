@@ -2012,4 +2012,175 @@ theorem cpowNeg_diff_im_tail (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hTd :
     Rle_trans (Rle_Rneg hBble1) hBb1
   exact cpowNeg_diff_im_bound s n hn hσ hd1 hb1 hb2 hBb1 hBb2 hBb
 
+
+-- ===========================================================================
+-- Step 7b-ii(β-1) — reduce Vterm to A·C·δ: the per-term variation ≤ exp(−σ·log n)·C·δ_n for a fixed
+-- rational C (the polynomial part U+M ≤ C·δ_n via the product keystone + δ_n ≤ 1). With δ_n ≤ 1/n this
+-- is the clean input to the dyadic summability (the δ_n factor improves the czeta ratio to u<1, σ>0).
+-- ===========================================================================
+
+-- Reduce Vterm to the clean form A·C·δ:  Vterm s n hn (T·δ) ≤ A · (C · δ) for a rational constant C
+-- (depending on sb, T), where A = exp(−s.re·log n), δ = deltaLogNat n hn.  This is the entry to the dyadic
+-- summability: Σ Vterm ≤ C·Σ A·δ, and Σ A_n δ_n converges geometrically (the δ_n~1/n factor improves the
+-- czeta dyadic ratio to u = exp(−σ log2) < 1 for σ > 0).
+--
+-- The polynomial part U + M ≤ C·δ:
+--   U = 4d + 3b²,  d = s.re·δ ≤ sb·δ,  b² = (s.im·δ)² ≤ (T·δ)² = T²δ² ≤ T²δ  (δ ≤ 1)
+--   M = (1+3b²)·(T·δ) ≤ (1+3T²)·T·δ
+--   so U + M ≤ (4·sb + 3·T² + (1+3T²)·T)·δ.  Take C = that rational.
+-- Inputs: sb,T rational bounds on s (as in cpowNeg_diff_re_tail) + the smallness (b ∈ [−Tδ, Tδ], δ ≤ 1).
+-- The δ ≤ 1 comes from δ ≤ 1/n ≤ 1/2 (deltaLogNat_le_recip, n ≥ 2).  b ∈ [−Tδ,Tδ] derived as in the smallness setup.
+-- Construct C existentially (its exact value is immaterial — only that it is a fixed rational ≥ 0).
+
+theorem Vterm_le_A_delta (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hTd : 0 < T.den)
+    (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd))
+    (hT1 : Rle (Rneg (ofQ T hTd)) s.im) (hT2 : Rle s.im (ofQ T hTd))
+    (n : Nat) (hn : 2 ≤ n) :
+    ∃ (C : Q) (hCd : 0 < C.den),
+      Rle (Vterm s n hn (Rmul (ofQ T hTd) (deltaLogNat n hn)))
+        (Rmul (RexpReal (Rmul (Rneg s.re) (RlogNat n hn)))
+          (Rmul (ofQ C hCd) (deltaLogNat n hn))) := by
+  -- abbreviations
+  let δ := deltaLogNat n hn
+  let b := Rmul (Rneg s.im) δ
+  let d := Rmul s.re δ
+  let A := RexpReal (Rmul (Rneg s.re) (RlogNat n hn))
+  let three : Real := ofQ (⟨3, 1⟩ : Q) (by decide)
+  let four : Real := ofQ (⟨4, 1⟩ : Q) (by decide)
+  let Td := Rmul (ofQ T hTd) δ
+  -- den positivity
+  have hnpos : 0 < n := by omega
+  have hrecd : 0 < (⟨1, n⟩ : Q).den := by show 0 < n; omega
+  have hT2d : 0 < (mul T T).den := Qmul_den_pos hTd hTd
+  -- δ ≥ 0
+  have hδnn : Rnonneg δ := Rnonneg_deltaLogNat n hn
+  -- δ ≤ 1
+  have hδle : Rle δ (ofQ (⟨1, n⟩ : Q) hrecd) := deltaLogNat_le_recip n hn
+  have hδ1 : Rle δ one := by
+    have hrec1 : Rle (ofQ (⟨1, n⟩ : Q) hrecd) one := by
+      have : Rle (ofQ (⟨1, n⟩ : Q) hrecd) (ofQ (⟨1, 1⟩ : Q) (by decide)) :=
+        Rle_ofQ_ofQ hrecd (by decide) (by show Qle (⟨1, n⟩ : Q) (⟨1, 1⟩ : Q); simp only [Qle]; push_cast; omega)
+      exact this
+    exact Rle_trans hδle hrec1
+  -- ofQ T ≥ 0, ofQ sb ≥ 0
+  have hTnn : Rnonneg (ofQ T hTd) := Rnonneg_ofQ hTd hT0
+  have hsbnn : Rnonneg (ofQ sb hsbd) :=
+    Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg hσ) hsb)
+  -- Td = ofQ T · δ bounds on b:  −Td ≤ b ≤ Td
+  have hnegim : Rle (Rneg s.im) (ofQ T hTd) :=
+    Rle_trans (Rle_Rneg hT1) (Rle_of_Req (Rneg_neg (ofQ T hTd)))
+  have hb2 : Rle b Td := Rmul_le_Rmul_right hδnn hnegim
+  have hnegim2 : Rle (Rneg (ofQ T hTd)) (Rneg s.im) := Rle_Rneg hT2
+  have hb1 : Rle (Rneg Td) b := by
+    have step : Rle (Rmul (Rneg (ofQ T hTd)) δ) b := Rmul_le_Rmul_right hδnn hnegim2
+    exact Rle_trans (Rle_of_Req (Req_symm (Rmul_neg_left (ofQ T hTd) δ))) step
+  -- b² ≤ Td·Td
+  have hbb : Rle (Rmul b b) (Rmul Td Td) := Rmul_le_mul_of_abs hb1 hb2 hb1 hb2
+  -- Td·Td ≈ (ofQ T · ofQ T)·(δ·δ) ≤ (ofQ T · ofQ T)·δ ≈ ofQ(T·T)·δ
+  have hTTnn : Rnonneg (Rmul (ofQ T hTd) (ofQ T hTd)) := Rnonneg_Rmul hTnn hTnn
+  have hddle : Rle (Rmul δ δ) δ :=
+    Rle_trans (Rmul_le_Rmul_left hδnn hδ1) (Rle_of_Req (Rmul_one δ))
+  have hTd2 : Rle (Rmul Td Td) (Rmul (ofQ (mul T T) hT2d) δ) := by
+    have e1 : Req (Rmul Td Td) (Rmul (Rmul (ofQ T hTd) (ofQ T hTd)) (Rmul δ δ)) :=
+      Rmul4_rearrange (ofQ T hTd) δ (ofQ T hTd) δ
+    have step2 : Rle (Rmul (Rmul (ofQ T hTd) (ofQ T hTd)) (Rmul δ δ))
+        (Rmul (Rmul (ofQ T hTd) (ofQ T hTd)) δ) := Rmul_le_Rmul_left hTTnn hddle
+    have e3 : Req (Rmul (Rmul (ofQ T hTd) (ofQ T hTd)) δ) (Rmul (ofQ (mul T T) hT2d) δ) :=
+      Rmul_congr (Rmul_ofQ_ofQ hTd hTd) (Req_refl δ)
+    exact Rle_trans (Rle_of_Req e1) (Rle_trans step2 (Rle_of_Req e3))
+  -- b² ≤ ofQ(T·T)·δ
+  have hbb2 : Rle (Rmul b b) (Rmul (ofQ (mul T T) hT2d) δ) := Rle_trans hbb hTd2
+  -- =============== Bound U = 4d + 3b² ===============
+  -- 4d ≤ 4·(sb·δ) ≈ ofQ(4·sb)·δ
+  have hsbdd : 0 < (mul (⟨4, 1⟩ : Q) sb).den := Qmul_den_pos (by decide) hsbd
+  have hU1 : Rle (Rmul four d) (Rmul (ofQ (mul (⟨4, 1⟩ : Q) sb) hsbdd) δ) := by
+    have s1 : Rle d (Rmul (ofQ sb hsbd) δ) := Rmul_le_Rmul_right hδnn hsb
+    have s2 : Rle (Rmul four d) (Rmul four (Rmul (ofQ sb hsbd) δ)) :=
+      Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) s1
+    have e3 : Req (Rmul four (Rmul (ofQ sb hsbd) δ)) (Rmul (ofQ (mul (⟨4, 1⟩ : Q) sb) hsbdd) δ) :=
+      Req_trans (Req_symm (Rmul_assoc four (ofQ sb hsbd) δ))
+        (Rmul_congr (Rmul_ofQ_ofQ (by decide) hsbd) (Req_refl δ))
+    exact Rle_trans s2 (Rle_of_Req e3)
+  -- 3b² ≤ 3·(ofQ(T²)·δ) ≈ ofQ(3·T²)·δ
+  have h3T2d : 0 < (mul (⟨3, 1⟩ : Q) (mul T T)).den := Qmul_den_pos (by decide) hT2d
+  have hU2 : Rle (Rmul three (Rmul b b)) (Rmul (ofQ (mul (⟨3, 1⟩ : Q) (mul T T)) h3T2d) δ) := by
+    have s2 : Rle (Rmul three (Rmul b b)) (Rmul three (Rmul (ofQ (mul T T) hT2d) δ)) :=
+      Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) hbb2
+    have e3 : Req (Rmul three (Rmul (ofQ (mul T T) hT2d) δ))
+        (Rmul (ofQ (mul (⟨3, 1⟩ : Q) (mul T T)) h3T2d) δ) :=
+      Req_trans (Req_symm (Rmul_assoc three (ofQ (mul T T) hT2d) δ))
+        (Rmul_congr (Rmul_ofQ_ofQ (by decide) hT2d) (Req_refl δ))
+    exact Rle_trans s2 (Rle_of_Req e3)
+  -- U ≤ ofQ(4sb)·δ + ofQ(3T²)·δ ≈ ofQ(4sb + 3T²)·δ
+  let Cu : Q := add (mul (⟨4, 1⟩ : Q) sb) (mul (⟨3, 1⟩ : Q) (mul T T))
+  have hCud : 0 < Cu.den := add_den_pos hsbdd h3T2d
+  have hU : Rle (Radd (Rmul four d) (Rmul three (Rmul b b))) (Rmul (ofQ Cu hCud) δ) := by
+    have hsum : Rle (Radd (Rmul four d) (Rmul three (Rmul b b)))
+        (Radd (Rmul (ofQ (mul (⟨4, 1⟩ : Q) sb) hsbdd) δ) (Rmul (ofQ (mul (⟨3, 1⟩ : Q) (mul T T)) h3T2d) δ)) :=
+      Radd_le_add hU1 hU2
+    have e : Req (Radd (Rmul (ofQ (mul (⟨4, 1⟩ : Q) sb) hsbdd) δ) (Rmul (ofQ (mul (⟨3, 1⟩ : Q) (mul T T)) h3T2d) δ))
+        (Rmul (ofQ Cu hCud) δ) :=
+      Req_trans (Req_symm (Rmul_distrib_right (ofQ (mul (⟨4, 1⟩ : Q) sb) hsbdd)
+          (ofQ (mul (⟨3, 1⟩ : Q) (mul T T)) h3T2d) δ))
+        (Rmul_congr (Radd_ofQ_ofQ hsbdd h3T2d) (Req_refl δ))
+    exact Rle_trans hsum (Rle_of_Req e)
+  -- =============== Bound M = (1 + 3b²)·Td ===============
+  -- 1 + 3b² ≤ 1 + 3T²  (b² ≤ T²δ ≤ T², using δ ≤ 1)
+  -- first b² ≤ ofQ(T²)  (from b² ≤ ofQ(T²)·δ ≤ ofQ(T²)·1 ≈ ofQ(T²))
+  have hbbT2 : Rle (Rmul b b) (ofQ (mul T T) hT2d) := by
+    have s1 : Rle (Rmul (ofQ (mul T T) hT2d) δ) (Rmul (ofQ (mul T T) hT2d) one) :=
+      Rmul_le_Rmul_left (Rnonneg_ofQ hT2d (by
+        show (0 : Int) ≤ T.num * T.num
+        exact Int.mul_nonneg hT0 hT0)) hδ1
+    exact Rle_trans hbb2 (Rle_trans s1 (Rle_of_Req (Rmul_one (ofQ (mul T T) hT2d))))
+  -- 3b² ≤ ofQ(3·T²)
+  have h3bbT2 : Rle (Rmul three (Rmul b b)) (ofQ (mul (⟨3, 1⟩ : Q) (mul T T)) h3T2d) := by
+    have s2 : Rle (Rmul three (Rmul b b)) (Rmul three (ofQ (mul T T) hT2d)) :=
+      Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) hbbT2
+    exact Rle_trans s2 (Rle_of_Req (Rmul_ofQ_ofQ (by decide) hT2d))
+  -- 1 + 3b² ≤ ofQ(1) + ofQ(3T²) ≈ ofQ(1 + 3T²)
+  have h1pd : 0 < (add (⟨1, 1⟩ : Q) (mul (⟨3, 1⟩ : Q) (mul T T))).den := add_den_pos (by decide) h3T2d
+  have hfac : Rle (Radd one (Rmul three (Rmul b b)))
+      (ofQ (add (⟨1, 1⟩ : Q) (mul (⟨3, 1⟩ : Q) (mul T T))) h1pd) := by
+    have hone : Req one (ofQ (⟨1, 1⟩ : Q) (by decide)) := Req_refl one
+    have hsum : Rle (Radd one (Rmul three (Rmul b b)))
+        (Radd (ofQ (⟨1, 1⟩ : Q) (by decide)) (ofQ (mul (⟨3, 1⟩ : Q) (mul T T)) h3T2d)) :=
+      Radd_le_add (Rle_of_Req hone) h3bbT2
+    exact Rle_trans hsum (Rle_of_Req (Radd_ofQ_ofQ (by decide) h3T2d))
+  -- M = fac · Td ≤ ofQ(1+3T²) · (ofQ T · δ) ≈ ofQ((1+3T²)·T) · δ
+  let Cm : Q := mul (add (⟨1, 1⟩ : Q) (mul (⟨3, 1⟩ : Q) (mul T T))) T
+  have hCmd : 0 < Cm.den := Qmul_den_pos h1pd hTd
+  have hM : Rle (Rmul (Radd one (Rmul three (Rmul b b))) Td) (Rmul (ofQ Cm hCmd) δ) := by
+    -- monotone in left factor (Td ≥ 0)
+    have hTdnn : Rnonneg Td := Rnonneg_Rmul hTnn hδnn
+    have s1 : Rle (Rmul (Radd one (Rmul three (Rmul b b))) Td)
+        (Rmul (ofQ (add (⟨1, 1⟩ : Q) (mul (⟨3, 1⟩ : Q) (mul T T))) h1pd) Td) :=
+      Rmul_le_Rmul_right hTdnn hfac
+    -- ofQ(1+3T²) · (ofQ T · δ) ≈ (ofQ(1+3T²) · ofQ T) · δ ≈ ofQ((1+3T²)·T) · δ
+    have e : Req (Rmul (ofQ (add (⟨1, 1⟩ : Q) (mul (⟨3, 1⟩ : Q) (mul T T))) h1pd) Td)
+        (Rmul (ofQ Cm hCmd) δ) :=
+      Req_trans (Req_symm (Rmul_assoc (ofQ (add (⟨1, 1⟩ : Q) (mul (⟨3, 1⟩ : Q) (mul T T))) h1pd) (ofQ T hTd) δ))
+        (Rmul_congr (Rmul_ofQ_ofQ h1pd hTd) (Req_refl δ))
+    exact Rle_trans s1 (Rle_of_Req e)
+  -- =============== Combine U + M ≤ ofQ(Cu + Cm) · δ ===============
+  let C : Q := add Cu Cm
+  have hCd : 0 < C.den := add_den_pos hCud hCmd
+  have hUM : Rle (Radd (Radd (Rmul four d) (Rmul three (Rmul b b)))
+        (Rmul (Radd one (Rmul three (Rmul b b))) Td)) (Rmul (ofQ C hCd) δ) := by
+    have hsum : Rle (Radd (Radd (Rmul four d) (Rmul three (Rmul b b)))
+          (Rmul (Radd one (Rmul three (Rmul b b))) Td))
+        (Radd (Rmul (ofQ Cu hCud) δ) (Rmul (ofQ Cm hCmd) δ)) :=
+      Radd_le_add hU hM
+    have e : Req (Radd (Rmul (ofQ Cu hCud) δ) (Rmul (ofQ Cm hCmd) δ)) (Rmul (ofQ C hCd) δ) :=
+      Req_trans (Req_symm (Rmul_distrib_right (ofQ Cu hCud) (ofQ Cm hCmd) δ))
+        (Rmul_congr (Radd_ofQ_ofQ hCud hCmd) (Req_refl δ))
+    exact Rle_trans hsum (Rle_of_Req e)
+  -- =============== Lift through A = exp(...) ≥ 0 ===============
+  refine ⟨C, hCd, ?_⟩
+  -- Vterm s n hn Td is defeq to Rmul A (Radd U M)
+  show Rle (Rmul A (Radd (Radd (Rmul four d) (Rmul three (Rmul b b)))
+        (Rmul (Radd one (Rmul three (Rmul b b))) Td)))
+      (Rmul A (Rmul (ofQ C hCd) δ))
+  exact Rmul_le_Rmul_left (RexpReal_nonneg _) hUM
+
 end UOR.Bridge.F1Square.Analysis
