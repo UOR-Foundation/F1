@@ -1639,3 +1639,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Vconst_den_pos
 #print axioms Analysis.Vconst_num_nonneg
 #print axioms Analysis.Vterm_block_le
+#print axioms Analysis.logBlock_eq

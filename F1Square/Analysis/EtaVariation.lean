@@ -2325,4 +2325,23 @@ theorem Vterm_block_le (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 �
   refine Rle_of_Req (Req_trans (RsumRange_smul (Rmul B Cv) (fun i => deltaLogNat (N + i) (by omega)) d) ?_)
   exact Rmul_congr (Req_refl _) (deltaLogNat_sum_telescope N hN2 d)
 
+-- ===========================================================================
+-- Step 7b-ii(β-2b/vii) — the FULL block collapses to log 2: RlogNat(2ᵏ⁺¹) − RlogNat(2ᵏ) ≈ logN 2
+-- (bridge + log-multiplicativity logN(2m)=logN2+logN m). So the full dyadic block bound is
+-- block_k ≤ exp(−σ·k·log2)·Vconst·logN2 — manifestly geometric (ratio u = exp(−σ log2) < 1, σ > 0).
+-- ===========================================================================
+
+/-- **`RlogNat(2ᵏ⁺¹) − RlogNat(2ᵏ) ≈ logN 2`** (`k ≥ 1`): the consecutive dyadic log-gap is a constant. -/
+theorem logBlock_eq (k : Nat) (hk1 : 2 ≤ 2 ^ (k + 1)) (hkk : 2 ≤ 2 ^ k) :
+    Req (Rsub (RlogNat (2 ^ (k + 1)) hk1) (RlogNat (2 ^ k) hkk)) (logN 2 (by omega)) := by
+  have hm : 1 ≤ 2 ^ k := by omega
+  have heq : 2 ^ (k + 1) = 2 * 2 ^ k := by rw [Nat.pow_succ]; omega
+  have hB1 : Req (RlogNat (2 ^ (k + 1)) hk1) (Radd (logN 2 (by omega)) (logN (2 ^ k) hm)) :=
+    Req_trans (RlogNat_eq_logN (2 ^ (k + 1)) hk1)
+      (Req_trans (logN_eq_of_eq heq (by omega) (by omega)) (Req_symm (logN_mul (2 ^ k) hm)))
+  have hB2 : Req (RlogNat (2 ^ k) hkk) (logN (2 ^ k) hm) := RlogNat_eq_logN (2 ^ k) hkk
+  refine Req_trans (Rsub_congr hB1 hB2) ?_
+  exact Req_trans (Radd_assoc (logN 2 (by omega)) (logN (2 ^ k) hm) (Rneg (logN (2 ^ k) hm)))
+    (Req_trans (Radd_congr (Req_refl _) (Radd_neg (logN (2 ^ k) hm))) (Radd_zero (logN 2 (by omega))))
+
 end UOR.Bridge.F1Square.Analysis
