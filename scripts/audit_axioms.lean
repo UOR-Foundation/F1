@@ -1647,3 +1647,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.EtaVSum_block_geo_le
 #print axioms Analysis.EtaVSum_tail
 #print axioms Analysis.EtaVSum_tail_reindex
+#print axioms Analysis.Rnonneg_Vterm
+#print axioms Analysis.Rnonneg_etaVtermTerm
+#print axioms Analysis.EtaVSum_mono
+#print axioms Analysis.EtaVSum_tail_full

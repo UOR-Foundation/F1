@@ -2559,4 +2559,62 @@ theorem EtaVSum_tail_reindex (s : Complex) (T : Q) (hTd : 0 < T.den) (sb : Q) (h
     (Qle_trans (Qmul_den_pos (qpow_den_pos hrd _) (Qinv_den_pos hsub))
       (geoFrom_le _ hrd hr0 hsub _ d) (geom_reindex hrd hr0 hple hsub j))
 
+/-- **`Vterm ≥ 0`**: the per-term variation modulus is nonnegative (each factor `exp(…), U, M ≥ 0`). -/
+theorem Rnonneg_Vterm (s : Complex) (n : Nat) (hn : 2 ≤ n) {Bb : Real}
+    (hσ : Rnonneg s.re) (hBb : Rnonneg Bb) :
+    Rnonneg (Vterm s n hn Bb) := by
+  show Rnonneg (Rmul (RexpReal (Rmul (Rneg s.re) (RlogNat n hn)))
+    (Radd
+      (Radd (Rmul (ofQ (⟨4, 1⟩ : Q) (by decide)) (Rmul s.re (deltaLogNat n hn)))
+            (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide))
+                  (Rmul (Rmul (Rneg s.im) (deltaLogNat n hn)) (Rmul (Rneg s.im) (deltaLogNat n hn)))))
+      (Rmul (Radd one (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide))
+                  (Rmul (Rmul (Rneg s.im) (deltaLogNat n hn)) (Rmul (Rneg s.im) (deltaLogNat n hn))))) Bb)))
+  refine Rnonneg_Rmul (RexpReal_nonneg _) (Rnonneg_Radd (Rnonneg_Radd ?_ ?_) ?_)
+  · exact Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide))
+      (Rnonneg_Rmul hσ (Rnonneg_deltaLogNat n hn))
+  · exact Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide)) (Rnonneg_Rmul_self _)
+  · exact Rnonneg_Rmul (Rnonneg_Radd Rnonneg_one
+      (Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide)) (Rnonneg_Rmul_self _))) hBb
+
+/-- **`etaVtermTerm ≥ 0`**: the variation-sum term function is nonnegative. -/
+theorem Rnonneg_etaVtermTerm (s : Complex) (T : Q) (hTd : 0 < T.den) (hT0 : 0 ≤ T.num)
+    (hσ : Rnonneg s.re) (n : Nat) : Rnonneg (etaVtermTerm s T hTd n) := by
+  unfold etaVtermTerm
+  by_cases h : 2 ≤ n
+  · rw [dif_pos h]
+    exact Rnonneg_Vterm s n h hσ (Rnonneg_Rmul (Rnonneg_ofQ hTd hT0) (Rnonneg_deltaLogNat n h))
+  · rw [dif_neg h]; exact Rnonneg_zero
+
+/-- **`EtaVSum` is monotone**: `N ≤ M ⟹ EtaVSum N ≤ EtaVSum M` (each increment `etaVtermTerm ≥ 0`). -/
+theorem EtaVSum_mono (s : Complex) (T : Q) (hTd : 0 < T.den) (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re)
+    {N M : Nat} (hNM : N ≤ M) : Rle (EtaVSum s T hTd N) (EtaVSum s T hTd M) := by
+  obtain ⟨d, rfl⟩ := Nat.le.dest hNM
+  clear hNM
+  induction d with
+  | zero => exact Rle_refl _
+  | succ d ih => exact Rle_trans ih (Rle_self_Radd_right (Rnonneg_etaVtermTerm s T hTd hT0 hσ _))
+
+/-- **The reindexed η tail for *every* `N`** (not just dyadic): `EtaVSum(N) − EtaVSum(2^{M(j)}) ≤ Vconst·1/(j+1)`.
+    `EtaVSum(N) ≤ EtaVSum(2^{M(j)+N})` (monotone, `N < 2ᴺ`) and the dyadic reindexed tail caps the latter. -/
+theorem EtaVSum_tail_full (s : Complex) (T : Q) (hTd : 0 < T.den) (sb : Q) (hsbd : 0 < sb.den)
+    (hsb0 : 0 ≤ sb.num) (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hblk : ∀ k, 1 ≤ k → Rle (Rsub (EtaVSum s T hTd (2^(k+1))) (EtaVSum s T hTd (2^k)))
+        (ofQ (mul (Vconst sb T) (qpow (Qinv (add ⟨1,1⟩ τ)) k))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (qpow_den_pos (Qinv_den_pos (by simp only [add]; push_cast; omega)) k))))
+    (j N : Nat) :
+    Rle (Rsub (EtaVSum s T hTd N) (EtaVSum s T hTd (2 ^ ((j+1) * ((Qinv (add ⟨1,1⟩ τ)).den * (Qinv (add ⟨1,1⟩ τ)).den)))))
+        (ofQ (mul (Vconst sb T) (⟨1, j+1⟩ : Q)) (Qmul_den_pos (Vconst_den_pos hsbd hTd) (Nat.succ_pos j))) := by
+  have hNle : N ≤ 2 ^ ((j + 1) * ((Qinv (add ⟨1, 1⟩ τ)).den * (Qinv (add ⟨1, 1⟩ τ)).den) + N) := by
+    have key : ∀ m, m < 2 ^ m := by
+      intro m; induction m with
+      | zero => decide
+      | succ k ih => rw [Nat.pow_succ]; omega
+    have h2 := Nat.pow_le_pow_right (show 1 ≤ 2 by omega)
+      (Nat.le_add_left N ((j + 1) * ((Qinv (add ⟨1, 1⟩ τ)).den * (Qinv (add ⟨1, 1⟩ τ)).den)))
+    have := key N
+    omega
+  refine Rle_trans (Radd_le_add (EtaVSum_mono s T hTd hT0 hσ hNle) (Rle_refl _)) ?_
+  exact EtaVSum_tail_reindex s T hTd sb hsbd hsb0 hT0 hτn hτd hblk j N
+
 end UOR.Bridge.F1Square.Analysis
