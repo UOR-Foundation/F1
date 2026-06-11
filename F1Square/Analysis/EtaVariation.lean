@@ -2279,5 +2279,19 @@ theorem deltaLogNat_sum_telescope (N : Nat) (hN : 2 ≤ N) (d : Nat) :
       refine Req_trans (Radd_comm _ _) ?_
       exact Rsub_telescope (RlogNat (N + d + 1) (by omega)) (RlogNat (N + d) (by omega)) (RlogNat N hN)
 
+/-- **`RsumRange` monotonicity**: termwise `V i ≤ W i` lifts to the partial sums. -/
+theorem RsumRange_mono {V W : Nat → Real} (h : ∀ i, Rle (V i) (W i)) :
+    ∀ d, Rle (RsumRange V d) (RsumRange W d)
+  | 0 => Rle_of_Req (Req_refl _)
+  | (d + 1) => Radd_le_add (RsumRange_mono h d) (h d)
+
+/-- **`RsumRange` scalar-distributivity**: `Σ_{i<d} (c · f i) ≈ c · Σ_{i<d} f i`. -/
+theorem RsumRange_smul (c : Real) (f : Nat → Real) :
+    ∀ d, Req (RsumRange (fun i => Rmul c (f i)) d) (Rmul c (RsumRange f d))
+  | 0 => Req_symm (Rmul_zero c)
+  | (d + 1) =>
+      Req_trans (Radd_congr (RsumRange_smul c f d) (Req_refl _))
+        (Req_symm (Rmul_distrib c (RsumRange f d) (f d)))
+
 end UOR.Bridge.F1Square.Analysis
 
