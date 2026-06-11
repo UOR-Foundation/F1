@@ -89,6 +89,16 @@ theorem cpowNeg_diff (s : Complex) (n : Nat) (hn : 2 ≤ n) :
       (Ceq_symm (Cmul_distrib (cpowNeg s n) Cone
         (Cneg (Cexp ⟨Rmul (Rneg s.re) (deltaLogNat n hn), Rmul (Rneg s.im) (deltaLogNat n hn)⟩)))))
 
+/-- **`e^{−d} ≤ 1` for `d ≥ 0`** (the exponential of a non-positive argument is at most `1`). From
+    `e^{−d}·e^d = 1` and `e^d ≥ 1`: `e^{−d} = e^{−d}·1 ≤ e^{−d}·e^d = 1`. -/
+theorem RexpReal_neg_le_one (d : Real) (hd : Rnonneg d) : Rle (RexpReal (Rneg d)) one := by
+  have hprod : Req (Rmul (RexpReal (Rneg d)) (RexpReal d)) one :=
+    Req_trans (Req_symm (RexpReal_add (Rneg d) d))
+      (Req_trans (RexpReal_congr (Req_trans (Radd_comm (Rneg d) d) (Radd_neg d))) RexpReal_zero)
+  exact Rle_trans (Rle_of_Req (Req_symm (Rmul_one (RexpReal (Rneg d)))))
+    (Rle_trans (Rmul_le_Rmul_left (RexpReal_nonneg (Rneg d)) (RexpReal_ge_one hd))
+      (Rle_of_Req hprod))
+
 -- ===========================================================================
 -- The `n⁻ˢ` per-term component bounds `−n⁻ᴿᵉˢ ≤ Re/Im(n⁻ˢ) ≤ n⁻ᴿᵉˢ` (no real-abs; two-sided `Rle`,
 -- mirroring `ComplexZeta`'s `czetaTerm_re_le`/`ge`). `cpowNeg s n = e^{−s·log n}` for `n ≥ 2`. -/
