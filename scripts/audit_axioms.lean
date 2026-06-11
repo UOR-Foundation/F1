@@ -1573,3 +1573,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.csConv_den_pos
 #print axioms Analysis.scConv_den_pos
 #print axioms Analysis.csMul_diag_le
+#print axioms Analysis.scMul_diag_le
