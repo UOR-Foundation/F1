@@ -2032,11 +2032,12 @@ theorem cpowNeg_diff_im_tail (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hTd :
 -- The δ ≤ 1 comes from δ ≤ 1/n ≤ 1/2 (deltaLogNat_le_recip, n ≥ 2).  b ∈ [−Tδ,Tδ] derived as in the smallness setup.
 -- Construct C existentially (its exact value is immaterial — only that it is a fixed rational ≥ 0).
 
-theorem Vterm_le_A_delta (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hTd : 0 < T.den)
+theorem Vterm_le_A_delta (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 ≤ sb.num)
+    (hTd : 0 < T.den)
     (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd))
     (hT1 : Rle (Rneg (ofQ T hTd)) s.im) (hT2 : Rle s.im (ofQ T hTd))
     (n : Nat) (hn : 2 ≤ n) :
-    ∃ (C : Q) (hCd : 0 < C.den),
+    ∃ (C : Q) (hCd : 0 < C.den) (_hCn : 0 ≤ C.num),
       Rle (Vterm s n hn (Rmul (ofQ T hTd) (deltaLogNat n hn)))
         (Rmul (RexpReal (Rmul (Rneg s.re) (RlogNat n hn)))
           (Rmul (ofQ C hCd) (deltaLogNat n hn))) := by
@@ -2176,12 +2177,27 @@ theorem Vterm_le_A_delta (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hTd : 0 <
         (Rmul_congr (Radd_ofQ_ofQ hCud hCmd) (Req_refl δ))
     exact Rle_trans hsum (Rle_of_Req e)
   -- =============== Lift through A = exp(...) ≥ 0 ===============
-  refine ⟨C, hCd, ?_⟩
-  -- Vterm s n hn Td is defeq to Rmul A (Radd U M)
-  show Rle (Rmul A (Radd (Radd (Rmul four d) (Rmul three (Rmul b b)))
-        (Rmul (Radd one (Rmul three (Rmul b b))) Td)))
-      (Rmul A (Rmul (ofQ C hCd) δ))
-  exact Rmul_le_Rmul_left (RexpReal_nonneg _) hUM
+  refine ⟨C, hCd, ?_, ?_⟩
+  · -- 0 ≤ C.num
+    show 0 ≤ C.num
+    have hTT : (0 : Int) ≤ T.num * T.num := Int.mul_nonneg hT0 hT0
+    simp only [C, Cu, Cm, add, mul]
+    push_cast
+    refine Int.add_nonneg ?_ ?_
+    · refine Int.mul_nonneg ?_ (Int.ofNat_nonneg _)
+      refine Int.add_nonneg ?_ ?_
+      · exact Int.mul_nonneg (Int.mul_nonneg (by decide) hsb0) (Int.ofNat_nonneg _)
+      · exact Int.mul_nonneg (Int.mul_nonneg (by decide) hTT) (Int.ofNat_nonneg _)
+    · refine Int.mul_nonneg ?_ (Int.ofNat_nonneg _)
+      refine Int.mul_nonneg ?_ hT0
+      refine Int.add_nonneg ?_ ?_
+      · exact Int.mul_nonneg (by decide) (Int.ofNat_nonneg _)
+      · exact Int.mul_nonneg (Int.mul_nonneg (by decide) hTT) (Int.ofNat_nonneg _)
+  · -- Vterm s n hn Td is defeq to Rmul A (Radd U M)
+    show Rle (Rmul A (Radd (Radd (Rmul four d) (Rmul three (Rmul b b)))
+          (Rmul (Radd one (Rmul three (Rmul b b))) Td)))
+        (Rmul A (Rmul (ofQ C hCd) δ))
+    exact Rmul_le_Rmul_left (RexpReal_nonneg _) hUM
 
 -- ===========================================================================
 -- Step 7b-ii(β-2c) — the η geometric ratio: u = exp(−σ·log2) ≤ 1/(1+τ) < 1 for σ > 0 (Pos s.re).
@@ -2226,4 +2242,23 @@ theorem A_dyadic_le (s : Complex) (hσ : Rnonneg s.re) (k n : Nat) (hn : 2 ≤ n
         (RexpReal (Rneg (Rmul s.re (Rnsmul k (logN 2 (by omega)))))) :=
   Rle_trans (Rle_of_Req (A_eq_czetaExp s n hn)) (czetaExp_term_le s hσ k n (by omega) hkn)
 
+/-- **The η per-term dyadic bound**: combines `Vterm_le_A_delta` (Vterm ≤ A·(C·δ)) with the dyadic
+    modulus bound `A_dyadic_le` (A ≤ exp(−σ·k·log2) =: B), using C·δ ≥ 0. -/
+theorem Vterm_dyadic_le (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 ≤ sb.num)
+    (hTd : 0 < T.den) (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd))
+    (hT1 : Rle (Rneg (ofQ T hTd)) s.im) (hT2 : Rle s.im (ofQ T hTd))
+    (k n : Nat) (hn : 2 ≤ n) (hkn : 2 ^ k ≤ n) :
+    ∃ (C : Q) (hCd : 0 < C.den),
+      Rle (Vterm s n hn (Rmul (ofQ T hTd) (deltaLogNat n hn)))
+        (Rmul (RexpReal (Rneg (Rmul s.re (Rnsmul k (logN 2 (by omega))))))
+          (Rmul (ofQ C hCd) (deltaLogNat n hn))) := by
+  obtain ⟨C, hCd, hCn, hVle⟩ := Vterm_le_A_delta s hsbd hsb0 hTd hT0 hσ hsb hT1 hT2 n hn
+  refine ⟨C, hCd, ?_⟩
+  -- Vterm ≤ A·(C·δ) ≤ B·(C·δ)   [A ≤ B = exp(−σ·k·log2), and C·δ ≥ 0]
+  refine Rle_trans hVle ?_
+  exact Rmul_le_Rmul_right
+    (Rnonneg_Rmul (Rnonneg_ofQ hCd hCn) (Rnonneg_deltaLogNat n hn))
+    (A_dyadic_le s hσ k n hn hkn)
+
 end UOR.Bridge.F1Square.Analysis
+
