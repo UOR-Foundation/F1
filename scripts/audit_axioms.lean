@@ -1662,3 +1662,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.eta_Vconst_bound
 #print axioms Analysis.etaLevel_ge_N0
 #print axioms Analysis.etaMidx_ge_one
+#print axioms Analysis.etaRe_tail_reindexed
+#print axioms Analysis.etaIm_tail_reindexed
+#print axioms Analysis.etaRe_RReg
+#print axioms Analysis.etaIm_RReg
+#print axioms Analysis.Ceta

@@ -2825,4 +2825,202 @@ theorem eta_Vconst_bound (sb T : Q) (hsbd : 0 < sb.den) (hTd : 0 < T.den)
     rw [← hcast]; exact_mod_cast key
   simpa using keyI
 
+-- ===========================================================================
+-- Step 7c — the CULMINATION: η.re/η.im as Bishop diagonal limits (Rlim) of the reindexed
+-- paired partial sums, then the complex Ceta. Mirrors czeta (ComplexZeta.lean 574-687).
+-- ===========================================================================
+
+/-- The reindexed real-part paired partial sums: `(czEtaPaired s (2^{etaMidx j − 1})).re`. -/
+def etaReSeq (s : Complex) (τ sb T : Q) (j : Nat) : Real :=
+  (czEtaPaired s (2 ^ (etaMidx τ sb T j - 1))).re
+
+/-- The reindexed imaginary-part paired partial sums. -/
+def etaImSeq (s : Complex) (τ sb T : Q) (j : Nat) : Real :=
+  (czEtaPaired s (2 ^ (etaMidx τ sb T j - 1))).im
+
+/-- `y ≤ x + y` when `0 ≤ x` (re-derived `Qle_self_add_left`; the ComplexZeta one is private). -/
+private theorem eta_Qle_self_add_left {x y : Q} (hx : 0 ≤ x.num) (hxd : 0 < x.den) (hyd : 0 < y.den) :
+    Qle y (add x y) :=
+  Qle_trans (add_den_pos hyd hxd) (Qle_self_add hx)
+    (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+
+/-- **The reindexed real-part tail bound** (the hard combine): for `j ≤ k`, the difference of the
+    reindexed paired real partial sums is bounded both ways by `1/(j+1)`. Combines the paired re-tail
+    (`czEtaPaired_re_tail`) with the full geometric tail (`EtaVSum_tail_full`) and `Vconst` absorption. -/
+theorem etaRe_tail_reindexed (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 ≤ sb.num)
+    (hTd : 0 < T.den) (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd))
+    (hT1 : Rle (Rneg (ofQ T hTd)) s.im) (hT2 : Rle s.im (ofQ T hTd)) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hblk : ∀ k, 1 ≤ k → Rle (Rsub (EtaVSum s T hTd (2^(k+1))) (EtaVSum s T hTd (2^k)))
+        (ofQ (mul (Vconst sb T) (qpow (Qinv (add ⟨1,1⟩ τ)) k))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (qpow_den_pos (Qinv_den_pos (by simp only [add]; push_cast; omega)) k))))
+    {j k : Nat} (hjk : j ≤ k) :
+    Rle (Rsub (etaReSeq s τ sb T k) (etaReSeq s τ sb T j)) (ofQ (⟨1, j+1⟩ : Q) (Nat.succ_pos j))
+  ∧ Rle (Rneg (Rsub (etaReSeq s τ sb T k) (etaReSeq s τ sb T j))) (ofQ (⟨1, j+1⟩ : Q) (Nat.succ_pos j)) := by
+  have key : ∀ m, m < 2 ^ m := by
+    intro m; induction m with
+    | zero => decide
+    | succ p ih => rw [Nat.pow_succ]; omega
+  let Kj : Nat := 2 ^ (etaMidx τ sb T j - 1)
+  let Kk : Nat := 2 ^ (etaMidx τ sb T k - 1)
+  have hKjk : Kj ≤ Kk :=
+    Nat.pow_le_pow_right (by omega) (Nat.sub_le_sub_right (etaMidx_mono τ sb T hjk) 1)
+  have hKj1 : 1 ≤ Kj := Nat.one_le_two_pow
+  have hMj1 : 1 ≤ etaMidx τ sb T j := etaMidx_ge_one τ sb T hτn hτd j
+  have h2j : 2 * Kj = 2 ^ etaMidx τ sb T j := etaMidx_two_pow τ sb T hτn hτd j
+  have h2k : 2 * Kk = 2 ^ etaMidx τ sb T k := etaMidx_two_pow τ sb T hτn hτd k
+  -- smallness for every index ≥ 2·Kj
+  have hsm : ∀ i, Qle (mul sb (⟨1, 2*(Kj+i)+1⟩ : Q)) (⟨1,2⟩ : Q) ∧ Qle (mul T (⟨1, 2*(Kj+i)+1⟩ : Q)) (⟨1,1⟩ : Q) := by
+    intro i
+    refine eta_smallness_n sb T hsbd hTd (2*(Kj+i)+1) ?_
+    have hkey := key (etaMidx τ sb T j)
+    have hN0 := etaMidx_ge_N0 τ sb T hτn hτd j
+    show etaN0 sb T ≤ 2 * (Kj + i) + 1
+    omega
+  -- paired re-tail, two-sided
+  have htail := czEtaPaired_re_tail s hsbd hTd hT0 hσ hsb hT1 hT2 Kj hKj1 hsm (Kk - Kj)
+  have hKsum : Kj + (Kk - Kj) = Kk := Nat.add_sub_cancel' hKjk
+  -- rewrite the tail to the reindexed-seq form
+  rw [hKsum] at htail
+  rw [h2k, h2j] at htail
+  -- htail.1 : Rle (Rsub (czEtaPaired s Kk).re (czEtaPaired s Kj).re)
+  --              (Rsub (EtaVSum (2^etaMidx k)) (EtaVSum (2^etaMidx j)))
+  -- full geometric tail at the j-level, with N := 2^etaMidx k
+  have htf0 := EtaVSum_tail_full s T hTd sb hsbd hsb0 hT0 hσ hτn hτd hblk
+    (etaLevel sb T j - 1) (2 ^ etaMidx τ sb T k)
+  have hL1 : 1 ≤ etaLevel sb T j := by
+    have := etaLevel_ge_N0 sb T j; simp only [etaN0] at this; omega
+  have heq : etaLevel sb T j - 1 + 1 = etaLevel sb T j := by omega
+  -- the base exponent of htf0 is 2^((etaLevel j -1 +1) * r.den²) = 2^etaMidx j
+  have hbaseexp : (etaLevel sb T j - 1 + 1) * ((Qinv (add ⟨1,1⟩ τ)).den * (Qinv (add ⟨1,1⟩ τ)).den)
+      = etaMidx τ sb T j := by rw [heq]; rfl
+  rw [hbaseexp] at htf0
+  -- htf0 : Rle (Rsub (EtaVSum (2^etaMidx k)) (EtaVSum (2^etaMidx j)))
+  --            (ofQ (mul (Vconst sb T) ⟨1, etaLevel j - 1 + 1⟩) _)
+  -- the Vconst absorption, from htf0's bound (den index etaLevel j - 1 + 1 = etaLevel j) to 1/(j+1)
+  have hVcQ : Qle (mul (Vconst sb T) (⟨1, etaLevel sb T j - 1 + 1⟩ : Q)) (⟨1, j + 1⟩ : Q) := by
+    rw [heq]; exact eta_Vconst_bound sb T hsbd hTd hsb0 hT0 j
+  have hVc : Rle (ofQ (mul (Vconst sb T) (⟨1, etaLevel sb T j - 1 + 1⟩ : Q))
+        (Qmul_den_pos (Vconst_den_pos hsbd hTd) (Nat.succ_pos _)))
+      (ofQ (⟨1, j+1⟩ : Q) (Nat.succ_pos j)) :=
+    Rle_ofQ_ofQ _ _ hVcQ
+  refine ⟨?_, ?_⟩
+  · -- upper
+    exact Rle_trans htail.1 (Rle_trans htf0 hVc)
+  · -- lower: from htail.2 with Rle_Rneg + Rneg_neg
+    have hstep : Rle (Rneg (Rsub (etaReSeq s τ sb T k) (etaReSeq s τ sb T j)))
+        (Rsub (EtaVSum s T hTd (2 ^ etaMidx τ sb T k)) (EtaVSum s T hTd (2 ^ etaMidx τ sb T j))) := by
+      have h := Rle_Rneg htail.2
+      exact Rle_trans h (Rle_of_Req (Rneg_neg _))
+    exact Rle_trans hstep (Rle_trans htf0 hVc)
+
+/-- **The reindexed imaginary-part tail bound** (mirror of `etaRe_tail_reindexed`). -/
+theorem etaIm_tail_reindexed (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 ≤ sb.num)
+    (hTd : 0 < T.den) (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd))
+    (hT1 : Rle (Rneg (ofQ T hTd)) s.im) (hT2 : Rle s.im (ofQ T hTd)) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hblk : ∀ k, 1 ≤ k → Rle (Rsub (EtaVSum s T hTd (2^(k+1))) (EtaVSum s T hTd (2^k)))
+        (ofQ (mul (Vconst sb T) (qpow (Qinv (add ⟨1,1⟩ τ)) k))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (qpow_den_pos (Qinv_den_pos (by simp only [add]; push_cast; omega)) k))))
+    {j k : Nat} (hjk : j ≤ k) :
+    Rle (Rsub (etaImSeq s τ sb T k) (etaImSeq s τ sb T j)) (ofQ (⟨1, j+1⟩ : Q) (Nat.succ_pos j))
+  ∧ Rle (Rneg (Rsub (etaImSeq s τ sb T k) (etaImSeq s τ sb T j))) (ofQ (⟨1, j+1⟩ : Q) (Nat.succ_pos j)) := by
+  have key : ∀ m, m < 2 ^ m := by
+    intro m; induction m with
+    | zero => decide
+    | succ p ih => rw [Nat.pow_succ]; omega
+  let Kj : Nat := 2 ^ (etaMidx τ sb T j - 1)
+  let Kk : Nat := 2 ^ (etaMidx τ sb T k - 1)
+  have hKjk : Kj ≤ Kk :=
+    Nat.pow_le_pow_right (by omega) (Nat.sub_le_sub_right (etaMidx_mono τ sb T hjk) 1)
+  have hKj1 : 1 ≤ Kj := Nat.one_le_two_pow
+  have hMj1 : 1 ≤ etaMidx τ sb T j := etaMidx_ge_one τ sb T hτn hτd j
+  have h2j : 2 * Kj = 2 ^ etaMidx τ sb T j := etaMidx_two_pow τ sb T hτn hτd j
+  have h2k : 2 * Kk = 2 ^ etaMidx τ sb T k := etaMidx_two_pow τ sb T hτn hτd k
+  have hsm : ∀ i, Qle (mul sb (⟨1, 2*(Kj+i)+1⟩ : Q)) (⟨1,2⟩ : Q) ∧ Qle (mul T (⟨1, 2*(Kj+i)+1⟩ : Q)) (⟨1,1⟩ : Q) := by
+    intro i
+    refine eta_smallness_n sb T hsbd hTd (2*(Kj+i)+1) ?_
+    have hkey := key (etaMidx τ sb T j)
+    have hN0 := etaMidx_ge_N0 τ sb T hτn hτd j
+    show etaN0 sb T ≤ 2 * (Kj + i) + 1
+    omega
+  have htail := czEtaPaired_im_tail s hsbd hTd hT0 hσ hsb hT1 hT2 Kj hKj1 hsm (Kk - Kj)
+  have hKsum : Kj + (Kk - Kj) = Kk := Nat.add_sub_cancel' hKjk
+  rw [hKsum] at htail
+  rw [h2k, h2j] at htail
+  have htf0 := EtaVSum_tail_full s T hTd sb hsbd hsb0 hT0 hσ hτn hτd hblk
+    (etaLevel sb T j - 1) (2 ^ etaMidx τ sb T k)
+  have hL1 : 1 ≤ etaLevel sb T j := by
+    have := etaLevel_ge_N0 sb T j; simp only [etaN0] at this; omega
+  have heq : etaLevel sb T j - 1 + 1 = etaLevel sb T j := by omega
+  have hbaseexp : (etaLevel sb T j - 1 + 1) * ((Qinv (add ⟨1,1⟩ τ)).den * (Qinv (add ⟨1,1⟩ τ)).den)
+      = etaMidx τ sb T j := by rw [heq]; rfl
+  rw [hbaseexp] at htf0
+  have hVcQ : Qle (mul (Vconst sb T) (⟨1, etaLevel sb T j - 1 + 1⟩ : Q)) (⟨1, j + 1⟩ : Q) := by
+    rw [heq]; exact eta_Vconst_bound sb T hsbd hTd hsb0 hT0 j
+  have hVc : Rle (ofQ (mul (Vconst sb T) (⟨1, etaLevel sb T j - 1 + 1⟩ : Q))
+        (Qmul_den_pos (Vconst_den_pos hsbd hTd) (Nat.succ_pos _)))
+      (ofQ (⟨1, j+1⟩ : Q) (Nat.succ_pos j)) :=
+    Rle_ofQ_ofQ _ _ hVcQ
+  refine ⟨?_, ?_⟩
+  · exact Rle_trans htail.1 (Rle_trans htf0 hVc)
+  · have hstep : Rle (Rneg (Rsub (etaImSeq s τ sb T k) (etaImSeq s τ sb T j)))
+        (Rsub (EtaVSum s T hTd (2 ^ etaMidx τ sb T k)) (EtaVSum s T hTd (2 ^ etaMidx τ sb T j))) := by
+      have h := Rle_Rneg htail.2
+      exact Rle_trans h (Rle_of_Req (Rneg_neg _))
+    exact Rle_trans hstep (Rle_trans htf0 hVc)
+
+/-- **The reindexed real-part partial sums form a regular sequence of reals** (`RReg`) — the input
+    to Bishop's `Rlim`. Mirrors `czetaRe_RReg`. -/
+theorem etaRe_RReg (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 ≤ sb.num)
+    (hTd : 0 < T.den) (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd))
+    (hT1 : Rle (Rneg (ofQ T hTd)) s.im) (hT2 : Rle s.im (ofQ T hTd)) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hblk : ∀ k, 1 ≤ k → Rle (Rsub (EtaVSum s T hTd (2^(k+1))) (EtaVSum s T hTd (2^k)))
+        (ofQ (mul (Vconst sb T) (qpow (Qinv (add ⟨1,1⟩ τ)) k))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (qpow_den_pos (Qinv_den_pos (by simp only [add]; push_cast; omega)) k)))) :
+    RReg (fun j => etaReSeq s τ sb T j) := by
+  refine RReg_of_real_bound _ (fun j k => add ⟨1, j + 1⟩ ⟨1, k + 1⟩)
+    (fun j k => add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (fun j k => Qle_refl _) ?_
+  intro j k
+  rcases Nat.le_total j k with hjk | hkj
+  · refine Rle_trans (Rle_trans (Rle_of_Req (Req_symm (Rneg_Rsub _ _)))
+        (etaRe_tail_reindexed s hsbd hsb0 hTd hT0 hσ hsb hT1 hT2 hτn hτd hblk hjk).2) ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _ (Qle_self_add (by show (0 : Int) ≤ 1; decide))
+  · refine Rle_trans (etaRe_tail_reindexed s hsbd hsb0 hTd hT0 hσ hsb hT1 hT2 hτn hτd hblk hkj).1 ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _
+      (eta_Qle_self_add_left (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _) (Nat.succ_pos _))
+
+/-- **The reindexed imaginary-part partial sums form a regular sequence of reals** (`RReg`). -/
+theorem etaIm_RReg (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 ≤ sb.num)
+    (hTd : 0 < T.den) (hT0 : 0 ≤ T.num) (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd))
+    (hT1 : Rle (Rneg (ofQ T hTd)) s.im) (hT2 : Rle s.im (ofQ T hTd)) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hblk : ∀ k, 1 ≤ k → Rle (Rsub (EtaVSum s T hTd (2^(k+1))) (EtaVSum s T hTd (2^k)))
+        (ofQ (mul (Vconst sb T) (qpow (Qinv (add ⟨1,1⟩ τ)) k))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (qpow_den_pos (Qinv_den_pos (by simp only [add]; push_cast; omega)) k)))) :
+    RReg (fun j => etaImSeq s τ sb T j) := by
+  refine RReg_of_real_bound _ (fun j k => add ⟨1, j + 1⟩ ⟨1, k + 1⟩)
+    (fun j k => add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (fun j k => Qle_refl _) ?_
+  intro j k
+  rcases Nat.le_total j k with hjk | hkj
+  · refine Rle_trans (Rle_trans (Rle_of_Req (Req_symm (Rneg_Rsub _ _)))
+        (etaIm_tail_reindexed s hsbd hsb0 hTd hT0 hσ hsb hT1 hT2 hτn hτd hblk hjk).2) ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _ (Qle_self_add (by show (0 : Int) ≤ 1; decide))
+  · refine Rle_trans (etaIm_tail_reindexed s hsbd hsb0 hTd hT0 hσ hsb hT1 hT2 hτn hτd hblk hkj).1 ?_
+    exact Rle_ofQ_ofQ (Nat.succ_pos _) _
+      (eta_Qle_self_add_left (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _) (Nat.succ_pos _))
+
+/-- **The Dirichlet eta function `η(s) = Σ_{n≥1} (−1)^{n−1} n⁻ˢ` for `Re s > 0`** — a genuine
+    constructive complex number, the culmination of goal B. The half-plane `Re s > 0` is captured by a
+    rational box `sb, T` (`0 ≤ Re s ≤ sb`, `|Im s| ≤ T`) plus `Pos (Re s)`; the witness `τ > 0` of the
+    geometric block decay (`EtaVSum_block_geo_le`) is supplied explicitly (choice-free, mirroring
+    `Czeta`). The real and imaginary parts are Bishop diagonal limits of the reindexed alternating
+    paired partial sums `(czEtaPaired s (2^{etaMidx j − 1})).re/.im`. -/
+def Ceta (s : Complex) {sb T : Q} (hsbd : 0 < sb.den) (hsb0 : 0 ≤ sb.num) (hTd : 0 < T.den) (hT0 : 0 ≤ T.num)
+    (hσ : Rnonneg s.re) (hsb : Rle s.re (ofQ sb hsbd)) (hT1 : Rle (Rneg (ofQ T hTd)) s.im)
+    (hT2 : Rle s.im (ofQ T hTd)) {τ : Q} (hτn : 0 < τ.num) (hτd : 0 < τ.den)
+    (hblk : ∀ k, 1 ≤ k → Rle (Rsub (EtaVSum s T hTd (2^(k+1))) (EtaVSum s T hTd (2^k)))
+        (ofQ (mul (Vconst sb T) (qpow (Qinv (add ⟨1,1⟩ τ)) k))
+          (Qmul_den_pos (Vconst_den_pos hsbd hTd) (qpow_den_pos (Qinv_den_pos (by simp only [add]; push_cast; omega)) k)))) :
+    Complex :=
+  ⟨Rlim (fun j => etaReSeq s τ sb T j) (etaRe_RReg s hsbd hsb0 hTd hT0 hσ hsb hT1 hT2 hτn hτd hblk),
+   Rlim (fun j => etaImSeq s τ sb T j) (etaIm_RReg s hsbd hsb0 hTd hT0 hσ hsb hT1 hT2 hτn hτd hblk)⟩
+
 end UOR.Bridge.F1Square.Analysis
