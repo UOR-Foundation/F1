@@ -12,6 +12,7 @@ import F1Square.Analysis.EulerMaclaurin
 import F1Square.Analysis.ComplexExpAdd
 import F1Square.Analysis.ComplexZeta
 import F1Square.Analysis.GammaOne
+import F1Square.Analysis.EtaFunction
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -1782,5 +1783,34 @@ theorem cpowNeg_diff_im_bound (s : Complex) (n : Nat) (hn : 2 ≤ n) {Bb : Real}
     refine Rle_trans hcomb.2 ?_
     rw [← hCmulim]
     exact Rle_of_Req (Req_symm hdiff)
+
+-- ===========================================================================
+-- Step 7a — the PAIRING identity for the alternating η partial sums: czEtaSum s (2K) ≈ Σ_{j<K} D_{2j+1}
+-- (D_n = n⁻ˢ − (n+1)⁻ˢ). The even partial sums equal the sum of the consecutive differences bounded above,
+-- so the η-Cauchy criterion reduces to the (summable) variation Σ Vterm. Exact Cadd-rearrangement.
+-- ===========================================================================
+
+/-- The `n`-th consecutive difference `n⁻ˢ − (n+1)⁻ˢ`. -/
+def cpowNegDiff (s : Complex) (n : Nat) : Complex := Csub (cpowNeg s n) (cpowNeg s (n + 1))
+
+/-- The paired-difference sum `Σ_{j=0}^{K−1} D_{2j+1}` (the even η partial sums in paired form). -/
+def czEtaPaired (s : Complex) : Nat → Complex
+  | 0 => Czero
+  | (K + 1) => Cadd (czEtaPaired s K) (cpowNegDiff s (2 * K + 1))
+
+/-- **The pairing identity**: `czEtaSum s (2K) ≈ Σ_{j<K} D_{2j+1}`. Each even/odd pair
+    `(+a_{2j+1}) + (−a_{2j+2})` is the difference `D_{2j+1}`; `Cadd_assoc` regroups. -/
+theorem czEtaSum_two_eq_paired (s : Complex) (K : Nat) :
+    Ceq (czEtaSum s (2 * K)) (czEtaPaired s K) := by
+  induction K with
+  | zero => exact Ceq_refl _
+  | succ K ih =>
+    have h2 : 2 * (K + 1) = 2 * K + 1 + 1 := by omega
+    rw [h2, czEtaSum_succ, czEtaSum_succ,
+      czEtaTerm_even s (2 * K) (by omega), czEtaTerm_odd s (2 * K + 1) (by omega)]
+    refine Ceq_trans
+      (Cadd_assoc (czEtaSum s (2 * K)) (cpowNeg s (2 * K + 1))
+        (Cneg (cpowNeg s (2 * K + 1 + 1)))) ?_
+    exact Cadd_congr ih (Ceq_refl _)
 
 end UOR.Bridge.F1Square.Analysis
