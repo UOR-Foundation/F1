@@ -1597,3 +1597,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.cpowNeg_im_le
 #print axioms Analysis.cpowNeg_im_ge
 #print axioms Analysis.RexpReal_neg_le_one
+#print axioms Analysis.expSum_ge_one_add_four
+#print axioms Analysis.RexpReal_ge_one_add_four
+#print axioms Analysis.RexpReal_one_sub_neg_le
