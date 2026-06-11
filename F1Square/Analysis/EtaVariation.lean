@@ -2617,4 +2617,22 @@ theorem EtaVSum_tail_full (s : Complex) (T : Q) (hTd : 0 < T.den) (sb : Q) (hsbd
   refine Rle_trans (Radd_le_add (EtaVSum_mono s T hTd hT0 hσ hNle) (Rle_refl _)) ?_
   exact EtaVSum_tail_reindex s T hTd sb hsbd hsb0 hT0 hτn hτd hblk j N
 
+-- ===========================================================================
+-- Step 7b-ii(β-3/vii) — the SUBSUM: the odd-offset partial sum (the paired-difference sum) is ≤ the full
+-- range sum, since every term is ≥ 0. This bridges the alternating PAIRED tail (over odd n = 2(K+i)+1) to
+-- the FULL EtaVSum tail (which has the vanishing geometric bound).
+-- ===========================================================================
+
+/-- **Odd-offset subsum ≤ full sum** (nonneg terms): `Σ_{i<d} f(2i+1) ≤ Σ_{n<2d} f n`. -/
+theorem RsumRange_odd_le {f : Nat → Real} (hf : ∀ n, Rnonneg (f n)) :
+    ∀ d, Rle (RsumRange (fun i => f (2 * i + 1)) d) (RsumRange f (2 * d))
+  | 0 => Rle_refl _
+  | (d + 1) => by
+      show Rle (Radd (RsumRange (fun i => f (2 * i + 1)) d) (f (2 * d + 1))) (RsumRange f (2 * (d + 1)))
+      rw [show 2 * (d + 1) = 2 * d + 1 + 1 by omega]
+      show Rle (Radd (RsumRange (fun i => f (2 * i + 1)) d) (f (2 * d + 1)))
+          (Radd (Radd (RsumRange f (2 * d)) (f (2 * d))) (f (2 * d + 1)))
+      exact Radd_le_add
+        (Rle_trans (RsumRange_odd_le hf d) (Rle_self_Radd_right (hf (2 * d)))) (Rle_refl _)
+
 end UOR.Bridge.F1Square.Analysis
