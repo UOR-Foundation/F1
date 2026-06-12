@@ -260,7 +260,12 @@ def f1SquareStatus : F1SquareStatus := {
   liPositivityHolds         := none           -- = RH (analytic face: λₙ > 0 ∀n, Li 1997), OPEN, never
                                               -- asserted. v0.18.0: equivalent to hodgeIndexHolds'
                                               -- spectral form through the bridge; certified slices
-                                              -- n = 1, 2 only; stays none.
+                                              -- n = 1, 2 only. v0.19.0: a THIRD equivalent face —
+                                              -- dominance by a single uniform bound
+                                              -- (Square.dominance_crux_equivalent) — and the
+                                              -- explicit-formula trace completed at the built
+                                              -- slices (Analysis.weilTraceTwo); the trace bears no
+                                              -- positivity content, so this stays none.
 }
 
 -- ===========================================================================
@@ -433,6 +438,33 @@ def f1SquareStatus : F1SquareStatus := {
 --                                FAILS the crux), spectral_iff_all_upTo (no finite check
 --                                reaches it)}
 --   CONCLUSION: the attempt did not close the universal; the fields below stay `none`.
+-- v0.19.0 (stage E — completion: the explicit-formula trace, the dominance face, the roll-up):
+--   the completed trace         ← Analysis.{explicitFormulaTrace_one_realized,
+--     (the zero side at the       explicitFormulaTrace_two_realized (ExplicitFormulaTrace —
+--      BL slices)                 until now only the trivial z = z + 0 — realized with all
+--                                three sides at the built slices: zero side λₙ [the
+--                                sum-over-zeros reading is CLASSICAL, BL 1999], finite-place
+--                                closed forms, archimedean parts), WeilTrace + weilTraceTwo
+--                                (the completion package: trace identity at every positive
+--                                index), weilTraceTwo_evidence}
+--   LiAgreesWith retired        ← Analysis.liAgreesWith_two_realized (computed certified
+--     (at the built slices)       builds Rlambda1/Rlambda2 = classical BL closed-form
+--                                assemblies — genuinely non-reflexive at n = 1, 2)
+--   THE DOMINANCE FACE          ← Square.{Dominates/Dominated (ONE bound B: −B(n) ≤ arith(n)
+--     (the crux as a single       and arch(n) − B(n) > 0, every n — sign-agnostic, no
+--      uniform bound: the         enumeration, no slice ladder), dominated_liPositive,
+--      oscillation loses)         liPositive_dominated, dominated_iff_liPositive,
+--                                dominance_crux_equivalent (the THIRD face: Dominated ⟺
+--                                SpectralCrux ⟺ LiCrux — one proposition, three faces),
+--                                weilTrace_dominance (the dominance reading of the completed
+--                                trace), dominance_satisfiable + twoSlice_not_dominated +
+--                                weilTraceTwo_not_crux (the two-sided honesty guards)}
+--   CONCLUSION: the F1 square is COMPLETE AS SCOPED (stages A–E shipped); every surrounding
+--   construction is built and audited, and what remains open is exactly the crux — ONE
+--   proposition with three equivalent faces, whose open content is now relocated into a
+--   single object (the dominance bound for the genuine parts, governed by the zeros'
+--   location). The fields below stay `none` — that is the v1.0.0-candidate state: complete
+--   construction, honest crux.
 -- The crux is NOT backed and stays `none` (BOTH faces, same RH) — λ₁ > 0 is the n=1 case, not RH:
 --   hodgeIndexHolds (= RH, geometric) ← OPEN. Crux.template_hodgeIndex proves the property on the
 --                               product-of-curves TEMPLATE; Square.square_hodgeIndex (v0.17.0)
@@ -860,5 +892,37 @@ example :
   ⟨BridgeFF.ff_hodge_iff_hodgeType, Analysis.Rlambda2_decomposition,
    Analysis.li_decomposition_two_realized, Square.crux_faces_equivalent,
    Square.spectral_strict_upTo_two, Square.spectralTwoSlice_not_crux, rfl, rfl⟩
+
+/-- Elaboration-checked witness binding the **v0.19.0 stage-E layer** — completion. In order:
+    (1) the explicit-formula trace REALIZED at both built slices (the zero side `λ₁`/`λ₂`, the
+    finite-place closed forms, the archimedean parts — all three sides built; the trivial
+    `z = z + 0` inhabitant is retired); (2) `LiAgreesWith` retired at the built slices (the
+    direct certified builds agree with the BL closed-form assemblies — non-reflexively);
+    (3) **THE DOMINANCE FACE**: for every spectral square satisfying the trace, the crux is
+    equivalent to the existence of ONE uniform bound under which the arithmetic oscillation
+    loses to the archimedean trend — with (4) the dominance reading of the completed trace
+    ladder, (5) the two-sidedness guard (the property is satisfiable — no hidden
+    impossibility), and (6) the finite-assembly guard transferred to this face (the certified
+    two-slice parts are provably NOT dominated). The crux fields stay `none`: **RH OPEN** —
+    the v1.0.0-candidate state is complete construction with the honest crux. -/
+example :
+    Li.ExplicitFormulaTrace Analysis.Rlambda1 Analysis.Rlambda1_arith Analysis.Rlambda1_arch
+    ∧ Li.ExplicitFormulaTrace Analysis.Rlambda2 Analysis.Rlambda2_arith Analysis.Rlambda2_arch
+    ∧ Li.LiAgreesWith Analysis.liLamSeqTwo Analysis.liClassicalSeqTwo
+    ∧ (∀ (S : Square.SpectralSquare) (arith arch : Nat → Analysis.Real),
+        (∀ n : Nat, 0 < n →
+          Li.ExplicitFormulaTrace (S.lam n) (arith n) (arch n)) →
+        (Square.Dominated arith arch ↔ Square.SpectralCrux S))
+    ∧ (∀ W : Analysis.WeilTrace,
+        Square.Dominated W.primePart W.archPart ↔ Li.LiCrux W.zeroSide)
+    ∧ Square.Dominated (fun _ => Analysis.one) (fun _ => Analysis.zero)
+    ∧ ¬ Square.Dominated Analysis.liArithSeqTwo Analysis.liArchSeqTwo
+    ∧ f1SquareStatus.hodgeIndexHolds = none
+    ∧ f1SquareStatus.liPositivityHolds = none :=
+  ⟨Analysis.explicitFormulaTrace_one_realized, Analysis.explicitFormulaTrace_two_realized,
+   Analysis.liAgreesWith_two_realized,
+   fun S _ _ htrace => Square.dominance_crux_equivalent S htrace,
+   Square.weilTrace_dominance, Square.dominance_satisfiable,
+   Square.twoSlice_not_dominated, rfl, rfl⟩
 
 end UOR.Bridge.F1Square
