@@ -98,12 +98,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.Rnonneg_Radd_self
 #print axioms Square.Rnonneg_of_Radd_self
 #print axioms Square.spectral_bridge_nonneg
+#print axioms Square.spectral_bridge_pos_slice
 #print axioms Square.spectral_bridge_pos
 #print axioms Square.crux_faces_equivalent
 #print axioms Square.spectral_evidence_two
 #print axioms Square.not_Pos_zero_double
 #print axioms Square.spectralTwoSlice_not_crux
 #print axioms Square.spectral_iff_all_upTo
+
+-- v0.18.0 stage D — the crux ATTEMPT under the gate (Square/Attempt.lean): the certified
+-- part, the exact frontier, and the honest conclusion. Fields stay none; RH OPEN.
+#print axioms Square.crux_attempt_frontier
+#print axioms Square.crux_attempt_frontier_geometric
+#print axioms Square.spectral_strict_upTo_two
 
 -- v0.17.0 stage C — the 𝔽₁ curve at the monoid level (Square/Monoid.lean).
 #print axioms Square.one_le_mul

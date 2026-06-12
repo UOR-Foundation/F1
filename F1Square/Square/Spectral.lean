@@ -143,16 +143,25 @@ theorem spectral_bridge_nonneg (S : SpectralSquare) :
   · intro h n hn
     exact Rnonneg_congr (neg_cSq_eq_double S n hn) (Rnonneg_Radd_self (h n hn))
 
+/-- The bridge, one slice at a time: `⟨Cₙ,Cₙ⟩ < 0 ⟺ λₙ > 0` for each individual `n ≥ 1`. -/
+theorem spectral_bridge_pos_slice (S : SpectralSquare) (n : Nat) (hn : 0 < n) :
+    Pos (Rneg (S.cSq n)) ↔ Pos (S.lam n) := by
+  constructor
+  · intro h
+    refine Pos_of_Radd_self (x := S.lam n) ?_
+    exact Pos_congr (Req_symm (neg_cSq_eq_double S n hn)) h
+  · intro h
+    exact Pos_congr (neg_cSq_eq_double S n hn) (Pos_Radd_self h)
+
 /-- **THE BRIDGE, definite form** (the strict face): `⟨Cₙ,Cₙ⟩ < 0 ∀n ⟺ λₙ > 0 ∀n`
     (for the genuine instance the right side is Li's criterion, Li 1997 — RH). -/
 theorem spectral_bridge_pos (S : SpectralSquare) :
     SpectralHodgeNegStrict S ↔ LiPositive S.lam := by
   constructor
   · intro h n hn
-    refine Pos_of_Radd_self (x := S.lam n) ?_
-    exact Pos_congr (Req_symm (neg_cSq_eq_double S n hn)) (h n hn)
+    exact (spectral_bridge_pos_slice S n hn).mp (h n hn)
   · intro h n hn
-    exact Pos_congr (neg_cSq_eq_double S n hn) (Pos_Radd_self (h n hn))
+    exact (spectral_bridge_pos_slice S n hn).mpr (h n hn)
 
 /-- **THE CRUX, geometric face on the spectral enrichment**: strict Hodge-index negativity.
     For the GENUINE instance (the unbuilt `H¹` pairing with the Li data of ζ) this is RH. -/
