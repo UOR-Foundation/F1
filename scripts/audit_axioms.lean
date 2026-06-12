@@ -158,6 +158,19 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RsumN_congr
 #print axioms Analysis.Rnonneg_RsumN
 #print axioms Analysis.RsumN_le
+
+-- v0.19.0 the genuine-pairing arc — THE WEIL FUNCTIONAL: the constructed finite-place
+-- side and archimedean constant (Analysis/Weil.lean), the assembled pairing, the
+-- pairing-induced spectral square, and the first computed pairing value
+-- (Square/Pairing.lean). Crux stays OPEN; nothing asserts PSD for the genuine family.
+#print axioms Analysis.weilPrimeTerm_past_support
+#print axioms Analysis.weilPrimePart_stable
+#print axioms Square.weilSpectralSquare
+#print axioms Square.weil_psd_iff_hodge
+#print axioms Square.weil_strict_iff_crux
+#print axioms Square.weil_template_crux
+#print axioms Square.demoWeilTest
+#print axioms Square.weilPrime_demo
 #print axioms Square.weilTraceTwo_not_crux
 #print axioms Square.twoSlice_not_dominated
 #print axioms Square.dominance_satisfiable

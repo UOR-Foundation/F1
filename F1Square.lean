@@ -41,6 +41,7 @@ import F1Square.Square.Polarized
 import F1Square.Square.Spectral
 import F1Square.Square.Attempt
 import F1Square.Square.Dominance
+import F1Square.Square.Pairing
 import F1Square.Tropical.Closure
 import F1Square.Tropical.Signature
 import F1Square.Tropical.Spectrum
@@ -102,6 +103,7 @@ import F1Square.Analysis.ArchTrend
 import F1Square.Analysis.GenuineLi
 import F1Square.Analysis.RMax
 import F1Square.Analysis.RSum
+import F1Square.Analysis.Weil
 
 open UOR.Primitives
 
