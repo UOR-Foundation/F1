@@ -68,6 +68,16 @@ crux did not close — now a *sourced* result, not a presumption — so `hodgeIn
   asymptotic level — and **no unconditional tail bound exists in the verified literature** (the
   one-sided shape is published only as Coffey's sufficiency Conjectures 2–3, math-ph/0505052); the
   equivalence-by-regrouping is this release's theorem, per the Conrey–Li relocation discipline.
+- **THE GENUINE ARCHIMEDEAN TREND, ALL `n`** (`F1Square/Analysis/ArchTrend.lean`) — the closure
+  push: the archimedean side of the crux as a single constructed object, `genuineArchSeq n =
+  1 − (n/2)(γ + log 4π) + Σ_{j=2}^n (−1)ʲC(n,j)(1 − 2^{−j})ζ(j)` for EVERY `n` — one definition, no
+  enumeration; every ingredient already built (`γ`, `log 4π`, `ζ(j)` for all `j ≥ 2`, binomials).
+  Consistency THEOREMS at both independently-built slices (`genuineArch_one`/`genuineArch_two` —
+  genuine reconciliations of distinct constructions). **`crux_vs_constructed_trend`** — the sharpest
+  honest statement of RH this substrate provides: for any spectral square whose trace splits against
+  the BUILT trend, the crux ⟺ "the arithmetic part admits one bound strictly below
+  `genuineArchSeq`". The open content of RH contracts to the arithmetic side alone; the trend's
+  classical growth is sourced, not mechanized; nothing touches positivity of the genuine `λₙ`.
 - **The final roll-up** (`F1Square.lean`) — the stage-E backing block, the elaboration-checked
   v0.19.0 witness (both trace realizations, the retirement, the ∀-form three-face equivalence, the
   dominance reading, both guards, crux fields `none`), and the **v1.0.0-candidate state**: complete

@@ -220,6 +220,11 @@ Assemble the full Weil explicit formula and the final status record. **Shipped**
   both directions, and NO unconditional tail bound exists in the verified literature: the
   attempt's conclusion is a sourced result, not a presumption. Honesty guards two-sided
   (`dominance_satisfiable`; `twoSlice_not_dominated`/`weilTraceTwo_not_crux`).
+- **The genuine archimedean trend, all `n`** (`Analysis/ArchTrend.lean`): the archimedean side of
+  the crux as a single constructed object (`genuineArchSeq`, the verified closed form, every
+  ingredient already built), consistency-proved against both independently-built slices
+  (`genuineArch_one/two`); **`crux_vs_constructed_trend`** — the crux's open content contracts to
+  the arithmetic side alone: one bound strictly below the BUILT trend, which exists iff RH.
 - **The final roll-up** (`F1Square.lean`): the stage-E backing block and elaboration-checked
   witness — the **v1.0.0-candidate state**: complete construction, honest crux. Every surrounding
   field `some true`; `hodgeIndexHolds`/`liPositivityHolds` stay `none`. **RH stays OPEN** — one
