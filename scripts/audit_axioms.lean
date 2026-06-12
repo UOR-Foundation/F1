@@ -104,6 +104,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.spectral_evidence_two
 #print axioms Square.not_Pos_zero_double
 #print axioms Square.spectralTwoSlice_not_crux
+#print axioms Square.spectral_template_crux
 #print axioms Square.spectral_iff_all_upTo
 
 -- v0.18.0 stage D — the crux ATTEMPT under the gate (Square/Attempt.lean): the certified

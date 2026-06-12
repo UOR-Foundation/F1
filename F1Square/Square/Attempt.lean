@@ -48,6 +48,17 @@ Per the bright line, `hodgeIndexHolds` and `liPositivityHolds` STAY `none`; the 
 ships the bridge substrate. This module is the attempt's record — honest, mechanized where
 mechanizable, and explicit about the single remaining object.
 
+THE ATTEMPT IS NOT BIASED TOWARD FAILURE (the verifier-not-prohibition stance, enforced in
+BOTH directions): (i) the geometric crux property is SATISFIABLE — `spectral_template_crux`
+proves it for the constant-`1` instance, so the encoding contains no hidden impossibility
+and openness is a fact about the genuine instance, not an artifact of the formulation;
+(ii) the certified-slice ladder is EXTENSIBLE — nothing here caps it at `n = 2`: building
+the `γ₂` bracket (the same dyadic machinery as `GammaOne`) would certify `λ₃`, and so on,
+arbitrarily far; (iii) the gate is two-sided — `crux_attempt_frontier` is stated as the
+precise NEXT TARGET, and if a genuine proof of the universal ever lands here, the fields
+flip to `some true` because that is then the truth (a result, not a defect). What is
+recorded above is where the wall genuinely is, not a declaration that it cannot fall.
+
 Pure Lean 4 core, no Mathlib, no `sorry`, choice-free; audited by `scripts/honesty_audit.sh`.
 -/
 

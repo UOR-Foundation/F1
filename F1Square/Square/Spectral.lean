@@ -221,6 +221,25 @@ theorem spectralTwoSlice_not_crux : ¬ SpectralCrux spectralTwoSlice := by
   have hz : Req (liLamSeqTwo 3) (Radd zero zero) := Req_refl _
   exact not_Pos_zero_double (Pos_congr hz h3)
 
+/-- The template spectral square: the constant-`1` Li data (the geometric mirror of
+    `Li.template_liPositive`'s sequence). -/
+def spectralTemplate : SpectralSquare where
+  lam := fun _ => one
+  cSq := fun _ => Rneg (Radd one one)
+  dict := fun _ _ => Req_refl _
+
+/-- **THE TWO-SIDEDNESS GUARD**: the geometric crux PROPERTY is satisfiable —
+    `SpectralCrux spectralTemplate` holds (the constant-`1` instance has every
+    `⟨Cₙ,Cₙ⟩ = −2 < 0`). Two consequences, both load-bearing for honesty:
+    (1) the interface contains NO hidden impossibility — the encoding does not bias the
+    attempt toward failure; openness is a fact about the GENUINE instance, not a defect of
+    the formulation; and (2) the loose existential `∃ S, SpectralCrux S` is TRUE and hence
+    NOT RH — the exact geometric mirror of the `Li.template_liPositive` caution: the crux
+    must be the genuine instance, never an existential. -/
+theorem spectral_template_crux : SpectralCrux spectralTemplate := by
+  intro n hn
+  exact Pos_congr (neg_cSq_eq_double spectralTemplate n hn) (Pos_Radd_self Pos_one)
+
 /-- The checkable finite approximant of the geometric face. -/
 def SpectralHodgeNegUpTo (S : SpectralSquare) (N : Nat) : Prop :=
   ∀ n : Nat, 0 < n → n ≤ N → Rnonneg (Rneg (S.cSq n))
