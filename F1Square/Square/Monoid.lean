@@ -31,7 +31,8 @@ def MPos : Type := {n : Nat // 1 ≤ n}
 /-- The unit `1` of the curve monoid. -/
 def mOne : MPos := ⟨1, Nat.le_refl 1⟩
 
-private theorem one_le_mul {a b : Nat} (ha : 1 ≤ a) (hb : 1 ≤ b) : 1 ≤ a * b := by
+/-- Positivity is multiplicative (the carrier is closed under `mMul`). -/
+theorem one_le_mul {a b : Nat} (ha : 1 ≤ a) (hb : 1 ≤ b) : 1 ≤ a * b := by
   have := Nat.mul_le_mul ha hb
   omega
 

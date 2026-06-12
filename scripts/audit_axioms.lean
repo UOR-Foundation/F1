@@ -73,6 +73,7 @@ open UOR.Bridge.F1Square
 #print axioms Crux.template_hodgeIndex
 
 -- v0.17.0 stage C — the 𝔽₁ curve at the monoid level (Square/Monoid.lean).
+#print axioms Square.one_le_mul
 #print axioms Square.mMul_assoc
 #print axioms Square.mMul_comm
 #print axioms Square.mOne_mul
@@ -98,6 +99,32 @@ open UOR.Bridge.F1Square
 #print axioms Square.proj1_inl
 #print axioms Square.proj2_inr
 #print axioms Square.proj_faithful
+
+-- v0.17.0 stage C — distinguished divisors of 𝕊 and their point-count intersections
+-- (Square/Divisors.lean): the intrinsic input the lattice is derived from.
+#print axioms Square.graph_one_diag
+#print axioms Square.vFiber_inter_hFiber
+#print axioms Square.vFiber_disjoint
+#print axioms Square.hFiber_disjoint
+#print axioms Square.diag_inter_vFiber
+#print axioms Square.diag_inter_hFiber
+#print axioms Square.graph_inter_vFiber
+#print axioms Square.graph_inter_hFiber
+#print axioms Square.diag_inter_graph_empty
+#print axioms Square.graph_disjoint
+#print axioms Square.graph_translate_diag
+#print axioms Square.vFiber_translate
+
+-- v0.17.0 stage C — the parallel pencil on canonical 𝕊 with shift lengths log n
+-- (Square/Pencil.lean): the §2.3 finding as theorems on the constructed object.
+#print axioms Square.logN_mul_general
+#print axioms Square.logN_pow_general
+#print axioms Square.pencil_shift
+#print axioms Square.pencil_parallel
+#print axioms Square.pencil_det_zero
+#print axioms Square.pencil_separation
+#print axioms Square.pencil_separation_vonMangoldt
+#print axioms Square.pencil_separation_pow
 
 -- v0.2.0 — Tropical closure / κ / spectrum (R2, R3, R4, R9, R10, R11).
 #print axioms Tropical.star_matches
