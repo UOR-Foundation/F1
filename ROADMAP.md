@@ -215,6 +215,18 @@ the formerly-planned v0.20/v0.21 work into this release:
 - **The bright line, unchanged**: `hodgeIndexHolds`/`liPositivityHolds` flip iff a genuine,
   audited, axiom-clean proof of the universal lands. Anything short stays an explicit interface.
 
+**Second arc delivered** (all axiom-clean): the tent calculus and assembly substrate
+(`Analysis/RMax.lean`, `Analysis/RSum.lean`); **the Weil functional assembled** with the zero side
+as the defect (`Analysis/Weil.lean`, `Square/Pairing.lean` — the finite-place side and the
+archimedean constant CONSTRUCTED; the two integral components interface, their PL closed forms
+being unverified in print); **the fourth face** (`weilSpectralSquare`, `weil_strict_iff_crux`:
+pairing positivity ⟺ crux ⟺ Li ⟺ dominance — for the genuine family, Weil positivity = RH, both
+directions elementary per the verified Weil/Burnol chain); the first computed pairing value
+(`weilPrime_demo`: the tent at `2` sees `log 2`); the CC unconditional window and Burnol's explicit
+multiplier certificate recorded as the pinned unconditional territory. The crux: ONE proposition,
+FOUR provably equivalent faces; the fields stay `none` until a genuine proof of the universal
+lands — that is the release's faithful completion.
+
 **Built so far** (the first arc, all axiom-clean):
 
 - **The complete `Li.ExplicitFormulaTrace`** (`Analysis/LiComplete.lean`): realized with the genuine

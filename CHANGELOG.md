@@ -99,6 +99,43 @@ crux did not close — now a *sourced* result, not a presumption — so `hodgeIn
   construction, honest crux. Workspace hygiene: warning-free build; `Li.lean` realization ledger;
   `Attempt.lean` frontier cross-pointer.
 
+- **THE GENUINE-PAIRING ARC** (the closure push, continued — the formerly-planned v0.20/v0.21
+  work folded into this release; deep-research #4: 99 agents, 21 claims confirmed 3-0 against the
+  primary PDFs, 4 refuted):
+  - *Substrate*: `Analysis/RMax.lean` — `Rabs` (Bishop-regular with no reindex, via the reverse
+    triangle inequality on exact ℚ), `RmaxZero = ½(t+|t|)`, and the tent calculus (non-negativity,
+    vanishing off support, identity on support) — compactly-supported piecewise-linear test
+    functions as total `Real → Real` functions; `Analysis/RSum.lean` — finite real sums with the
+    congruence/PSD/monotonicity transports.
+  - **THE WEIL FUNCTIONAL, assembled** (`Analysis/Weil.lean`, `Square/Pairing.lean`): in the pinned
+    CC unsymmetrized normalization (arXiv 2006.13771 App. B; the three-normalization trap and the
+    `dx` vs `dx/x` involution trap recorded), `W(f) = poles − (primes + archimedean)` — **the zero
+    side is the DEFECT of the built sides; no zeros are inputs**. CONSTRUCTED: the whole
+    finite-place side `weilPrimePart = Σ_{n≤X} Λ(n)(f(n) + n⁻¹f(1/n))` (rational weights, finite by
+    support, stable past the cutoff) and the archimedean constant `(log 4π + γ)·f(1)` (both factors
+    built). INTERFACE (the faithful boundary): the pole terms and the archimedean integral — their
+    piecewise-linear closed forms are routine but **unverified in print** (the deep-research open
+    question), so transcribing them would breach the gate. Piecewise-linear test data is ADMISSIBLE
+    to Weil's criterion directly (Bombieri's class `W`, the official Clay problem description §V).
+  - **THE FOURTH FACE** : `weilSpectralSquare` — the FIRST `SpectralSquare` whose `cSq` comes from a
+    pairing-valued assembly (the dictionary holds by construction) — with `weil_psd_iff_hodge` and
+    `weil_strict_iff_crux`: positivity of the pairing family ⟺ the crux ⟺ Li positivity ⟺
+    dominance. For the genuine family this is Weil positivity = RH — **elementary in both
+    directions** (Weil 1952; Burnol math/9810169 proves the Lemma directly, no density argument —
+    the presumed 'hard direction' was adversarially refuted). Guard: `weil_template_crux`.
+  - **The first computed pairing value** (`weilPrime_demo`): the finite-place side at the
+    piecewise-linear tent peaked at `2` is exactly `log 2` — the pairing sees the prime through the
+    test function (the §2.3 "separation = Λ" finding, now on the pairing side, as a theorem).
+  - **The unconditional territory, recorded** (pinned, not asserted): Connes–Consani (Selecta
+    Math. 27 (2021), Thm 1) — Weil positivity is UNCONDITIONAL for test support in
+    `[2^{−1/2}, 2^{1/2}]` (the prime-free window — where the constructed finite-place side vanishes
+    by `weilPrimePart_stable`'s discipline); the certificate is the Sonine-space projection
+    (infinite-dimensional). Burnol's precursor window carries an EXPLICIT nonnegative spectral
+    multiplier `α(τ) = 8√2·cos(τ log 2)/(1+4τ²) + h₊(τ)`, `h₊ = −log π + Re ψ(1/4 + iτ/2)` — the
+    natural constructive SOS target (needs uniform-in-τ digamma bounds; the pinned next
+    mechanization). Bombieri's Lincei truncations were verified to be ZERO-INDEXED (not zero-free
+    certification targets) — that route is honestly closed.
+
 ### Honest scope (the bright line, unchanged)
 - The dominance face RELOCATES the difficulty (Conrey–Li); it does not remove it. The open content
   of RH is now ONE object: a single bound sequence dominating the genuine arithmetic part strictly
