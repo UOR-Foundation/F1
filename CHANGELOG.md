@@ -91,6 +91,22 @@ choice-free (`{propext, Quot.sound}`), audited; the build is warning-free; the g
   0.96`) and a tight bracket needs an anchor `N ∼ 10⁴` (`ln²N/N ≲ 0.01`), beyond kernel `decide`'s
   reach with the current artanh log-evaluator — `γ₂`'s tail is `ln²(N)/N`, intrinsically heavier
   than `γ₁`'s clean `1/(2N)`.
+- **Lever 1 — the Li/zero growth geometry** (`F1Square/Analysis/ZeroGeometry.lean`): the constructive
+  bridge from a zero's POSITION to the GROWTH of its Li contribution, feeding the Voros dichotomy and
+  the de la Vallée-Poussin zero-free region. Each Riemann zero `ρ` contributes `1 − (1−1/ρ)ⁿ` to
+  `λₙ`, whose growth is governed by the squared ratio `|1−1/ρ|² = |ρ−1|²/|ρ|²`. The genuine
+  constructive nugget, proved unconditionally and without `sqrt` (`liRatio_diff_eq`):
+  **`|ρ−1|² − |ρ|² = 1 − 2·Re ρ`** — the `Im ρ` terms cancel exactly, so the regime is fixed by which
+  side of the critical line the zero lies on: `Re ρ = ½` ⟹ ratio `1` (bounded, Voros's tempered/RH
+  seed, `liRatio_on_line`); `Re ρ < ½` ⟹ ratio `> 1` (an exponentially growing Li term, the ¬RH seed,
+  `liRatio_left_of_line`); `Re ρ > ½` ⟹ ratio `< 1` (`liRatio_right_of_line`). The dVP band
+  (`DVPBand δ`) does NOT collapse to the line — `dvp_band_admits_off_line` exhibits a band-resident
+  off-line zero (ratio `> 1` AND band membership coexisting), so `DVPBand δ` for `δ > 0` is strictly
+  weaker than `AllZerosOnLine`; that residual gap (band ⟹ line) is RH itself. The additive
+  rearrangements run through the genuine abelian-group laws (`Req_of_seq_Qeq` can't see through
+  `Rmul`'s nor reshape `Radd`'s Bishop reindexing). WHERE the zeros sit, and that the SUM `λₙ`
+  inherits a single term's growth (Voros's saddle-point), stay [CLASSICAL] interface; the crux fields
+  stay `none`.
 - **The UOR Real additive-group normalizer `RAddNF`** (`F1Square/Analysis/RAddNF.lean`) — the κ-form
   solution to the central mechanization blocker. `ring_uor` is Int/ℚ-only and the pointwise Real
   route clears denominators multiplicatively (any atom occurring 3+ times explodes), so additive

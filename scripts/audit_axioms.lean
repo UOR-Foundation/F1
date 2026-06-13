@@ -2102,3 +2102,13 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Csum_den_pos
 #print axioms Analysis.WUsum_den_pos
 #print axioms Analysis.WLsum_den_pos
+
+-- v0.20.0 stage F: Lever 1 — the Li/zero growth geometry (Analysis/ZeroGeometry.lean).
+#print axioms Analysis.liRatio_diff_eq
+#print axioms Analysis.liRatio_on_line
+#print axioms Analysis.liRatio_left_of_line
+#print axioms Analysis.liRatio_right_of_line
+#print axioms Analysis.Req_of_Rsub_zero
+#print axioms Analysis.half_add_half
+#print axioms Analysis.allOnLine_ratios_one
+#print axioms Analysis.dvp_band_admits_off_line

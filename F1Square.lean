@@ -113,6 +113,7 @@ import F1Square.Analysis.RSum
 import F1Square.Analysis.Weil
 import F1Square.Analysis.Voros
 import F1Square.Analysis.GammaTwo
+import F1Square.Analysis.ZeroGeometry
 
 open UOR.Primitives
 
@@ -1185,5 +1186,25 @@ example :
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨Analysis.g2SeqDyadic_RReg, Analysis.g2_pair_le, Analysis.g2_pair_ge, rfl, rfl⟩
+
+/-- Elaboration-checked witness binding **Lever 1 — the Li/zero geometry** (`ZeroGeometry.lean`): the
+    constructive bridge from a zero's POSITION to the GROWTH of its Li contribution. The growth ratio
+    identity `|ρ−1|² − |ρ|² = 1 − 2·Re ρ` (the `Im` terms cancel) fixes the regime by the side of the
+    critical line: on the line (`Re = ½`) the ratio is exactly `1` (bounded — Voros's tempered/RH
+    seed); left of it (`Re < ½`) the ratio EXCEEDS `1` (an exponentially growing Li term — the ¬RH
+    seed). The de la Vallée-Poussin band does NOT force the line (`dvp_band_admits_off_line`): a band
+    zone admits off-line zeros, the residual gap being RH itself. The growth dichotomy feeds Voros;
+    WHERE the zeros sit stays the open analytic content, so the crux fields stay `none`. -/
+example :
+    (∀ z : Analysis.Complex,
+        Analysis.Req (Analysis.Rsub (Analysis.csubOneNormSq z) (Analysis.cnormSq z))
+          (Analysis.Rsub Analysis.one (Analysis.Radd z.re z.re)))
+    ∧ (∀ z : Analysis.Complex, Analysis.Req z.re Analysis.half →
+        Analysis.Req (Analysis.csubOneNormSq z) (Analysis.cnormSq z))
+    ∧ (∀ z : Analysis.Complex, Analysis.Pos (Analysis.Rsub Analysis.half z.re) →
+        Analysis.Pos (Analysis.Rsub (Analysis.csubOneNormSq z) (Analysis.cnormSq z)))
+    ∧ f1SquareStatus.hodgeIndexHolds = none
+    ∧ f1SquareStatus.liPositivityHolds = none :=
+  ⟨Analysis.liRatio_diff_eq, Analysis.liRatio_on_line, Analysis.liRatio_left_of_line, rfl, rfl⟩
 
 end UOR.Bridge.F1Square
