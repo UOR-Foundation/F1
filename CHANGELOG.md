@@ -139,6 +139,19 @@ crux did not close — now a *sourced* result, not a presumption — so `hodgeIn
     to `poles − archimedean` — the exact statement the certificate program starts from, as a
     theorem of the assembly. Bombieri's Lincei truncations were verified to be ZERO-INDEXED (not
     zero-free certification targets) — that route is honestly closed.
+  - **THE WINDOW CERTIFICATE, computed** (`Analysis/PsiQuarter.lean`, `Analysis/BurnolAlpha.lean`):
+    Burnol's nonnegative spectral multiplier `α(τ) = 8√2·cos(τ log2)/(1+4τ²) + h₊(τ)`,
+    `h₊(τ) = −logπ + Re ψ(1/4 + iτ/2)`, evaluated at the center of the prime-free window. **ψ(1/4)**
+    is built as the FIRST exact non-trivial digamma value — at `z = 1/4` the digamma series has
+    exact-rational terms `1/(n+1) − 1/(n+1/4) = −3/[(n+1)(4n+1)]`, a sign-definite series with a
+    telescoping tail, giving a genuine direct-sequence constructive real with `ψ(1/4) ≥ −4.32`
+    (true `≈ −4.2270`, via `Rgamma_h_upper` and a uniform partial-sum bound). **`α(0) > 0`**
+    (`burnolAlphaZero_pos`, true `≈ 5.94`) is then an axiom-clean theorem — `8√2 − logπ + ψ(1/4)`,
+    with `√2 = exp(½ log2) ≥ 1` (`RrpowPos`, no sqrt primitive) — certified from the wide margin
+    `8·1 − 1.15 − 4.32 = 2.53 > 0`. This is EVIDENCE for the windowed Weil positivity (the
+    multiplier at one point), exactly as `weilPrime_demo` / the certified `λ`-slices are evidence —
+    NOT the universal `α(τ) ≥ 0 ∀τ` (needs the uniform-in-τ complex-digamma bound), still less RH
+    (the window excludes every prime). The universal window theorem stays the pinned next target.
 
 ### Honest scope (the bright line, unchanged)
 - The dominance face RELOCATES the difficulty (Conrey–Li); it does not remove it. The open content

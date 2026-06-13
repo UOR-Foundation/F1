@@ -225,7 +225,12 @@ directions elementary per the verified Weil/Burnol chain); the first computed pa
 (`weilPrime_demo`: the tent at `2` sees `log 2`); the CC unconditional window and Burnol's explicit
 multiplier certificate recorded as the pinned unconditional territory — with **the window theorem
 proven on the built object** (`weilPrime_window`: inside the prime-free window the finite-place
-side vanishes identically; `weilValue_window`: in-window `W = poles − archimedean`). The crux: ONE proposition,
+side vanishes identically; `weilValue_window`: in-window `W = poles − archimedean`). **The window
+certificate is computed where computable**: `ψ(1/4)` built as the first exact non-trivial digamma
+value (`Analysis/PsiQuarter.lean`, `ψ(1/4) ≥ −4.32`) and **`α(0) > 0`** — Burnol's nonnegative
+multiplier at the window center, an axiom-clean theorem (`Analysis/BurnolAlpha.lean`,
+`8√2 − logπ + ψ(1/4) ≈ 5.94`) — EVIDENCE for the windowed positivity, not the universal
+`α(τ) ≥ 0 ∀τ` (the pinned next target), still less RH. The crux: ONE proposition,
 FOUR provably equivalent faces; the fields stay `none` until a genuine proof of the universal
 lands — that is the release's faithful completion.
 
