@@ -1165,4 +1165,25 @@ example :
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨Analysis.tempered_not_exp, Analysis.exp_not_tempered, Analysis.cube_le_pow2, rfl, rfl⟩
 
+/-- Elaboration-checked witness binding the **v0.20.0 γ₂ frontier brick** — the second Stieltjes
+    constant `γ₂ ≈ −0.00969` as a *genuine constructive real* (`Rgamma2 := Rlim g2SeqDyadic`). The
+    full regularity stack is built choice-free: the defining sequence `g₂(N) = Σ(ln k)²/k − ⅓(ln N)³`
+    telescopes to `Σ eₖ`, the two-sided per-step envelopes (`eₖ ≤ ln(p+1)/p²`,
+    `eₖ ≥ −ln(p+1)²/(p(p+1))`) are summed over dyadic blocks with the QUADRATIC discrete
+    antiderivative `T_L(m)=(2m²+12m+22)/2^m` (the new ingredient over `γ₁`), reindexed by `M(j)=2j+8`
+    with domination `(j+1)(2M²+12M+22) ≤ 2^M`, yielding the pairwise-Cauchy `RReg` certificate.
+    `γ₂` is the H¹-object ingredient feeding `λ₃`; its existence is unconditional and the crux fields
+    stay `none`. -/
+example :
+    Analysis.RReg Analysis.g2SeqDyadic
+    ∧ (∀ {j k : Nat}, j ≤ k →
+        Analysis.Rle (Analysis.Rsub (Analysis.g2SeqDyadic k) (Analysis.g2SeqDyadic j))
+          (Analysis.ofQ (⟨1, j + 1⟩ : Analysis.Q) (Nat.succ_pos j)))
+    ∧ (∀ {j k : Nat}, j ≤ k →
+        Analysis.Rle (Analysis.Rneg (Analysis.ofQ (⟨1, j + 1⟩ : Analysis.Q) (Nat.succ_pos j)))
+          (Analysis.Rsub (Analysis.g2SeqDyadic k) (Analysis.g2SeqDyadic j)))
+    ∧ f1SquareStatus.hodgeIndexHolds = none
+    ∧ f1SquareStatus.liPositivityHolds = none :=
+  ⟨Analysis.g2SeqDyadic_RReg, Analysis.g2_pair_le, Analysis.g2_pair_ge, rfl, rfl⟩
+
 end UOR.Bridge.F1Square

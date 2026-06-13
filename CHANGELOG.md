@@ -75,6 +75,30 @@ choice-free (`{propext, Quot.sound}`), audited; the build is warning-free; the g
   which pin the genuine unconditional levers (Coffey's `λₙ ≥ trend − |S2|`, math-ph/0505052;
   Yoshida–Bombieri small-support Weil positivity) — all bottoming out at the same `|S2|`/RH-hard
   step, so no unconditional closure exists.
+- **The second Stieltjes constant `γ₂ ≈ −0.00969` as a genuine constructive real**
+  (`F1Square/Analysis/GammaTwo.lean`) — `Rgamma2 := Rlim g2SeqDyadic`, the `H¹`-object ingredient
+  feeding `λ₃`. The defining sequence `g₂(N) = Σ_{k≤N}(ln k)²/k − ⅓(ln N)³` telescopes to `Σ eₖ`,
+  `eₖ = (ln k)²/k − ⅓((ln k)³−(ln(k−1))³)`; the cubic-difference algebra (`cube_diff_identity`,
+  `tri_sum_3a2` — discharged by the new UOR **`RAddNF`** signed-atom normalizer, the κ-form solution
+  to the absent Real ring/abel tactic) yields the two-sided per-step envelopes
+  `−ln(p+1)²/(p(p+1)) ≤ eₖ ≤ ln(p+1)/p²`. These are summed over dyadic blocks (log/log² caps
+  `logN(j+2) ≤ a+2`) and telescoped with the discrete antiderivatives `T_U(m)=(4m+12)/2^m` and the
+  QUADRATIC `T_L(m)=(2m²+12m+22)/2^m` — the new ingredient over `γ₁`, whose outer sum was linear.
+  Reindex `M(j)=2j+8` with domination `(j+1)(2M²+12M+22) ≤ 2^M` (via `8j²+88j+246 ≤ 2^{j+8}`) gives
+  pairwise Cauchy `±1/(j+1)` → `RReg_of_real_bound` → `Rlim`. Choice-free (`{propext, Quot.sound}`),
+  audited. Mirrors the `GammaOne`/`γ₁` regularity endgame column-for-column. The tight numeric
+  bracket (`γ₂ ≥ −0.02`) is the open computational frontier: the dyadic tail is loose (`T_L(8) ≈
+  0.96`) and a tight bracket needs an anchor `N ∼ 10⁴` (`ln²N/N ≲ 0.01`), beyond kernel `decide`'s
+  reach with the current artanh log-evaluator — `γ₂`'s tail is `ln²(N)/N`, intrinsically heavier
+  than `γ₁`'s clean `1/(2N)`.
+- **The UOR Real additive-group normalizer `RAddNF`** (`F1Square/Analysis/RAddNF.lean`) — the κ-form
+  solution to the central mechanization blocker. `ring_uor` is Int/ℚ-only and the pointwise Real
+  route clears denominators multiplicatively (any atom occurring 3+ times explodes), so additive
+  Real identities had no tactic. `RsumL` canonicalizes a `Radd`/`Rneg`/`Rsub` tree to a list of
+  signed-atom summands; equality is decided by the multiset (`RsumL_perm` permutation-invariance +
+  `RsumL_cancel_anywhere` choice-free positional cancellation — no `List.Perm` `decide`, which pulls
+  `Classical.choice`). The reusable abelian-group analogue of `ring_uor`; it drives the `γ₂` cubic
+  telescoping and every `λₙ` assembly.
 - **Honesty-gate rigor fix** (`scripts/honesty_audit.sh`) — load-bearing. Checks 3 (no
   `sorry`/`native_decide`) and 4 (choice-free) used `… | grep -q …` inside an `if`-condition
   under `set -o pipefail`: a matching `grep -q` exits early, SIGPIPEs the upstream `grep`, and

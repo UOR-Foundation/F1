@@ -2073,3 +2073,32 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Radd_eq_RsumL3
 #print axioms Analysis.RsumL_perm_map
 #print axioms Analysis.RsumL_map_Rneg
+
+-- v0.20.0 stage F: γ₂ dyadic-tail regularity → Rgamma2 (Analysis/GammaTwo.lean).
+#print axioms Analysis.logSq_le_block
+#print axioms Analysis.Qblock_upper
+#print axioms Analysis.g2Seq_step_le_block
+#print axioms Analysis.g2Seq_step_ge_block
+#print axioms Analysis.Csum_step_eq
+#print axioms Analysis.Csum_tail_le
+#print axioms Analysis.g2Seq_diff_le_block
+#print axioms Analysis.g2Seq_diff_ge_block
+#print axioms Analysis.g2Seq_block_le
+#print axioms Analysis.g2Seq_block_ge
+#print axioms Analysis.WUsum_tail_le
+#print axioms Analysis.WLsum_tail_le
+#print axioms Analysis.g2Seq_diff_le_outer
+#print axioms Analysis.g2Seq_diff_ge_outer
+#print axioms Analysis.g2_lin2
+#print axioms Analysis.g2_quad_lin
+#print axioms Analysis.g2_domination
+#print axioms Analysis.g2_domination_U
+#print axioms Analysis.g2_T_le
+#print axioms Analysis.g2_TU_le
+#print axioms Analysis.g2_pair_le
+#print axioms Analysis.g2_pair_ge
+#print axioms Analysis.g2SeqDyadic_RReg
+#print axioms Analysis.Rgamma2
+#print axioms Analysis.Csum_den_pos
+#print axioms Analysis.WUsum_den_pos
+#print axioms Analysis.WLsum_den_pos
