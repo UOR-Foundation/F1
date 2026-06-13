@@ -249,4 +249,65 @@ theorem e2_core (a b : Real) :
   refine Req_trans (Rmul_congr (Req_refl _) (Rmul_third_three (Rmul a a))) ?_
   exact Rmul_comm (Rsub a b) (Rmul a a)
 
+private theorem Rneg_Rneg_g2 (x : Real) : Req (Rneg (Rneg x)) x :=
+  Req_of_seq_Qeq (fun _ => by simp only [Rneg, Qeq, neg]; push_cast; ring_uor)
+
+/-- **The e_k upper-bound identity**: `⅓δ²(2a+b) − e_k ≈ a²(δ−u)` (`δ = a−b`), the difference
+    whose non-negativity (since `δ ≥ u = 1/(p+1)` and `a² ≥ 0`) gives `e_k ≤ ⅓δ²(2a+b)`. -/
+theorem e2_ub_identity (a b u : Real) :
+    Req (Rsub (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide))
+              (Rmul (Rmul (Rsub a b) (Rsub a b)) (Radd (Radd a a) b)))
+          (Rsub (Rmul (Rmul a a) u)
+            (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide))
+              (Rmul (Rsub a b) (Radd (Radd (Rmul a a) (Rmul a b)) (Rmul b b))))))
+        (Rmul (Rmul a a) (Rsub (Rsub a b) u)) := by
+  -- quadUB − (Au − ⅓δW) ≈ (⅓δW + quadUB) − Au ≈ a²δ − Au ≈ a²(δ−u)
+  refine Req_trans (Radd_congr (Req_refl _)
+    (Req_trans (Rneg_Radd (Rmul (Rmul a a) u)
+        (Rneg (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide))
+          (Rmul (Rsub a b) (Radd (Radd (Rmul a a) (Rmul a b)) (Rmul b b))))))
+      (Radd_congr (Req_refl _) (Rneg_Rneg_g2 _)))) ?_
+  refine Req_trans (Radd_congr (Req_refl _) (Radd_comm _ _)) ?_
+  refine Req_trans (Req_symm (Radd_assoc _ _ _)) ?_
+  refine Req_trans (Radd_congr (Radd_comm _ _) (Req_refl _)) ?_
+  refine Req_trans (Radd_congr
+    (Req_trans (Req_symm (Rmul_distrib (ofQ (⟨1, 3⟩ : Q) (by decide))
+        (Rmul (Rsub a b) (Radd (Radd (Rmul a a) (Rmul a b)) (Rmul b b)))
+        (Rmul (Rmul (Rsub a b) (Rsub a b)) (Radd (Radd a a) b))))
+      (Req_symm (e2_core a b))) (Req_refl _)) ?_
+  exact Req_symm (Rmul_sub_distrib (Rmul a a) (Rsub a b) u)
+
+/-- **The e_k UPPER bound** `e_k ≤ ⅓·(a−b)²·(2a+b)` (`a = ln(p+1)`, `b = ln p`): from
+    `e2_ub_identity` and `δ ≥ 1/(p+1)` (`deltaLog_lower`), `a² ≥ 0`. -/
+theorem e2Step_le_quad (p : Nat) (hp : 1 ≤ p) :
+    Rle (e2Step p hp)
+        (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide))
+          (Rmul (Rmul (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+                      (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))
+                (Radd (Radd (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+                  (logN p hp)))) := by
+  have he2 : Req (e2Step p hp)
+      (Rsub (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+              (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))
+        (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide))
+          (Rmul (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+            (Radd (Radd (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+                    (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))
+              (Rmul (logN p hp) (logN p hp)))))) := by
+    show Req (Rsub (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+              (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))
+        (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide))
+          (Rsub (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+                  (logN (p + 1) (Nat.succ_pos p)))
+                (Rmul (Rmul (logN p hp) (logN p hp)) (logN p hp))))) _
+    exact Rsub_congr (Req_refl _) (Rmul_congr (Req_refl _)
+      (Req_symm (cube_diff_identity (logN (p + 1) (Nat.succ_pos p)) (logN p hp))))
+  have hub := e2_ub_identity (logN (p + 1) (Nat.succ_pos p)) (logN p hp)
+    (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p))
+  have hnn : Rnonneg (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+      (Rsub (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+        (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))) :=
+    Rnonneg_Rmul (Rnonneg_Rmul_self _) (Rnonneg_Rsub_of_Rle (deltaLog_lower p hp))
+  exact Rle_of_Rnonneg_Rsub (Rnonneg_congr (Req_symm (Req_trans (Rsub_congr (Req_refl _) he2) hub)) hnn)
+
 end UOR.Bridge.F1Square.Analysis
