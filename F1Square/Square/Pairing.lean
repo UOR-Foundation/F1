@@ -118,6 +118,44 @@ theorem weil_template_crux : SpectralCrux (weilSpectralSquare (fun _ => one)) :=
   (weil_strict_iff_crux (fun _ => one)).mp (fun _ _ => Pos_one)
 
 -- ===========================================================================
+-- The prime-free window, on the built object.
+-- ===========================================================================
+
+/-- **THE WINDOW THEOREM, on the built object**: a test datum with support cutoff
+    `X = 1` (support inside the prime-free window `(1/2, 2)` at the consumed points —
+    exactly the Connes–Consani window for autocorrelations, `g` supported in
+    `[2^{−1/2}, 2^{1/2}]`) has IDENTICALLY VANISHING finite-place side, at every
+    truncation depth: no prime power contributes, by theorem. This is the in-substrate
+    footprint of the unconditional territory — inside the window, Weil positivity is
+    purely archimedean (CC Selecta 27 (2021) Thm 1 proves it there unconditionally via
+    the Sonine-space projection; Burnol's explicit multiplier is the constructive
+    certificate target, module docstring). -/
+theorem weilPrime_window (T : WeilTest) (hX : T.X = 1) :
+    ∀ N : Nat, Req (RsumN (weilPrimeTerm T) N) zero := by
+  intro N
+  induction N with
+  | zero => exact Req_refl zero
+  | succ k ih =>
+    have hterm : Req (weilPrimeTerm T k) zero := by
+      by_cases hk : k = 0
+      · subst hk
+        refine Req_trans (Rmul_congr vonMangoldt_one (Req_refl _)) ?_
+        exact Req_trans (Rmul_comm zero _) (Rmul_zero _)
+      · exact weilPrimeTerm_past_support T k (by omega)
+    show Req (Radd (RsumN (weilPrimeTerm T) k) (weilPrimeTerm T k)) zero
+    exact Req_trans (Radd_congr ih hterm) (Radd_zero zero)
+
+/-- **In the window, the Weil functional is purely archimedean**: the assembled
+    `W = poles − (primes + archimedean)` reduces to `poles − archimedean` — the exact
+    statement the unconditional certificate program starts from, now a theorem of the
+    assembly. -/
+theorem weilValue_window (S : WeilSlot) (hX : S.test.X = 1) :
+    Req (weilValue S) (Rsub S.poles (Radd (weilArchConst S.test) S.archTail)) := by
+  refine Rsub_congr (Req_refl S.poles) ?_
+  refine Req_trans (Radd_congr (weilPrime_window S.test hX S.test.X) (Req_refl _)) ?_
+  exact Req_trans (Radd_comm zero _) (Radd_zero _)
+
+-- ===========================================================================
 -- The first computed finite-place pairing value.
 -- ===========================================================================
 

@@ -171,6 +171,8 @@ open UOR.Bridge.F1Square
 #print axioms Square.weil_template_crux
 #print axioms Square.demoWeilTest
 #print axioms Square.weilPrime_demo
+#print axioms Square.weilPrime_window
+#print axioms Square.weilValue_window
 #print axioms Square.weilTraceTwo_not_crux
 #print axioms Square.twoSlice_not_dominated
 #print axioms Square.dominance_satisfiable
