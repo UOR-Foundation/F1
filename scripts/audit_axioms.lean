@@ -2185,3 +2185,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sStep_decomp
 #print axioms Analysis.C2_le
 #print axioms Analysis.C2_ge
+#print axioms Analysis.dsq_le
+#print axioms Analysis.dcube_le

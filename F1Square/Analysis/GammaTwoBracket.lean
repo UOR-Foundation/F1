@@ -681,4 +681,45 @@ theorem C2_ge (p T : Nat) (hp : 1 ≤ p) :
           (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))) :=
   Rsub_le_sub (Rle_of_Req (Req_refl _)) (deltaLog_upper_tight p T hp)
 
+/-- **`d² ≤ dPlusQ²`** — the squared consecutive-log difference bounded above by a rational
+    (`0 ≤ d ≤ dPlusQ`, squared monotonicity). -/
+theorem dsq_le (p T : Nat) (hp : 1 ≤ p) :
+    Rle (Rmul (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+              (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))
+        (ofQ (mul (dPlusQ T p) (dPlusQ T p))
+          (Qmul_den_pos (dPlusQ_den_pos T p hp) (dPlusQ_den_pos T p hp))) := by
+  have hd_nn : Rnonneg (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)) :=
+    Rnonneg_Rsub_of_Rle (logN_mono hp (Nat.le_succ p))
+  have hup := deltaLog_upper_tight p T hp
+  have hdP_nn : Rnonneg (ofQ (dPlusQ T p) (dPlusQ_den_pos T p hp)) :=
+    Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg hd_nn) hup)
+  refine Rle_trans (Rmul_le_Rmul_right hd_nn hup) ?_
+  refine Rle_trans (Rmul_le_Rmul_left hdP_nn hup) ?_
+  exact Rle_of_Req (Rmul_ofQ_ofQ (dPlusQ_den_pos T p hp) (dPlusQ_den_pos T p hp))
+
+/-- **`d³ ≤ dPlusQ³`** (`(d·d)·d`) — the cubed consecutive-log difference bounded above by a
+    rational (the `⅓d³` summand of `R0`). -/
+theorem dcube_le (p T : Nat) (hp : 1 ≤ p) :
+    Rle (Rmul (Rmul (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+                    (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))
+              (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))
+        (ofQ (mul (mul (dPlusQ T p) (dPlusQ T p)) (dPlusQ T p))
+          (Qmul_den_pos (Qmul_den_pos (dPlusQ_den_pos T p hp) (dPlusQ_den_pos T p hp))
+            (dPlusQ_den_pos T p hp))) := by
+  have hd_nn : Rnonneg (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)) :=
+    Rnonneg_Rsub_of_Rle (logN_mono hp (Nat.le_succ p))
+  have hup := deltaLog_upper_tight p T hp
+  have hdP_nn : Rnonneg (ofQ (dPlusQ T p) (dPlusQ_den_pos T p hp)) :=
+    Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg hd_nn) hup)
+  have hdPsq_nn : Rnonneg (ofQ (mul (dPlusQ T p) (dPlusQ T p))
+      (Qmul_den_pos (dPlusQ_den_pos T p hp) (dPlusQ_den_pos T p hp))) :=
+    Rnonneg_congr (Rmul_ofQ_ofQ (dPlusQ_den_pos T p hp) (dPlusQ_den_pos T p hp))
+      (Rnonneg_Rmul hdP_nn hdP_nn)
+  refine Rle_trans (Rmul_le_Rmul_right hd_nn (dsq_le p T hp)) ?_
+  refine Rle_trans (Rmul_le_Rmul_left hdPsq_nn hup) ?_
+  exact Rle_of_Req (Req_trans (Rmul_congr
+      (Rmul_ofQ_ofQ (dPlusQ_den_pos T p hp) (dPlusQ_den_pos T p hp)) (Req_refl _))
+    (Rmul_ofQ_ofQ (Qmul_den_pos (dPlusQ_den_pos T p hp) (dPlusQ_den_pos T p hp))
+      (dPlusQ_den_pos T p hp)))
+
 end UOR.Bridge.F1Square.Analysis
