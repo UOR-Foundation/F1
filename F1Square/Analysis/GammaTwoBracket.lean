@@ -264,4 +264,56 @@ theorem two_plus_one (x : Real) :
   exact Req_trans (Req_symm (Rmul_distrib_right (ofQ (⟨2, 1⟩ : Q) (by decide)) one x))
     (Rmul_congr h3 (Req_refl x))
 
+/-- **Inner-sum merge** `(b+d)² + (b+d)·b + b² ≈ 3·b² + 3·(b·d) + d²`.  Atoms `B=b²`, `T=2·(b·d)`,
+    `Dd=d²`, `U=b·d`: flatten the LHS to `RsumL [B,T,Dd,B,U,B]`, permute to `[B,B,B,T,U,Dd]`
+    (choice-free, explicit), and unmerge the RHS coefficients (`3B = B+B+B`, `3·(b·d) = T+U`). -/
+theorem inner_merge (b d : Real) :
+    Req (Radd (Radd (Rmul (Radd b d) (Radd b d)) (Rmul (Radd b d) b)) (Rmul b b))
+        (Radd (Radd (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))
+                    (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b d))) (Rmul d d)) := by
+  have hbb : Req (Rmul (Radd b d) b) (Radd (Rmul b b) (Rmul b d)) :=
+    Req_trans (Rmul_distrib_right b d b) (Radd_congr (Req_refl _) (Rmul_comm d b))
+  -- LHS ≈ ((B+T+Dd)+(B+U))+B
+  refine Req_trans (Radd_congr (Radd_congr (sq_binom2 b d) hbb) (Req_refl (Rmul b b))) ?_
+  -- flatten LHS to RsumL [B,T,Dd,B,U,B]
+  refine Req_trans (Radd_congr (Radd_congr
+      (Radd_eq_RsumL3 (Rmul b b) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)) (Rmul d d))
+      (Radd_eq_RsumL (Rmul b b) (Rmul b d))) (RsumL_singleton (Rmul b b))) ?_
+  refine Req_trans (Radd_congr (Req_symm (RsumL_append
+      [Rmul b b, Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d), Rmul d d] [Rmul b b, Rmul b d]))
+      (Req_refl _)) ?_
+  refine Req_trans (Req_symm (RsumL_append
+      [Rmul b b, Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d), Rmul d d, Rmul b b, Rmul b d]
+      [Rmul b b])) ?_
+  -- permute [B,T,Dd,B,U,B] ~ [B,B,B,T,U,Dd]  (B=b², T=2bd, Dd=d², U=bd); explicit, choice-free
+  have s1 := List.Perm.cons (Rmul b b) (List.Perm.cons (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d))
+    (List.Perm.swap (Rmul b b) (Rmul d d) [Rmul b d, Rmul b b]))
+  have s2 := List.Perm.cons (Rmul b b) (List.Perm.swap (Rmul b b)
+    (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)) [Rmul d d, Rmul b d, Rmul b b])
+  have q1 := List.Perm.cons (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d))
+    (List.Perm.cons (Rmul d d) (List.Perm.swap (Rmul b b) (Rmul b d) []))
+  have q2 := List.Perm.cons (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d))
+    (List.Perm.swap (Rmul b b) (Rmul d d) [Rmul b d])
+  have q3 := List.Perm.swap (Rmul b b) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d))
+    [Rmul d d, Rmul b d]
+  have s3 := List.Perm.cons (Rmul b b) (List.Perm.cons (Rmul b b) ((q1.trans q2).trans q3))
+  have s4 := List.Perm.cons (Rmul b b) (List.Perm.cons (Rmul b b) (List.Perm.cons (Rmul b b)
+    (List.Perm.cons (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d))
+      (List.Perm.swap (Rmul b d) (Rmul d d) []))))
+  refine Req_trans (RsumL_perm ((s1.trans s2).trans (s3.trans s4))) ?_
+  -- RsumL [B,B,B,T,U,Dd] ≈ RHS  (unmerge 3B, 3bd)
+  refine Req_trans (RsumL_append [Rmul b b, Rmul b b, Rmul b b]
+      [Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d), Rmul b d, Rmul d d]) ?_
+  refine Req_trans (Radd_congr (Req_symm (Radd_eq_RsumL3 (Rmul b b) (Rmul b b) (Rmul b b)))
+      (Req_symm (Radd_eq_RsumL3 (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)) (Rmul b d)
+        (Rmul d d)))) ?_
+  -- ((B+B+B) ≈ 3B) and ((2bd + bd + d²) → need (T+U)+d²; regroup then two_plus_one)
+  refine Req_trans (Radd_congr (three_mul_eq (Rmul b b)) (Req_refl _)) ?_
+  -- now: Radd (3B) ((T + bd) + d²)  ;  (T+bd) ≈ 3bd, then attach d²
+  refine Req_trans (Radd_congr (Req_refl _)
+      (Radd_congr (two_plus_one (Rmul b d)) (Req_refl (Rmul d d)))) ?_
+  -- Radd (3B) (Radd (3bd) d²) ≈ Radd (Radd (3B) (3bd)) d²
+  exact Req_symm (Radd_assoc (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b b))
+    (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul b d)) (Rmul d d))
+
 end UOR.Bridge.F1Square.Analysis

@@ -2166,3 +2166,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sq_binom2
 #print axioms Analysis.three_mul_eq
 #print axioms Analysis.two_plus_one
+#print axioms Analysis.inner_merge
