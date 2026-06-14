@@ -925,4 +925,50 @@ theorem sStep_lower (j Tart Tlog D : Nat) (hD : 0 < D)
         (logN_le_logBound Tlog D hD j))
   · exact R0_lower_frame (j + 1) Tart (Nat.succ_pos j) hTart
 
+-- ===========================================================================
+-- (C3g) The CLEAN per-step lower bound `s_{j+1} ≥ −1/(2p(p+1)) − 1/(3p³)` (elementary, telescoping
+-- tail — no dyadic machinery).  Uses the crude `ln p ≤ p` and the trapezoid handle `d − u1 ≤ M − u1
+-- = 1/(2p(p+1))`, which keeps the R1 cancellation while staying summable.
+-- ===========================================================================
+
+/-- **`log p ≤ p`** (crude) — `exp(log p) = p ≤ 1 + p ≤ exp p`. -/
+theorem logN_le_self (p : Nat) (hp : 1 ≤ p) :
+    Rle (logN p hp) (ofQ (⟨(p : Int), 1⟩ : Q) Nat.one_pos) := by
+  have hpnn : Rnonneg (ofQ (⟨(p : Int), 1⟩ : Q) Nat.one_pos) :=
+    Rnonneg_ofQ Nat.one_pos (by show (0 : Int) ≤ (p : Int); omega)
+  refine RexpReal_reflects_le hpnn (Rle_trans (Rle_of_Req (Rexp_logN p hp)) ?_)
+  refine Rle_trans ?_ (RexpReal_ge_one_add_nonneg hpnn)
+  refine Rle_of_Rnonneg_Rsub (Rnonneg_congr ?_ Rnonneg_one)
+  refine Req_symm (Req_trans (Radd_assoc one (ofQ (⟨(p : Int), 1⟩ : Q) Nat.one_pos)
+    (Rneg (ofQ (⟨(p : Int), 1⟩ : Q) Nat.one_pos))) ?_)
+  exact Req_trans (Radd_congr (Req_refl one)
+    (Radd_neg (ofQ (⟨(p : Int), 1⟩ : Q) Nat.one_pos))) (Radd_zero one)
+
+/-- **`d ≤ M = ½(1/p+1/(p+1))`** (trapezoid ≥ integral, restated as an order fact). -/
+theorem deltaLog_le_mid (p : Nat) (hp : 1 ≤ p) :
+    Rle (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+        (ofQ (mul (⟨1, 2⟩ : Q) (add (⟨1, p⟩ : Q) (⟨1, p + 1⟩ : Q)))
+          (Qmul_den_pos (by decide)
+            (add_den_pos (a := (⟨1, p⟩ : Q)) (b := (⟨1, p + 1⟩ : Q)) hp (Nat.succ_pos p)))) :=
+  Rle_trans (deltaLog_upper_tight p 0 hp)
+    (Rle_of_Req (ofQ_congr (dPlusQ_den_pos 0 p hp)
+      (Qmul_den_pos (by decide)
+        (add_den_pos (a := (⟨1, p⟩ : Q)) (b := (⟨1, p + 1⟩ : Q)) hp (Nat.succ_pos p)))
+      (dPlusQ_zero_eq_mid p hp)))
+
+/-- **`d − u1 ≤ 1/(2p(p+1))`** — the trapezoid handle (`d ≤ M`, `M − u1 = 1/(2p(p+1))`), keeping the
+    cancellation that makes `R1 = d·u1 − d²` summable. -/
+theorem dMinusU1_le (p : Nat) (hp : 1 ≤ p) :
+    Rle (Rsub (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+          (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))
+        (ofQ (⟨1, 2 * p * (p + 1)⟩ : Q)
+          (Nat.mul_pos (Nat.mul_pos (by decide) hp) (Nat.succ_pos p))) := by
+  refine Rle_trans (Rsub_le_sub (deltaLog_le_mid p hp) (Rle_of_Req (Req_refl _))) ?_
+  refine Rle_of_Req (Req_of_seq_Qeq (fun n => ?_))
+  show Qeq (add (mul (⟨1, 2⟩ : Q) (add (⟨1, p⟩ : Q) (⟨1, p + 1⟩ : Q))) (neg (⟨1, p + 1⟩ : Q)))
+    (⟨1, 2 * p * (p + 1)⟩ : Q)
+  simp only [Qeq, add, mul, neg]
+  push_cast
+  ring_uor
+
 end UOR.Bridge.F1Square.Analysis
