@@ -244,4 +244,24 @@ theorem sq_binom2 (b d : Real) :
   refine Req_trans (Req_symm (Radd_assoc (Rmul b b) (Radd (Rmul b d) (Rmul b d)) (Rmul d d))) ?_
   exact Radd_congr (Radd_congr (Req_refl _) (two_mul_eq (Rmul b d))) (Req_refl _)
 
+/-- `x + x + x ≈ 3·x`. -/
+theorem three_mul_eq (x : Real) :
+    Req (Radd (Radd x x) x) (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) x) := by
+  have h3 : Req (Radd (Radd one one) one) (ofQ (⟨3, 1⟩ : Q) (by decide)) := by
+    apply Req_of_seq_Qeq; intro n; simp only [Radd, one, ofQ, add, Qeq]; push_cast
+  have hx1 : Req x (Rmul one x) := Req_symm (Req_trans (Rmul_comm one x) (Rmul_one x))
+  refine Req_trans (Radd_congr (Radd_congr hx1 hx1) hx1) ?_
+  refine Req_trans (Radd_congr (Req_symm (Rmul_distrib_right one one x)) (Req_refl _)) ?_
+  exact Req_trans (Req_symm (Rmul_distrib_right (Radd one one) one x)) (Rmul_congr h3 (Req_refl x))
+
+/-- `2·x + x ≈ 3·x`. -/
+theorem two_plus_one (x : Real) :
+    Req (Radd (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) x) x) (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) x) := by
+  have h3 : Req (Radd (ofQ (⟨2, 1⟩ : Q) (by decide)) one) (ofQ (⟨3, 1⟩ : Q) (by decide)) := by
+    apply Req_of_seq_Qeq; intro n; simp only [Radd, one, ofQ, add, Qeq]; push_cast
+  have hx1 : Req x (Rmul one x) := Req_symm (Req_trans (Rmul_comm one x) (Rmul_one x))
+  refine Req_trans (Radd_congr (Req_refl _) hx1) ?_
+  exact Req_trans (Req_symm (Rmul_distrib_right (ofQ (⟨2, 1⟩ : Q) (by decide)) one x))
+    (Rmul_congr h3 (Req_refl x))
+
 end UOR.Bridge.F1Square.Analysis
