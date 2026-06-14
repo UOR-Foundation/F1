@@ -886,4 +886,43 @@ theorem R1_nonpos (p : Nat) (hp : 1 ≤ p) :
     (Rle_of_Req (Radd_neg (Rmul (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
       (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))))
 
+/-- **`s_{j+1} ≥ L_j`** — the trapezoidal residual is bounded below by a rational (`b²C2 ≥ 0`;
+    `b·R1 ≥ logBound·(dMinusQ·u1 − dPlusQ²)`, the negative term via `R1 ≤ 0`, `b ≤ logBound`;
+    `R0 ≥ ½dMinusQ²u1 − ⅓dPlusQ³`).  The summable tail-ready lower bound (`L_j ~ −C·ln p/p³`). -/
+theorem sStep_lower (j Tart Tlog D : Nat) (hD : 0 < D)
+    (hTart : Tart ≤ (2 * (j + 1) + 1) * (2 * (j + 1) + 1) + 4 * (2 * (j + 1) + 1)) :
+    Rle
+      (Radd
+        (Radd zero
+          (Rmul (ofQ (logBound Tlog D j) (logBound_den_pos Tlog D hD j))
+            (Rsub
+              (Rmul (ofQ (dMinusQ Tart (j + 1)) (dMinusQ_den_pos Tart (j + 1)))
+                (ofQ (⟨1, j + 1 + 1⟩ : Q) (Nat.succ_pos (j + 1))))
+              (ofQ (mul (dPlusQ Tart (j + 1)) (dPlusQ Tart (j + 1)))
+                (Qmul_den_pos (dPlusQ_den_pos Tart (j + 1) (Nat.succ_pos j))
+                  (dPlusQ_den_pos Tart (j + 1) (Nat.succ_pos j)))))))
+        (Rsub
+          (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide))
+            (Rmul
+              (ofQ (mul (dMinusQ Tart (j + 1)) (dMinusQ Tart (j + 1)))
+                (Qmul_den_pos (dMinusQ_den_pos Tart (j + 1)) (dMinusQ_den_pos Tart (j + 1))))
+              (ofQ (⟨1, j + 1 + 1⟩ : Q) (Nat.succ_pos (j + 1)))))
+          (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide))
+            (ofQ (mul (mul (dPlusQ Tart (j + 1)) (dPlusQ Tart (j + 1))) (dPlusQ Tart (j + 1)))
+              (Qmul_den_pos
+                (Qmul_den_pos (dPlusQ_den_pos Tart (j + 1) (Nat.succ_pos j))
+                  (dPlusQ_den_pos Tart (j + 1) (Nat.succ_pos j)))
+                (dPlusQ_den_pos Tart (j + 1) (Nat.succ_pos j)))))))
+      (sStep (j + 1) (Nat.succ_pos j)) := by
+  refine Rle_trans ?_ (Rle_of_Req (Req_symm (sStep_decomp (j + 1) (Nat.succ_pos j))))
+  refine Radd_le_add (Radd_le_add ?_ ?_) ?_
+  · exact Rle_zero_of_Rnonneg (Rnonneg_Rmul (Rnonneg_Rmul_self (logN (j + 1) (Nat.succ_pos j)))
+      (C2_nonneg (j + 1) (Nat.succ_pos j)))
+  · exact Rle_trans
+      (Rmul_le_Rmul_left (logBound_ofQ_nonneg Tlog D j hD)
+        (R1_lower_frame (j + 1) Tart (Nat.succ_pos j) hTart))
+      (Rmul_le_Rmul_right_nonpos (R1_nonpos (j + 1) (Nat.succ_pos j))
+        (logN_le_logBound Tlog D hD j))
+  · exact R0_lower_frame (j + 1) Tart (Nat.succ_pos j) hTart
+
 end UOR.Bridge.F1Square.Analysis
