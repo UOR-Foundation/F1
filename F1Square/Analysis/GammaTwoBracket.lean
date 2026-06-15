@@ -1219,4 +1219,52 @@ theorem sStep_lower_tele (j : Nat) (hj : 1 ≤ j) :
   refine Rle_trans ?_ (Rle_of_Req (Req_symm hcollapse))
   exact Rle_Rneg (Rle_ofQ_ofQ _ _ (hAB_qle j hj))
 
+/-- **Telescoping tail**: `hSeq(N+k) ≥ hSeq(N) − (1/(N+1) − 1/(N+k+1))` (`N ≥ 1`), by induction on `k`
+    (`hSeq_step_eq` + `sStep_lower_tele` + the telescoping identity `1/(N+1)−1/(P+1) + 1/((P+1)(P+2))
+    = 1/(N+1)−1/(P+2)`).  Hence `hSeq(M) ≥ hSeq(N) − 1/(N+1)` for all `M ≥ N`. -/
+theorem hSeq_tele (N : Nat) (hN : 1 ≤ N) : ∀ k,
+    Rle (Rsub (hSeq N) (Rsub (ofQ (⟨1, N + 1⟩ : Q) (Nat.succ_pos N))
+            (ofQ (⟨1, N + k + 1⟩ : Q) (Nat.succ_pos (N + k)))))
+        (hSeq (N + k)) := by
+  intro k
+  induction k with
+  | zero =>
+    refine Rle_of_Req (Req_trans (Rsub_congr (Req_refl _)
+      (Radd_neg (ofQ (⟨1, N + 1⟩ : Q) (Nat.succ_pos N)))) (Radd_zero (hSeq N)))
+  | succ k ih =>
+    have hPk : 1 ≤ N + k := Nat.le_trans hN (Nat.le_add_right N k)
+    -- per-step: hSeq(P+1) − hSeq(P) ≥ −1/((P+1)(P+2)),  P = N+k
+    have hstep : Rle (Rneg (ofQ (⟨1, (N + k + 1) * (N + k + 2)⟩ : Q)
+          (Nat.mul_pos (Nat.succ_pos (N + k)) (Nat.succ_pos (N + k + 1)))))
+        (Rsub (hSeq (N + k + 1)) (hSeq (N + k))) :=
+      Rle_trans (sStep_lower_tele (N + k) hPk) (Rle_of_Req (Req_symm (hSeq_step_eq (N + k))))
+    -- telescoping Q-identity: B_k + c = B_{k+1}
+    have hABc : Req (Radd (Rsub (ofQ (⟨1, N + 1⟩ : Q) (Nat.succ_pos N))
+            (ofQ (⟨1, N + k + 1⟩ : Q) (Nat.succ_pos (N + k))))
+          (ofQ (⟨1, (N + k + 1) * (N + k + 2)⟩ : Q)
+            (Nat.mul_pos (Nat.succ_pos (N + k)) (Nat.succ_pos (N + k + 1)))))
+        (Rsub (ofQ (⟨1, N + 1⟩ : Q) (Nat.succ_pos N))
+          (ofQ (⟨1, N + (k + 1) + 1⟩ : Q) (Nat.succ_pos (N + (k + 1))))) := by
+      apply Req_of_seq_Qeq; intro n
+      show Qeq (add (add (⟨1, N + 1⟩ : Q) (neg (⟨1, N + k + 1⟩ : Q)))
+          (⟨1, (N + k + 1) * (N + k + 2)⟩ : Q))
+        (add (⟨1, N + 1⟩ : Q) (neg (⟨1, N + (k + 1) + 1⟩ : Q)))
+      simp only [Qeq, add, neg, mul]
+      push_cast
+      ring_uor
+    -- combine: (hSeq N − B_k) + (−c) ≈ hSeq N − B_{k+1}
+    have hcombine : Req
+        (Radd (Rsub (hSeq N) (Rsub (ofQ (⟨1, N + 1⟩ : Q) (Nat.succ_pos N))
+              (ofQ (⟨1, N + k + 1⟩ : Q) (Nat.succ_pos (N + k)))))
+          (Rneg (ofQ (⟨1, (N + k + 1) * (N + k + 2)⟩ : Q)
+            (Nat.mul_pos (Nat.succ_pos (N + k)) (Nat.succ_pos (N + k + 1))))))
+        (Rsub (hSeq N) (Rsub (ofQ (⟨1, N + 1⟩ : Q) (Nat.succ_pos N))
+          (ofQ (⟨1, N + (k + 1) + 1⟩ : Q) (Nat.succ_pos (N + (k + 1)))))) := by
+      refine Req_trans (Radd_assoc (hSeq N) _ _) ?_
+      refine Radd_congr (Req_refl (hSeq N)) ?_
+      exact Req_trans (Req_symm (Rneg_Radd _ _)) (Rneg_congr hABc)
+    refine Rle_trans (Rle_of_Req (Req_symm hcombine)) ?_
+    refine Rle_trans (Radd_le_add ih hstep) ?_
+    exact Rle_of_Req (Req_symm (sub_add_cancel_real (hSeq (N + k + 1)) (hSeq (N + k))))
+
 end UOR.Bridge.F1Square.Analysis
