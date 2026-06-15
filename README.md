@@ -76,7 +76,9 @@ This project uses [Semantic Versioning](https://semver.org), starting at **v0.0.
 [`CHANGELOG.md`](CHANGELOG.md) for the release history and [`ROADMAP.md`](ROADMAP.md) for the remaining
 construction of the F1 square, scoped into releases v0.15.0–v0.20.0 (the crux stays `none` until RH is
 genuinely proven — v0.20.0 derives the Hodge-index dictionary `⟨Cₙ,Cₙ⟩ = −2λₙ` as a theorem and the
-gate locates the frontier: the forced signature is exactly `λₙ > 0 ∀n` = RH, still open).
+gate locates the frontier: the forced signature is exactly `λₙ > 0 ∀n` = RH, still open; v0.20.0 also
+constructs the second Stieltjes constant `γ₂` and closes its numeric bracket `γ₂ ≥ −0.02`
+(`Rgamma2_ge_neg002`, discrete Euler–Maclaurin) — a certified constant bound, not a positivity-of-all-`λₙ` claim).
 
 ## Publishing (Zenodo)
 

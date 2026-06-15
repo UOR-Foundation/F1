@@ -652,7 +652,7 @@ theorem sStep_decomp (p : Nat) (hp : 1 ≤ p) :
       (ofQ (⟨1, p⟩ : Q) hp) (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))
 
 -- ===========================================================================
--- (C3d) **`C2 ≥ 0` (trapezoid ≥ integral)** — the key structural coincidence: the trapezoidal
+-- (C3a) **`C2 ≥ 0` (trapezoid ≥ integral)** — the key structural coincidence: the trapezoidal
 -- midpoint `M = ½(1/p+1/(p+1))` IS the `T=0` artanh upper bound `dPlusQ 0 p` (exactly, as rationals:
 -- `2·(1/(2p+1) + 1/((2p+1)·4p(p+1))) = (2p+1)/(2p(p+1)) = M`).  So `δ = d ≤ dPlusQ 0 p ≈ M`, hence
 -- `C2 = M − d ≥ 0` — with NO series comparison or polynomial inequality.
@@ -693,7 +693,7 @@ theorem C2_nonneg (p : Nat) (hp : 1 ≤ p) :
   exact Rnonneg_Rsub_of_Rle (Rle_trans hdM (Rle_of_Req (Req_symm hMeq)))
 
 -- ===========================================================================
--- (C3g) The CLEAN per-step lower bound `s_{j+1} ≥ −1/(2p(p+1)) − 1/(3p³)` (elementary, telescoping
+-- (C3b) The CLEAN per-step lower bound `s_{j+1} ≥ −1/(2p(p+1)) − 1/(3p³)` (elementary, telescoping
 -- tail — no dyadic machinery).  Uses the crude `ln p ≤ p` and the trapezoid handle `d − u1 ≤ M − u1
 -- = 1/(2p(p+1))`, which keeps the R1 cancellation while staying summable.
 -- ===========================================================================
@@ -1044,7 +1044,7 @@ theorem hSeq_lower_const (N : Nat) (hN : 1 ≤ N) (k : Nat) :
   exact Rle_trans (Rsub_le_sub (Rle_of_Req (Req_refl (hSeq N))) hBkle) (hSeq_tele N hN k)
 
 -- ===========================================================================
--- (C5) The limit: `γ₂ ≥ hSeq(N) − 1/(N+1)`.  Each `g2SeqDyadic k = g2Seq(2^{2k+8}) ≥ hSeq(2^{2k+8})
+-- (C5a) The limit: `γ₂ ≥ hSeq(N) − 1/(N+1)`.  Each `g2SeqDyadic k = g2Seq(2^{2k+8}) ≥ hSeq(2^{2k+8})
 -- ≥ hSeq(N) − 1/(N+1)`, so the limit `γ₂` is too (one-sided Archimedean via the `RTendsTo` rate).
 -- ===========================================================================
 

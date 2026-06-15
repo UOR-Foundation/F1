@@ -293,8 +293,19 @@ pins the frontier** — the construction is complete down to one irreducible inp
 Stieltjes η-tail = the zeros), the gate flips the instant a faithful, axiom-clean proof of the
 criterion lands, and until then the crux fields stay `none`. The DICTIONARY column of
 `BridgeFF` (`primDG_sq`) is now a theorem; the SIGNATURE-FORCING column (`ff_hodge_iff_hasse`'s
-`4q−a²` completed square) has no unconditional ℤ-analog, because that analog is RH. The full
-construction map, as originally scoped, follows.
+`4q−a²` completed square) has no unconditional ℤ-analog, because that analog is RH.
+
+**Also shipped (the open numeric frontier from v0.18.0, now CLOSED): `γ₂ ≥ −0.02`**
+(`Analysis/GammaTwoBracket.lean`, `Rgamma2_ge_neg002`). The second Stieltjes constant `γ₂` is
+constructed (`Rgamma2`) and its numeric bracket certified via discrete Euler–Maclaurin (no
+constructive integration): the trapezoidal-corrected `hSeq → γ₂` has a summable residual whose
+per-step bound telescopes (`s_{j+1} ≥ −1/((j+1)(j+2))`), and a single big-integer `decide` at depth
+`T=3`, denominator `D=10⁸` certifies `hSeq(199) − 1/200 ≥ −1/50`. This is a certified CONSTANT bound
+(evidence), not positivity-of-all-`λₙ`. `Pos λ₃` remains open: `λ₃ ≈ 0.0173` is a small difference
+of `Θ(1)` terms, needing the full `λ₃`-formula numeric assembly (tight brackets on `γ, γ₁, γ₂, γ³,
+γγ₁` and the archimedean `λ₃^{∞}`), not the single `γ₂` input.
+
+The full construction map, as originally scoped, follows.
 
 The goal is the full UOR-based construction — brick by
 brick from universal properties — of the canonical content-addressed 𝔽₁-object whose *intrinsic*
