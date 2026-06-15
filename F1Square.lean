@@ -50,6 +50,7 @@ import F1Square.Square.FrobForm
 import F1Square.Square.AtlasRule
 import F1Square.Square.KillTest
 import F1Square.Square.GateA
+import F1Square.Square.E8Seed
 import F1Square.Tropical.Closure
 import F1Square.Tropical.Signature
 import F1Square.Tropical.Spectrum

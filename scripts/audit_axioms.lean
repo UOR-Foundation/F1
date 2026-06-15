@@ -2270,3 +2270,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.gateA_is_liNonneg
 #print axioms Square.gateA_satisfiable
 #print axioms Square.gateA_can_fail
+
+-- v0.21.0 stage G, brick G2a (the E₈ seed): the ofQ-embedding-Gram reduction, and the E₈ anchor
+-- (PSD free, equal to 4× the standard E₈ Cartan matrix, strictly positive diagonal).
+#print axioms Square.dotQ_den_pos
+#print axioms Square.gramOf_ofQ
+#print axioms Square.e8_weilPSD
+#print axioms Square.e8_dot_check
+#print axioms Square.e8_is_cartan
+#print axioms Square.e8_target_diag_pos
+#print axioms Square.e8_diag_pos
