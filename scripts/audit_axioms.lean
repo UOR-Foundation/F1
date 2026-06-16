@@ -2429,3 +2429,8 @@ open UOR.Bridge.F1Square
 #print axioms Square.atlasShiftDiag_mono
 #print axioms Square.atlasShiftDiag_step_ge_one
 #print axioms Square.atlasGenerator_survives_growth
+
+-- v0.21.0 stage G — coherence is the closure condition: the Atlas closes by coherence across all
+-- facets (zero-state laws), not a single facet.
+#print axioms Square.atlas_coherent
+#print axioms Square.coherent_closure_not_single_facet
