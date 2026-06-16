@@ -77,6 +77,7 @@ import F1Square.Square.AtlasCoherence
 import F1Square.Square.AtlasComposition
 import F1Square.Square.AtlasTopology
 import F1Square.Square.AtlasCalculus
+import F1Square.Square.AtlasComplete
 import F1Square.Tropical.Closure
 import F1Square.Tropical.Signature
 import F1Square.Tropical.Spectrum

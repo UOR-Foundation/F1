@@ -2456,3 +2456,6 @@ open UOR.Bridge.F1Square
 #print axioms Square.term_unit_right
 #print axioms Square.cata_append
 #print axioms Square.cata_unique
+
+-- v0.21.0 stage G — the complete UOR Atlas: the roll-up of every facet formalized, crux open.
+#print axioms Square.atlas_complete
