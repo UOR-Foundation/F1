@@ -2292,3 +2292,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.stageG_frontier_located
 #print axioms Square.strictRealizes_closes_crux
 #print axioms Square.strictRealizes_is_liCrux
+
+-- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
+-- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.
+#print axioms Square.blockEig_spectrum
+#print axioms Square.atlasTrace_eq
+#print axioms Square.atlasMult
+#print axioms Square.atlasDim_eq
+#print axioms Square.atlasM_neg_entry
+#print axioms Square.atlasM_indefinite
+#print axioms Square.atlasNorm_psd
