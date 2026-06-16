@@ -2302,3 +2302,6 @@ open UOR.Bridge.F1Square
 #print axioms Square.atlasM_neg_entry
 #print axioms Square.atlasM_indefinite
 #print axioms Square.atlasNorm_psd
+
+-- v0.21.0 stage G — gate sanity: the crux gate discriminates (accepts/rejects/closes-on-witness).
+#print axioms Square.crux_gate_faithful
