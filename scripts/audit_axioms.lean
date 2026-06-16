@@ -2441,3 +2441,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.four_square
 #print axioms Square.eight_square
 #print axioms Square.composition_tower
+
+-- v0.21.0 stage G — Atlas topology: the Betti signature (§6.5, reduced homology rank 1) and
+-- Bott/Clifford periodicity (§10); the tower forced four ways.
+#print axioms Square.betti_signature
+#print axioms Square.bott_periods
+#print axioms Square.tower_forced_four_ways
