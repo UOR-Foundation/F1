@@ -2365,3 +2365,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.eH_sq_pos
 #print axioms Square.genuine_crux_arch_coupling
 #print axioms Square.crux_is_arithmetic_hodge
+
+-- v0.21.0 stage G — the archimedean place: the arch(n) facet of the coupling, conquered at the
+-- head and in the prime-free window (α(0)>0), open outside (the tail bound).
+#print axioms Square.coupling_head_positive
+#print axioms Square.coupling_window_archimedean
+#print axioms Square.archimedean_center_positive
+#print axioms Square.archimedean_place_status
