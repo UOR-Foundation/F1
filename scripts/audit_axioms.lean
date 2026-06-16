@@ -2336,3 +2336,8 @@ open UOR.Bridge.F1Square
 #print axioms Square.sigma_order_four
 #print axioms Square.tau_order_eight
 #print axioms Square.mu_order_two
+
+-- v0.21.0 stage G — Atlas conservation (§4/§5): no-loss, round-trip identity, scale-invariance.
+#print axioms Square.class_no_loss
+#print axioms Square.atlas_roundtrip
+#print axioms Square.atlas_scale_consistent
