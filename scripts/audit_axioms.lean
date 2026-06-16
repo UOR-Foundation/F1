@@ -2447,3 +2447,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.betti_signature
 #print axioms Square.bott_periods
 #print axioms Square.tower_forced_four_ways
+
+-- v0.21.0 stage G — Atlas calculus: the seven operators, the free-monoid Term, and the
+-- catamorphism with its universal property (§3/§4) — form determines function.
+#print axioms Square.op_count
+#print axioms Square.term_assoc
+#print axioms Square.term_unit_left
+#print axioms Square.term_unit_right
+#print axioms Square.cata_append
+#print axioms Square.cata_unique
