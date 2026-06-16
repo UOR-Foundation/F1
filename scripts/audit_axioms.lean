@@ -2380,3 +2380,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.e4cube_eq_e6sq_plus_1728delta
 #print axioms Square.delta_coeffs
 #print axioms Square.twentyFour_modular
+
+-- v0.21.0 stage G — Atlas exceptional: the magic-square exceptional series (R,C,H,O → F₄,E₆,E₇,E₈),
+-- the rank·(h+1) dimension law, and the connections (dim G₂ = (T−1)(O−1), 240 = E₈ roots).
+#print axioms Square.exceptional_dims
+#print axioms Square.magic_square_octonion_row
+#print axioms Square.g2_coxeter_atlas
+#print axioms Square.e8_top
+#print axioms Square.twoForty_roots
