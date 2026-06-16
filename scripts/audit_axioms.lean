@@ -2341,3 +2341,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.class_no_loss
 #print axioms Square.atlas_roundtrip
 #print axioms Square.atlas_scale_consistent
+
+-- v0.21.0 stage G — Atlas forcing: what makes a value NOT a coincidence (parametric identity or
+-- over-determination), incl. the discovery that trace = dimension is forced by T = 3.
+#print axioms Square.multSum_eq_dim
+#print axioms Square.traceParam_formula
+#print axioms Square.trace_eq_dim_at_T3
+#print axioms Square.twentyFour_overdetermined
+#print axioms Square.fourteen_overdetermined
+#print axioms Square.twoForty_overdetermined
+#print axioms Square.eight_overdetermined
