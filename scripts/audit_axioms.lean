@@ -2177,6 +2177,8 @@ open UOR.Bridge.F1Square
 -- the Bombieri–Lagarias pipeline (Square/BLPipeline.lean) — witness wired to genuine λ, RH-forward.
 #print axioms Analysis.Rnonneg_Rlim
 #print axioms Square.bl_rh_implies_liNonneg
+#print axioms Square.liNonneg_implies_onLine
+#print axioms Square.li_criterion
 
 -- v0.20.0 stage F: γ₂≥−0.02 bracket evaluators (Analysis/GammaTwoBracket.lean) — parts (A),(B).
 #print axioms Analysis.lnSqSumLo_den_pos

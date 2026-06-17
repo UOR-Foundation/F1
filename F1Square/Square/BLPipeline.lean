@@ -104,4 +104,42 @@ theorem bl_rh_implies_liNonneg (E : StieltjesEta) (B : BLZeroSum E)
     Rnonneg_Rlim (B.reg n) hpart
   exact Rnonneg_congr (Req_symm (B.bl n hn)) hlim
 
+/-- **The Voros dichotomy interface — the reverse direction.** Extends `BLZeroSum` with the genuine
+    classical fact for `λₙ ≥ 0 ⟹ RH`:
+
+    * `dichotomy` — `[CLASSICAL, Voros 2006 / Li 1997]` Voros's strict dichotomy as a CONSTRUCTIVE
+      disjunction: each zero is EITHER on the critical line OR forces a negative Li coefficient at some
+      `n` (an off-line zero contributes a Li term of modulus `r(ρ)ⁿ → ∞`, `liTerm_dominates`, whose
+      exponential oscillation breaks positivity — no third option). Stated as `∨` so the reverse
+      direction is choice-free (no `by_contra`).
+
+    Carried as an explicit hypothesis; it is the reverse companion to `bl`, and it is not the
+    conclusion (it is a per-zero alternative, not a claim about all `λₙ`). -/
+structure LiBridge (E : StieltjesEta) extends BLZeroSum E where
+  /-- `[CLASSICAL, Voros]`: each zero is on the line, or some `λₙ < 0` -/
+  dichotomy : ∀ ρ, isZero ρ →
+    OnCriticalLine ρ ∨ (∃ n, 0 < n ∧ Pos (Rneg (genuineLamSeq E.eta n)))
+
+/-- **THE REVERSE DIRECTION**: `λₙ ≥ 0 ∀n ⟹ RH` (every zero on the critical line). For each zero, the
+    Voros dichotomy gives on-line or a negative coefficient; under `LiNonneg` the latter is impossible
+    (`not_Pos_of_Rnonneg_neg`), so the zero is on the line. Choice-free. -/
+theorem liNonneg_implies_onLine (E : StieltjesEta) (L : LiBridge E)
+    (h : LiNonneg (genuineLamSeq E.eta)) : AllZerosOnLine L.isZero := by
+  intro ρ hρ
+  obtain hon | ⟨n, hn, hpos⟩ := L.dichotomy ρ hρ
+  · exact hon
+  · exact absurd hpos (not_Pos_of_Rnonneg_neg
+      (Rnonneg_congr (Req_symm (Rneg_neg (genuineLamSeq E.eta n))) (h n hn)))
+
+/-- **LI'S CRITERION FOR THE GENUINE SEQUENCE, BOTH DIRECTIONS**: `λₙ ≥ 0 ∀n ⟺ RH`. Forward is the
+    witness pipeline (`bl_rh_implies_liNonneg`); reverse is the Voros dichotomy
+    (`liNonneg_implies_onLine`). Both classical inputs — Bombieri–Lagarias (`bl`) and Voros
+    (`offline_forces_neg`) — are explicit hypotheses of `LiBridge`, visible to `#print axioms`; the
+    equivalence itself is axiom-clean `{propext, Quot.sound}`. This makes precise, as one statement,
+    that proving `LiNonneg (genuineLamSeq)` IS proving RH. Inhabiting `LiBridge` is classical;
+    discharging either side is RH — the crux fields stay `none`. -/
+theorem li_criterion (E : StieltjesEta) (L : LiBridge E) :
+    LiNonneg (genuineLamSeq E.eta) ↔ AllZerosOnLine L.isZero :=
+  ⟨liNonneg_implies_onLine E L, bl_rh_implies_liNonneg E L.toBLZeroSum⟩
+
 end UOR.Bridge.F1Square.Square
