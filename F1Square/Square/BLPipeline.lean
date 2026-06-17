@@ -116,7 +116,15 @@ theorem bl_rh_implies_liNonneg (E : StieltjesEta) (B : BLZeroSum E)
     Carried as an explicit hypothesis; it is the reverse companion to `bl`, and it is not the
     conclusion (it is a per-zero alternative, not a claim about all `λₙ`). -/
 structure LiBridge (E : StieltjesEta) extends BLZeroSum E where
-  /-- `[CLASSICAL, Voros]`: each zero is on the line, or some `λₙ < 0` -/
+  /-- `[CLASSICAL, Voros (MPAG 2006) / Lagarias (Ann. Inst. Fourier 2007)]`: Voros's tempered-vs-
+      exponential dichotomy — each zero is on the line, OR some `λₙ < 0`. The off-line ⟹ negative step
+      is ASYMPTOTIC: an off-line zero's contribution grows like `r(ρ)ⁿ` (steepest descent / Darboux)
+      and overtakes the smooth `(n/2)log n` trend only at enormous `n` — a literature estimate puts the
+      threshold at `n ≳ T²/t` for a zero `½+t±iT` (≈ `10²⁵` given RH verified to `T₀ ≈ 2.4·10¹²`), which
+      is exactly why no finite computation reaches a violation. The reverse direction needs only the
+      EXISTENCE `∃n`, which the asymptotic theorem supplies — so this `∃n` interface is the faithful
+      minimal form. (Quantitative threshold surfaced by the v0.21.0+ literature survey, arXiv
+      2204.01036; the asymptotic dichotomy itself is Voros/Lagarias.) -/
   dichotomy : ∀ ρ, isZero ρ →
     OnCriticalLine ρ ∨ (∃ n, 0 < n ∧ Pos (Rneg (genuineLamSeq E.eta n)))
 
