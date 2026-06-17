@@ -4,7 +4,8 @@ connected to the RH crux, localizing exactly what closing the crux *in the UOR A
 
 This gathers the Atlas→RH connections into one statement. The point: of all the Atlas's structure,
 almost everything is FORCED or CONQUERED — the one genuinely open thing is the sign of the
-prime–archimedean coupling for `n ≥ 3`, the archimedean place the Atlas structurally omits.
+prime–archimedean coupling for `n ≥ 3`, governed by the archimedean place (conquered in the
+prime-free window, open beyond it).
 
 `atlas_crux_localization` bundles, for the genuine square:
 - **the Atlas forces the prime side** — its addressing prime `5` is the Frobenius orbit shift and the

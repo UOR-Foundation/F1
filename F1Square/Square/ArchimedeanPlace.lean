@@ -1,7 +1,7 @@
 /-
 F1 square — v0.21.0 stage G, brick **the archimedean place**: deepening the `arch(n)` term of the
-prime–archimedean coupling — the one place the Atlas structurally omits (§12/§14), and where its
-construction is conquered ground.
+prime–archimedean coupling — the term whose construction is conquered ground (the head and the
+prime-free window) and whose sign outside the window is the open content (§12/§14).
 
 `genuine_crux_arch_coupling` reduced the crux to the sign of `arith(n) + arch(n)`. The `arch(n)`
 term is `ArchTrend.genuineArchSeq` (the archimedean Li trend), and the test-function archimedean
@@ -56,7 +56,7 @@ theorem coupling_window_archimedean (S : WeilSlot) (hX : S.test.X = 1) :
 theorem archimedean_center_positive : Pos burnolAlphaZero :=
   burnolAlphaZero_pos
 
-/-- **THE ARCHIMEDEAN PLACE — STATUS** (the one place the Atlas omits, §12/§14): the coupling is
+/-- **THE ARCHIMEDEAN PLACE — STATUS** (§12/§14): the coupling is
     conquered at the certified head (`n = 1, 2`) and, in the prime-free window, reduces to the
     archimedean place with a positive center certificate (`α(0) > 0`). Outside the window the prime
     side returns and the coupling's sign is the uniform tail bound governed by the zeros — the open
