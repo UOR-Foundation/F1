@@ -24,6 +24,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 import F1Square.Square.BLPipeline
 import F1Square.Square.LefschetzCoupling
 import F1Square.Square.Forced
+import F1Square.Analysis.RiemannZero
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -53,5 +54,17 @@ theorem atlas_coupling_analytic_face (E : StieltjesEta) (L : LiBridge E) :
 theorem hodgeIndex_iff_RH (E : StieltjesEta) (L : LiBridge E) :
     SpectralHodgeNeg (genuineSpectralSquare E) ↔ AllZerosOnLine L.isZero :=
   Iff.trans (genuine_hodgeNeg_iff E) (li_criterion E L)
+
+/-- **THE ARITHMETIC HODGE INDEX ⟺ RH FOR THE CONSTRUCTED ζ** — the F1-square crux grounded in the ζ
+    this repository actually builds (`CzetaStrip`), not an abstract zero predicate. For a `LiBridge`
+    whose zero set is the genuine constructed zero set (`isZeroOfZeta`), the Hodge-index non-negativity
+    of `𝕊` holds **iff** every nontrivial zero of the constructed ζ lies on the critical line
+    (`RiemannHypothesisStrip`). Chains `hodgeIndex_iff_RH` with `riemannHypothesisStrip_iff`. This is
+    the F1-square construction tied end to end to the genuine RH statement; the single open input is
+    `RiemannHypothesisStrip` itself, formalized as the unproven object it is. Crux fields `none`. -/
+theorem hodgeIndex_iff_riemannHypothesis (E : StieltjesEta) (L : LiBridge E)
+    (hL : L.isZero = isZeroOfZeta) :
+    SpectralHodgeNeg (genuineSpectralSquare E) ↔ RiemannHypothesisStrip :=
+  Iff.trans (hL ▸ hodgeIndex_iff_RH E L) riemannHypothesisStrip_iff.symm
 
 end UOR.Bridge.F1Square.Square
