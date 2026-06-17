@@ -18,11 +18,16 @@ construction — no new work.
 WHAT THIS DOES AND DOES NOT DO. This completes the `λ₃` OBJECT (the closed-form constructive real)
 and its consistency with the ladder. The `γ₂` numeric bracket that gates the `η₂` term (coefficient
 `3/2`) is now CLOSED — `Rgamma2_ge_neg002 : γ₂ ≥ −0.02` (`GammaTwoBracket.lean`, the discrete
-Euler–Maclaurin bracket). It still does NOT prove `Pos λ₃`: `λ₃ ≈ 0.0173` is a small difference of
-`Θ(1)` terms (`λ₃^{arith} ≈ +1.22`, `λ₃^{∞} ≈ −1.20`), so a positivity certificate needs TIGHT
-two-sided brackets on all of `γ, γ₁, γ₂, γ³, γγ₁` AND the archimedean `λ₃^{∞}` (via `ζ(2), ζ(3)`) —
-the full `λ₃`-formula numeric assembly, not the single `γ₂` input. That assembly is the remaining
-open work; the crux fields stay `none`.
+Euler–Maclaurin bracket). It does not YET prove `Pos λ₃`, but the difficulty was OVERSTATED here
+once: the true value (computed from this very closed form) is `λ₃ ≈ 0.2076389` — the standard Li
+coefficient — with `λ₃^{arith} ≈ +1.221` and `λ₃^{∞} ≈ −1.013`, a comfortable `Θ(1)` MARGIN (≈ 0.21),
+not a razor-thin `0.017`. So a positivity certificate needs only MODERATE two-sided brackets on
+`γ, γ₁, γ₂, ζ(2), ζ(3), log 4π`; the binding constraint is `γ` (the `−3γ²` term is 3× more sensitive
+than `λ₂`'s `−γ²`, so the current `[0.54, 0.66]` bracket is too loose — `γ` to `~[0.575, 0.580]`
+suffices). The explicit closed form is
+`λ₃ = 1 + (3/2)γ − 3γ² − 6γ₁ + γ³ + 3γγ₁ + (3/2)γ₂ − (3/2)log 4π + (9/4)ζ(2) − (7/8)ζ(3)`. That
+bracket assembly (tighter `γ`, plus `γ₁` lower, `ζ(2)` upper-precision, `ζ(3)` upper, `log 4π` upper)
+is the remaining numeric work; the crux fields stay `none`.
 
 Pure Lean 4 core, no Mathlib, no `sorry`, choice-free; audited by `scripts/honesty_audit.sh`.
 -/
