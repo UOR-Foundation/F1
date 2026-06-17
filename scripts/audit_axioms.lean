@@ -2178,6 +2178,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Pos_Rnpow
 #print axioms Analysis.Pos_of_Pos_Rsub_one
 #print axioms Analysis.offLine_term_grows
+#print axioms Analysis.witnessTerm_tempered
+#print axioms Analysis.voros_term_dichotomy
 
 -- the Bombieri–Lagarias pipeline (Square/BLPipeline.lean) — witness wired to genuine λ, RH-forward.
 #print axioms Analysis.Rnonneg_Rlim
