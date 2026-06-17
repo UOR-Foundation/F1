@@ -514,4 +514,33 @@ theorem rsAngle_increasing_on_band {sn sd : Nat} (hsd : 1 ≤ sd) (hs : sn ≤ 2
     (Rsub_le_sub (psiLineReP_mono (by omega) hsd (by omega) hs (by omega)) (Rle_refl Rlogπc))
     rsLineSlope16_pos
 
+-- ===========================================================================
+-- Faithfulness at the center: the assembled kernel reduces to ψ(1/4) at s = 0
+-- (the assembled-level analog of DigammaWindow.windowTerm_zero).
+-- ===========================================================================
+
+private theorem corrTP_zero_num (n : Nat) : (corrTP 0 1 n).num = 0 := by simp [corrTP]
+
+/-- At `s = 0` every correction term vanishes, so every partial sum has numerator `0`. -/
+private theorem corrPP_zero_num : ∀ N, (corrPP 0 1 N).num = 0
+  | 0 => rfl
+  | (N + 1) => by
+    show (corrPP 0 1 N).num * ((corrTP 0 1 N).den : Int)
+        + (corrTP 0 1 N).num * ((corrPP 0 1 N).den : Int) = 0
+    rw [corrPP_zero_num N, corrTP_zero_num N]; simp
+
+private theorem corrPP_zero_Qeq (N : Nat) : Qeq (corrPP 0 1 N) (⟨0, 1⟩ : Q) := by
+  simp [Qeq, corrPP_zero_num N]
+
+/-- **The correction series vanishes at `s = 0`**: `Σ cₙ(0) = 0` (every partial sum is `Qeq 0`). -/
+theorem corrCoreP_zero : Req (corrCoreP 0 1 (by omega) (by omega)) zero :=
+  Req_of_seq_Qeq (fun j => corrPP_zero_Qeq (25 * (j + 1)))
+
+/-- **THE KERNEL AT THE CENTER IS `ψ(1/4)`**: `Re ψ(1/4 + i·0) = ψ(1/4)` — the parameterized
+    assembled kernel reduces, at `s = 0` (`τ = 0`), to exactly the window-center value, the
+    assembled-level analog of `DigammaWindow.windowTerm_zero`. With `psiLineRe5` (`= psiLineReP 25 1`)
+    at the far end, the construction is verified-correct at both endpoints of the window. -/
+theorem psiLineReP_zero : Req (psiLineReP 0 1 (by omega) (by omega)) psiQuarter :=
+  Req_trans (Radd_congr (Req_refl psiQuarter) corrCoreP_zero) (Radd_zero psiQuarter)
+
 end UOR.Bridge.F1Square.Analysis

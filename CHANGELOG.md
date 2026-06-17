@@ -124,6 +124,11 @@ classical input is an explicit, audit-visible hypothesis, never an axiom).
   Riemann–Siegel angle's unique minimum sits at `τ < 8`, and beyond it `θ` rises monotonically: a genuine
   interval of positivity, not a single point. (`corrCoreP_ge_partial` generalizes the partial-sum lower
   bracket to any cutoff `N ≤ 25`.) Crux fields stay `none`.
+- **The kernel reduces to `ψ(1/4)` at the center** (`Analysis/PsiLine.lean`) — `psiLineReP_zero`:
+  `Re ψ(1/4 + i·0) = ψ(1/4)`, the assembled-level analog of `DigammaWindow.windowTerm_zero` (`corrCoreP_zero`:
+  `Σ cₙ(0) = 0`, every `s=0` correction term vanishes). With `psiLineRe5 = psiLineReP 25 1` at the far end,
+  the parameterized assembled kernel is now verified-correct at **both endpoints** of the window — a
+  faithfulness anchor closing the construction. Crux fields stay `none`.
 - **Erratum** — corrected the stale `λ₃ ≈ 0.0173` / `λ₃^∞ ≈ −1.20` (a computational error) to the
   standard Li value `λ₃ ≈ 0.2076` / `λ₃^∞ ≈ −1.013` across `LambdaThree.lean`, `CruxFrontierN3.lean`,
   `Attempt.lean`, `ROADMAP.md`, and the v0.20.0 changelog entry; recorded the precision analysis (the
