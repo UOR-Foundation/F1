@@ -93,4 +93,50 @@ theorem onLine_mirror_in_disk (z : Complex) (h : OnCriticalLine z) :
     InClosedDisk z ∧ InClosedDisk (Creflect z) :=
   (mirror_both_in_disk_iff z).mpr (liRatio_on_line z h)
 
+-- ===========================================================================
+-- The OTHER symmetry: complex conjugation `ρ ↦ ρ̄`. Together with the reflection it generates the
+-- full 4-fold symmetry group `{ρ, ρ̄, 1−ρ, 1−ρ̄}` of the completed-ζ zeros.
+-- ===========================================================================
+
+/-- Complex **conjugation** `ρ ↦ ρ̄` (same real part, negated imaginary part) — the second generator
+    of the ξ-zero symmetry group (`ζ(s̄) = conj ζ(s)`). -/
+def Cconj (z : Complex) : Complex := ⟨z.re, Rneg z.im⟩
+
+/-- **Conjugation preserves the modulus**: `|ρ̄|² = |ρ|²` (`(−i)² = i²`, `Rneg_sq`). -/
+theorem cnormSq_Cconj (z : Complex) : Req (cnormSq (Cconj z)) (cnormSq z) :=
+  Radd_congr (Req_refl (Rmul z.re z.re)) (Rneg_sq z.im)
+
+/-- **Conjugation preserves `csubOneNormSq`**: `|ρ̄−1|² = |ρ−1|²`. -/
+theorem csubOneNormSq_Cconj (z : Complex) : Req (csubOneNormSq (Cconj z)) (csubOneNormSq z) :=
+  Radd_congr (Req_refl (Rmul (Rsub z.re one) (Rsub z.re one))) (Rneg_sq z.im)
+
+/-- **Conjugation preserves disk-membership**: `ρ̄` is in the closed Cayley disk iff `ρ` is. So a zero
+    and its conjugate sit on the SAME side of the line — conjugation adds no obstruction, unlike the
+    reflection (`mirror_both_in_disk_iff`), which flips the side. -/
+theorem inClosedDisk_Cconj (z : Complex) : InClosedDisk (Cconj z) ↔ InClosedDisk z := by
+  unfold InClosedDisk
+  constructor
+  · intro h
+    exact Rle_trans (Rle_of_Req (Req_symm (csubOneNormSq_Cconj z)))
+      (Rle_trans h (Rle_of_Req (cnormSq_Cconj z)))
+  · intro h
+    exact Rle_trans (Rle_of_Req (csubOneNormSq_Cconj z))
+      (Rle_trans h (Rle_of_Req (Req_symm (cnormSq_Cconj z))))
+
+/-- **THE SYMMETRY GROUP MEETS THE WITNESS**: for the ξ-zero symmetry orbit, the zero, its conjugate,
+    and its reflection ALL lie in the closed Cayley disk **iff** `|ρ−1|² = |ρ|²` — unit modulus, the
+    on-line condition. Conjugation is automatic (same side); the reflection is the binding leg. So the
+    half-plane witness can hold across the full symmetry orbit only on the critical line — the
+    structural reason RH's "all zeros in the disk" is equivalent to "all zeros on the line", realized
+    constructively on the Li growth ratio. It does not prove the zeros are there; the crux fields stay
+    `none`. -/
+theorem symmetry_orbit_in_disk_iff (z : Complex) :
+    (InClosedDisk z ∧ InClosedDisk (Cconj z) ∧ InClosedDisk (Creflect z))
+      ↔ Req (csubOneNormSq z) (cnormSq z) := by
+  constructor
+  · intro h; exact (mirror_both_in_disk_iff z).mp ⟨h.1, h.2.2⟩
+  · intro heq
+    have hpair := (mirror_both_in_disk_iff z).mpr heq
+    exact ⟨hpair.1, (inClosedDisk_Cconj z).mpr hpair.1, hpair.2⟩
+
 end UOR.Bridge.F1Square.Analysis

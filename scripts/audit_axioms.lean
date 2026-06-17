@@ -2167,6 +2167,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.csubOneNormSq_Creflect
 #print axioms Analysis.mirror_both_in_disk_iff
 #print axioms Analysis.onLine_mirror_in_disk
+#print axioms Analysis.cnormSq_Cconj
+#print axioms Analysis.csubOneNormSq_Cconj
+#print axioms Analysis.inClosedDisk_Cconj
+#print axioms Analysis.symmetry_orbit_in_disk_iff
 
 -- v0.20.0 stage F: γ₂≥−0.02 bracket evaluators (Analysis/GammaTwoBracket.lean) — parts (A),(B).
 #print axioms Analysis.lnSqSumLo_den_pos
