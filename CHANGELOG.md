@@ -83,15 +83,29 @@ classical input is an explicit, audit-visible hypothesis, never an axiom).
   Riemann–Siegel angle `θ(t) = arg Γ(1/4 + i t/2) − (t/2)·log π` (the phase of the completed-ζ
   functional equation) has center slope `θ′(0) = ½·(ψ(1/4) − log π)`, and `rsCenterSlope_neg :
   Pos (Rneg rsCenterSlope)` proves it strictly negative — `ψ(1/4) < log π`, so `θ` *decreases* through
-  the symmetry point `t = 0` (before rising for large `t`). This non-monotonicity is exactly the
-  obstruction Connes–Consani note to a monotonicity-based propagation of the single-archimedean-place
-  positivity across further places. The proof uses two new **complementary brackets** on the genuine
-  constructive reals already in the substrate: `psiQuarter_upper` (`ψ(1/4) ≤ −3`, the value bounded
-  *above* — the opposite direction to the α(0) certificate, whose `psiQuarter_lower` bounds it below)
-  and `Rnonneg_Rlog_pi` (`log π ≥ 0`, since `π ≥ 1`, via `Rnonneg_RlogPos` on the genuine `Rlog_pi`).
-  This is the **obstruction formalized faithfully — not a route through it**: proving `θ` non-monotone
-  is precisely what blocks the naive monotonicity argument, so it constrains the frontier rather than
-  closing it. The unconditional content stays confined to the archimedean window; crux fields `none`.
+  the symmetry point `t = 0`. This non-monotonicity is exactly the obstruction Connes–Consani note to
+  a monotonicity-based propagation of the single-archimedean-place positivity across further places.
+  The proof uses `psiQuarter_upper` (`ψ(1/4) ≤ −3`, the value bounded *above* — the opposite direction
+  to the α(0) certificate, whose `psiQuarter_lower` bounds it below) and `Rnonneg_Rlogπc` (`log π ≥ 0`,
+  via `Rnonneg_Rartanh_of_nonneg` on the repo's canonical `Rlogπc = 2·artanh((π−1)/(π+1))`, the same
+  `log π` of α(0)/λ₁/λ₂). The **obstruction formalized faithfully — not a route through it**.
+- **The archimedean kernel `Re ψ(1/4 + iτ/2)` ASSEMBLED, and the angle is non-monotone two-sidedly**
+  (`Analysis/PsiLine.lean`) — a large construction. `DigammaWindow.lean` had built the `τ`-parameterized
+  kernel *term* and its monotonicity but not the assembled kernel; this builds it at the frontier point
+  `τ = 10` (`s = τ²/4 = 25`), the first value of `Re ψ` along the critical line off the center `ψ(1/4)`.
+  The window term splits exactly as `windowTerm n 25 = windowTerm n 0 + cₙ`,
+  `cₙ = 1600/[(4n+1)((4n+1)²+400)] ≥ 0` (`corrT_eq_windowTerm_gain`, the faithfulness bridge to
+  `DigammaWindow`), so `Re ψ(1/4 + 5i) = ψ(1/4) + Σ cₙ`. `corrCore` is `Σ cₙ` as a **genuine
+  constructive real** — a manifestly positive convergent series, with regularity proved *from scratch*
+  via the telescoping `cₙ ≤ tel(n) − tel(n+1)`, `tel(n) = 100/(4n+1)`, holding for all `n` through the
+  manifest square `(4n−1)² + 380 ≥ 0` (depth schedule `j ↦ 25(j+1)`). `psiLineRe5 := ψ(1/4) + corrCore`,
+  with lower bracket `psiLineRe5_lower : Re ψ(1/4 + 5i) ≥ 1.28` (true value `≈ 1.61`) from
+  `psiQuarter_lower` and `corrCore_lower` (`Σ cₙ ≥ 5.6`, the certified 12-term partial sum). Consequence:
+  `rsLineSlope10_pos : θ′(10) > 0` (`Re ψ(1/4+5i) > log π`, using `Rlogπc_le`), and the capstone
+  `rsAngle_non_monotone : θ′(0) < 0 ∧ θ′(10) > 0` — for one `θ` (one `log π = Rlogπc`), the slope changes
+  sign, so the Riemann–Siegel angle is **non-monotone, two-sided**: the bounded-negative-band structure
+  Burnol / Connes–Consani must work around. The obstruction completed as a theorem; it sharpens the
+  barrier, it does not cross it. Crux fields stay `none`.
 - **Erratum** — corrected the stale `λ₃ ≈ 0.0173` / `λ₃^∞ ≈ −1.20` (a computational error) to the
   standard Li value `λ₃ ≈ 0.2076` / `λ₃^∞ ≈ −1.013` across `LambdaThree.lean`, `CruxFrontierN3.lean`,
   `Attempt.lean`, `ROADMAP.md`, and the v0.20.0 changelog entry; recorded the precision analysis (the

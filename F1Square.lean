@@ -157,6 +157,7 @@ import F1Square.Analysis.Reflection
 import F1Square.Analysis.OffLineGrowth
 import F1Square.Analysis.RiemannZero
 import F1Square.Analysis.RiemannSiegel
+import F1Square.Analysis.PsiLine
 import F1Square.Analysis.GammaTwoBracket
 
 open UOR.Primitives

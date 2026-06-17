@@ -2196,8 +2196,22 @@ open UOR.Bridge.F1Square
 -- the Riemann–Siegel center-slope obstruction (Analysis/RiemannSiegel.lean) — θ′(0) < 0, the
 -- non-monotonicity Connes–Consani name as the barrier to semi-local Weil positivity. Obstruction,
 -- not a route through it; crux none.
-#print axioms Analysis.Rnonneg_Rlog_pi
+#print axioms Analysis.Rnonneg_RpiTmap
+#print axioms Analysis.Rnonneg_Rlogπc
 #print axioms Analysis.rsCenterSlope_neg
+
+-- the archimedean kernel Re ψ(1/4+iτ/2) ASSEMBLED at the frontier point τ=10, and the two-sided
+-- non-monotonicity of the Riemann–Siegel angle (Analysis/PsiLine.lean). The obstruction completed;
+-- crux none.
+#print axioms Analysis.corrCore
+#print axioms Analysis.corrCore_ge_twelve
+#print axioms Analysis.corrP_twelve_lower
+#print axioms Analysis.corrCore_lower
+#print axioms Analysis.psiLineRe5
+#print axioms Analysis.corrT_eq_windowTerm_gain
+#print axioms Analysis.psiLineRe5_lower
+#print axioms Analysis.rsLineSlope10_pos
+#print axioms Analysis.rsAngle_non_monotone
 
 -- v0.20.0 stage F: γ₂≥−0.02 bracket evaluators (Analysis/GammaTwoBracket.lean) — parts (A),(B).
 #print axioms Analysis.lnSqSumLo_den_pos
