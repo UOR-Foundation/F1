@@ -107,6 +107,7 @@ import F1Square.Analysis.Log
 import F1Square.Analysis.Arctan
 import F1Square.Analysis.RArctan
 import F1Square.Analysis.RexpLogRat
+import F1Square.Analysis.ComplexArg
 import F1Square.Analysis.Pi
 import F1Square.Analysis.Euler
 import F1Square.Analysis.GammaAccel

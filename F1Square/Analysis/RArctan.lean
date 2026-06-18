@@ -201,4 +201,39 @@ theorem RarctanR_zero (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt : 
   have hz2 : (zero : Real).seq n = (⟨0, 1⟩ : Q) := rfl
   rw [hz, hz2]; exact arctanSum_zero (Rartanh_R ρ n)
 
+-- ===========================================================================
+-- `arctan` of any vanishing-numerator sequence is `0` (generalizes `RarctanR_zero`;
+-- the case `arg(z) = arctan(Im z / Re z)` for `Im z = 0`, where the ratio has numerator `0`).
+-- ===========================================================================
+
+/-- A positive power of a numerator-`0` rational has numerator `0`. -/
+theorem qpow_succ_num_eq_zero {q : Q} (hq : q.num = 0) (m : Nat) : (qpow q (m + 1)).num = 0 := by
+  show (mul q (qpow q m)).num = 0
+  simp only [mul]; rw [hq]; simp
+
+/-- The `n`-th arctan term of a numerator-`0` argument has numerator `0`. -/
+theorem arctanTerm_num_eq_zero {q : Q} (hq : q.num = 0) (n : Nat) : (arctanTerm q n).num = 0 := by
+  show (mul (qpow (⟨-1, 1⟩ : Q) n) (mul (qpow q (2 * n + 1)) ⟨1, 2 * n + 1⟩)).num = 0
+  have h : (qpow q (2 * n + 1)).num = 0 := qpow_succ_num_eq_zero hq (2 * n)
+  simp only [mul]; rw [h]; simp
+
+/-- The arctan partial sum of a numerator-`0` argument has numerator `0`. -/
+theorem arctanSum_num_eq_zero {q : Q} (hq : q.num = 0) : ∀ N, (arctanSum q N).num = 0
+  | 0 => arctanTerm_num_eq_zero hq 0
+  | (n + 1) => by
+      show (add (arctanSum q n) (arctanTerm q (n + 1))).num = 0
+      simp only [add]; rw [arctanSum_num_eq_zero hq n, arctanTerm_num_eq_zero hq (n + 1)]; simp
+
+/-- **`arctan` of a numerator-`0` real is `0`**: if every approximant of `t` has numerator `0`
+    (e.g. `t = 0/x = Im z/Re z` when `Im z = 0`), then `RarctanR t = 0`. The general value-at-origin,
+    the `arg`-of-a-positive-real fact behind the principal branch of `Clog`. -/
+theorem RarctanR_of_num_zero (t : Real) (ht : ∀ n, (t.seq n).num = 0)
+    (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt : ρ.num.toNat < ρ.den)
+    (hb : ∀ n, Qle (Qabs (t.seq n)) ρ) : Req (RarctanR t ρ hρ0 hρd hlt hb) zero := by
+  apply Req_of_seq_Qeq
+  intro n
+  show Qeq (arctanSum (t.seq (Rartanh_R ρ n)) (Rartanh_R ρ n)) ((zero).seq n)
+  rw [zero_seq]
+  simp only [Qeq]; rw [arctanSum_num_eq_zero (ht (Rartanh_R ρ n)) (Rartanh_R ρ n)]; simp
+
 end UOR.Bridge.F1Square.Analysis

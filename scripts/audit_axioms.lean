@@ -738,6 +738,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.arctanSum_zero_num
 #print axioms Analysis.arctanSum_zero
 #print axioms Analysis.RarctanR_zero
+#print axioms Analysis.qpow_succ_num_eq_zero
+#print axioms Analysis.arctanTerm_num_eq_zero
+#print axioms Analysis.arctanSum_num_eq_zero
+#print axioms Analysis.RarctanR_of_num_zero
+-- v0.22.0 Track 1: the complex argument on the principal sector (Analysis/ComplexArg.lean).
+#print axioms Analysis.Carg_ofReal_pos
 -- v0.22.0 Track 1: tmap closed forms at a rational argument (Analysis/RexpLogRat.lean).
 #print axioms Analysis.tmap_rat_num
 #print axioms Analysis.tmap_rat_den
