@@ -2195,6 +2195,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.symmetry_orbit_in_disk_iff
 #print axioms Analysis.offLine_left_not_inClosedDisk
 #print axioms Analysis.inClosedDisk_iff_geom
+#print axioms Analysis.double_inj
+#print axioms Analysis.onLine_of_ratios_eq
+#print axioms Analysis.onLine_iff_ratios_eq
+#print axioms Analysis.allInClosedDisk_iff_allOnLine
 #print axioms Analysis.Pos_Rnpow
 #print axioms Analysis.Pos_of_Pos_Rsub_one
 #print axioms Analysis.offLine_term_grows

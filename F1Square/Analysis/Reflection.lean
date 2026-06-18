@@ -163,4 +163,62 @@ theorem inClosedDisk_iff_geom (z : Complex) :
     (OnCriticalLine z → InClosedDisk z) ∧ (Pos (Rsub half z.re) → ¬ InClosedDisk z) :=
   ⟨fun h => Rle_of_Req (liRatio_on_line z h), offLine_left_not_inClosedDisk z⟩
 
+-- ===========================================================================
+-- The on-line CHARACTERIZATION (the converse of `liRatio_on_line`) and the SET-LEVEL closure:
+-- on a reflection-closed zero set, the closed-disk witness hypothesis is EQUIVALENT to RH.
+-- ===========================================================================
+
+/-- `half·(x + x) = x` — halving the double. (`half·(x+x) = half·x + half·x = (half+half)·x = 1·x = x`,
+    via `half_add_half`.) The arithmetic core of doubling-injectivity. -/
+private theorem half_double (x : Real) : Req (Rmul half (Radd x x)) x :=
+  Req_trans (Rmul_distrib half x x)
+    (Req_trans (Req_symm (Rmul_distrib_right half half x))
+      (Req_trans (Rmul_congr half_add_half (Req_refl x))
+        (Req_trans (Rmul_comm one x) (Rmul_one x))))
+
+/-- **Doubling is injective**: `x + x = y + y ⟹ x = y` (multiply both sides by `½`, `half_double`).
+    The constructive replacement for "divide by 2". -/
+theorem double_inj {x y : Real} (h : Req (Radd x x) (Radd y y)) : Req x y :=
+  Req_trans (Req_symm (half_double x))
+    (Req_trans (Rmul_congr (Req_refl half) h) (half_double y))
+
+/-- **The on-line characterization — the converse of `liRatio_on_line`**: `|ρ−1|² = |ρ|² ⟹ Re ρ = ½`.
+    The growth-ratio identity gives `|ρ−1|² − |ρ|² = 1 − 2·Re ρ`; equality forces `2·Re ρ = 1 = 2·½`,
+    so `Re ρ = ½` by doubling-injectivity. Together with `liRatio_on_line` this makes unit Cayley
+    modulus EQUIVALENT to being on the critical line. -/
+theorem onLine_of_ratios_eq (z : Complex) (h : Req (csubOneNormSq z) (cnormSq z)) :
+    OnCriticalLine z := by
+  have hz : Req (Rsub (csubOneNormSq z) (cnormSq z)) zero :=
+    Req_trans (Radd_congr h (Req_refl _)) (Radd_neg (cnormSq z))
+  have h2 : Req one (Radd z.re z.re) :=
+    Req_of_Rsub_zero (Req_trans (Req_symm (liRatio_diff_eq z)) hz)
+  exact double_inj (Req_trans (Req_symm h2) (Req_symm half_add_half))
+
+/-- **Unit Cayley modulus ⟺ on the critical line** — the two directions packaged
+    (`liRatio_on_line` and `onLine_of_ratios_eq`). -/
+theorem onLine_iff_ratios_eq (z : Complex) :
+    OnCriticalLine z ↔ Req (csubOneNormSq z) (cnormSq z) :=
+  ⟨liRatio_on_line z, onLine_of_ratios_eq z⟩
+
+/-- A zero set is **reflection-closed** when it contains the functional-equation mirror `1−ρ` of each
+    of its members — the genuine ξ-zero set is (`ξ(s) = ξ(1−s)`). -/
+def ReflClosed (isZero : Complex → Prop) : Prop := ∀ z, isZero z → isZero (Creflect z)
+
+/-- **THE SET-LEVEL CLOSURE — the closed-disk witness hypothesis IS RH (on a reflection-closed set).**
+    For a reflection-closed zero set, "every zero's Cayley factor lies in the closed disk `|w|² ≤ 1`"
+    (the half-plane witness hypothesis of `RHWitness`) is EQUIVALENT to "every zero on the critical
+    line" (`AllZerosOnLine`). Forward: each `z` and its mirror `1−ρ` are both zeros, both in the disk,
+    so `mirror_both_in_disk_iff` pins `|ρ−1|² = |ρ|²`, hence `Re ρ = ½` (`onLine_of_ratios_eq`).
+    Reverse: on the line the factor is in the disk (`liRatio_on_line`). This upgrades the per-zero
+    `rh_witness_onLine` remark to a SET-level theorem — the closed-disk witness does not secretly
+    weaken RH. It does NOT place the zeros (RH); the crux fields stay `none`. -/
+theorem allInClosedDisk_iff_allOnLine (isZero : Complex → Prop) (hcl : ReflClosed isZero) :
+    (∀ z, isZero z → InClosedDisk z) ↔ AllZerosOnLine isZero := by
+  constructor
+  · intro h z hz
+    exact onLine_of_ratios_eq z
+      ((mirror_both_in_disk_iff z).mp ⟨h z hz, h (Creflect z) (hcl z hz)⟩)
+  · intro h z hz
+    exact Rle_of_Req (liRatio_on_line z (h z hz))
+
 end UOR.Bridge.F1Square.Analysis
