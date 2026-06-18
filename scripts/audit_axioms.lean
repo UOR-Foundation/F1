@@ -846,6 +846,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Gseq_zero
 #print axioms Analysis.Gseq_ode
 #print axioms Analysis.sin_arctan_eq
+#print axioms Analysis.peval_sin_arctan_eq
+#print axioms Analysis.peval_sinComp_swap
+#print axioms Analysis.peval_cosComp_swap
 -- v0.22.0 Track 1: the complex argument on the principal sector (Analysis/ComplexArg.lean).
 #print axioms Analysis.Carg_ofReal_pos
 -- v0.22.0 Track 1: the complex logarithm Clog on the principal sector (Analysis/ComplexLog.lean).

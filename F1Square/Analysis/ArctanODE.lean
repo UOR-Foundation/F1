@@ -681,4 +681,35 @@ theorem sin_arctan_eq (k : Nat) :
     Qeq (fcomp sinCoeff arctanCoeff k) (fmul Xident (fcomp cosCoeff arctanCoeff) k) :=
   Qeq_of_Qsub_zero (ode_unique Gseq Gseq_den_pos Gseq_zero Gseq_ode k)
 
+-- ===========================================================================
+-- Value-bridge entry points: the formal identity at the `peval` (evaluation) level,
+-- and the composition swaps `peval (sin∘arctan) = Σₘ sinₘ·peval(arctanᵐ)`. The remaining
+-- step toward `Rsin(arctan t) = t·Rcos(arctan t)` is the composition-series convergence
+-- (`peval (fpow arctanCoeff m) t M → (arctan-value)ᵐ`, summed against `sinCoeff`), for which
+-- ExpLog provides the general infrastructure: `peval_fcomp_swap`, `peval_fpow_abs_bound`,
+-- `peval_mul`/`peval_fpow_succ`, and the `per_m_step` error-recursion pattern.
+-- ===========================================================================
+
+/-- **Value-level form of the formal identity**: the composed series `sin∘arctan` and
+    `t·(cos∘arctan)`, evaluated at any rational `t` and truncated at `M`, agree (`peval_congr` on
+    `sin_arctan_eq`). The entry point of the formal-PS → value bridge. -/
+theorem peval_sin_arctan_eq (t : Q) (M : Nat) :
+    Qeq (peval (fcomp sinCoeff arctanCoeff) t M)
+      (peval (fmul Xident (fcomp cosCoeff arctanCoeff)) t M) :=
+  peval_congr (fun k => sin_arctan_eq k) t M
+
+/-- **Composition swap for `sin∘arctan`**: `peval(sin∘arctan, t, M) = Σ_{m≤M} sinₘ·peval(arctanᵐ, t, M)`
+    — the finite rearrangement (`peval_fcomp_swap`) expressing the composed series as the `sin` series
+    evaluated at the `arctan` powers. -/
+theorem peval_sinComp_swap (t : Q) (htd : 0 < t.den) (M : Nat) :
+    Qeq (peval (fcomp sinCoeff arctanCoeff) t M)
+      (Fsum (fun m => mul (sinCoeff m) (peval (fpow arctanCoeff m) t M)) M) :=
+  peval_fcomp_swap sinCoeff arctanCoeff sinCoeff_den_pos arctanCoeff_den_pos arctanCoeff_zero t htd M
+
+/-- **Composition swap for `cos∘arctan`**: `peval(cos∘arctan, t, M) = Σ_{m≤M} cosₘ·peval(arctanᵐ, t, M)`. -/
+theorem peval_cosComp_swap (t : Q) (htd : 0 < t.den) (M : Nat) :
+    Qeq (peval (fcomp cosCoeff arctanCoeff) t M)
+      (Fsum (fun m => mul (cosCoeff m) (peval (fpow arctanCoeff m) t M)) M) :=
+  peval_fcomp_swap cosCoeff arctanCoeff cosCoeff_den_pos arctanCoeff_den_pos arctanCoeff_zero t htd M
+
 end UOR.Bridge.F1Square.Analysis
