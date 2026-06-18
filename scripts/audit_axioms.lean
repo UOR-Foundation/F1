@@ -2234,6 +2234,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.rsAngle_increasing_on_band
 #print axioms Analysis.corrCoreP_zero
 #print axioms Analysis.psiLineReP_zero
+-- the s=1 kernel upper bound and the kernel-sign indefiniteness h₊(2) < 0 (toward α(2) < 0).
+#print axioms Analysis.corrCoreP_one_upper
+#print axioms Analysis.psiLineReP_one_upper
+#print axioms Analysis.archKernel_at_two_below_logpi
 
 -- v0.20.0 stage F: γ₂≥−0.02 bracket evaluators (Analysis/GammaTwoBracket.lean) — parts (A),(B).
 #print axioms Analysis.lnSqSumLo_den_pos

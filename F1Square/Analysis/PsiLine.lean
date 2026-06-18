@@ -35,6 +35,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 import F1Square.Analysis.PsiQuarter
 import F1Square.Analysis.DigammaWindow
 import F1Square.Analysis.RiemannSiegel
+import F1Square.Analysis.LogPiLower
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -641,5 +642,30 @@ theorem corrCoreP_one_upper :
   have hval : Qle (add (corrPP 1 1 12) (corrTel1 12)) (⟨422, 100⟩ : Q) := by decide
   exact Qle_trans (corrGP1_den_pos 12) htail
     (Qle_trans (by decide) hval (Qle_self_add (by show (0 : Int) ≤ 2; decide)))
+
+/-- **`Re ψ(1/4 + i) ≤ 0.22`** (true value `≈ −0.017`): the assembled kernel at `τ = 2` (`s = 1`),
+    from `ψ(1/4) ≤ −4` (`psiQuarter_upper_tight`) and `Σ cₙ(1) ≤ 4.22` (`corrCoreP_one_upper`). -/
+theorem psiLineReP_one_upper :
+    Rle (psiLineReP 1 1 (by omega) (by omega)) (ofQ (⟨22, 100⟩ : Q) (by decide)) := by
+  have hsum := Radd_le_add psiQuarter_upper_tight corrCoreP_one_upper
+  refine Rle_trans hsum ?_
+  refine Rle_trans (Rle_of_Req (Radd_ofQ_ofQ (by decide) (by decide))) ?_
+  exact Rle_ofQ_ofQ (by decide) (by decide) (by decide)
+
+/-- **`h₊(2) < 0` — Burnol's archimedean multiplier part is negative at `τ = 2`** (`Re ψ(1/4 + i) <
+    log π`): `Re ψ(1/4 + i) ≤ 0.22 < 1 ≤ log π`, so `h₊(2) = Re ψ(1/4 + i) − log π ≤ 0.22 − 1 = −0.78`.
+    This is the kernel-sign content of the Burnol multiplier `α(τ) = 8√2·cos(τ log2)/(1+4τ²) +
+    h₊(τ)`: the archimedean part `h₊` is strictly negative inside the band, which (with the bounded
+    oscillating cosine term) is *why* `α` dips below zero — the indefiniteness Burnol / Connes–Consani
+    must work around. The full pointwise `α(2) < 0` additionally needs the multiplier-coefficient bound
+    `8√2 ≤ 12` (`√2 ≤ 3/2`), which requires the `exp∘RlogPos = id` inverse not yet in this substrate.
+    Crux fields stay `none`. -/
+theorem archKernel_at_two_below_logpi :
+    Pos (Rsub Rlogπc (psiLineReP 1 1 (by omega) (by omega))) := by
+  refine Pos_of_Rle_ofQ (c := (⟨78, 100⟩ : Q)) (by decide) (by decide) ?_
+  refine Rle_trans ?_ (Rsub_le_sub Rlogpi_ge_one psiLineReP_one_upper)
+  intro n
+  show Qle (⟨78, 100⟩ : Q) (add (add (⟨1, 1⟩ : Q) (neg (⟨22, 100⟩ : Q))) ⟨2, n + 1⟩)
+  simp only [Qle, add, neg]; push_cast; omega
 
 end UOR.Bridge.F1Square.Analysis
