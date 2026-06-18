@@ -100,4 +100,49 @@ theorem burnolAlphaTwo_neg : Pos (Rneg burnolAlphaTwo) := by
       (Rle_trans (Radd_le_add (Rneg_le hcost_le) (Rneg_le hhplus_le))
         (Rle_of_Req (Req_symm (Rneg_Radd _ _)))))
 
+-- ===========================================================================
+-- The indefiniteness capstone: the bare single-place multiplier takes BOTH signs, so pointwise
+-- positivity is REFUTED — the Sonine-space projection (not pointwise α ≥ 0) is the resolution.
+-- ===========================================================================
+
+/-- `Rnonneg x ⟹ ¬ Pos (Rneg x)` — a non-negative real's negation is not positive. (Set `z = −x` in
+    `not_Pos_of_Rnonneg_neg`, using `Rnonneg (−(−x)) = Rnonneg x` via `Rneg_neg`.) -/
+private theorem not_Pos_neg_of_Rnonneg {x : Real} (h : Rnonneg x) : ¬ Pos (Rneg x) :=
+  not_Pos_of_Rnonneg_neg (Rnonneg_congr (Req_symm (Rneg_neg x)) h)
+
+/-- `Pos x ⟹ ¬ Rle x zero` — a positive real is not `≤ 0`. -/
+private theorem not_Rle_zero_of_Pos {x : Real} (h : Pos x) : ¬ Rle x zero := fun hle =>
+  not_Pos_of_Rnonneg_neg
+    (Rnonneg_congr (Req_trans (Radd_comm zero (Rneg x)) (Radd_zero (Rneg x)))
+      (Rnonneg_Rsub_of_Rle hle)) h
+
+/-- The two computed samples of Burnol's archimedean multiplier `α`: the window center `α(0)` and the
+    off-center point `α(2)`. -/
+def burnolAlphaSample : Bool → Real
+  | false => burnolAlphaZero
+  | true  => burnolAlphaTwo
+
+/-- **THE MULTIPLIER IS INDEFINITE — it takes both signs.** `α(0) > 0` (the window center,
+    `burnolAlphaZero_pos`) and `α(2) < 0` (off-center, `burnolAlphaTwo_neg`). The single bare
+    archimedean multiplier is genuinely sign-changing — the precise obstruction (Burnol: "a further
+    idea seems necessary") to extending single-place Weil positivity. -/
+theorem burnol_multiplier_indefinite :
+    Pos burnolAlphaZero ∧ Pos (Rneg burnolAlphaTwo) :=
+  ⟨burnolAlphaZero_pos, burnolAlphaTwo_neg⟩
+
+/-- **POINTWISE SINGLE-PLACE POSITIVITY IS REFUTED**: the bare multiplier is NOT everywhere `≥ 0` on
+    its computed samples — `α(2) < 0`. So no τ-uniform `α(τ) ≥ 0` holds; the Connes–Consani / Burnol
+    **Sonine-space projection** (positivity recovered after projecting onto the prime-free window), not
+    a pointwise `α ≥ 0`, is the genuine resolution. The crux stays `none`. -/
+theorem burnolAlpha_not_pointwise_nonneg :
+    ¬ (∀ b, Rnonneg (burnolAlphaSample b)) := fun h =>
+  not_Pos_neg_of_Rnonneg (h true) burnolAlphaTwo_neg
+
+/-- ...and the bare multiplier is not everywhere `≤ 0` either — `α(0) > 0` at the window center. With
+    `burnolAlpha_not_pointwise_nonneg` this is genuine indefiniteness (both signs realized): single
+    place positivity does NOT extend, exactly the gap the Sonine projection fills. Crux `none`. -/
+theorem burnolAlpha_not_pointwise_nonpos :
+    ¬ (∀ b, Rle (burnolAlphaSample b) zero) := fun h =>
+  not_Rle_zero_of_Pos burnolAlphaZero_pos (h false)
+
 end UOR.Bridge.F1Square.Analysis

@@ -2259,6 +2259,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sqrt2_le_three_halves
 #print axioms Analysis.sqrt2_nonneg
 #print axioms Analysis.burnolAlphaTwo_neg
+-- v0.22.0 Track 2: the indefiniteness capstone — α takes both signs, so pointwise single-place
+-- positivity is refuted (the Sonine projection, not pointwise α ≥ 0, is the resolution).
+#print axioms Analysis.burnol_multiplier_indefinite
+#print axioms Analysis.burnolAlpha_not_pointwise_nonneg
+#print axioms Analysis.burnolAlpha_not_pointwise_nonpos
 
 -- v0.20.0 stage F: γ₂≥−0.02 bracket evaluators (Analysis/GammaTwoBracket.lean) — parts (A),(B).
 #print axioms Analysis.lnSqSumLo_den_pos
