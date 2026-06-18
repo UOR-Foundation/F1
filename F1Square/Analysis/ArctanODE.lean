@@ -468,6 +468,21 @@ theorem fderiv_sub (S T : Nat → Q) (k : Nat) :
     Qeq (fderiv (fun j => Qsub (S j) (T j)) k) (Qsub (fderiv S k) (fderiv T k)) :=
   Qmul_sub_distrib ⟨(k : Int) + 1, 1⟩ (S (k + 1)) (T (k + 1))
 
+/-- Right distributivity of the formal Cauchy product over difference: `a·(b−c) ≈ a·b − a·c`
+    (local, via `fmul_comm` + `fmul_sub_left`). -/
+theorem fmul_subR (a b c : Nat → Q) (ha : ∀ i, 0 < (a i).den) (hb : ∀ i, 0 < (b i).den)
+    (hc : ∀ i, 0 < (c i).den) (k : Nat) :
+    Qeq (fmul a (fun i => Qsub (b i) (c i)) k) (Qsub (fmul a b k) (fmul a c k)) := by
+  refine Qeq_trans (fmul_den_pos (fun i => Qsub_den_pos (hb i) (hc i)) ha k)
+    (fmul_comm a (fun i => Qsub (b i) (c i)) ha (fun i => Qsub_den_pos (hb i) (hc i)) k) ?_
+  refine Qeq_trans (Qsub_den_pos (fmul_den_pos hb ha k) (fmul_den_pos hc ha k))
+    (fmul_sub_left hb hc ha k) ?_
+  exact QsubCongr (fmul_comm b a hb ha k) (fmul_comm c a hc ha k)
+
+/-- The Q-algebra rearrangement at the heart of the ODE relation: `a − ((a + b) − c) ≈ c − b`. -/
+theorem Qalg1 (a b c : Q) : Qeq (Qsub a (add (add a b) (neg c))) (Qsub c b) := by
+  simp only [Qeq, Qsub, add, neg, mul]; push_cast; ring_uor
+
 /-- The identity series is its own antiderivative's derivative: `X′ = 1` (`fderiv Xident ≈ fone`). -/
 theorem Xident_fderiv (k : Nat) : Qeq (fderiv Xident k) (fone k) := by
   by_cases h0 : k = 0

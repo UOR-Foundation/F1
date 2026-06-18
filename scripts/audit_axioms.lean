@@ -834,6 +834,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fderiv_strip
 #print axioms Analysis.ode_unique
 #print axioms Analysis.fderiv_sub
+#print axioms Analysis.fmul_subR
+#print axioms Analysis.Qalg1
 #print axioms Analysis.Xident_fderiv
 #print axioms Analysis.fmul_neg_right
 #print axioms Analysis.X_sq_eq_sq2
