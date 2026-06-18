@@ -2214,6 +2214,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.li_criterion_disk
 #print axioms Square.atlas_coupling_analytic_face
 #print axioms Square.hodgeIndex_iff_RH
+#print axioms Square.hodgeIndex_iff_closedDisk
 #print axioms Analysis.riemannHypothesisStrip_iff
 #print axioms Square.hodgeIndex_iff_riemannHypothesis
 

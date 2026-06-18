@@ -67,4 +67,17 @@ theorem hodgeIndex_iff_riemannHypothesis (E : StieltjesEta) (L : LiBridge E)
     SpectralHodgeNeg (genuineSpectralSquare E) ↔ RiemannHypothesisStrip :=
   Iff.trans (hL ▸ hodgeIndex_iff_RH E L) riemannHypothesisStrip_iff.symm
 
+/-- **THE ARITHMETIC HODGE INDEX ⟺ THE CLOSED-DISK WITNESS** — the geometric crux face stated in the
+    constructive witness's own geometry. For a reflection-closed zero set, the Hodge-index
+    non-negativity of `𝕊` holds **iff every nontrivial zero's Cayley factor `1−1/ρ` lies in the closed
+    unit disk** (`|1−1/ρ|² ≤ 1`) — the exact hypothesis the manifest sum-of-nonnegatives witness
+    (`witnessSum_nonneg`) consumes. Chains `genuine_hodgeNeg_iff` with `li_criterion_disk`
+    (`Reflection.allInClosedDisk_iff_allOnLine`, the functional-equation closure). So the F1-square's
+    geometric Hodge index, Li-positivity, the on-line condition, and the witness's closed-disk geometry
+    are ONE proposition. The single open input is still RH; the crux fields stay `none`. -/
+theorem hodgeIndex_iff_closedDisk (E : StieltjesEta) (L : LiBridge E)
+    (hcl : ReflClosed L.isZero) :
+    SpectralHodgeNeg (genuineSpectralSquare E) ↔ (∀ z, L.isZero z → InClosedDisk z) :=
+  Iff.trans (genuine_hodgeNeg_iff E) (li_criterion_disk E L hcl)
+
 end UOR.Bridge.F1Square.Square
