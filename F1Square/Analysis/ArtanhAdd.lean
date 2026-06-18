@@ -1092,4 +1092,54 @@ theorem tmap_nonneg_lt_one (q : Q) (hqd : 0 < q.den) (hq : Qle (⟨1, 1⟩ : Q) 
     omega
   exact_mod_cast hlt
 
+/-- **The `hbw` bound packaged for `[1,B]` arguments**: for `a, b ∈ [1, B]`,
+    `|wvalR(tmap a, tmap b)| ≤ ρ_{B²}` (`= tmap(B²)`). Packages `wvalR_tmap_bound`'s sub-hypotheses from
+    `1 ≤ a, b ≤ B`; this is `Rlog_mul`'s `hbw` per index. -/
+theorem wvalR_tmap_seq_bound (a b B : Q) (had : 0 < a.den) (hbd : 0 < b.den) (hBd : 0 < B.den)
+    (ha1 : Qle (⟨1, 1⟩ : Q) a) (hb1 : Qle (⟨1, 1⟩ : Q) b) (haB : Qle a B) (hbB : Qle b B)
+    (hBge : Qle (⟨1, 1⟩ : Q) B) :
+    Qle (Qabs (wvalR (tmap a) (tmap b)))
+        (⟨(mul B B).num - ((mul B B).den : Int), (mul B B).num.toNat + (mul B B).den⟩ : Q) := by
+  have ha0 : 0 ≤ a.num := by have := ha1; simp only [Qle] at this; omega
+  have hb0 : 0 ≤ b.num := by have := hb1; simp only [Qle] at this; omega
+  have hBn : 0 ≤ B.num := by have := hBge; simp only [Qle] at this; omega
+  have ha1' : 0 < (add a ⟨1, 1⟩).num := by
+    show 0 < a.num * 1 + 1 * (a.den : Int); have := Int.ofNat_nonneg a.den; omega
+  have hb1' : 0 < (add b ⟨1, 1⟩).num := by
+    show 0 < b.num * 1 + 1 * (b.den : Int); have := Int.ofNat_nonneg b.den; omega
+  have hab1 : 0 < (add (mul a b) ⟨1, 1⟩).num := by
+    show 0 < a.num * b.num * 1 + 1 * ((a.den * b.den : Nat) : Int)
+    have h1 : 0 ≤ a.num * b.num := Int.mul_nonneg ha0 hb0
+    have h2 : 0 < ((a.den * b.den : Nat) : Int) := by exact_mod_cast Nat.mul_pos had hbd
+    omega
+  have htad : 0 < (tmap a).den := Qmul_den_pos (Qsub_den_pos had Nat.one_pos) (Qinv_den_pos ha1')
+  have htbd : 0 < (tmap b).den := Qmul_den_pos (Qsub_den_pos hbd Nat.one_pos) (Qinv_den_pos hb1')
+  have hta0 : 0 ≤ (tmap a).num := (tmap_nonneg_lt_one a had ha1).1
+  have htb0 : 0 ≤ (tmap b).num := (tmap_nonneg_lt_one b hbd hb1).1
+  have hD : 0 < ((tmap a).den : Int) * (tmap b).den + (tmap a).num * (tmap b).num := by
+    have hdd : 0 < ((tmap a).den : Int) * (tmap b).den :=
+      Int.mul_pos (by exact_mod_cast htad) (by exact_mod_cast htbd)
+    have hnn : 0 ≤ (tmap a).num * (tmap b).num := Int.mul_nonneg hta0 htb0
+    omega
+  have hB2d : 0 < (mul B B).den := Qmul_den_pos hBd hBd
+  have hB2n : 0 ≤ (mul B B).num := Int.mul_nonneg hBn hBn
+  have hMab1 : 0 < (add (mul B B) ⟨1, 1⟩).num := by
+    show 0 < B.num * B.num * 1 + 1 * ((B.den * B.den : Nat) : Int)
+    have h2 : 0 < ((B.den * B.den : Nat) : Int) := by exact_mod_cast Nat.mul_pos hBd hBd
+    have h1 : 0 ≤ B.num * B.num := Int.mul_nonneg hBn hBn; omega
+  have habM : Qle (mul a b) (mul B B) := Qmul_le_mul had hBd hbd ha0 hb0 haB hbB
+  have habMge : Qle (⟨1, 1⟩ : Q) (mul (mul a b) (mul B B)) := by
+    have hab1ge : Qle (⟨1, 1⟩ : Q) (mul a b) :=
+      Qle_trans (by decide) (Qeq_le (by decide : Qeq (⟨1, 1⟩ : Q) (mul ⟨1, 1⟩ ⟨1, 1⟩)))
+        (Qmul_le_mul Nat.one_pos had Nat.one_pos (by decide) (by decide) ha1 hb1)
+    have hB2ge : Qle (⟨1, 1⟩ : Q) (mul B B) :=
+      Qle_trans (by decide) (Qeq_le (by decide : Qeq (⟨1, 1⟩ : Q) (mul ⟨1, 1⟩ ⟨1, 1⟩)))
+        (Qmul_le_mul Nat.one_pos hBd Nat.one_pos (by decide) (by decide) hBge hBge)
+    exact Qle_trans (by decide) (Qeq_le (by decide : Qeq (⟨1, 1⟩ : Q) (mul ⟨1, 1⟩ ⟨1, 1⟩)))
+      (Qmul_le_mul Nat.one_pos (Qmul_den_pos had hbd) Nat.one_pos (by decide) (by decide)
+        hab1ge hB2ge)
+  exact Qle_trans (Qmul_den_pos (Qsub_den_pos hB2d Nat.one_pos) (Qinv_den_pos hMab1))
+    (wvalR_tmap_bound a b B B had hbd ha1' hb1' hab1 hD hB2d hMab1 habM habMge)
+    (Qeq_le (tmap_M_eq hB2d hB2n))
+
 end UOR.Bridge.F1Square.Analysis

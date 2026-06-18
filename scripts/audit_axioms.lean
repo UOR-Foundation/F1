@@ -782,6 +782,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rlog_mul_via
 #print axioms Analysis.wvalR_tmap_bound
 #print axioms Analysis.tmap_nonneg_lt_one
+#print axioms Analysis.wvalR_tmap_seq_bound
 -- v0.22.0 Track 1: the complex argument on the principal sector (Analysis/ComplexArg.lean).
 #print axioms Analysis.Carg_ofReal_pos
 -- v0.22.0 Track 1: the complex logarithm Clog on the principal sector (Analysis/ComplexLog.lean).
