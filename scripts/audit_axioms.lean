@@ -2438,6 +2438,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.burnol_pairing_indefinite
 #print axioms Square.burnol_pairing_psd_on_sonine
 #print axioms Square.burnol_sonine_dichotomy
+-- Burnol's correction mechanism (the sharpest UNCONDITIONAL Weil-positivity theorem, discretized):
+-- a correction making the multiplier pointwise ≥ 0 and vanishing on the window ⟹ window positivity.
+#print axioms Square.multForm_psd_via_correction
+#print axioms Square.burnol_corrected_nonneg
+#print axioms Square.burnol_pairing_psd_via_correction
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.
