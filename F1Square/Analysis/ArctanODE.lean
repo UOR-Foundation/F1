@@ -895,6 +895,30 @@ theorem arctanSum_abs_le {t ρ : Q} (htd : 0 < t.den) (hρ0 : 0 ≤ ρ.num) (hρ
           (Qabs_den_pos (arctanTerm_den_pos htd (N + 1)))) (Qabs_add_le _ _) ?_
       exact Qadd_le_add (arctanSum_abs_le htd hρ0 hρd htρ N) (arctanTerm_abs_le htd hρ0 hρd htρ (N + 1))
 
+-- ===========================================================================
+-- The DN-sum: composition error = Σₘ sinₘ·(per-m error), bounded by Σₘ Σⱼ |cornerⱼ|.
+-- ===========================================================================
+
+/-- **`DN` identity**: `peval(sin∘arctan,t,M) − peval(sin, q, M) = Σ_{m≤M} sinₘ·(peval(arctanᵐ,t,M) − qᵐ)`
+    where `q = peval arctanCoeff t M`. (`peval_fcomp_swap` + `Fsum_sub` + `Qmul_sub_left_loc`.) -/
+theorem DN_sin_eq (t : Q) (htd : 0 < t.den) (M : Nat) :
+    Qeq (Qsub (peval (fcomp sinCoeff arctanCoeff) t M)
+          (peval sinCoeff (peval arctanCoeff t M) M))
+      (Fsum (fun m => mul (sinCoeff m)
+        (Qsub (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m))) M) := by
+  have hq : 0 < (peval arctanCoeff t M).den := peval_den_pos arctanCoeff_den_pos htd M
+  have hF : ∀ m, 0 < (mul (sinCoeff m) (peval (fpow arctanCoeff m) t M)).den :=
+    fun m => Qmul_den_pos (sinCoeff_den_pos m) (peval_den_pos (fpow_den_pos arctanCoeff_den_pos m) htd M)
+  have hG : ∀ m, 0 < (mul (sinCoeff m) (qpow (peval arctanCoeff t M) m)).den :=
+    fun m => Qmul_den_pos (sinCoeff_den_pos m) (qpow_den_pos hq m)
+  refine Qeq_trans (Qsub_den_pos (Fsum_den_pos hF M) (peval_den_pos sinCoeff_den_pos hq M))
+    (QsubCongr (peval_fcomp_swap sinCoeff arctanCoeff sinCoeff_den_pos arctanCoeff_den_pos
+      arctanCoeff_zero t htd M) (Qeq_refl _)) ?_
+  refine Qeq_trans (Fsum_den_pos (fun m => Qsub_den_pos (hF m) (hG m)) M)
+    (Qeq_symm (Fsum_sub hF hG M)) ?_
+  exact Fsum_congr (fun m => Qeq_symm (Qmul_sub_left_loc (sinCoeff m)
+    (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m))) M
+
 /-- **Geometric domination of the arctan coefficients**: `|arctanCoeffₖ| ≤ 1` for every `k` (the
     coefficient is `(−1)^{k/2}/k` at odd `k`, else `0`). The convergence input for the composition
     value bridge: combined with `peval_mono` it bounds `peval (fabs arctanCoeff) ρ M` by a geometric
