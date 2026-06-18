@@ -14,6 +14,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 
 import F1Square.Analysis.RArctan
 import F1Square.Analysis.ExpLog
+import F1Square.Analysis.RealPow
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -43,5 +44,30 @@ theorem RarctanR_congr (t t' : Real) (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < 
       _ ≤ (ρ.den * ρ.den + 4 * ρ.den) * (n + 1) := Nat.mul_le_mul_right _ hk
   show (2 * 2 : Int) * ((n + 1 : Nat) : Int) ≤ (4 : Int) * ((1 * (Rartanh_R ρ n + 1) : Nat) : Int)
   push_cast; omega
+
+-- ===========================================================================
+-- The exp-injectivity core of any logarithm/artanh additivity: from the exp-VALUES,
+-- `exp C = exp A · exp B = exp(A+B)`, so `C = A + B`. The parameter-thicket of computing the
+-- exp-values (`exp(2·artanh τ) = (1+τ)/(1−τ)` per `Rexp_two_artanh_ofQ`) is isolated into the
+-- explicit hypotheses `hA`/`hB`/`hC` — the honest computed input — leaving this clean and reusable.
+-- ===========================================================================
+
+/-- **Additivity from exp-values** (the `RexpReal_inj` core): if `exp A = gA`, `exp B = gB`,
+    `exp C = gC` (as rationals) with `gC = gA·gB`, and `A, B, C ≥ 0`, then `C = A + B`. The engine for
+    `2·artanh c = 2·artanh a + 2·artanh b` (with `gA = (1+a)/(1−a)` etc., `gC = gA·gB`), hence for log
+    multiplicativity `log(xy) = log x + log y`. -/
+theorem Req_add_of_exp_values {A B C : Real} {gA gB gC : Q}
+    (hgAd : 0 < gA.den) (hgBd : 0 < gB.den) (hgCd : 0 < gC.den)
+    (hA : Req (RexpReal A) (ofQ gA hgAd)) (hB : Req (RexpReal B) (ofQ gB hgBd))
+    (hC : Req (RexpReal C) (ofQ gC hgCd)) (hg : Qeq gC (mul gA gB))
+    (hAnn : Rnonneg A) (hBnn : Rnonneg B) (hCnn : Rnonneg C) :
+    Req C (Radd A B) := by
+  apply RexpReal_inj hCnn (Rnonneg_Radd hAnn hBnn)
+  have hmul : Req (RexpReal (Radd A B)) (ofQ gC hgCd) :=
+    Req_trans (RexpReal_add A B)
+      (Req_trans (Rmul_congr hA hB)
+        (Req_trans (Rmul_ofQ_ofQ hgAd hgBd)
+          (ofQ_congr (Qmul_den_pos hgAd hgBd) hgCd (Qeq_symm hg))))
+  exact Req_trans hC (Req_symm hmul)
 
 end UOR.Bridge.F1Square.Analysis
