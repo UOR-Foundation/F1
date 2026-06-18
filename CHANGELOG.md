@@ -80,7 +80,20 @@ audit-visible hypothesis, never an axiom).
   `SpectralHodgeNeg(𝕊) ⟺ AllZerosOnLine` (via `genuine_hodgeNeg_iff` + `li_criterion`);
   `hodgeIndex_iff_riemannHypothesis`: `SpectralHodgeNeg(𝕊) ⟺ RiemannHypothesisStrip` — the F1-square
   Hodge index equated end to end to RH about the constructed ζ. `atlas_coupling_analytic_face` bundles
-  the geometric and analytic faces.
+  the geometric and analytic faces. `hodgeIndex_iff_closedDisk` (this release): the same Hodge index ⟺
+  every zero's Cayley factor in the closed unit disk (via `li_criterion_disk`) — so the geometric
+  Hodge index, Li-positivity, the on-line condition, and the witness's closed-disk geometry are ONE
+  connected proposition.
+- **The Burnol multiplier is indefinite — pointwise single-place positivity REFUTED**
+  (`Analysis/BurnolAlphaTwo.lean`). `α(0) > 0` (`burnolAlphaZero_pos`, window center) and `α(2) < 0`
+  (`burnolAlphaTwo_neg`, off-center) were both proven; this packages the frontier statement they
+  jointly establish. `burnol_multiplier_indefinite` — the bare archimedean multiplier takes both
+  signs; `burnolAlphaSample` + `burnolAlpha_not_pointwise_nonneg` / `burnolAlpha_not_pointwise_nonpos`
+  — on its computed samples it is neither everywhere `≥ 0` nor everywhere `≤ 0`, so pointwise
+  single-place positivity is refuted (both directions). The Connes–Consani / Burnol Sonine-space
+  projection (positivity after projecting onto the prime-free window), NOT a pointwise `α ≥ 0`, is the
+  genuine Track-2 resolution; the obstruction (Burnol "a further idea seems necessary") is now a named
+  theorem. Crux fields stay `none`.
 - **The prime-free window is maximal** (`Square/Pairing.lean`) — `prime_window_maximal`: the conquered
   prime-free window is at `X = 1`; the prime `2` enters at the next term (`Λ(2) = log 2`), the discrete
   Connes–Consani interval `(1/2, 2)`.
