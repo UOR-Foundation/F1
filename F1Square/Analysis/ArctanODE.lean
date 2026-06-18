@@ -522,4 +522,163 @@ theorem absorb_onePlusSq_geomAlt (P : Nat → Q) (hP : ∀ i, 0 < (P i).den) (k 
         (fmul_comm geomAlt onePlusSq geomAlt_den_pos onePlusSq_den_pos i) (onePlusSq_geomAlt i)) k) ?_
   exact fmul_one P hP k
 
+-- ===========================================================================
+-- The formal identity  sin∘arctan = t·(cos∘arctan)  via ode_unique on G = S − t·C.
+-- ===========================================================================
+
+/-- **Derivative of `t·(cos∘arctan)`**: `(X·C)′ ≈ C + (−((X·S)·A′))` — product rule `(X·C)′ = X′·C + X·C′`
+    with `X′ = 1`, `C′ = −(S·A′)` (`cosComp_deriv`), and the associativity `X·(S·A′) = (X·S)·A′`. -/
+theorem Gseq_fderivT (i : Nat) :
+    Qeq (fderiv (fmul Xident (fcomp cosCoeff arctanCoeff)) i)
+      (add (fcomp cosCoeff arctanCoeff i)
+        (neg (fmul (fmul Xident (fcomp sinCoeff arctanCoeff)) geomAlt i))) := by
+  have hS : ∀ j, 0 < (fcomp sinCoeff arctanCoeff j).den :=
+    fun j => fcomp_den_pos sinCoeff_den_pos arctanCoeff_den_pos j
+  have hC : ∀ j, 0 < (fcomp cosCoeff arctanCoeff j).den :=
+    fun j => fcomp_den_pos cosCoeff_den_pos arctanCoeff_den_pos j
+  have hSg : ∀ j, 0 < (fmul (fcomp sinCoeff arctanCoeff) geomAlt j).den :=
+    fun j => fmul_den_pos hS geomAlt_den_pos j
+  have part1 : Qeq (fmul (fderiv Xident) (fcomp cosCoeff arctanCoeff) i) (fcomp cosCoeff arctanCoeff i) :=
+    Qeq_trans (fmul_den_pos (fun j => fone_den_pos j) hC i)
+      (fmul_congr_left (fun j => Xident_fderiv j) i) (fmul_fone_left (fcomp cosCoeff arctanCoeff) hC i)
+  have part2 : Qeq (fmul Xident (fderiv (fcomp cosCoeff arctanCoeff)) i)
+      (neg (fmul (fmul Xident (fcomp sinCoeff arctanCoeff)) geomAlt i)) :=
+    Qeq_trans (fmul_den_pos Xident_den_pos (fun j => neg_den_pos (hSg j)) i)
+      (fmul_congr_right (fun j => cosComp_deriv j) i)
+      (Qeq_trans (neg_den_pos (fmul_den_pos Xident_den_pos hSg i))
+        (fmul_neg_right Xident (fmul (fcomp sinCoeff arctanCoeff) geomAlt) Xident_den_pos hSg i)
+        (Qneg_congr (Qeq_symm
+          (fmul_assoc Xident (fcomp sinCoeff arctanCoeff) geomAlt Xident_den_pos hS geomAlt_den_pos i))))
+  exact Qeq_trans
+    (add_den_pos (fmul_den_pos (fun j => fderiv_den_pos Xident_den_pos j) hC i)
+      (fmul_den_pos Xident_den_pos (fun j => fderiv_den_pos hC j) i))
+    (fderiv_fmul Xident (fcomp cosCoeff arctanCoeff) Xident_den_pos hC i)
+    (Qadd_congr part1 part2)
+
+/-- `G = sin∘arctan − t·(cos∘arctan)` — the difference whose vanishing is the formal identity. -/
+def Gseq (j : Nat) : Q :=
+  Qsub (fcomp sinCoeff arctanCoeff j) (fmul Xident (fcomp cosCoeff arctanCoeff) j)
+
+theorem Gseq_den_pos (i : Nat) : 0 < (Gseq i).den :=
+  Qsub_den_pos (fcomp_den_pos sinCoeff_den_pos arctanCoeff_den_pos i)
+    (fmul_den_pos Xident_den_pos (fun j => fcomp_den_pos cosCoeff_den_pos arctanCoeff_den_pos j) i)
+
+/-- `G(0) ≈ 0`: `sin∘arctan` and `t·(cos∘arctan)` both vanish at degree 0. -/
+theorem Gseq_zero : Qeq (Gseq 0) ⟨0, 1⟩ := by
+  have hA : Qeq (fcomp sinCoeff arctanCoeff 0) ⟨0, 1⟩ :=
+    Qeq_trans (sinCoeff_den_pos 0) (fcomp_const sinCoeff arctanCoeff) (by decide)
+  have hB : Qeq (fmul Xident (fcomp cosCoeff arctanCoeff) 0) ⟨0, 1⟩ :=
+    fmul_Xident_zero (fcomp cosCoeff arctanCoeff)
+  exact Qeq_trans (Qsub_den_pos (by decide) (by decide)) (QsubCongr hA hB) (by decide)
+
+/-- **The `G`-ODE relation**: `(1+t²)·G′ ≈ t·G`. Both sides reduce to `X·S − t²·C`: the RHS by
+    distributing `X` and `X² = t²`; the LHS by the chain-rule derivatives, the absorption
+    `(1+t²)·(P·A′) = P`, and the algebra `a − ((a+b)−c) = c − b`. -/
+theorem Gseq_ode (k : Nat) : Qeq (fmul onePlusSq (fderiv Gseq) k) (fmul Xident Gseq k) := by
+  show Qeq (fmul onePlusSq
+      (fderiv (fun j => Qsub (fcomp sinCoeff arctanCoeff j)
+        (fmul Xident (fcomp cosCoeff arctanCoeff) j))) k)
+    (fmul Xident (fun j => Qsub (fcomp sinCoeff arctanCoeff j)
+      (fmul Xident (fcomp cosCoeff arctanCoeff) j)) k)
+  have hS : ∀ j, 0 < (fcomp sinCoeff arctanCoeff j).den :=
+    fun j => fcomp_den_pos sinCoeff_den_pos arctanCoeff_den_pos j
+  have hC : ∀ j, 0 < (fcomp cosCoeff arctanCoeff j).den :=
+    fun j => fcomp_den_pos cosCoeff_den_pos arctanCoeff_den_pos j
+  have hT : ∀ j, 0 < (fmul Xident (fcomp cosCoeff arctanCoeff) j).den :=
+    fun j => fmul_den_pos Xident_den_pos hC j
+  have hXS : ∀ j, 0 < (fmul Xident (fcomp sinCoeff arctanCoeff) j).den :=
+    fun j => fmul_den_pos Xident_den_pos hS j
+  have hsq2C : ∀ j, 0 < (fmul sq2 (fcomp cosCoeff arctanCoeff) j).den :=
+    fun j => fmul_den_pos sq2_den_pos hC j
+  have hfdS : ∀ j, 0 < (fderiv (fcomp sinCoeff arctanCoeff) j).den := fun j => fderiv_den_pos hS j
+  have hfdT : ∀ j, 0 < (fderiv (fmul Xident (fcomp cosCoeff arctanCoeff)) j).den :=
+    fun j => fderiv_den_pos hT j
+  have hCg : ∀ j, 0 < (fmul (fcomp cosCoeff arctanCoeff) geomAlt j).den :=
+    fun j => fmul_den_pos hC geomAlt_den_pos j
+  have hXSg : ∀ j, 0 < (fmul (fmul Xident (fcomp sinCoeff arctanCoeff)) geomAlt j).den :=
+    fun j => fmul_den_pos hXS geomAlt_den_pos j
+  -- abbreviation: the common middle form M = X·S − t²·C
+  -- RHS : fmul Xident Gseq k ≈ M
+  have hRHS : Qeq (fmul Xident (fun j => Qsub (fcomp sinCoeff arctanCoeff j)
+        (fmul Xident (fcomp cosCoeff arctanCoeff) j)) k)
+      (Qsub (fmul Xident (fcomp sinCoeff arctanCoeff) k) (fmul sq2 (fcomp cosCoeff arctanCoeff) k)) := by
+    have hTeq : Qeq (fmul Xident (fmul Xident (fcomp cosCoeff arctanCoeff)) k)
+        (fmul sq2 (fcomp cosCoeff arctanCoeff) k) :=
+      Qeq_trans (fmul_den_pos (fun j => fmul_den_pos Xident_den_pos Xident_den_pos j) hC k)
+        (Qeq_symm (fmul_assoc Xident Xident (fcomp cosCoeff arctanCoeff) Xident_den_pos Xident_den_pos hC k))
+        (fmul_congr_left (fun j => X_sq_eq_sq2 j) k)
+    refine Qeq_trans (Qsub_den_pos (hXS k) (fmul_den_pos Xident_den_pos hT k))
+      (fmul_subR Xident (fcomp sinCoeff arctanCoeff) (fmul Xident (fcomp cosCoeff arctanCoeff))
+        Xident_den_pos hS hT k) ?_
+    exact QsubCongr (Qeq_refl _) hTeq
+  -- LHS : fmul onePlusSq (fderiv Gseq) k ≈ M
+  have hLHS : Qeq (fmul onePlusSq
+        (fderiv (fun j => Qsub (fcomp sinCoeff arctanCoeff j)
+          (fmul Xident (fcomp cosCoeff arctanCoeff) j))) k)
+      (Qsub (fmul Xident (fcomp sinCoeff arctanCoeff) k) (fmul sq2 (fcomp cosCoeff arctanCoeff) k)) := by
+    -- fderiv Gseq ≈ Qsub (fderiv S)(fderiv T)
+    have hLd : Qeq (fmul onePlusSq
+          (fderiv (fun j => Qsub (fcomp sinCoeff arctanCoeff j)
+            (fmul Xident (fcomp cosCoeff arctanCoeff) j))) k)
+        (Qsub (fmul onePlusSq (fderiv (fcomp sinCoeff arctanCoeff)) k)
+          (fmul onePlusSq (fderiv (fmul Xident (fcomp cosCoeff arctanCoeff))) k)) := by
+      refine Qeq_trans (fmul_den_pos onePlusSq_den_pos
+          (fun j => Qsub_den_pos (hfdS j) (hfdT j)) k)
+        (fmul_congr_right
+          (b := fderiv (fun j => Qsub (fcomp sinCoeff arctanCoeff j)
+            (fmul Xident (fcomp cosCoeff arctanCoeff) j)))
+          (b' := fun j => Qsub (fderiv (fcomp sinCoeff arctanCoeff) j)
+            (fderiv (fmul Xident (fcomp cosCoeff arctanCoeff)) j))
+          (fun j => fderiv_sub (fcomp sinCoeff arctanCoeff)
+            (fmul Xident (fcomp cosCoeff arctanCoeff)) j) k) ?_
+      exact fmul_subR onePlusSq (fderiv (fcomp sinCoeff arctanCoeff))
+        (fderiv (fmul Xident (fcomp cosCoeff arctanCoeff))) onePlusSq_den_pos hfdS hfdT k
+    -- term1 : (1+t²)·S′ ≈ C
+    have hT1 : Qeq (fmul onePlusSq (fderiv (fcomp sinCoeff arctanCoeff)) k) (fcomp cosCoeff arctanCoeff k) :=
+      Qeq_trans (fmul_den_pos onePlusSq_den_pos hCg k)
+        (fmul_congr_right (fun j => sinComp_deriv j) k)
+        (absorb_onePlusSq_geomAlt (fcomp cosCoeff arctanCoeff) hC k)
+    -- term2 : (1+t²)·T′ ≈ (C + t²·C) − X·S
+    have hT2 : Qeq (fmul onePlusSq (fderiv (fmul Xident (fcomp cosCoeff arctanCoeff))) k)
+        (add (add (fcomp cosCoeff arctanCoeff k) (fmul sq2 (fcomp cosCoeff arctanCoeff) k))
+          (neg (fmul Xident (fcomp sinCoeff arctanCoeff) k))) := by
+      -- (1+t²)·T′ ≈ (1+t²)·(C + (−((X·S)·A′)))
+      refine Qeq_trans (fmul_den_pos onePlusSq_den_pos
+          (fun j => add_den_pos (hC j) (neg_den_pos (hXSg j))) k)
+        (fmul_congr_right (fun j => Gseq_fderivT j) k) ?_
+      -- distribute over add
+      refine Qeq_trans (add_den_pos (fmul_den_pos onePlusSq_den_pos hC k)
+          (fmul_den_pos onePlusSq_den_pos (fun j => neg_den_pos (hXSg j)) k))
+        (fmul_add_right onePlusSq_den_pos hC (fun j => neg_den_pos (hXSg j)) k) ?_
+      refine Qadd_congr ?_ ?_
+      · -- (1+t²)·C ≈ C + t²·C
+        refine Qeq_trans (add_den_pos (fmul_den_pos (fun j => fone_den_pos j) hC k)
+            (fmul_den_pos sq2_den_pos hC k))
+          (Qeq_trans (fmul_den_pos (fun j => add_den_pos (fone_den_pos j) (sq2_den_pos j)) hC k)
+            (fmul_congr_left (fun j => onePlusSq_decomp j) k)
+            (fmul_add_left (fun j => fone_den_pos j) (fun j => sq2_den_pos j) hC k)) ?_
+        exact Qadd_congr (fmul_fone_left (fcomp cosCoeff arctanCoeff) hC k) (Qeq_refl _)
+      · -- (1+t²)·(−((X·S)·A′)) ≈ −(X·S)
+        refine Qeq_trans (neg_den_pos (fmul_den_pos onePlusSq_den_pos
+            (fun j => fmul_den_pos hXS geomAlt_den_pos j) k))
+          (fmul_neg_right onePlusSq (fmul (fmul Xident (fcomp sinCoeff arctanCoeff)) geomAlt)
+            onePlusSq_den_pos hXSg k) ?_
+        exact Qneg_congr (absorb_onePlusSq_geomAlt (fmul Xident (fcomp sinCoeff arctanCoeff)) hXS k)
+    -- combine: Qsub C ((C+t²C) − X·S) ≈ X·S − t²·C  via Qalg1
+    refine Qeq_trans (Qsub_den_pos (hC k)
+        (add_den_pos (add_den_pos (hC k) (hsq2C k)) (neg_den_pos (hXS k))))
+      (Qeq_trans (Qsub_den_pos (fmul_den_pos onePlusSq_den_pos hfdS k)
+          (fmul_den_pos onePlusSq_den_pos hfdT k))
+        hLd (QsubCongr hT1 hT2)) ?_
+    exact Qalg1 (fcomp cosCoeff arctanCoeff k) (fmul sq2 (fcomp cosCoeff arctanCoeff) k)
+      (fmul Xident (fcomp sinCoeff arctanCoeff) k)
+  exact Qeq_trans (Qsub_den_pos (hXS k) (hsq2C k)) hLHS (Qeq_symm hRHS)
+
+/-- **★ The formal identity `sin∘arctan = t·(cos∘arctan)`**: `fcomp sinCoeff arctanCoeff ≈
+    fmul Xident (fcomp cosCoeff arctanCoeff)`. The formal-power-series shadow of `tan(arctan t) = t`,
+    obtained by `ode_unique` on `G = S − t·C` (which satisfies `(1+t²)G′ = t·G`, `G(0)=0`). -/
+theorem sin_arctan_eq (k : Nat) :
+    Qeq (fcomp sinCoeff arctanCoeff k) (fmul Xident (fcomp cosCoeff arctanCoeff) k) :=
+  Qeq_of_Qsub_zero (ode_unique Gseq Gseq_den_pos Gseq_zero Gseq_ode k)
+
 end UOR.Bridge.F1Square.Analysis
