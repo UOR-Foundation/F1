@@ -718,6 +718,103 @@ theorem qpow_neg_one_abs (n : Nat) : Qabs (qpow (⟨-1, 1⟩ : Q) n) = ⟨1, 1�
   | zero => rfl
   | succ m ih => rw [qpow_succ, Qabs_mul, ih]; rfl
 
+-- ===========================================================================
+-- General per-m convergence: |peval(bᵐ,w,M) − (peval b w M)ᵐ| ≤ Σ |cornerⱼ|.
+-- (Compares the truncated power-of-series to the power of the truncated series — the
+-- partial-sum comparison that the NON-rational arctan series needs, vs the doubling's
+-- rational-limit `uval`. The recursion eₘ₊₁ = q·eₘ − cornerₘ has no q−u term.)
+-- ===========================================================================
+
+/-- The general truncation corner of `peval (fpow b (m+1))` (the `peval_fpow_succ` defect; `kcorner`
+    with `b` in place of `kdbl`). -/
+def gcornerB (b : Nat → Q) (w : Q) (m M : Nat) : Q :=
+  Fsum (fun i => Qsub
+    (Fsum (fun j => mul (mul (b i) (qpow w i)) (mul (fpow b m j) (qpow w j))) M)
+    (Fsum (fun j => mul (mul (b i) (qpow w i)) (mul (fpow b m j) (qpow w j))) (M - i))) M
+
+theorem gcornerB_den (b : Nat → Q) (hb : ∀ i, 0 < (b i).den) (w : Q) (hwd : 0 < w.den) (m M : Nat) :
+    0 < (gcornerB b w m M).den :=
+  Fsum_den_pos (fun i => Qsub_den_pos
+    (Fsum_den_pos (fun j => Qmul_den_pos (Qmul_den_pos (hb i) (qpow_den_pos hwd i))
+      (Qmul_den_pos (fpow_den_pos hb m j) (qpow_den_pos hwd j))) M)
+    (Fsum_den_pos (fun j => Qmul_den_pos (Qmul_den_pos (hb i) (qpow_den_pos hwd i))
+      (Qmul_den_pos (fpow_den_pos hb m j) (qpow_den_pos hwd j))) (M - i))) M
+
+/-- The error-recursion algebra: `(q·p − c) − q·r = q·(p − r) − c`. -/
+theorem e_rec_alg2 (q p r c : Q) :
+    Qeq (Qsub (Qsub (mul q p) c) (mul q r)) (Qsub (mul q (Qsub p r)) c) := by
+  simp only [Qeq, Qsub, add, neg, mul]; push_cast; ring_uor
+
+/-- **Per-`m` error step**: `|eₘ₊₁| ≤ |q|·|eₘ| + |cornerₘ|`, where `eₖ = peval(bᵏ,w,M) − qᵏ`,
+    `q = peval b w M`. From `peval_fpow_succ` (= `q·peval(bᵐ) − corner`) and `e_rec_alg2`. -/
+theorem gen_per_m_step (b : Nat → Q) (hb : ∀ i, 0 < (b i).den) (w : Q) (hwd : 0 < w.den) (m M : Nat) :
+    Qle (Qabs (Qsub (peval (fpow b (m + 1)) w M) (qpow (peval b w M) (m + 1))))
+      (add (mul (Qabs (peval b w M))
+              (Qabs (Qsub (peval (fpow b m) w M) (qpow (peval b w M) m))))
+        (Qabs (gcornerB b w m M))) := by
+  have hq : 0 < (peval b w M).den := peval_den_pos hb hwd M
+  have hpm : 0 < (peval (fpow b m) w M).den := peval_den_pos (fpow_den_pos hb m) hwd M
+  have hqm : 0 < (qpow (peval b w M) m).den := qpow_den_pos hq m
+  have hem : 0 < (Qsub (peval (fpow b m) w M) (qpow (peval b w M) m)).den := Qsub_den_pos hpm hqm
+  have hcor : 0 < (gcornerB b w m M).den := gcornerB_den b hb w hwd m M
+  have hid : Qeq (Qsub (peval (fpow b (m + 1)) w M) (qpow (peval b w M) (m + 1)))
+      (Qsub (mul (peval b w M) (Qsub (peval (fpow b m) w M) (qpow (peval b w M) m)))
+        (gcornerB b w m M)) := by
+    rw [qpow_succ]
+    exact Qeq_trans
+      (Qsub_den_pos (Qsub_den_pos (Qmul_den_pos hq hpm) hcor) (Qmul_den_pos hq hqm))
+      (Qsub_congr (peval_fpow_succ b hb w hwd m M) (Qeq_refl _))
+      (e_rec_alg2 (peval b w M) (peval (fpow b m) w M) (qpow (peval b w M) m) (gcornerB b w m M))
+  refine Qle_trans (Qabs_den_pos (Qsub_den_pos (Qmul_den_pos hq hem) hcor))
+    (Qeq_le (Qabs_Qeq hid)) ?_
+  refine Qle_trans (add_den_pos (Qabs_den_pos (Qmul_den_pos hq hem)) (Qabs_den_pos hcor))
+    (Qabs_sub_le_add _ _) ?_
+  exact Qadd_le_add (Qeq_le (by rw [Qabs_mul]; exact Qeq_refl _ :
+    Qeq (Qabs (mul (peval b w M) (Qsub (peval (fpow b m) w M) (qpow (peval b w M) m))))
+      (mul (Qabs (peval b w M)) (Qabs (Qsub (peval (fpow b m) w M) (qpow (peval b w M) m))))))
+    (Qle_refl _)
+
+/-- **Per-`m` error bound**: `|peval(bᵐ⁺¹,w,M) − qᵐ⁺¹| ≤ Σ_{j≤m} |cornerⱼ|` for `q = peval b w M` with
+    `|q| ≤ 1`. By induction via `gen_per_m_step` (the `|q|·|eₘ| ≤ |eₘ|` contraction). -/
+theorem gen_per_m_bound (b : Nat → Q) (hb : ∀ i, 0 < (b i).den) (w : Q) (hwd : 0 < w.den) (M : Nat)
+    (hq1 : Qle (Qabs (peval b w M)) ⟨1, 1⟩) (m : Nat) :
+    Qle (Qabs (Qsub (peval (fpow b (m + 1)) w M) (qpow (peval b w M) (m + 1))))
+      (Fsum (fun j => Qabs (gcornerB b w j M)) m) := by
+  have hq : 0 < (peval b w M).den := peval_den_pos hb hwd M
+  have hpd : ∀ k, 0 < (peval (fpow b k) w M).den :=
+    fun k => peval_den_pos (fpow_den_pos hb k) hwd M
+  have hqm : ∀ k, 0 < (qpow (peval b w M) k).den := fun k => qpow_den_pos hq k
+  have bound1 : ∀ {e : Q}, 0 < e.den → Qle (mul (Qabs (peval b w M)) (Qabs e)) (Qabs e) :=
+    fun {e} he => Qle_trans (Qmul_den_pos Nat.one_pos (Qabs_den_pos he))
+      (Qmul_le_mul_right (Qabs_num_nonneg _) hq1) (Qeq_le (Qone_mul _))
+  induction m with
+  | zero =>
+      have hz : Qeq (Qsub (peval (fpow b 0) w M) (qpow (peval b w M) 0)) ⟨0, 1⟩ := by
+        show Qeq (Qsub (peval fone w M) ⟨1, 1⟩) ⟨0, 1⟩
+        refine Qeq_trans (Qsub_den_pos Nat.one_pos Nat.one_pos)
+          (Qsub_congr (peval_fone w hwd M) (Qeq_refl _)) ?_
+        simp [Qeq, Qsub, add, neg]
+      have he0 : Qle (Qabs (Qsub (peval (fpow b 0) w M) (qpow (peval b w M) 0))) ⟨0, 1⟩ :=
+        Qeq_le (Qeq_trans Nat.one_pos (Qabs_Qeq hz) (by decide : Qeq (Qabs (⟨0, 1⟩ : Q)) ⟨0, 1⟩))
+      show Qle (Qabs (Qsub (peval (fpow b 1) w M) (qpow (peval b w M) 1)))
+        (Qabs (gcornerB b w 0 M))
+      refine Qle_trans (add_den_pos (Qmul_den_pos (Qabs_den_pos hq)
+          (Qabs_den_pos (Qsub_den_pos (hpd 0) (hqm 0)))) (Qabs_den_pos (gcornerB_den b hb w hwd 0 M)))
+        (gen_per_m_step b hb w hwd 0 M) ?_
+      refine Qle_trans (add_den_pos Nat.one_pos (Qabs_den_pos (gcornerB_den b hb w hwd 0 M)))
+        (Qadd_le_add (Qle_trans (Qabs_den_pos (Qsub_den_pos (hpd 0) (hqm 0)))
+          (bound1 (Qsub_den_pos (hpd 0) (hqm 0))) he0) (Qle_refl _)) ?_
+      exact Qeq_le (Qzero_add _)
+  | succ m ih =>
+      refine Qle_trans (add_den_pos (Qmul_den_pos (Qabs_den_pos hq)
+          (Qabs_den_pos (Qsub_den_pos (hpd (m + 1)) (hqm (m + 1)))))
+          (Qabs_den_pos (gcornerB_den b hb w hwd (m + 1) M)))
+        (gen_per_m_step b hb w hwd (m + 1) M) ?_
+      refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos (hpd (m + 1)) (hqm (m + 1))))
+          (Qabs_den_pos (gcornerB_den b hb w hwd (m + 1) M)))
+        (Qadd_le_add (bound1 (Qsub_den_pos (hpd (m + 1)) (hqm (m + 1)))) (Qle_refl _)) ?_
+      exact Qadd_le_add ih (Qle_refl _)
+
 /-- **Geometric domination of the arctan coefficients**: `|arctanCoeffₖ| ≤ 1` for every `k` (the
     coefficient is `(−1)^{k/2}/k` at odd `k`, else `0`). The convergence input for the composition
     value bridge: combined with `peval_mono` it bounds `peval (fabs arctanCoeff) ρ M` by a geometric

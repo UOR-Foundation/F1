@@ -851,6 +851,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.peval_cosComp_swap
 #print axioms Analysis.qpow_neg_one_abs
 #print axioms Analysis.arctanCoeff_fabs_le_one
+#print axioms Analysis.gcornerB_den
+#print axioms Analysis.e_rec_alg2
+#print axioms Analysis.gen_per_m_step
+#print axioms Analysis.gen_per_m_bound
 -- v0.22.0 Track 1: the complex argument on the principal sector (Analysis/ComplexArg.lean).
 #print axioms Analysis.Carg_ofReal_pos
 -- v0.22.0 Track 1: the complex logarithm Clog on the principal sector (Analysis/ComplexLog.lean).
