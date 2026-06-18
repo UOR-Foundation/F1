@@ -775,6 +775,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rexp_twoArtanh_general_rho
 #print axioms Analysis.TwoArtanh_add_wval_rho
 #print axioms Analysis.artSum_wval_argdiff
+#print axioms Analysis.RartanhConst_add_wval_rho
 -- v0.22.0 Track 1: the complex argument on the principal sector (Analysis/ComplexArg.lean).
 #print axioms Analysis.Carg_ofReal_pos
 -- v0.22.0 Track 1: the complex logarithm Clog on the principal sector (Analysis/ComplexLog.lean).

@@ -299,6 +299,38 @@ theorem TwoArtanh_add_wval_rho (a b σ : Q)
     (Rnonneg_TwoArtanhConst (wval a b) σ (wval_den_pos a b had hbd) hσ0 hσd hσlt hbc
       (wval_num_nonneg a b ha0 hb0))
 
+/-- `½·(2·x) ≈ x` (local copy; `half_two_cancel` lives downstream). The `Rmul`-coefficient collapse
+    `½·2 = 1`, via `Rmul_ofQ_ofQ` + `ofQ_congr` + `Rmul_assoc` + `Rone_mul`. -/
+private theorem two_half_cancel (x : Real) :
+    Req (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) x)) x := by
+  have hc : Req (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (ofQ (⟨2, 1⟩ : Q) (by decide))) one :=
+    Req_trans (Rmul_ofQ_ofQ (by decide) (by decide)) (ofQ_congr (by decide) (by decide) (by decide))
+  refine Req_trans (Req_symm (Rmul_assoc (ofQ (⟨1, 2⟩ : Q) (by decide))
+    (ofQ (⟨2, 1⟩ : Q) (by decide)) x)) ?_
+  exact Req_trans (Rmul_congr hc (Req_refl x)) (Rone_mul x)
+
+/-- **The single-`artanh` addition law at a common radius** (the `×2` stripped): `artanh(wval a b) =
+    artanh a + artanh b` as `RartanhConst`s. From `TwoArtanh_add_wval_rho` (definitionally
+    `Rmul 2 ∘ RartanhConst`) by `Rmul_distrib` + cancelling the `2` via `half_two_cancel`. This
+    single-level form has clean depths for the diagonal's combination bound. -/
+theorem RartanhConst_add_wval_rho (a b σ : Q)
+    (had : 0 < a.den) (ha0 : 0 ≤ a.num) (halt : a.num.toNat < a.den)
+    (hbd : 0 < b.den) (hb0 : 0 ≤ b.num) (hblt : b.num.toNat < b.den)
+    (hσ0 : 0 ≤ σ.num) (hσd : 0 < σ.den) (hσlt : σ.num.toNat < σ.den)
+    (hba : Qle (Qabs a) σ) (hbb : Qle (Qabs b) σ) (hbc : Qle (Qabs (wval a b)) σ) :
+    Req (RartanhConst (wval a b) σ (wval_den_pos a b had hbd) hσ0 hσd hσlt hbc)
+        (Radd (RartanhConst a σ had hσ0 hσd hσlt hba)
+              (RartanhConst b σ hbd hσ0 hσd hσlt hbb)) := by
+  have hlaw := TwoArtanh_add_wval_rho a b σ had ha0 halt hbd hb0 hblt hσ0 hσd hσlt hba hbb hbc
+  have hmul2 : Req (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide))
+        (RartanhConst (wval a b) σ (wval_den_pos a b had hbd) hσ0 hσd hσlt hbc))
+      (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide))
+        (Radd (RartanhConst a σ had hσ0 hσd hσlt hba)
+              (RartanhConst b σ hbd hσ0 hσd hσlt hbb))) :=
+    Req_trans hlaw (Req_symm (Rmul_distrib _ _ _))
+  exact Req_trans (Req_symm (two_half_cancel _))
+    (Req_trans (Rmul_congr (Req_refl (ofQ (⟨1, 2⟩ : Q) (by decide))) hmul2) (two_half_cancel _))
+
 -- ===========================================================================
 -- The binary Lipschitz core for the REAL lift of the addition law.
 --
