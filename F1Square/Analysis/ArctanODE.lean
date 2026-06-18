@@ -864,6 +864,25 @@ theorem peval_arctanCoeff_eq_arctanSum (t : Q) (htd : 0 < t.den) (N : Nat) :
       (Qadd_congr (Qadd_congr ih (arctanCoeff_term_even t n)) ho) ?_
     exact Qadd_congr (Qadd_zero_right (arctanSum t n)) (Qeq_refl _)
 
+/-- `|sinCoeffₖ| ≤ 1` for every `k` (`(−1)^{k/2}/k!` at odd `k`, else `0`; `k! ≥ 1`). The outer-series
+    coefficient bound for the `DN`-sum of the `sin∘arctan` composition bridge. -/
+theorem sinCoeff_abs_le_one (k : Nat) : Qle (Qabs (sinCoeff k)) ⟨1, 1⟩ := by
+  unfold sinCoeff
+  by_cases h : k % 2 = 1
+  · rw [if_pos h, Qabs_mul, qpow_neg_one_abs]
+    have hk1 : 1 ≤ fct k := fct_pos k
+    simp only [Qabs, Qle, mul]; push_cast; omega
+  · rw [if_neg h]; simp only [Qabs, Qle]; push_cast
+
+/-- `|cosCoeffₖ| ≤ 1` for every `k`. -/
+theorem cosCoeff_abs_le_one (k : Nat) : Qle (Qabs (cosCoeff k)) ⟨1, 1⟩ := by
+  unfold cosCoeff
+  by_cases h : k % 2 = 0
+  · rw [if_pos h, Qabs_mul, qpow_neg_one_abs]
+    have hk1 : 1 ≤ fct k := fct_pos k
+    simp only [Qabs, Qle, mul]; push_cast; omega
+  · rw [if_neg h]; simp only [Qabs, Qle]; push_cast
+
 /-- **Absolute bound on the arctan partial sum**: `|arctanSum t N| ≤ geoSum ρ N` for `|t| ≤ ρ`
     (per-term `arctanTerm_abs_le` + triangle). With `geoSum ρ N ≤ 1` (small `ρ`) this gives the
     `|peval arctanCoeff t M| ≤ 1` hypothesis that `gen_per_m_bound` needs. -/
