@@ -96,6 +96,23 @@ audit-visible hypothesis, never an axiom).
   every zero's Cayley factor in the closed unit disk (via `li_criterion_disk`) — so the geometric
   Hodge index, Li-positivity, the on-line condition, and the witness's closed-disk geometry are ONE
   connected proposition.
+- **Track 1 — ★ REAL log-multiplicativity `Rlog(x·y) = Rlog x + Rlog y`** (`Analysis/ArtanhAdd.lean`,
+  `Rlog_mul`), what `Clog` additivity needs (`Re Clog(zw) = Re Clog z + Re Clog w` via
+  `log(|z|²|w|²) = log|z|² + log|w|²`). The full binary analog of the doubling `Rlog_sq`, built from
+  scratch over many bricks: the rational addition law (below) → the sign-robust division-free addition
+  map `wvalR a b = (a+b)/(1+ab)` with its full Lipschitz machinery (`wval_lip1`/`wval_lip2` via the
+  certified cleared identities + the constant-`4` denominator estimate `wval_lip1_den` and radius
+  half-bound `wval_halfbound`) → the two rational identities `wvalR_rel` and `tmap_mul_wvalR`
+  (`tmap(x·y) = wvalR(tmap x, tmap y)`, the bridge `log(xy)↔` the addition map) → the real binary map
+  `wvalReal` with regularity → the ★ **capstone** `Rartanh_add_real_via` (the real-argument `artanh`
+  addition, binary analog of `Rartanh_double_real_via`: the doubling's single-variable polynomial bound
+  `Dterm_recip` has *no* binary analog, so its combination leg is the exact rational law itself,
+  `RartanhConst_add_wval_rho`, which inherently relates the depth-`n` `wval` to the depth-`(2n+1)`
+  summands; arg-variation by `artSum_wval_argdiff`) → the wiring `Rlog_mul_via`/`Rlog_mul_algebra` →
+  `Rlog_mul`, mirroring `Rlog_sq`'s radius bookkeeping (common bound `B`, `x,y ∈ [1,B]` *pointwise* so
+  the `artanh` arguments `tmap(·)` are non-negative — `tmap_nonneg_lt_one`; `hbw` via
+  `wvalR_tmap_seq_bound`; radius alignment `ρ_B → ρ_{B²}` via `Rartanh_radius_indep`). RH-independent
+  interface-shrinking toward `bl`; the crux fields stay `none`.
 - **Track 1 — the rational `artanh` addition law** (`Analysis/ArtanhAdd.lean`), the arithmetic heart of
   log-multiplicativity `log(xy) = log x + log y` (hence of `Clog` additivity, hence of the Hadamard
   `log ξ`). `Rexp_twoArtanh_general` packages the heavy `Rexp_two_artanh_ofQ` parameter thicket **once**
