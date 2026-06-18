@@ -1,4 +1,4 @@
-# F1 Square — Roadmap to completion (v0.15.0 → v0.21.0)
+# F1 Square — Roadmap to completion (v0.15.0 → v0.22.0)
 
 The genuine-proof layer (`F1Square/`) builds the 𝔽₁ / Riemann-Hypothesis program from first
 principles in **pure Lean 4** (Lean core + UOR-Foundation, **no Mathlib, no `sorry`/`native_decide`,
@@ -506,6 +506,39 @@ mode named and routed to a recorded result, the two circular corners excluded by
 conservation and the no-smuggling audit, the substrate cost budgeted, the full form (not its diagonal)
 required before definiteness is claimed. The single remaining unknown is whether the atlas supplies a
 zero-free, manifestly nonnegative formula for `λₙ` — the problem the strategy exists to attack.
+
+---
+
+## v0.22.0 — Track 1: discharging the classical interfaces, and the Sonine-projection frontier **[planned]**
+
+v0.21.0 localized the crux; the post-tag thread (the RH witness, the BL pipeline, the
+Reflection/Voros geometry, and the **`α(2) < 0` obstruction** — Burnol's archimedean multiplier proven
+pointwise *indefinite* on the band) sharpened the frontier to its true classical shape. Two distinct
+senses of "missing component" remain, and v0.22.0 is scoped to **Track 1** (the discharge work); the
+**Track 2** crux frontier (the `α`-band sign / Sonine projection) is roadmapped here as research, not
+committed scope.
+
+- **Track 1 — make `hodgeIndex_iff_riemannHypothesis` unconditional-but-for-RH.** The
+  `li_criterion` equivalence currently rests on two explicit, audit-visible `LiBridge` hypotheses:
+  (i) the **Bombieri–Lagarias zero-sum** `λₙ = Σ_ρ (1 − (1 − 1/ρ)ⁿ)` about the *genuine* `λ`
+  (classical, BL 1999), and (ii) the **Voros dichotomy** (tempered `½n(log n−1+γ−log 2π)` vs
+  exponential, *MPAG* 2006). Track 1 discharges these from the constructed ζ / explicit formula where
+  the literature makes them theorems, shrinking the classical interface to RH alone. Deliverables:
+  the zero-sum derived for the constructed `genuineLamSeq`; the Voros alternative grounded as the
+  asymptotic theorem it is (the `n ≳ T²/t` threshold made constructive); the off-line ⟹ negative-`λ`
+  step kept as the *single* remaining classical seam (phase equidistribution + saddle-point over the
+  sum), explicitly labelled.
+- **Related (research, not committed) — the `α`-band / Sonine-projection crux.** `α(2) < 0` proves
+  the bare multiplier is indefinite, so single-place positivity provably does **not** extend — the
+  Connes–Consani / Burnol resolution is the **Sonine-space projection** (infinite-dimensional), where
+  positivity is recovered after projecting onto the prime-free window. Formalizing that projection is
+  the genuine crux frontier and stays open; it is *not* a route through `α ≥ 0` (which is false). Any
+  work here is gated exactly as the existing interfaces are — it flips a crux field only on an audited,
+  axiom-clean proof, never on ambition.
+
+Every v0.22.0 commit stays green, axiom-clean (`{propext, Quot.sound}`), `sorry`/`native_decide`-free,
+choice-free, and no-smuggling-clean. The bright line is unchanged: crux fields stay `none` until RH
+itself is proven.
 
 ---
 

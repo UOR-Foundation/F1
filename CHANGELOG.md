@@ -129,6 +129,28 @@ classical input is an explicit, audit-visible hypothesis, never an axiom).
   `Σ cₙ(0) = 0`, every `s=0` correction term vanishes). With `psiLineRe5 = psiLineReP 25 1` at the far end,
   the parameterized assembled kernel is now verified-correct at **both endpoints** of the window — a
   faithfulness anchor closing the construction. Crux fields stay `none`.
+- **`α(2) < 0` — Burnol's archimedean multiplier is pointwise INDEFINITE** (`Analysis/BurnolAlphaTwo.lean`,
+  with a new lower-bound substrate). The bare multiplier `α(τ) = 8√2·cos(τ·log2)/(1+4τ²) + h₊(τ)`,
+  `h₊(τ) = Re ψ(1/4+iτ/2) − log π`, is shown **negative at `τ = 2`** (`burnolAlphaTwo_neg :
+  Pos (Rneg burnolAlphaTwo)`) — the honest kernel analog of Burnol's "a further idea seems necessary":
+  single-place positivity does *not* extend across the band, which is exactly why the Sonine projection
+  is needed. We prove the **obstruction**, never a (false) `α ≥ 0`. The pieces, all axiom-clean
+  (`{propext, Quot.sound}`), each its own bracket added to the substrate:
+  - `Rpi_lower_three : π ≥ 3` (`Analysis/Pi.lean`) — sharp `π` *lower* bound via depth-parameterized
+    arctan brackets (`arctanSum_diag_ge_at`/`_le_at`, tail `ρ^(2a+3)`); the repo had only `π ≤ …`.
+  - `Rlogpi_ge_one : log π ≥ 1` (`Analysis/LogPiLower.lean`) — `log π = 2·artanh((π−1)/(π+1)) ≥ 2·½`,
+    resting on `π ≥ 3`; the first positive *lower* bound on a log in the substrate (companion to
+    `Rlogπc_le`).
+  - `psiQuarter_upper_tight : ψ(1/4) ≤ −4` (`Analysis/PsiQuarter.lean`) — the sharp upper bracket
+    (a two-branch `n<6` / `n≥6` Int case split on the digamma series).
+  - `corrCoreP_one_upper : Σ cₙ(1) ≤ 4.22`, `psiLineReP_one_upper : Re ψ(1/4+i) ≤ 0.22`,
+    `archKernel_at_two_below_logpi : Pos (Rsub Rlogπc (psiLineReP 1 1 …))` — i.e. `h₊(2) < 0`
+    (`Analysis/PsiLine.lean`), from `Re ψ(1/4+i) = ψ(1/4) + Σcₙ(1) ≤ −4 + 4.22 = 0.22` and `log π ≥ 1`.
+  - `sqrt2_mul_self : √2·√2 = 2` and `sqrt2_le_three_halves : √2 ≤ 3/2` (`Analysis/BurnolAlphaTwo.lean`)
+    — the **exp∘log inverse** (`RrpowPos_add` + `Rexp_RlogNat`), no `sqrt` primitive.
+  Assembled: with `|cos| ≤ 1`, `8√2 ≤ 12` and `1/(1+16) = 1/17` bound the oscillating term by `12/17`,
+  so `α(2) ≤ 12/17 + (0.22 − 1) = 12/17 − 78/100 = 126/1700` negated, i.e. `−α(2) ≥ 1/100 > 0`. The
+  obstruction to extending single-place positivity, mechanized at a point. Crux fields stay `none`.
 - **Erratum** — corrected the stale `λ₃ ≈ 0.0173` / `λ₃^∞ ≈ −1.20` (a computational error) to the
   standard Li value `λ₃ ≈ 0.2076` / `λ₃^∞ ≈ −1.013` across `LambdaThree.lean`, `CruxFrontierN3.lean`,
   `Attempt.lean`, `ROADMAP.md`, and the v0.20.0 changelog entry; recorded the precision analysis (the
