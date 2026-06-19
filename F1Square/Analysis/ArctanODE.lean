@@ -2030,6 +2030,20 @@ theorem Qabs_sub_mul_right_eq (a b c : Q) :
     simp only [Qeq, Qsub, mul, add, neg]; push_cast; ring_uor
   rw [← Qabs_mul]; exact Qabs_Qeq hf
 
+/-- **Reciprocal-bound antitone in the denominator**: `m ≤ k ⟹ ⟨A,k+1⟩ ≤ ⟨A,m+1⟩` for `A ≥ 0`.
+    Converts a `C/(Rs+1)` bound (large reindex) to the `C/(n+1)` form `Req_of_lin_bound` needs. -/
+theorem Qrecip_anti {A : Int} (hA : 0 ≤ A) {m k : Nat} (hmk : m ≤ k) :
+    Qle (⟨A, k + 1⟩ : Q) (⟨A, m + 1⟩ : Q) := by
+  show A * ((m + 1 : Nat) : Int) ≤ A * ((k + 1 : Nat) : Int)
+  exact Int.mul_le_mul_of_nonneg_left (by exact_mod_cast Nat.succ_le_succ hmk) hA
+
+/-- **Common-factor product difference (left)**: `|c·a − c·b| = |c|·|a−b|`. -/
+theorem Qabs_sub_mul_left_eq (c a b : Q) :
+    Qeq (Qabs (Qsub (mul c a) (mul c b))) (mul (Qabs c) (Qabs (Qsub a b))) := by
+  have hf : Qeq (Qsub (mul c a) (mul c b)) (mul c (Qsub a b)) := by
+    simp only [Qeq, Qsub, mul, add, neg]; push_cast; ring_uor
+  rw [← Qabs_mul]; exact Qabs_Qeq hf
+
 /-- **`RaltReal_R` lower bound**: `m + 1 ≤ RaltReal_R x m` (the diagonal reindex dominates its index,
     since `RaltReal_R x m = 2·xBound² + 4(m+1)·RaltReal_K x` and `RaltReal_K ≥ 1`). -/
 theorem RaltReal_R_ge (x : Real) (m : Nat) : m + 1 ≤ RaltReal_R x m := by

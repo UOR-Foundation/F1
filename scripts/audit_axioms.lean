@@ -905,6 +905,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sin_nested_general
 #print axioms Analysis.Rsin_arctan_nested
 #print axioms Analysis.Qabs_sub_mul_right_eq
+#print axioms Analysis.Qabs_sub_mul_left_eq
+#print axioms Analysis.Qrecip_anti
 #print axioms Analysis.RaltReal_R_ge
 #print axioms Analysis.Rartanh_R_ge
 #print axioms Analysis.sinCoeff_abs_le_one
