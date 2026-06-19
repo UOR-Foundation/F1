@@ -1904,4 +1904,51 @@ theorem cos_nested_general (t₀ ρ : Q) (htd : 0 < t₀.den) (hρ0 : 0 ≤ ρ.n
   exact Qeq_le (Qadd_same_den_loc (((expM_U 1 2).num.toNat : Int) * (4 * (ρ.den : Int)))
     (2 * (ρ.den : Int)) (n + 1))
 
+set_option maxHeartbeats 1600000 in
+/-- **cos nested-diagonal bound (real arctan)**: `|(Rcos (Rarctan t₀)).seq j − peval(cos∘arctan) t₀
+    (2D)| ≤ (U·4ρ.den + 2ρ.den)/(j+1)`, `D = RaltReal_R (Rarctan t₀) j`. Wraps `cos_nested_general`
+    for the genuine `Rcos` of the fixed-rational arctan real: transports the `Rcos` diagonal to the
+    `peval cos` form (`Rcos_seq_eq_peval`) and discharges the depth bookkeeping
+    (`D = E+1 ≥ j+1`, `E ≤ Rartanh_R ρ (E+1)`). The cos side of `tan(arctan t)=t` for the real object. -/
+theorem Rcos_arctan_nested (t₀ ρ : Q) (htd : 0 < t₀.den) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (hlt : ρ.num.toNat < ρ.den) (htρ : Qle (Qabs t₀) ρ)
+    (hlt16 : (mul ⟨16, 1⟩ ρ).num.toNat < (mul ⟨16, 1⟩ ρ).den)
+    (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (hhalf : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ))) (hρ4 : Qle (mul ⟨4, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ2 : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ))) (hρ8 : Qle (mul ⟨2, 1⟩ ρ) ⟨1, 1⟩) (j : Nat) :
+    Qle (Qabs (Qsub ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq j)
+        (peval (fcomp cosCoeff arctanCoeff) t₀ (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j))))
+      (⟨((expM_U 1 2).num.toNat : Int) * (4 * (ρ.den : Int)) + 2 * (ρ.den : Int), j + 1⟩ : Q) := by
+  have hK1 : 1 ≤ RaltReal_K (Rarctan t₀ htd hρ0 hρd hlt htρ) := by unfold RaltReal_K; omega
+  have hDj : j + 1 ≤ RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j := by
+    have h4 : 4 * (j + 1) * 1 ≤ 4 * (j + 1) * RaltReal_K (Rarctan t₀ htd hρ0 hρd hlt htρ) :=
+      Nat.mul_le_mul (Nat.le_refl _) hK1
+    have hge : 4 * (j + 1) * RaltReal_K (Rarctan t₀ htd hρ0 hρd hlt htρ)
+        ≤ RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j := by unfold RaltReal_R; omega
+    omega
+  obtain ⟨E, hE⟩ : ∃ E, RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j = E + 1 :=
+    ⟨RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j - 1, by omega⟩
+  have hrw : Qeq (Qabs (Qsub ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq j)
+        (peval (fcomp cosCoeff arctanCoeff) t₀ (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j))))
+      (Qabs (Qsub (peval cosCoeff
+          ((Rarctan t₀ htd hρ0 hρd hlt htρ).seq (RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j))
+          (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j))
+        (peval (fcomp cosCoeff arctanCoeff) t₀ (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ) j)))) :=
+    Qabs_Qeq (Qsub_congr (Rcos_seq_eq_peval (Rarctan t₀ htd hρ0 hρd hlt htρ) j) (Qeq_refl _))
+  refine Qle_congr_left
+    (Qabs_den_pos (Qsub_den_pos
+      (peval_den_pos cosCoeff_den_pos ((Rarctan t₀ htd hρ0 hρd hlt htρ).den_pos _) _)
+      (peval_den_pos (fun k => fcomp_den_pos cosCoeff_den_pos arctanCoeff_den_pos k) htd _)))
+    (Qeq_symm hrw) ?_
+  rw [hE]
+  have hRge : ∀ m, m + 1 ≤ Rartanh_R ρ m := by
+    intro m; unfold Rartanh_R
+    have hk : 1 ≤ ρ.den * ρ.den + 4 * ρ.den :=
+      Nat.le_trans (by omega : 1 ≤ 4 * ρ.den) (Nat.le_add_left _ _)
+    calc m + 1 = 1 * (m + 1) := by omega
+      _ ≤ (ρ.den * ρ.den + 4 * ρ.den) * (m + 1) := Nat.mul_le_mul_right _ hk
+  have hbE : E ≤ Rartanh_R ρ (E + 1) := by have := hRge (E + 1); omega
+  exact cos_nested_general t₀ ρ htd hρ0 hρd hlt16 htρ h2ρ hhalf hρ4 hρ2 hρ8 hlt
+    E (Rartanh_R ρ (E + 1)) j hbE (by omega) (by omega)
+
 end UOR.Bridge.F1Square.Analysis
