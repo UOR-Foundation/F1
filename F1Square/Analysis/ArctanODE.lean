@@ -1068,4 +1068,41 @@ theorem peval_arctan_pow_gap (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num
         (fpow_arctan_term_bound ρ hρd hρ0 m k)))
     hMM
 
+/-- **Cauchy modulus for arctan powers** (telescoped): `|peval(arctanᵐ,w,M′) − peval(arctanᵐ,w,M)|·(1−2ρ)
+    ≤ 2ᵐ·(2ρ)^{M+1}`. Mirrors `peval_kdbl_pow_cauchy` (the `gPow` telescoping is general). -/
+theorem peval_arctan_pow_cauchy (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (hwd : 0 < w.den)
+    (hw : Qle (Qabs w) ρ) (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (m : Nat) {M M' : Nat} (hMM : M ≤ M') :
+    Qle (mul (Qabs (Qsub (peval (fpow arctanCoeff m) w M') (peval (fpow arctanCoeff m) w M)))
+          (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))
+      (mul (⟨(2 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1))) := by
+  have hrd : 0 < (mul (⟨2, 1⟩ : Q) ρ).den := Qmul_den_pos (by decide) hρd
+  have hr0 : 0 ≤ (mul (⟨2, 1⟩ : Q) ρ).num := Qmul_num_nonneg (by decide) hρ0
+  have hgN : ∀ N, 0 < (Fsum (fun k => mul (⟨(2 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) k)) N).den :=
+    fun N => Fsum_den_pos (fun k => Qmul_den_pos Nat.one_pos (qpow_den_pos hrd k)) N
+  have hDden : 0 < (Qsub (gPow (mul ⟨2, 1⟩ ρ) M') (gPow (mul ⟨2, 1⟩ ρ) M)).den :=
+    Qsub_den_pos (gPow_den_pos hrd M') (gPow_den_pos hrd M)
+  have hwd1 : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).den := Qsub_den_pos Nat.one_pos hrd
+  have eRG : ∀ N, Qeq (Fsum (fun k => mul (⟨(2 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) k)) N)
+      (mul (⟨(2 : Int) ^ m, 1⟩ : Q) (gPow (mul ⟨2, 1⟩ ρ) N)) :=
+    fun N => Qeq_trans (Qmul_den_pos Nat.one_pos (Fsum_den_pos (fun k => qpow_den_pos hrd k) N))
+      (Fsum_mul_left Nat.one_pos (fun k => qpow_den_pos hrd k) N)
+      (Qmul_congr (Qeq_refl _) (gPow_eq_Fsum (mul ⟨2, 1⟩ ρ) N))
+  have eGap : Qeq (Qsub (Fsum (fun k => mul (⟨(2 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) k)) M')
+        (Fsum (fun k => mul (⟨(2 : Int) ^ m, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) k)) M))
+      (mul (⟨(2 : Int) ^ m, 1⟩ : Q) (Qsub (gPow (mul ⟨2, 1⟩ ρ) M') (gPow (mul ⟨2, 1⟩ ρ) M))) :=
+    Qeq_trans (Qsub_den_pos (Qmul_den_pos Nat.one_pos (gPow_den_pos hrd M'))
+        (Qmul_den_pos Nat.one_pos (gPow_den_pos hrd M)))
+      (Qsub_congr (eRG M') (eRG M))
+      (Qeq_symm (Qmul_sub_left_loc ⟨(2 : Int) ^ m, 1⟩ (gPow (mul ⟨2, 1⟩ ρ) M') (gPow (mul ⟨2, 1⟩ ρ) M)))
+  refine Qle_trans (Qmul_den_pos (Qsub_den_pos (hgN M') (hgN M)) hwd1)
+    (Qmul_le_mul_right h2ρ (peval_arctan_pow_gap ρ w hρd hρ0 hwd hw m hMM)) ?_
+  refine Qle_trans (Qmul_den_pos (Qmul_den_pos Nat.one_pos hDden) hwd1)
+    (Qeq_le (Qmul_congr eGap (Qeq_refl _))) ?_
+  refine Qle_trans (Qmul_den_pos Nat.one_pos (Qmul_den_pos hDden hwd1))
+    (Qeq_le (Qmul_assoc ⟨(2 : Int) ^ m, 1⟩ (Qsub (gPow (mul ⟨2, 1⟩ ρ) M') (gPow (mul ⟨2, 1⟩ ρ) M))
+      (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))) ?_
+  exact Qmul_le_mul_left (by show (0 : Int) ≤ (2 : Int) ^ m; exact_mod_cast Nat.zero_le (2 ^ m))
+    (gPow_gap_le (mul ⟨2, 1⟩ ρ) hr0 hrd hMM)
+
 end UOR.Bridge.F1Square.Analysis
