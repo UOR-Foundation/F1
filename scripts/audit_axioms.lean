@@ -886,6 +886,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rcos_seq_eq_peval
 #print axioms Analysis.RsinAux_seq_eq_altSum
 #print axioms Analysis.RsinAux_seq_eq_peval
+#print axioms Analysis.peval_arg_congr
 #print axioms Analysis.peval_arctanCoeff_even
 #print axioms Analysis.arctanSum_abs_le_one
 #print axioms Analysis.LipS_num_nonneg

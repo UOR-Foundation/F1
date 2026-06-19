@@ -1712,6 +1712,12 @@ theorem RsinAux_seq_eq_peval (X : Real) (j : Nat) :
   rw [RsinAux_seq_eq_altSum]
   exact Qeq_symm (peval_sinCoeff_eq (X.seq (RaltReal_R X j)) (X.den_pos _) (RaltReal_R X j))
 
+/-- **`peval` respects `≈` of its argument**: `q ≈ q' ⟹ peval c q N ≈ peval c q' N` (termwise via
+    `qpow_Qeq`). Lets the inner arctan argument be rewritten between its `peval`/`arctanSum` forms. -/
+theorem peval_arg_congr (c : Nat → Q) {q q' : Q} (h : Qeq q q') (N : Nat) :
+    Qeq (peval c q N) (peval c q' N) :=
+  Fsum_congr (fun k => Qmul_congr (Qeq_refl (c k)) (qpow_Qeq h k)) N
+
 /-- **arctan at even depth**: `peval arctanCoeff t (2E+2) = arctanSum t E` — the cos truncation depth
     `2D` from `Rcos` is even, but the top (even-degree) arctan term vanishes, so the arctan argument at
     that depth is still the `E`-term partial sum (`peval_arctanCoeff_eq_arctanSum` + the vanishing even
