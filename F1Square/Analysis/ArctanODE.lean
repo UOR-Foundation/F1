@@ -1242,4 +1242,29 @@ theorem corner_sum_closed_arctan (ρ w : Q) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ
     (Qeq_symm (Fsum_mul_const_right (a := fun j => (⟨(2 : Int) ^ j, 1⟩ : Q)) hC (fun _ => Nat.one_pos) M))
     (Qmul_congr (pow2_sum M) (Qeq_refl _)))
 
+/-- **Closed `DN` bound**: `|peval(sin∘arctan,t,M) − peval(sin,q,M)|·(1−2ρ) ≤
+    (M+1)·(2^{M+1}−1)·(M+1)·(2ρ)^{M+1}` for `|t| ≤ ρ`, `|q| ≤ 1`. Combines `DN_sin_abs_le` with
+    `corner_sum_closed_arctan`. The RHS `→ 0` (for `4ρ < 1`), proving `peval(sin∘arctan,t,·) → peval(sin,q,·)`. -/
+theorem DN_sin_closed (t ρ : Q) (M : Nat) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (htd : 0 < t.den)
+    (hw : Qle (Qabs t) ρ) (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (hq1 : Qle (Qabs (peval arctanCoeff t M)) ⟨1, 1⟩) :
+    Qle (mul (Qabs (Qsub (peval (fcomp sinCoeff arctanCoeff) t M)
+            (peval sinCoeff (peval arctanCoeff t M) M))) (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))
+      (mul (⟨(M : Int) + 1, 1⟩ : Q) (mul (⟨(2 : Int) ^ (M + 1) - 1, 1⟩ : Q)
+        (mul (⟨(M : Int) + 1, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1))))) := by
+  have hwd1 : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).den := Qsub_den_pos Nat.one_pos (Qmul_den_pos (by decide) hρd)
+  have hInner : 0 < (Fsum (fun j => Qabs (gcornerB arctanCoeff t j M)) M).den :=
+    Fsum_den_pos (fun j => Qabs_den_pos (gcornerB_den arctanCoeff arctanCoeff_den_pos t htd j M)) M
+  have hCB : 0 < (mul (⟨(2 : Int) ^ (M + 1) - 1, 1⟩ : Q)
+      (mul (⟨(M : Int) + 1, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1)))).den :=
+    Qmul_den_pos Nat.one_pos (Qmul_den_pos Nat.one_pos (qpow_den_pos (Qmul_den_pos (by decide) hρd) (M + 1)))
+  refine Qle_trans (Qmul_den_pos (Fsum_den_pos (fun _ => hInner) M) hwd1)
+    (Qmul_le_mul_right h2ρ (DN_sin_abs_le t htd M hq1)) ?_
+  refine Qle_trans (Fsum_den_pos (fun _ => Qmul_den_pos hInner hwd1) M)
+    (Qeq_le (Fsum_mul_const_right hwd1 (fun _ => hInner) M)) ?_
+  refine Qle_trans (Fsum_den_pos (fun _ => hCB) M)
+    (Fsum_le_Fsum_le (fun _ _ => corner_sum_closed_arctan ρ t hρd hρ0 htd hw h2ρ M)) ?_
+  exact Qeq_le (Fsum_const_eq (mul (⟨(2 : Int) ^ (M + 1) - 1, 1⟩ : Q)
+    (mul (⟨(M : Int) + 1, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1)))) hCB M)
+
 end UOR.Bridge.F1Square.Analysis
