@@ -19,6 +19,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 
 import F1Square.Analysis.ExpLog
 import F1Square.Analysis.Arctan
+import F1Square.Analysis.CosSinAddFormula
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -1266,5 +1267,59 @@ theorem DN_sin_closed (t ρ : Q) (M : Nat) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.
     (Fsum_le_Fsum_le (fun _ _ => corner_sum_closed_arctan ρ t hρd hρ0 htd hw h2ρ M)) ?_
   exact Qeq_le (Fsum_const_eq (mul (⟨(2 : Int) ^ (M + 1) - 1, 1⟩ : Q)
     (mul (⟨(M : Int) + 1, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1)))) hCB M)
+
+-- ===========================================================================
+-- Bridge: peval cosCoeff = altSum (the cos series), connecting to Rcos.
+-- ===========================================================================
+
+/-- The even-degree term of `peval cosCoeff` is the `cos` series term `altTerm q 0 n`
+    (both `(−1)ⁿ·q^{2n}/(2n)!`; `qpow_negsq` supplies `(−q²)ⁿ = (−1)ⁿ·q^{2n}`). -/
+theorem cosCoeff_term_even (q : Q) (hqd : 0 < q.den) (n : Nat) :
+    Qeq (mul (cosCoeff (2 * n)) (qpow q (2 * n))) (altTerm q 0 n) := by
+  unfold cosCoeff altTerm
+  rw [if_pos (by omega : (2 * n) % 2 = 0), show (2 * n) / 2 = n from by omega,
+    show 2 * n + 0 = 2 * n from by omega]
+  -- P = (−1)ⁿ, F = 1/(2n)!, Qq = q^{2n}.  goal: (P·F)·Qq ≈ (neg(q·q))ⁿ·F
+  have hP : 0 < (qpow (⟨-1, 1⟩ : Q) n).den := qpow_den_pos (by decide) n
+  have hQq : 0 < (qpow q (2 * n)).den := qpow_den_pos hqd (2 * n)
+  have hab : Qeq (mul (mul (qpow (⟨-1, 1⟩ : Q) n) (⟨1, fct (2 * n)⟩ : Q)) (qpow q (2 * n)))
+      (mul (mul (qpow (⟨-1, 1⟩ : Q) n) (qpow q (2 * n))) (⟨1, fct (2 * n)⟩ : Q)) :=
+    Qeq_trans (Qmul_den_pos hP (Qmul_den_pos (fct_pos (2 * n)) hQq))
+      (Qmul_assoc (qpow (⟨-1, 1⟩ : Q) n) (⟨1, fct (2 * n)⟩ : Q) (qpow q (2 * n)))
+      (Qeq_trans (Qmul_den_pos hP (Qmul_den_pos hQq (fct_pos (2 * n))))
+        (Qmul_congr (Qeq_refl _) (Qmul_comm (⟨1, fct (2 * n)⟩ : Q) (qpow q (2 * n))))
+        (Qeq_symm (Qmul_assoc (qpow (⟨-1, 1⟩ : Q) n) (qpow q (2 * n)) (⟨1, fct (2 * n)⟩ : Q))))
+  exact Qeq_trans (Qmul_den_pos (Qmul_den_pos hP hQq) (fct_pos (2 * n))) hab
+    (Qmul_congr (Qeq_symm (qpow_negsq hqd n)) (Qeq_refl _))
+
+/-- The odd-degree term of `peval cosCoeff` vanishes. -/
+theorem cosCoeff_term_odd (q : Q) (n : Nat) :
+    Qeq (mul (cosCoeff (2 * n + 1)) (qpow q (2 * n + 1))) ⟨0, 1⟩ := by
+  unfold cosCoeff
+  rw [if_neg (by omega : ¬ (2 * n + 1) % 2 = 0)]
+  show Qeq (mul (⟨0, 1⟩ : Q) (qpow q (2 * n + 1))) ⟨0, 1⟩
+  simp only [Qeq, mul]; omega
+
+/-- **Bridge to `altSum` (cos)**: `peval cosCoeff q (2N) ≈ altSum q 0 N` — the degree-indexed eval of
+    the `cos` coefficients IS the `n`-indexed `cos` partial sum (`Rcos q = RaltReal q 0` diagonal). -/
+theorem peval_cosCoeff_eq_altSum (q : Q) (hqd : 0 < q.den) (N : Nat) :
+    Qeq (peval cosCoeff q (2 * N)) (altSum q 0 N) := by
+  have hg : ∀ k, 0 < (mul (cosCoeff k) (qpow q k)).den :=
+    fun k => Qmul_den_pos (cosCoeff_den_pos k) (qpow_den_pos hqd k)
+  induction N with
+  | zero => exact cosCoeff_term_even q hqd 0
+  | succ n ih =>
+    rw [show 2 * (n + 1) = 2 * n + 1 + 1 from by omega]
+    show Qeq (add (add (peval cosCoeff q (2 * n)) (mul (cosCoeff (2 * n + 1)) (qpow q (2 * n + 1))))
+          (mul (cosCoeff (2 * n + 1 + 1)) (qpow q (2 * n + 1 + 1))))
+      (add (altSum q 0 n) (altTerm q 0 (n + 1)))
+    have ho : Qeq (mul (cosCoeff (2 * n + 1)) (qpow q (2 * n + 1))) ⟨0, 1⟩ := cosCoeff_term_odd q n
+    have he : Qeq (mul (cosCoeff (2 * n + 1 + 1)) (qpow q (2 * n + 1 + 1))) (altTerm q 0 (n + 1)) := by
+      have h := cosCoeff_term_even q hqd (n + 1)
+      rwa [show 2 * (n + 1) = 2 * n + 1 + 1 from by omega] at h
+    refine Qeq_trans (add_den_pos (add_den_pos (altSum_den_pos hqd 0 n) Nat.one_pos)
+        (altTerm_den_pos hqd 0 (n + 1)))
+      (Qadd_congr (Qadd_congr ih ho) he) ?_
+    exact Qadd_congr (Qadd_zero_right (altSum q 0 n)) (Qeq_refl _)
 
 end UOR.Bridge.F1Square.Analysis
