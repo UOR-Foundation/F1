@@ -143,4 +143,42 @@ theorem vvalReal_rel_via (s t V : Real) (ρ : Q) (f : Nat → Nat) (hf : ∀ n, 
   refine Qle_trans (add_den_pos (Nat.succ_pos n) (Nat.succ_pos n)) (Qadd_le_add hterm1 hterm2) ?_
   apply Qeq_le; exact Qadd_same_den_loc 4 4 (n + 1)
 
+/-- **The arctan ratio cross-identity** (pure real algebra): if `s·a ≈ b`, `t·c ≈ d`, and
+    `V·(1 − s·t) ≈ s + t` (the `vvalReal` defining relation), then `V·(a·c − b·d) ≈ a·d + b·c`. With
+    `a = Re z, b = Im z, c = Re w, d = Im w` and `s = Im z/Re z, t = Im w/Re w`, this is
+    `vvalReal(ratio z, ratio w)·Re(zw) = Im(zw)` — one cross-multiplied side of
+    `Im(zw)/Re(zw) = vvalReal(ratio z, ratio w)`. -/
+theorem ratio_cross_via {s t V a b c d : Real}
+    (hsa : Req (Rmul s a) b) (htc : Req (Rmul t c) d)
+    (hVrel : Req (Rmul V (Rsub one (Rmul s t))) (Radd s t)) :
+    Req (Rmul V (Rsub (Rmul a c) (Rmul b d))) (Radd (Rmul a d) (Rmul b c)) := by
+  -- b·d ≈ (a·c)·(s·t)
+  have hbd : Req (Rmul b d) (Rmul (Rmul a c) (Rmul s t)) :=
+    Req_trans (Rmul_congr (Req_symm hsa) (Req_symm htc))
+      (Req_trans (Rmul_assoc s a (Rmul t c))
+        (Req_trans (Rmul_congr (Req_refl s) (Rmul_congr (Req_refl a) (Rmul_comm t c)))
+          (Req_trans (Rmul_congr (Req_refl s) (Req_symm (Rmul_assoc a c t)))
+            (Rmul_left_comm_loc s (Rmul a c) t))))
+  -- a·c − b·d ≈ (a·c)·(1 − s·t)
+  have hstep1 : Req (Rsub (Rmul a c) (Rmul b d)) (Rmul (Rmul a c) (Rsub one (Rmul s t))) :=
+    Req_trans (Rsub_congr (Req_refl (Rmul a c)) hbd)
+      (Req_symm (Req_trans (Rmul_sub_distrib (Rmul a c) one (Rmul s t))
+        (Rsub_congr (Rmul_one (Rmul a c)) (Req_refl _))))
+  -- V·(a·c − b·d) ≈ (a·c)·(s + t)
+  have hstep2 : Req (Rmul V (Rsub (Rmul a c) (Rmul b d))) (Rmul (Rmul a c) (Radd s t)) :=
+    Req_trans (Rmul_congr (Req_refl V) hstep1)
+      (Req_trans (Rmul_left_comm_loc V (Rmul a c) (Rsub one (Rmul s t)))
+        (Rmul_congr (Req_refl (Rmul a c)) hVrel))
+  -- (a·c)·s ≈ b·c, (a·c)·t ≈ a·d
+  have hacs : Req (Rmul (Rmul a c) s) (Rmul b c) :=
+    Req_trans (Rmul_comm (Rmul a c) s)
+      (Req_trans (Req_symm (Rmul_assoc s a c)) (Rmul_congr hsa (Req_refl c)))
+  have hact : Req (Rmul (Rmul a c) t) (Rmul a d) :=
+    Req_trans (Rmul_assoc a c t)
+      (Req_trans (Rmul_congr (Req_refl a) (Rmul_comm c t)) (Rmul_congr (Req_refl a) htc))
+  -- assemble
+  exact Req_trans hstep2
+    (Req_trans (Rmul_distrib (Rmul a c) s t)
+      (Req_trans (Radd_congr hacs hact) (Radd_comm (Rmul b c) (Rmul a d))))
+
 end UOR.Bridge.F1Square.Analysis
