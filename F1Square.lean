@@ -111,6 +111,7 @@ import F1Square.Analysis.ComplexArg
 import F1Square.Analysis.ComplexLog
 import F1Square.Analysis.RArctanCongr
 import F1Square.Analysis.ArtanhAdd
+import F1Square.Analysis.RlogMulPos
 import F1Square.Analysis.ArctanODE
 import F1Square.Analysis.ArctanTan
 import F1Square.Analysis.ComplexArgAdd

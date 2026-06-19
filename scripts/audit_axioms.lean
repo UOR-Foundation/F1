@@ -2855,3 +2855,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RexpReal_eq_one_imp_zero
 #print axioms Analysis.RexpReal_inj_gen
 #print axioms Analysis.Rexp_log_ratQ
+#print axioms Analysis.reindex_Req
+#print axioms Analysis.Rlog_congr
