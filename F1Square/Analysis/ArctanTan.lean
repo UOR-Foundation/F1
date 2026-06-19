@@ -405,4 +405,37 @@ theorem Pos_RsinAux_of_small {w : Real} (hw : ∀ n, Qle (Qabs (w.seq n)) (⟨1,
     Pos (RsinAux w) :=
   ⟨2, altSum_sin_diag_gt (w.den_pos _) (hw _) (Nat.le_trans (by decide) (RaltReal_R_ge w 2))⟩
 
+-- ===========================================================================
+-- The arctan addition law: arctan a + arctan b = arctan(vval a b), (a+b)/(1−ab).
+-- ===========================================================================
+
+/-- **★ the arctan addition law** `arctan a + arctan b = arctan((a+b)/(1−ab))` (value level): for
+    `|a|, |b|, |vval a b| ≤ ρ` (a common `ρ < 1/16` satisfying the `Rsin_arctan_value_eq` thicket) and
+    `1 − ab > 0`, the angles add to `arctan(vval a b)`. Each of `arctan a`, `arctan b`,
+    `arctan(vval a b)` has the right tangent (`Rsin_arctan_value_eq`), so `Req_add_of_tan_values`
+    closes it, given the `RsinAux` apartness `hk` for the angle difference (small, so
+    `Pos_RsinAux_of_small` discharges it once the difference is bounded by `1`). This is the imaginary
+    half of `Clog` additivity: `arg(zw) = arg z + arg w`. -/
+theorem Rarctan_add {a b ρ : Q} {k : Nat}
+    (hda : 0 < a.den) (hdb : 0 < b.den)
+    (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt : ρ.num.toNat < ρ.den)
+    (htρa : Qle (Qabs a) ρ) (htρb : Qle (Qabs b) ρ)
+    (hpos : 0 < (a.den : Int) * b.den - a.num * b.num)
+    (htρv : Qle (Qabs (vval a b)) ρ)
+    (hlt16 : (mul ⟨16, 1⟩ ρ).num.toNat < (mul ⟨16, 1⟩ ρ).den)
+    (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (hhalf : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ))) (hρ4 : Qle (mul ⟨4, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ2 : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ))) (hρ8 : Qle (mul ⟨2, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ1 : Qle ρ ⟨1, 1⟩)
+    (hk : Qlt (Qbound k) ((RsinAux (Rsub
+            (Radd (Rarctan a hda hρ0 hρd hlt htρa) (Rarctan b hdb hρ0 hρd hlt htρb))
+            (Rarctan (vval a b) (vval_den_pos a b hpos) hρ0 hρd hlt htρv))).seq k)) :
+    Req (Radd (Rarctan a hda hρ0 hρd hlt htρa) (Rarctan b hdb hρ0 hρd hlt htρb))
+        (Rarctan (vval a b) (vval_den_pos a b hpos) hρ0 hρd hlt htρv) :=
+  Req_add_of_tan_values hda hdb hpos hk
+    (Rsin_arctan_value_eq a ρ hda hρ0 hρd hlt htρa hlt16 h2ρ hhalf hρ4 hρ2 hρ8 hρ1)
+    (Rsin_arctan_value_eq b ρ hdb hρ0 hρd hlt htρb hlt16 h2ρ hhalf hρ4 hρ2 hρ8 hρ1)
+    (Rsin_arctan_value_eq (vval a b) ρ (vval_den_pos a b hpos) hρ0 hρd hlt htρv hlt16 h2ρ hhalf
+      hρ4 hρ2 hρ8 hρ1)
+
 end UOR.Bridge.F1Square.Analysis
