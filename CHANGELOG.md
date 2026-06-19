@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 — ★ value-level `sin(arctan t) = t·cos(arctan t)`** (`Analysis/ArctanODE.lean`,
+  `Rsin_arctan_value_eq`): `Req (Rsin (Rarctan t₀)) (Rmul (ofQ t₀) (Rcos (Rarctan t₀)))` for
+  `|t₀| ≤ ρ < 1/16`. This **completes the formal-PS → value (FTC) bridge** that lifts the formal
+  identity `sin∘arctan = t·(cos∘arctan)` (`sin_arctan_eq`) to the constructive reals — the sole
+  remaining gap for argument-additivity, and the `artanh`-free analog of the real `artanh` doubling.
+  The full stack, built from scratch on the corner-decay machinery: the closed `C/(n+1)` decay rate
+  `DN_arctan_decay` (the `(M+1)²` polynomial absorbs into the geometric base only at `ρ < 1/16`, via
+  `sq_le_four_pow`), the reciprocal composition bounds `DN_{sin,cos}_recip`, the degree-shift identity
+  `peval_sin_arctan_shift : peval(sin∘arctan,t,m+1) = t·peval(cos∘arctan,t,m)` (no division — `sin =
+  t·cos` directly), the diagonal↔peval identifications (`Rcos_seq_eq_peval`, `RsinAux_seq_eq_peval`),
+  the argument-Lipschitz bounds (`peval_cosCoeff_Lip`, `peval_{cos,sin}Coeff_arctan_argdiff_recip`,
+  via `altSum_Lip_le` + `qsq_diff_le` with `LipS` bounded uniformly by `LipS_le_U`), the geometric
+  arctan tail `geoSum_diff_recip`, and the nested-diagonal cores `cos_nested_general`/`sin_nested_general`
+  with their real wrappers `Rcos_arctan_nested`/`Rsin_arctan_nested` — the latter handling the **`Rmul`
+  reconciliation** (`Rsin = Rmul X (RsinAux X)` evaluates `X` at the outer reindex but `RsinAux`
+  internally at a deeper one; the gap `|X.seq R − X.seq D|·|RsinAux|` is killed by `X`'s regularity).
+  The final `Req_of_lin_bound` is a 3-term triangle through `peval(sin∘arctan)` and the shift.
+  RH-*independent* analytic infrastructure; crux fields stay `none`.
+
 - **The RH witness** (`F1Square/Analysis/RHWitness.lean`) — the constructive witness of RH's forward
   direction (`RH ⟹ λₙ ≥ 0`), exhibited as an object. On the critical line a zero's Cayley factor
   `w = 1−1/ρ` has unit modulus; unit modulus survives every power via the Atlas composition norm
