@@ -2267,4 +2267,140 @@ theorem Rsin_arctan_nested (t₀ ρ : Q) (X : Real) (htd : 0 < t₀.den) (hρ0 :
   refine Qle_trans (add_den_pos (Nat.succ_pos n) (Nat.succ_pos n)) (Qadd_le_add hrec hsinLeg) ?_
   apply Qeq_le; simp only [Qeq, add]; push_cast; ring_uor
 
+set_option maxHeartbeats 4000000 in
+/-- **★ `sin(arctan t₀) = t₀·cos(arctan t₀)` at the value level**: `Req (Rsin (Rarctan t₀))
+    (Rmul (ofQ t₀) (Rcos (Rarctan t₀)))` for `|t₀| ≤ ρ < 1/16` (the doubling radius). The value form of
+    the formal identity `sin∘arctan = t·(cos∘arctan)`. Via `Req_of_lin_bound` and the triangle
+    `a0=(Rsin X).seq n → a1=peval(sin∘arctan)(2Ds+1) → a3=t₀·(Rcos X).seq Rs → a4=(t₀·Rcos X).seq n`:
+    L1 = `Rsin_arctan_nested`; `a1 = t₀·peval(cos∘arctan)(2Ds)` by `peval_sin_arctan_shift`;
+    L2 = `|t₀|·(Rcos_arctan_nested at Rs)`; L3 = `|t₀|·(Rcos X regularity)`, with `|t₀| ≤ 1`. No
+    division: `tan(arctan t₀) = t₀` then follows from this by `Rcos(arctan t₀) ≠ 0`. -/
+theorem Rsin_arctan_value_eq (t₀ ρ : Q) (htd : 0 < t₀.den) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
+    (hlt : ρ.num.toNat < ρ.den) (htρ : Qle (Qabs t₀) ρ)
+    (hlt16 : (mul ⟨16, 1⟩ ρ).num.toNat < (mul ⟨16, 1⟩ ρ).den)
+    (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (hhalf : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ))) (hρ4 : Qle (mul ⟨4, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ2 : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ))) (hρ8 : Qle (mul ⟨2, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ1 : Qle ρ ⟨1, 1⟩) :
+    Req (Rsin (Rarctan t₀ htd hρ0 hρd hlt htρ))
+      (Rmul (ofQ t₀ htd) (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ))) := by
+  refine Req_of_lin_bound
+    (C := (expM_U 1 2).num.toNat * 2 + ((expM_U 1 2).num.toNat * (6 * ρ.den) + 2 * ρ.den)
+      + ((expM_U 1 2).num.toNat * (4 * ρ.den) + 2 * ρ.den) + 2) ?_
+  intro n
+  have ht1 : Qle (Qabs t₀) ⟨1, 1⟩ := Qle_trans hρd htρ hρ1
+  have hRn : n ≤ Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n :=
+    Ridx_ge _ _ n
+  have hCcnn : 0 ≤ ((expM_U 1 2).num.toNat : Int) * (4 * (ρ.den : Int)) + 2 * (ρ.den : Int) :=
+    Int.add_nonneg (Int.mul_nonneg (Int.ofNat_nonneg _) (Int.mul_nonneg (by decide) (Int.ofNat_nonneg _)))
+      (Int.mul_nonneg (by decide) (Int.ofNat_nonneg _))
+  -- L1: Rsin nested
+  have hL1 := Rsin_arctan_nested t₀ ρ (Rarctan t₀ htd hρ0 hρd hlt htρ) htd hρ0 hρd hlt16 htρ h2ρ
+    hhalf hρ4 hρ2 hρ8 hlt (fun m => rfl) n
+  -- Rcos nested at Rs
+  have hRcos := Rcos_arctan_nested t₀ ρ htd hρ0 hρd hlt htρ hlt16 h2ρ hhalf hρ4 hρ2 hρ8
+    (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)
+  -- inner cos bound, comm + reindex to /(n+1)
+  have hinner : Qle (Qabs (Qsub (peval (fcomp cosCoeff arctanCoeff) t₀
+        (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ)
+          (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)))
+        ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+          (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n))))
+      (⟨((expM_U 1 2).num.toNat : Int) * (4 * (ρ.den : Int)) + 2 * (ρ.den : Int), n + 1⟩ : Q) := by
+    rw [Qabs_Qsub_comm]
+    exact Qle_trans (Nat.succ_pos _) hRcos (Qrecip_anti hCcnn hRn)
+  -- L2: |a1 − a3| via shift + factor t₀
+  have hL2 : Qle (Qabs (Qsub
+        (peval (fcomp sinCoeff arctanCoeff) t₀
+          (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ)
+            (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n) + 1))
+        (mul t₀ ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+          (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)))))
+      (⟨((expM_U 1 2).num.toNat : Int) * (4 * (ρ.den : Int)) + 2 * (ρ.den : Int), n + 1⟩ : Q) := by
+    have hcosd : 0 < (peval (fcomp cosCoeff arctanCoeff) t₀
+        (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ)
+          (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n))).den :=
+      peval_den_pos (fun k => fcomp_den_pos cosCoeff_den_pos arctanCoeff_den_pos k) htd _
+    have hrcd : 0 < ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+        (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)).den :=
+      (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).den_pos _
+    refine Qle_congr_left (Qabs_den_pos (Qsub_den_pos (Qmul_den_pos htd hcosd) (Qmul_den_pos htd hrcd)))
+      (Qabs_Qeq (Qsub_congr (Qeq_symm (peval_sin_arctan_shift t₀ htd
+        (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ)
+          (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n))))
+        (Qeq_refl _))) ?_
+    refine Qle_congr_left (Qmul_den_pos (Qabs_den_pos htd) (Qabs_den_pos (Qsub_den_pos hcosd hrcd)))
+      (Qeq_symm (Qabs_sub_mul_left_eq t₀ _ _)) ?_
+    refine Qle_trans (Qmul_den_pos Nat.one_pos (Nat.succ_pos n))
+      (Qmul_le_mul (Qabs_den_pos htd) Nat.one_pos (Qabs_den_pos (Qsub_den_pos hcosd hrcd))
+        (Qabs_num_nonneg _) (Qabs_num_nonneg _) ht1 hinner) ?_
+    apply Qeq_le; simp only [Qeq, mul]; push_cast; ring_uor
+  -- L3: |a3 − a4| via Rcos regularity + factor t₀
+  have hL3 : Qle (Qabs (Qsub
+        (mul t₀ ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+          (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)))
+        (mul t₀ ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+          (Ridx (ofQ t₀ htd) (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)))))
+      (⟨2, n + 1⟩ : Q) := by
+    have hrcd1 : 0 < ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+        (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)).den :=
+      (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).den_pos _
+    have hrcd2 : 0 < ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+        (Ridx (ofQ t₀ htd) (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)).den :=
+      (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).den_pos _
+    have hreg : Qle (Qabs (Qsub ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+          (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n))
+          ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+            (Ridx (ofQ t₀ htd) (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)))) (⟨2, n + 1⟩ : Q) := by
+      refine Qle_trans (add_den_pos (Qbound_den_pos _) (Qbound_den_pos _))
+        ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).reg _ _) ?_
+      have hb1 : Qle (Qbound (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ)
+          (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)) (Qbound n) := by
+        show (1 : Int) * ((n + 1 : Nat) : Int) ≤ 1 * ((_ + 1 : Nat) : Int)
+        rw [Int.one_mul, Int.one_mul]; exact_mod_cast (Nat.succ_le_succ hRn)
+      have hb2 : Qle (Qbound (Ridx (ofQ t₀ htd) (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)) n))
+          (Qbound n) := by
+        show (1 : Int) * ((n + 1 : Nat) : Int) ≤ 1 * ((_ + 1 : Nat) : Int)
+        rw [Int.one_mul, Int.one_mul]; exact_mod_cast (Nat.succ_le_succ (Ridx_ge _ _ n))
+      refine Qle_trans (add_den_pos (Qbound_den_pos n) (Qbound_den_pos n)) (Qadd_le_add hb1 hb2) ?_
+      apply Qeq_le; simp only [Qeq, add, Qbound]; push_cast; ring_uor
+    refine Qle_congr_left (Qmul_den_pos (Qabs_den_pos htd) (Qabs_den_pos (Qsub_den_pos hrcd1 hrcd2)))
+      (Qeq_symm (Qabs_sub_mul_left_eq t₀ _ _)) ?_
+    refine Qle_trans (Qmul_den_pos Nat.one_pos (Nat.succ_pos n))
+      (Qmul_le_mul (Qabs_den_pos htd) Nat.one_pos (Qabs_den_pos (Qsub_den_pos hrcd1 hrcd2))
+        (Qabs_num_nonneg _) (Qabs_num_nonneg _) ht1 hreg) ?_
+    apply Qeq_le; simp only [Qeq, mul]; push_cast; ring_uor
+  -- assemble the two-level triangle
+  have ha0d : 0 < ((Rsin (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq n).den :=
+    (Rsin (Rarctan t₀ htd hρ0 hρd hlt htρ)).den_pos n
+  have ha1d : 0 < (peval (fcomp sinCoeff arctanCoeff) t₀
+      (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ)
+        (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n) + 1)).den :=
+    peval_den_pos (fun k => fcomp_den_pos sinCoeff_den_pos arctanCoeff_den_pos k) htd _
+  have ha3d : 0 < (mul t₀ ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+      (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n))).den :=
+    Qmul_den_pos htd ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).den_pos _)
+  have ha4d : 0 < ((Rmul (ofQ t₀ htd) (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ))).seq n).den :=
+    (Rmul (ofQ t₀ htd) (Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ))).den_pos n
+  refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos ha0d ha1d))
+      (Qabs_den_pos (Qsub_den_pos ha1d ha4d)))
+    (Qabs_sub_triangle (b := peval (fcomp sinCoeff arctanCoeff) t₀
+      (2 * RaltReal_R (Rarctan t₀ htd hρ0 hρd hlt htρ)
+        (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n) + 1))
+      ha0d ha1d ha4d) ?_
+  refine Qle_trans (add_den_pos (Nat.succ_pos n) (add_den_pos (Nat.succ_pos n) (Nat.succ_pos n)))
+    (Qadd_le_add hL1 (Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos ha1d ha3d))
+        (Qabs_den_pos (Qsub_den_pos ha3d ha4d)))
+      (Qabs_sub_triangle (b := mul t₀ ((Rcos (Rarctan t₀ htd hρ0 hρd hlt htρ)).seq
+        (Ridx (Rarctan t₀ htd hρ0 hρd hlt htρ) (RsinAux (Rarctan t₀ htd hρ0 hρd hlt htρ)) n)))
+        ha1d ha3d ha4d) (Qadd_le_add hL2 hL3))) ?_
+  refine Qle_trans (add_den_pos (Nat.succ_pos n) (Nat.succ_pos n))
+    (Qadd_le_add (Qle_refl _) (Qeq_le (Qadd_same_den_loc
+      (((expM_U 1 2).num.toNat : Int) * (4 * (ρ.den : Int)) + 2 * (ρ.den : Int)) 2 (n + 1)))) ?_
+  refine Qle_trans (Nat.succ_pos n) (Qeq_le (Qadd_same_den_loc
+      (((expM_U 1 2).num.toNat : Int) * 2 + (((expM_U 1 2).num.toNat : Int) * (6 * (ρ.den : Int))
+        + 2 * (ρ.den : Int)))
+      ((((expM_U 1 2).num.toNat : Int) * (4 * (ρ.den : Int)) + 2 * (ρ.den : Int)) + 2) (n + 1))) ?_
+  apply Qeq_le; simp only [Qeq]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Analysis
