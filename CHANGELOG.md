@@ -40,8 +40,17 @@ audit-visible hypothesis, never an axiom).
   the diagonal by regularity) feeds the real-algebra cross-identity `ratio_cross_via`
   (`vvalReal(r_z,r_w)·Re(zw) = Im(zw)`), which together with `Rdiv_mul_cancel` and `Rmul_right_cancel`
   gives the identity; then `RarctanR_congr` + `RarctanR_add_real_via` close it. **This completes the
-  imaginary (harder) half of `Clog` additivity.** Remaining: combine with `Rlog_mul` (the modulus half)
-  for the full `Clog(zw) = Clog z + Clog w`. RH-*independent*; crux fields stay `none`.
+  imaginary (harder) half of `Clog` additivity.**
+- **Track 1 — ★ complex logarithm additivity** `Clog(zw) = Clog z + Clog w` (`ComplexArgAdd.lean`,
+  `Clog_add`): the capstone of substrate item 0. `Clog z = ½·log|z|² + i·arg z`, so additivity splits
+  into the modulus half (`RlogPos`-multiplicativity) and the imaginary half (`Carg_add`, fully
+  discharged). `Clog(zw).re = ½·log|zw|² ≈ ½(log|z|²+log|w|²) = Clog z.re + Clog w.re` (`Rmul_distrib`),
+  `Clog(zw).im = Carg(zw) = Carg z + Carg w` (`Carg_add`). The general positive-real
+  log-multiplicativity `log|zw|² = log|z|²+log|w|²` (via `cnormSq_mul` + `Rlog_mul` + integer-part
+  telescoping) is the one explicit audit-visible hypothesis, isolated exactly as the program isolates
+  each heavy input — RH-*independent*, no smuggling. Discharging it (general `RlogPos_mul`, needing the
+  general `exp∘log` inverse or float decomposition) is the remaining substrate brick. Crux fields stay
+  `none`.
 - **Track 1 — ★ value-level `sin(arctan t) = t·cos(arctan t)`** (`Analysis/ArctanODE.lean`,
   `Rsin_arctan_value_eq`): `Req (Rsin (Rarctan t₀)) (Rmul (ofQ t₀) (Rcos (Rarctan t₀)))` for
   `|t₀| ≤ ρ < 1/16`. This **completes the formal-PS → value (FTC) bridge** that lifts the formal
