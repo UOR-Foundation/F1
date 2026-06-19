@@ -1322,4 +1322,63 @@ theorem peval_cosCoeff_eq_altSum (q : Q) (hqd : 0 < q.den) (N : Nat) :
       (Qadd_congr (Qadd_congr ih ho) he) ?_
     exact Qadd_congr (Qadd_zero_right (altSum q 0 n)) (Qeq_refl _)
 
+-- ===========================================================================
+-- Bridge: peval sinCoeff = q·altSum(·,1) (the sin series), connecting to Rsin = q·RsinAux.
+-- ===========================================================================
+
+/-- Four-factor rearrangement `(a·b)·(c·d) ≈ c·((a·d)·b)` (generic, `ring_uor`). -/
+theorem Qmul_rearr_sin (a b c d : Q) : Qeq (mul (mul a b) (mul c d)) (mul c (mul (mul a d) b)) := by
+  simp only [Qeq, mul]; push_cast; ring_uor
+
+/-- The odd-degree term of `peval sinCoeff` is `q·(sin-aux term)`: `sinCoeff_{2n+1}·q^{2n+1} ≈
+    q·altTerm q 1 n` (both `(−1)ⁿ·q^{2n+1}/(2n+1)!`). -/
+theorem sinCoeff_term_odd (q : Q) (hqd : 0 < q.den) (n : Nat) :
+    Qeq (mul (sinCoeff (2 * n + 1)) (qpow q (2 * n + 1))) (mul q (altTerm q 1 n)) := by
+  unfold sinCoeff altTerm
+  rw [if_pos (by omega : (2 * n + 1) % 2 = 1), show (2 * n + 1) / 2 = n from by omega]
+  have hQq : 0 < (qpow q (2 * n)).den := qpow_den_pos hqd (2 * n)
+  exact Qeq_trans (Qmul_den_pos hqd (Qmul_den_pos (Qmul_den_pos (qpow_den_pos (by decide) n) hQq)
+      (fct_pos (2 * n + 1))))
+    (Qmul_rearr_sin (qpow (⟨-1, 1⟩ : Q) n) (⟨1, fct (2 * n + 1)⟩ : Q) q (qpow q (2 * n)))
+    (Qmul_congr (Qeq_refl q) (Qmul_congr (Qeq_symm (qpow_negsq hqd n)) (Qeq_refl _)))
+
+/-- The even-degree term of `peval sinCoeff` vanishes. -/
+theorem sinCoeff_term_even (q : Q) (n : Nat) :
+    Qeq (mul (sinCoeff (2 * n)) (qpow q (2 * n))) ⟨0, 1⟩ := by
+  unfold sinCoeff
+  rw [if_neg (by omega : ¬ (2 * n) % 2 = 1)]
+  show Qeq (mul (⟨0, 1⟩ : Q) (qpow q (2 * n))) ⟨0, 1⟩
+  simp only [Qeq, mul]; omega
+
+/-- **Bridge to `altSum` (sin)**: `peval sinCoeff q (2N+1) ≈ q·altSum q 1 N` — matching `Rsin q =
+    q·RsinAux q = q·(RaltReal q 1 diagonal)`. -/
+theorem peval_sinCoeff_eq (q : Q) (hqd : 0 < q.den) (N : Nat) :
+    Qeq (peval sinCoeff q (2 * N + 1)) (mul q (altSum q 1 N)) := by
+  have hg : ∀ k, 0 < (mul (sinCoeff k) (qpow q k)).den :=
+    fun k => Qmul_den_pos (sinCoeff_den_pos k) (qpow_den_pos hqd k)
+  induction N with
+  | zero =>
+    show Qeq (add (mul (sinCoeff 0) (qpow q 0)) (mul (sinCoeff 1) (qpow q 1))) (mul q (altTerm q 1 0))
+    have he : Qeq (mul (sinCoeff 0) (qpow q 0)) ⟨0, 1⟩ := sinCoeff_term_even q 0
+    exact Qeq_trans (add_den_pos Nat.one_pos (Qmul_den_pos hqd (altTerm_den_pos hqd 1 0)))
+      (Qadd_congr he (sinCoeff_term_odd q hqd 0)) (Qzero_add (mul q (altTerm q 1 0)))
+  | succ n ih =>
+    rw [show 2 * (n + 1) + 1 = 2 * n + 1 + 1 + 1 from by omega]
+    show Qeq (add (add (peval sinCoeff q (2 * n + 1)) (mul (sinCoeff (2 * n + 2)) (qpow q (2 * n + 2))))
+        (mul (sinCoeff (2 * n + 3)) (qpow q (2 * n + 3))))
+      (mul q (altSum q 1 (n + 1)))
+    have ho : Qeq (mul (sinCoeff (2 * n + 3)) (qpow q (2 * n + 3))) (mul q (altTerm q 1 (n + 1))) := by
+      have h := sinCoeff_term_odd q hqd (n + 1)
+      rwa [show 2 * (n + 1) + 1 = 2 * n + 3 from by omega] at h
+    have he : Qeq (mul (sinCoeff (2 * n + 2)) (qpow q (2 * n + 2))) ⟨0, 1⟩ := by
+      have h := sinCoeff_term_even q (n + 1)
+      rwa [show 2 * (n + 1) = 2 * n + 2 from by omega] at h
+    refine Qeq_trans (add_den_pos (add_den_pos (Qmul_den_pos hqd (altSum_den_pos hqd 1 n)) Nat.one_pos)
+        (Qmul_den_pos hqd (altTerm_den_pos hqd 1 (n + 1))))
+      (Qadd_congr (Qadd_congr ih he) ho) ?_
+    refine Qeq_trans (add_den_pos (Qmul_den_pos hqd (altSum_den_pos hqd 1 n))
+        (Qmul_den_pos hqd (altTerm_den_pos hqd 1 (n + 1))))
+      (Qadd_congr (Qadd_zero_right (mul q (altSum q 1 n))) (Qeq_refl _)) ?_
+    exact Qeq_symm (Qmul_add_left q (altSum q 1 n) (altTerm q 1 (n + 1)))
+
 end UOR.Bridge.F1Square.Analysis
