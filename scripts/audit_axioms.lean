@@ -2851,3 +2851,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.vvalReal_rel_via
 #print axioms Analysis.ratio_cross_via
 #print axioms Analysis.Carg_add
+#print axioms Analysis.Clog_add

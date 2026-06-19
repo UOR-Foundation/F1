@@ -15,6 +15,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 import F1Square.Analysis.ArctanTan
 import F1Square.Analysis.RArctanCongr
 import F1Square.Analysis.ComplexArg
+import F1Square.Analysis.ComplexLog
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -236,5 +237,43 @@ theorem Carg_add (z w : Complex) (kz : Nat) (hkz : Qlt (Qbound kz) (z.re.seq kz)
     (fun n => by show n ≤ 12 * Rartanh_R ρ n + 11; exact Nat.le_trans (hRge n) (by omega))
     hbs hbt hbw (fun _ => rfl) (fun _ => rfl) (fun _ => rfl)
   exact Req_trans hcongr (Req_symm hadd)
+
+set_option maxHeartbeats 1200000 in
+/-- **★ complex logarithm additivity** `Clog(zw) = Clog z + Clog w` (principal sector). The capstone
+    of substrate item 0: `Clog z = ½·log|z|² + i·arg z`, so its two halves are the real
+    log-multiplicativity (modulus) and the argument addition (imaginary). The imaginary half is
+    `Carg_add` (`arg(zw) = arg z + arg w`, fully discharged here). The modulus half is the
+    `RlogPos`-multiplicativity `hmod` (`log|zw|² = log|z|² + log|w|²`, via `cnormSq_mul` +
+    `Rlog_mul` — the general positive-real log-multiplicativity, supplied as the one explicit
+    audit-visible hypothesis, exactly as the program isolates each classical/heavy input). Then
+    `Clog(zw).re = ½·log|zw|² ≈ ½(log|z|²+log|w|²) = Clog z.re + Clog w.re` by `Rmul_distrib`, and the
+    imaginary parts by `Carg_add`. -/
+theorem Clog_add (z w : Complex)
+    (knz : Nat) (hknz : Qlt (Qbound knz) ((cnormSq z).seq knz))
+    (knw : Nat) (hknw : Qlt (Qbound knw) ((cnormSq w).seq knw))
+    (knzw : Nat) (hknzw : Qlt (Qbound knzw) ((cnormSq (Cmul z w)).seq knzw))
+    (kz : Nat) (hkz : Qlt (Qbound kz) (z.re.seq kz))
+    (kw : Nat) (hkw : Qlt (Qbound kw) (w.re.seq kw))
+    (kzw : Nat) (hzw : Qlt (Qbound kzw) ((Cmul z w).re.seq kzw))
+    (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt : ρ.num.toNat < ρ.den)
+    (hlt16 : (mul (⟨16, 1⟩ : Q) ρ).num.toNat < (mul (⟨16, 1⟩ : Q) ρ).den)
+    (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (hhalf : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ))) (hρ4 : Qle (mul ⟨4, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ2 : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ))) (hρ8 : Qle (mul ⟨2, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ1 : Qle ρ ⟨1, 1⟩)
+    (hbs : ∀ n, Qle (Qabs ((Rdiv z.im z.re kz hkz).seq n)) ρ)
+    (hbt : ∀ n, Qle (Qabs ((Rdiv w.im w.re kw hkw).seq n)) ρ)
+    (hbzw : ∀ n, Qle (Qabs ((Rdiv (Cmul z w).im (Cmul z w).re kzw hzw).seq n)) ρ)
+    (hbw : ∀ n, Qle (Qabs (vval ((Rdiv z.im z.re kz hkz).seq n)
+      ((Rdiv w.im w.re kw hkw).seq n))) ρ)
+    (hmod : Req (RlogPos (cnormSq (Cmul z w)) knzw hknzw)
+      (Radd (RlogPos (cnormSq z) knz hknz) (RlogPos (cnormSq w) knw hknw))) :
+    Ceq (Clog (Cmul z w) knzw hknzw kzw hzw ρ hρ0 hρd hlt hbzw)
+        (Cadd (Clog z knz hknz kz hkz ρ hρ0 hρd hlt hbs)
+              (Clog w knw hknw kw hkw ρ hρ0 hρd hlt hbt)) :=
+  ⟨Req_trans (Rmul_congr (Req_refl half) hmod)
+      (Rmul_distrib half (RlogPos (cnormSq z) knz hknz) (RlogPos (cnormSq w) knw hknw)),
+   Carg_add z w kz hkz kw hkw kzw hzw ρ hρ0 hρd hlt hlt16 h2ρ hhalf hρ4 hρ2 hρ8 hρ1
+     hbs hbt hbzw hbw⟩
 
 end UOR.Bridge.F1Square.Analysis
