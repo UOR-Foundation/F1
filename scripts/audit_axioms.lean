@@ -874,6 +874,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sinCoeff_term_odd
 #print axioms Analysis.sinCoeff_term_even
 #print axioms Analysis.peval_sinCoeff_eq
+#print axioms Analysis.DN_cos_eq
+#print axioms Analysis.DN_cos_abs_le
+#print axioms Analysis.DN_cos_closed
 #print axioms Analysis.sinCoeff_abs_le_one
 #print axioms Analysis.cosCoeff_abs_le_one
 #print axioms Analysis.arctanSum_abs_le

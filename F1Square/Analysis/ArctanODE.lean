@@ -1381,4 +1381,74 @@ theorem peval_sinCoeff_eq (q : Q) (hqd : 0 < q.den) (N : Nat) :
       (Qadd_congr (Qadd_zero_right (mul q (altSum q 1 n))) (Qeq_refl _)) ?_
     exact Qeq_symm (Qmul_add_left q (altSum q 1 n) (altTerm q 1 (n + 1)))
 
+-- ===========================================================================
+-- The cos value bridge (mirror of the sin DN trio; gcornerB/corner machinery reused).
+-- ===========================================================================
+
+/-- **`DN` identity (cos)**: `peval(cos∘arctan,t,M) − peval(cos,q,M) = Σₘ cosₘ·(peval(arctanᵐ,t,M) − qᵐ)`. -/
+theorem DN_cos_eq (t : Q) (htd : 0 < t.den) (M : Nat) :
+    Qeq (Qsub (peval (fcomp cosCoeff arctanCoeff) t M)
+          (peval cosCoeff (peval arctanCoeff t M) M))
+      (Fsum (fun m => mul (cosCoeff m)
+        (Qsub (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m))) M) := by
+  have hq : 0 < (peval arctanCoeff t M).den := peval_den_pos arctanCoeff_den_pos htd M
+  have hF : ∀ m, 0 < (mul (cosCoeff m) (peval (fpow arctanCoeff m) t M)).den :=
+    fun m => Qmul_den_pos (cosCoeff_den_pos m) (peval_den_pos (fpow_den_pos arctanCoeff_den_pos m) htd M)
+  have hG : ∀ m, 0 < (mul (cosCoeff m) (qpow (peval arctanCoeff t M) m)).den :=
+    fun m => Qmul_den_pos (cosCoeff_den_pos m) (qpow_den_pos hq m)
+  refine Qeq_trans (Qsub_den_pos (Fsum_den_pos hF M) (peval_den_pos cosCoeff_den_pos hq M))
+    (QsubCongr (peval_fcomp_swap cosCoeff arctanCoeff cosCoeff_den_pos arctanCoeff_den_pos
+      arctanCoeff_zero t htd M) (Qeq_refl _)) ?_
+  refine Qeq_trans (Fsum_den_pos (fun m => Qsub_den_pos (hF m) (hG m)) M)
+    (Qeq_symm (Fsum_sub hF hG M)) ?_
+  exact Fsum_congr (fun m => Qeq_symm (Qmul_sub_left_loc (cosCoeff m)
+    (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m))) M
+
+/-- **`DN` bound (cos)**: `|peval(cos∘arctan,t,M) − peval(cos,q,M)| ≤ Σₘ Σⱼ|cornerⱼ|`. -/
+theorem DN_cos_abs_le (t : Q) (htd : 0 < t.den) (M : Nat)
+    (hq1 : Qle (Qabs (peval arctanCoeff t M)) ⟨1, 1⟩) :
+    Qle (Qabs (Qsub (peval (fcomp cosCoeff arctanCoeff) t M)
+          (peval cosCoeff (peval arctanCoeff t M) M)))
+      (Fsum (fun _ => Fsum (fun j => Qabs (gcornerB arctanCoeff t j M)) M) M) := by
+  have herr : ∀ m, 0 < (Qsub (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m)).den :=
+    fun m => Qsub_den_pos (peval_den_pos (fpow_den_pos arctanCoeff_den_pos m) htd M)
+      (qpow_den_pos (peval_den_pos arctanCoeff_den_pos htd M) m)
+  have hSE : ∀ m, 0 < (mul (cosCoeff m)
+      (Qsub (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m))).den :=
+    fun m => Qmul_den_pos (cosCoeff_den_pos m) (herr m)
+  refine Qle_trans (Qabs_den_pos (Fsum_den_pos hSE M)) (Qeq_le (Qabs_Qeq (DN_cos_eq t htd M))) ?_
+  refine Qle_trans (Fsum_den_pos (fun m => Qabs_den_pos (hSE m)) M) (Fsum_abs_le hSE M) ?_
+  refine Fsum_le_congr (fun m hm => ?_)
+  refine Qle_trans (Qmul_den_pos (Qabs_den_pos (cosCoeff_den_pos m)) (Qabs_den_pos (herr m)))
+    (Qeq_le (by rw [Qabs_mul]; exact Qeq_refl _ :
+      Qeq (Qabs (mul (cosCoeff m) (Qsub (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m))))
+        (mul (Qabs (cosCoeff m)) (Qabs (Qsub (peval (fpow arctanCoeff m) t M) (qpow (peval arctanCoeff t M) m)))))) ?_
+  refine Qle_trans (Qmul_den_pos Nat.one_pos (Qabs_den_pos (herr m)))
+    (Qmul_le_mul_right (Qabs_num_nonneg _) (cosCoeff_abs_le_one m)) ?_
+  exact Qle_trans (Qabs_den_pos (herr m)) (Qeq_le (Qone_mul _)) (e_le_T_arctan t htd M hq1 m hm)
+
+/-- **Closed `DN` bound (cos)**: `|peval(cos∘arctan,t,M) − peval(cos,q,M)|·(1−2ρ) ≤
+    (M+1)·(2^{M+1}−1)·(M+1)·(2ρ)^{M+1}` → 0. -/
+theorem DN_cos_closed (t ρ : Q) (M : Nat) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ.num) (htd : 0 < t.den)
+    (hw : Qle (Qabs t) ρ) (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (hq1 : Qle (Qabs (peval arctanCoeff t M)) ⟨1, 1⟩) :
+    Qle (mul (Qabs (Qsub (peval (fcomp cosCoeff arctanCoeff) t M)
+            (peval cosCoeff (peval arctanCoeff t M) M))) (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ)))
+      (mul (⟨(M : Int) + 1, 1⟩ : Q) (mul (⟨(2 : Int) ^ (M + 1) - 1, 1⟩ : Q)
+        (mul (⟨(M : Int) + 1, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1))))) := by
+  have hwd1 : 0 < (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).den := Qsub_den_pos Nat.one_pos (Qmul_den_pos (by decide) hρd)
+  have hInner : 0 < (Fsum (fun j => Qabs (gcornerB arctanCoeff t j M)) M).den :=
+    Fsum_den_pos (fun j => Qabs_den_pos (gcornerB_den arctanCoeff arctanCoeff_den_pos t htd j M)) M
+  have hCB : 0 < (mul (⟨(2 : Int) ^ (M + 1) - 1, 1⟩ : Q)
+      (mul (⟨(M : Int) + 1, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1)))).den :=
+    Qmul_den_pos Nat.one_pos (Qmul_den_pos Nat.one_pos (qpow_den_pos (Qmul_den_pos (by decide) hρd) (M + 1)))
+  refine Qle_trans (Qmul_den_pos (Fsum_den_pos (fun _ => hInner) M) hwd1)
+    (Qmul_le_mul_right h2ρ (DN_cos_abs_le t htd M hq1)) ?_
+  refine Qle_trans (Fsum_den_pos (fun _ => Qmul_den_pos hInner hwd1) M)
+    (Qeq_le (Fsum_mul_const_right hwd1 (fun _ => hInner) M)) ?_
+  refine Qle_trans (Fsum_den_pos (fun _ => hCB) M)
+    (Fsum_le_Fsum_le (fun _ _ => corner_sum_closed_arctan ρ t hρd hρ0 htd hw h2ρ M)) ?_
+  exact Qeq_le (Fsum_const_eq (mul (⟨(2 : Int) ^ (M + 1) - 1, 1⟩ : Q)
+    (mul (⟨(M : Int) + 1, 1⟩ : Q) (qpow (mul ⟨2, 1⟩ ρ) (M + 1)))) hCB M)
+
 end UOR.Bridge.F1Square.Analysis
