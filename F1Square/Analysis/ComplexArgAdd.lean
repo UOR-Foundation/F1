@@ -14,6 +14,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 
 import F1Square.Analysis.ArctanTan
 import F1Square.Analysis.RArctanCongr
+import F1Square.Analysis.ComplexArg
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -180,5 +181,60 @@ theorem ratio_cross_via {s t V a b c d : Real}
   exact Req_trans hstep2
     (Req_trans (Rmul_distrib (Rmul a c) s t)
       (Req_trans (Radd_congr hacs hact) (Radd_comm (Rmul b c) (Rmul a d))))
+
+set_option maxHeartbeats 1200000 in
+/-- **★ complex argument additivity** `arg(zw) = arg z + arg w` (principal sector). For `z, w` with
+    `Re z, Re w, Re(zw)` apart from `0` and all three ratios `Im/Re` bounded by `ρ < 1/16`,
+    `Carg(zw) = Carg z + Carg w`. The imaginary half of `Clog` additivity. Assembly: the ratio identity
+    `Im(zw)/Re(zw) ≈ vvalReal(ratio z, ratio w)` (`ratio_cross_via` + `Rdiv_mul_cancel` cross-multiplied,
+    cancelled by `Rmul_right_cancel`), bridged through `RarctanR_congr`, then the real arctan addition
+    `RarctanR_add_real_via`. -/
+theorem Carg_add (z w : Complex) (kz : Nat) (hkz : Qlt (Qbound kz) (z.re.seq kz))
+    (kw : Nat) (hkw : Qlt (Qbound kw) (w.re.seq kw))
+    (kzw : Nat) (hzw : Qlt (Qbound kzw) ((Cmul z w).re.seq kzw))
+    (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hlt : ρ.num.toNat < ρ.den)
+    (hlt16 : (mul (⟨16, 1⟩ : Q) ρ).num.toNat < (mul (⟨16, 1⟩ : Q) ρ).den)
+    (h2ρ : 0 ≤ (Qsub (⟨1, 1⟩ : Q) (mul ⟨2, 1⟩ ρ)).num)
+    (hhalf : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ⟨2, 1⟩ ρ))) (hρ4 : Qle (mul ⟨4, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ2 : Qle (⟨1, 2⟩ : Q) (Qsub ⟨1, 1⟩ (mul ρ ρ))) (hρ8 : Qle (mul ⟨2, 1⟩ ρ) ⟨1, 1⟩)
+    (hρ1 : Qle ρ ⟨1, 1⟩)
+    (hbs : ∀ n, Qle (Qabs ((Rdiv z.im z.re kz hkz).seq n)) ρ)
+    (hbt : ∀ n, Qle (Qabs ((Rdiv w.im w.re kw hkw).seq n)) ρ)
+    (hbzw : ∀ n, Qle (Qabs ((Rdiv (Cmul z w).im (Cmul z w).re kzw hzw).seq n)) ρ)
+    (hbw : ∀ n, Qle (Qabs (vval ((Rdiv z.im z.re kz hkz).seq n)
+      ((Rdiv w.im w.re kw hkw).seq n))) ρ) :
+    Req (Carg (Cmul z w) kzw hzw ρ hρ0 hρd hlt hbzw)
+        (Radd (Carg z kz hkz ρ hρ0 hρd hlt hbs) (Carg w kw hkw ρ hρ0 hρd hlt hbt)) := by
+  have hρ2' : Qle (mul ρ ρ) (⟨1, 2⟩ : Q) := by
+    have h := hρ2; simp only [Qle, Qsub, add, neg, mul] at h ⊢; push_cast at h ⊢; omega
+  have hRge : ∀ k, k ≤ Rartanh_R ρ k := by
+    intro k; unfold Rartanh_R
+    have hk : 1 ≤ ρ.den * ρ.den + 4 * ρ.den := Nat.le_trans (by omega) (Nat.le_add_left _ _)
+    calc k ≤ 1 * (k + 1) := by omega
+      _ ≤ (ρ.den * ρ.den + 4 * ρ.den) * (k + 1) := Nat.mul_le_mul_right _ hk
+  have hbvv : ∀ n, Qle (Qabs ((vvalReal (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw)
+      ρ hρd hρ0 hρ2' hbs hbt).seq n)) ρ := fun n => hbw (12 * n + 11)
+  have hVrel := vvalReal_rel_via (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw)
+    (vvalReal (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw) ρ hρd hρ0 hρ2' hbs hbt)
+    ρ (fun n => 12 * n + 11) (fun n => by show n ≤ 12 * n + 11; omega) hρ0 hρd hρ1 hρ2' hbs hbt hbw
+    (fun _ => rfl)
+  have goal_vval : Req (Rmul (vvalReal (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw)
+        ρ hρd hρ0 hρ2' hbs hbt) (Cmul z w).re) ((Cmul z w).im) :=
+    ratio_cross_via (Rdiv_mul_cancel hkz) (Rdiv_mul_cancel hkw) hVrel
+  have hratio : Req (Rdiv (Cmul z w).im (Cmul z w).re kzw hzw)
+        (vvalReal (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw) ρ hρd hρ0 hρ2' hbs hbt) :=
+    Rmul_right_cancel hzw (Req_trans (Rdiv_mul_cancel hzw) (Req_symm goal_vval))
+  have hcongr := RarctanR_congr (Rdiv (Cmul z w).im (Cmul z w).re kzw hzw)
+    (vvalReal (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw) ρ hρd hρ0 hρ2' hbs hbt)
+    ρ hρ0 hρd hlt hρ2 hbzw hbvv hratio
+  have hadd := RarctanR_add_real_via (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw)
+    (RarctanR (Rdiv z.im z.re kz hkz) ρ hρ0 hρd hlt hbs)
+    (RarctanR (Rdiv w.im w.re kw hkw) ρ hρ0 hρd hlt hbt)
+    (RarctanR (vvalReal (Rdiv z.im z.re kz hkz) (Rdiv w.im w.re kw hkw) ρ hρd hρ0 hρ2' hbs hbt)
+      ρ hρ0 hρd hlt hbvv)
+    ρ (fun n => 12 * Rartanh_R ρ n + 11) hρ0 hρd hlt hlt16 h2ρ hhalf hρ4 hρ2 hρ8 hρ1
+    (fun n => by show n ≤ 12 * Rartanh_R ρ n + 11; exact Nat.le_trans (hRge n) (by omega))
+    hbs hbt hbw (fun _ => rfl) (fun _ => rfl) (fun _ => rfl)
+  exact Req_trans hcongr (Req_symm hadd)
 
 end UOR.Bridge.F1Square.Analysis
