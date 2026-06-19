@@ -87,4 +87,47 @@ theorem Rtan_arctan_eq (t₀ ρ : Q) (htd : 0 < t₀.den) (hρ0 : 0 ≤ ρ.num) 
     (Rcos_arctan_inv t₀ ρ htd hρ0 hρd hlt htρ hlt16 h2ρ hhalf hρ4 hρ2 hρ8 hρ1)) ?_
   exact Rmul_one (ofQ t₀ htd)
 
+-- ===========================================================================
+-- Angle-addition given the tangent: sin(A+B), cos(A+B) for sin = (tan)·cos.
+-- ===========================================================================
+
+/-- `x·(y·z) ≈ y·(x·z)` (left-commutativity of `Rmul`). -/
+theorem Rmul_left_comm_loc (x y z : Real) : Req (Rmul x (Rmul y z)) (Rmul y (Rmul x z)) :=
+  Req_trans (Req_symm (Rmul_assoc x y z))
+    (Req_trans (Rmul_congr (Rmul_comm x y) (Req_refl z)) (Rmul_assoc y x z))
+
+/-- `1·x ≈ x`. -/
+theorem Rone_mul_loc (x : Real) : Req (Rmul one x) x := Req_trans (Rmul_comm one x) (Rmul_one x)
+
+/-- `(a·c)·(b·d) ≈ (a·b)·(c·d)` (regroup the four factors), via the `RprodL` product normal form. -/
+theorem Rmul_pair_regroup (a b c d : Real) :
+    Req (Rmul (Rmul a c) (Rmul b d)) (Rmul (Rmul a b) (Rmul c d)) :=
+  Req_trans (Rmul_pair_eq_RprodL4 a c b d)
+    (Req_trans (RprodL_perm (List.Perm.cons a (List.Perm.swap b c [d])))
+      (Req_symm (Rmul_pair_eq_RprodL4 a b c d)))
+
+/-- **sin angle-addition given the tangent**: if `sin A = a·cos A` and `sin B = b·cos B` then
+    `sin(A+B) = (a+b)·(cos A·cos B)`. (`Rsin_add` + substitution + reassociation/distribution.) -/
+theorem Rsin_add_of_tan {A B : Real} {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den)
+    (hA : Req (Rsin A) (Rmul (ofQ a ha) (Rcos A))) (hB : Req (Rsin B) (Rmul (ofQ b hb) (Rcos B))) :
+    Req (Rsin (Radd A B)) (Rmul (Radd (ofQ a ha) (ofQ b hb)) (Rmul (Rcos A) (Rcos B))) := by
+  refine Req_trans (Rsin_add A B) ?_
+  refine Req_trans (Radd_congr (Rmul_congr (Req_refl _) hB) (Rmul_congr hA (Req_refl _))) ?_
+  refine Req_trans (Radd_congr (Rmul_left_comm_loc (Rcos A) (ofQ b hb) (Rcos B))
+    (Rmul_assoc (ofQ a ha) (Rcos A) (Rcos B))) ?_
+  refine Req_trans (Req_symm (Rmul_distrib_right (ofQ b hb) (ofQ a ha) (Rmul (Rcos A) (Rcos B)))) ?_
+  exact Rmul_congr (Radd_comm (ofQ b hb) (ofQ a ha)) (Req_refl _)
+
+/-- **cos angle-addition given the tangent**: if `sin A = a·cos A` and `sin B = b·cos B` then
+    `cos(A+B) = (1−a·b)·(cos A·cos B)`. (`Rcos_add` + substitution + the four-factor regroup.) -/
+theorem Rcos_add_of_tan {A B : Real} {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den)
+    (hA : Req (Rsin A) (Rmul (ofQ a ha) (Rcos A))) (hB : Req (Rsin B) (Rmul (ofQ b hb) (Rcos B))) :
+    Req (Rcos (Radd A B))
+      (Rmul (Rsub one (Rmul (ofQ a ha) (ofQ b hb))) (Rmul (Rcos A) (Rcos B))) := by
+  refine Req_trans (Rcos_add A B) ?_
+  refine Req_trans (Rsub_congr (Req_refl _) (Rmul_congr hA hB)) ?_
+  refine Req_trans (Rsub_congr (Req_symm (Rone_mul_loc (Rmul (Rcos A) (Rcos B))))
+    (Rmul_pair_regroup (ofQ a ha) (ofQ b hb) (Rcos A) (Rcos B))) ?_
+  exact Req_symm (Rmul_sub_distrib_right one (Rmul (ofQ a ha) (ofQ b hb)) (Rmul (Rcos A) (Rcos B)))
+
 end UOR.Bridge.F1Square.Analysis
