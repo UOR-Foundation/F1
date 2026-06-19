@@ -1627,4 +1627,60 @@ theorem DN_cos_recip (t ρ : Q) (M n : Nat) (hρd : 0 < ρ.den) (hρ0 : 0 ≤ ρ
     (Qmul_le_mul_left (by decide) (DN_arctan_decay ρ M n hρd hρ0 hρ4 hlt hMn)) ?_
   exact Qeq_le (by simp only [Qeq, mul]; push_cast; ring_uor)
 
+-- ===========================================================================
+-- Formal-identity algebra: peval(sin∘arctan) = t·peval(cos∘arctan) (degree shift).
+-- ===========================================================================
+
+/-- **Xident shift under `peval`**: `peval (X·G) t (m+1) = t·peval G t m`. Multiplying a series by the
+    identity `Xident` (support `{1}`) shifts every degree up by one, so the evaluated truncation
+    factors a single `t` out and drops one term. (`fmul_Xident`/`fmul_Xident_zero` termwise, then the
+    `qpow` successor and left-distribution.) -/
+theorem peval_fmul_Xident_shift (G : Nat → Q) (hG : ∀ i, 0 < (G i).den) (t : Q) (htd : 0 < t.den) :
+    ∀ m, Qeq (peval (fmul Xident G) t (m + 1)) (mul t (peval G t m))
+  | 0 => by
+      show Qeq (add (mul (fmul Xident G 0) (qpow t 0)) (mul (fmul Xident G 1) (qpow t 1)))
+        (mul t (mul (G 0) (qpow t 0)))
+      have h0 : Qeq (mul (fmul Xident G 0) (qpow t 0)) ⟨0, 1⟩ := by
+        refine Qeq_trans (Qmul_den_pos Nat.one_pos (qpow_den_pos htd 0))
+          (Qmul_congr (fmul_Xident_zero G) (Qeq_refl _)) ?_
+        simp only [Qeq, mul]; omega
+      have h1 : Qeq (mul (fmul Xident G 1) (qpow t 1)) (mul t (mul (G 0) (qpow t 0))) := by
+        refine Qeq_trans (Qmul_den_pos (hG 0) (qpow_den_pos htd 1))
+          (Qmul_congr (fmul_Xident G hG 0) (Qeq_refl _)) ?_
+        show Qeq (mul (G 0) (mul t (qpow t 0))) (mul t (mul (G 0) (qpow t 0)))
+        simp only [Qeq, mul]; push_cast; ring_uor
+      refine Qeq_trans (add_den_pos Nat.one_pos
+          (Qmul_den_pos htd (Qmul_den_pos (hG 0) (qpow_den_pos htd 0))))
+        (Qadd_congr h0 h1) ?_
+      exact Qzero_add (mul t (mul (G 0) (qpow t 0)))
+  | (m + 1) => by
+      show Qeq (add (peval (fmul Xident G) t (m + 1)) (mul (fmul Xident G (m + 2)) (qpow t (m + 2))))
+        (mul t (add (peval G t m) (mul (G (m + 1)) (qpow t (m + 1)))))
+      have ih := peval_fmul_Xident_shift G hG t htd m
+      have hterm : Qeq (mul (fmul Xident G (m + 2)) (qpow t (m + 2)))
+          (mul t (mul (G (m + 1)) (qpow t (m + 1)))) := by
+        refine Qeq_trans (Qmul_den_pos (hG (m + 1)) (qpow_den_pos htd (m + 2)))
+          (Qmul_congr (fmul_Xident G hG (m + 1)) (Qeq_refl _)) ?_
+        show Qeq (mul (G (m + 1)) (mul t (qpow t (m + 1)))) (mul t (mul (G (m + 1)) (qpow t (m + 1))))
+        simp only [Qeq, mul]; push_cast; ring_uor
+      refine Qeq_trans (add_den_pos
+          (Qmul_den_pos htd (peval_den_pos hG htd m))
+          (Qmul_den_pos htd (Qmul_den_pos (hG (m + 1)) (qpow_den_pos htd (m + 1)))))
+        (Qadd_congr ih hterm) ?_
+      exact Qeq_symm (Qmul_add_left t (peval G t m) (mul (G (m + 1)) (qpow t (m + 1))))
+
+/-- **Value form of `sin∘arctan = t·(cos∘arctan)` with the degree shift made explicit**:
+    `peval(sin∘arctan, t, m+1) = t·peval(cos∘arctan, t, m)`. Composes the formal identity
+    `peval_sin_arctan_eq` (`sin∘arctan = Xident·(cos∘arctan)`) with the `Xident` shift. This is the
+    algebraic hinge of `tan(arctan t) = t`: once both compositions converge to `Rsin`/`Rcos∘arctan`,
+    this passes the identity to the value limit (no division — `sin = t·cos` directly). -/
+theorem peval_sin_arctan_shift (t : Q) (htd : 0 < t.den) (m : Nat) :
+    Qeq (peval (fcomp sinCoeff arctanCoeff) t (m + 1))
+      (mul t (peval (fcomp cosCoeff arctanCoeff) t m)) :=
+  Qeq_trans (peval_den_pos (fun k => fmul_den_pos Xident_den_pos
+        (fun i => fcomp_den_pos cosCoeff_den_pos arctanCoeff_den_pos i) k) htd (m + 1))
+    (peval_sin_arctan_eq t (m + 1))
+    (peval_fmul_Xident_shift (fcomp cosCoeff arctanCoeff)
+      (fun i => fcomp_den_pos cosCoeff_den_pos arctanCoeff_den_pos i) t htd m)
+
 end UOR.Bridge.F1Square.Analysis
