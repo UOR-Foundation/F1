@@ -864,6 +864,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.corner_inner_eq_arctan
 #print axioms Analysis.corner_term_le_arctan
 #print axioms Analysis.corner_bound_arctan
+#print axioms Analysis.corner_sum_bound_arctan
 #print axioms Analysis.sinCoeff_abs_le_one
 #print axioms Analysis.cosCoeff_abs_le_one
 #print axioms Analysis.arctanSum_abs_le
