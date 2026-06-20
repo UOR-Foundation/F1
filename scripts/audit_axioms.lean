@@ -3037,3 +3037,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.zeta2_lower_tight
 #print axioms Analysis.cLowQ_den_pos
 #print axioms Analysis.cApprox_ge_cLowQ
+#print axioms Analysis.gammaLoBound_den_pos
+#print axioms Analysis.gammaLoBound_le_Ssum
+#print axioms Analysis.Ssum_cLowQ_le_gammaHseq

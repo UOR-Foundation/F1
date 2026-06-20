@@ -54,4 +54,43 @@ theorem cApprox_ge_cLowQ (T n T' : Nat) : Qle (cLowQ T n) (cApprox n T') := by
   exact artSum_le_value (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _) htaild hWn T
     (deltaTail_eq (n + 1) T) T'
 
+-- ===========================================================================
+-- (B) The rounded accumulator and the partial-sum lower bound `gammaLoBound ≤ Ssum cLowQ ≤ gammaHseq`.
+-- ===========================================================================
+
+/-- The **rounded lower-bound accumulator** for `Σ_{n<K} cLowQ T n`, at fixed denominator `D`
+    (round down each step, keeping the denominator bounded for a feasible final `decide`). -/
+def gammaLoBound (T D : Nat) : Nat → Q
+  | 0 => ⟨0, D⟩
+  | (K + 1) => qRoundDown (add (gammaLoBound T D K) (cLowQ T K)) D
+
+theorem gammaLoBound_den_pos (T D : Nat) (hD : 0 < D) : ∀ K, 0 < (gammaLoBound T D K).den
+  | 0 => hD
+  | (_ + 1) => hD
+
+/-- **`gammaLoBound T D K ≤ Σ_{n<K} cLowQ T n`** — the round-down accumulator stays below the exact
+    partial sum (`qRoundDown_le` at each step). -/
+theorem gammaLoBound_le_Ssum (T D : Nat) (hD : 0 < D) :
+    ∀ K, Qle (gammaLoBound T D K) (Ssum (cLowQ T) K)
+  | 0 => by
+      show Qle (⟨0, D⟩ : Q) (⟨0, 1⟩ : Q); simp only [Qle]; omega
+  | (K + 1) => by
+      have hadd : 0 < (add (gammaLoBound T D K) (cLowQ T K)).den :=
+        add_den_pos (gammaLoBound_den_pos T D hD K) (cLowQ_den_pos T K)
+      refine Qle_trans hadd
+        (qRoundDown_le (add (gammaLoBound T D K) (cLowQ T K)) hadd D) ?_
+      show Qle (add (gammaLoBound T D K) (cLowQ T K)) (add (Ssum (cLowQ T) K) (cLowQ T K))
+      exact Qadd_le_add (gammaLoBound_le_Ssum T D hD K) (Qle_refl _)
+
+/-- **`Σ_{n<K} cLowQ T n ≤ gammaHseq j`** for `K ≤ 2(j+1)` — the partial sum of per-term lower bounds
+    is dominated by the (longer, deeper) accelerated approximant `gammaHseq j` (`Ssum_le_of_le` with
+    `cApprox_ge_cLowQ`, then `Ssum_le` to extend the upper limit; `cApprox` terms are `≥ 0`). -/
+theorem Ssum_cLowQ_le_gammaHseq (T j K : Nat) (hK : K ≤ 2 * (j + 1)) :
+    Qle (Ssum (cLowQ T) K) (gammaHseq j) := by
+  refine Qle_trans (Ssum_den_pos (fun i => cApprox_den_pos i (j + 1)) K)
+    (Ssum_le_of_le (fun i => cApprox_ge_cLowQ T i (j + 1)) K) ?_
+  show Qle (Ssum (fun i => cApprox i (j + 1)) K) (Ssum (fun i => cApprox i (j + 1)) (gammaHN j))
+  exact Ssum_le (fun i => cApprox_num_nonneg i (j + 1)) (fun i => cApprox_den_pos i (j + 1))
+    (by unfold gammaHN; omega)
+
 end UOR.Bridge.F1Square.Analysis
