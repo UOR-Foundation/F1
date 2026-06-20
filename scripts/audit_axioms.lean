@@ -2865,3 +2865,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RlogPos_cnormSq_mul
 #print axioms Analysis.Clog_add_bounded
 #print axioms Analysis.Rartanh_neg
+#print axioms Analysis.RartanhConst_neg
+#print axioms Analysis.TwoArtanhConst_neg
+#print axioms Analysis.Rexp_TwoArtanh_of_neg
