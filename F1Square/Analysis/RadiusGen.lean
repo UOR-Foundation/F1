@@ -179,4 +179,59 @@ theorem Rartanh_radius_indep_gen (t X X' : Real) (ρ ρ' τ : Q) (K : Nat) (hρd
     (Qeq_le (Qadd_same_den_loc ((K : Int) * (τ.den : Int)) (2 * (K : Int) + (K : Int) * (τ.den : Int)) (n + 1))) ?_
   apply Qeq_le; simp only [Qeq]; push_cast; ring_uor
 
+set_option maxHeartbeats 1600000 in
+/-- **General-radius `Rlog` congruence**: `x ≈ y` (both presented at modulus `M`) ⟹ `Rlog x M ≈ Rlog y M`
+    for **any** `M ≥ 1` (no small-radius cap), with `K` the even-sum bound for `ρ_M` (`K = ρ_M.den`
+    works). Generalizes `Rlog_congr` via `Rartanh_congr_gen`. -/
+theorem Rlog_congr_gen (x y : Real) (M : Q) (K : Nat) (hMd : 0 < M.den) (hMge : Qle (⟨1, 1⟩ : Q) M)
+    (hxpos : ∀ n, 0 < (x.seq n).num) (hxhi : ∀ n, Qle (x.seq n) M)
+    (hxlo : ∀ n, Qle (⟨1, 1⟩ : Q) (mul (x.seq n) M))
+    (hypos : ∀ n, 0 < (y.seq n).num) (hyhi : ∀ n, Qle (y.seq n) M)
+    (hylo : ∀ n, Qle (⟨1, 1⟩ : Q) (mul (y.seq n) M))
+    (hKF : Qle (⟨1, 1⟩ : Q) (mul (⟨(K : Int), 1⟩ : Q)
+      (Qsub ⟨1, 1⟩ (mul ⟨M.num - (M.den : Int), M.num.toNat + M.den⟩
+        ⟨M.num - (M.den : Int), M.num.toNat + M.den⟩))))
+    (hKr : K ≤ 2 * ((M.num.toNat + M.den) * (M.num.toNat + M.den) + 4 * (M.num.toNat + M.den)))
+    (heq : Req x y) :
+    Req (Rlog x M hMd hMge hxpos hxhi hxlo) (Rlog y M hMd hMge hypos hyhi hylo) := by
+  obtain ⟨hMn, hM1, hρ0, hρd, hρlt, hρ1⟩ := Rlog_radius_facts M hMd hMge
+  have hden_x : ∀ n, 0 < (Rlog_seq x n).den := fun n => Qmul_den_pos
+    (Qsub_den_pos (x.den_pos _) Nat.one_pos) (Qinv_den_pos (by
+      have := hxpos (Rlog_R n); have h := Int.ofNat_nonneg (x.seq (Rlog_R n)).den
+      show 0 < (x.seq (Rlog_R n)).num * 1 + 1 * ((x.seq (Rlog_R n)).den : Int); omega))
+  have hden_y : ∀ n, 0 < (Rlog_seq y n).den := fun n => Qmul_den_pos
+    (Qsub_den_pos (y.den_pos _) Nat.one_pos) (Qinv_den_pos (by
+      have := hypos (Rlog_R n); have h := Int.ofNat_nonneg (y.seq (Rlog_R n)).den
+      show 0 < (y.seq (Rlog_R n)).num * 1 + 1 * ((y.seq (Rlog_R n)).den : Int); omega))
+  have hbtρx := Rlog_tbound x M hMd hMn hM1 hxhi hxlo hxpos
+  have hbtρy := Rlog_tbound y M hMd hMn hM1 hyhi hylo hypos
+  rw [Rlog_eq_Rmul x M hMd hMge hxpos hxhi hxlo hden_x hρ0 hρd hρlt (fun n => hbtρx (Rlog_R n)),
+    Rlog_eq_Rmul y M hMd hMge hypos hyhi hylo hden_y hρ0 hρd hρlt (fun n => hbtρy (Rlog_R n))]
+  refine Rmul_congr (Req_refl _) ?_
+  have hWeq : Req (⟨Rlog_seq x, Rlog_regular x hxpos, hden_x⟩ : Real)
+      ⟨Rlog_seq y, Rlog_regular y hypos, hden_y⟩ := by
+    refine Req_of_lin_bound (C := 4) ?_
+    intro n
+    show Qle (Qabs (Qsub (tmap (x.seq (Rlog_R n))) (tmap (y.seq (Rlog_R n))))) (⟨(4 : Int), n + 1⟩ : Q)
+    have ha1 : 0 < (add (x.seq (Rlog_R n)) ⟨1, 1⟩).num := by
+      have := hxpos (Rlog_R n); have h := Int.ofNat_nonneg (x.seq (Rlog_R n)).den
+      show 0 < (x.seq (Rlog_R n)).num * 1 + 1 * ((x.seq (Rlog_R n)).den : Int); omega
+    have hb1 : 0 < (add (y.seq (Rlog_R n)) ⟨1, 1⟩).num := by
+      have := hypos (Rlog_R n); have h := Int.ofNat_nonneg (y.seq (Rlog_R n)).den
+      show 0 < (y.seq (Rlog_R n)).num * 1 + 1 * ((y.seq (Rlog_R n)).den : Int); omega
+    have hage : Qle (⟨1, 1⟩ : Q) (add (x.seq (Rlog_R n)) ⟨1, 1⟩) := by
+      have := hxpos (Rlog_R n); have h := Int.ofNat_nonneg (x.seq (Rlog_R n)).den
+      simp only [Qle, add]; push_cast; omega
+    have hbge : Qle (⟨1, 1⟩ : Q) (add (y.seq (Rlog_R n)) ⟨1, 1⟩) := by
+      have := hypos (Rlog_R n); have h := Int.ofNat_nonneg (y.seq (Rlog_R n)).den
+      simp only [Qle, add]; push_cast; omega
+    refine Qle_trans (Qmul_den_pos (by decide) (Qabs_den_pos (Qsub_den_pos (x.den_pos _) (y.den_pos _))))
+      (tmap_lip (x.seq (Rlog_R n)) (y.seq (Rlog_R n)) (x.den_pos _) (y.den_pos _) ha1 hb1 hage hbge) ?_
+    refine Qle_trans (Qmul_den_pos (by decide) (Nat.succ_pos _))
+      (Qmul_le_mul_left (by decide) (heq (Rlog_R n))) ?_
+    show Qle (mul (⟨2, 1⟩ : Q) ⟨2, Rlog_R n + 1⟩) (⟨(4 : Int), n + 1⟩ : Q)
+    simp only [Qle, mul, Rlog_R]; push_cast; omega
+  exact Rartanh_congr_gen _ _ _ K hρ0 hρd hρlt hKF hKr
+    (fun n => hbtρx (Rlog_R n)) (fun n => hbtρy (Rlog_R n)) hWeq
+
 end UOR.Bridge.F1Square.Analysis

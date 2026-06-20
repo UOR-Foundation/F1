@@ -2886,3 +2886,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rartanh_congr_gen
 #print axioms Analysis.artSum_depth_recip_gen
 #print axioms Analysis.Rartanh_radius_indep_gen
+#print axioms Analysis.Rlog_congr_gen
