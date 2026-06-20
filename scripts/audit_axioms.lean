@@ -3048,3 +3048,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.cLowQ_one_tail_lower
 #print axioms Analysis.cApprox_tail_lower
 #print axioms Analysis.Ssum_cApprox_tail
+#print axioms Analysis.gammaHseq_ge_partial_tail
+#print axioms Analysis.Rgamma_h_ge_of_witness
+#print axioms Analysis.gammaLo_decide
+#print axioms Analysis.Rgamma_h_ge_577

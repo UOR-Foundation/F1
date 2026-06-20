@@ -21,6 +21,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 
 import F1Square.Analysis.GammaAccel
 import F1Square.Analysis.GammaOne
+import F1Square.Analysis.GammaUpper
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -215,5 +216,71 @@ theorem Ssum_cApprox_tail (T' K : Nat) : ∀ d,
             (Ssum_den_pos (fun i => cApprox_den_pos i T') K))
           (cApprox_den_pos (K + d) T'))
         (Qadd_le_add ih hstep') (Qeq_le (Qeq_symm hsplit))
+
+/-- **`gammaLoBound T D K + (1/(2(K+1)) − 1/(2(2(j+1)+1))) ≤ gammaHseq j`** for `K ≤ 2(j+1)` — the
+    accelerated approximant dominates the rounded `K`-term partial sum plus its telescoped tail. -/
+theorem gammaHseq_ge_partial_tail (T D K j : Nat) (hD : 0 < D) (hKj : K ≤ 2 * (j + 1)) :
+    Qle (add (gammaLoBound T D K) (Qsub (⟨1, 2 * (K + 1)⟩ : Q) (⟨1, 2 * (2 * (j + 1) + 1)⟩ : Q)))
+        (gammaHseq j) := by
+  obtain ⟨d, hd⟩ := Nat.le.dest hKj
+  have hpart : Qle (gammaLoBound T D K) (Ssum (fun m => cApprox m (j + 1)) K) :=
+    Qle_trans (Ssum_den_pos (fun i => cLowQ_den_pos T i) K) (gammaLoBound_le_Ssum T D hD K)
+      (Ssum_le_of_le (fun i => cApprox_ge_cLowQ T i (j + 1)) K)
+  have htail := Ssum_cApprox_tail (j + 1) K d
+  have hcomb : Qle (add (gammaLoBound T D K) (Qsub (⟨1, 2 * (K + 1)⟩ : Q) (⟨1, 2 * (K + d + 1)⟩ : Q)))
+      (Ssum (fun m => cApprox m (j + 1)) (K + d)) := by
+    refine Qle_trans (add_den_pos (Ssum_den_pos (fun i => cApprox_den_pos i (j + 1)) K)
+        (Qsub_den_pos (Ssum_den_pos (fun i => cApprox_den_pos i (j + 1)) (K + d))
+          (Ssum_den_pos (fun i => cApprox_den_pos i (j + 1)) K)))
+      (Qadd_le_add hpart htail) ?_
+    apply Qeq_le
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  have e1 : gammaHseq j = Ssum (fun m => cApprox m (j + 1)) (K + d) := by
+    show Ssum (fun i => cApprox i (j + 1)) (gammaHN j) = _
+    unfold gammaHN; rw [← hd]
+  have e2 : 2 * (2 * (j + 1) + 1) = 2 * (K + d + 1) := by omega
+  rw [e1, e2]; exact hcomb
+
+/-- **Single-witness lower bound**: if `q + 1/(k+1) ≤ gammaHseq k` for some `k`, then `q ≤ γ`
+    (regularity: `gammaHseq n ≥ gammaHseq k − 1/(n+1) − 1/(k+1) ≥ q − 1/(n+1)` for all `n`). -/
+theorem Rgamma_h_ge_of_witness {q : Q} (hq : 0 < q.den) (k : Nat)
+    (h : Qle (add q (⟨1, k + 1⟩ : Q)) (gammaHseq k)) : Rle (ofQ q hq) Rgamma_h := by
+  intro n
+  show Qle q (add (gammaHseq n) ⟨2, n + 1⟩)
+  have hkn : Qle (gammaHseq k) (add (gammaHseq n) (add (⟨1, n + 1⟩ : Q) (⟨1, k + 1⟩ : Q))) :=
+    Qabs_upper (gammaHseq_den_pos n) (gammaHseq_den_pos k)
+      (add_den_pos (Nat.succ_pos n) (Nat.succ_pos k)) (gammaHseq_regular n k)
+  have hA : Qle q (Qsub (gammaHseq k) (⟨1, k + 1⟩ : Q)) := by
+    refine Qle_congr_left (Qsub_den_pos (add_den_pos hq (Nat.succ_pos k)) (Nat.succ_pos k))
+      (show Qeq (Qsub (add q (⟨1, k + 1⟩ : Q)) (⟨1, k + 1⟩ : Q)) q by
+        simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor) (Qsub_le_sub h)
+  refine Qle_trans (Qsub_den_pos (gammaHseq_den_pos k) (Nat.succ_pos k)) hA ?_
+  refine Qle_trans (Qsub_den_pos (add_den_pos (gammaHseq_den_pos n)
+      (add_den_pos (Nat.succ_pos n) (Nat.succ_pos k))) (Nat.succ_pos k))
+    (Qsub_le_sub hkn) ?_
+  refine Qle_trans (add_den_pos (gammaHseq_den_pos n) (Nat.succ_pos n))
+    (Qeq_le (show Qeq (Qsub (add (gammaHseq n) (add (⟨1, n + 1⟩ : Q) (⟨1, k + 1⟩ : Q)))
+        (⟨1, k + 1⟩ : Q)) (add (gammaHseq n) (⟨1, n + 1⟩ : Q)) by
+      simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor)) ?_
+  exact Qadd_le_add (Qle_refl _) (by simp only [Qle]; push_cast; omega)
+
+set_option maxRecDepth 40000 in
+/-- The numeric heart: `577/1000 + 1/(3·10⁶+1) ≤ gammaLoBound 3 10⁸ 60 + (1/122 − 1/(2(2·(3·10⁶+1)+1)))`
+    (one big-integer kernel `decide`). -/
+theorem gammaLo_decide :
+    Qle (add (⟨577, 1000⟩ : Q) (⟨1, 3000000 + 1⟩ : Q))
+        (add (gammaLoBound 3 100000000 60)
+          (Qsub (⟨1, 2 * (60 + 1)⟩ : Q) (⟨1, 2 * (2 * (3000000 + 1) + 1)⟩ : Q))) := by decide
+
+set_option maxRecDepth 40000 in
+/-- **`γ ≥ 0.577`** (`= 577/1000`) — the tightened lower bracket on the Euler–Mascheroni constant
+    (true `≈ 0.57722`, vs the prior loose `≥ 0.54`), via the per-term `cLowQ` lower bound, the rounded
+    accumulator over `K = 60` terms, and the telescoped tail correction `Σ_{n≥60} ≥ 1/122`, certified
+    at the witness index `k = 3·10⁶`. -/
+theorem Rgamma_h_ge_577 : Rle (ofQ (⟨577, 1000⟩ : Q) (by decide)) Rgamma_h := by
+  refine Rgamma_h_ge_of_witness (by decide) 3000000 ?_
+  exact Qle_trans (add_den_pos (gammaLoBound_den_pos 3 100000000 (by decide) 60)
+      (Qsub_den_pos (Nat.mul_pos (by decide) (by decide)) (Nat.mul_pos (by decide) (by decide))))
+    gammaLo_decide (gammaHseq_ge_partial_tail 3 100000000 60 3000000 (by decide) (by omega))
 
 end UOR.Bridge.F1Square.Analysis
