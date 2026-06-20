@@ -2920,6 +2920,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CdigammaArg_witness
 #print axioms Analysis.CdigammaTerm_re
 #print axioms Analysis.CdigammaTerm_im
+#print axioms Analysis.Cadd_neg_eq_mul_of_inv
+#print axioms Analysis.Cmul_natSucc_inv
+#print axioms Analysis.CdigammaArg_sub_succ_eq
+#print axioms Analysis.CdigammaTerm_factored
 #print axioms Analysis.Rcos_sub
 #print axioms Analysis.Rsin_pi_half_sub
 #print axioms Analysis.Rcos_pi_half_sub

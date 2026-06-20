@@ -98,4 +98,131 @@ noncomputable def cdigammaTermWitness : Complex :=
   CdigammaTerm Cone (c := ⟨1, 1⟩) (by decide) (by decide)
     (Rle_of_Req (Req_of_seq_Qeq (fun _ => Qeq_refl _))) 0
 
+-- ===========================================================================
+-- The factored identity `Cterm = (s−1)·P`, the telescoping engine (complex analogue of
+-- `Rsub_eq_mul_of_inv`/`digammaTerm_eq_factored`). It captures the `1/(n+1) − 1/(s+n)`
+-- cancellation that makes the term `O(1/n²)` rather than the `O(1/n)` of either summand alone.
+-- ===========================================================================
+
+/-- `ℂ`-negation congruence (componentwise `Rneg_congr`). -/
+private theorem cdig_Cneg_congr {z z' : Complex} (h : Ceq z z') : Ceq (Cneg z) (Cneg z') :=
+  ⟨Rneg_congr h.1, Rneg_congr h.2⟩
+
+/-- `ℂ`-addition congruence (componentwise `Radd_congr`). -/
+private theorem cdig_Cadd_congr {z z' w w' : Complex} (hz : Ceq z z') (hw : Ceq w w') :
+    Ceq (Cadd z w) (Cadd z' w') :=
+  ⟨Radd_congr hz.1 hw.1, Radd_congr hz.2 hw.2⟩
+
+/-- `ℂ`-multiplication congruence (componentwise from the `Cmul` formula). -/
+private theorem cdig_Cmul_congr {z z' w w' : Complex} (hz : Ceq z z') (hw : Ceq w w') :
+    Ceq (Cmul z w) (Cmul z' w') :=
+  ⟨Rsub_congr (Rmul_congr hz.1 hw.1) (Rmul_congr hz.2 hw.2),
+   Radd_congr (Rmul_congr hz.1 hw.2) (Rmul_congr hz.2 hw.1)⟩
+
+/-- **Right distributivity over `Cadd`** `(a + b)·X ≈ a·X + b·X` (from `Cmul_comm` + the left
+    `Cmul_distrib`). -/
+private theorem cdig_Cmul_add_distrib_right (a b X : Complex) :
+    Ceq (Cmul (Cadd a b) X) (Cadd (Cmul a X) (Cmul b X)) :=
+  Ceq_trans (Cmul_comm (Cadd a b) X)
+    (Ceq_trans (Cmul_distrib X a b) (cdig_Cadd_congr (Cmul_comm X a) (Cmul_comm X b)))
+
+/-- **Negation pulls out of the left factor** `(−z)·w ≈ −(z·w)` (componentwise, as in
+    `Cneg_Cmul_left`). -/
+private theorem cdig_Cmul_neg_left (z w : Complex) : Ceq (Cmul (Cneg z) w) (Cneg (Cmul z w)) := by
+  refine ⟨?_, ?_⟩
+  · show Req (Rsub (Rmul (Rneg z.re) w.re) (Rmul (Rneg z.im) w.im))
+      (Rneg (Rsub (Rmul z.re w.re) (Rmul z.im w.im)))
+    refine Req_trans (Rsub_congr (Rmul_neg_left z.re w.re) (Rmul_neg_left z.im w.im)) ?_
+    exact Req_symm (Rneg_Radd (Rmul z.re w.re) (Rneg (Rmul z.im w.im)))
+  · show Req (Radd (Rmul (Rneg z.re) w.im) (Rmul (Rneg z.im) w.re))
+      (Rneg (Radd (Rmul z.re w.im) (Rmul z.im w.re)))
+    refine Req_trans (Radd_congr (Rmul_neg_left z.re w.im) (Rmul_neg_left z.im w.re)) ?_
+    exact Req_symm (Rneg_Radd (Rmul z.re w.im) (Rmul z.im w.re))
+
+/-- **Abstract reciprocal-difference identity (ℂ)**: if `a·I ≈ 1` and `Q·P ≈ 1`, then
+    `P − I ≈ (a − Q)·(P·I)`. The complex analogue of `Rsub_eq_mul_of_inv`; the engine of the
+    telescoping complex digamma term. (`P − I` and `a − Q` are written in the `Cadd _ (Cneg _)`
+    form `CdigammaTerm` uses.) -/
+theorem Cadd_neg_eq_mul_of_inv {a I P Q : Complex} (haI : Ceq (Cmul a I) Cone)
+    (hQP : Ceq (Cmul Q P) Cone) :
+    Ceq (Cadd P (Cneg I)) (Cmul (Cadd a (Cneg Q)) (Cmul P I)) := by
+  -- RHS ≈ a·(P·I) + (−Q)·(P·I)
+  have hexpand : Ceq (Cmul (Cadd a (Cneg Q)) (Cmul P I))
+      (Cadd (Cmul a (Cmul P I)) (Cmul (Cneg Q) (Cmul P I))) :=
+    cdig_Cmul_add_distrib_right a (Cneg Q) (Cmul P I)
+  -- a·(P·I) ≈ P·(a·I) ≈ P·1 ≈ P
+  have hL : Ceq (Cmul a (Cmul P I)) P :=
+    Ceq_trans (cdig_Cmul_congr (Ceq_refl a) (Cmul_comm P I))
+      (Ceq_trans (Ceq_symm (Cmul_assoc a I P))
+        (Ceq_trans (cdig_Cmul_congr haI (Ceq_refl P))
+          (Ceq_trans (Cmul_comm Cone P) (Cmul_one P))))
+  -- (−Q)·(P·I) ≈ −(Q·(P·I)) ≈ −((Q·P)·I) ≈ −(1·I) ≈ −I
+  have hQPI : Ceq (Cmul Q (Cmul P I)) I :=
+    Ceq_trans (Ceq_symm (Cmul_assoc Q P I))
+      (Ceq_trans (cdig_Cmul_congr hQP (Ceq_refl I)) (Ceq_trans (Cmul_comm Cone I) (Cmul_one I)))
+  have hR : Ceq (Cmul (Cneg Q) (Cmul P I)) (Cneg I) :=
+    Ceq_trans (cdig_Cmul_neg_left Q (Cmul P I)) (cdig_Cneg_congr hQPI)
+  exact Ceq_symm (Ceq_trans hexpand (cdig_Cadd_congr hL hR))
+
+/-- **The positive product factor** `P_n = 1/(n+1) · 1/(s+n)` of the `n`-th complex term
+    (complex analogue of `digammaPfac`). -/
+def CdigammaPfac (s : Complex) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) (n : Nat) : Complex :=
+  Cmul (ofReal (ofQ ⟨1, n + 1⟩ (Nat.succ_pos n)))
+    (Cinv (CdigammaArg s n) (CdigK c) (CdigammaArg_witness hcn hcd hcs n))
+
+/-- **`(n+1)·(1/(n+1)) ≈ 1` as complex numbers** — the second reciprocal hypothesis of the factored
+    identity. `n+1` and `1/(n+1)` are real embeddings, so this reduces to the rational
+    `(n+1)·1/(n+1) = 1`. -/
+theorem Cmul_natSucc_inv (n : Nat) :
+    Ceq (Cmul ⟨RofNat (n + 1), zero⟩ (ofReal (ofQ ⟨1, n + 1⟩ (Nat.succ_pos n)))) Cone := by
+  refine ⟨?_, ?_⟩
+  · -- Re: (n+1)·(1/(n+1)) − 0·0 ≈ 1
+    show Req (Rsub (Rmul (RofNat (n + 1)) (ofQ ⟨1, n + 1⟩ (Nat.succ_pos n))) (Rmul zero zero)) one
+    refine Req_trans (Rsub_congr (Rmul_ofQ_ofQ Nat.one_pos (Nat.succ_pos n)) (Rmul_zero zero)) ?_
+    refine Req_trans (Rsub_zero _) ?_
+    exact Req_of_seq_Qeq (fun _ => by
+      show Qeq (mul (⟨((n + 1 : Nat) : Int), 1⟩ : Q) (⟨1, n + 1⟩ : Q)) (⟨1, 1⟩ : Q)
+      simp only [Qeq, mul]; push_cast; ring_uor)
+  · -- Im: (n+1)·0 + 0·(1/(n+1)) ≈ 0
+    show Req (Radd (Rmul (RofNat (n + 1)) zero) (Rmul zero (ofQ ⟨1, n + 1⟩ (Nat.succ_pos n)))) zero
+    refine Req_trans (Radd_congr (Rmul_zero (RofNat (n + 1)))
+      (Req_trans (Rmul_comm zero (ofQ ⟨1, n + 1⟩ (Nat.succ_pos n))) (Rmul_zero _))) ?_
+    exact Radd_zero zero
+
+/-- **`(s+n) − (n+1) ≈ s − 1` as complex numbers** (componentwise from `digammaArg_sub_succ_eq` on the
+    real part and `Im s − 0 ≈ Im s` on the imaginary part). -/
+theorem CdigammaArg_sub_succ_eq (s : Complex) (n : Nat) :
+    Ceq (Cadd (CdigammaArg s n) (Cneg ⟨RofNat (n + 1), zero⟩)) (Cadd s (Cneg Cone)) := by
+  refine ⟨?_, ?_⟩
+  · -- (Re s + n) + (−(n+1)) ≈ Re s + (−1)  [from digammaArg_sub_succ_eq, written additively]
+    show Req (Radd (Radd s.re (RofNat n)) (Rneg (RofNat (n + 1)))) (Radd s.re (Rneg one))
+    have h := digammaArg_sub_succ_eq s.re n
+    -- bridge the cast ⟨↑(n+1),1⟩ (RofNat (n+1)) ≈ ⟨(↑n)+1,1⟩ (the literal in digammaArg_sub_succ_eq)
+    have hcast : Req (RofNat (n + 1)) (ofQ (⟨((n : Int) + 1), 1⟩ : Q) Nat.one_pos) :=
+      Req_of_seq_Qeq (fun _ => by
+        show Qeq (⟨((n + 1 : Nat) : Int), 1⟩ : Q) (⟨((n : Int) + 1), 1⟩ : Q)
+        simp only [Qeq]; push_cast; ring_uor)
+    exact Req_trans (Radd_congr (Req_refl _) (Rneg_congr hcast)) h
+  · -- Im s + (−0) ≈ Im s + (−0); Cone.im = 0
+    show Req (Radd s.im (Rneg zero)) (Radd s.im (Rneg zero))
+    exact Req_refl _
+
+/-- **The factored complex term** `Cterm_n = (s−1)·P_n` (complex analogue of `digammaTerm_eq_factored`).
+    Via the abstract identity `Cadd_neg_eq_mul_of_inv` with `a = s+n` (`a·(1/(s+n)) = 1`, `Cmul_Cinv`)
+    and `Q = n+1` (`(n+1)·(1/(n+1)) = 1`, `Cmul_natSucc_inv`), then `(s+n)−(n+1) ≈ s−1`
+    (`CdigammaArg_sub_succ_eq`). This is the telescoping form that exhibits the `O(1/n²)` decay. -/
+theorem CdigammaTerm_factored (s : Complex) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) (n : Nat) :
+    Ceq (CdigammaTerm s hcn hcd hcs n)
+      (Cmul (Cadd s (Cneg Cone)) (CdigammaPfac s hcn hcd hcs n)) := by
+  have hid := Cadd_neg_eq_mul_of_inv
+    (a := CdigammaArg s n) (I := Cinv (CdigammaArg s n) (CdigK c) (CdigammaArg_witness hcn hcd hcs n))
+    (P := ofReal (ofQ ⟨1, n + 1⟩ (Nat.succ_pos n))) (Q := ⟨RofNat (n + 1), zero⟩)
+    (Cmul_Cinv (CdigammaArg s n) (CdigK c) (CdigammaArg_witness hcn hcd hcs n))
+    (Cmul_natSucc_inv n)
+  -- CdigammaTerm = Cadd P (Cneg I), CdigammaPfac = Cmul P I
+  refine Ceq_trans hid ?_
+  exact cdig_Cmul_congr (CdigammaArg_sub_succ_eq s n) (Ceq_refl _)
+
 end UOR.Bridge.F1Square.Analysis

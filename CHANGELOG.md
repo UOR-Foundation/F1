@@ -27,6 +27,14 @@ audit-visible hypothesis, never an axiom).
   complex term `CdigammaTerm = 1/(n+1) − 1/(s+n)`. Per-term bounds, regular partial sums, and the
   limit object `CDigamma` follow in later increments via the generic `RReg_of_real_bound` engine.
   Axiom-clean.
+  - **Increment 2a — the factored telescoping identity** `Cterm_n = (s−1)·P_n` with
+    `P_n = 1/(n+1)·1/(s+n)` (`CdigammaTerm_factored`, complex analogue of the real
+    `digammaTerm_eq_factored`). The engine is the abstract reciprocal-difference identity
+    `Cadd_neg_eq_mul_of_inv` (`P − I ≈ (a−Q)·(P·I)` whenever `a·I ≈ 1`, `Q·P ≈ 1`, the ℂ analogue of
+    `Rsub_eq_mul_of_inv`), instantiated with `a = s+n` (`Cmul_Cinv`) and `Q = n+1`
+    (`Cmul_natSucc_inv`), then `(s+n)−(n+1) ≈ s−1` (`CdigammaArg_sub_succ_eq`). This factorization
+    exposes the `O(1/n²)` decay (the `1/(n+1)` and `1/(s+n)` summands each only `O(1/n)`), the
+    prerequisite for the per-term bounds.
 - **Track 1 — left-sector argument additivity** `CargLeft(zw) = CargLeft z + Carg w`
   (`Analysis/ComplexArgLeftAdd.lean`): left-half-plane `z` (`Re z < 0`) times principal `w`, the
   product again left. Reflects the principal `Carg_add` through the `+π` shift via `−(zw) = (−z)·w`
