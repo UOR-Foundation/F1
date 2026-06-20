@@ -283,4 +283,171 @@ theorem Rgamma_h_ge_577 : Rle (ofQ (⟨577, 1000⟩ : Q) (by decide)) Rgamma_h :
       (Qsub_den_pos (Nat.mul_pos (by decide) (by decide)) (Nat.mul_pos (by decide) (by decide))))
     gammaLo_decide (gammaHseq_ge_partial_tail 3 100000000 60 3000000 (by decide) (by omega))
 
+-- ===========================================================================
+-- (E) The γ UPPER bound `γ ≤ 0.578` — the dual (drives the `−3γ²` term in `λ₃`). `cApprox m T` is
+-- itself a per-term UPPER bound (antitone in depth), tail upper `cApprox m T' ≤ 1/(2m(m+1))`.
+-- ===========================================================================
+
+/-- **`cApprox` is antitone in depth**: `cApprox m Tk ≤ cApprox m Tj` for `Tj ≤ Tk`. -/
+theorem cApprox_antitone (m : Nat) {Tj Tk : Nat} (hT : Tj ≤ Tk) :
+    Qle (cApprox m Tk) (cApprox m Tj) := by
+  unfold cApprox Qsub
+  exact Qadd_le_add (Qle_refl _) (Qneg_le_neg (Qmul_le_mul_left (by decide)
+    (artSum_mono (by show (0 : Int) ≤ 1; decide) (Nat.succ_pos _) hT)))
+
+/-- `cApprox m 0 = 1/((m+1)(2m+3))`. -/
+theorem cApprox_zero_eq (m : Nat) :
+    Qeq (cApprox m 0) (⟨1, (m + 1) * (2 * m + 3)⟩ : Q) := by
+  unfold cApprox
+  simp only [artSum, artTerm, qpow, npow, Qsub, Qeq, mul, add, neg]
+  push_cast; ring_uor
+
+/-- **`cApprox m T' ≤ 1/(2m(m+1))`** (`m ≥ 1`) — the per-term tail UPPER bound (`cApprox` antitone,
+    `cApprox m 0 = 1/((m+1)(2m+3)) ≤ 1/(2m(m+1))`). -/
+theorem cApprox_tail_upper (m T' : Nat) (hm : 1 ≤ m) :
+    Qle (cApprox m T') (⟨1, 2 * m * (m + 1)⟩ : Q) := by
+  refine Qle_trans (cApprox_den_pos m 0) (cApprox_antitone m (Nat.zero_le T')) ?_
+  refine Qle_congr_left (Nat.mul_pos (Nat.succ_pos m) (Nat.succ_pos (2 * m + 2)))
+    (Qeq_symm (cApprox_zero_eq m)) ?_
+  show Qle (⟨1, (m + 1) * (2 * m + 3)⟩ : Q) (⟨1, 2 * m * (m + 1)⟩ : Q)
+  simp only [Qle]
+  have h1 : (m + 1) * (2 * m) ≤ (m + 1) * (2 * m + 3) := Nat.mul_le_mul_left (m + 1) (by omega)
+  have h2 : (m + 1) * (2 * m) = 2 * m * (m + 1) := Nat.mul_comm (m + 1) (2 * m)
+  have hnat : 2 * m * (m + 1) ≤ (m + 1) * (2 * m + 3) := h2 ▸ h1
+  omega
+
+/-- The **rounded UPPER accumulator** for `Σ_{m<K} cApprox m T` (round up to `D`). -/
+def gammaHiBound (T D : Nat) : Nat → Q
+  | 0 => ⟨0, D⟩
+  | (K + 1) => qRoundUp (add (gammaHiBound T D K) (cApprox K T)) D
+
+theorem gammaHiBound_den_pos (T D : Nat) (hD : 0 < D) : ∀ K, 0 < (gammaHiBound T D K).den
+  | 0 => hD
+  | (_ + 1) => hD
+
+/-- **`Σ_{m<K} cApprox m T ≤ gammaHiBound T D K`** (round-up dominates the exact partial sum). -/
+theorem Ssum_le_gammaHiBound (T D : Nat) (hD : 0 < D) :
+    ∀ K, Qle (Ssum (fun m => cApprox m T) K) (gammaHiBound T D K)
+  | 0 => by show Qle (⟨0, 1⟩ : Q) (⟨0, D⟩ : Q); simp only [Qle]; omega
+  | (K + 1) => by
+      have hadd : 0 < (add (gammaHiBound T D K) (cApprox K T)).den :=
+        add_den_pos (gammaHiBound_den_pos T D hD K) (cApprox_den_pos K T)
+      refine Qle_trans hadd ?_ (qRoundUp_ge (add (gammaHiBound T D K) (cApprox K T)) hadd D)
+      show Qle (add (Ssum (fun m => cApprox m T) K) (cApprox K T))
+        (add (gammaHiBound T D K) (cApprox K T))
+      exact Qadd_le_add (Ssum_le_gammaHiBound T D hD K) (Qle_refl _)
+
+/-- **Telescoped γ-series tail UPPER bound** `Σ_{K≤m<K+d} cApprox m T' ≤ 1/(2K) − 1/(2(K+d))** (`K ≥ 1`). -/
+theorem Ssum_cApprox_tail_upper (T' K : Nat) (hK : 1 ≤ K) : ∀ d,
+    Qle (Qsub (Ssum (fun m => cApprox m T') (K + d)) (Ssum (fun m => cApprox m T') K))
+        (Qsub (⟨1, 2 * K⟩ : Q) (⟨1, 2 * (K + d)⟩ : Q)) := by
+  intro d
+  induction d with
+  | zero =>
+      simp only [Nat.add_zero]
+      apply Qeq_le
+      simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+  | succ d ih =>
+      have hK0 : 0 < K := hK
+      have hKd : 0 < K + d := by omega
+      have hstep := cApprox_tail_upper (K + d) T' (by omega)
+      have hpt : Qeq (⟨1, 2 * (K + d) * (K + d + 1)⟩ : Q)
+          (Qsub (⟨1, 2 * (K + d)⟩ : Q) (⟨1, 2 * (K + d + 1)⟩ : Q)) := by
+        simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+      have hstep' : Qle (cApprox (K + d) T')
+          (Qsub (⟨1, 2 * (K + d)⟩ : Q) (⟨1, 2 * (K + d + 1)⟩ : Q)) :=
+        Qle_congr_right (Nat.mul_pos (Nat.mul_pos (by decide) hKd) (Nat.succ_pos (K + d)))
+          hpt hstep
+      have hsplit : Qeq (Qsub (Ssum (fun m => cApprox m T') (K + d + 1)) (Ssum (fun m => cApprox m T') K))
+          (add (Qsub (Ssum (fun m => cApprox m T') (K + d)) (Ssum (fun m => cApprox m T') K))
+            (cApprox (K + d) T')) := by
+        show Qeq (add (add (Ssum (fun m => cApprox m T') (K + d)) (cApprox (K + d) T'))
+              (neg (Ssum (fun m => cApprox m T') K)))
+          (add (add (Ssum (fun m => cApprox m T') (K + d)) (neg (Ssum (fun m => cApprox m T') K)))
+              (cApprox (K + d) T'))
+        simp only [Qeq, add, neg]; push_cast; ring_uor
+      have htel : Qeq (add (Qsub (⟨1, 2 * K⟩ : Q) (⟨1, 2 * (K + d)⟩ : Q))
+            (Qsub (⟨1, 2 * (K + d)⟩ : Q) (⟨1, 2 * (K + d + 1)⟩ : Q)))
+          (Qsub (⟨1, 2 * K⟩ : Q) (⟨1, 2 * (K + (d + 1))⟩ : Q)) := by
+        simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+      refine Qle_trans (add_den_pos
+          (Qsub_den_pos (Ssum_den_pos (fun i => cApprox_den_pos i T') (K + d))
+            (Ssum_den_pos (fun i => cApprox_den_pos i T') K))
+          (cApprox_den_pos (K + d) T'))
+        (Qeq_le hsplit) ?_
+      refine Qle_trans (add_den_pos
+          (Qsub_den_pos (Nat.mul_pos (by decide) hK0)
+            (Nat.mul_pos (by decide) hKd))
+          (Qsub_den_pos (Nat.mul_pos (by decide) hKd)
+            (Nat.mul_pos (by decide) (Nat.succ_pos (K + d)))))
+        (Qadd_le_add ih hstep') (Qeq_le htel)
+
+/-- **`gammaHseq j ≤ gammaHiBound T D K + (1/(2K) − 1/(2·2(j+1)))`** for `1 ≤ K ≤ 2(j+1)`, `T ≤ j+1`. -/
+theorem gammaHseq_le_partial_tail (T D K j : Nat) (hD : 0 < D) (hK1 : 1 ≤ K) (hTj : T ≤ j + 1)
+    (hKj : K ≤ 2 * (j + 1)) :
+    Qle (gammaHseq j)
+        (add (gammaHiBound T D K) (Qsub (⟨1, 2 * K⟩ : Q) (⟨1, 2 * (2 * (j + 1))⟩ : Q))) := by
+  obtain ⟨d, hd⟩ := Nat.le.dest hKj
+  have hpart : Qle (Ssum (fun m => cApprox m (j + 1)) K) (gammaHiBound T D K) :=
+    Qle_trans (Ssum_den_pos (fun i => cApprox_den_pos i T) K)
+      (Ssum_le_of_le (fun i => cApprox_antitone i hTj) K) (Ssum_le_gammaHiBound T D hD K)
+  have htail := Ssum_cApprox_tail_upper (j + 1) K hK1 d
+  have hcomb : Qle (Ssum (fun m => cApprox m (j + 1)) (K + d))
+      (add (gammaHiBound T D K) (Qsub (⟨1, 2 * K⟩ : Q) (⟨1, 2 * (K + d)⟩ : Q))) := by
+    refine Qle_trans (add_den_pos (Ssum_den_pos (fun i => cApprox_den_pos i (j + 1)) K)
+        (Qsub_den_pos (Ssum_den_pos (fun i => cApprox_den_pos i (j + 1)) (K + d))
+          (Ssum_den_pos (fun i => cApprox_den_pos i (j + 1)) K)))
+      (Qeq_le (show Qeq (Ssum (fun m => cApprox m (j + 1)) (K + d))
+          (add (Ssum (fun m => cApprox m (j + 1)) K)
+            (Qsub (Ssum (fun m => cApprox m (j + 1)) (K + d)) (Ssum (fun m => cApprox m (j + 1)) K)))
+        by simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor))
+      (Qadd_le_add hpart htail)
+  have e1 : gammaHseq j = Ssum (fun m => cApprox m (j + 1)) (K + d) := by
+    show Ssum (fun i => cApprox i (j + 1)) (gammaHN j) = _
+    unfold gammaHN; rw [← hd]
+  have e2 : 2 * (2 * (j + 1)) = 2 * (K + d) := by omega
+  rw [e1, e2]; exact hcomb
+
+/-- **Single-witness upper bound** (dual of `Rgamma_h_ge_of_witness`). -/
+theorem Rgamma_h_le_of_witness {q : Q} (hq : 0 < q.den) (k : Nat)
+    (h : Qle (add (gammaHseq k) (⟨1, k + 1⟩ : Q)) q) : Rle Rgamma_h (ofQ q hq) := by
+  intro n
+  show Qle (gammaHseq n) (add q ⟨2, n + 1⟩)
+  have hnk : Qle (gammaHseq n) (add (gammaHseq k) (add (⟨1, k + 1⟩ : Q) (⟨1, n + 1⟩ : Q))) :=
+    Qabs_upper (gammaHseq_den_pos k) (gammaHseq_den_pos n)
+      (add_den_pos (Nat.succ_pos k) (Nat.succ_pos n)) (gammaHseq_regular k n)
+  -- gammaHseq k ≤ q − 1/(k+1)
+  have hkq : Qle (gammaHseq k) (Qsub q (⟨1, k + 1⟩ : Q)) := by
+    refine Qle_congr_left (Qsub_den_pos (add_den_pos (gammaHseq_den_pos k) (Nat.succ_pos k))
+      (Nat.succ_pos k))
+      (show Qeq (Qsub (add (gammaHseq k) (⟨1, k + 1⟩ : Q)) (⟨1, k + 1⟩ : Q)) (gammaHseq k) by
+        simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor) (Qsub_le_sub h)
+  refine Qle_trans (add_den_pos (gammaHseq_den_pos k)
+      (add_den_pos (Nat.succ_pos k) (Nat.succ_pos n))) hnk ?_
+  refine Qle_trans (add_den_pos (Qsub_den_pos hq (Nat.succ_pos k))
+      (add_den_pos (Nat.succ_pos k) (Nat.succ_pos n))) (Qadd_le_add hkq (Qle_refl _)) ?_
+  refine Qle_trans (add_den_pos hq (Nat.succ_pos n))
+    (Qeq_le (show Qeq (add (Qsub q (⟨1, k + 1⟩ : Q)) (add (⟨1, k + 1⟩ : Q) (⟨1, n + 1⟩ : Q)))
+        (add q (⟨1, n + 1⟩ : Q)) by simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor)) ?_
+  exact Qadd_le_add (Qle_refl _) (by simp only [Qle]; push_cast; omega)
+
+set_option maxRecDepth 40000 in
+/-- The numeric heart (upper): `gammaHiBound 3 10⁸ 60 + (1/120 − 1/(2·2·(5000+1))) + 1/(5000+1) ≤ 578/1000`. -/
+theorem gammaHi_decide :
+    Qle (add (add (gammaHiBound 3 100000000 60)
+          (Qsub (⟨1, 2 * 60⟩ : Q) (⟨1, 2 * (2 * (5000 + 1))⟩ : Q))) (⟨1, 5000 + 1⟩ : Q))
+        (⟨578, 1000⟩ : Q) := by decide
+
+set_option maxRecDepth 40000 in
+/-- **`γ ≤ 0.578`** (`= 578/1000`) — the tightened UPPER bracket on the Euler–Mascheroni constant
+    (true `≈ 0.57722`, vs the prior loose `≤ 0.66`); the bound that drives the `−3γ²` term of `λ₃`.
+    With `Rgamma_h_ge_577` this brackets `γ ∈ [0.577, 0.578]`. -/
+theorem Rgamma_h_le_578 : Rle Rgamma_h (ofQ (⟨578, 1000⟩ : Q) (by decide)) := by
+  refine Rgamma_h_le_of_witness (by decide) 5000 ?_
+  exact Qle_trans (add_den_pos (add_den_pos (gammaHiBound_den_pos 3 100000000 (by decide) 60)
+      (Qsub_den_pos (Nat.mul_pos (by decide) (by decide)) (Nat.mul_pos (by decide) (by decide))))
+      (Nat.succ_pos 5000))
+    (Qadd_le_add (gammaHseq_le_partial_tail 3 100000000 60 5000 (by decide) (by decide) (by decide)
+      (by omega)) (Qle_refl _)) gammaHi_decide
+
 end UOR.Bridge.F1Square.Analysis
