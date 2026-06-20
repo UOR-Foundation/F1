@@ -2929,6 +2929,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CnormSq_CdigammaArg_ge
 #print axioms Analysis.CdigammaPfac_im_eq
 #print axioms Analysis.CdigammaPfac_im_bound
+#print axioms Analysis.CdigammaTerm_re_bound
+#print axioms Analysis.CdigammaTerm_im_bound
 #print axioms Analysis.Rcos_sub
 #print axioms Analysis.Rsin_pi_half_sub
 #print axioms Analysis.Rcos_pi_half_sub

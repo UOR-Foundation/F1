@@ -413,4 +413,129 @@ theorem CdigammaPfac_im_bound (s : Complex) {c : Q} (hcn : 0 < c.num) (hcd : 0 <
   · -- upper: Im P_n ≈ F·((−Im s)·(1/N)) ≤ F·(B·1/n) ≈ E
     exact Rle_trans (Rle_of_Req heq) (Rle_trans key.2 (Rle_of_Req hEeq))
 
+-- ===========================================================================
+-- The full per-term bounds. `Cterm = (s−1)·P`, so each component is a sum/difference of two
+-- products of the bounded pieces `(Re s−1), Im s` and `Re P, Im P`. Both components are
+-- `≤ K/((n+1)n)` with `K = (B1+B2²) + (B1B2+B2)` (`|Re s−1| ≤ B1`, `|Im s| ≤ B2`).
+-- ===========================================================================
+
+/-- Abstract: `Rsub` of two `±`-bounded products is `±`-bounded by the sum of the product bounds. -/
+private theorem cdig_Rsub_prod_bound {a b pR pI A A2 PR PI : Real}
+    (hAa1 : Rle (Rneg A) a) (hAa2 : Rle a A) (hAb1 : Rle (Rneg A2) b) (hAb2 : Rle b A2)
+    (hPr1 : Rle (Rneg PR) pR) (hPr2 : Rle pR PR) (hPi1 : Rle (Rneg PI) pI) (hPi2 : Rle pI PI) :
+    Rle (Rneg (Radd (Rmul A PR) (Rmul A2 PI))) (Rsub (Rmul a pR) (Rmul b pI))
+    ∧ Rle (Rsub (Rmul a pR) (Rmul b pI)) (Radd (Rmul A PR) (Rmul A2 PI)) := by
+  refine ⟨?_, ?_⟩
+  · refine Rle_trans (Rle_of_Req (Rneg_Radd (Rmul A PR) (Rmul A2 PI))) ?_
+    exact Radd_le_add (Rneg_mul_le_of_abs hAa1 hAa2 hPr1 hPr2) (Rle_Rneg (Rmul_le_mul_of_abs hAb1 hAb2 hPi1 hPi2))
+  · exact Radd_le_add (Rmul_le_mul_of_abs hAa1 hAa2 hPr1 hPr2)
+      (Rle_trans (Rle_Rneg (Rneg_mul_le_of_abs hAb1 hAb2 hPi1 hPi2)) (Rle_of_Req (Rneg_neg (Rmul A2 PI))))
+
+/-- Abstract: `Radd` of two `±`-bounded products is `±`-bounded by the sum of the product bounds. -/
+private theorem cdig_Radd_prod_bound {a b pR pI A A2 PR PI : Real}
+    (hAa1 : Rle (Rneg A) a) (hAa2 : Rle a A) (hAb1 : Rle (Rneg A2) b) (hAb2 : Rle b A2)
+    (hPr1 : Rle (Rneg PR) pR) (hPr2 : Rle pR PR) (hPi1 : Rle (Rneg PI) pI) (hPi2 : Rle pI PI) :
+    Rle (Rneg (Radd (Rmul A PI) (Rmul A2 PR))) (Radd (Rmul a pI) (Rmul b pR))
+    ∧ Rle (Radd (Rmul a pI) (Rmul b pR)) (Radd (Rmul A PI) (Rmul A2 PR)) := by
+  refine ⟨?_, ?_⟩
+  · refine Rle_trans (Rle_of_Req (Rneg_Radd (Rmul A PI) (Rmul A2 PR))) ?_
+    exact Radd_le_add (Rneg_mul_le_of_abs hAa1 hAa2 hPi1 hPi2) (Rneg_mul_le_of_abs hAb1 hAb2 hPr1 hPr2)
+  · exact Radd_le_add (Rmul_le_mul_of_abs hAa1 hAa2 hPi1 hPi2) (Rmul_le_mul_of_abs hAb1 hAb2 hPr1 hPr2)
+
+/-- The `±` two-sided bound for `Im s` lifted to `(s−1).im = Im s + (−0)`. -/
+private theorem cdig_sm1_im_bounds (s : Complex) {B2 : Q} (hB2d : 0 < B2.den)
+    (hB2lo : Rle (Rneg (ofQ B2 hB2d)) s.im) (hB2hi : Rle s.im (ofQ B2 hB2d)) :
+    Rle (Rneg (ofQ B2 hB2d)) (Radd s.im (Rneg zero)) ∧ Rle (Radd s.im (Rneg zero)) (ofQ B2 hB2d) := by
+  have hsm : Req (Radd s.im (Rneg zero)) s.im :=
+    Req_trans (Radd_congr (Req_refl _)
+      (Req_of_seq_Qeq (fun _ => by simp only [Rneg, zero, ofQ, Qeq, neg]; decide))) (Radd_zero s.im)
+  exact ⟨Rle_trans hB2lo (Rle_of_Req (Req_symm hsm)), Rle_trans (Rle_of_Req hsm) hB2hi⟩
+
+/-- The `±` two-sided bound for `Re P_n` (from `0 ≤ Re P_n ≤ 1/((n+1)n)`). -/
+private theorem cdig_Pre_bounds (s : Complex) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) {n : Nat} (hn : 1 ≤ n) :
+    Rle (Rneg (ofQ (⟨1, (n + 1) * n⟩ : Q) (digamma_succ_mul_pos hn))) (CdigammaPfac s hcn hcd hcs n).re
+    ∧ Rle (CdigammaPfac s hcn hcd hcs n).re (ofQ (⟨1, (n + 1) * n⟩ : Q) (digamma_succ_mul_pos hn)) := by
+  have hb := CdigammaPfac_re_bound s hcn hcd hcs hn
+  have hPRnn : Rnonneg (ofQ (⟨1, (n + 1) * n⟩ : Q) (digamma_succ_mul_pos hn)) :=
+    Rnonneg_ofQ (digamma_succ_mul_pos hn) (show (0 : Int) ≤ 1 by decide)
+  refine ⟨?_, hb.2⟩
+  refine Rle_trans ?_ (Rle_zero_of_Rnonneg hb.1)
+  refine Rle_trans (Rle_Rneg (Rle_zero_of_Rnonneg hPRnn)) (Rle_of_Req ?_)
+  exact Req_of_seq_Qeq (fun _ => by simp only [Rneg, zero, ofQ, Qeq, neg]; decide)
+
+set_option maxHeartbeats 1600000 in
+/-- **Per-term Re bound** (`n ≥ 1`, `|Re s−1| ≤ B1`, `|Im s| ≤ B2`): `|Re Cterm_n| ≤ K/((n+1)n)` with
+    `K = B1 + B2²`. From `Cterm = (s−1)·P`, `Re Cterm = (Re s−1)·Re P − Im s·Im P`, bounded by
+    `B1·(1/((n+1)n)) + B2·(B2/((n+1)n))`. -/
+theorem CdigammaTerm_re_bound (s : Complex) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) {B1 B2 : Q} (hB1d : 0 < B1.den) (hB2d : 0 < B2.den)
+    (hB1lo : Rle (Rneg (ofQ B1 hB1d)) (Rsub s.re one)) (hB1hi : Rle (Rsub s.re one) (ofQ B1 hB1d))
+    (hB2lo : Rle (Rneg (ofQ B2 hB2d)) s.im) (hB2hi : Rle s.im (ofQ B2 hB2d)) {n : Nat} (hn : 1 ≤ n) :
+    Rle (Rneg (ofQ (mul (add B1 (mul B2 B2)) (⟨1, (n + 1) * n⟩ : Q))
+          (Qmul_den_pos (add_den_pos hB1d (Qmul_den_pos hB2d hB2d)) (digamma_succ_mul_pos hn))))
+        (CdigammaTerm s hcn hcd hcs n).re
+    ∧ Rle (CdigammaTerm s hcn hcd hcs n).re
+        (ofQ (mul (add B1 (mul B2 B2)) (⟨1, (n + 1) * n⟩ : Q))
+          (Qmul_den_pos (add_den_pos hB1d (Qmul_den_pos hB2d hB2d)) (digamma_succ_mul_pos hn))) := by
+  have hPre := cdig_Pre_bounds s hcn hcd hcs hn
+  have hPim := CdigammaPfac_im_bound s hcn hcd hcs hB2d hB2lo hB2hi hn
+  have hbim := cdig_sm1_im_bounds s hB2d hB2lo hB2hi
+  -- abstract product-sum bound (a=(s−1).re, b=(s−1).im, pR=Re P, pI=Im P)
+  have hkey := cdig_Rsub_prod_bound hB1lo hB1hi hbim.1 hbim.2 hPre.1 hPre.2 hPim.1 hPim.2
+  -- the rational bound: B1·(1/((n+1)n)) + B2·(B2·(1/((n+1)n))) ≈ (B1+B2²)·(1/((n+1)n))
+  have hBeq : Req (Radd (Rmul (ofQ B1 hB1d) (ofQ (⟨1, (n + 1) * n⟩ : Q) (digamma_succ_mul_pos hn)))
+        (Rmul (ofQ B2 hB2d)
+          (ofQ (mul B2 (⟨1, (n + 1) * n⟩ : Q)) (Qmul_den_pos hB2d (digamma_succ_mul_pos hn)))))
+      (ofQ (mul (add B1 (mul B2 B2)) (⟨1, (n + 1) * n⟩ : Q))
+        (Qmul_den_pos (add_den_pos hB1d (Qmul_den_pos hB2d hB2d)) (digamma_succ_mul_pos hn))) := by
+    refine Req_trans (Radd_congr (Rmul_ofQ_ofQ hB1d (digamma_succ_mul_pos hn))
+      (Rmul_ofQ_ofQ hB2d (Qmul_den_pos hB2d (digamma_succ_mul_pos hn)))) ?_
+    refine Req_trans (Radd_ofQ_ofQ (Qmul_den_pos hB1d (digamma_succ_mul_pos hn))
+      (Qmul_den_pos hB2d (Qmul_den_pos hB2d (digamma_succ_mul_pos hn)))) ?_
+    exact ofQ_congr _ _ (by
+      show Qeq (add (mul B1 (⟨1, (n + 1) * n⟩ : Q)) (mul B2 (mul B2 (⟨1, (n + 1) * n⟩ : Q))))
+        (mul (add B1 (mul B2 B2)) (⟨1, (n + 1) * n⟩ : Q))
+      simp only [Qeq, mul, add]; push_cast; ring_uor)
+  have hfac := (CdigammaTerm_factored s hcn hcd hcs n).1
+  refine ⟨?_, ?_⟩
+  · refine Rle_trans (Rle_of_Req (Req_symm (Rneg_congr hBeq))) (Rle_trans hkey.1 (Rle_of_Req (Req_symm hfac)))
+  · exact Rle_trans (Rle_of_Req hfac) (Rle_trans hkey.2 (Rle_of_Req hBeq))
+
+set_option maxHeartbeats 1600000 in
+/-- **Per-term Im bound** (`n ≥ 1`, `|Re s−1| ≤ B1`, `|Im s| ≤ B2`): `|Im Cterm_n| ≤ K/((n+1)n)` with
+    `K = B1·B2 + B2`. From `Im Cterm = (Re s−1)·Im P + Im s·Re P`, bounded by
+    `B1·(B2/((n+1)n)) + B2·(1/((n+1)n))`. -/
+theorem CdigammaTerm_im_bound (s : Complex) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) {B1 B2 : Q} (hB1d : 0 < B1.den) (hB2d : 0 < B2.den)
+    (hB1lo : Rle (Rneg (ofQ B1 hB1d)) (Rsub s.re one)) (hB1hi : Rle (Rsub s.re one) (ofQ B1 hB1d))
+    (hB2lo : Rle (Rneg (ofQ B2 hB2d)) s.im) (hB2hi : Rle s.im (ofQ B2 hB2d)) {n : Nat} (hn : 1 ≤ n) :
+    Rle (Rneg (ofQ (mul (add (mul B1 B2) B2) (⟨1, (n + 1) * n⟩ : Q))
+          (Qmul_den_pos (add_den_pos (Qmul_den_pos hB1d hB2d) hB2d) (digamma_succ_mul_pos hn))))
+        (CdigammaTerm s hcn hcd hcs n).im
+    ∧ Rle (CdigammaTerm s hcn hcd hcs n).im
+        (ofQ (mul (add (mul B1 B2) B2) (⟨1, (n + 1) * n⟩ : Q))
+          (Qmul_den_pos (add_den_pos (Qmul_den_pos hB1d hB2d) hB2d) (digamma_succ_mul_pos hn))) := by
+  have hPre := cdig_Pre_bounds s hcn hcd hcs hn
+  have hPim := CdigammaPfac_im_bound s hcn hcd hcs hB2d hB2lo hB2hi hn
+  have hbim := cdig_sm1_im_bounds s hB2d hB2lo hB2hi
+  have hkey := cdig_Radd_prod_bound hB1lo hB1hi hbim.1 hbim.2 hPre.1 hPre.2 hPim.1 hPim.2
+  have hBeq : Req (Radd (Rmul (ofQ B1 hB1d)
+          (ofQ (mul B2 (⟨1, (n + 1) * n⟩ : Q)) (Qmul_den_pos hB2d (digamma_succ_mul_pos hn))))
+        (Rmul (ofQ B2 hB2d) (ofQ (⟨1, (n + 1) * n⟩ : Q) (digamma_succ_mul_pos hn))))
+      (ofQ (mul (add (mul B1 B2) B2) (⟨1, (n + 1) * n⟩ : Q))
+        (Qmul_den_pos (add_den_pos (Qmul_den_pos hB1d hB2d) hB2d) (digamma_succ_mul_pos hn))) := by
+    refine Req_trans (Radd_congr (Rmul_ofQ_ofQ hB1d (Qmul_den_pos hB2d (digamma_succ_mul_pos hn)))
+      (Rmul_ofQ_ofQ hB2d (digamma_succ_mul_pos hn))) ?_
+    refine Req_trans (Radd_ofQ_ofQ (Qmul_den_pos hB1d (Qmul_den_pos hB2d (digamma_succ_mul_pos hn)))
+      (Qmul_den_pos hB2d (digamma_succ_mul_pos hn))) ?_
+    exact ofQ_congr _ _ (by
+      show Qeq (add (mul B1 (mul B2 (⟨1, (n + 1) * n⟩ : Q))) (mul B2 (⟨1, (n + 1) * n⟩ : Q)))
+        (mul (add (mul B1 B2) B2) (⟨1, (n + 1) * n⟩ : Q))
+      simp only [Qeq, mul, add]; push_cast; ring_uor)
+  have hfac := (CdigammaTerm_factored s hcn hcd hcs n).2
+  refine ⟨?_, ?_⟩
+  · refine Rle_trans (Rle_of_Req (Req_symm (Rneg_congr hBeq))) (Rle_trans hkey.1 (Rle_of_Req (Req_symm hfac)))
+  · exact Rle_trans (Rle_of_Req hfac) (Rle_trans hkey.2 (Rle_of_Req hBeq))
+
 end UOR.Bridge.F1Square.Analysis

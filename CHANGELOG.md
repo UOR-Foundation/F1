@@ -41,6 +41,12 @@ audit-visible hypothesis, never an axiom).
     (`CnormSq_CdigammaArg_ge`), and the real-line `digamma_Rinv_le`. `Re P_n = F·(σ_n/N) ≤ F·(1/n)`
     and `Im P_n = F·((−Im s)/N)` bounded two-sidedly via an abstract product lemma. This is the
     `O(1/n²)` decay made rational — the input the generic `RReg_of_real_bound` engine needs.
+  - **Increment 2d — the full term-component bounds** `|Re Cterm_n| ≤ (B1+B2²)/((n+1)n)` and
+    `|Im Cterm_n| ≤ (B1·B2+B2)/((n+1)n)` (`|Re s−1| ≤ B1`, `|Im s| ≤ B2`), via
+    `CdigammaTerm_re_bound`/`_im_bound`. From `Cterm = (s−1)·P`, each component is a sum/difference of
+    two `±`-bounded products (combined by abstract `cdig_Rsub_prod_bound`/`cdig_Radd_prod_bound` over
+    `Rmul_le_mul_of_abs`/`Rneg_mul_le_of_abs`), then collapsed to a single `K/((n+1)n)`. Both
+    components are now summable `O(1/n²)` — the regular-partial-sums and `CDigamma` limit follow.
 - **Track 1 — left-sector argument additivity** `CargLeft(zw) = CargLeft z + Carg w`
   (`Analysis/ComplexArgLeftAdd.lean`): left-half-plane `z` (`Re z < 0`) times principal `w`, the
   product again left. Reflects the principal `Carg_add` through the `+π` shift via `−(zw) = (−z)·w`
