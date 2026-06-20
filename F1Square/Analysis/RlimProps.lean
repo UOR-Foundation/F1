@@ -54,4 +54,15 @@ theorem Rlim_neg (X : Nat → Real) (hX : RReg X) (hNX : RReg (fun j => Rneg (X 
     Req (Rlim (fun j => Rneg (X j)) hNX) (Rneg (Rlim X hX)) :=
   Req_of_seq_Qeq (fun _ => Qeq_refl _)
 
+/-- **A pointwise-`0` regular sequence has limit `0`**: `(∀ j, X j ≈ 0) ⟹ lim X ≈ 0` (the `≈ 0`
+    specialization of `Rlim_congr`). -/
+theorem Rlim_zero (X : Nat → Real) (hX : RReg X) (hz : ∀ j, Req (X j) zero) :
+    Req (Rlim X hX) zero := by
+  intro n
+  rw [Rlim_seq]
+  have hstep : Qle (⟨2, (4 * n + 3) + 1⟩ : Q) (⟨2, n + 1⟩ : Q) := by
+    show (2 : Int) * ((n + 1 : Nat) : Int) ≤ (2 : Int) * (((4 * n + 3) + 1 : Nat) : Int)
+    push_cast; omega
+  exact Qle_trans (Nat.succ_pos _) (hz (4 * n + 3) (4 * n + 3)) hstep
+
 end UOR.Bridge.F1Square.Analysis

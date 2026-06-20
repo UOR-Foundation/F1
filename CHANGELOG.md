@@ -123,6 +123,14 @@ audit-visible hypothesis, never an axiom).
   `Cconj` through the product — isolating the genuine remaining content (the Γ conjugation, a large
   `Clog`/`Cpow` chain; the ζ conjugation) as named audit-visible hypotheses, the program's standard
   relocation. Axiom-clean.
+- **Track 1 — the complex digamma value anchor** `ψ(1) = −γ` (`CDigamma_one`,
+  `Analysis/ComplexDigammaValue.lean`): the convention witness that the constructed `CDigamma` is
+  genuinely `Γ′/Γ` (complex lift of the real `Digamma_one_eq_neg_gamma`). At `s = 1` the factored term
+  `Cterm_n = (s−1)·P_n` vanishes (`CdigammaTerm_one_eq_zero`, since `s−1 = 0` via `Cadd_neg` and
+  `0·P = 0`), so both real and imaginary partial sums are pointwise `≈ 0` and their limits vanish
+  (`CDigammaCore_one_eq_zero`, via `genSum_congr` to the all-zero sequence + the reusable `Rlim_zero`),
+  giving `ψ(1) = −γ + 0 = −γ`. Also adds the reusable `Rlim_zero` (pointwise-`0` regular sequence ⟹
+  limit `0`) and `genSum_const_zero`. Axiom-clean.
 - **Track 1 — left-sector argument additivity** `CargLeft(zw) = CargLeft z + Carg w`
   (`Analysis/ComplexArgLeftAdd.lean`): left-half-plane `z` (`Re z < 0`) times principal `w`, the
   product again left. Reflects the principal `Carg_add` through the `+π` shift via `−(zw) = (−z)·w`
