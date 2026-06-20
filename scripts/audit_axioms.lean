@@ -2929,8 +2929,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CargUpper_congr
 #print axioms Analysis.CargLower_add
 #print axioms Analysis.Cadd_congr_loc
+#print axioms Analysis.Cmul_congr_loc
 #print axioms Analysis.Cpow_re
 #print axioms Analysis.Cpow_add_exp
+#print axioms Analysis.Cpow_mul_base
 #print axioms Analysis.Rcos_RarctanR_nested
 #print axioms Analysis.Rsin_RarctanR_nested
 #print axioms Analysis.RarctanR_value_eq

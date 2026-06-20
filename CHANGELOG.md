@@ -21,8 +21,9 @@ audit-visible hypothesis, never an axiom).
   `n^s` for a *natural* base `n ≥ 2` (the ζ Dirichlet terms), `Cpow` raises a *complex* base on the
   principal sector — needed for Spouge's `(z+a)^{z+1/2}` in `Γ(s/2)` and `π^{−s/2}` in `ξ`. Defined as
   `Cexp(w·Clog z)`; the exponent law `z^{w₁+w₂} = z^{w₁}·z^{w₂}` (`Cpow_add_exp`) is immediate from
-  `Cexp_add` + distributivity (the base law `(zz')^w = z^w·z'^w` follows from the `Clog` additivity of
-  item 0). Axiom-clean (`{propext, Quot.sound}`).
+  `Cexp_add` + distributivity, and the **base law `(zw)^v = z^v·w^v`** (`Cpow_mul_base`) follows from
+  the `Clog` additivity of item 0 (`Clog_add`) + distributivity + `Cexp_add` — concretely bridging
+  item 0 to item 1. Axiom-clean (`{propext, Quot.sound}`).
 - **Track 1 — the lower-sector argument + its additivity** `CargLower` (`Analysis/ComplexArgLower.lean`):
   for `Im z < 0`, `arg(z) = −arg(z̄)` (`CargLower z = −CargUpper(Cconj z)`, `z̄` upper). Genuine
   tangent `tan(CargLower z) = Im z/Re z` (`CargLower_tan`, from `CargUpper_tan` of `z̄` + sin-oddness /
