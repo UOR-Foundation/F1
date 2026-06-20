@@ -19,6 +19,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 -/
 import F1Square.Analysis.ComplexInv
 import F1Square.Analysis.Gamma
+import F1Square.Analysis.ComplexPowGen
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -770,5 +771,72 @@ noncomputable def cspougeBracketWitness : Complex :=
       show Qlt (⟨1, 1⟩ : Q) (Qsub (⟨4, 1⟩ : Q) (⟨(k : Int), 1⟩ : Q))
       rcases hk with h | h <;> subst h <;>
         (show Qlt (⟨1, 1⟩ : Q) (Qsub (⟨4, 1⟩ : Q) (⟨_, 1⟩ : Q)); simp only [Qlt, Qsub, add, neg]; decide))
+
+-- ===========================================================================
+-- The base power `(s+a)^{s+½}` and the full complex Spouge Γ assembly
+-- `Γ(s+1) ≈ (s+a)^{s+½}·e^{−(s+a)}·[c₀+Σ cₖ/(s+k)]` (complex lift of `SpougeGamma`, Re s ≥ c > 0).
+-- The base argument ratio bound is a caller hypothesis (satisfied by choosing the shift `a` large).
+-- ===========================================================================
+
+/-- **The complex Spouge base** `s + a` (`a` a rational shift `≥ 0`), as the explicit pair
+    `⟨Re s + a, Im s⟩`. -/
+def CspougeBase (s : Complex) (a : Q) (hadp : 0 < a.den) : Complex := ⟨Radd s.re (ofQ a hadp), s.im⟩
+
+/-- **The modulus-squared floor** `|s+a|² ≥ c²` (from `Re s ≥ c > 0`, `a ≥ 0`): the positivity input
+    for the base's `Clog`. -/
+theorem ofQ_le_cnormSq_CspougeBase {s : Complex} {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) {a : Q} (hadp : 0 < a.den) (han : 0 ≤ a.num) :
+    Rle (ofQ (mul c c) (Qmul_den_pos hcd hcd)) (cnormSq (CspougeBase s a hadp)) := by
+  have hfloor : Rle (ofQ c hcd) (Radd s.re (ofQ a hadp)) :=
+    Rle_trans hcs (Rle_self_Radd_right (Rnonneg_ofQ hadp han))
+  have cnn : Rnonneg (ofQ c hcd) := Rnonneg_ofQ hcd (Int.le_of_lt hcn)
+  have σnn : Rnonneg (Radd s.re (ofQ a hadp)) := Rnonneg_of_ofQ_le hcn hcd hfloor
+  have ha : Rle (Rmul (ofQ c hcd) (ofQ c hcd)) (Rmul (ofQ c hcd) (Radd s.re (ofQ a hadp))) :=
+    Rmul_le_Rmul_left cnn hfloor
+  have hb : Rle (Rmul (ofQ c hcd) (Radd s.re (ofQ a hadp)))
+      (Rmul (Radd s.re (ofQ a hadp)) (Radd s.re (ofQ a hadp))) :=
+    Rle_trans (Rle_of_Req (Rmul_comm (ofQ c hcd) (Radd s.re (ofQ a hadp))))
+      (Rmul_le_Rmul_left σnn hfloor)
+  have hchain : Rle (ofQ (mul c c) (Qmul_den_pos hcd hcd))
+      (Rmul (Radd s.re (ofQ a hadp)) (Radd s.re (ofQ a hadp))) :=
+    Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ hcd hcd))) (Rle_trans ha hb)
+  exact Rle_trans hchain (Rle_self_Radd_right (Rnonneg_Rmul_self s.im))
+
+/-- The `cnormSq` positivity witness for the base (index `CdigK c`). -/
+theorem CspougeBase_cnormSq_witness {s : Complex} {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) {a : Q} (hadp : 0 < a.den) (han : 0 ≤ a.num) :
+    Qlt (Qbound (CdigK c)) ((cnormSq (CspougeBase s a hadp)).seq (CdigK c)) :=
+  Rlt_Qbound_of_Rle_ofQ (show 0 < (mul c c).num from Int.mul_pos hcn hcn) (Qmul_den_pos hcd hcd)
+    (ofQ_le_cnormSq_CspougeBase hcn hcd hcs hadp han)
+
+/-- The real-part positivity witness for the base `s + a` (index `digammaArgK c`). -/
+theorem CspougeBase_re_witness {s : Complex} {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) {a : Q} (hadp : 0 < a.den) (han : 0 ≤ a.num) :
+    Qlt (Qbound (digammaArgK c)) ((CspougeBase s a hadp).re.seq (digammaArgK c)) :=
+  Rlt_Qbound_of_Rle_ofQ hcn hcd
+    (Rle_trans hcs (Rle_self_Radd_right (Rnonneg_ofQ hadp han)))
+
+/-- **The complex Spouge `Γ` approximant** — `CSpougeGamma s … N` approximates `Γ(s+1)` for complex
+    `s` (`Re s ≥ c > 0`) by `(s+a)^{s+½} · e^{−(s+a)} · [c₀ + Σ_{k=1}^{N} cₖ/(s+k)]`, the faithful
+    complex lift of `SpougeGamma`. Built from `Cpow` (base power), `Cexp`, and `Cinv` (bracket):
+    * the base power `(s+a)^{s+½} = Cpow (s+a) … (s+½)` — its `Clog`/`Carg` need only the argument-ratio
+      bound `hb : |Im(s+a)/Re(s+a)| ≤ ρ < 1` (NOT the `1/16` value identity), satisfied by choosing the
+      shift `a` large relative to `|Im s|`; positivity witnesses derived from the floor `c`;
+    * `e^{−(s+a)} = Cexp (−(s+a))`;
+    * the bracket `CspougeBracket`.
+    "Approximates" is prose (no `Ceq` to the true `Γ` is asserted — as for the real `SpougeGamma`). -/
+def CSpougeGamma (s : Complex) {c : Q} (hcn : 0 < c.num) (hcd : 0 < c.den)
+    (hcs : Rle (ofQ c hcd) s.re) (a : Q) (hadp : 0 < a.den) (han : 0 ≤ a.num)
+    (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den) (hρlt : ρ.num.toNat < ρ.den)
+    (hb : ∀ n, Qle (Qabs ((Rdiv (CspougeBase s a hadp).im (CspougeBase s a hadp).re
+      (digammaArgK c) (CspougeBase_re_witness hcn hcd hcs hadp han)).seq n)) ρ)
+    (N : Nat) (ha : ∀ (k : Nat), 1 ≤ k → k ≤ N → Qlt (⟨1, 1⟩ : Q) (Qsub a ⟨(k : Int), 1⟩)) : Complex :=
+  Cmul
+    (Cmul
+      (Cpow (CspougeBase s a hadp) (CdigK c) (CspougeBase_cnormSq_witness hcn hcd hcs hadp han)
+        (digammaArgK c) (CspougeBase_re_witness hcn hcd hcs hadp han) ρ hρ0 hρd hρlt hb
+        ⟨Radd s.re (ofQ ⟨1, 2⟩ (by decide)), s.im⟩)
+      (Cexp (Cneg (CspougeBase s a hadp))))
+    (CspougeBracket s hcn hcd hcs a hadp N ha)
 
 end UOR.Bridge.F1Square.Analysis

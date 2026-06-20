@@ -65,6 +65,16 @@ audit-visible hypothesis, never an axiom).
     `< 1` (not the `1/16` value identity, which is only for additivity *properties*), so the base power
     `(s+a)^{s+½}` and the full `Γ` assembly are buildable barrier-free by choosing the Spouge shift `a`
     large enough to keep the base's argument small — the remaining item-1 pieces.
+  - **Increment 5 — the complex Spouge `Γ` approximant `CSpougeGamma`** (item 1's `Γ(s/2)`-on-the-strip
+    object). The faithful complex lift of the real `SpougeGamma`: `Γ(s+1) ≈ (s+a)^{s+½}·e^{−(s+a)}·[c₀ +
+    Σ_{k=1}^N cₖ/(s+k)]` for complex `s` (`Re s ≥ c > 0`), assembled from `Cpow` (base power), `Cexp`,
+    and the `CspougeBracket`. The base power's `Clog`/`Carg` need only the argument-ratio bound `< 1`
+    (a caller hypothesis, satisfied by taking the shift `a` large relative to `|Im s|`) — not the
+    `1/16` value identity — so the construction is barrier-free; positivity witnesses
+    (`CspougeBase_cnormSq_witness`/`_re_witness`, floor `|s+a|² ≥ c²`) come from the floor `c`. As for
+    the real `SpougeGamma`, this is the constructive approximant object (no `Ceq` to the true `Γ`
+    asserted). **Item 1's complex `Γ` on the strip is now built** (object-level), alongside the
+    barrier-free complex digamma `CDigamma`.
 - **Track 1 — left-sector argument additivity** `CargLeft(zw) = CargLeft z + Carg w`
   (`Analysis/ComplexArgLeftAdd.lean`): left-half-plane `z` (`Re z < 0`) times principal `w`, the
   product again left. Reflects the principal `Carg_add` through the `+π` shift via `−(zw) = (−z)·w`

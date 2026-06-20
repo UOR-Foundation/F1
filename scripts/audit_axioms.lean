@@ -2936,6 +2936,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.genSum_RReg
 #print axioms Analysis.CdigammaReSum_RReg
 #print axioms Analysis.CdigammaImSum_RReg
+#print axioms Analysis.ofQ_le_cnormSq_CspougeBase
+#print axioms Analysis.CspougeBase_cnormSq_witness
+#print axioms Analysis.CspougeBase_re_witness
 #print axioms Analysis.Rcos_sub
 #print axioms Analysis.Rsin_pi_half_sub
 #print axioms Analysis.Rcos_pi_half_sub
