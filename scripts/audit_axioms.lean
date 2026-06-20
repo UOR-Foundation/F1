@@ -2902,3 +2902,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RlogPos_mul_gen
 #print axioms Analysis.RlogPos_cnormSq_mul_gen
 #print axioms Analysis.Clog_add_gen
+
+-- Argument axis: tan(π/4)=1 and the π/2 values (full-range Carg/Clog anchors).
+#print axioms Analysis.sin_eq_cos_pi4
+#print axioms Analysis.Rcos_pi_half
+#print axioms Analysis.Rsin_pi_half

@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 — ★ `tan(π/4) = 1` and the `π/2` values `cos(π/2) = 0`, `sin(π/2) = 1`**
+  (`Analysis/TanPiQuarter.lean`, `sin_eq_cos_pi4` / `Rcos_pi_half` / `Rsin_pi_half`) — the anchors of
+  the **full-range complex argument** (`Carg`/`Clog` past the principal sector `|arg| < π/4`, via the
+  reciprocal reduction `arctan t = π/2 − arctan(1/t)`). The obstacle this clears: the value identity
+  `sin(arctan t) = t·cos(arctan t)` (`Rsin_arctan_value_eq`) holds only for `|t| < 1/16` (the
+  nested-composition radius forced by `DN_arctan_decay`), but Machin's
+  `π = 16·arctan(1/5) − 4·arctan(1/239)` uses `1/5 > 1/16`. The fix is **Gauss's Machin-like formula**
+  `π/4 = 12·arctan(1/18) + 8·arctan(1/57) − 5·arctan(1/239)`, all three arguments `< 1/16` (common
+  radius `ρ = 1/18`): the value identity applies to each leaf, and the 25-leaf chain is built through
+  `Rsin_cos_add_tan` (which needs only `1 − ab > 0`, never that the *output* tangent is small), so the
+  running tangent climbs to exactly `1` while every step's `|running·leaf| ≤ 0.039`. A `TanReal` bundle
+  (`angle`, rational `tan`, `sin = tan·cos`) with `.add`/`.retag`/`.step` carries the chain (each
+  step's tangent relabelled to a `Qeq`-equal literal to keep the positivity `decide`s shallow); the
+  exact rational tangent of the combination is `vval`-checked to be `1`, giving `sin(π/4) = cos(π/4)`.
+  Double-angle on `π/2 = 2·(π/4)` (`Rcos_add_of_tan`, `Rsin_add_of_tan`) then yields
+  `cos(π/2) = 1 − 1·1 = 0` and, via Pythagoras, `sin(π/2) = 2·cos²(π/4) = 1`. Axiom-clean
+  (`{propext, Quot.sound}`). (Consistency `Rpi = 4·Spi4.angle` with the Machin `Rpi` of `Pi.lean`, and
+  the reciprocal arctan reduction + lift to `Carg`/`Clog`, are the following bricks.)
 - **Track 1 — ★ the arctan addition law** `arctan a + arctan b = arctan((a+b)/(1−ab))`
   (`Analysis/ArctanTan.lean`, `Rarctan_add` / `Rarctan_add_of_small`): the imaginary half of `Clog`
   additivity, built on the value-level `tan` substrate below. The chain: the abstract
