@@ -234,4 +234,115 @@ theorem Rlog_congr_gen (x y : Real) (M : Q) (K : Nat) (hMd : 0 < M.den) (hMge : 
   exact Rartanh_congr_gen _ _ _ K hρ0 hρd hρlt hKF hKr
     (fun n => hbtρx (Rlog_R n)) (fun n => hbtρy (Rlog_R n)) hWeq
 
+set_option maxHeartbeats 1600000 in
+/-- **General-radius `RlogPos → Rlog` bridge**: `RlogPos x k = Rlog x B` for `x ∈ [1/B, B]` at **any**
+    `B ≥ 1` (no small-radius cap), with `K` the even-sum bound for `ρ_B` (`K = ρ_B.den` works).
+    Generalizes `RlogPos_eq_Rlog` via `Rartanh_radius_indep_gen` (`Mx→B`) + `Rlog_congr_gen`
+    (`reindex x ≈ x`). -/
+theorem RlogPos_eq_Rlog_gen (x : Real) (k : Nat) (hk : Qlt (Qbound k) (x.seq k))
+    (B : Q) (K : Nat) (hBd : 0 < B.den) (hBge : Qle (⟨1, 1⟩ : Q) B)
+    (hxposB : ∀ n, 0 < (x.seq n).num) (hxhiB : ∀ n, Qle (x.seq n) B)
+    (hxloB : ∀ n, Qle (⟨1, 1⟩ : Q) (mul (x.seq n) B))
+    (hKF : Qle (⟨1, 1⟩ : Q) (mul (⟨(K : Int), 1⟩ : Q)
+      (Qsub ⟨1, 1⟩ (mul ⟨B.num - (B.den : Int), B.num.toNat + B.den⟩
+        ⟨B.num - (B.den : Int), B.num.toNat + B.den⟩))))
+    (hKr : K ≤ 2 * ((B.num.toNat + B.den) * (B.num.toNat + B.den) + 4 * (B.num.toNat + B.den))) :
+    Req (RlogPos x k hk) (Rlog x B hBd hBge hxposB hxhiB hxloB) := by
+  have hLn := RL_num_pos hk
+  have hLd := @RL_den_pos x k
+  have hLinvn := Qinv_num_pos hLd
+  have hLinvd := Qinv_den_pos hLn
+  have hAd : 0 < (add (Qabs (x.seq 0)) ⟨2, 1⟩).den :=
+    add_den_pos (Qabs_den_pos (x.den_pos 0)) Nat.one_pos
+  have hAn : 0 ≤ (add (Qabs (x.seq 0)) ⟨2, 1⟩).num := by
+    simp only [add, Qabs]
+    have h1 := Int.ofNat_nonneg (x.seq 0).num.natAbs
+    have h2 := Int.ofNat_nonneg (x.seq 0).den; push_cast; omega
+  have h1A : Qle (⟨1, 1⟩ : Q) (add (Qabs (x.seq 0)) ⟨2, 1⟩) := by
+    simp only [Qle, add, Qabs]
+    have h1 := Int.ofNat_nonneg (x.seq 0).num.natAbs
+    have h2 := Int.ofNat_nonneg (x.seq 0).den; push_cast; omega
+  have hMxd : 0 < (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))).den := add_den_pos hAd hLinvd
+  have hMxge : Qle (⟨1, 1⟩ : Q) (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))) :=
+    Qle_trans hAd h1A (Qle_add_right_nonneg (Int.le_of_lt hLinvn))
+  have hposrix : ∀ n, 0 < ((⟨fun n => x.seq (RlogPosR x k n),
+      reindex_regular x (RlogPosR x k) (RlogPosR_self x k), fun _ => x.den_pos _⟩ : Real).seq n).num :=
+    fun n => Rinv_num_pos hk (RlogPosR_tail x k n)
+  have hhirix : ∀ n, Qle ((⟨fun n => x.seq (RlogPosR x k n),
+      reindex_regular x (RlogPosR x k) (RlogPosR_self x k), fun _ => x.den_pos _⟩ : Real).seq n)
+      (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))) := by
+    intro n
+    exact Qle_trans (add_den_pos (x.den_pos 0) Nat.one_pos)
+      (Rlog_ub x (RlogPosR x k n))
+      (Qle_trans hAd (Qadd_le_add (Qle_self_Qabs (x.seq 0)) (Qle_refl _))
+        (Qle_add_right_nonneg (Int.le_of_lt hLinvn)))
+  have hlorix : ∀ n, Qle (⟨1, 1⟩ : Q) (mul ((⟨fun n => x.seq (RlogPosR x k n),
+      reindex_regular x (RlogPosR x k) (RlogPosR_self x k), fun _ => x.den_pos _⟩ : Real).seq n)
+      (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k)))) := by
+    intro n
+    have hqn : 0 < (x.seq (RlogPosR x k n)).num := Rinv_num_pos hk (RlogPosR_tail x k n)
+    have hqd : 0 < (x.seq (RlogPosR x k n)).den := x.den_pos _
+    have hqL : Qle (RL x k) (x.seq (RlogPosR x k n)) := Rinv_lb hk (RlogPosR_tail x k n)
+    exact Qle_trans (Qmul_den_pos hLd hLinvd)
+      (Qeq_le (Qeq_symm (Qmul_Qinv hLn)))
+      (Qle_trans (Qmul_den_pos hqd hLinvd)
+        (Qmul_le_mul hLd hqd hLinvd (Int.le_of_lt hLn) (Int.le_of_lt hLinvn) hqL (Qle_refl _))
+        (Qmul_le_mul_left (Int.le_of_lt hqn) (Qle_add_left_nonneg hAn)))
+  rw [RlogPos_unfold x k hk hMxd hMxge hposrix hhirix hlorix]
+  have hhirixB : ∀ n, Qle ((⟨fun n => x.seq (RlogPosR x k n),
+      reindex_regular x (RlogPosR x k) (RlogPosR_self x k), fun _ => x.den_pos _⟩ : Real).seq n) B :=
+    fun n => hxhiB (RlogPosR x k n)
+  have hlorixB : ∀ n, Qle (⟨1, 1⟩ : Q) (mul ((⟨fun n => x.seq (RlogPosR x k n),
+      reindex_regular x (RlogPosR x k) (RlogPosR_self x k), fun _ => x.den_pos _⟩ : Real).seq n) B) :=
+    fun n => hxloB (RlogPosR x k n)
+  refine Req_trans ?_
+    (Rlog_congr_gen _ x B K hBd hBge hposrix hhirixB hlorixB hxposB hxhiB hxloB hKF hKr
+      (reindex_Req x (RlogPosR x k) (RlogPosR_self x k)))
+  obtain ⟨hMxn, hMx1, hρMx0, hρMxd, hρMxlt, hρMx1⟩ :=
+    Rlog_radius_facts (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))) hMxd hMxge
+  obtain ⟨hBn, hB1, hρB0, hρBd, hρBlt, hρB1⟩ := Rlog_radius_facts B hBd hBge
+  have hden_rix : ∀ n, 0 < (Rlog_seq ⟨fun n => x.seq (RlogPosR x k n),
+      reindex_regular x (RlogPosR x k) (RlogPosR_self x k), fun _ => x.den_pos _⟩ n).den := fun n =>
+    Qmul_den_pos (Qsub_den_pos (x.den_pos _) Nat.one_pos) (Qinv_den_pos (by
+      have hpp : 0 < (x.seq (RlogPosR x k (Rlog_R n))).num := hposrix (Rlog_R n)
+      have h := Int.ofNat_nonneg (x.seq (RlogPosR x k (Rlog_R n))).den
+      show 0 < (x.seq (RlogPosR x k (Rlog_R n))).num * 1 + 1 * ((x.seq (RlogPosR x k (Rlog_R n))).den : Int)
+      omega))
+  have hbtMx := Rlog_tbound _ (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))) hMxd hMxn hMx1
+    hhirix hlorix hposrix
+  have hbtB := Rlog_tbound _ B hBd hBn hB1 hhirixB hlorixB hposrix
+  rw [Rlog_eq_Rmul _ (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))) hMxd hMxge hposrix hhirix hlorix
+        hden_rix hρMx0 hρMxd hρMxlt (fun n => hbtMx (Rlog_R n)),
+    Rlog_eq_Rmul _ B hBd hBge hposrix hhirixB hlorixB hden_rix hρB0 hρBd hρBlt (fun n => hbtB (Rlog_R n))]
+  refine Rmul_congr (Req_refl _) ?_
+  exact Rartanh_radius_indep_gen ⟨Rlog_seq ⟨fun n => x.seq (RlogPosR x k n),
+      reindex_regular x (RlogPosR x k) (RlogPosR_self x k), fun _ => x.den_pos _⟩,
+      Rlog_regular _ hposrix, hden_rix⟩ _ _
+    ⟨(add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))).num
+        - ((add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))).den : Int),
+      (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))).num.toNat
+        + (add (add (Qabs (x.seq 0)) ⟨2, 1⟩) (Qinv (RL x k))).den⟩
+    ⟨B.num - (B.den : Int), B.num.toNat + B.den⟩
+    ⟨B.num - (B.den : Int), B.num.toNat + B.den⟩ K
+    hρMxd hρBd hρB0 hρBd hρBlt hKF (fun n => hbtB (Rlog_R n)) (fun _ => rfl) (fun _ => rfl)
+
+/-- **General-radius `RlogPos` congruence**: `x ≈ y` (both in `[1/B,B]`) ⟹ `RlogPos x ≈ RlogPos y` at
+    any `B ≥ 1`. Generalizes `RlogPos_congr` via the general-radius bridge + `Rlog_congr_gen`. -/
+theorem RlogPos_congr_gen (x y : Real) (kx : Nat) (hx : Qlt (Qbound kx) (x.seq kx))
+    (ky : Nat) (hy : Qlt (Qbound ky) (y.seq ky))
+    (B : Q) (K : Nat) (hBd : 0 < B.den) (hBge : Qle (⟨1, 1⟩ : Q) B)
+    (hxposB : ∀ n, 0 < (x.seq n).num) (hxhiB : ∀ n, Qle (x.seq n) B)
+    (hxloB : ∀ n, Qle (⟨1, 1⟩ : Q) (mul (x.seq n) B))
+    (hyposB : ∀ n, 0 < (y.seq n).num) (hyhiB : ∀ n, Qle (y.seq n) B)
+    (hyloB : ∀ n, Qle (⟨1, 1⟩ : Q) (mul (y.seq n) B))
+    (hKF : Qle (⟨1, 1⟩ : Q) (mul (⟨(K : Int), 1⟩ : Q)
+      (Qsub ⟨1, 1⟩ (mul ⟨B.num - (B.den : Int), B.num.toNat + B.den⟩
+        ⟨B.num - (B.den : Int), B.num.toNat + B.den⟩))))
+    (hKr : K ≤ 2 * ((B.num.toNat + B.den) * (B.num.toNat + B.den) + 4 * (B.num.toNat + B.den)))
+    (heq : Req x y) :
+    Req (RlogPos x kx hx) (RlogPos y ky hy) :=
+  Req_trans (RlogPos_eq_Rlog_gen x kx hx B K hBd hBge hxposB hxhiB hxloB hKF hKr)
+    (Req_trans (Rlog_congr_gen x y B K hBd hBge hxposB hxhiB hxloB hyposB hyhiB hyloB hKF hKr heq)
+      (Req_symm (RlogPos_eq_Rlog_gen y ky hy B K hBd hBge hyposB hyhiB hyloB hKF hKr)))
+
 end UOR.Bridge.F1Square.Analysis
