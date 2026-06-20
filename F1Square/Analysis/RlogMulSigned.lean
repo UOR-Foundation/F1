@@ -182,4 +182,59 @@ theorem Rexp_TwoArtanh_signed_rho (τ ρ : Q) (hτd : 0 < τ.den)
         = ((τ.den : Int) + τ.num) * ((τ.den - τ.num.toNat : Nat) : Int)
     rw [hqI, hqI2]
 
+set_option maxHeartbeats 800000 in
+/-- **★ signed artanh addition law at a common radius** `2·artanh(wvalR a b) = 2·artanh a + 2·artanh b`
+    for **signed** rationals `a, b` with `|a|, |b| < 1` and `1 + ab > 0`, all three `artanh`'s at one
+    radius `σ`. The signed analog of `TwoArtanh_add_wval_rho`, using `wvalR` (sign-robust) +
+    `Rexp_TwoArtanh_signed_rho` (×3) + `Req_add_of_exp_values_gen` + `wvalR_hg`. -/
+theorem TwoArtanh_add_wvalR_rho (a b σ : Q)
+    (had : 0 < a.den) (haL : a.num.toNat < a.den) (haL' : (neg a).num.toNat < a.den)
+    (hbd : 0 < b.den) (hbL : b.num.toNat < b.den) (hbL' : (neg b).num.toNat < b.den)
+    (hσ0 : 0 ≤ σ.num) (hσd : 0 < σ.den) (hσlt : σ.num.toNat < σ.den)
+    (hab : 0 < (a.den : Int) * b.den + a.num * b.num)
+    (hba : Qle (Qabs a) σ) (hbb : Qle (Qabs b) σ) (hbc : Qle (Qabs (wvalR a b)) σ) :
+    Req (TwoArtanhConst (wvalR a b) σ (wvalR_den_pos a b hab) hσ0 hσd hσlt hbc)
+        (Radd (TwoArtanhConst a σ had hσ0 hσd hσlt hba)
+              (TwoArtanhConst b σ hbd hσ0 hσd hσlt hbb)) := by
+  -- Int forms of the `|·| < 1` bounds
+  have haLi : a.num < (a.den : Int) := by omega
+  have haGi : -(a.den : Int) < a.num := by have := haL'; simp only [neg] at this; omega
+  have hbLi : b.num < (b.den : Int) := by omega
+  have hbGi : -(b.den : Int) < b.num := by have := hbL'; simp only [neg] at this; omega
+  have hWd : ((wvalR a b).den : Int) = (a.den : Int) * b.den + a.num * b.num := by
+    rw [wvalR_den]; exact Int.toNat_of_nonneg (Int.le_of_lt hab)
+  -- |wvalR a b| < 1: den ± num = (qa∓pa)(qb∓pb) > 0
+  have hcnum_lt : (wvalR a b).num < ((wvalR a b).den : Int) := by
+    rw [hWd, wvalR_num]
+    have hfac : (a.den : Int) * b.den + a.num * b.num - (a.num * (b.den : Int) + b.num * (a.den : Int))
+        = ((a.den : Int) - a.num) * ((b.den : Int) - b.num) := by
+      generalize (a.den : Int) = qa; generalize (b.den : Int) = qb; ring_uor
+    have hpos : 0 < ((a.den : Int) - a.num) * ((b.den : Int) - b.num) :=
+      Int.mul_pos (by omega) (by omega)
+    omega
+  have hcnum_gt : -((wvalR a b).den : Int) < (wvalR a b).num := by
+    rw [hWd, wvalR_num]
+    have hfac : (a.num * (b.den : Int) + b.num * (a.den : Int)) + ((a.den : Int) * b.den + a.num * b.num)
+        = ((a.den : Int) + a.num) * ((b.den : Int) + b.num) := by
+      generalize (a.den : Int) = qa; generalize (b.den : Int) = qb; ring_uor
+    have hpos : 0 < ((a.den : Int) + a.num) * ((b.den : Int) + b.num) :=
+      Int.mul_pos (by omega) (by omega)
+    omega
+  have hcL : (wvalR a b).num.toNat < (wvalR a b).den := by omega
+  have hcL' : (neg (wvalR a b)).num.toNat < (wvalR a b).den := by
+    have : ((neg (wvalR a b)).num) = -(wvalR a b).num := rfl
+    simp only [this]; omega
+  -- the three signed exp identities, via Rexp_TwoArtanh_signed_rho
+  have hA := Rexp_TwoArtanh_signed_rho a σ had haL haL' hσ0 hσd hσlt hba
+    (by rw [Qabs_neg]; exact hba)
+  have hB := Rexp_TwoArtanh_signed_rho b σ hbd hbL hbL' hσ0 hσd hσlt hbb
+    (by rw [Qabs_neg]; exact hbb)
+  have hC := Rexp_TwoArtanh_signed_rho (wvalR a b) σ (wvalR_den_pos a b hab) hcL hcL'
+    hσ0 hσd hσlt hbc (by rw [Qabs_neg]; exact hbc)
+  exact Req_add_of_exp_values_gen
+    (by show 0 < (a.den - a.num).toNat; omega) (by show 0 < (b.den - b.num).toNat; omega)
+    (by show 0 < ((wvalR a b).den - (wvalR a b).num).toNat
+        have := hcnum_lt; rw [hWd] at this ⊢; omega)
+    hA hB hC (wvalR_hg a b haLi hbLi hab)
+
 end UOR.Bridge.F1Square.Analysis
