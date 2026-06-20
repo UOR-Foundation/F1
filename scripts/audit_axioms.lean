@@ -3035,3 +3035,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.zeta2_ge_partial_tail
 #print axioms Analysis.zetaSum_two_70_tail_ge
 #print axioms Analysis.zeta2_lower_tight
+#print axioms Analysis.cLowQ_den_pos
+#print axioms Analysis.cApprox_ge_cLowQ
