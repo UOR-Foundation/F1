@@ -237,4 +237,37 @@ theorem TwoArtanh_add_wvalR_rho (a b σ : Q)
         have := hcnum_lt; rw [hWd] at this ⊢; omega)
     hA hB hC (wvalR_hg a b haLi hbLi hab)
 
+/-- `½·(2·x) ≈ x` (local copy; the private one lives in `ArtanhAdd`). -/
+private theorem two_half_cancel_s (x : Real) :
+    Req (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) x)) x := by
+  have hc : Req (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (ofQ (⟨2, 1⟩ : Q) (by decide))) one :=
+    Req_trans (Rmul_ofQ_ofQ (by decide) (by decide)) (ofQ_congr (by decide) (by decide) (by decide))
+  refine Req_trans (Req_symm (Rmul_assoc (ofQ (⟨1, 2⟩ : Q) (by decide))
+    (ofQ (⟨2, 1⟩ : Q) (by decide)) x)) ?_
+  exact Req_trans (Rmul_congr hc (Req_refl x)) (Rone_mul x)
+
+set_option maxHeartbeats 800000 in
+/-- **★ signed single-`artanh` addition law at a common radius** (the `×2` stripped):
+    `artanh(wvalR a b) = artanh a + artanh b` as `RartanhConst`s, for signed `a, b`. The signed analog
+    of `RartanhConst_add_wval_rho` — from `TwoArtanh_add_wvalR_rho` by `Rmul_distrib` + cancelling `2`.
+    This single-level form has the clean depths the real-lift diagonal's combination leg needs. -/
+theorem RartanhConst_add_wvalR_rho (a b σ : Q)
+    (had : 0 < a.den) (haL : a.num.toNat < a.den) (haL' : (neg a).num.toNat < a.den)
+    (hbd : 0 < b.den) (hbL : b.num.toNat < b.den) (hbL' : (neg b).num.toNat < b.den)
+    (hσ0 : 0 ≤ σ.num) (hσd : 0 < σ.den) (hσlt : σ.num.toNat < σ.den)
+    (hab : 0 < (a.den : Int) * b.den + a.num * b.num)
+    (hba : Qle (Qabs a) σ) (hbb : Qle (Qabs b) σ) (hbc : Qle (Qabs (wvalR a b)) σ) :
+    Req (RartanhConst (wvalR a b) σ (wvalR_den_pos a b hab) hσ0 hσd hσlt hbc)
+        (Radd (RartanhConst a σ had hσ0 hσd hσlt hba)
+              (RartanhConst b σ hbd hσ0 hσd hσlt hbb)) := by
+  have hlaw := TwoArtanh_add_wvalR_rho a b σ had haL haL' hbd hbL hbL' hσ0 hσd hσlt hab hba hbb hbc
+  have hmul2 : Req (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide))
+        (RartanhConst (wvalR a b) σ (wvalR_den_pos a b hab) hσ0 hσd hσlt hbc))
+      (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide))
+        (Radd (RartanhConst a σ had hσ0 hσd hσlt hba)
+              (RartanhConst b σ hbd hσ0 hσd hσlt hbb))) :=
+    Req_trans hlaw (Req_symm (Rmul_distrib _ _ _))
+  exact Req_trans (Req_symm (two_half_cancel_s _))
+    (Req_trans (Rmul_congr (Req_refl (ofQ (⟨1, 2⟩ : Q) (by decide))) hmul2) (two_half_cancel_s _))
+
 end UOR.Bridge.F1Square.Analysis
