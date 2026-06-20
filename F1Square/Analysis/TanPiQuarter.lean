@@ -64,6 +64,26 @@ def TanReal.step (x y : TanReal)
     (t' : Q) (ht'd : 0 < t'.den) (h : Qeq (vval x.tan y.tan) t') : TanReal :=
   (x.add y hpos).retag t' ht'd h
 
+/-- **Negate a tangent-carrying angle**: `−angle` has tangent `−tan` (`sin` odd, `cos` even). Completes
+    the bundle's additive group, so subtracted angles (e.g. the `−5·arctan(1/239)` term of a Machin
+    combination) are handled at the bundle level rather than through signed leaves. -/
+def TanReal.negate (x : TanReal) : TanReal :=
+  { angle := Rneg x.angle
+    tan := neg x.tan
+    htd := x.htd
+    hrel := by
+      have h3 : Req (Rmul (ofQ (neg x.tan) x.htd) (Rcos (Rneg x.angle)))
+          (Rneg (Rmul (ofQ x.tan x.htd) (Rcos x.angle))) :=
+        Req_trans (Rmul_congr (Req_refl (ofQ (neg x.tan) x.htd)) (Rcos_neg x.angle))
+          (Req_trans (Rmul_congr (Req_symm (Rneg_ofQ x.tan x.htd)) (Req_refl (Rcos x.angle)))
+            (Rmul_neg_left (ofQ x.tan x.htd) (Rcos x.angle)))
+      exact Req_trans (Req_trans (Rsin_neg x.angle) (Rneg_congr x.hrel)) (Req_symm h3) }
+
+/-- **Subtract**: `x.angle − y.angle` carries tangent `vval x.tan (−y.tan) = (a−b)/(1+ab)`. -/
+def TanReal.sub (x y : TanReal)
+    (hpos : 0 < (x.tan.den : Int) * (neg y.tan).den - x.tan.num * (neg y.tan).num) : TanReal :=
+  x.add y.negate hpos
+
 -- ===========================================================================
 -- The three Gauss leaves at the common radius ρ = 1/18 (each |r| ≤ 1/18 < 1/16).
 -- ===========================================================================
