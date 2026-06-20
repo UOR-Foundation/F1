@@ -168,4 +168,52 @@ theorem cApprox_tail_lower (m T' : Nat) :
     Qle (⟨1, 2 * (m + 1) * (m + 2)⟩ : Q) (cApprox m T') :=
   Qle_trans (cLowQ_den_pos 1 m) (cLowQ_one_tail_lower m) (cApprox_ge_cLowQ 1 m T')
 
+-- ===========================================================================
+-- (D) The telescoped tail of `gammaHseq` and the `Rgamma_h` lower bound.
+-- ===========================================================================
+
+/-- **Telescoped γ-series tail** `Σ_{K≤m<K+d} cApprox m T' ≥ 1/(2(K+1)) − 1/(2(K+d+1))** (`d`-induction,
+    `cApprox_tail_lower` per step; mirrors `zetaSum2_tail_ge`). -/
+theorem Ssum_cApprox_tail (T' K : Nat) : ∀ d,
+    Qle (Qsub (⟨1, 2 * (K + 1)⟩ : Q) (⟨1, 2 * (K + d + 1)⟩ : Q))
+        (Qsub (Ssum (fun m => cApprox m T') (K + d)) (Ssum (fun m => cApprox m T') K)) := by
+  intro d
+  induction d with
+  | zero =>
+      simp only [Nat.add_zero]
+      apply Qeq_le
+      simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+  | succ d ih =>
+      have hstep := cApprox_tail_lower (K + d) T'
+      have hpt : Qeq (⟨1, 2 * (K + d + 1) * (K + d + 2)⟩ : Q)
+          (Qsub (⟨1, 2 * (K + d + 1)⟩ : Q) (⟨1, 2 * (K + d + 2)⟩ : Q)) := by
+        simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+      have hstep' : Qle (Qsub (⟨1, 2 * (K + d + 1)⟩ : Q) (⟨1, 2 * (K + d + 2)⟩ : Q))
+          (cApprox (K + d) T') :=
+        Qle_congr_left (Nat.mul_pos (Nat.mul_pos (by decide) (Nat.succ_pos (K + d)))
+          (Nat.succ_pos (K + d + 1))) hpt hstep
+      have hsplit : Qeq (Qsub (Ssum (fun m => cApprox m T') (K + d + 1)) (Ssum (fun m => cApprox m T') K))
+          (add (Qsub (Ssum (fun m => cApprox m T') (K + d)) (Ssum (fun m => cApprox m T') K))
+            (cApprox (K + d) T')) := by
+        show Qeq (add (add (Ssum (fun m => cApprox m T') (K + d)) (cApprox (K + d) T'))
+              (neg (Ssum (fun m => cApprox m T') K)))
+          (add (add (Ssum (fun m => cApprox m T') (K + d)) (neg (Ssum (fun m => cApprox m T') K)))
+              (cApprox (K + d) T'))
+        simp only [Qeq, add, neg]; push_cast; ring_uor
+      have htel : Qeq (add (Qsub (⟨1, 2 * (K + 1)⟩ : Q) (⟨1, 2 * (K + d + 1)⟩ : Q))
+            (Qsub (⟨1, 2 * (K + d + 1)⟩ : Q) (⟨1, 2 * (K + d + 2)⟩ : Q)))
+          (Qsub (⟨1, 2 * (K + 1)⟩ : Q) (⟨1, 2 * (K + (d + 1) + 1)⟩ : Q)) := by
+        simp only [Qsub, add, neg, Qeq]; push_cast; ring_uor
+      refine Qle_trans (add_den_pos
+          (Qsub_den_pos (Nat.mul_pos (by decide) (Nat.succ_pos K))
+            (Nat.mul_pos (by decide) (Nat.succ_pos (K + d))))
+          (Qsub_den_pos (Nat.mul_pos (by decide) (Nat.succ_pos (K + d)))
+            (Nat.mul_pos (by decide) (Nat.succ_pos (K + d + 1)))))
+        (Qeq_le (Qeq_symm htel)) ?_
+      refine Qle_trans (add_den_pos
+          (Qsub_den_pos (Ssum_den_pos (fun i => cApprox_den_pos i T') (K + d))
+            (Ssum_den_pos (fun i => cApprox_den_pos i T') K))
+          (cApprox_den_pos (K + d) T'))
+        (Qadd_le_add ih hstep') (Qeq_le (Qeq_symm hsplit))
+
 end UOR.Bridge.F1Square.Analysis
