@@ -93,4 +93,51 @@ theorem Ssum_cLowQ_le_gammaHseq (T j K : Nat) (hK : K ≤ 2 * (j + 1)) :
   exact Ssum_le (fun i => cApprox_num_nonneg i (j + 1)) (fun i => cApprox_den_pos i (j + 1))
     (by unfold gammaHN; omega)
 
+-- ===========================================================================
+-- (C) The uniform per-term tail bracket `1/(2(m+1)(m+2)) ≤ cLowQ 3 m ≤ 1/(2m(m+1))`.
+-- ===========================================================================
+
+/-- **`dPlusQ 1 (m+1)` in closed form** `[12(2m+3)²(m+1)(m+2) + 4(m+1)(m+2) + 3] / [6(2m+3)³(m+1)(m+2)]`
+    (`= 2·(1/(2m+3) + 1/(3(2m+3)³) + 1/(2(2m+3)³(m+1)(m+2)))`). -/
+theorem dPlusQ_one_eq (m : Nat) :
+    Qeq (dPlusQ 1 (m + 1))
+      (⟨12 * (2 * (m : Int) + 3) * (2 * (m : Int) + 3) * ((m : Int) + 1) * ((m : Int) + 2)
+          + 4 * ((m : Int) + 1) * ((m : Int) + 2) + 3,
+        6 * (2 * m + 3) * (2 * m + 3) * (2 * m + 3) * (m + 1) * (m + 2)⟩ : Q) := by
+  unfold dPlusQ
+  simp only [artSum, artTerm, qpow, npow, Qeq, mul, add]
+  push_cast
+  ring_uor
+
+/-- The clean form `≤ (2m+3)/(2(m+1)(m+2))` (cleared difference `= 16·((m+1)(m+2))² ≥ 0`). -/
+theorem gcf_le (m : Nat) :
+    Qle (⟨12 * (2 * (m : Int) + 3) * (2 * (m : Int) + 3) * ((m : Int) + 1) * ((m : Int) + 2)
+          + 4 * ((m : Int) + 1) * ((m : Int) + 2) + 3,
+        6 * (2 * m + 3) * (2 * m + 3) * (2 * m + 3) * (m + 1) * (m + 2)⟩ : Q)
+        (⟨2 * m + 3, 2 * (m + 1) * (m + 2)⟩ : Q) := by
+  simp only [Qle]
+  push_cast
+  have hX : (0 : Int) ≤ ((m : Int) + 1) * ((m : Int) + 2) := Int.mul_nonneg (by omega) (by omega)
+  have key :
+      (2 * (m : Int) + 3) * (6 * (2 * (m : Int) + 3) * (2 * (m : Int) + 3) * (2 * (m : Int) + 3)
+            * ((m : Int) + 1) * ((m : Int) + 2))
+        - (12 * (2 * (m : Int) + 3) * (2 * (m : Int) + 3) * ((m : Int) + 1) * ((m : Int) + 2)
+            + 4 * ((m : Int) + 1) * ((m : Int) + 2) + 3) * (2 * ((m : Int) + 1) * ((m : Int) + 2))
+      = 16 * (((m : Int) + 1) * ((m : Int) + 2)) * (((m : Int) + 1) * ((m : Int) + 2)) := by ring_uor
+  have hnn : (0 : Int) ≤ 16 * (((m : Int) + 1) * ((m : Int) + 2)) * (((m : Int) + 1) * ((m : Int) + 2)) :=
+    Int.mul_nonneg (Int.mul_nonneg (by omega) hX) hX
+  omega
+
+theorem gcfDen_pos (m : Nat) :
+    0 < (⟨12 * (2 * (m : Int) + 3) * (2 * (m : Int) + 3) * ((m : Int) + 1) * ((m : Int) + 2)
+          + 4 * ((m : Int) + 1) * ((m : Int) + 2) + 3,
+        6 * (2 * m + 3) * (2 * m + 3) * (2 * m + 3) * (m + 1) * (m + 2)⟩ : Q).den :=
+  Nat.mul_pos (Nat.mul_pos (Nat.mul_pos (Nat.mul_pos (Nat.mul_pos (by decide)
+    (by omega)) (by omega)) (by omega)) (by omega)) (by omega)
+
+/-- **`dPlusQ 1 (m+1) ≤ (2m+3)/(2(m+1)(m+2))`**. -/
+theorem dPlusQ_one_le (m : Nat) :
+    Qle (dPlusQ 1 (m + 1)) (⟨2 * m + 3, 2 * (m + 1) * (m + 2)⟩ : Q) :=
+  Qle_congr_left (gcfDen_pos m) (Qeq_symm (dPlusQ_one_eq m)) (gcf_le m)
+
 end UOR.Bridge.F1Square.Analysis

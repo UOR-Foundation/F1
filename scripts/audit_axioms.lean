@@ -3040,3 +3040,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.gammaLoBound_den_pos
 #print axioms Analysis.gammaLoBound_le_Ssum
 #print axioms Analysis.Ssum_cLowQ_le_gammaHseq
+#print axioms Analysis.dPlusQ_one_eq
+#print axioms Analysis.gcf_le
+#print axioms Analysis.gcfDen_pos
+#print axioms Analysis.dPlusQ_one_le
