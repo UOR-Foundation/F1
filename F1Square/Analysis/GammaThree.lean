@@ -243,4 +243,56 @@ theorem W3_le_4a3 {a b : Real} (hb : Rnonneg b) (ha : Rnonneg a) (hab : Rle b a)
   have h4 : Rle (Rmul (Rmul b b) b) (Rmul (Rmul a a) a) := cube_mono hb ha hab
   exact Radd_le_add (Radd_le_add (Radd_le_add (Rle_refl _) h2) h3) h4
 
+/-- **`¼(a⁴−b⁴) ≤ a³·δ`** (`a = ln(p+1)`, `b = ln p`, `δ = a−b`): from `quartic_diff_identity`,
+    `W₃ ≤ 4a³` (`W3_le_4a3`), and `¼·4a³ = a³` (`Rmul_fourth_four`). -/
+theorem quarter_diff_le (p : Nat) (hp : 1 ≤ p) :
+    Rle (Rmul (ofQ (⟨1, 4⟩ : Q) (by decide))
+          (Rsub (logQuartic (p + 1) (Nat.succ_pos p)) (logQuartic p hp)))
+        (Rmul (logCube (p + 1) (Nat.succ_pos p))
+          (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))) := by
+  have hδnn : Rnonneg (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)) :=
+    Rnonneg_Rsub_of_Rle (logN_mono hp (Nat.le_succ p))
+  refine Rle_trans (Rle_of_Req (Rmul_congr (Req_refl _)
+    (Req_symm (quartic_diff_identity (logN (p + 1) (Nat.succ_pos p)) (logN p hp))))) ?_
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide))
+    (Rmul_le_Rmul_left hδnn (W3_le_4a3 (Rnonneg_logN p hp) (Rnonneg_logN (p + 1) (Nat.succ_pos p))
+      (logN_mono hp (Nat.le_succ p))))) ?_
+  refine Rle_of_Req (Req_trans (Rmul_left_comm3 (ofQ (⟨1, 4⟩ : Q) (by decide))
+    (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+    (Radd (Radd (Radd (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+      (logN (p + 1) (Nat.succ_pos p))) (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p))
+      (logN (p + 1) (Nat.succ_pos p))) (logN (p + 1) (Nat.succ_pos p))))
+      (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+        (logN (p + 1) (Nat.succ_pos p))))
+      (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+        (logN (p + 1) (Nat.succ_pos p)))))
+    (Req_trans (Rmul_congr (Req_refl _)
+      (Rmul_fourth_four (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+        (logN (p + 1) (Nat.succ_pos p)))))
+      (Rmul_comm (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+        (Rmul (Rmul (logN (p + 1) (Nat.succ_pos p)) (logN (p + 1) (Nat.succ_pos p)))
+          (logN (p + 1) (Nat.succ_pos p))))))
+
+/-- **`e₃ ≥ −a³/(p(p+1))`** (`a = ln(p+1)`) — the summable LOWER envelope, via
+    `e₃ = a³u − ¼(a⁴−b⁴) ≥ a³u − a³δ = a³(u−δ)` and `u − δ ≥ −1/(p(p+1))` (`δ ≤ 1/p`). -/
+theorem e3Step_ge_num (p : Nat) (hp : 1 ≤ p) :
+    Rle (Rmul (logCube (p + 1) (Nat.succ_pos p))
+          (Rneg (ofQ (⟨1, p * (p + 1)⟩ : Q) (Nat.mul_pos hp (Nat.succ_pos p)))))
+        (e3Step p hp) := by
+  have ha3nn : Rnonneg (logCube (p + 1) (Nat.succ_pos p)) := logCube_nonneg (p + 1) (Nat.succ_pos p)
+  -- u − δ ≥ −1/(p(p+1))
+  have hud : Rle (Rneg (ofQ (⟨1, p * (p + 1)⟩ : Q) (Nat.mul_pos hp (Nat.succ_pos p))))
+      (Rsub (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p))
+        (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))) := by
+    have huvp : Req (Rneg (ofQ (⟨1, p * (p + 1)⟩ : Q) (Nat.mul_pos hp (Nat.succ_pos p))))
+        (Rsub (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)) (ofQ (⟨1, p⟩ : Q) hp)) :=
+      Req_of_seq_Qeq (fun n => by
+        simp only [Rsub, Radd, Rneg, ofQ, Qeq, neg, add]; push_cast; ring_uor)
+    exact Rle_trans (Rle_of_Req huvp)
+      (Rsub_le_sub (Rle_refl _) (deltaLog_upper p hp))
+  refine Rle_trans (Rmul_le_Rmul_left ha3nn hud) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_sub_distrib (logCube (p + 1) (Nat.succ_pos p))
+    (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)) (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))) ?_
+  exact Rsub_le_sub (Rle_refl _) (quarter_diff_le p hp)
+
 end UOR.Bridge.F1Square.Analysis
