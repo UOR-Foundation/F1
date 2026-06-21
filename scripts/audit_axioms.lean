@@ -2644,6 +2644,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.three_merge
 #print axioms Analysis.four_merge
 #print axioms Analysis.six_merge
+#print axioms Analysis.one_plus_three
+#print axioms Analysis.three_plus_one
+#print axioms Analysis.three_plus_three
 #print axioms Analysis.Rmul_eq_RprodL4L
 #print axioms Analysis.Rmul_eq_RprodL5L
 #print axioms Analysis.cube_times_pair

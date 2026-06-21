@@ -253,6 +253,36 @@ theorem six_merge (x : Real) :
   exact Req_trans (Req_symm (Rmul_distrib_right (Radd (Radd (Radd (Radd one one) one) one) one) one x))
     (Rmul_congr h6 (Req_refl x))
 
+/-- `x + 3·x ≈ 4·x` (coefficient merge `1 + 3 = 4`). -/
+theorem one_plus_three (x : Real) :
+    Req (Radd x (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) x)) (Rmul (ofQ (⟨4, 1⟩ : Q) (by decide)) x) := by
+  have h4 : Req (Radd one (ofQ (⟨3, 1⟩ : Q) (by decide))) (ofQ (⟨4, 1⟩ : Q) (by decide)) := by
+    apply Req_of_seq_Qeq; intro n; simp only [Radd, one, ofQ, add, Qeq]; push_cast
+  have hx1 : Req x (Rmul one x) := Req_symm (Req_trans (Rmul_comm one x) (Rmul_one x))
+  refine Req_trans (Radd_congr hx1 (Req_refl _)) ?_
+  exact Req_trans (Req_symm (Rmul_distrib_right one (ofQ (⟨3, 1⟩ : Q) (by decide)) x))
+    (Rmul_congr h4 (Req_refl x))
+
+/-- `3·x + x ≈ 4·x` (coefficient merge `3 + 1 = 4`). -/
+theorem three_plus_one (x : Real) :
+    Req (Radd (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) x) x) (Rmul (ofQ (⟨4, 1⟩ : Q) (by decide)) x) := by
+  have h4 : Req (Radd (ofQ (⟨3, 1⟩ : Q) (by decide)) one) (ofQ (⟨4, 1⟩ : Q) (by decide)) := by
+    apply Req_of_seq_Qeq; intro n; simp only [Radd, one, ofQ, add, Qeq]; push_cast
+  have hx1 : Req x (Rmul one x) := Req_symm (Req_trans (Rmul_comm one x) (Rmul_one x))
+  refine Req_trans (Radd_congr (Req_refl _) hx1) ?_
+  exact Req_trans (Req_symm (Rmul_distrib_right (ofQ (⟨3, 1⟩ : Q) (by decide)) one x))
+    (Rmul_congr h4 (Req_refl x))
+
+/-- `3·x + 3·x ≈ 6·x` (coefficient merge `3 + 3 = 6`). -/
+theorem three_plus_three (x : Real) :
+    Req (Radd (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) x) (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) x))
+        (Rmul (ofQ (⟨6, 1⟩ : Q) (by decide)) x) := by
+  have h6 : Req (Radd (ofQ (⟨3, 1⟩ : Q) (by decide)) (ofQ (⟨3, 1⟩ : Q) (by decide)))
+      (ofQ (⟨6, 1⟩ : Q) (by decide)) := by
+    apply Req_of_seq_Qeq; intro n; simp only [Radd, ofQ, add, Qeq]; push_cast
+  exact Req_trans (Req_symm (Rmul_distrib_right (ofQ (⟨3, 1⟩ : Q) (by decide))
+    (ofQ (⟨3, 1⟩ : Q) (by decide)) x)) (Rmul_congr h6 (Req_refl x))
+
 /-- Left-nested degree-4 flattening: `((x·y)·z)·w ≈ RprodL [x,y,z,w]`. -/
 theorem Rmul_eq_RprodL4L (x y z w : Real) :
     Req (Rmul (Rmul (Rmul x y) z) w) (RprodL [x, y, z, w]) :=
