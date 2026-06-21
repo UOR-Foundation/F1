@@ -518,4 +518,169 @@ theorem g3Seq_diff_ge_block (a N : Nat) : ∀ (d : Nat), N + d + 1 ≤ 2 ^ (a + 
           (Rle_of_Req (Rsub_split (g3Seq (N + d + 1)) (g3Seq (N + d)) (g3Seq N))))
 
 
+
+/-- **Per-block UPPER bound** `g₃(2^{a+1}) − g₃(2^a) ≤ 3(a+2)²/2^a`. -/
+theorem g3Seq_block_le (a : Nat) :
+    Rle (Rsub (g3Seq (2 ^ (a + 1))) (g3Seq (2 ^ a)))
+        (ofQ (⟨3 * (((a : Int) + 2) * ((a : Int) + 2)), 2 ^ a⟩ : Q) (Nat.pos_pow_of_pos a (by decide))) := by
+  have e1 : (2 : Nat) ^ (a + 1) = 2 ^ a + 2 ^ a := by rw [Nat.pow_succ]; omega
+  have hp1 : 1 ≤ (2 : Nat) ^ a := Nat.one_le_two_pow
+  have hcon : 2 ^ a + 2 ^ a + 1 ≤ 2 ^ (a + 2) := by
+    have e2 : (2 : Nat) ^ (a + 2) = 2 ^ (a + 1) + 2 ^ (a + 1) := by rw [Nat.pow_succ]; omega
+    omega
+  rw [e1]
+  refine Rle_trans (g3Seq_diff_le_block a (2 ^ a) (2 ^ a) hcon) ?_
+  have hmid : 0 < (Qsub (⟨3 * (((a : Int) + 2) * ((a : Int) + 2)), 2 ^ a + 1⟩ : Q)
+      ⟨3 * (((a : Int) + 2) * ((a : Int) + 2)), 2 ^ a + 2 ^ a + 1⟩).den :=
+    Qsub_den_pos (Nat.succ_pos (2 ^ a)) (Nat.succ_pos (2 ^ a + 2 ^ a))
+  exact Rle_trans
+    (Rle_ofQ_ofQ (Qsub_den_pos (Csum_den_pos _ (2 ^ a + 2 ^ a)) (Csum_den_pos _ (2 ^ a))) hmid
+      (Csum_tail_le (3 * (((a : Int) + 2) * ((a : Int) + 2))) (2 ^ a) (2 ^ a)))
+    (Rle_ofQ_ofQ hmid (Nat.pos_pow_of_pos a (by decide))
+      (Qsub_block_le (3 * (((a : Int) + 2) * ((a : Int) + 2)))
+        (Int.mul_nonneg (by decide) (Int.mul_nonneg (by have := Int.ofNat_nonneg a; omega)
+          (by have := Int.ofNat_nonneg a; omega))) (2 ^ a)))
+
+/-- **Per-block LOWER bound** `g₃(2^{a+1}) − g₃(2^a) ≥ −(a+2)³/2^a`. -/
+theorem g3Seq_block_ge (a : Nat) :
+    Rle (Rneg (ofQ (⟨((a : Int) + 2) * ((a : Int) + 2) * ((a : Int) + 2), 2 ^ a⟩ : Q)
+          (Nat.pos_pow_of_pos a (by decide))))
+        (Rsub (g3Seq (2 ^ (a + 1))) (g3Seq (2 ^ a))) := by
+  have e1 : (2 : Nat) ^ (a + 1) = 2 ^ a + 2 ^ a := by rw [Nat.pow_succ]; omega
+  have hp1 : 1 ≤ (2 : Nat) ^ a := Nat.one_le_two_pow
+  have hcon : 2 ^ a + 2 ^ a + 1 ≤ 2 ^ (a + 2) := by
+    have e2 : (2 : Nat) ^ (a + 2) = 2 ^ (a + 1) + 2 ^ (a + 1) := by rw [Nat.pow_succ]; omega
+    omega
+  rw [e1]
+  refine Rle_trans (Rle_Rneg ?_) (g3Seq_diff_ge_block a (2 ^ a) (2 ^ a) hcon)
+  have hmid : 0 < (Qsub (⟨((a : Int) + 2) * ((a : Int) + 2) * ((a : Int) + 2), 2 ^ a + 1⟩ : Q)
+      ⟨((a : Int) + 2) * ((a : Int) + 2) * ((a : Int) + 2), 2 ^ a + 2 ^ a + 1⟩).den :=
+    Qsub_den_pos (Nat.succ_pos (2 ^ a)) (Nat.succ_pos (2 ^ a + 2 ^ a))
+  exact Rle_trans
+    (Rle_ofQ_ofQ (Qsub_den_pos (Csum_den_pos _ (2 ^ a + 2 ^ a)) (Csum_den_pos _ (2 ^ a))) hmid
+      (Csum_tail_le (((a : Int) + 2) * ((a : Int) + 2) * ((a : Int) + 2)) (2 ^ a) (2 ^ a)))
+    (Rle_ofQ_ofQ hmid (Nat.pos_pow_of_pos a (by decide))
+      (Qsub_block_le (((a : Int) + 2) * ((a : Int) + 2) * ((a : Int) + 2))
+        (Int.mul_nonneg (Int.mul_nonneg (by have := Int.ofNat_nonneg a; omega)
+          (by have := Int.ofNat_nonneg a; omega)) (by have := Int.ofNat_nonneg a; omega)) (2 ^ a)))
+
+
+
+/-- γ₃ reindex `M(j) = 2j+14` (more slack than `γ₂`'s `2j+8`, to dominate the CUBIC lower tail). -/
+def gamma3Midx (j : Nat) : Nat := 2 * j + 14
+
+theorem gamma3Midx_mono {j k : Nat} (h : j ≤ k) : gamma3Midx j ≤ gamma3Midx k := by
+  simp only [gamma3Midx]; omega
+
+/-- `48k+432 ≤ 2^{k+14}` (upper linear increment). -/
+theorem g3_linU (k : Nat) : 48 * k + 432 ≤ 2 ^ (k + 14) := by
+  induction k with
+  | zero => decide
+  | succ m ih =>
+      have hp : (2 : Nat) ^ (m + 1 + 14) = 2 ^ (m + 14) * 2 := by
+        rw [show m + 1 + 14 = (m + 14) + 1 from by omega, Nat.pow_succ]
+      omega
+
+/-- `6(2j+14)²+36(2j+14)+66 ≤ 2^{j+14}` (Q_U at the reindex). -/
+theorem g3_quad_lin (j : Nat) :
+    6 * (2 * j + 14) * (2 * j + 14) + 36 * (2 * j + 14) + 66 ≤ 2 ^ (j + 14) := by
+  induction j with
+  | zero => decide
+  | succ k ih =>
+      have hp : (2 : Nat) ^ (k + 1 + 14) = 2 ^ (k + 14) * 2 := by
+        rw [show k + 1 + 14 = (k + 14) + 1 from by omega, Nat.pow_succ]
+      have hexp : 6 * (2 * (k + 1) + 14) * (2 * (k + 1) + 14) + 36 * (2 * (k + 1) + 14) + 66
+          = (6 * (2 * k + 14) * (2 * k + 14) + 36 * (2 * k + 14) + 66) + (48 * k + 432) := by
+        have hi : ((6 * (2 * (k + 1) + 14) * (2 * (k + 1) + 14) + 36 * (2 * (k + 1) + 14) + 66 : Nat) : Int)
+            = (((6 * (2 * k + 14) * (2 * k + 14) + 36 * (2 * k + 14) + 66) + (48 * k + 432) : Nat) : Int) := by
+          push_cast; ring_uor
+        exact_mod_cast hi
+      have hlin := g3_linU k
+      rw [hp, hexp]; omega
+
+/-- **Reindex domination (upper)** `Q_U(M)·(j+1) ≤ 2^M` for `M = 2j+14`. -/
+theorem g3_domination_U (j : Nat) :
+    (6 * (2 * j + 14) * (2 * j + 14) + 36 * (2 * j + 14) + 66) * (j + 1) ≤ 2 ^ (2 * j + 14) := by
+  have h1 : j + 1 ≤ 2 ^ j := lt_two_pow j
+  have h2 := g3_quad_lin j
+  have h3 := Nat.mul_le_mul h2 h1
+  have h4 : (2 : Nat) ^ (j + 14) * 2 ^ j = 2 ^ (2 * j + 14) := by rw [← Nat.pow_add]; congr 1; omega
+  omega
+
+/-- **Upper antiderivative anchor** `T_U(M(j)) ≤ 1/(j+1)`. -/
+theorem g3_TU_le (j : Nat) :
+    Qle (⟨(6 * gamma3Midx j * gamma3Midx j + 36 * gamma3Midx j + 66 : Int), 2 ^ gamma3Midx j⟩ : Q)
+        ⟨1, j + 1⟩ := by
+  simp only [Qle, gamma3Midx]; push_cast
+  have hcast : (((6 * (2 * j + 14) * (2 * j + 14) + 36 * (2 * j + 14) + 66) * (j + 1) : Nat) : Int)
+      ≤ ((2 ^ (2 * j + 14) : Nat) : Int) := by exact_mod_cast g3_domination_U j
+  push_cast at hcast; omega
+
+/-- `96k+912 ≤ 2^{k+14}` (lower linear increment). -/
+theorem g3_linL (k : Nat) : 96 * k + 912 ≤ 2 ^ (k + 14) := by
+  induction k with
+  | zero => decide
+  | succ m ih =>
+      have hp : (2 : Nat) ^ (m + 1 + 14) = 2 ^ (m + 14) * 2 := by
+        rw [show m + 1 + 14 = (m + 14) + 1 from by omega, Nat.pow_succ]
+      omega
+
+/-- `48k²+864k+3916 ≤ 2^{k+14}` (lower quadratic increment). -/
+theorem g3_quadincL (k : Nat) : 48 * k * k + 864 * k + 3916 ≤ 2 ^ (k + 14) := by
+  induction k with
+  | zero => decide
+  | succ m ih =>
+      have hp : (2 : Nat) ^ (m + 1 + 14) = 2 ^ (m + 14) * 2 := by
+        rw [show m + 1 + 14 = (m + 14) + 1 from by omega, Nat.pow_succ]
+      have hexp : 48 * (m + 1) * (m + 1) + 864 * (m + 1) + 3916
+          = (48 * m * m + 864 * m + 3916) + (96 * m + 912) := by
+        have hi : ((48 * (m + 1) * (m + 1) + 864 * (m + 1) + 3916 : Nat) : Int)
+            = (((48 * m * m + 864 * m + 3916) + (96 * m + 912) : Nat) : Int) := by push_cast; ring_uor
+        exact_mod_cast hi
+      have hlin := g3_linL m
+      rw [hp, hexp]; omega
+
+/-- `2(2j+14)³+18(2j+14)²+66(2j+14)+102 ≤ 2^{j+14}` (Q_L at the reindex; cubic). -/
+theorem g3_cube_lin (j : Nat) :
+    2 * (2 * j + 14) * (2 * j + 14) * (2 * j + 14) + 18 * (2 * j + 14) * (2 * j + 14)
+      + 66 * (2 * j + 14) + 102 ≤ 2 ^ (j + 14) := by
+  induction j with
+  | zero => decide
+  | succ k ih =>
+      have hp : (2 : Nat) ^ (k + 1 + 14) = 2 ^ (k + 14) * 2 := by
+        rw [show k + 1 + 14 = (k + 14) + 1 from by omega, Nat.pow_succ]
+      have hexp : 2 * (2 * (k + 1) + 14) * (2 * (k + 1) + 14) * (2 * (k + 1) + 14)
+            + 18 * (2 * (k + 1) + 14) * (2 * (k + 1) + 14) + 66 * (2 * (k + 1) + 14) + 102
+          = (2 * (2 * k + 14) * (2 * k + 14) * (2 * k + 14) + 18 * (2 * k + 14) * (2 * k + 14)
+              + 66 * (2 * k + 14) + 102) + (48 * k * k + 864 * k + 3916) := by
+        have hi : ((2 * (2 * (k + 1) + 14) * (2 * (k + 1) + 14) * (2 * (k + 1) + 14)
+              + 18 * (2 * (k + 1) + 14) * (2 * (k + 1) + 14) + 66 * (2 * (k + 1) + 14) + 102 : Nat) : Int)
+            = (((2 * (2 * k + 14) * (2 * k + 14) * (2 * k + 14) + 18 * (2 * k + 14) * (2 * k + 14)
+                + 66 * (2 * k + 14) + 102) + (48 * k * k + 864 * k + 3916) : Nat) : Int) := by
+          push_cast; ring_uor
+        exact_mod_cast hi
+      have hquad := g3_quadincL k
+      rw [hp, hexp]; omega
+
+/-- **Reindex domination (lower)** `Q_L(M)·(j+1) ≤ 2^M` for `M = 2j+14`. -/
+theorem g3_domination_L (j : Nat) :
+    (2 * (2 * j + 14) * (2 * j + 14) * (2 * j + 14) + 18 * (2 * j + 14) * (2 * j + 14)
+      + 66 * (2 * j + 14) + 102) * (j + 1) ≤ 2 ^ (2 * j + 14) := by
+  have h1 : j + 1 ≤ 2 ^ j := lt_two_pow j
+  have h2 := g3_cube_lin j
+  have h3 := Nat.mul_le_mul h2 h1
+  have h4 : (2 : Nat) ^ (j + 14) * 2 ^ j = 2 ^ (2 * j + 14) := by rw [← Nat.pow_add]; congr 1; omega
+  omega
+
+/-- **Lower antiderivative anchor** `T_L(M(j)) ≤ 1/(j+1)`. -/
+theorem g3_TL_le (j : Nat) :
+    Qle (⟨(2 * gamma3Midx j * gamma3Midx j * gamma3Midx j + 18 * gamma3Midx j * gamma3Midx j
+          + 66 * gamma3Midx j + 102 : Int), 2 ^ gamma3Midx j⟩ : Q) ⟨1, j + 1⟩ := by
+  simp only [Qle, gamma3Midx]; push_cast
+  have hcast : (((2 * (2 * j + 14) * (2 * j + 14) * (2 * j + 14) + 18 * (2 * j + 14) * (2 * j + 14)
+        + 66 * (2 * j + 14) + 102) * (j + 1) : Nat) : Int) ≤ ((2 ^ (2 * j + 14) : Nat) : Int) := by
+    exact_mod_cast g3_domination_L j
+  push_cast at hcast; omega
+
+
 end UOR.Bridge.F1Square.Analysis

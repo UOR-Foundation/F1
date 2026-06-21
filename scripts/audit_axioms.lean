@@ -3119,3 +3119,15 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.g3Seq_step_ge_block
 #print axioms Analysis.g3Seq_diff_le_block
 #print axioms Analysis.g3Seq_diff_ge_block
+#print axioms Analysis.g3Seq_block_le
+#print axioms Analysis.g3Seq_block_ge
+#print axioms Analysis.gamma3Midx_mono
+#print axioms Analysis.g3_linU
+#print axioms Analysis.g3_quad_lin
+#print axioms Analysis.g3_domination_U
+#print axioms Analysis.g3_TU_le
+#print axioms Analysis.g3_linL
+#print axioms Analysis.g3_quadincL
+#print axioms Analysis.g3_cube_lin
+#print axioms Analysis.g3_domination_L
+#print axioms Analysis.g3_TL_le
