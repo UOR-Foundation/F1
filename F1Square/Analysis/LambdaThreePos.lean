@@ -13,7 +13,8 @@ of the constant-precision work. With all six constants now two-sided bracketed �
 THIS CONQUERS `n = 3` of the prime–archimedean coupling (`coupling_n3_iff_pos_lambda3`). It does NOT
 close the crux, which is the uniform `∀ n` (= RH); the crux fields stay `none`.
 
-THIS FILE — part (A): the product/parabola bounds (`γ²`, `γ³`, `γγ₁`) and the linear constant facts.
+THIS FILE proves `Pos Rlambda3` (`Rlambda3_pos`): the product/parabola bounds (`γ²`,`γ³`,`γγ₁`), the
+archimedean lower `genuineArchSeq3_ge`, the rounded η-anchor bounds, and the assembly.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited by
 `scripts/honesty_audit.sh`.
@@ -245,10 +246,91 @@ theorem reta1_le : Rle Reta1 (ofQ reta1UpQ reta1UpQ_den_pos) := by
   exact Rle_trans (Radd_le_add Rgamma_sq_le hlin)
     (Rle_of_Req (Radd_ofQ_ofQ (Qmul_den_pos (by decide) (by decide)) (Qmul_den_pos (by decide) (by decide))))
 
-/- NOTE: the arithmetic-side assembly (`reta2_le`, `Rlambda3_arith_ge`, `Rlambda3_pos`) is staged
-   separately — `reta2_le` (η₂ upper, nested `Rsub` over the γ³/γγ₁ products) hits a deep
-   large-number reduction wall; the fix is the rounded-accumulator technique (round every bound
-   rational to a fixed small denominator `≈10⁶`, as in `gammaLoBound`/`gammaHiBound`). The arch side
-   `genuineArchSeq3_ge` and all product lemmas below are complete; `λ₃`'s lower bound `≈+0.058 > 0`. -/
+/-! ### Arithmetic side and the assembly `Pos Rlambda3`
+
+    Every bound rational is rounded to a fixed small denominator (`10⁶`) and stated in **expression**
+    form (`mul ⟨3,1⟩ ⟨q⟩`, `neg ⟨q⟩`), never a pre-multiplied literal: the Lean elaborator's
+    `isDefEq` reconciling a literal with a `mul`/`neg`-expression `Q` inside an `ofQ` is pathologically
+    slow (the denominator-blowup wall), whereas a final `decide` on the same comparison is fast. So the
+    collapses match expressions and only the terminal `Qle` against the rounded literal uses `decide`. -/
+
+set_option maxRecDepth 4096 in
+/-- **`η₂ = −γ³ − 3γγ₁ − (3/2)γ₂ ≤ −29968/10⁶`** — rounded η₂ upper bound (true `≈ −0.029969`). -/
+theorem reta2_le : Rle Reta2 (ofQ (⟨-29968, 1000000⟩ : Q) (by decide)) := by
+  unfold Reta2
+  have hN : Rle (Rneg (Rmul (Rmul Rgamma_h Rgamma_h) Rgamma_h)) (ofQ (⟨-192100, 1000000⟩ : Q) (by decide)) :=
+    Rle_trans (Rle_Rneg (Rle_trans (Rle_ofQ_ofQ (by decide) (by decide) (by decide)) Rgamma_cube_ge))
+      (Rle_of_Req (Rneg_ofQ (⟨192100, 1000000⟩ : Q) (by decide)))
+  have hC : Rle (ofQ (mul (⟨3, 1⟩ : Q) (⟨-44044, 1000000⟩ : Q)) (by decide))
+      (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul Rgamma_h Rgamma1)) := by
+    have hgg : Rle (ofQ (⟨-44044, 1000000⟩ : Q) (by decide)) (Rmul Rgamma_h Rgamma1) :=
+      Rle_trans (Rle_ofQ_ofQ (by decide) (by decide) (by decide)) Rgamma_gamma1_ge
+    exact Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ (by decide) (by decide))))
+      (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) hgg)
+  have hD : Rle (ofQ (mul (⟨3, 2⟩ : Q) (⟨-1, 50⟩ : Q)) (by decide))
+      (Rmul (ofQ (⟨3, 2⟩ : Q) (by decide)) Rgamma2) :=
+    Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ (by decide) (by decide))))
+      (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) Rgamma2_ge_neg002)
+  refine Rle_trans (Rsub_le_sub (Rsub_le_sub hN hC) hD) ?_
+  refine Rle_trans (Rle_of_Req (Rsub_congr
+    (Rsub_ofQ_ofQ (by decide) (Qmul_den_pos (by decide) (by decide))) (Req_refl _))) ?_
+  refine Rle_trans (Rle_of_Req (Rsub_ofQ_ofQ
+    (Qsub_den_pos (by decide) (Qmul_den_pos (by decide) (by decide)))
+    (Qmul_den_pos (by decide) (by decide)))) ?_
+  exact Rle_ofQ_ofQ (Qsub_den_pos (Qsub_den_pos (by decide) (Qmul_den_pos (by decide) (by decide)))
+    (Qmul_den_pos (by decide) (by decide))) (by decide) (by decide)
+
+set_option maxRecDepth 4096 in
+/-- **`η₁ = γ² + 2γ₁ ≤ 224085/10⁶`** — rounded η₁ upper bound (true `≈ 0.18`). -/
+theorem reta1_le_r : Rle Reta1 (ofQ (⟨224085, 1000000⟩ : Q) (by decide)) :=
+  Rle_trans reta1_le (Rle_ofQ_ofQ reta1UpQ_den_pos (by decide) (by decide))
+
+set_option maxRecDepth 4096 in
+set_option maxHeartbeats 2000000 in
+/-- **`Rlambda3_arith ≥ 1088713/10⁶`** (`= 3γ − 3γ² − 6γ₁ + γ³ + 3γγ₁ + (3/2)γ₂`, true `≈ 1.0887`),
+    assembled from the rounded η-anchor bounds `reta0_le`, `reta1_le_r`, `reta2_le` via the symbolic
+    `nsmulR 3` collapse. -/
+theorem Rlambda3_arith_ge_r : Rle (ofQ (neg (⟨-1088713, 1000000⟩ : Q)) (by decide)) Rlambda3_arith := by
+  unfold Rlambda3_arith
+  refine Rle_trans (Rle_of_Req (Req_symm (Rneg_ofQ (⟨-1088713, 1000000⟩ : Q) (by decide)))) (Rle_Rneg ?_)
+  have h0 : Rle (nsmulR (choose 3 1) Reta0) (ofQ (mul (⟨3, 1⟩ : Q) (⟨-577, 1000⟩ : Q)) (by decide)) :=
+    nsmulR3_le_mul3 (by decide) reta0_le
+  have h1 : Rle (nsmulR (choose 3 2) Reta1) (ofQ (mul (⟨3, 1⟩ : Q) (⟨224085, 1000000⟩ : Q)) (by decide)) :=
+    nsmulR3_le_mul3 (by decide) reta1_le_r
+  have h2 : Rle (nsmulR (choose 3 3) Reta2) (ofQ (⟨-29968, 1000000⟩ : Q) (by decide)) := reta2_le
+  have hz : Rle zero (ofQ (⟨0, 1⟩ : Q) (by decide)) := Rle_refl _
+  refine Rle_trans (Radd_le_add (Radd_le_add (Radd_le_add hz h0) h1) h2) ?_
+  refine Rle_trans (Radd_le_add (Radd_le_add (Radd_Rle_ofQ_add (by decide)
+    (Qmul_den_pos (by decide) (by decide))) (Rle_refl _)) (Rle_refl _)) ?_
+  refine Rle_trans (Radd_le_add (Radd_Rle_ofQ_add
+    (add_den_pos (by decide) (Qmul_den_pos (by decide) (by decide)))
+    (Qmul_den_pos (by decide) (by decide))) (Rle_refl _)) ?_
+  refine Rle_trans (Radd_Rle_ofQ_add
+    (add_den_pos (add_den_pos (by decide) (Qmul_den_pos (by decide) (by decide)))
+      (Qmul_den_pos (by decide) (by decide))) (by decide)) ?_
+  exact Rle_ofQ_ofQ (add_den_pos (add_den_pos (add_den_pos (by decide)
+    (Qmul_den_pos (by decide) (by decide))) (Qmul_den_pos (by decide) (by decide))) (by decide))
+    (by decide) (by decide)
+
+set_option maxRecDepth 4096 in
+/-- **`genuineArchSeq 3 ≥ −1030276/10⁶`** — the archimedean lower `archLoQ` rounded to `10⁶`. -/
+theorem archLoR_le : Rle (ofQ (⟨-1030276, 1000000⟩ : Q) (by decide)) (genuineArchSeq 3) :=
+  Rle_trans (Rle_ofQ_ofQ (by decide) archLoQ_den_pos (by decide)) genuineArchSeq3_ge
+
+set_option maxRecDepth 4096 in
+/-- **`Pos Rlambda3`** — the third Li coefficient is positive, the first kernel-certified `Pos λₙ`
+    beyond `n = 2`. Certified lower bound `λ₃ ≥ 58437/10⁶ ≈ +0.0584` (true `λ₃ ≈ 0.2076`), assembled
+    from `Rlambda3_arith ≥ 1.0887` and `genuineArchSeq 3 ≥ −1.0303`, i.e. from the six bracketed
+    constants `γ ∈ [0.577,0.578]`, `γ₁ ∈ [−0.0762,−0.055]`, `γ₂ ≥ −0.02`, `ζ(2) ≥ 1.644`,
+    `ζ(3) ≤ 1.217`, `log 4π ≤ 2.5316`.
+
+    Conquers the `n = 3` prime–archimedean coupling coefficient (`coupling_n3_iff_pos_lambda3`). This
+    is `n = 3` ONLY — NOT the crux, which is the uniform `∀ n` (= RH); `liPositivityHolds` stays
+    `none`, RH open. -/
+theorem Rlambda3_pos : Pos Rlambda3 := by
+  have hμ : Rle (ofQ (add (neg (⟨-1088713, 1000000⟩ : Q)) (⟨-1030276, 1000000⟩ : Q)) (by decide)) Rlambda3 :=
+    Rle_trans (Rle_of_Req (Req_symm (Radd_ofQ_ofQ (by decide) (by decide))))
+      (Radd_le_add Rlambda3_arith_ge_r archLoR_le)
+  exact Pos_of_Rle_ofQ (by decide) (by decide) hμ
 
 end UOR.Bridge.F1Square.Analysis

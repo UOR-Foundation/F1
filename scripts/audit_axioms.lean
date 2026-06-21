@@ -3088,3 +3088,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.reta1UpQ_den_pos
 #print axioms Analysis.reta2UpQ_den_pos
 #print axioms Analysis.xuQ_den_pos
+#print axioms Analysis.reta2_le
+#print axioms Analysis.reta1_le_r
+#print axioms Analysis.Rlambda3_arith_ge_r
+#print axioms Analysis.archLoR_le
+#print axioms Analysis.Rlambda3_pos
+#print axioms Square.coupling_n3_positive

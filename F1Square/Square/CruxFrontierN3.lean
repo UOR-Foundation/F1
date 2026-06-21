@@ -31,6 +31,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 
 import F1Square.Square.LefschetzCoupling
 import F1Square.Analysis.LambdaThree
+import F1Square.Analysis.LambdaThreePos
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -56,5 +57,14 @@ theorem crux_frontier_n3 (E : StieltjesEta3) :
         ∀ n, 0 < n → Pos (Radd (genuineArithSeq E.toStieltjesEta.eta n) (genuineArchSeq n)))
     ∧ (Pos (Radd (genuineArithSeq E.toStieltjesEta.eta 3) (genuineArchSeq 3)) ↔ Pos Rlambda3) :=
   ⟨genuine_crux_arch_coupling E.toStieltjesEta, coupling_n3_iff_pos_lambda3 E⟩
+
+/-- **`n = 3` CONQUERED**: for η₂-anchored data the prime–archimedean coupling `arith(3) + arch(3)`
+    is positive — the third rung of the crux ladder, now kernel-certified via `Rlambda3_pos`
+    (`coupling_n3_iff_pos_lambda3` ▸ `Rlambda3_pos`). Joins the conquered `n = 1`
+    (`coupling_head_positive`) and `n = 2` (`Rlambda2_pos`). This is `n = 3` ONLY; the crux is the
+    uniform `∀ n` (= RH) and stays open (`liPositivityHolds` `none`). -/
+theorem coupling_n3_positive (E : StieltjesEta3) :
+    Pos (Radd (genuineArithSeq E.toStieltjesEta.eta 3) (genuineArchSeq 3)) :=
+  (coupling_n3_iff_pos_lambda3 E).mpr Rlambda3_pos
 
 end UOR.Bridge.F1Square.Square
