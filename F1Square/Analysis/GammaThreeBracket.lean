@@ -290,6 +290,90 @@ theorem single_times_sqpair (x z₁ z₂ c w : Real) :
       (Req_trans (Req_symm (Rmul_assoc (Rmul (Rmul x z₁) z₂) c w))
         (Rmul_eq_RprodL5L x z₁ z₂ c w)))
 
+set_option maxHeartbeats 8000000 in
+/-- **The cube binomial** `(b+d)³ ≈ b³ + 3·(b²d) + 3·(bd²) + d³` (`b³ = (b·b)·b`, etc.; the `3`s as
+    `ofQ⟨3,1⟩` factors), for the `a = b+δ` substitution in `partA`/`partC`.  Expand `(b+d)²` via
+    `sq_binom2`, distribute the trailing `(b+d)`, normalize each monomial, and merge `2X + X = 3X`
+    (`two_plus_one`). -/
+theorem cube_binom (b d : Real) :
+    Req (Rmul (Rmul (Radd b d) (Radd b d)) (Radd b d))
+        (Radd (Radd (Radd (Rmul (Rmul b b) b)
+                  (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d)))
+              (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d)))
+          (Rmul (Rmul d d) d)) := by
+  -- (b+d)² = b² + 2(bd) + d²
+  refine Req_trans (Rmul_congr (sq_binom2 b d) (Req_refl (Radd b d))) ?_
+  -- distribute the trailing (b+d): X·(b+d) = X·b + X·d
+  refine Req_trans (Rmul_distrib
+    (Radd (Radd (Rmul b b) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d))) (Rmul d d)) b d) ?_
+  -- expand X·b and X·d into their three monomials each
+  refine Req_trans (Radd_congr
+    (Req_trans (Rmul_distrib_right (Radd (Rmul b b) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)))
+        (Rmul d d) b)
+      (Radd_congr (Rmul_distrib_right (Rmul b b) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)) b)
+        (Req_refl _)))
+    (Req_trans (Rmul_distrib_right (Radd (Rmul b b) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)))
+        (Rmul d d) d)
+      (Radd_congr (Rmul_distrib_right (Rmul b b) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)) d)
+        (Req_refl _)))) ?_
+  -- now: ((b³ + (2bd)·b) + d²·b) + ((b²d + (2bd)·d) + d³)
+  -- normalize the six monomials to canonical and regroup
+  -- m_bbb = b³, m1 = (2bd)·b ≈ 2·(b²d), m_ddb = d²·b ≈ bd², m_bbd = b²d, m2 = (2bd)·d ≈ 2·(bd²), m_ddd = d³
+  have e1 : Req (Rmul (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)) b)
+      (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d)) :=
+    Req_trans (Rmul_assoc (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d) b)
+      (Rmul_congr (Req_refl _)
+        (Req_trans (Rmul_assoc b d b)
+          (Req_trans (Rmul_congr (Req_refl b) (Rmul_comm d b))
+            (Req_symm (Rmul_assoc b b d)))))
+  have e2 : Req (Rmul (Rmul d d) b) (Rmul (Rmul b d) d) :=
+    Req_trans (Rmul_comm (Rmul d d) b) (Req_symm (Rmul_assoc b d d))
+  have e3 : Req (Rmul (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d)) d)
+      (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d)) :=
+    Rmul_assoc (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul b d) d
+  refine Req_trans (Radd_congr (Radd_congr (Radd_congr (Req_refl _) e1) e2)
+    (Radd_congr (Radd_congr (Req_refl _) e3) (Req_refl _))) ?_
+  -- ((b³ + 2·b²d) + bd²) + ((b²d + 2·bd²) + d³); flatten, permute pairs adjacent, regroup, merge
+  refine Req_trans (Radd_congr
+    (Radd_eq_RsumL3 (Rmul (Rmul b b) b)
+      (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d)) (Rmul (Rmul b d) d))
+    (Radd_eq_RsumL3 (Rmul (Rmul b b) d)
+      (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d)) (Rmul (Rmul d d) d))) ?_
+  refine Req_trans (Req_symm (RsumL_append
+    [Rmul (Rmul b b) b, Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d), Rmul (Rmul b d) d]
+    [Rmul (Rmul b b) d, Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d), Rmul (Rmul d d) d])) ?_
+  refine Req_trans (RsumL_perm (List.Perm.cons (Rmul (Rmul b b) b)
+    (List.Perm.cons (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d))
+      ((List.Perm.swap (Rmul (Rmul b b) d) (Rmul (Rmul b d) d)
+          [Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d), Rmul (Rmul d d) d]).trans
+        (List.Perm.cons (Rmul (Rmul b b) d)
+          (List.Perm.swap (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d))
+            (Rmul (Rmul b d) d) [Rmul (Rmul d d) d])))))) ?_
+  -- RsumL[b³, 2b²d, b²d, 2bd², bd², d³] = Radd b³ (Radd 2b²d (Radd b²d REST))
+  refine Req_trans (Radd_congr (Req_refl _)
+    (Req_symm (Radd_assoc (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d))
+      (Rmul (Rmul b b) d)
+      (Radd (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d))
+        (Radd (Rmul (Rmul b d) d) (Radd (Rmul (Rmul d d) d) zero)))))) ?_
+  refine Req_trans (Radd_congr (Req_refl _)
+    (Radd_congr (two_plus_one (Rmul (Rmul b b) d)) (Req_refl _))) ?_
+  -- Radd b³ (Radd 3b²d REST), REST = Radd 2bd² (Radd bd² (Radd d³ zero))
+  refine Req_trans (Radd_congr (Req_refl _) (Radd_congr (Req_refl _)
+    (Req_symm (Radd_assoc (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d))
+      (Rmul (Rmul b d) d) (Radd (Rmul (Rmul d d) d) zero))))) ?_
+  refine Req_trans (Radd_congr (Req_refl _) (Radd_congr (Req_refl _)
+    (Radd_congr (two_plus_one (Rmul (Rmul b d) d)) (Req_refl _)))) ?_
+  -- Radd b³ (Radd 3b²d (Radd 3bd² (Radd d³ zero)))
+  refine Req_trans (Radd_congr (Req_refl _) (Radd_congr (Req_refl _)
+    (Radd_congr (Req_refl _) (Radd_zero (Rmul (Rmul d d) d))))) ?_
+  -- Radd b³ (Radd 3b²d (Radd 3bd² d³)) → reassociate to ((b³ + 3b²d) + 3bd²) + d³
+  refine Req_trans (Req_symm (Radd_assoc (Rmul (Rmul b b) b)
+    (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d))
+    (Radd (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d)) (Rmul (Rmul d d) d)))) ?_
+  exact Req_symm (Radd_assoc
+    (Radd (Rmul (Rmul b b) b) (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul (Rmul b b) d)))
+    (Rmul (ofQ (⟨3, 1⟩ : Q) (by decide)) (Rmul (Rmul b d) d)) (Rmul (Rmul d d) d))
+
 -- ===========================================================================
 -- (C2b) The quartic residual decomposition `sStep3 ≈ decompForm3 = b³·C2 + b²·R2 + b·R1 + R0`
 -- (`d = a − b`, `C2 = ½(u0+u1) − d`, `R2 = (3/2)·d·(u1−d)`, `R1 = d²·((3/2)u1 − d)`,
