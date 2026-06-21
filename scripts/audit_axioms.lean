@@ -2630,6 +2630,14 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.gamma2_decide
 #print axioms Analysis.Rgamma2_ge_neg002
 
+-- v0.22.0 crux frontier: γ₃ UPPER bracket evaluators (Analysis/GammaThreeBracket.lean) — part (A),(B).
+#print axioms Analysis.lnCubeSumUp_den_pos
+#print axioms Analysis.lnCubeSum_le
+#print axioms Analysis.logLowBound_ofQ_nonneg
+#print axioms Analysis.logCube_ge
+#print axioms Analysis.logQuartic_ge
+#print axioms Analysis.lnCubeOver_ge
+
 -- v0.21.0 stage G, brick S (the substrate): the finite-truncation PSD predicate `WeilPSD`,
 -- its additive/rank-one structure, the embedding Gram (Gate B free), and the embedding bridge.
 #print axioms Square.Rmul_RsumN_left
