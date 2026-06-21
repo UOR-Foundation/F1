@@ -163,6 +163,7 @@ import F1Square.Analysis.Voros
 import F1Square.Analysis.GammaTwo
 import F1Square.Analysis.ZeroGeometry
 import F1Square.Analysis.LambdaThree
+import F1Square.Analysis.LambdaThreePos
 import F1Square.Analysis.RMulNF
 import F1Square.Analysis.LiGrowth
 import F1Square.Analysis.ClogAddBounded
