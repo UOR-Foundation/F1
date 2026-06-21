@@ -257,15 +257,15 @@ theorem six_merge (x : Real) :
 theorem Rmul_eq_RprodL4L (x y z w : Real) :
     Req (Rmul (Rmul (Rmul x y) z) w) (RprodL [x, y, z, w]) :=
   Req_trans (Rmul_congr (Rmul_eq_RprodL3 x y z) (Req_refl w))
-    (Req_trans (Req_symm (RprodL_append [x, y, z] [w]))
-      (RprodL_perm (by simp)))
+    (Req_trans (Rmul_congr (Req_refl (RprodL [x, y, z])) (Req_symm (Rmul_one w)))
+      (Req_symm (RprodL_append [x, y, z] [w])))
 
 /-- Left-nested degree-5 flattening: `(((x·y)·z)·w)·v ≈ RprodL [x,y,z,w,v]`. -/
 theorem Rmul_eq_RprodL5L (x y z w v : Real) :
     Req (Rmul (Rmul (Rmul (Rmul x y) z) w) v) (RprodL [x, y, z, w, v]) :=
   Req_trans (Rmul_congr (Rmul_eq_RprodL4L x y z w) (Req_refl v))
-    (Req_trans (Req_symm (RprodL_append [x, y, z, w] [v]))
-      (RprodL_perm (by simp)))
+    (Req_trans (Rmul_congr (Req_refl (RprodL [x, y, z, w])) (Req_symm (Rmul_one v)))
+      (Req_symm (RprodL_append [x, y, z, w] [v])))
 
 /-- **Monomial normalizer `X·(c·u) → RprodL`** where `X = (x₁·x₂)·x₃` is a left-nested cube: reassociate
     `X·(c·u) ≈ ((X·c)·u)` then flatten to `RprodL [x₁,x₂,x₃,c,u]`. -/
@@ -274,6 +274,21 @@ theorem cube_times_pair (x₁ x₂ x₃ c u : Real) :
         (RprodL [x₁, x₂, x₃, c, u]) :=
   Req_trans (Req_symm (Rmul_assoc (Rmul (Rmul x₁ x₂) x₃) c u))
     (Rmul_eq_RprodL5L x₁ x₂ x₃ c u)
+
+/-- **Monomial normalizer `(x·y)·(c·(z·w)) → RprodL [x,y,c,z,w]`** (reassociate to left-nested 5). -/
+theorem pair_times_triple (x y c z w : Real) :
+    Req (Rmul (Rmul x y) (Rmul c (Rmul z w))) (RprodL [x, y, c, z, w]) :=
+  Req_trans (Req_symm (Rmul_assoc (Rmul x y) c (Rmul z w)))
+    (Req_trans (Req_symm (Rmul_assoc (Rmul (Rmul x y) c) z w))
+      (Rmul_eq_RprodL5L x y c z w))
+
+/-- **Monomial normalizer `x·((z₁·z₂)·(c·w)) → RprodL [x,z₁,z₂,c,w]`** (reassociate to left-nested 5). -/
+theorem single_times_sqpair (x z₁ z₂ c w : Real) :
+    Req (Rmul x (Rmul (Rmul z₁ z₂) (Rmul c w))) (RprodL [x, z₁, z₂, c, w]) :=
+  Req_trans (Req_symm (Rmul_assoc x (Rmul z₁ z₂) (Rmul c w)))
+    (Req_trans (Rmul_congr (Req_symm (Rmul_assoc x z₁ z₂)) (Req_refl _))
+      (Req_trans (Req_symm (Rmul_assoc (Rmul (Rmul x z₁) z₂) c w))
+        (Rmul_eq_RprodL5L x z₁ z₂ c w)))
 
 -- ===========================================================================
 -- (C2b) The quartic residual decomposition `sStep3 ≈ decompForm3 = b³·C2 + b²·R2 + b·R1 + R0`
