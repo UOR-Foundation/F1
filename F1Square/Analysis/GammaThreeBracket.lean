@@ -267,4 +267,44 @@ theorem Rmul_eq_RprodL5L (x y z w v : Real) :
     (Req_trans (Req_symm (RprodL_append [x, y, z, w] [v]))
       (RprodL_perm (by simp)))
 
+/-- **Monomial normalizer `X·(c·u) → RprodL`** where `X = (x₁·x₂)·x₃` is a left-nested cube: reassociate
+    `X·(c·u) ≈ ((X·c)·u)` then flatten to `RprodL [x₁,x₂,x₃,c,u]`. -/
+theorem cube_times_pair (x₁ x₂ x₃ c u : Real) :
+    Req (Rmul (Rmul (Rmul x₁ x₂) x₃) (Rmul c u))
+        (RprodL [x₁, x₂, x₃, c, u]) :=
+  Req_trans (Req_symm (Rmul_assoc (Rmul (Rmul x₁ x₂) x₃) c u))
+    (Rmul_eq_RprodL5L x₁ x₂ x₃ c u)
+
+-- ===========================================================================
+-- (C2b) The quartic residual decomposition `sStep3 ≈ decompForm3 = b³·C2 + b²·R2 + b·R1 + R0`
+-- (`d = a − b`, `C2 = ½(u0+u1) − d`, `R2 = (3/2)·d·(u1−d)`, `R1 = d²·((3/2)u1 − d)`,
+-- `R0 = ½d³u1 − ¼d⁴`).  The keystone: `b²·R2 ≤ 0` (drops), leaving only the clean-telescoping terms.
+-- ===========================================================================
+
+/-- The **stage-1 residual form** (`sStep3` after `quartic_diff_identity`), parameterized:
+    `½a³u1 + ½b³u0 − ¼·(a−b)·(a³+a²b+ab²+b³)`. -/
+def lhsForm3 (a b u0 u1 : Real) : Real :=
+  Rsub (Radd (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rmul (Rmul (Rmul a a) a) u1))
+             (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rmul (Rmul (Rmul b b) b) u0)))
+       (Rmul (ofQ (⟨1, 4⟩ : Q) (by decide))
+         (Rmul (Rsub a b)
+           (Radd (Radd (Radd (Rmul (Rmul a a) a) (Rmul (Rmul a a) b)) (Rmul (Rmul a b) b))
+             (Rmul (Rmul b b) b))))
+
+/-- The **bound-ready decomposition** `b³·C2 + b²·R2 + b·R1 + R0` of the trapezoidal residual
+    (`d = a − b`, `C2 = ½(u0+u1) − d`, `R2 = (3/2)·d·(u1−d)`, `R1 = d²·((3/2)u1 − d)`,
+    `R0 = ½d³u1 − ¼d⁴`). -/
+def decompForm3 (a b u0 u1 : Real) : Real :=
+  Radd (Radd (Radd
+      (Rmul (Rmul (Rmul b b) b)
+        (Rsub (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Radd u0 u1)) (Rsub a b)))
+      (Rmul (Rmul b b)
+        (Rmul (ofQ (⟨3, 2⟩ : Q) (by decide)) (Rmul (Rsub a b) (Rsub u1 (Rsub a b))))))
+      (Rmul b
+        (Rmul (Rmul (Rsub a b) (Rsub a b))
+          (Rsub (Rmul (ofQ (⟨3, 2⟩ : Q) (by decide)) u1) (Rsub a b)))))
+    (Rsub (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rmul (Rmul (Rmul (Rsub a b) (Rsub a b)) (Rsub a b)) u1))
+          (Rmul (ofQ (⟨1, 4⟩ : Q) (by decide))
+            (Rmul (Rmul (Rmul (Rsub a b) (Rsub a b)) (Rsub a b)) (Rsub a b))))
+
 end UOR.Bridge.F1Square.Analysis
