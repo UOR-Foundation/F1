@@ -766,4 +766,41 @@ theorem hSeq1_le_gBound1up (T D N : Nat) (hD : 0 < D) (hT : T ≤ 21) :
     hlnover_lo) ?_
   exact Rle_of_Req (Req_of_seq_Qeq (fun _ => Qeq_refl _))
 
+/-- **`corr ≤ 1/(j+1)²` at `j = 300`** — `(2·300+9)·301² ≤ 2(2^{608}+1)` (poly ≤ exp, one `decide`). -/
+theorem corr1_weaken300 :
+    Rle (ofQ (⟨2 * (300 : Int) + 9, 2 * (2 ^ (2 * 300 + 8) + 1)⟩ : Q)
+          (Nat.mul_pos (by decide) (Nat.succ_pos _)))
+        (ofQ (⟨1, (300 + 1) * (300 + 1)⟩ : Q) (Nat.mul_pos (Nat.succ_pos _) (Nat.succ_pos _))) := by
+  refine Rle_ofQ_ofQ (Nat.mul_pos (by decide) (Nat.succ_pos _))
+    (Nat.mul_pos (Nat.succ_pos _) (Nat.succ_pos _)) ?_
+  simp only [Qle]
+  have hpow : (55176009 : Nat) ≤ 2 ^ (2 * 300 + 8) :=
+    Nat.le_trans (show (55176009 : Nat) ≤ 2 ^ 26 by decide)
+      (Nat.pow_le_pow_right (by decide) (by decide))
+  omega
+
+set_option maxRecDepth 40000 in
+/-- The numeric heart: `gBound1up 4 10⁶ 200 + 1/400 + 1/301² + 1/301 ≤ −65/1000` — one `decide`. -/
+theorem gamma1_up_decide :
+    Qle (add (add (add (gBound1up 4 1000000 200) (⟨1, 2 * 200⟩ : Q)) (⟨1, (300 + 1) * (300 + 1)⟩ : Q))
+        (⟨1, 300 + 1⟩ : Q))
+      (⟨-65, 1000⟩ : Q) := by decide
+
+set_option maxRecDepth 40000 in
+/-- **`γ₁ ≤ −0.065`** — the tightened UPPER bracket (vs the raw-`gSeq` `−0.055`), via the `hSeq1`
+    acceleration upper: `γ₁ ≤ hSeq1(200) + 1/400 + corr + 1/301` (`Rgamma1_le_hSeq1_up`, `j = 300`),
+    `hSeq1(200) ≤ gBound1up 4 10⁶ 200`, `corr ≤ 1/301²`, and one big-integer `decide`. The dominant
+    `Pos λ₄` input (the loose `−0.055` made `λ₄` infeasible). -/
+theorem Rgamma1_le_neg065 : Rle Rgamma1 (ofQ (⟨-65, 1000⟩ : Q) (by decide)) := by
+  refine Rle_trans (Rgamma1_le_hSeq1_up 200 300 (by decide)
+    (Nat.le_trans (show (200 : Nat) ≤ 2 ^ 8 by decide)
+      (Nat.pow_le_pow_right (by decide) (by decide)))) ?_
+  refine Rle_trans (Radd_le_add (Radd_le_add (Radd_le_add
+    (hSeq1_le_gBound1up 4 1000000 200 (by decide) (by decide)) (Rle_refl _)) corr1_weaken300)
+    (Rle_refl _)) ?_
+  refine Rle_trans (Rle_of_Req (Req_of_seq_Qeq (fun _ => Qeq_refl _))) ?_
+  exact Rle_ofQ_ofQ (add_den_pos (add_den_pos (add_den_pos (gBound1up_den_pos 4 1000000 200 (by decide))
+      (by decide)) (Nat.mul_pos (Nat.succ_pos _) (Nat.succ_pos _))) (Nat.succ_pos _)) (by decide)
+    gamma1_up_decide
+
 end UOR.Bridge.F1Square.Analysis
