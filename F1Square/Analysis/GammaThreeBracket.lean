@@ -972,4 +972,13 @@ theorem lhsForm3_eq_RsumL (a b u0 u1 : Real) :
      Rneg (RprodL [b, Rsub a b, Rsub a b, Rsub a b]),
      Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b])])
 
+set_option maxHeartbeats 8000000 in
+/-- **The keystone identity** `lhsForm3 ≈ decompForm3` — both expand to the same 9 canonical monomials
+    (`lhsForm3_eq_RsumL` / `decompForm3_eq_RsumL`), matched by a 9-element permutation
+    `[n2,n4,n6,n8,n1,n3,n5,n7,n9] ~ [n1,…,n9]` (explicit `List.Perm`, swap elements inferred). -/
+theorem decomp_generic3 (a b u0 u1 : Real) :
+    Req (lhsForm3 a b u0 u1) (decompForm3 a b u0 u1) := by
+  refine Req_trans (lhsForm3_eq_RsumL a b u0 u1)
+    (Req_trans (RsumL_perm ?_) (Req_symm (decompForm3_eq_RsumL a b u0 u1)))
+  exact (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))).trans ((List.Perm.cons _ (List.Perm.swap _ _ _)).trans ((List.Perm.swap _ _ _).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))))).trans (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))))))))))))))
 end UOR.Bridge.F1Square.Analysis
