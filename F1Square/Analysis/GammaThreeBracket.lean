@@ -1232,4 +1232,55 @@ theorem b2R2_le (p : Nat) (hp : 1 ≤ p) :
     (Rmul_nonpos_left (Rnonneg_ofQ (by decide) (by decide))
       (Rmul_nonpos_left hδnn hu1δ))
 
+/-- **`b·R1 = b·δ²((3/2)u1 − δ) ≤ 3/(p(p+1))`** (drop `−δ`, `δ² ≤ 1/p²`, `b ≤ p`, `u1 = 1/(p+1)`). -/
+theorem bR1_le (p : Nat) (hp : 1 ≤ p) :
+    Rle (Rmul (logN p hp)
+          (Rmul (Rmul (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+              (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))
+            (Rsub (Rmul (ofQ (⟨3, 2⟩ : Q) (by decide)) (ofQ (⟨1, p + 1⟩ : Q) (Nat.succ_pos p)))
+              (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)))))
+        (ofQ (⟨3, p * (p + 1)⟩ : Q) (Nat.mul_pos hp (Nat.succ_pos p))) := by
+  have hδnn : Rnonneg (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp)) :=
+    Rnonneg_Rsub_of_Rle (logN_mono hp (Nat.le_succ p))
+  have hbnn : Rnonneg (logN p hp) := Rnonneg_logN p hp
+  have hδ2nn : Rnonneg (Rmul (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))
+      (Rsub (logN (p + 1) (Nat.succ_pos p)) (logN p hp))) := Rnonneg_Rmul_self _
+  have d_p2 : 0 < (mul (⟨1, p⟩ : Q) (⟨1, p⟩ : Q)).den := Qmul_den_pos hp hp
+  have d_X : 0 < (mul (⟨3, 2⟩ : Q) (⟨1, p + 1⟩ : Q)).den := Qmul_den_pos (by decide) (Nat.succ_pos p)
+  have d_big : 0 < (mul (mul (⟨1, p⟩ : Q) (⟨1, p⟩ : Q)) (mul (⟨3, 2⟩ : Q) (⟨1, p + 1⟩ : Q))).den :=
+    Qmul_den_pos d_p2 d_X
+  have hXnn : Rnonneg (ofQ (mul (⟨3, 2⟩ : Q) (⟨1, p + 1⟩ : Q)) d_X) :=
+    Rnonneg_ofQ _ (by show (0 : Int) ≤ 3 * 1; decide)
+  -- drop −δ: ((3/2)u1 − δ) ≤ (3/2)u1
+  refine Rle_trans (Rmul_le_Rmul_left hbnn (Rmul_le_Rmul_left hδ2nn
+    (Rsub_le_self _ hδnn))) ?_
+  -- (3/2)u1 ≈ ofQ⟨3,2(p+1)⟩
+  refine Rle_trans (Rle_of_Req (Rmul_congr (Req_refl _) (Rmul_congr (Req_refl _)
+    (Rmul_ofQ_ofQ (a := (⟨3, 2⟩ : Q)) (b := (⟨1, p + 1⟩ : Q)) (by decide) (Nat.succ_pos p))))) ?_
+  -- δ²·(ofQ⟨3,2(p+1)⟩) ≤ ofQ(p²·3·2(p+1))
+  refine Rle_trans (Rmul_le_Rmul_left hbnn
+    (Rle_trans (Rmul_le_Rmul_right hXnn (dsq_self_le p hp))
+      (Rle_of_Req (Rmul_ofQ_ofQ (a := mul (⟨1, p⟩ : Q) (⟨1, p⟩ : Q))
+        (b := mul (⟨3, 2⟩ : Q) (⟨1, p + 1⟩ : Q)) d_p2 d_X)))) ?_
+  -- b·(ofQ⟨3,…⟩) ≤ ofQ⟨p,1⟩·(ofQ⟨3,…⟩) ≈ ofQ⟨3p,…⟩
+  refine Rle_trans (Rmul_le_Rmul_right
+    (Rnonneg_ofQ d_big (by show (0 : Int) ≤ 1 * (3 * 1); decide))
+    (logN_le_self p hp)) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ (a := (⟨(p : Int), 1⟩ : Q))
+    (b := mul (mul (⟨1, p⟩ : Q) (⟨1, p⟩ : Q)) (mul (⟨3, 2⟩ : Q) (⟨1, p + 1⟩ : Q))) Nat.one_pos d_big)) ?_
+  refine Rle_ofQ_ofQ _ (Nat.mul_pos hp (Nat.succ_pos p)) ?_
+  show Qle (mul (⟨(p : Int), 1⟩ : Q)
+      (mul (mul (⟨1, p⟩ : Q) (⟨1, p⟩ : Q)) (mul (⟨3, 2⟩ : Q) (⟨1, p + 1⟩ : Q))))
+    (⟨3, p * (p + 1)⟩ : Q)
+  simp only [Qle, mul, Int.one_mul, Int.mul_one, Nat.one_mul, Nat.mul_one]
+  have key : p * 3 * (p * (p + 1)) ≤ 3 * (p * p * (2 * (p + 1))) := by
+    have e1 : ((p * 3 * (p * (p + 1)) : Nat) : Int) = ((3 * (p * p * (p + 1)) : Nat) : Int) := by
+      push_cast; ring_uor
+    have e2 : ((3 * (p * p * (2 * (p + 1))) : Nat) : Int) = ((6 * (p * p * (p + 1)) : Nat) : Int) := by
+      push_cast; ring_uor
+    have n1 : p * 3 * (p * (p + 1)) = 3 * (p * p * (p + 1)) := by exact_mod_cast e1
+    have n2 : 3 * (p * p * (2 * (p + 1))) = 6 * (p * p * (p + 1)) := by exact_mod_cast e2
+    omega
+  exact_mod_cast key
+
 end UOR.Bridge.F1Square.Analysis
