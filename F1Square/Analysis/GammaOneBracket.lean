@@ -707,4 +707,63 @@ theorem corr1_le (j : Nat) :
     (⟨2 * (j : Int) + 9, 2 * (2 ^ (2 * j + 8) + 1)⟩ : Q)
   simp only [Qeq, mul]; push_cast; ring_uor
 
+/-- **`γ₁ ≤ hSeq1(N) + 1/(2N) + (2j+9)/(2(2^{2j+8}+1)) + 1/(j+1)`** — dyadic limit
+    (`Rgamma1_le_dyadic`), correction extracted (`gSeq_eq_hSeq1_add`), anchor telescoped to `N`
+    (`hSeq1_upper_const`), correction capped (`corr1_le`). -/
+theorem Rgamma1_le_hSeq1_up (N j : Nat) (hN : 1 ≤ N) (hNj : N ≤ 2 ^ (2 * j + 8)) :
+    Rle Rgamma1
+      (Radd (Radd (Radd (hSeq1 N) (ofQ (⟨1, 2 * N⟩ : Q) (Nat.mul_pos (by decide) hN)))
+          (ofQ (⟨2 * (j : Int) + 9, 2 * (2 ^ (2 * j + 8) + 1)⟩ : Q)
+            (Nat.mul_pos (by decide) (Nat.succ_pos _))))
+        (ofQ (⟨1, j + 1⟩ : Q) (Nat.succ_pos j))) := by
+  refine Rle_trans (Rgamma1_le_dyadic j) (Radd_le_add ?_ (Rle_refl _))
+  refine Rle_trans (Rle_of_Req (gSeq_eq_hSeq1_add (2 ^ (2 * j + 8)))) ?_
+  refine Radd_le_add ?_ (corr1_le j)
+  obtain ⟨k, hk⟩ := Nat.le.dest hNj
+  rw [← hk]
+  exact hSeq1_upper_const N hN k
+
+/-- The **rational upper bound on `hSeq1 N`** (depth `T`, denominator `D`): the upper `lnSum` bound
+    minus the lower `½log²` and `½log/(N+1)` bounds. -/
+def gBound1up (T D N : Nat) : Q :=
+  Qsub (Qsub (lnSumBound T D (N + 1)) (mul (⟨1, 2⟩ : Q) (mul (logLowBound T D N) (logLowBound T D N))))
+    (mul (⟨1, 2⟩ : Q) (mul (logLowBound T D N) (⟨1, N + 1⟩ : Q)))
+
+theorem gBound1up_den_pos (T D N : Nat) (hD : 0 < D) : 0 < (gBound1up T D N).den :=
+  Qsub_den_pos (Qsub_den_pos (lnSumBound_den_pos T D hD (N + 1))
+      (Qmul_den_pos (by decide) (Qmul_den_pos (logLowBound_den_pos T D hD N) (logLowBound_den_pos T D hD N))))
+    (Qmul_den_pos (by decide) (Qmul_den_pos (logLowBound_den_pos T D hD N) (Nat.succ_pos N)))
+
+set_option maxHeartbeats 8000000 in
+/-- **`hSeq1 N ≤ ofQ(gBound1up T D N)`** (`T ≤ 21`) — the upper `lnSum` bound minus the lower
+    `½log²`/`½log/(N+1)` bounds (`lnSum_le_lnSumBound`, `logN_ge_logLowBound`), collapsed to `gBound1up`. -/
+theorem hSeq1_le_gBound1up (T D N : Nat) (hD : 0 < D) (hT : T ≤ 21) :
+    Rle (hSeq1 N) (ofQ (gBound1up T D N) (gBound1up_den_pos T D N hD)) := by
+  have LLd := logLowBound_den_pos T D hD N
+  have LLnn : Rnonneg (ofQ (logLowBound T D N) LLd) := Rnonneg_ofQ LLd (logLowBound_num_nonneg T D N)
+  have hloglow := logN_ge_logLowBound T D hD hT N
+  have hlogsq_lo : Rle (ofQ (mul (⟨1, 2⟩ : Q) (mul (logLowBound T D N) (logLowBound T D N)))
+        (Qmul_den_pos (by decide) (Qmul_den_pos LLd LLd)))
+      (Rhalf (Rmul (logN (N + 1) (Nat.succ_pos N)) (logN (N + 1) (Nat.succ_pos N)))) := by
+    have hsq : Rle (ofQ (mul (logLowBound T D N) (logLowBound T D N)) (Qmul_den_pos LLd LLd))
+        (Rmul (logN (N + 1) (Nat.succ_pos N)) (logN (N + 1) (Nat.succ_pos N))) :=
+      Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ LLd LLd)))
+        (Rle_trans (Rmul_le_Rmul_right LLnn hloglow)
+          (Rmul_le_Rmul_left (Rnonneg_logN (N + 1) (Nat.succ_pos N)) hloglow))
+    exact Rle_trans (Rle_of_Req (Req_symm (Rhalf_ofQ (mul (logLowBound T D N) (logLowBound T D N))
+      (Qmul_den_pos LLd LLd)))) (Rhalf_le_Rhalf hsq)
+  have hlnover_lo : Rle (ofQ (mul (⟨1, 2⟩ : Q) (mul (logLowBound T D N) (⟨1, N + 1⟩ : Q)))
+        (Qmul_den_pos (by decide) (Qmul_den_pos LLd (Nat.succ_pos N))))
+      (Rhalf (lnOver (N + 1) (Nat.succ_pos N))) := by
+    have hov : Rle (ofQ (mul (logLowBound T D N) (⟨1, N + 1⟩ : Q)) (Qmul_den_pos LLd (Nat.succ_pos N)))
+        (lnOver (N + 1) (Nat.succ_pos N)) :=
+      Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ LLd (Nat.succ_pos N))))
+        (Rmul_le_Rmul_right (Rnonneg_ofQ (Nat.succ_pos N) (by show (0 : Int) ≤ 1; decide)) hloglow)
+    exact Rle_trans (Rle_of_Req (Req_symm (Rhalf_ofQ (mul (logLowBound T D N) (⟨1, N + 1⟩ : Q))
+      (Qmul_den_pos LLd (Nat.succ_pos N))))) (Rhalf_le_Rhalf hov)
+  unfold hSeq1 gSeq
+  refine Rle_trans (Rsub_le_sub (Rsub_le_sub (lnSum_le_lnSumBound T D hD (N + 1)) hlogsq_lo)
+    hlnover_lo) ?_
+  exact Rle_of_Req (Req_of_seq_Qeq (fun _ => Qeq_refl _))
+
 end UOR.Bridge.F1Square.Analysis
