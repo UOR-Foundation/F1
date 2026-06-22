@@ -998,4 +998,103 @@ theorem sStep3_decomp (p : Nat) (hp : 1 ≤ p) :
     (Rmul_congr (Req_refl _)
       (Req_symm (quartic_diff_identity (logN (p + 1) (Nat.succ_pos p)) (logN p hp))))
 
+-- ===========================================================================
+-- (C3) The cube-root bound `(ln p)³ ≤ 27·p`.  With `L = ln p ≥ 0`, `M = L/3`:
+-- `exp(M) ≥ 1+M ≥ M ≥ 0`, so `exp(L) = exp(M+M+M) = exp(M)³ ≥ M³`, hence
+-- `27·exp(L) ≥ 27·M³ = L³`; with `exp(ln p) = p` (`Rexp_logN`) this is `(ln p)³ ≤ 27p`.
+-- No `RrpowPos`: only `exp`-additivity and `1+t ≤ exp t`.
+-- ===========================================================================
+
+/-- **`(a·x)³ ≈ a³·x³`** (cube of a product splits) — both flatten to the factor multiset
+    `{a,x,a,x,a,x} = {a,a,a,x,x,x}`; matched by an explicit `List.Perm` (choice-free). -/
+theorem cube_prod_split (a x : Real) :
+    Req (Rmul (Rmul (Rmul a x) (Rmul a x)) (Rmul a x))
+        (Rmul (Rmul (Rmul a a) a) (Rmul (Rmul x x) x)) := by
+  -- LHS ≈ RprodL [a,x,a,x,a,x]
+  have hL : Req (Rmul (Rmul (Rmul a x) (Rmul a x)) (Rmul a x)) (RprodL [a, x, a, x, a, x]) :=
+    Req_trans (Rmul_congr (Rmul_pair_eq_RprodL4 a x a x) (Req_refl (Rmul a x)))
+      (Req_trans (Rmul_congr (Req_refl (RprodL [a, x, a, x])) (Rmul_eq_RprodL a x))
+        (Req_symm (RprodL_append [a, x, a, x] [a, x])))
+  -- RHS ≈ RprodL [a,a,a,x,x,x]
+  have hR : Req (Rmul (Rmul (Rmul a a) a) (Rmul (Rmul x x) x)) (RprodL [a, a, a, x, x, x]) :=
+    Req_trans (Rmul_congr (Rmul_eq_RprodL3 a a a) (Rmul_eq_RprodL3 x x x))
+      (Req_symm (RprodL_append [a, a, a] [x, x, x]))
+  -- [a,x,a,x,a,x] ~ [a,a,a,x,x,x]
+  refine Req_trans hL (Req_trans (RprodL_perm ?_) (Req_symm hR))
+  exact List.Perm.cons a
+    ((List.Perm.swap a x [x, a, x]).trans
+      (List.Perm.cons a
+        ((List.Perm.cons x (List.Perm.swap a x [x])).trans (List.Perm.swap a x [x, x]))))
+
+/-- **Cube monotonicity** `0 ≤ A ≤ B ⟹ A³ ≤ B³`. -/
+theorem cube_le_cube {A B : Real} (hA : Rnonneg A) (hB : Rnonneg B) (hAB : Rle A B) :
+    Rle (Rmul (Rmul A A) A) (Rmul (Rmul B B) B) := by
+  have hAA_le_BB : Rle (Rmul A A) (Rmul B B) :=
+    Rle_trans (Rmul_le_Rmul_left hA hAB) (Rmul_le_Rmul_right hB hAB)
+  exact Rle_trans (Rmul_le_Rmul_right hA hAA_le_BB)
+    (Rmul_le_Rmul_left (Rnonneg_Rmul hB hB) hAB)
+
+/-- **`L³ ≤ 27·exp(L)`** for `L ≥ 0`.  With `M = L/3`: `exp(M) ≥ 1+M ≥ M ≥ 0`, so
+    `exp(L) = exp(M+M+M) = exp(M)³ ≥ M³`, and `27·M³ = L³`. -/
+theorem cube_le_27_exp (L : Real) (hL : Rnonneg L) :
+    Rle (Rmul (Rmul L L) L) (Rmul (ofQ (⟨27, 1⟩ : Q) (by decide)) (RexpReal L)) := by
+  have hMnn : Rnonneg (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L) :=
+    Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide)) hL
+  have hEnn : Rnonneg (RexpReal (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)) := RexpReal_nonneg _
+  -- M ≤ 1+M ≤ exp(M)
+  have hMleE : Rle (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)
+      (RexpReal (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)) :=
+    Rle_trans (Rle_self_Radd_left Rnonneg_one) (RexpReal_ge_one_add_nonneg hMnn)
+  -- M³ ≤ E³
+  have hcube := cube_le_cube hMnn hEnn hMleE
+  -- M+M+M ≈ L
+  have hcoef : Req (Radd (Radd (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)
+        (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)) (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)) L := by
+    refine Req_trans (Radd_congr (Req_symm (Rmul_distrib_right _ _ L)) (Req_refl _)) ?_
+    refine Req_trans (Req_symm (Rmul_distrib_right _ _ L)) ?_
+    refine Req_trans (Rmul_congr ?_ (Req_refl L)) (Rone_mul L)
+    refine Req_trans (Radd_congr (Radd_ofQ_ofQ (by decide) (by decide)) (Req_refl _)) ?_
+    exact Req_trans (Radd_ofQ_ofQ (by decide) (by decide)) (ofQ_congr (by decide) (by decide) (by decide))
+  -- E³ ≈ exp(L)
+  have hE3 : Req (Rmul (Rmul (RexpReal (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L))
+          (RexpReal (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)))
+        (RexpReal (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L))) (RexpReal L) := by
+    refine Req_trans (Rmul_congr (Req_symm (RexpReal_add _ _)) (Req_refl _)) ?_
+    exact Req_trans (Req_symm (RexpReal_add _ _)) (RexpReal_congr hcoef)
+  -- L³ ≈ 27·M³
+  have hconst : Req (Rmul (ofQ (⟨27, 1⟩ : Q) (by decide))
+      (Rmul (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) (ofQ (⟨1, 3⟩ : Q) (by decide)))
+        (ofQ (⟨1, 3⟩ : Q) (by decide)))) one := by
+    refine Req_trans (Rmul_congr (Req_refl _)
+        (Req_trans (Rmul_congr (Rmul_ofQ_ofQ (by decide) (by decide)) (Req_refl _))
+          (Rmul_ofQ_ofQ (by decide) (by decide)))) ?_
+    exact Req_trans (Rmul_ofQ_ofQ (by decide) (by decide))
+      (ofQ_congr (by decide) (by decide) (by decide))
+  have hL3 : Req (Rmul (Rmul L L) L)
+      (Rmul (ofQ (⟨27, 1⟩ : Q) (by decide))
+        (Rmul (Rmul (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)
+            (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L)) (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) L))) := by
+    refine Req_symm ?_
+    refine Req_trans (Rmul_congr (Req_refl _) (cube_prod_split (ofQ (⟨1, 3⟩ : Q) (by decide)) L)) ?_
+    refine Req_trans (Req_symm (Rmul_assoc (ofQ (⟨27, 1⟩ : Q) (by decide))
+        (Rmul (Rmul (ofQ (⟨1, 3⟩ : Q) (by decide)) (ofQ (⟨1, 3⟩ : Q) (by decide)))
+          (ofQ (⟨1, 3⟩ : Q) (by decide))) (Rmul (Rmul L L) L))) ?_
+    exact Req_trans (Rmul_congr hconst (Req_refl _)) (Rone_mul _)
+  -- combine: L³ = 27·M³ ≤ 27·E³ = 27·exp(L)
+  refine Rle_trans (Rle_of_Req hL3) ?_
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) hcube) ?_
+  exact Rle_of_Req (Rmul_congr (Req_refl _) hE3)
+
+/-- **`(ln p)³ ≤ 27·p`** — the cube-root cap (`logCube p ≤ 27p`), via `cube_le_27_exp` and
+    `exp(ln p) = p` (`Rexp_logN`). -/
+theorem logCube_le_self27 (p : Nat) (hp : 1 ≤ p) :
+    Rle (logCube p hp) (ofQ (⟨27 * (p : Int), 1⟩ : Q) Nat.one_pos) := by
+  unfold logCube
+  refine Rle_trans (cube_le_27_exp (logN p hp) (Rnonneg_logN p hp)) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_congr (Req_refl _) (Rexp_logN p hp))) ?_
+  exact Rle_of_Req (Req_trans (Rmul_ofQ_ofQ (by decide) Nat.one_pos)
+    (ofQ_congr (Qmul_den_pos (by decide) Nat.one_pos) Nat.one_pos
+      (by show Qeq (mul (⟨27, 1⟩ : Q) (⟨(p : Int), 1⟩ : Q)) (⟨27 * (p : Int), 1⟩ : Q)
+          simp only [Qeq, mul])))
+
 end UOR.Bridge.F1Square.Analysis
