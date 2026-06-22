@@ -881,4 +881,95 @@ theorem decompForm3_eq_RsumL (a b u0 u1 : Real) :
     [RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, u1],
      Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b])])
 
+set_option maxHeartbeats 8000000 in
+/-- **`lhsForm3` expands to its 9 canonical monomials** in the order `[n2,n4,n6,n8,n1,n3,n5,n7,n9]`
+    (partA gives `n2,n4,n6,n8`; `½b³u0 = n1`; `−partC` gives `n3,n5,n7,n9`). -/
+theorem lhsForm3_eq_RsumL (a b u0 u1 : Real) :
+    Req (lhsForm3 a b u0 u1)
+      (RsumL [ RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u1],
+               RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, u1],
+               RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, Rsub a b, Rsub a b, u1],
+               RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, u1],
+               RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u0],
+               Rneg (RprodL [b, b, b, Rsub a b]),
+               Rneg (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b]),
+               Rneg (RprodL [b, Rsub a b, Rsub a b, Rsub a b]),
+               Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b]) ]) := by
+  -- ½b³u0 ≈ n1
+  have hb3u0 : Req (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rmul (Rmul (Rmul b b) b) u0))
+      (RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u0]) :=
+    Rmul_congr (Req_refl _) (Rmul_eq_RprodL4L b b b u0)
+  -- −partC ≈ [n3,n5,n7,n9]
+  have hnegC : Req
+      (Rneg (Rmul (ofQ (⟨1, 4⟩ : Q) (by decide))
+        (Rmul (Rsub a b)
+          (Radd (Radd (Radd (Rmul (Rmul a a) a) (Rmul (Rmul a a) b)) (Rmul (Rmul a b) b))
+            (Rmul (Rmul b b) b)))))
+      (Radd (Radd (Radd (Rneg (RprodL [b, b, b, Rsub a b]))
+            (Rneg (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b])))
+          (Rneg (RprodL [b, Rsub a b, Rsub a b, Rsub a b])))
+        (Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b]))) := by
+    refine Req_trans (Rneg_congr (partC3_eq a b)) ?_
+    refine Req_trans (Rneg_Radd (Radd (Radd (RprodL [b, b, b, Rsub a b])
+        (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b]))
+        (RprodL [b, Rsub a b, Rsub a b, Rsub a b]))
+      (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b])) ?_
+    refine Radd_congr ?_ (Req_refl _)
+    refine Req_trans (Rneg_Radd (Radd (RprodL [b, b, b, Rsub a b])
+        (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b]))
+      (RprodL [b, Rsub a b, Rsub a b, Rsub a b])) ?_
+    exact Radd_congr (Rneg_Radd (RprodL [b, b, b, Rsub a b])
+      (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b])) (Req_refl _)
+  -- assemble: lhsForm3 = Radd (Radd (½a³u1) (½b³u0)) (Rneg partC)
+  unfold lhsForm3
+  refine Req_trans (Radd_congr (Radd_congr (partA3_eq a b u1) hb3u0) hnegC) ?_
+  -- flatten Radd (Radd PA n1) NC to RsumL[n2,n4,n6,n8,n1,n3,n5,n7,n9]
+  -- PA = Radd(Radd(Radd n2 n4) n6) n8 → RsumL[n2,n4,n6,n8]
+  have hPA : Req (Radd (Radd (Radd (RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u1])
+        (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, u1]))
+      (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, Rsub a b, Rsub a b, u1]))
+      (RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, u1]))
+      (RsumL [RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u1],
+              RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, u1],
+              RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, Rsub a b, Rsub a b, u1],
+              RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, u1]]) :=
+    Req_trans (Radd_congr (Radd_eq_RsumL3 _ _ _) (RsumL_singleton _))
+      (Req_symm (RsumL_append
+        [RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u1],
+         RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, u1],
+         RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, Rsub a b, Rsub a b, u1]]
+        [RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, u1]]))
+  have hNC : Req (Radd (Radd (Radd (Rneg (RprodL [b, b, b, Rsub a b]))
+          (Rneg (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b])))
+        (Rneg (RprodL [b, Rsub a b, Rsub a b, Rsub a b])))
+      (Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b])))
+      (RsumL [Rneg (RprodL [b, b, b, Rsub a b]),
+              Rneg (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b]),
+              Rneg (RprodL [b, Rsub a b, Rsub a b, Rsub a b]),
+              Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b])]) :=
+    Req_trans (Radd_congr (Radd_eq_RsumL3 _ _ _) (RsumL_singleton _))
+      (Req_symm (RsumL_append
+        [Rneg (RprodL [b, b, b, Rsub a b]),
+         Rneg (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b]),
+         Rneg (RprodL [b, Rsub a b, Rsub a b, Rsub a b])]
+        [Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b])]))
+  -- Radd (Radd PA n1) NC → Radd (RsumL[n2,n4,n6,n8,n1]) (RsumL[n3,n5,n7,n9]) → RsumL all 9
+  refine Req_trans (Radd_congr (Req_trans (Radd_congr hPA (RsumL_singleton _))
+    (Req_symm (RsumL_append
+      [RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u1],
+       RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, u1],
+       RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, Rsub a b, Rsub a b, u1],
+       RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, u1]]
+      [RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u0]]))) hNC) ?_
+  exact Req_symm (RsumL_append
+    [RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u1],
+     RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, u1],
+     RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, Rsub a b, Rsub a b, u1],
+     RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, u1],
+     RprodL [ofQ (⟨1, 2⟩ : Q) (by decide), b, b, b, u0]]
+    [Rneg (RprodL [b, b, b, Rsub a b]),
+     Rneg (RprodL [ofQ (⟨3, 2⟩ : Q) (by decide), b, b, Rsub a b, Rsub a b]),
+     Rneg (RprodL [b, Rsub a b, Rsub a b, Rsub a b]),
+     Rneg (RprodL [ofQ (⟨1, 4⟩ : Q) (by decide), Rsub a b, Rsub a b, Rsub a b, Rsub a b])])
+
 end UOR.Bridge.F1Square.Analysis
