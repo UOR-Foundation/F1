@@ -1325,4 +1325,39 @@ theorem sStep3_le (p : Nat) (hp : 1 ≤ p) :
   refine Req_trans (Radd_congr (Radd_ofQ_same 27 3 (p * (p + 1)) hD) (Req_refl _)) ?_
   exact Radd_ofQ_same 30 1 (p * (p + 1)) hD
 
+-- ===========================================================================
+-- (C5) Telescoping `Σ sStep3 ≤ 31/(N+1)` → `γ₃ ≤ hSeq3(N) + 31/(N+1)`, then a rational ceiling.
+-- ===========================================================================
+
+/-- **Telescoping tail (upper)**: `hSeq3(N+k) ≤ hSeq3(N) + (31/(N+1) − 31/(N+k+1))` (`N ≥ 1`). -/
+theorem hSeq3_tele (N : Nat) (hN : 1 ≤ N) : ∀ k,
+    Rle (hSeq3 (N + k))
+        (Radd (hSeq3 N) (Rsub (ofQ (⟨31, N + 1⟩ : Q) (Nat.succ_pos N))
+            (ofQ (⟨31, N + k + 1⟩ : Q) (Nat.succ_pos (N + k))))) := by
+  intro k
+  induction k with
+  | zero =>
+    refine Rle_of_Req ?_
+    exact Req_trans (Req_symm (Radd_zero (hSeq3 N)))
+      (Radd_congr (Req_refl _) (Req_symm (Radd_neg (ofQ (⟨31, N + 1⟩ : Q) (Nat.succ_pos N)))))
+  | succ k ih =>
+    refine Rle_trans (Rle_of_Req (sub_add_cancel_real (hSeq3 (N + k + 1)) (hSeq3 (N + k)))) ?_
+    refine Rle_trans (Rle_of_Req (Radd_congr (Req_refl _) (hSeq3_step_eq (N + k)))) ?_
+    refine Rle_trans (Radd_le_add ih (sStep3_le (N + k + 1) (Nat.succ_pos (N + k)))) ?_
+    refine Rle_of_Req (Req_trans (Radd_assoc (hSeq3 N) _ _) ?_)
+    refine Radd_congr (Req_refl (hSeq3 N)) ?_
+    apply Req_of_seq_Qeq; intro _
+    show Qeq (add (add (⟨31, N + 1⟩ : Q) (neg (⟨31, N + k + 1⟩ : Q)))
+        (⟨31, (N + k + 1) * ((N + k + 1) + 1)⟩ : Q))
+      (add (⟨31, N + 1⟩ : Q) (neg (⟨31, N + (k + 1) + 1⟩ : Q)))
+    simp only [Qeq, add, neg, mul]
+    push_cast
+    ring_uor
+
+/-- **`hSeq3(N+k) ≤ hSeq3(N) + 31/(N+1)`** (uniform in `k`, `N ≥ 1`) — drop the nonneg `−31/(N+k+1)`. -/
+theorem hSeq3_upper_const (N : Nat) (hN : 1 ≤ N) (k : Nat) :
+    Rle (hSeq3 (N + k)) (Radd (hSeq3 N) (ofQ (⟨31, N + 1⟩ : Q) (Nat.succ_pos N))) := by
+  refine Rle_trans (hSeq3_tele N hN k) (Radd_le_add (Rle_refl _) ?_)
+  exact Rsub_le_self _ (Rnonneg_ofQ (Nat.succ_pos (N + k)) (by show (0 : Int) ≤ 31; decide))
+
 end UOR.Bridge.F1Square.Analysis
