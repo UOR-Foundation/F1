@@ -2659,6 +2659,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.partC3_eq
 #print axioms Analysis.lhsForm3_eq_RsumL
 #print axioms Analysis.decomp_generic3
+#print axioms Analysis.sStep3_decomp
 #print axioms Analysis.decompForm3_eq_RsumL
 
 -- v0.21.0 stage G, brick S (the substrate): the finite-truncation PSD predicate `WeilPSD`,

@@ -981,4 +981,21 @@ theorem decomp_generic3 (a b u0 u1 : Real) :
   refine Req_trans (lhsForm3_eq_RsumL a b u0 u1)
     (Req_trans (RsumL_perm ?_) (Req_symm (decompForm3_eq_RsumL a b u0 u1)))
   exact (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))).trans ((List.Perm.cons _ (List.Perm.swap _ _ _)).trans ((List.Perm.swap _ _ _).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))))).trans ((List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _))))).trans (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.cons _ (List.Perm.swap _ _ _)))))))))))))))
+
+set_option maxHeartbeats 8000000 in
+/-- **`sStep3 p ≈ decompForm3`** at the log/reciprocal atoms (`a = ln(p+1)`, `b = ln p`, `u0 = 1/p`,
+    `u1 = 1/(p+1)`): `sStep3` matches `lhsForm3` on the nose except the quartic difference
+    `(ln(p+1))⁴ − (ln p)⁴`, which `quartic_diff_identity` rewrites to `(a−b)(a³+a²b+ab²+b³)`; then
+    `decomp_generic3`. -/
+theorem sStep3_decomp (p : Nat) (hp : 1 ≤ p) :
+    Req (sStep3 p hp)
+      (decompForm3 (logN (p + 1) (Nat.succ_pos p)) (logN p hp)
+        (ofQ (⟨1, p⟩ : Q) (by show 0 < p; omega)) (ofQ (⟨1, p + 1⟩ : Q) (by show 0 < p + 1; omega))) := by
+  refine Req_trans ?_ (decomp_generic3 (logN (p + 1) (Nat.succ_pos p)) (logN p hp)
+    (ofQ (⟨1, p⟩ : Q) (by show 0 < p; omega)) (ofQ (⟨1, p + 1⟩ : Q) (by show 0 < p + 1; omega)))
+  unfold sStep3 lhsForm3 lnCubeOver logCube logQuartic
+  exact Rsub_congr (Req_refl _)
+    (Rmul_congr (Req_refl _)
+      (Req_symm (quartic_diff_identity (logN (p + 1) (Nat.succ_pos p)) (logN p hp))))
+
 end UOR.Bridge.F1Square.Analysis
