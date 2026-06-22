@@ -401,7 +401,7 @@ theorem Rgamma1_ge_neg0762 : Rle (ofQ (⟨-762, 10000⟩ : Q) (by decide)) Rgamm
 attribute [local irreducible] logN
 
 /-- `(x+y) − y ≈ x`. -/
-theorem Radd_sub_cancel (x y : Real) : Req (Rsub (Radd x y) y) x :=
+theorem Radd_sub_self_cancel (x y : Real) : Req (Rsub (Radd x y) y) x :=
   Req_trans (Radd_assoc x y (Rneg y)) (Req_trans (Radd_congr (Req_refl x) (Radd_neg y)) (Radd_zero x))
 
 /-- `n + 1 ≤ 2ⁿ` (replaces the renamed `Nat.lt_two_pow`). -/
@@ -414,7 +414,7 @@ theorem nat_succ_le_two_pow : ∀ n : Nat, n + 1 ≤ 2 ^ n
     omega
 
 /-- `x ≤ y ⟹ x − y ≤ 0`. -/
-theorem Rle_sub_zero {x y : Real} (h : Rle x y) : Rle (Rsub x y) zero := by
+theorem Rsub_nonpos_of_le {x y : Real} (h : Rle x y) : Rle (Rsub x y) zero := by
   refine Rle_of_Rnonneg_Rsub (Rnonneg_congr ?_ (Rnonneg_Rsub_of_Rle h))
   exact Req_symm (Req_trans (Req_trans (Radd_comm zero (Rneg (Rsub x y))) (Radd_zero _))
     (Rneg_Rsub_swap x y))
@@ -459,7 +459,7 @@ theorem WStep_le_Dsq_gen (a b u0 u1 : Real) (hbnn : Rnonneg b) (hδnn : Rnonneg 
   have hWStep_eq : Req (Rsub (Radd (Rmul a u1) (Rmul b u0)) (Rsub (Rmul a a) (Rmul b b)))
       (Rsub (Rsub (Radd (Rmul a u1) (Rmul b u0)) (Rmul b (Radd (Rsub a b) (Rsub a b))))
         (Rmul (Rsub a b) (Rsub a b))) :=
-    Req_symm (Req_trans (Rsub_congr (Req_symm hWid) (Req_refl _)) (Radd_sub_cancel _ _))
+    Req_symm (Req_trans (Rsub_congr (Req_symm hWid) (Req_refl _)) (Radd_sub_self_cancel _ _))
   -- Z ≈ b·((u0+u1)−2δ) + δ·u1
   have hZeq : Req (Rsub (Radd (Rmul a u1) (Rmul b u0)) (Rmul b (Radd (Rsub a b) (Rsub a b))))
       (Radd (Rmul b (Rsub (Radd u0 u1) (Radd (Rsub a b) (Rsub a b)))) (Rmul (Rsub a b) u1)) := by
@@ -667,7 +667,7 @@ theorem Rgamma1_le_dyadic (j : Nat) :
     exact_mod_cast this
   refine Rle_trans (Rle_of_Req (Req_symm (Rsub_split Rgamma1 (gSeqDyadic (j + k))
     (Radd (gSeqDyadic j) (ofQ (⟨1, j + 1⟩ : Q) (Nat.succ_pos j)))))) ?_
-  exact Rle_trans (Radd_le_add htend (Rle_sub_zero hanchor)) (Rle_of_Req (Radd_zero _))
+  exact Rle_trans (Radd_le_add htend (Rsub_nonpos_of_le hanchor)) (Rle_of_Req (Radd_zero _))
 
 /-- **`gSeq M = hSeq1 M + ½·(ln(M+1))/(M+1)`** — the accelerator correction made explicit. -/
 theorem gSeq_eq_hSeq1_add (M : Nat) :
