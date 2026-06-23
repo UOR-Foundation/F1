@@ -130,4 +130,24 @@ theorem witnessSum_hadFactor_eq_liRatio {gs zs : Complex} (H : HadamardXi Cone g
   witnessSum_mapidx_congr _ _
     (fun j => hadFactor_one_eq_liRatio (H.ρ j) (H.kwit j) (H.hwit j)) n (List.range M)
 
+/-- **Li-positivity from the Hadamard product, under RH** — if every zero `ρⱼ` of the Hadamard
+    product lies on the critical line, then the Li witness sum over its `s = 1` factors is `≥ 0` for
+    every partial range `M` and order `n`.
+
+    On the line each factor `hadFactor 1 ρⱼ = liRatio ρⱼ` has unit modulus
+    (`cnormSq_liRatio_on_line`), hence lies in the closed unit disk, so `witnessSum_nonneg` applies.
+    This is the Hadamard-product-side statement of `λₙ ≥ 0` under RH — the same positivity the
+    abstract `BLZeroSum` pipeline derives, now anchored to the genuinely-built product object. -/
+theorem hadamard_witnessSum_nonneg_on_line {gs zs : Complex} (H : HadamardXi Cone gs zs)
+    (hline : ∀ j, OnCriticalLine (H.ρ j)) (M n : Nat) :
+    Rnonneg (witnessSum ((List.range M).map
+        (fun j => hadFactor Cone (H.ρ j) (H.kwit j) (H.hwit j))) n) := by
+  refine witnessSum_nonneg _ n ?_
+  intro w hw
+  rcases List.mem_map.1 hw with ⟨j, _hj, hfj⟩
+  rw [← hfj]
+  exact Rle_of_Req
+    (Req_trans (cnormSq_congr (hadFactor_one_eq_liRatio (H.ρ j) (H.kwit j) (H.hwit j)))
+      (cnormSq_liRatio_on_line (H.ρ j) (H.kwit j) (H.hwit j) (hline j)))
+
 end UOR.Bridge.F1Square.Analysis
