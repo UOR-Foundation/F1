@@ -20,8 +20,17 @@ import F1Square.Analysis.ComplexArgUpper
 import F1Square.Analysis.ComplexArgLower
 import F1Square.Analysis.ComplexDigammaConj
 import F1Square.Analysis.ComplexPowGen
+import F1Square.Analysis.ComplexLimit
 
 namespace UOR.Bridge.F1Square.Analysis
+
+/-- **Conjugate of a limit = limit of conjugates**: `conj(Clim X) = Clim (conj ∘ X)`. Real parts are
+    fixed (`Cconj` keeps `re`); imaginary parts negate (`Rlim_neg`). The bridge for conjugating any
+    `Rlim`-built complex object (`Ceta`, hence `CzetaStrip`, toward the ζ-side of `Cxi_conj`). -/
+theorem Clim_Cconj (X : Nat → Complex) (h : CReg X) (hc : CReg (fun n => Cconj (X n))) :
+    Ceq (Clim (fun n => Cconj (X n)) hc) (Cconj (Clim X h)) :=
+  ⟨Rlim_congr (fun n => (X n).re) (fun n => (X n).re) hc.1 h.1 (fun _ => Req_refl _),
+   Rlim_neg (fun n => (X n).im) h.2 hc.2⟩
 
 /-- **`Clog(z̄) = conj(Clog z)`** on the principal sector: imaginary part `arg(z̄) = −arg(z)`
     (`Carg_conj`); real part `½·log|z̄|² = ½·log|z|²` carried as the `RlogPos`-congruence seam `hre`
