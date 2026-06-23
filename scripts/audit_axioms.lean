@@ -3365,3 +3365,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.thetaArg_mono
 #print axioms Analysis.thetaTerm_antitone
 #print axioms Analysis.thetaFn_antitone
+#print axioms Analysis.thetaTerm_congr
+#print axioms Analysis.genSumTheta_congr
+#print axioms Analysis.thetaFn_congr

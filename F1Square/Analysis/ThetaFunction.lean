@@ -23,6 +23,7 @@ import F1Square.Analysis.RealPow
 import F1Square.Analysis.Pi
 import F1Square.Analysis.ComplexDigamma
 import F1Square.Analysis.ExpRealMono
+import F1Square.Analysis.RlimProps
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -156,5 +157,22 @@ theorem thetaFn_antitone {t₁ t₂ : Real} (ht₁ : Rle one t₁) (ht₂ : Rle 
     Rle (thetaFn t₂ ht₂) (thetaFn t₁ ht₁) :=
   Rlim_le_Rlim (thetaTerm_RReg t₂ ht₂) (thetaTerm_RReg t₁ ht₁)
     (fun j => genSum_le (fun m => thetaTerm_antitone h m) (digammaMidx (⟨1, 1⟩ : Q) j))
+
+/-- The `m`-th theta term respects `≈` in `t`. -/
+theorem thetaTerm_congr {t₁ t₂ : Real} (h : Req t₁ t₂) (m : Nat) :
+    Req (thetaTerm t₁ m) (thetaTerm t₂ m) :=
+  RexpReal_congr (Rneg_congr (Rmul_congr (Req_refl _) (Rmul_congr (Req_refl _) h)))
+
+/-- The partial sum `Σ_{n<N} T n` respects pointwise `≈` of the summands. -/
+theorem genSumTheta_congr {T U : Nat → Real} (h : ∀ m, Req (T m) (U m)) :
+    ∀ N, Req (genSum T N) (genSum U N)
+  | 0 => Req_refl _
+  | (N + 1) => Radd_congr (genSumTheta_congr h N) (h N)
+
+/-- **The Jacobi theta function respects `≈` in `t`** (with proof-irrelevant domain witnesses). -/
+theorem thetaFn_congr {t₁ t₂ : Real} (ht₁ : Rle one t₁) (ht₂ : Rle one t₂) (h : Req t₁ t₂) :
+    Req (thetaFn t₁ ht₁) (thetaFn t₂ ht₂) :=
+  Rlim_congr _ _ (thetaTerm_RReg t₁ ht₁) (thetaTerm_RReg t₂ ht₂)
+    (fun j => genSumTheta_congr (fun m => thetaTerm_congr h m) (digammaMidx (⟨1, 1⟩ : Q) j))
 
 end UOR.Bridge.F1Square.Analysis
