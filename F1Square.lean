@@ -106,6 +106,7 @@ import F1Square.Analysis.ThetaFunction
 import F1Square.Analysis.RiemannSum
 import F1Square.Analysis.RabsLemmas
 import F1Square.Analysis.RiemannConv
+import F1Square.Analysis.DyadicIntegral
 import F1Square.Analysis.Complete
 import F1Square.Analysis.Exp
 import F1Square.Analysis.ExpGen

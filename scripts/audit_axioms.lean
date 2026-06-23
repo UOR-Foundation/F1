@@ -3393,3 +3393,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.dyadic_pair_spacing
 #print axioms Analysis.dyadic_pair_lip
 #print axioms Analysis.riemannSum_refine
+#print axioms Analysis.two_mul_env
+#print axioms Analysis.qmul_den_anti
+#print axioms Analysis.dyadicTerm_bound
+#print axioms Analysis.dyadicSum_RReg
