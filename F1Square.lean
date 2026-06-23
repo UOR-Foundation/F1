@@ -100,6 +100,7 @@ import F1Square.Analysis.ComplexZetaConj
 import F1Square.Analysis.ComplexGammaConj
 import F1Square.Analysis.ComplexXiConjFull
 import F1Square.Analysis.ComplexXiFE
+import F1Square.Analysis.ComplexXiHadamard
 import F1Square.Analysis.Complete
 import F1Square.Analysis.Exp
 import F1Square.Analysis.ExpGen

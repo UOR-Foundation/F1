@@ -3339,3 +3339,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CxiPoly_congr
 #print axioms Analysis.Cxi_congr
 #print axioms Analysis.Cxi_real_on_critical_line
+#print axioms Analysis.hadFactor_one_eq_liRatio
+#print axioms Analysis.hadamard_factor_one_is_cayley
