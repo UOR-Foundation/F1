@@ -145,6 +145,22 @@ theorem riemannIntegral_const (c : Real) :
   refine Req_trans (Radd_congr (Req_refl _) (Rlim_zero _ _ hz)) ?_
   exact Req_trans (Radd_zero _) (riemannSum_const c (2 ^ 0 - 1))
 
+/-- **`∫₀¹ c = c`, general in the Lipschitz datum** — the constant integral is `c` for *any* valid
+    `(L, hlip, hfc)` (the value depends only on `c`). Needed when the integrand is constant but its
+    modulus is fixed by an outer construction (e.g. the affine pullback's `L·w`). -/
+theorem riemannIntegral_const_gen (c : Real) {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlip : ∀ x y, Rle (Rabs (Rsub c c)) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfc : ∀ x y, Req x y → Req c c) :
+    Req (riemannIntegral (f := fun _ => c) hLd hLn hlip hfc) c := by
+  have hz : ∀ j, Req (genSum (dyadicTerm (fun _ => c)) (digammaMidx L j)) zero := by
+    intro j
+    refine Req_trans (genSum_telescope (fun _ => c) (digammaMidx L j)) ?_
+    exact Req_trans
+      (Rsub_congr (riemannSum_const c (2 ^ digammaMidx L j - 1)) (riemannSum_const c (2 ^ 0 - 1)))
+      (Radd_neg c)
+  refine Req_trans (Radd_congr (Req_refl _) (Rlim_zero _ _ hz)) ?_
+  exact Req_trans (Radd_zero _) (riemannSum_const c (2 ^ 0 - 1))
+
 -- ===========================================================================
 -- Integral as the genuine limit of the dyadic Riemann sums, and positivity.
 -- ===========================================================================

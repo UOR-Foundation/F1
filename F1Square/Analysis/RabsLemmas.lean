@@ -49,6 +49,18 @@ theorem Rabs_ofQ_nonneg {q : Q} (hq : 0 < q.den) (hn : 0 ≤ q.num) :
     Req (Rabs (ofQ q hq)) (ofQ q hq) :=
   Req_of_seq_Qeq (fun _ => Qabs_of_nonneg hn)
 
+/-- **`|q·z| = q·|z|` for a non-negative rational scalar** `q` (embedded). The `Rmul` reindex
+    `Ridx (ofQ q) z` and `Ridx (ofQ q) (Rabs z)` coincide (`xBound (Rabs z) = xBound z`), so this is
+    pointwise: `|q·z_r| = |q|·|z_r| = q·|z_r|` (`Qabs_mul`, `Qabs_of_nonneg`). The scalar law the
+    affine change of variables (general-interval integral) needs. -/
+theorem Rabs_Rmul_ofQ_nonneg {q : Q} (hq : 0 < q.den) (hn : 0 ≤ q.num) (z : Real) :
+    Req (Rabs (Rmul (ofQ q hq) z)) (Rmul (ofQ q hq) (Rabs z)) :=
+  Req_of_seq_Qeq (fun n => by
+    show Qeq (Qabs (mul q (z.seq (Ridx (ofQ q hq) z n))))
+             (mul q (Qabs (z.seq (Ridx (ofQ q hq) (Rabs z) n))))
+    rw [Qabs_mul]
+    exact Qmul_congr (Qabs_of_nonneg hn) (Qeq_refl _))
+
 /-- **The finite-sum triangle inequality** `|Σ_{i<N} F i| ≤ Σ_{i<N} |F i|`. -/
 theorem RsumN_Rabs_le (F : Nat → Real) :
     ∀ N, Rle (Rabs (RsumN F N)) (RsumN (fun i => Rabs (F i)) N)
