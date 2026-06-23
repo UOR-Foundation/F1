@@ -93,4 +93,21 @@ theorem riemannSum_add (f g : Real → Real) (N : Nat) :
         (fun i => g (ofQ (⟨(i : Int), N + 1⟩ : Q) (Nat.succ_pos N))) (N + 1)))
     (Rmul_distrib _ _ _)
 
+/-- **Even–odd sum split** `Σ_{i<2N} F(i) = Σ_{j<N} F(2j) + Σ_{j<N} F(2j+1)` — the combinatorial heart
+    of dyadic Riemann-sum refinement (a `2N`-point sum reindexed as `N` even/odd pairs). Reusable. -/
+theorem RsumN_split2 (F : Nat → Real) : ∀ N,
+    Req (RsumN F (2 * N))
+      (Radd (RsumN (fun j => F (2 * j)) N) (RsumN (fun j => F (2 * j + 1)) N))
+  | 0 => Req_symm (Radd_zero zero)
+  | (N + 1) => by
+      have h2 : 2 * (N + 1) = 2 * N + 1 + 1 := by omega
+      rw [h2]
+      refine Req_trans (Radd_congr (Radd_congr (RsumN_split2 F N) (Req_refl (F (2 * N))))
+        (Req_refl (F (2 * N + 1)))) ?_
+      exact Req_trans
+        (Radd_assoc (Radd (RsumN (fun j => F (2 * j)) N) (RsumN (fun j => F (2 * j + 1)) N))
+          (F (2 * N)) (F (2 * N + 1)))
+        (Radd_swap (RsumN (fun j => F (2 * j)) N) (RsumN (fun j => F (2 * j + 1)) N)
+          (F (2 * N)) (F (2 * N + 1)))
+
 end UOR.Bridge.F1Square.Analysis

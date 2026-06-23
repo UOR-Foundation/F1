@@ -3380,3 +3380,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannSum_le
 #print axioms Analysis.riemannSum_nonneg
 #print axioms Analysis.riemannSum_add
+#print axioms Analysis.RsumN_split2
