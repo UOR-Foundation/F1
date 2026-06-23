@@ -3417,3 +3417,5 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannIntegralI_const
 #print axioms Analysis.riemannIntegralI_nonneg
 #print axioms Analysis.riemannIntegralI_le
+#print axioms Analysis.const_lip0
+#print axioms Analysis.Cintegral_const

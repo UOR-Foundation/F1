@@ -60,7 +60,7 @@ def riemannIntegralI {f : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ 
       (fun x y h => hfc _ _ (affineMap_congr a w ha hw h)))
 
 /-- The constant integrand's Lipschitz witness at the zero modulus. -/
-private theorem const_lip0 (c : Real) : ∀ x y,
+theorem const_lip0 (c : Real) : ∀ x y,
     Rle (Rabs (Rsub c c)) (Rmul (ofQ (⟨0, 1⟩ : Q) (by decide)) (Rabs (Rsub x y))) := by
   intro x y
   have hL : Req (Rabs (Rsub c c)) zero := Req_trans (Rabs_congr (Radd_neg c)) Rabs_zero
