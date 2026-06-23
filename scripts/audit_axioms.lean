@@ -3353,3 +3353,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CprodN_const_one
 #print axioms Analysis.hadamard_prod_zero
 #print axioms Analysis.RexpReal_le_of_le
+#print axioms Analysis.one_le_pi_mul
+#print axioms Analysis.thetaArg_lower
+#print axioms Analysis.thetaTerm_le
+#print axioms Analysis.thetaTerm_RReg

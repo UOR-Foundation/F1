@@ -1,0 +1,96 @@
+/-
+F1 square — Track 1, item 3 substrate: **the Jacobi theta function** `ψ(t) = Σ_{n≥1} e^{−πn²t}`,
+as a genuine constructive real on its natural domain `t ≥ 1`.
+
+This is the object the document names as the constructive substrate for the functional-equation seam
+`CompletedZetaFE` (item 3): the Riemann FE is the Mellin transform of the theta modular transformation
+`θ(1/t) = √t·θ(t)`. Here we build the function and its **convergence** from first principles, following
+the established UOR precedent (term sequence → `RReg` regularity via a rational term bound → `Rlim`),
+exactly as `Ceta`/`Czeta`/`CDigamma` were built.
+
+The convergence is geometric and sidesteps the `Rpi²` `whnf` barrier entirely: for `t ≥ 1` the `m`-th
+term `e^{−(m+1)²πt}` has exponent `(m+1)²·π·t ≥ (m+1)·m` (since `π·t ≥ 1`), so the exp-decay bound
+`e^{−θ} ≤ 1/(1+τ)` (`Rexp_neg_le_ratio`, with `τ = (m+1)m`) gives `e^{−(m+1)²πt} ≤ 1/((m+1)m+1) ≤
+1/((m+1)m)` — a *rational* `K/((m+1)m)` bound (`K = 1`) that feeds the generic convergence engine
+`genSum_RReg`. `π` enters only as an opaque atom through `π·t ≥ 1` (`Rpi_lower_three`); no `Rpi²`.
+
+The modular transformation itself (Poisson summation) remains the labelled classical seam.
+
+Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited by `scripts/honesty_audit.sh`.
+-/
+
+import F1Square.Analysis.RealPow
+import F1Square.Analysis.Pi
+import F1Square.Analysis.ComplexDigamma
+
+namespace UOR.Bridge.F1Square.Analysis
+
+/-- The exponent `(m+1)²·π·t` of the `m`-th theta term (so the sum ranges over `n = m+1 ≥ 1`). -/
+def thetaArg (t : Real) (m : Nat) : Real :=
+  Rmul (RofNat ((m + 1) * (m + 1))) (Rmul Rpi t)
+
+/-- **The `m`-th Jacobi theta term** `e^{−(m+1)²πt}` (the `n = m+1` term of `Σ_{n≥1} e^{−πn²t}`). -/
+def thetaTerm (t : Real) (m : Nat) : Real := RexpReal (Rneg (thetaArg t m))
+
+/-- `π·t ≥ 1` for `t ≥ 1` (`π ≥ 3` is `Rpi_lower_three`, `t ≥ 1` is the hypothesis). -/
+theorem one_le_pi_mul (t : Real) (ht : Rle one t) : Rle one (Rmul Rpi t) := by
+  have hpi3 : Rle (ofQ (⟨3, 1⟩ : Q) (by decide)) Rpi := Rpi_lower_three
+  have hpi_nn : Rnonneg Rpi :=
+    Rnonneg_congr (Rsub_zero Rpi)
+      (Rnonneg_Rsub_of_Rle (Rle_trans (Rle_ofQ_ofQ (by decide) (by decide) (by decide)) hpi3))
+  have h1 : Rle Rpi (Rmul Rpi t) :=
+    Rle_trans (Rle_of_Req (Req_symm (Rmul_one Rpi))) (Rmul_le_Rmul_left hpi_nn ht)
+  exact Rle_trans (Rle_trans (Rle_ofQ_ofQ (by decide) (by decide) (by decide)) hpi3) h1
+
+/-- **The exponent lower bound** `(m+1)²·π·t ≥ (m+1)·m` (for `t ≥ 1`): drop `π·t ≥ 1`, then
+    `(m+1)² ≥ (m+1)m`. The `τ` for the exp-decay bound. -/
+theorem thetaArg_lower (t : Real) (ht : Rle one t) (m : Nat) :
+    Rle (ofQ (⟨((m + 1) * m : Nat), 1⟩ : Q) Nat.one_pos) (thetaArg t m) := by
+  have hstep : Rle (RofNat ((m + 1) * (m + 1))) (thetaArg t m) :=
+    Rle_trans (Rle_of_Req (Req_symm (Rmul_one (RofNat ((m + 1) * (m + 1))))))
+      (Rmul_le_Rmul_left (Rnonneg_ofQ Nat.one_pos (Int.ofNat_nonneg _)) (one_le_pi_mul t ht))
+  refine Rle_trans ?_ hstep
+  refine Rle_ofQ_ofQ Nat.one_pos Nat.one_pos ?_
+  have hI : (↑((m + 1) * m) : Int) ≤ ↑((m + 1) * (m + 1)) := by
+    exact_mod_cast Nat.mul_le_mul (Nat.le_refl (m + 1)) (Nat.le_succ m)
+  exact Int.mul_le_mul_of_nonneg_right hI (by exact_mod_cast Nat.zero_le 1)
+
+/-- **The rational term bound** `e^{−(m+1)²πt} ≤ 1/((m+1)m)` (for `t ≥ 1`, `m ≥ 1`), in the exact form
+    `genSum_RReg` consumes (`K = 1`). From `Rexp_neg_le_ratio` with `τ = (m+1)m`:
+    `e^{−θ} ≤ 1/(1+(m+1)m) ≤ 1/((m+1)m)`. -/
+theorem thetaTerm_le (t : Real) (ht : Rle one t) (m : Nat) (hm : 1 ≤ m) :
+    Rle (thetaTerm t m)
+      (ofQ (mul (⟨1, 1⟩ : Q) (⟨1, (m + 1) * m⟩ : Q))
+        (Qmul_den_pos (by decide) (digamma_succ_mul_pos hm))) := by
+  have hmulpos : 0 < ((m + 1) * m : Nat) := Nat.mul_pos (Nat.succ_pos m) (by omega)
+  have hτn : 0 < (⟨((m + 1) * m : Nat), 1⟩ : Q).num := by
+    show (0 : Int) < ((m + 1) * m : Nat); exact_mod_cast hmulpos
+  have hp : (0 : Int) ≤ ((m + 1) * m : Nat) := Int.ofNat_nonneg _
+  have hd : 0 < (add (⟨1, 1⟩ : Q) (⟨((m + 1) * m : Nat), 1⟩ : Q)).num := by
+    show (0 : Int) < 1 * ((1 : Nat) : Int) + ((m + 1) * m : Nat) * ((1 : Nat) : Int)
+    omega
+  refine Rle_trans (Rexp_neg_le_ratio hτn Nat.one_pos (thetaArg_lower t ht m)) ?_
+  refine Rle_ofQ_ofQ (Qinv_den_pos hd) (Qmul_den_pos (by decide) (digamma_succ_mul_pos hm)) ?_
+  simp only [Qle, Qinv, add, mul]
+  omega
+
+/-- **The theta terms are regular**: the `K`-reindexed partial sums of `thetaTerm t` form a regular
+    sequence (for `t ≥ 1`), via `genSum_RReg` with the rational bound `thetaTerm_le` (`K = 1`). The
+    lower bound `−1/((m+1)m) ≤ e^{−…}` is trivial since the term is `≥ 0`. -/
+theorem thetaTerm_RReg (t : Real) (ht : Rle one t) :
+    RReg (fun j => genSum (thetaTerm t) (digammaMidx (⟨1, 1⟩ : Q) j)) :=
+  genSum_RReg (thetaTerm t) (by decide) (by decide) (fun m hm =>
+    ⟨Rle_trans
+        (Rle_trans (Rle_Rneg (Rle_zero_of_Rnonneg
+          (Rnonneg_ofQ (Qmul_den_pos (by decide) (digamma_succ_mul_pos hm))
+            (show (0 : Int) ≤ 1 * 1 by decide))))
+          (Rle_of_Req Rneg_zero))
+        (Rle_zero_of_Rnonneg (RexpReal_nonneg _)),
+      thetaTerm_le t ht m hm⟩)
+
+/-- **The Jacobi theta function** `ψ(t) = Σ_{n≥1} e^{−πn²t}` on `t ≥ 1`, a genuine constructive real:
+    the limit of the regular reindexed partial sums (`thetaTerm_RReg`). -/
+def thetaFn (t : Real) (ht : Rle one t) : Real :=
+  Rlim (fun j => genSum (thetaTerm t) (digammaMidx (⟨1, 1⟩ : Q) j)) (thetaTerm_RReg t ht)
+
+end UOR.Bridge.F1Square.Analysis
