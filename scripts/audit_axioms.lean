@@ -3373,3 +3373,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.genSum_boundTele
 #print axioms Analysis.Rlim_le_ofQ
 #print axioms Analysis.thetaFn_le_one
+#print axioms Analysis.riemannSum_congr
+#print axioms Analysis.RsumN_const
+#print axioms Analysis.riemannSum_const

@@ -103,6 +103,7 @@ import F1Square.Analysis.ComplexXiFE
 import F1Square.Analysis.ComplexXiHadamard
 import F1Square.Analysis.ExpRealMono
 import F1Square.Analysis.ThetaFunction
+import F1Square.Analysis.RiemannSum
 import F1Square.Analysis.Complete
 import F1Square.Analysis.Exp
 import F1Square.Analysis.ExpGen
