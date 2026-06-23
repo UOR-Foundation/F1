@@ -145,4 +145,94 @@ theorem riemannIntegral_const (c : Real) :
   refine Req_trans (Radd_congr (Req_refl _) (Rlim_zero _ _ hz)) ?_
   exact Req_trans (Radd_zero _) (riemannSum_const c (2 ^ 0 - 1))
 
+-- ===========================================================================
+-- Integral as the genuine limit of the dyadic Riemann sums, and positivity.
+-- ===========================================================================
+
+/-- Adding a fixed constant preserves regularity (`Radd` reindexes both terms identically, so the
+    constant cancels in every pairwise difference). -/
+theorem RReg_add_const (c : Real) (X : Nat → Real) (hX : RReg X) :
+    RReg (fun j => Radd c (X j)) := by
+  intro j k n
+  show Qle (Qabs (Qsub (add (c.seq (2 * n + 1)) ((X j).seq (2 * n + 1)))
+                       (add (c.seq (2 * n + 1)) ((X k).seq (2 * n + 1)))))
+        (add (add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q)) (⟨2, n + 1⟩ : Q))
+  have hcancel : Qeq (Qsub (add (c.seq (2 * n + 1)) ((X j).seq (2 * n + 1)))
+                          (add (c.seq (2 * n + 1)) ((X k).seq (2 * n + 1))))
+                    (Qsub ((X j).seq (2 * n + 1)) ((X k).seq (2 * n + 1))) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  refine Qle_congr_left (Qabs_den_pos (Qsub_den_pos ((X j).den_pos _) ((X k).den_pos _)))
+    (Qabs_Qeq (Qeq_symm hcancel)) ?_
+  refine Qle_trans (add_den_pos (add_den_pos (Nat.succ_pos j) (Nat.succ_pos k))
+      (Nat.succ_pos (2 * n + 1))) (hX j k (2 * n + 1)) ?_
+  refine Qadd_le_add (Qle_refl _) ?_
+  show (2 : Int) * ((n + 1 : Nat) : Int) ≤ (2 : Int) * (((2 * n + 1) + 1 : Nat) : Int)
+  push_cast; omega
+
+/-- Adding a fixed constant commutes with convergence: `X k → L ⟹ c + X k → c + L`. -/
+theorem RTendsTo_add_const (c : Real) (X : Nat → Real) (L : Real) (h : RTendsTo X L) :
+    RTendsTo (fun j => Radd c (X j)) (Radd c L) := by
+  intro k n
+  show Qle (Qabs (Qsub (add (c.seq (2 * n + 1)) ((X k).seq (2 * n + 1)))
+                       (add (c.seq (2 * n + 1)) (L.seq (2 * n + 1)))))
+        (add (⟨2, k + 1⟩ : Q) (⟨2, n + 1⟩ : Q))
+  have hcancel : Qeq (Qsub (add (c.seq (2 * n + 1)) ((X k).seq (2 * n + 1)))
+                          (add (c.seq (2 * n + 1)) (L.seq (2 * n + 1))))
+                    (Qsub ((X k).seq (2 * n + 1)) (L.seq (2 * n + 1))) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  refine Qle_congr_left (Qabs_den_pos (Qsub_den_pos ((X k).den_pos _) (L.den_pos _)))
+    (Qabs_Qeq (Qeq_symm hcancel)) ?_
+  refine Qle_trans (add_den_pos (Nat.succ_pos k) (Nat.succ_pos (2 * n + 1)))
+    (h k (2 * n + 1)) ?_
+  refine Qadd_le_add (Qle_refl _) ?_
+  show (2 : Int) * ((n + 1 : Nat) : Int) ≤ (2 : Int) * (((2 * n + 1) + 1 : Nat) : Int)
+  push_cast; omega
+
+/-- **`Rlim` commutes with adding a constant**: `lim (c + X) ≈ c + lim X` (by limit uniqueness). -/
+theorem Rlim_add_const (c : Real) (X : Nat → Real) (hX : RReg X)
+    (hcX : RReg (fun j => Radd c (X j))) :
+    Req (Rlim (fun j => Radd c (X j)) hcX) (Radd c (Rlim X hX)) :=
+  RTendsTo_unique (Rlim_tendsTo (fun j => Radd c (X j)) hcX)
+    (RTendsTo_add_const c X (Rlim X hX) (Rlim_tendsTo X hX))
+
+/-- Non-negativity passes to a Bishop limit (`∀k, X k ≥ 0 ⟹ lim X ≥ 0`). -/
+theorem Rnonneg_Rlim_seq {X : Nat → Real} (h : RReg X) (hX : ∀ k, Rnonneg (X k)) :
+    Rnonneg (Rlim X h) := by
+  intro n
+  have hab : Qle (neg (Qbound n)) (neg (Qbound (4 * n + 3))) := by
+    simp only [Qle, neg, Qbound]; push_cast; omega
+  rw [Rlim_seq]
+  exact Qle_trans (by show 0 < 4 * n + 3 + 1; omega) hab (hX (4 * n + 3) (4 * n + 3))
+
+/-- `c + (a − c) ≈ a` (the additive cancellation used to recover `D_M` from `D_0 + ΣΔ`). -/
+theorem Radd_Rsub_cancel (a c : Real) : Req (Radd c (Rsub a c)) a :=
+  Req_trans (Radd_congr (Req_refl c) (Radd_comm a (Rneg c)))
+    (Req_trans (Req_symm (Radd_assoc c (Rneg c) a))
+      (Req_trans (Radd_congr (Radd_neg c) (Req_refl a))
+        (Req_trans (Radd_comm zero a) (Radd_zero a))))
+
+/-- The dyadic Riemann sum recovered from the anchor plus telescoped increments:
+    `D_M ≈ D_0 + Σ_{k<M}(D_{k+1} − D_k)`. -/
+theorem dyadicR_eq (f : Real → Real) (M : Nat) :
+    Req (dyadicR f M) (Radd (dyadicR f 0) (genSum (dyadicTerm f) M)) :=
+  Req_symm (Req_trans (Radd_congr (Req_refl _) (genSum_telescope f M))
+    (Radd_Rsub_cancel (dyadicR f M) (dyadicR f 0)))
+
+/-- **`∫₀¹ f ≥ 0` for `f ≥ 0`** — the certified integral of a non-negative integrand is
+    non-negative. The integral is the limit of the dyadic sums `D_{m} ≈ D_0 + ΣΔ`, each `≥ 0`
+    (`riemannSum_nonneg`), so the limit is `≥ 0` (`Rnonneg_Rlim`). -/
+theorem riemannIntegral_nonneg {f : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlip : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfc : ∀ x y, Req x y → Req (f x) (f y)) (hfnn : ∀ x, Rnonneg (f x)) :
+    Rnonneg (riemannIntegral hLd hLn hlip hfc) := by
+  have hZReg : RReg (fun j => Radd (dyadicR f 0) (genSum (dyadicTerm f) (digammaMidx L j))) :=
+    RReg_add_const (dyadicR f 0) _ (dyadicSum_RReg hLd hLn hlip hfc)
+  have hZnn : ∀ j, Rnonneg (Radd (dyadicR f 0) (genSum (dyadicTerm f) (digammaMidx L j))) := fun j =>
+    Rnonneg_congr (dyadicR_eq f (digammaMidx L j))
+      (riemannSum_nonneg (2 ^ digammaMidx L j - 1) (fun i _ => hfnn _))
+  have hEq : Req (Rlim (fun j => Radd (dyadicR f 0) (genSum (dyadicTerm f) (digammaMidx L j))) hZReg)
+      (riemannIntegral hLd hLn hlip hfc) :=
+    Rlim_add_const (dyadicR f 0) _ (dyadicSum_RReg hLd hLn hlip hfc) hZReg
+  exact Rnonneg_congr hEq (Rnonneg_Rlim_seq hZReg hZnn)
+
 end UOR.Bridge.F1Square.Analysis

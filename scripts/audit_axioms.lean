@@ -3400,3 +3400,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Radd_Rsub_Rsub
 #print axioms Analysis.genSum_telescope
 #print axioms Analysis.riemannIntegral_const
+#print axioms Analysis.RReg_add_const
+#print axioms Analysis.RTendsTo_add_const
+#print axioms Analysis.Rlim_add_const
+#print axioms Analysis.Rnonneg_Rlim_seq
+#print axioms Analysis.Radd_Rsub_cancel
+#print axioms Analysis.dyadicR_eq
+#print axioms Analysis.riemannIntegral_nonneg
