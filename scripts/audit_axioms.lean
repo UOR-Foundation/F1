@@ -3436,3 +3436,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.genSum_sqrtTerm_eq
 #print axioms Analysis.Rsqrt_nonneg
 #print axioms Analysis.Rsqrt_le_sqHi
+#print axioms Analysis.Rle_of_Rsub_le_eps
+#print axioms Analysis.RTendsTo_Rsub_le
+#print axioms Analysis.term_le_Rlim
+#print axioms Analysis.genSum_mono
+#print axioms Analysis.sqLo_mono_le
+#print axioms Analysis.Rsqrt_ge_sqLo
+#print axioms Analysis.Rsq_mono

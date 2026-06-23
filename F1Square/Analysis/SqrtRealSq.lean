@@ -97,4 +97,89 @@ theorem Rsqrt_le_sqHi (q : Q) (hqd : 0 < q.den) (hq : Qle (⟨0, 1⟩ : Q) q) (n
         (sqrtBisect_den_pos q hqd n).2
         (sqLo_le_sqHi_cross q hqd hq (digammaMidx (sqrtK q) j) n)))
 
+-- ===========================================================================
+-- The lower bracket (monotone-limit) and squaring-monotonicity.
+-- ===========================================================================
+
+/-- One-sided ε-collapse (real order): `a − b ≤ C/(k+1)` for all `k` ⟹ `a ≤ b`. -/
+theorem Rle_of_Rsub_le_eps {a b : Real} {C : Nat}
+    (h : ∀ k, Rle (Rsub a b) (ofQ (⟨(C : Int), k + 1⟩ : Q) (Nat.succ_pos k))) : Rle a b := by
+  intro n
+  have hsub : Qle (Qsub (a.seq n) (b.seq n)) (⟨2, n + 1⟩ : Q) := by
+    apply Qarch_gen (C := C) (Qsub_den_pos (a.den_pos n) (b.den_pos n)) (Nat.succ_pos n)
+    intro k
+    exact Qle_trans (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))
+      (seq_diff_le a b (⟨(C : Int), k + 1⟩ : Q) (Nat.succ_pos k) (h k) n)
+      (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+  have h2 : Qeq (a.seq n) (add (b.seq n) (Qsub (a.seq n) (b.seq n))) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  exact Qle_congr_left (add_den_pos (b.den_pos n) (Qsub_den_pos (a.den_pos n) (b.den_pos n)))
+    (Qeq_symm h2) (Qadd_le_add (Qle_refl _) hsub)
+
+/-- From convergence, the difference `X m − L` is `≤ 2/(m+1)` (the upper rate; `Rsub` reindexes both
+    terms together so no regularity slack is incurred). -/
+theorem RTendsTo_Rsub_le {X : Nat → Real} {L : Real} (h : RTendsTo X L) (m : Nat) :
+    Rle (Rsub (X m) L) (ofQ (⟨2, m + 1⟩ : Q) (Nat.succ_pos m)) := by
+  intro n
+  show Qle (add ((X m).seq (2 * n + 1)) (neg (L.seq (2 * n + 1))))
+        (add (⟨2, m + 1⟩ : Q) (⟨2, n + 1⟩ : Q))
+  refine Qle_trans (Qabs_den_pos (Qsub_den_pos ((X m).den_pos _) (L.den_pos _)))
+    (Qle_self_Qabs (Qsub ((X m).seq (2 * n + 1)) (L.seq (2 * n + 1)))) ?_
+  refine Qle_trans (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (h m (2 * n + 1)) ?_
+  exact Qadd_le_add (Qle_refl _)
+    (by show Qle (⟨2, (2 * n + 1) + 1⟩ : Q) (⟨2, n + 1⟩ : Q); simp only [Qle]; push_cast; omega)
+
+/-- **A monotone sequence sits below its limit**: `X j ≤ lim X` (the lower-bracket engine). -/
+theorem term_le_Rlim {X : Nat → Real} (hX : RReg X)
+    (hmono : ∀ i j, i ≤ j → Rle (X i) (X j)) (J : Nat) : Rle (X J) (Rlim X hX) := by
+  refine Rle_of_Rsub_le_eps (C := 2) (fun k => ?_)
+  refine Rle_trans (Radd_le_add (hmono J (J + k) (Nat.le_add_right J k))
+    (Rle_refl (Rneg (Rlim X hX)))) ?_
+  refine Rle_trans (RTendsTo_Rsub_le (Rlim_tendsTo X hX) (J + k)) ?_
+  exact Rle_ofQ_ofQ (Nat.succ_pos _) (Nat.succ_pos k) (by simp only [Qle]; push_cast; omega)
+
+/-- Partial sums of non-negative terms are monotone in the upper limit. -/
+theorem genSum_mono {T : Nat → Real} (hT : ∀ n, Rnonneg (T n)) (M : Nat) :
+    ∀ d, Rle (genSum T M) (genSum T (M + d))
+  | 0 => Rle_refl _
+  | (d + 1) => by
+    refine Rle_trans (genSum_mono hT M d) ?_
+    refine Rle_trans (Rle_of_Req (Req_symm (Radd_zero (genSum T (M + d))))) ?_
+    exact Radd_le_add (Rle_refl _) (Rle_zero_of_Rnonneg (hT (M + d)))
+
+/-- The lower endpoints are monotone: `a ≤ b ⟹ lo_a ≤ lo_b`. -/
+theorem sqLo_mono_le (q : Q) (hqd : 0 < q.den) (hq : Qle (⟨0, 1⟩ : Q) q) (a : Nat) :
+    ∀ d, Qle (sqLo q a) (sqLo q (a + d))
+  | 0 => Qle_refl _
+  | (d + 1) => Qle_trans (sqrtBisect_den_pos q hqd (a + d)).1
+      (sqLo_mono_le q hqd hq a d) (sqLo_mono q hqd hq (a + d))
+
+/-- **Lower bracket**: `lo_m ≤ Rsqrt q` for every `m` (monotone-limit). -/
+theorem Rsqrt_ge_sqLo (q : Q) (hqd : 0 < q.den) (hq : Qle (⟨0, 1⟩ : Q) q) (m : Nat) :
+    Rle (ofQ (sqLo q m) (sqrtBisect_den_pos q hqd m).1) (Rsqrt q hqd hq) := by
+  have hmidx : m ≤ digammaMidx (sqrtK q) m := by
+    have : m + 1 ≤ digammaMidx (sqrtK q) m := by
+      have h1 : 1 ≤ (sqrtK q).num.toNat + 1 := Nat.le_add_left 1 _
+      calc m + 1 = 1 * (m + 1) := by omega
+        _ ≤ ((sqrtK q).num.toNat + 1) * (m + 1) := Nat.mul_le_mul_right _ h1
+    omega
+  have hmono : ∀ i j, i ≤ j → Rle (genSum (sqrtTerm q hqd) (digammaMidx (sqrtK q) i))
+      (genSum (sqrtTerm q hqd) (digammaMidx (sqrtK q) j)) := by
+    intro i j hij
+    obtain ⟨d, hd⟩ : ∃ d, digammaMidx (sqrtK q) j = digammaMidx (sqrtK q) i + d :=
+      ⟨_, (Nat.add_sub_cancel' (digammaMidx_mono (sqrtK q) hij)).symm⟩
+    rw [hd]
+    exact genSum_mono (fun k => sqrtTerm_nonneg q hqd hq k) (digammaMidx (sqrtK q) i) d
+  refine Rle_trans (Rle_ofQ_ofQ (sqrtBisect_den_pos q hqd m).1
+    (sqrtBisect_den_pos q hqd (digammaMidx (sqrtK q) m)).1
+    (by have := sqLo_mono_le q hqd hq m (digammaMidx (sqrtK q) m - m)
+        rwa [Nat.add_sub_cancel' hmidx] at this)) ?_
+  exact Rle_trans (Rle_of_Req (Req_symm (genSum_sqrtTerm_eq q hqd (digammaMidx (sqrtK q) m))))
+    (term_le_Rlim _ hmono m)
+
+/-- **Squaring is monotone on non-negatives**: `0 ≤ a ≤ b ⟹ a² ≤ b²`. -/
+theorem Rsq_mono {a b : Real} (ha : Rnonneg a) (hb : Rnonneg b) (h : Rle a b) :
+    Rle (Rmul a a) (Rmul b b) :=
+  Rle_trans (Rmul_le_Rmul_left ha h) (Rmul_le_Rmul_right hb h)
+
 end UOR.Bridge.F1Square.Analysis
