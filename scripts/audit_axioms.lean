@@ -3025,7 +3025,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.tan_pi_half_sub_arctan_eighteen
 #print axioms Analysis.Carg_I
 #print axioms Analysis.CargUpper_tan
-#print axioms Analysis.Carg_conj
 #print axioms Analysis.Rdiv_congr
 #print axioms Analysis.Carg_congr
 #print axioms Analysis.swapC_re
@@ -3300,3 +3299,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CsumN_re_fun
 #print axioms Analysis.CsumN_im_fun
 #print axioms Analysis.CsumConv_iff
+#print axioms Analysis.Clog_conj
+#print axioms Analysis.Cpow_conj
+#print axioms Analysis.Carg_conj
