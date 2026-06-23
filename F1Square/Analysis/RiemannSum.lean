@@ -60,4 +60,37 @@ theorem riemannSum_const (c : Real) (N : Nat) : Req (riemannSum (fun _ => c) N) 
   refine Req_trans (Req_symm (Rmul_assoc _ (RofNat (N + 1)) c)) ?_
   exact Req_trans (Rmul_congr hone (Req_refl c)) (Rone_mul c)
 
+/-- **Finite sums are additive**: `Σ(F+G) = ΣF + ΣG`. -/
+theorem RsumN_Radd (F G : Nat → Real) : ∀ N,
+    Req (RsumN (fun i => Radd (F i) (G i)) N) (Radd (RsumN F N) (RsumN G N))
+  | 0 => Req_symm (Radd_zero zero)
+  | (N + 1) =>
+      Req_trans (Radd_congr (RsumN_Radd F G N) (Req_refl (Radd (F N) (G N))))
+        (Radd_swap (RsumN F N) (RsumN G N) (F N) (G N))
+
+/-- **The Riemann sum is monotone in the integrand** (pointwise at the partition points). -/
+theorem riemannSum_le {f g : Real → Real} (N : Nat)
+    (h : ∀ i, i < N + 1 →
+      Rle (f (ofQ (⟨(i : Int), N + 1⟩ : Q) (Nat.succ_pos N)))
+          (g (ofQ (⟨(i : Int), N + 1⟩ : Q) (Nat.succ_pos N)))) :
+    Rle (riemannSum f N) (riemannSum g N) :=
+  Rmul_le_Rmul_left (Rnonneg_ofQ (Nat.succ_pos N) (show (0:Int) ≤ 1 by decide)) (RsumN_le (N + 1) h)
+
+/-- **The Riemann sum of a non-negative integrand is non-negative** (`∫₀¹ f ≥ 0` for `f ≥ 0`). -/
+theorem riemannSum_nonneg {f : Real → Real} (N : Nat)
+    (h : ∀ i, i < N + 1 → Rnonneg (f (ofQ (⟨(i : Int), N + 1⟩ : Q) (Nat.succ_pos N)))) :
+    Rnonneg (riemannSum f N) :=
+  Rnonneg_Rmul (Rnonneg_ofQ (Nat.succ_pos N) (show (0:Int) ≤ 1 by decide)) (Rnonneg_RsumN (N + 1) h)
+
+/-- **The Riemann sum is additive in the integrand** (linearity, additive part):
+    `∫₀¹ (f+g) = ∫₀¹ f + ∫₀¹ g`. -/
+theorem riemannSum_add (f g : Real → Real) (N : Nat) :
+    Req (riemannSum (fun x => Radd (f x) (g x)) N)
+        (Radd (riemannSum f N) (riemannSum g N)) :=
+  Req_trans
+    (Rmul_congr (Req_refl _)
+      (RsumN_Radd (fun i => f (ofQ (⟨(i : Int), N + 1⟩ : Q) (Nat.succ_pos N)))
+        (fun i => g (ofQ (⟨(i : Int), N + 1⟩ : Q) (Nat.succ_pos N))) (N + 1)))
+    (Rmul_distrib _ _ _)
+
 end UOR.Bridge.F1Square.Analysis
