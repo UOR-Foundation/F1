@@ -113,6 +113,7 @@ import F1Square.Analysis.ComplexIntegral
 import F1Square.Analysis.SqrtRat
 import F1Square.Analysis.SqrtReal
 import F1Square.Analysis.SqrtRealSq
+import F1Square.Analysis.SqrtRealCmp
 import F1Square.Analysis.Complete
 import F1Square.Analysis.Exp
 import F1Square.Analysis.ExpGen
