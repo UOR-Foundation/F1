@@ -3524,3 +3524,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.thetaTerm0_value_le
 #print axioms Analysis.thetaFn_value_decay
 #print axioms Analysis.Rle_or_Rle
+#print axioms Analysis.RexpReal_one_sub_neg_le_global
