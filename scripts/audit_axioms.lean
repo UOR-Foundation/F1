@@ -3547,3 +3547,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.genSum_thetaDiff_le
 #print axioms Analysis.thetaFn_diff_le
 #print axioms Analysis.thetaFn_lip
+#print axioms Analysis.thetaClamp
+#print axioms Analysis.thetaClamp_congr
+#print axioms Analysis.thetaClamp_lip
+#print axioms Analysis.thetaClamp_nonneg
+#print axioms Analysis.integralTerm_thetaClamp_le
+#print axioms Analysis.thetaMellin1
+#print axioms Analysis.thetaMellin1_nonneg
