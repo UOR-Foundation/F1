@@ -3509,3 +3509,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.clampOne_congr
 #print axioms Analysis.riemannIntegral_le_unit
 #print axioms Analysis.riemannIntegralI_le_unit
+#print axioms Analysis.genSum_Rmul_const
+#print axioms Analysis.genSum_geom_eq
+#print axioms Analysis.genSum_geom_le
