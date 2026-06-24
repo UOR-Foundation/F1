@@ -3526,3 +3526,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rle_or_Rle
 #print axioms Analysis.RexpReal_one_sub_neg_le_global
 #print axioms Analysis.Rmul_self_exp_neg_le_one
+#print axioms Analysis.Rle_RmaxZero_self
+#print axioms Analysis.RmaxZero_le_Rabs
+#print axioms Analysis.RexpReal_one_sub_neg_le_maxZero
