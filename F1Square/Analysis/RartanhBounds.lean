@@ -21,6 +21,33 @@ import F1Square.Analysis.RexpLogRat
 
 namespace UOR.Bridge.F1Square.Analysis
 
+/-- **One-sided linear-bound criterion for `Rle`** (the `≤` analogue of `Req_of_lin_bound`): if the
+    sequences satisfy `x.seq n ≤ y.seq n + C/(n+1)` for a *fixed* constant `C` (any size), then `x ≤ y`.
+    The constant is absorbed by the Archimedean cancellation `Qarch_gen` through the regularity of both
+    reals — exactly what lets a per-index bound with a reindex-mismatch establish a real inequality. -/
+theorem Rle_of_lin_bound {x y : Real} {C : Nat}
+    (hb : ∀ n, Qle (x.seq n) (add (y.seq n) ⟨(C : Int), n + 1⟩)) : Rle x y := by
+  intro k
+  refine Qarch_gen (C := C + 2) (x.den_pos k) (add_den_pos (y.den_pos k) (Nat.succ_pos k)) ?_
+  intro m
+  have s1 : Qle (x.seq k) (add (x.seq m) (add (Qbound k) (Qbound m))) :=
+    Qle_add_of_Qabs_sub (x.den_pos k) (x.den_pos m)
+      (add_den_pos (Qbound_den_pos k) (Qbound_den_pos m)) (x.reg k m)
+  have s3 : Qle (y.seq m) (add (y.seq k) (add (Qbound m) (Qbound k))) :=
+    Qle_add_of_Qabs_sub (y.den_pos m) (y.den_pos k)
+      (add_den_pos (Qbound_den_pos m) (Qbound_den_pos k)) (y.reg m k)
+  refine Qle_trans (add_den_pos (x.den_pos m) (add_den_pos (Qbound_den_pos k) (Qbound_den_pos m)))
+    s1 ?_
+  refine Qle_trans (add_den_pos (add_den_pos (y.den_pos m) (Nat.succ_pos m))
+      (add_den_pos (Qbound_den_pos k) (Qbound_den_pos m)))
+    (Qadd_le_add (hb m) (Qle_refl _)) ?_
+  refine Qle_trans (add_den_pos (add_den_pos (add_den_pos (y.den_pos k)
+        (add_den_pos (Qbound_den_pos m) (Qbound_den_pos k))) (Nat.succ_pos m))
+      (add_den_pos (Qbound_den_pos k) (Qbound_den_pos m)))
+    (Qadd_le_add (Qadd_le_add s3 (Qle_refl _)) (Qle_refl _)) ?_
+  apply Qeq_le
+  simp only [Qeq, add, Qbound]; push_cast; ring_uor
+
 /-- **Real artanh lower bound** `v ≤ artanh(v)` for a constant rational `v ≥ 0`. Each diagonal
     `artSum v N ≥ v` (`artSum_ge_arg`), lifted to the Bishop `Rle` (the `⟨2,n+1⟩` slack is `≥ 0`). -/
 theorem RartanhAtQ_ge (v : Q) (hvd : 0 < v.den) (hv0 : 0 ≤ v.num) (ρ : Q)
