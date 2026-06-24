@@ -17,6 +17,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 -/
 
 import F1Square.Analysis.RealPow
+import F1Square.Analysis.RexpLogRat
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -60,5 +61,80 @@ theorem RartanhAtQ_le (v : Q) (hvd : 0 < v.den) (hv0 : 0 ≤ v.num) (ρ : Q)
     (add (mul v (Qinv (Qsub (⟨1, 1⟩ : Q) (mul v v)))) ⟨2, n + 1⟩)
   exact Qle_trans (Qmul_den_pos hvd (Qinv_den_pos hWn)) (key (Rartanh_R ρ n))
     (Qle_self_add (by show (0 : Int) ≤ 2; decide))
+
+/-- The rational Qinv cancellation `c·(v·W⁻¹)·W = c·v` for `0 < W.num` (`W` opaque). -/
+private theorem mul_Qinv_mul_cancel (c v W : Q) (hWn : 0 < W.num) :
+    Qeq (mul (mul c (mul v (Qinv W))) W) (mul c v) := by
+  have htW : ((W.num.toNat : Nat) : Int) = W.num := Int.toNat_of_nonneg (Int.le_of_lt hWn)
+  show (c.num * (v.num * (W.den : Int))) * W.num * ((c.den * v.den : Nat) : Int)
+      = (c.num * v.num) * (((c.den * (v.den * W.num.toNat)) * W.den : Nat) : Int)
+  push_cast [htW]; ring_uor
+
+set_option maxHeartbeats 1000000 in
+/-- **The one-sided log bound** `log q ≤ q − 1` for a rational `q ≥ 1` — the constructive Bishop form of
+    `log u ≤ u−1`, the convexity modulus the `RrpowPos` Lipschitz / general `t^{σ−1}` Mellin integrand needs.
+    Since `log q = 2·artanh(tmap q)` (`Rlog`'s definition, where `tmap q = (q−1)/(q+1)`), the bracket
+    `RartanhAtQ_le` gives `artanh(tmap q) ≤ tmap q/(1−tmap q²)`, so `2·tmap q/(1−tmap q²) = (q²−1)/(2q) ≤ q−1`.
+    The final rational inequality cancels the positive `1−tmap q²` (`mul_Qinv_mul_cancel`) and reduces to
+    `q.den ≤ q.num` (i.e. `q ≥ 1`), the residual `(q−1)²·… ≥ 0`. -/
+theorem Rlog_le_sub_one (q : Q) (hqd : 0 < q.den) (hqge : Qle (⟨1, 1⟩ : Q) q)
+    (hqn : 0 < q.num) (hqq : Qle (⟨1, 1⟩ : Q) (mul q q)) :
+    Rle (Rlog (ofQ q hqd) q hqd hqge (fun _ => hqn) (fun _ => Qle_refl q) (fun _ => hqq))
+        (ofQ (Qsub q (⟨1, 1⟩ : Q)) (Qsub_den_pos hqd Nat.one_pos)) := by
+  have had : (q.den : Int) ≤ q.num := by have h := hqge; simp only [Qle] at h; omega
+  have hdp : (0 : Int) < (q.den : Int) := by exact_mod_cast hqd
+  have htn : ((q.num + (q.den : Int)).toNat : Int) = q.num + (q.den : Int) :=
+    Int.toNat_of_nonneg (by omega)
+  obtain ⟨hMn, hM1, hρ0, hρd, hρlt, hρ1⟩ := Rlog_radius_facts q hqd hqge
+  have hτd : 0 < (tmap q).den := by rw [tmap_rat_den]; exact Nat.mul_pos hqd (by omega)
+  have hv0 : 0 ≤ (tmap q).num := by rw [tmap_rat_num]; exact Int.mul_nonneg (by omega) (by omega)
+  have hb : Qle (Qabs (tmap q)) (⟨q.num - (q.den : Int), q.num.toNat + q.den⟩ : Q) :=
+    Rlog_tbound (ofQ q hqd) q hqd hMn hM1 (fun _ => Qle_refl q) (fun _ => hqq) (fun _ => hqn) 0
+  have hWnum : (Qsub (⟨1, 1⟩ : Q) (mul (tmap q) (tmap q))).num
+      = 4 * q.num * ((q.den : Int) * (q.den : Int) * (q.den : Int)) := by
+    show (add (⟨1, 1⟩ : Q) (neg (mul (tmap q) (tmap q)))).num = _
+    simp only [add, neg, mul]; rw [tmap_rat_num, tmap_rat_den]; push_cast [htn]; ring_uor
+  have hWn : 0 < (Qsub (⟨1, 1⟩ : Q) (mul (tmap q) (tmap q))).num := by
+    rw [hWnum]
+    exact Int.mul_pos (Int.mul_pos (by decide) hqn) (Int.mul_pos (Int.mul_pos hdp hdp) hdp)
+  have hWd : 0 < (Qsub (⟨1, 1⟩ : Q) (mul (tmap q) (tmap q))).den :=
+    Qsub_den_pos Nat.one_pos (Qmul_den_pos hτd hτd)
+  have hbridge : Rlog (ofQ q hqd) q hqd hqge (fun _ => hqn) (fun _ => Qle_refl q) (fun _ => hqq)
+      = TwoArtanhConst (tmap q) (⟨q.num - (q.den : Int), q.num.toNat + q.den⟩ : Q)
+          hτd hρ0 hρd hρlt hb := rfl
+  rw [hbridge]
+  have hbracket := RartanhAtQ_le (tmap q) hτd hv0
+    (⟨q.num - (q.den : Int), q.num.toNat + q.den⟩ : Q) hρ0 hρd hρlt hb hWn
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) hbracket) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ (by decide)
+    (Qmul_den_pos hτd (Qinv_den_pos hWn)))) ?_
+  refine Rle_ofQ_ofQ (Qmul_den_pos (by decide) (Qmul_den_pos hτd (Qinv_den_pos hWn)))
+    (Qsub_den_pos hqd Nat.one_pos) ?_
+  refine Qmul_le_cancel_right hWn hWd ?_
+  refine Qle_trans (Qmul_den_pos (by decide) hτd)
+    (Qeq_le (mul_Qinv_mul_cancel (⟨2, 1⟩ : Q) (tmap q)
+      (Qsub (⟨1, 1⟩ : Q) (mul (tmap q) (tmap q))) hWn)) ?_
+  simp only [Qle, mul, Qsub, add, neg]
+  rw [tmap_rat_num, tmap_rat_den]
+  push_cast [htn]
+  have hsq : (0 : Int) ≤ (q.num - (q.den : Int)) * (q.num - (q.den : Int)) := by
+    rw [← Int.natAbs_mul_self]; exact Int.ofNat_nonneg _
+  have hap : (0 : Int) ≤ q.num + (q.den : Int) := by omega
+  have hnn : (0 : Int) ≤ 2 * ((q.num - (q.den : Int)) * (q.num - (q.den : Int)))
+      * ((q.den : Int) * (q.den : Int) * (q.den : Int) * (q.den : Int)) * (q.num + (q.den : Int)) :=
+    Int.mul_nonneg (Int.mul_nonneg (Int.mul_nonneg (by decide) hsq)
+      (Int.mul_nonneg (Int.mul_nonneg (Int.mul_nonneg (Int.le_of_lt hdp) (Int.le_of_lt hdp))
+        (Int.le_of_lt hdp)) (Int.le_of_lt hdp))) hap
+  have hfac : (q.num * 1 + -1 * (q.den : Int)) *
+        (1 * ((q.den : Int) * (q.num + (q.den : Int)) * ((q.den : Int) * (q.num + (q.den : Int)))) +
+          -((q.num - (q.den : Int)) * (q.den : Int) * ((q.num - (q.den : Int)) * (q.den : Int))) * 1) *
+      (1 * ((q.den : Int) * (q.num + (q.den : Int))))
+      = 2 * ((q.num - (q.den : Int)) * (q.den : Int))
+          * ((q.den : Int) * 1 * (1 * ((q.den : Int) * (q.num + (q.den : Int))
+              * ((q.den : Int) * (q.num + (q.den : Int))))))
+        + 2 * ((q.num - (q.den : Int)) * (q.num - (q.den : Int)))
+          * ((q.den : Int) * (q.den : Int) * (q.den : Int) * (q.den : Int)) * (q.num + (q.den : Int)) := by
+    ring_uor
+  omega
 
 end UOR.Bridge.F1Square.Analysis

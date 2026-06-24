@@ -3560,3 +3560,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.thetaMellin1_le
 #print axioms Analysis.RartanhAtQ_ge
 #print axioms Analysis.RartanhAtQ_le
+#print axioms Analysis.Rlog_le_sub_one
