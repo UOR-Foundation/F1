@@ -3588,3 +3588,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rdiv_seq_le_B
 #print axioms Analysis.Rdiv_seq_ge_invB
 #print axioms Analysis.Rmul_y_Rdiv
+#print axioms Analysis.Rsub_Radd_cancel_left
+#print axioms Analysis.Qone_le_mul
+#print axioms Analysis.Qprod_lo
+#print axioms Analysis.QB_le_B2
+#print axioms Analysis.Rmul_seq_pos
+#print axioms Analysis.Rmul_seq_le
+#print axioms Analysis.Rle_one_Rdiv
+#print axioms Analysis.RlogPos_sub_le_Rdiv
+#print axioms Analysis.RrpowPos_lipschitz
