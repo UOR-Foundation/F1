@@ -128,6 +128,7 @@ import F1Square.Analysis.ExpGen
 import F1Square.Analysis.ExactBounded
 import F1Square.Analysis.Zeta
 import F1Square.Analysis.ROrder
+import F1Square.Analysis.RealCompare
 import F1Square.Analysis.Pow
 import F1Square.Analysis.Inv
 import F1Square.Analysis.RealDiv
