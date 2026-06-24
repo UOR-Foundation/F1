@@ -3462,3 +3462,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rsqrt_mono
 #print axioms Analysis.Rsqrt_one
 #print axioms Analysis.Rsqrt_ge_one
+#print axioms Analysis.Rle_Rabs_self
+#print axioms Analysis.Rabs_ofQ
+#print axioms Analysis.Rabs_Rmul
+#print axioms Analysis.Rsqrt_lipschitz

@@ -61,6 +61,27 @@ theorem Rabs_Rmul_ofQ_nonneg {q : Q} (hq : 0 < q.den) (hn : 0 ≤ q.num) (z : Re
     rw [Qabs_mul]
     exact Qmul_congr (Qabs_of_nonneg hn) (Qeq_refl _))
 
+/-- **`x ≤ |x|`** — the embedding side of the absolute value (lifts `a ≤ |a|` pointwise). -/
+theorem Rle_Rabs_self (x : Real) : Rle x (Rabs x) := fun n =>
+  Qle_trans (Qabs_den_pos (x.den_pos n)) (Qle_self_Qabs (x.seq n))
+    (Qle_self_add (show (0 : Int) ≤ 2 by decide))
+
+/-- **`|ofQ q| = ofQ |q|`** — the absolute value commutes with the rational embedding (pointwise). -/
+theorem Rabs_ofQ {q : Q} (hq : 0 < q.den) :
+    Req (Rabs (ofQ q hq)) (ofQ (Qabs q) (Qabs_den_pos hq)) :=
+  Req_of_seq_Qeq (fun _ => Qeq_refl _)
+
+/-- **`|x·y| = |x|·|y|`** — full multiplicativity of the absolute value. The `Rmul` reindex
+    `Ridx x y` and `Ridx (Rabs x) (Rabs y)` coincide (`xBound (Rabs ·) = xBound ·`, since
+    `Int.natAbs (Int.ofNat k) = k`), so this is the pointwise `Qabs_mul`. -/
+theorem Rabs_Rmul (x y : Real) : Req (Rabs (Rmul x y)) (Rmul (Rabs x) (Rabs y)) :=
+  Req_of_seq_Qeq (fun n => by
+    show Qeq (Qabs (mul (x.seq (Ridx x y n)) (y.seq (Ridx x y n))))
+             (mul (Qabs (x.seq (Ridx (Rabs x) (Rabs y) n)))
+                  (Qabs (y.seq (Ridx (Rabs x) (Rabs y) n))))
+    rw [Qabs_mul]
+    exact Qmul_congr (Qeq_refl _) (Qeq_refl _))
+
 /-- **The finite-sum triangle inequality** `|Σ_{i<N} F i| ≤ Σ_{i<N} |F i|`. -/
 theorem RsumN_Rabs_le (F : Nat → Real) :
     ∀ N, Rle (Rabs (RsumN F N)) (RsumN (fun i => Rabs (F i)) N)
