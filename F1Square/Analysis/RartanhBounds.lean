@@ -137,4 +137,30 @@ theorem Rlog_le_sub_one (q : Q) (hqd : 0 < q.den) (hqge : Qle (⟨1, 1⟩ : Q) q
     ring_uor
   omega
 
+set_option maxHeartbeats 1000000 in
+/-- **The companion lower log bound** `2(q−1)/(q+1) ≤ log q` for rational `q ≥ 1`. From the artanh lower
+    bound `tmap q ≤ artanh(tmap q)` (`RartanhAtQ_ge`), doubled: `log q = 2·artanh(tmap q) ≥ 2·tmap q`. No
+    `Qinv` cancellation needed. Together with `Rlog_le_sub_one` this brackets `log q ∈ [2(q−1)/(q+1), q−1]`. -/
+theorem Rlog_ge_two_tmap (q : Q) (hqd : 0 < q.den) (hqge : Qle (⟨1, 1⟩ : Q) q)
+    (hqn : 0 < q.num) (hqq : Qle (⟨1, 1⟩ : Q) (mul q q)) :
+    Rle (ofQ (mul (⟨2, 1⟩ : Q) (tmap q)) (Qmul_den_pos (by decide)
+          (by rw [tmap_rat_den]; exact Nat.mul_pos hqd (by omega))))
+        (Rlog (ofQ q hqd) q hqd hqge (fun _ => hqn) (fun _ => Qle_refl q) (fun _ => hqq)) := by
+  obtain ⟨hMn, hM1, hρ0, hρd, hρlt, hρ1⟩ := Rlog_radius_facts q hqd hqge
+  have hτd : 0 < (tmap q).den := by rw [tmap_rat_den]; exact Nat.mul_pos hqd (by omega)
+  have hv0 : 0 ≤ (tmap q).num := by
+    rw [tmap_rat_num]
+    have had : (q.den : Int) ≤ q.num := by have h := hqge; simp only [Qle] at h; omega
+    exact Int.mul_nonneg (by omega) (by omega)
+  have hb : Qle (Qabs (tmap q)) (⟨q.num - (q.den : Int), q.num.toNat + q.den⟩ : Q) :=
+    Rlog_tbound (ofQ q hqd) q hqd hMn hM1 (fun _ => Qle_refl q) (fun _ => hqq) (fun _ => hqn) 0
+  have hbridge : Rlog (ofQ q hqd) q hqd hqge (fun _ => hqn) (fun _ => Qle_refl q) (fun _ => hqq)
+      = TwoArtanhConst (tmap q) (⟨q.num - (q.den : Int), q.num.toNat + q.den⟩ : Q)
+          hτd hρ0 hρd hρlt hb := rfl
+  rw [hbridge]
+  have hge := RartanhAtQ_ge (tmap q) hτd hv0
+    (⟨q.num - (q.den : Int), q.num.toNat + q.den⟩ : Q) hρ0 hρd hρlt hb
+  refine Rle_trans ?_ (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) hge)
+  exact Rle_of_Req (Req_symm (Rmul_ofQ_ofQ (by decide) hτd))
+
 end UOR.Bridge.F1Square.Analysis

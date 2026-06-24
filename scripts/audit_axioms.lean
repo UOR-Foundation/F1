@@ -3561,3 +3561,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RartanhAtQ_ge
 #print axioms Analysis.RartanhAtQ_le
 #print axioms Analysis.Rlog_le_sub_one
+#print axioms Analysis.Rlog_ge_two_tmap
