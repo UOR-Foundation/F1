@@ -247,4 +247,156 @@ theorem rsqrtRealSeq_tendsTo (a : Real) :
       (Qle_trans (add_den_pos (by show 0 < 4 * k + 4; omega) (Nat.succ_pos _))
         (Qeq_le hreg) htail))
 
+-- ===========================================================================
+-- General limit-arithmetic infrastructure for the squaring step.
+-- ===========================================================================
+
+/-- **`RTendsTo` ⟹ real `Rabs` rate**: `X k → L` gives `|X k − L| ≤ 2/(k+1)` as reals. -/
+theorem RTendsTo_Rabs_rate {X : Nat → Real} {L : Real} (h : RTendsTo X L) (k : Nat) :
+    Rle (Rabs (Rsub (X k) L)) (ofQ (⟨2, k + 1⟩ : Q) (Nat.succ_pos k)) := by
+  intro n
+  show Qle (Qabs ((Rsub (X k) L).seq n)) (add (⟨2, k + 1⟩ : Q) (⟨2, n + 1⟩ : Q))
+  refine Qle_trans (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (h k (2 * n + 1)) ?_
+  exact Qadd_le_add (Qle_refl _) (by simp only [Qle]; push_cast; omega)
+
+/-- **`q ≤ q²` for `q ≥ 1`** (rational). -/
+theorem Qle_self_mul_self_of_ge_one {q : Q} (hqd : 0 < q.den) (h1 : Qle (⟨1, 1⟩ : Q) q) :
+    Qle q (mul q q) := by
+  have hn : (q.den : Int) ≤ q.num := by simp only [Qle] at h1; simpa using h1
+  have hnn : 0 ≤ q.num := by omega
+  have hfac : 0 ≤ q.num * (q.den : Int) := Int.mul_nonneg hnn (Int.ofNat_nonneg _)
+  have hkey : q.num * (q.den : Int) * (q.den : Int) ≤ q.num * (q.den : Int) * q.num :=
+    Int.mul_le_mul_of_nonneg_left hn hfac
+  have e : q.num * ((q.den : Int) * (q.den : Int)) = q.num * (q.den : Int) * (q.den : Int) := by ring_uor
+  have e2 : q.num * q.num * (q.den : Int) = q.num * (q.den : Int) * q.num := by ring_uor
+  simp only [Qle, mul]; push_cast
+  rw [e, e2]; exact hkey
+
+/-- **`|x| ≤ B` for `0 ≤ x ≤ B`** (`B ≥ 0` rational). -/
+theorem Rabs_le_of_nonneg_le {x : Real} {B : Q} (hBd : 0 < B.den) (hBn : 0 ≤ B.num)
+    (hx : Rnonneg x) (hxB : Rle x (ofQ B hBd)) : Rle (Rabs x) (ofQ B hBd) := by
+  intro m
+  show Qle (Qabs (x.seq m)) (add B (⟨2, m + 1⟩ : Q))
+  refine Qabs_le_of_both (hxB m) ?_
+  have h1 : Qle (neg (x.seq m)) (neg (neg (Qbound m))) := Qneg_le_neg (hx m)
+  have h2 : Qle (neg (neg (Qbound m))) (⟨2, m + 1⟩ : Q) := by
+    simp only [Qle, neg, Qbound]; push_cast; omega
+  have h3 : Qle (⟨2, m + 1⟩ : Q) (add B (⟨2, m + 1⟩ : Q)) :=
+    Qle_trans (add_den_pos (Nat.succ_pos _) hBd) (Qle_self_add hBn)
+      (Qeq_le (add_comm (⟨2, m + 1⟩ : Q) B))
+  exact Qle_trans (neg_den_pos (neg_den_pos (Qbound_den_pos m))) h1
+    (Qle_trans (Nat.succ_pos _) h2 h3)
+
+/-- **Real `Rabs` rate ⟹ general-rate componentwise** — the converter feeding `RTendsTo_gen_unique`. -/
+theorem rate_to_gen {W : Nat → Real} {M : Real} {C : Nat}
+    (h : ∀ k, Rle (Rabs (Rsub (W k) M)) (ofQ (⟨(C : Int), k + 1⟩ : Q) (Nat.succ_pos k))) :
+    ∀ k n, Qle (Qabs (Qsub ((W k).seq n) (M.seq n)))
+      (add (⟨(C : Int), k + 1⟩ : Q) (⟨2, n + 1⟩ : Q)) := by
+  intro k n
+  have hpos : Rle (Rsub (W k) M) (ofQ (⟨(C : Int), k + 1⟩ : Q) (Nat.succ_pos k)) :=
+    Rle_of_Rabs_le (h k)
+  have hsymm : Req (Rabs (Rsub M (W k))) (Rabs (Rsub (W k) M)) :=
+    Req_trans (Rabs_congr (Req_symm (Rneg_Rsub (W k) M))) (Rabs_Rneg (Rsub (W k) M))
+  have hneg : Rle (Rsub M (W k)) (ofQ (⟨(C : Int), k + 1⟩ : Q) (Nat.succ_pos k)) :=
+    Rle_of_Rabs_le (Rle_trans (Rle_of_Req hsymm) (h k))
+  refine Qabs_le_of_both (seq_diff_le (W k) M _ (Nat.succ_pos k) hpos n) ?_
+  have hn := seq_diff_le M (W k) _ (Nat.succ_pos k) hneg n
+  have heq : Qeq (neg (Qsub ((W k).seq n) (M.seq n))) (Qsub (M.seq n) ((W k).seq n)) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  exact Qle_congr_left (Qsub_den_pos (M.den_pos n) ((W k).den_pos n)) (Qeq_symm heq) hn
+
+/-- The approximant `√cₖ` is bounded by `B := xBound a + 2` (since `√cₖ ≤ cₖ ≤ B`, `cₖ ≥ 1`). -/
+theorem rsqrtRealX_le (a : Real) (ha : Rle one a) (k : Nat) :
+    Rle (rsqrtRealX a ha k) (ofQ (⟨(xBound a : Int) + 2, 1⟩ : Q) Nat.one_pos) := by
+  have hcnB : Qle (rsqrtRealSeq a k) (⟨(xBound a : Int) + 2, 1⟩ : Q) := by
+    have ha3 : Qle (a.seq (4 * k + 3)) (⟨(xBound a : Int), 1⟩ : Q) :=
+      Qle_trans (Qabs_den_pos (a.den_pos _)) (Qle_self_Qabs _) (canon_bound a (4 * k + 3))
+    have hsh : Qle (⟨2, 4 * k + 4⟩ : Q) (⟨2, 1⟩ : Q) := by simp only [Qle]; push_cast; omega
+    refine Qle_trans (add_den_pos Nat.one_pos Nat.one_pos)
+      (Qadd_le_add ha3 hsh) (Qeq_le ?_)
+    simp only [Qeq, add]; push_cast; ring_uor
+  have hsqle : Rle (Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k))
+      (Rmul (ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k))
+            (ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k))) :=
+    Rle_trans (Rle_of_Req (Rsqrt_sq _ _ _))
+      (Rle_trans (Rle_ofQ_ofQ _ _
+          (Qle_self_mul_self_of_ge_one (rsqrtRealSeq_den_pos a k) (rsqrtRealSeq_ge_one a ha k)))
+        (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ _ _))))
+  refine Rle_trans (Rle_of_Rsq_le (Rsqrt_nonneg _ _ _)
+    (Rnonneg_ofQ _ (by have := rsqrtRealSeq_ge_zero a ha k; simp only [Qle] at this; simpa using this))
+    hsqle) ?_
+  exact Rle_ofQ_ofQ _ _ hcnB
+
+/-- `|√cₖ| ≤ B`. -/
+theorem rsqrtRealX_abs_le (a : Real) (ha : Rle one a) (k : Nat) :
+    Rle (Rabs (rsqrtRealX a ha k)) (ofQ (⟨(xBound a : Int) + 2, 1⟩ : Q) Nat.one_pos) :=
+  Rabs_le_of_nonneg_le Nat.one_pos (by show (0 : Int) ≤ (xBound a : Int) + 2; omega)
+    (Rsqrt_nonneg _ _ _) (rsqrtRealX_le a ha k)
+
+/-- `|√a| ≤ B`. -/
+theorem RsqrtReal_abs_le (a : Real) (ha : Rle one a) :
+    Rle (Rabs (RsqrtReal a ha)) (ofQ (⟨(xBound a : Int) + 2, 1⟩ : Q) Nat.one_pos) :=
+  Rabs_le_of_nonneg_le Nat.one_pos (by show (0 : Int) ≤ (xBound a : Int) + 2; omega)
+    (RsqrtReal_nonneg a ha)
+    (Rlim_le_ofQ (rsqrtRealX_RReg a ha) Nat.one_pos (fun k => rsqrtRealX_le a ha k))
+
+set_option maxHeartbeats 800000 in
+/-- **`(√a)² = a`** — the defining identity of the real-radicand square root. Both `√cₙ·√cₙ = ofQ cₙ`
+    converge: to `a` (the approximants, `rsqrtRealSeq_tendsTo`) and to `(√a)²` (the product estimate
+    `|√cₙ·√cₙ − √a·√a| = |√cₙ−√a|·|√cₙ+√a| ≤ (2/(n+1))·2B`), so the two limits agree
+    (`RTendsTo_gen_unique`). -/
+theorem RsqrtReal_sq (a : Real) (ha : Rle one a) :
+    Req (Rmul (RsqrtReal a ha) (RsqrtReal a ha)) a := by
+  have hprodrate : ∀ k, Rle (Rabs (Rsub (Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k))
+        (Rmul (RsqrtReal a ha) (RsqrtReal a ha))))
+      (ofQ (⟨4 * ((xBound a : Int) + 2), k + 1⟩ : Q) (Nat.succ_pos k)) := by
+    intro k
+    have e1 : Req (Rabs (Rsub (Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k))
+          (Rmul (RsqrtReal a ha) (RsqrtReal a ha))))
+        (Rmul (Rabs (Rsub (rsqrtRealX a ha k) (RsqrtReal a ha)))
+              (Rabs (Radd (rsqrtRealX a ha k) (RsqrtReal a ha)))) :=
+      Req_trans (Rabs_congr (Req_symm (Rmul_sub_add_self (rsqrtRealX a ha k) (RsqrtReal a ha))))
+        (Rabs_Rmul _ _)
+    have haddbd : Rle (Rabs (Radd (rsqrtRealX a ha k) (RsqrtReal a ha)))
+        (ofQ (⟨2 * ((xBound a : Int) + 2), 1⟩ : Q) Nat.one_pos) :=
+      Rle_trans (Rabs_Radd _ _)
+        (Rle_trans (Radd_le_add (rsqrtRealX_abs_le a ha k) (RsqrtReal_abs_le a ha))
+          (Rle_of_Req (Req_trans (Radd_ofQ_ofQ _ _)
+            (ofQ_congr _ _ (by simp only [Qeq, add]; push_cast; ring_uor)))))
+    have hsubbd : Rle (Rabs (Rsub (rsqrtRealX a ha k) (RsqrtReal a ha)))
+        (ofQ (⟨2, k + 1⟩ : Q) (Nat.succ_pos k)) :=
+      RTendsTo_Rabs_rate (Rlim_tendsTo (rsqrtRealX a ha) (rsqrtRealX_RReg a ha)) k
+    refine Rle_trans (Rle_of_Req e1) ?_
+    refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_Rabs _) haddbd) ?_
+    refine Rle_trans (Rmul_le_Rmul_right (Rnonneg_ofQ _ (by show (0 : Int) ≤ 2 * ((xBound a : Int) + 2); omega)) hsubbd) ?_
+    exact Rle_of_Req (Req_trans (Rmul_ofQ_ofQ _ _)
+      (ofQ_congr _ _ (by simp only [Qeq, mul]; push_cast; ring_uor)))
+  have hWLL := rate_to_gen hprodrate
+  have hWa : ∀ k n, Qle (Qabs (Qsub ((Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k)).seq n) (a.seq n)))
+      (add (⟨2, k + 1⟩ : Q) (⟨4, n + 1⟩ : Q)) := by
+    intro k n
+    have heqk : Req (Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k))
+        (ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k)) :=
+      Rsqrt_sq (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k) (rsqrtRealSeq_ge_zero a ha k)
+    have htri := Qabs_sub_triangle
+      (a := (Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k)).seq n)
+      (b := (ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k)).seq n) (c := a.seq n)
+      ((Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k)).den_pos n)
+      ((ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k)).den_pos n) (a.den_pos n)
+    have hb1 : Qle (Qabs (Qsub ((Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k)).seq n)
+        ((ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k)).seq n))) (⟨2, n + 1⟩ : Q) := heqk n
+    have hb2 := rsqrtRealSeq_tendsTo a k n
+    have hfin : Qle (add (⟨2, n + 1⟩ : Q) (add (⟨2, k + 1⟩ : Q) (⟨2, n + 1⟩ : Q)))
+        (add (⟨2, k + 1⟩ : Q) (⟨4, n + 1⟩ : Q)) := by
+      apply Qeq_le; simp only [Qeq, add]; push_cast; ring_uor
+    exact Qle_trans
+      (add_den_pos (Qabs_den_pos (Qsub_den_pos
+          ((Rmul (rsqrtRealX a ha k) (rsqrtRealX a ha k)).den_pos n)
+          ((ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k)).den_pos n)))
+        (Qabs_den_pos (Qsub_den_pos
+          ((ofQ (rsqrtRealSeq a k) (rsqrtRealSeq_den_pos a k)).den_pos n) (a.den_pos n)))) htri
+      (Qle_trans (add_den_pos (Nat.succ_pos _) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+        (Qadd_le_add hb1 hb2) hfin)
+  exact RTendsTo_gen_unique hWLL hWa
+
 end UOR.Bridge.F1Square.Analysis
