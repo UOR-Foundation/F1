@@ -108,6 +108,7 @@ import F1Square.Analysis.RabsLemmas
 import F1Square.Analysis.RiemannConv
 import F1Square.Analysis.DyadicIntegral
 import F1Square.Analysis.IntervalIntegral
+import F1Square.Analysis.ImproperIntegral
 import F1Square.Analysis.ComplexIntegral
 import F1Square.Analysis.SqrtRat
 import F1Square.Analysis.SqrtReal

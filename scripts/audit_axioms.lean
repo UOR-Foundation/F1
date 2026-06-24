@@ -3448,3 +3448,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.sqHi_le_init
 #print axioms Analysis.sqrt_sq_width_le
 #print axioms Analysis.Rsqrt_sq
+#print axioms Analysis.integralTerm
+#print axioms Analysis.improperIntegral1
+#print axioms Analysis.improperIntegral1_nonneg
+#print axioms Analysis.genSum_le_genSum
+#print axioms Analysis.improperIntegral1_le
