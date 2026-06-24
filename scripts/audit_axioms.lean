@@ -3453,3 +3453,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.improperIntegral1_nonneg
 #print axioms Analysis.genSum_le_genSum
 #print axioms Analysis.improperIntegral1_le
+#print axioms Analysis.halfLineIntegral
+#print axioms Analysis.halfLineIntegral_nonneg
+#print axioms Analysis.halfLineIntegral_le

@@ -89,4 +89,53 @@ theorem improperIntegral1_le {f g : Real → Real} {L K : Q} (hLd : 0 < L.den) (
       (fun _m => riemannIntegralI_le hLd hLn hlipf hfcf hlipg hfcg hfg _ _ _ _ _)
       (digammaMidx K j))
 
+/-- **The certified full half-line integral `∫₀^∞ f = ∫₀¹ f + ∫₁^∞ f`** — the Mellin domain, split
+    at `x = 1` into the `[0,1]` gateway (`riemannIntegral`) and the convergent half-line tail
+    (`improperIntegral1`). -/
+def halfLineIntegral {f : Real → Real} {L K : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlip : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfc : ∀ x y, Req x y → Req (f x) (f y)) (hKd : 0 < K.den) (hK0 : 0 ≤ K.num)
+    (hb : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm))))
+          (integralTerm hLd hLn hlip hfc m)
+      ∧ Rle (integralTerm hLd hLn hlip hfc m)
+          (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm)))) : Real :=
+  Radd (riemannIntegral hLd hLn hlip hfc) (improperIntegral1 hLd hLn hlip hfc hKd hK0 hb)
+
+/-- **`∫₀^∞ f ≥ 0` for `f ≥ 0`** — both halves are non-negative. -/
+theorem halfLineIntegral_nonneg {f : Real → Real} {L K : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlip : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfc : ∀ x y, Req x y → Req (f x) (f y)) (hKd : 0 < K.den) (hK0 : 0 ≤ K.num)
+    (hb : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm))))
+          (integralTerm hLd hLn hlip hfc m)
+      ∧ Rle (integralTerm hLd hLn hlip hfc m)
+          (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm))))
+    (hfnn : ∀ x, Rnonneg (f x)) :
+    Rnonneg (halfLineIntegral hLd hLn hlip hfc hKd hK0 hb) :=
+  Rnonneg_Radd (riemannIntegral_nonneg hLd hLn hlip hfc hfnn)
+    (improperIntegral1_nonneg hLd hLn hlip hfc hKd hK0 hb hfnn)
+
+/-- **`∫₀^∞ f ≤ ∫₀^∞ g` for `f ≤ g`** (shared `L`, `K`) — both halves are monotone. -/
+theorem halfLineIntegral_le {f g : Real → Real} {L K : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlipf : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcf : ∀ x y, Req x y → Req (f x) (f y))
+    (hlipg : ∀ x y, Rle (Rabs (Rsub (g x) (g y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcg : ∀ x y, Req x y → Req (g x) (g y)) (hKd : 0 < K.den) (hK0 : 0 ≤ K.num)
+    (hbf : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm))))
+          (integralTerm hLd hLn hlipf hfcf m)
+      ∧ Rle (integralTerm hLd hLn hlipf hfcf m)
+          (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm))))
+    (hbg : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm))))
+          (integralTerm hLd hLn hlipg hfcg m)
+      ∧ Rle (integralTerm hLd hLn hlipg hfcg m)
+          (ofQ (mul K (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKd (digamma_succ_mul_pos hm))))
+    (hfg : ∀ x, Rle (f x) (g x)) :
+    Rle (halfLineIntegral hLd hLn hlipf hfcf hKd hK0 hbf)
+        (halfLineIntegral hLd hLn hlipg hfcg hKd hK0 hbg) :=
+  Radd_le_add (riemannIntegral_le hLd hLn hlipf hfcf hlipg hfcg hfg)
+    (improperIntegral1_le hLd hLn hlipf hfcf hlipg hfcg hKd hK0 hbf hbg hfg)
+
 end UOR.Bridge.F1Square.Analysis
