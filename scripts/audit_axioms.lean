@@ -3497,3 +3497,4 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.thetaTerm_RReg_pos
 #print axioms Analysis.thetaFnPos
 #print axioms Analysis.thetaFnPos_nonneg
+#print axioms Analysis.ThetaModular

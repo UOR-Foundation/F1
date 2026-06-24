@@ -116,6 +116,7 @@ import F1Square.Analysis.SqrtReal
 import F1Square.Analysis.SqrtRealSq
 import F1Square.Analysis.SqrtRealCmp
 import F1Square.Analysis.SqrtRealOf
+import F1Square.Analysis.ThetaModular
 import F1Square.Analysis.Complete
 import F1Square.Analysis.Exp
 import F1Square.Analysis.ExpGen
