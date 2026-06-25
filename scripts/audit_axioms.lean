@@ -3051,6 +3051,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.ClogUpper_re
 #print axioms Analysis.ClogUpper_im
 #print axioms Analysis.ClogUpper_I_im
+#print axioms Analysis.ClogLower
+#print axioms Analysis.ClogLower_re
+#print axioms Analysis.ClogLower_im
+#print axioms Analysis.ClogLower_eq_conj_ClogUpper
 #print axioms Analysis.addsub_linear_b
 #print axioms Analysis.sq_diff_identity_b
 #print axioms Analysis.add_sub_add_cancel_left

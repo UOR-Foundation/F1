@@ -228,6 +228,7 @@ import F1Square.Analysis.RArctanValue
 import F1Square.Analysis.ComplexLogUpper
 import F1Square.Analysis.ComplexArgUpperAdd
 import F1Square.Analysis.ComplexLogUpperAdd
+import F1Square.Analysis.ComplexLogLower
 import F1Square.Analysis.ComplexArgLower
 import F1Square.Analysis.ComplexPowGen
 import F1Square.Analysis.ComplexArgLeft
