@@ -3655,4 +3655,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.thetaMellinPowSym
 #print axioms Analysis.thetaMellinPowSym_nonneg
 #print axioms Analysis.thetaMellinPowSym_symm
+#print axioms Analysis.integralTerm_gPowTheta_le2
+#print axioms Analysis.thetaMellinPow_le_two
 #print axioms Analysis.Radd_lipschitz_real

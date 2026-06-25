@@ -326,4 +326,61 @@ theorem thetaMellinPowSym_symm (e1 e2 : Real) (he1 : Rle e1 zero) (he2 : Rle e2 
         (thetaMellinPowSym e2 e1 he2 he1 B hB hBn heB2 heB1) :=
   improperIntegral1_congr _ _ _ _ _ _ _ _ _ _ (fun t => gPowThetaSym_swap e1 e2 t)
 
+-- ===========================================================================
+-- Uniform upper bound  ∫₁^∞ t^{σ−1}ψ ≤ 2  for σ ≤ 1  (independent of σ).
+-- ===========================================================================
+
+/-- **All-`m` per-interval bound for the product** `∫_{m+1}^{m+2} t^e·ψ ≤ 2/((m+1)(m+2))` (every `m`,
+    `e ≤ 0`): `t^e·ψ ≤ ψ(t) ≤ ψ(m+1) ≤ 2/((m+1)(m+2))` (the all-`m` value decay `thetaFn_value_decay2`).
+    The telescoping denominators sum to `≤ 1`. -/
+theorem integralTerm_gPowTheta_le2 (e : Real) (he : Rle e zero) {Lq : Q} (hLqd : 0 < Lq.den)
+    (hLqn : 0 ≤ Lq.num)
+    (hlipq : ∀ x y, Rle (Rabs (Rsub (gPowTheta e x) (gPowTheta e y)))
+      (Rmul (ofQ Lq hLqd) (Rabs (Rsub x y))))
+    (m : Nat) :
+    Rle (integralTerm hLqd hLqn hlipq (fun _ _ h => gPowTheta_congr e he h) m)
+      (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) (boundTele m)) := by
+  have hub : Rle (integralTerm hLqd hLqn hlipq (fun _ _ h => gPowTheta_congr e he h) m)
+      (riemannIntegralI (f := fun _ => thetaFn (RnatSucc m) (one_le_RnatSucc m))
+        hLqd hLqn (const_lip_any _ hLqd hLqn) (fun _ _ _ => Req_refl _)
+        (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) (by decide)) := by
+    refine riemannIntegralI_le_unit hLqd hLqn hlipq (fun _ _ h => gPowTheta_congr e he h)
+      (const_lip_any _ hLqd hLqn) (fun _ _ _ => Req_refl _)
+      (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) (by decide) (fun x hx0 hx1 => ?_)
+    have hxnn : Rnonneg x := Rnonneg_of_Rle_zero hx0
+    have hpge : Rle (RnatSucc m) (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos
+        (by decide) x) :=
+      Rle_self_Radd_right (Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide)) hxnn)
+    have hp1 : Rle one (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) x) :=
+      Rle_trans (one_le_RnatSucc m) hpge
+    show Rle (gPowTheta e _) _
+    exact Rle_trans (gPowTheta_le_thetaClamp e he _) (thetaClamp_le_succ m _ hp1 hpge)
+  refine Rle_trans hub ?_
+  refine Rle_trans (Rle_of_Req (riemannIntegralI_const_any _ _ _ _ _ _ _ _)) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_comm _ _)) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_one _)) ?_
+  refine Rle_trans (thetaFn_value_decay2 m) (Rle_of_Req ?_)
+  refine Req_trans ?_ (Req_symm (Rmul_ofQ_ofQ (by decide)
+    (Qmul_den_pos (by decide) (Nat.mul_pos (Nat.succ_pos m) (Nat.succ_pos (m + 1))))))
+  exact ofQ_congr (Nat.mul_pos (Nat.succ_pos m) (Nat.succ_pos (m + 1)))
+    (Qmul_den_pos (by decide) (Qmul_den_pos (by decide)
+      (Nat.mul_pos (Nat.succ_pos m) (Nat.succ_pos (m + 1))))) (by simp only [Qeq, mul]; push_cast; ring_uor)
+
+/-- **`∫₁^∞ t^{σ−1}ψ ≤ 2`** (`σ = e+1 ≤ 1`), uniformly in `σ` — since `0 ≤ t^e ≤ 1`, the product is
+    dominated by `ψ`, whose integral is `≤ 2` (telescoping `Σ 2/((m+1)(m+2)) = 2N/(N+1) ≤ 2`). -/
+theorem thetaMellinPow_le_two (e : Real) (he : Rle e zero) (B : Q) (hB : 0 < B.den) (hBn : 0 ≤ B.num)
+    (heB : Rle (Rabs e) (ofQ B hB)) :
+    Rle (thetaMellinPow e he B hB hBn heB) (ofQ (⟨2, 1⟩ : Q) (by decide)) := by
+  unfold thetaMellinPow improperIntegral1
+  refine Rlim_le_ofQ _ (by decide) (fun j => ?_)
+  have hbt : Rle (genSum boundTele (digammaMidx (⟨2, 1⟩ : Q) j)) (ofQ (⟨1, 1⟩ : Q) (by decide)) :=
+    Rle_trans (Rle_of_Req (genSum_boundTele (digammaMidx (⟨2, 1⟩ : Q) j)))
+      (Rle_ofQ_ofQ (Nat.succ_pos _) (by decide) (by simp only [Qle]; push_cast; omega))
+  refine Rle_trans (genSum_le_genSum
+    (fun m => integralTerm_gPowTheta_le2 e he _ _ _ m) (digammaMidx (⟨2, 1⟩ : Q) j)) ?_
+  refine Rle_trans (Rle_of_Req (genSum_Rmul_const (ofQ (⟨2, 1⟩ : Q) (by decide)) boundTele
+    (digammaMidx (⟨2, 1⟩ : Q) j))) ?_
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) hbt) ?_
+  exact Rle_of_Req (Rmul_one (ofQ (⟨2, 1⟩ : Q) (by decide)))
+
 end UOR.Bridge.F1Square.Analysis
