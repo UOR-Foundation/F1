@@ -52,4 +52,20 @@ theorem gPowClamp_lipschitz (e : Real) (he : Rle e zero) (x y : Real) :
     (Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide)) (Rnonneg_Rabs e))
     (qClampOne_lipschitz x y)
 
+/-- **`gPowClamp e` respects `≈`** — the integral's `hfc` hypothesis. From the Lipschitz bound: `x ≈ y`
+    ⟹ `|x−y| ≈ 0` ⟹ `|gPowClamp e x − gPowClamp e y| ≤ 0`, and `≥ 0` (`Rnonneg_Rabs`), so the difference
+    is `≈ 0`. -/
+theorem gPowClamp_congr (e : Real) (he : Rle e zero) {x y : Real} (hxy : Req x y) :
+    Req (gPowClamp e x) (gPowClamp e y) := by
+  have hRHS0 : Req (Rmul (Rmul (ofQ (⟨4, 1⟩ : Q) (by decide)) (Rabs e)) (Rabs (Rsub x y))) zero := by
+    refine Req_trans (Rmul_congr (Req_refl _) ?_) (Rmul_zero _)
+    refine Req_trans (Rabs_congr ?_) Rabs_zero
+    exact Req_trans (Rsub_congr (Req_refl x) (Req_symm hxy)) (Radd_neg x)
+  have habsle : Rle (Rabs (Rsub (gPowClamp e x) (gPowClamp e y))) zero :=
+    Rle_trans (gPowClamp_lipschitz e he x y) (Rle_of_Req hRHS0)
+  have hle : Rle (Rsub (gPowClamp e x) (gPowClamp e y)) zero := Rle_of_Rabs_le habsle
+  have hge : Rle zero (Rsub (gPowClamp e x) (gPowClamp e y)) :=
+    Rle_trans (Rle_of_Req (Req_symm Rneg_zero)) (Rneg_le_of_Rabs_le habsle)
+  exact Req_of_Rsub_zero_loc (Rle_antisymm hle hge)
+
 end UOR.Bridge.F1Square.Analysis
