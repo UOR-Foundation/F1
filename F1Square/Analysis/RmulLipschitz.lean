@@ -90,4 +90,62 @@ theorem Rmul_lipschitz {f g : Real → Real} {Lf Lg Mf Mg : Q}
         (ofQ_congr _ _ hQeq))
   exact Rle_trans htri (Rle_trans (Radd_le_add hb1 hb2) (Rle_of_Req hcollect))
 
+/-- **Product-Lipschitz with real constants** — the abstract-exponent form of `Rmul_lipschitz`. When
+    a factor's Lipschitz constant is a genuine real (e.g. `4·|e|` for `gPowClamp e` with an *abstract*
+    real exponent `e`), it cannot be written as `ofQ q` without forcing `e := ofQ q` (which detonates
+    `whnf` through the `RrpowPos ∘ qClampOne` cascade). This version keeps `Lf Lg Mf Mg : Real`, so the
+    exponent stays opaque; the product constant is the real `M_f·L_g + M_g·L_f`. The proof is the same
+    telescoping estimate, with the rational `ofQ`-arithmetic of the final regroup replaced by the real
+    ring lemmas. -/
+theorem Rmul_lipschitz_real {f g : Real → Real} {Lf Lg Mf Mg : Real}
+    (hLg0 : Rnonneg Lg) (hMg0 : Rnonneg Mg)
+    (hf_lip : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul Lf (Rabs (Rsub x y))))
+    (hg_lip : ∀ x y, Rle (Rabs (Rsub (g x) (g y))) (Rmul Lg (Rabs (Rsub x y))))
+    (hf_bd : ∀ x, Rle (Rabs (f x)) Mf) (hg_bd : ∀ x, Rle (Rabs (g x)) Mg)
+    (x y : Real) :
+    Rle (Rabs (Rsub (Rmul (f x) (g x)) (Rmul (f y) (g y))))
+        (Rmul (Radd (Rmul Mf Lg) (Rmul Mg Lf)) (Rabs (Rsub x y))) := by
+  -- telescoping identity  fg − fg = f·(g x − g y) + (f x − f y)·g
+  have htel : Req (Rsub (Rmul (f x) (g x)) (Rmul (f y) (g y)))
+      (Radd (Rmul (f x) (Rsub (g x) (g y))) (Rmul (Rsub (f x) (f y)) (g y))) :=
+    Req_symm (Req_trans (Radd_congr (Rmul_sub_distrib (f x) (g x) (g y))
+        (Rmul_sub_distrib_right (f x) (f y) (g y)))
+      (Rsub_split (Rmul (f x) (g x)) (Rmul (f x) (g y)) (Rmul (f y) (g y))))
+  -- triangle + |·| multiplicativity
+  have htri : Rle (Rabs (Rsub (Rmul (f x) (g x)) (Rmul (f y) (g y))))
+      (Radd (Rmul (Rabs (f x)) (Rabs (Rsub (g x) (g y))))
+            (Rmul (Rabs (Rsub (f x) (f y))) (Rabs (g y)))) :=
+    Rle_trans (Rle_of_Req (Rabs_congr htel))
+      (Rle_trans (Rabs_Radd _ _)
+        (Rle_of_Req (Radd_congr (Rabs_Rmul (f x) (Rsub (g x) (g y)))
+          (Rabs_Rmul (Rsub (f x) (f y)) (g y)))))
+  have hwnn : Rnonneg (Rabs (Rsub x y)) := Rnonneg_Rabs _
+  have hb1 : Rle (Rmul (Rabs (f x)) (Rabs (Rsub (g x) (g y))))
+      (Rmul Mf (Rmul Lg (Rabs (Rsub x y)))) :=
+    Rmul_le_Rmul_both (Rnonneg_Rabs _) (Rnonneg_Rmul hLg0 hwnn) (hf_bd x) (hg_lip x y)
+  have hb2 : Rle (Rmul (Rabs (Rsub (f x) (f y))) (Rabs (g y)))
+      (Rmul (Rmul Lf (Rabs (Rsub x y))) Mg) :=
+    Rmul_le_Rmul_both (Rnonneg_Rabs _) hMg0 (hf_lip x y) (hg_bd y)
+  -- collect  M_f·(L_g·w) + (L_f·w)·M_g  =  (M_f·L_g + M_g·L_f)·w  (real ring lemmas)
+  have hcollect : Req (Radd (Rmul Mf (Rmul Lg (Rabs (Rsub x y))))
+        (Rmul (Rmul Lf (Rabs (Rsub x y))) Mg))
+      (Rmul (Radd (Rmul Mf Lg) (Rmul Mg Lf)) (Rabs (Rsub x y))) := by
+    refine Req_trans (Radd_congr
+        (Req_symm (Rmul_assoc Mf Lg (Rabs (Rsub x y))))
+        (Req_trans (Rmul_comm (Rmul Lf (Rabs (Rsub x y))) Mg)
+          (Req_symm (Rmul_assoc Mg Lf (Rabs (Rsub x y)))))) ?_
+    exact Req_symm (Rmul_distrib_right (Rmul Mf Lg) (Rmul Mg Lf) (Rabs (Rsub x y)))
+  exact Rle_trans htri (Rle_trans (Radd_le_add hb1 hb2) (Rle_of_Req hcollect))
+
+/-- **Rational over-bound bridge**: a real Lipschitz constant `Lr` dominated by a rational `ofQ Lq`
+    yields the rational-constant Lipschitz hypothesis the integral layer's *schedule* consumes (`Lq`
+    drives `digammaMidx`, while the genuine modulus stays the real `Lr`). Since `|x−y| ≥ 0`,
+    `|f x − f y| ≤ Lr·|x−y| ≤ ofQ Lq·|x−y|`. This is what lets an abstract-exponent integrand
+    (real `Lr`) be integrated by the existing rational-`Q` integral stack. -/
+theorem lip_q_of_lip_real {f : Real → Real} {Lr : Real} {Lq : Q} (hLqd : 0 < Lq.den)
+    (hLrq : Rle Lr (ofQ Lq hLqd))
+    (hlip : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul Lr (Rabs (Rsub x y)))) :
+    ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ Lq hLqd) (Rabs (Rsub x y))) :=
+  fun x y => Rle_trans (hlip x y) (Rmul_le_Rmul_right (Rnonneg_Rabs _) hLrq)
+
 end UOR.Bridge.F1Square.Analysis

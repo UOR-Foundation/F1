@@ -3599,6 +3599,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RrpowPos_lipschitz
 #print axioms Analysis.Rmul_lip_const_nonneg
 #print axioms Analysis.Rmul_lipschitz
+#print axioms Analysis.Rmul_lipschitz_real
+#print axioms Analysis.lip_q_of_lip_real
 #print axioms Analysis.Rle_one_of_seq_ge1
 #print axioms Analysis.Rinv_le_one
 #print axioms Analysis.Rdiv_sub_one_le_abs
