@@ -83,6 +83,19 @@ theorem Clim_add (X Y : Nat → Complex) (hX : CReg X) (hY : CReg Y)
   ⟨Rlim_add (fun j => (X j).re) (fun j => (Y j).re) hX.1 hY.1 hXY.1,
    Rlim_add (fun j => (X j).im) (fun j => (Y j).im) hX.2 hY.2 hXY.2⟩
 
+/-- **Limit additivity, up to an approximation** `lim W ≈ lim X + lim Y` when `W ≈ X + Y` pointwise,
+    over ℂ — componentwise from the real `Rlim_add_of_approx`. The generalization of `Clim_add` that
+    sidesteps the fixed-modulus wall: `W`'s regularity `hW` is GIVEN (not derived from `X + Y`), so this
+    applies whenever a regular sequence `W` is pointwise `≈` a sum of two convergent sequences — e.g.
+    `W = CsumN (F+G)` against `CsumN F`, `CsumN G` (`Cseries_add`). -/
+theorem Clim_add_of_approx (W X Y : Nat → Complex) (hX : CReg X) (hY : CReg Y) (hW : CReg W)
+    (happ : ∀ j, Ceq (W j) (Cadd (X j) (Y j))) :
+    Ceq (Clim W hW) (Cadd (Clim X hX) (Clim Y hY)) :=
+  ⟨Rlim_add_of_approx (fun j => (W j).re) (fun j => (X j).re) (fun j => (Y j).re)
+     hX.1 hY.1 hW.1 (fun j => (happ j).1),
+   Rlim_add_of_approx (fun j => (W j).im) (fun j => (X j).im) (fun j => (Y j).im)
+     hX.2 hY.2 hW.2 (fun j => (happ j).2)⟩
+
 /-- **Limit negation** `lim (−X) ≈ −lim X` over ℂ — componentwise from the real `Rlim_neg`
     (`RlimProps.lean`). Unlike `Clim_add`, negation is modulus-SAFE (`Rneg` does not inflate the
     sequence index, so `RReg` is preserved exactly), but the codebase idiom still threads the

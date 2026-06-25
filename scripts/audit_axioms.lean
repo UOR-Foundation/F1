@@ -525,6 +525,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Cxi_conj
 #print axioms Analysis.Rlim_zero
 #print axioms Analysis.Rlim_add
+#print axioms Analysis.Rlim_add_of_approx
 #print axioms Analysis.genSum_const_zero
 #print axioms Analysis.CdigammaTerm_one_eq_zero
 #print axioms Analysis.CDigammaCore_one_eq_zero
@@ -3305,6 +3306,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Clim_congr
 #print axioms Analysis.Clim_zero
 #print axioms Analysis.Clim_add
+#print axioms Analysis.Clim_add_of_approx
 #print axioms Analysis.Clim_neg
 #print axioms Analysis.CsumN_re
 #print axioms Analysis.CsumN_im
@@ -3317,6 +3319,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CsumN_re_fun
 #print axioms Analysis.CsumN_im_fun
 #print axioms Analysis.CsumConv_iff
+#print axioms Analysis.Cseries_add
 #print axioms Analysis.Clog_conj
 #print axioms Analysis.Cpow_conj
 #print axioms Analysis.Carg_conj

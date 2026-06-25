@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 (item 6 — series substrate) — series additivity `Cseries_add`, via `Rlim_add_of_approx`**
+  (`Analysis/RlimProps.lean`, `Analysis/ComplexLimit.lean`, `Analysis/ComplexSeries.lean`):
+  `Σ_k (Fₖ + Gₖ) ≈ (Σ_k Fₖ) + (Σ_k Gₖ)` — linearity of the complex infinite sum, the forced tool for
+  splitting a log-derivative / witness series into its component series (item 6). This had appeared
+  *blocked* (the fixed `RReg` modulus is not preserved under summation, so a combined regularity is not
+  derivable) — the unblock is the **generalization `Rlim_add_of_approx`** (`lim W ≈ lim X + lim Y` when
+  `W ≈ X + Y` pointwise): it takes `W`'s regularity as GIVEN rather than deriving the sum's, so the
+  caller's `CsumConv (F+G)` carries `W = CsumN (F+G)`, which is pointwise `≈ CsumN F + CsumN G` by
+  `CsumN_add`. Proof of `Rlim_add_of_approx`: the `Rlim_add` `8n+7` diagonal alignment plus one triangle
+  for the `happ` error (`2/(4n+4) + 10/(8n+8) = 14/(8n+8) ≤ 2/(n+1)`, still absorbed by
+  `Req_of_lin_bound`); `Rlim_add` becomes its `happ = refl` corollary. `Clim_add_of_approx` is the
+  componentwise lift; `Cseries_add` a 1-liner over it. Grep-verified novel, axiom-clean.
 - **Track 1 (item 5 — product substrate) — finite-product multiplicativity `CprodN_mul`**
   (`Analysis/ComplexSeries.lean`): `∏_{k<N} (Fₖ·Gₖ) ≈ (∏_{k<N} Fₖ)·(∏_{k<N} Gₖ)` — the complex finite
   product distributes over a factorwise product, the algebraic substrate for factoring the Hadamard

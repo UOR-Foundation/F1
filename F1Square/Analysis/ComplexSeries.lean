@@ -142,6 +142,17 @@ def CsumConv (F : Nat → Complex) : Prop := CReg (CsumN F)
 /-- The **complex series** `Σ_k F k` — the limit of the partial sums, given convergence. -/
 def Cseries (F : Nat → Complex) (h : CsumConv F) : Complex := Clim (CsumN F) h
 
+/-- **★ Series additivity** `Σ_k (Fₖ + Gₖ) ≈ (Σ_k Fₖ) + (Σ_k Gₖ)` — linearity of the complex
+    infinite sum. The `Cseries`-level lift of `CsumN_add`, via `Clim_add_of_approx`: the GIVEN
+    convergence `hFG` of the combined series carries `W = CsumN (F+G)`, which is pointwise `≈`
+    `CsumN F + CsumN G` (`CsumN_add`) — so no (non-derivable) combined regularity is needed. The
+    forced linearity for splitting a log-derivative / witness series into its component series. -/
+theorem Cseries_add (F G : Nat → Complex) (hF : CsumConv F) (hG : CsumConv G)
+    (hFG : CsumConv (fun n => Cadd (F n) (G n))) :
+    Ceq (Cseries (fun n => Cadd (F n) (G n)) hFG) (Cadd (Cseries F hF) (Cseries G hG)) :=
+  Clim_add_of_approx (CsumN (fun n => Cadd (F n) (G n))) (CsumN F) (CsumN G)
+    hF hG hFG (CsumN_add F G)
+
 /-- A complex infinite product **converges** iff its partial products form a regular sequence. -/
 def CprodConv (F : Nat → Complex) : Prop := CReg (CprodN F)
 
