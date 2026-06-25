@@ -60,6 +60,22 @@ private theorem Cadd_add_add_comm (a b c d : Complex) :
         (Ceq_trans (Cadd_congr (Ceq_refl a) (Cadd_assoc c b d))
           (Ceq_symm (Cadd_assoc a c (Cadd b d))))))
 
+/-- **Negation distributes over a complex sum** `−(a + b) ≈ (−a) + (−b)` — componentwise `Rneg_Radd`.
+    The inductive step of `CsumN_neg`. -/
+private theorem Cneg_Cadd (a b : Complex) : Ceq (Cneg (Cadd a b)) (Cadd (Cneg a) (Cneg b)) :=
+  ⟨Rneg_Radd a.re b.re, Rneg_Radd a.im b.im⟩
+
+/-- **★ Partial-sum negation** `Σ_{n<N} (−Fₙ) ≈ −(Σ_{n<N} Fₙ)` — the negation half of complex
+    finite-sum linearity (with `CsumN_add`, the full additive group). Modulus-safe (negation does not
+    inflate the index). By induction: the appended `−Fₙ` and the negated inductive sum regroup via
+    `Cneg_Cadd`. The forced substrate for the subtractions in the log-derivative `bl` expansion. -/
+theorem CsumN_neg (F : Nat → Complex) :
+    ∀ N, Ceq (CsumN (fun n => Cneg (F n)) N) (Cneg (CsumN F N))
+  | 0 => ⟨Req_symm Rneg_zero, Req_symm Rneg_zero⟩
+  | (N + 1) =>
+      Ceq_trans (Cadd_congr (CsumN_neg F N) (Ceq_refl (Cneg (F N))))
+        (Ceq_symm (Cneg_Cadd (CsumN F N) (F N)))
+
 /-- **★ Partial-sum additivity** `Σ_{n<N} (Fₙ + Gₙ) ≈ (Σ_{n<N} Fₙ) + (Σ_{n<N} Gₙ)` — linearity of
     the complex finite sum. By induction: the appended summand `Fₙ + Gₙ` and the inductive split
     regroup via the four-term interchange `Cadd_add_add_comm`. The forced algebraic substrate for

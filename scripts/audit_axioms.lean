@@ -3305,10 +3305,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Clim_congr
 #print axioms Analysis.Clim_zero
 #print axioms Analysis.Clim_add
+#print axioms Analysis.Clim_neg
 #print axioms Analysis.CsumN_re
 #print axioms Analysis.CsumN_im
 #print axioms Analysis.CsumN_congr
 #print axioms Analysis.CsumN_add
+#print axioms Analysis.CsumN_neg
 #print axioms Analysis.CprodN_congr
 #print axioms Analysis.CprodN_succ_one
 #print axioms Analysis.CsumN_re_fun

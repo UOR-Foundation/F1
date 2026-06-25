@@ -83,4 +83,13 @@ theorem Clim_add (X Y : Nat → Complex) (hX : CReg X) (hY : CReg Y)
   ⟨Rlim_add (fun j => (X j).re) (fun j => (Y j).re) hX.1 hY.1 hXY.1,
    Rlim_add (fun j => (X j).im) (fun j => (Y j).im) hX.2 hY.2 hXY.2⟩
 
+/-- **Limit negation** `lim (−X) ≈ −lim X` over ℂ — componentwise from the real `Rlim_neg`
+    (`RlimProps.lean`). Unlike `Clim_add`, negation is modulus-SAFE (`Rneg` does not inflate the
+    sequence index, so `RReg` is preserved exactly), but the codebase idiom still threads the
+    transformed regularity `hNX` as a hypothesis (cf. `Clim_Cconj`). With `Clim_add` this gives the
+    full additive-group linearity of the complex Bishop limit (subtraction in `1 − Re(·)` / `−ζ′/ζ`). -/
+theorem Clim_neg (X : Nat → Complex) (hX : CReg X) (hNX : CReg (fun j => Cneg (X j))) :
+    Ceq (Clim (fun j => Cneg (X j)) hNX) (Cneg (Clim X hX)) :=
+  ⟨Rlim_neg (fun j => (X j).re) hX.1 hNX.1, Rlim_neg (fun j => (X j).im) hX.2 hNX.2⟩
+
 end UOR.Bridge.F1Square.Analysis

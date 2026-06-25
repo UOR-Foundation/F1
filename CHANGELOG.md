@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 (item 0 — limit/series substrate) — negation closure `Clim_neg` / `CsumN_neg`**
+  (`Analysis/ComplexLimit.lean`, `Analysis/ComplexSeries.lean`): `lim (−X) ≈ −lim X` and
+  `Σ_{n<N} (−Fₙ) ≈ −(Σ_{n<N} Fₙ)` — the negation half of the complex limit/finite-sum linearity (with
+  `Clim_add`/`CsumN_add`, the full additive-group structure; subtraction pervades the log-derivative
+  `1 − Re(·)` / `−ζ′/ζ`). Both modulus-SAFE — negation does not inflate the sequence index, so `RReg` is
+  preserved exactly (no rate doubling, unlike `Clim_add`). `Clim_neg` lifts the real `Rlim_neg`
+  componentwise (still threading the transformed regularity as a hypothesis, the codebase idiom);
+  `CsumN_neg` is an induction over the new `Cneg_Cadd` (`−(a+b) ≈ (−a)+(−b)`, from `Rneg_Radd`).
+  Grep-verified novel, axiom-clean.
 - **Track 1 (item 0 — limit substrate) — Bishop-limit additivity `Rlim_add` / `Clim_add`**
   (`Analysis/RlimProps.lean`, `Analysis/ComplexLimit.lean`): `lim (X + Y) ≈ lim X + lim Y` over ℝ and ℂ —
   the forced gateway to complex series linearity (`Cseries_add`) for splitting a witness / log-derivative
