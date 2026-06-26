@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 2 (integration) — Riemann-integral linearity `riemannIntegral_add`** (`Analysis/DyadicIntegral.lean`):
+  `∫₀¹ (f+g) = ∫₀¹ f + ∫₀¹ g` — the additive half of linearity for the certified Bishop-limit integral,
+  and the first genuine consumer of `Rlim_add_of_approx` (validating the limit-additivity layer end to
+  end). The three integrals share a Lipschitz constant `L` (caller supplies `L ≥ L_f + L_g` with all
+  three Lipschitz proofs at `L`), so they use the same dyadic reindex `digammaMidx L` and the limits
+  align — no integral-`L`-independence lemma needed. The dyadic sums add at every finite level
+  (`riemannSum_add` ⟹ `dyadicR` ⟹ `dyadicTerm` via `Rsub_Radd_Radd` ⟹ `genSum` via the new
+  `genSum_Radd_of_termwise`), so the integral sequences satisfy `Z_{f+g} ≈ Z_f + Z_g` pointwise; the
+  combined convergence is GIVEN (its own `dyadicSum_RReg`), so `Rlim_add_of_approx` joins the limits
+  without a (non-derivable) combined regularity. Grep-verified novel, axiom-clean.
 - **Track 1 (item 6 — series substrate) — series additivity `Cseries_add`, via `Rlim_add_of_approx`**
   (`Analysis/RlimProps.lean`, `Analysis/ComplexLimit.lean`, `Analysis/ComplexSeries.lean`):
   `Σ_k (Fₖ + Gₖ) ≈ (Σ_k Fₖ) + (Σ_k Gₖ)` — linearity of the complex infinite sum, the forced tool for

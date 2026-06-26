@@ -284,4 +284,68 @@ theorem riemannIntegral_le {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn 
   exact Rle_trans (Rlim_le_seq hZfReg hZgReg hZle)
     (Rle_of_Req (Rlim_add_const (dyadicR g 0) _ (dyadicSum_RReg hLd hLn hlipg hfcg) hZgReg))
 
+/-- **`genSum` distributes over a termwise sum**: if `Tₖ ≈ Tfₖ + Tgₖ` then
+    `Σ_{k<M} Tₖ ≈ Σ_{k<M} Tfₖ + Σ_{k<M} Tgₖ`. `genSum_congr` + finite-additivity combined, by
+    induction over the `Radd` middle-four swap. -/
+theorem genSum_Radd_of_termwise {T Tf Tg : Nat → Real} (h : ∀ k, Req (T k) (Radd (Tf k) (Tg k))) :
+    ∀ M, Req (genSum T M) (Radd (genSum Tf M) (genSum Tg M))
+  | 0 => Req_symm (Radd_zero zero)
+  | (M + 1) =>
+      Req_trans (Radd_congr (genSum_Radd_of_termwise h M) (h M))
+        (Radd_swap (genSum Tf M) (genSum Tg M) (Tf M) (Tg M))
+
+/-- **The certified Riemann integral is additive in the integrand** `∫₀¹ (f+g) = ∫₀¹ f + ∫₀¹ g` —
+    linearity (additive part) of the Bishop-limit integral, and the first genuine consumer of
+    `Rlim_add_of_approx`. The three integrals are taken at a SHARED Lipschitz constant `L` (so they use
+    the same dyadic reindex `digammaMidx L`, aligning the limits); the caller supplies `L ≥ L_f + L_g`
+    with all three Lipschitz proofs at `L`.
+
+    The dyadic sums add at every finite level — `riemannSum_add` ⟹ `dyadicR` additive ⟹ `dyadicTerm`
+    additive (`Rsub_Radd_Radd`) ⟹ `genSum` additive (`genSum_Radd_of_termwise`) — so the integral
+    sequences `Zₕ j = D₀(h) + Σ(dyadicTerm h)` satisfy `Z_{f+g} ≈ Z_f + Z_g` pointwise. The
+    convergence of `Z_{f+g}` is GIVEN (its own `dyadicSum_RReg`), so `Rlim_add_of_approx` combines the
+    limits without a (non-derivable) combined regularity. -/
+theorem riemannIntegral_add {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlipf : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcf : ∀ x y, Req x y → Req (f x) (f y))
+    (hlipg : ∀ x y, Rle (Rabs (Rsub (g x) (g y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcg : ∀ x y, Req x y → Req (g x) (g y))
+    (hlipfg : ∀ x y, Rle (Rabs (Rsub (Radd (f x) (g x)) (Radd (f y) (g y))))
+        (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcfg : ∀ x y, Req x y → Req (Radd (f x) (g x)) (Radd (f y) (g y))) :
+    Req (riemannIntegral hLd hLn hlipfg hfcfg)
+        (Radd (riemannIntegral hLd hLn hlipf hfcf) (riemannIntegral hLd hLn hlipg hfcg)) := by
+  -- dyadic sums add at every finite level
+  have hdR : ∀ m, Req (dyadicR (fun x => Radd (f x) (g x)) m)
+      (Radd (dyadicR f m) (dyadicR g m)) := fun m => riemannSum_add f g (2 ^ m - 1)
+  have hdT : ∀ k, Req (dyadicTerm (fun x => Radd (f x) (g x)) k)
+      (Radd (dyadicTerm f k) (dyadicTerm g k)) := fun k =>
+    Req_trans (Rsub_congr (hdR (k + 1)) (hdR k))
+      (Rsub_Radd_Radd (dyadicR f (k + 1)) (dyadicR g (k + 1)) (dyadicR f k) (dyadicR g k))
+  have hgS : ∀ j, Req (genSum (dyadicTerm (fun x => Radd (f x) (g x))) (digammaMidx L j))
+      (Radd (genSum (dyadicTerm f) (digammaMidx L j)) (genSum (dyadicTerm g) (digammaMidx L j))) :=
+    fun j => genSum_Radd_of_termwise hdT (digammaMidx L j)
+  -- the three integral sequences `Zₕ` are regular (`D₀ + Σ`)
+  have hZfReg : RReg (fun j => Radd (dyadicR f 0) (genSum (dyadicTerm f) (digammaMidx L j))) :=
+    RReg_add_const (dyadicR f 0) _ (dyadicSum_RReg hLd hLn hlipf hfcf)
+  have hZgReg : RReg (fun j => Radd (dyadicR g 0) (genSum (dyadicTerm g) (digammaMidx L j))) :=
+    RReg_add_const (dyadicR g 0) _ (dyadicSum_RReg hLd hLn hlipg hfcg)
+  have hZfgReg : RReg (fun j => Radd (dyadicR (fun x => Radd (f x) (g x)) 0)
+      (genSum (dyadicTerm (fun x => Radd (f x) (g x))) (digammaMidx L j))) :=
+    RReg_add_const _ _ (dyadicSum_RReg hLd hLn hlipfg hfcfg)
+  -- `Z_{f+g} ≈ Z_f + Z_g` pointwise
+  have happZ : ∀ j, Req (Radd (dyadicR (fun x => Radd (f x) (g x)) 0)
+        (genSum (dyadicTerm (fun x => Radd (f x) (g x))) (digammaMidx L j)))
+      (Radd (Radd (dyadicR f 0) (genSum (dyadicTerm f) (digammaMidx L j)))
+            (Radd (dyadicR g 0) (genSum (dyadicTerm g) (digammaMidx L j)))) := fun j =>
+    Req_trans (Radd_congr (hdR 0) (hgS j))
+      (Radd_swap (dyadicR f 0) (dyadicR g 0)
+        (genSum (dyadicTerm f) (digammaMidx L j)) (genSum (dyadicTerm g) (digammaMidx L j)))
+  -- assemble: ∫(f+g) ≈ lim Z_{f+g} ≈ lim Z_f + lim Z_g ≈ ∫f + ∫g
+  refine Req_trans (Req_symm (Rlim_add_const _ _ (dyadicSum_RReg hLd hLn hlipfg hfcfg) hZfgReg)) ?_
+  refine Req_trans (Rlim_add_of_approx _ _ _ hZfReg hZgReg hZfgReg happZ) ?_
+  exact Radd_congr
+    (Rlim_add_const (dyadicR f 0) _ (dyadicSum_RReg hLd hLn hlipf hfcf) hZfReg)
+    (Rlim_add_const (dyadicR g 0) _ (dyadicSum_RReg hLd hLn hlipg hfcg) hZgReg)
+
 end UOR.Bridge.F1Square.Analysis

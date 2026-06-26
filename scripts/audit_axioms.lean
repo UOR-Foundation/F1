@@ -3433,6 +3433,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannIntegral_nonneg
 #print axioms Analysis.Rlim_le_seq
 #print axioms Analysis.riemannIntegral_le
+#print axioms Analysis.genSum_Radd_of_termwise
+#print axioms Analysis.riemannIntegral_add
 #print axioms Analysis.riemannIntegral_const_gen
 #print axioms Analysis.Rabs_Rmul_ofQ_nonneg
 #print axioms Analysis.affineMap_congr
