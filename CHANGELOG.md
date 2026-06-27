@@ -16,6 +16,12 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 2 (integration) — base-integral congruence `riemannIntegral_congr` / `riemannIntegralI_congr`**
+  (`Analysis/DyadicIntegral.lean`, `Analysis/IntervalIntegral.lean`): `∫f ≈ ∫g` for `f ≈ g` pointwise on
+  `[0,1]` and `[a,a+w]` — the integral respects `≈` of the integrand, completing the `_congr` family
+  (the improper/half-line congruences already existed; the two base integrals were the gap). Each is
+  `Rle_antisymm` of the corresponding `_le` both ways. Axiom-clean. (The integrand-congruence substrate
+  any future integral rewrite — including a negation/subtraction zero-trick — needs.)
 - **Track 2 (integration) — complex Mellin integral linearity `ChalfLineIntegral_add`** (additive part)
   (`Analysis/ComplexIntegral.lean`): `∫₀^∞ ((gfr+ggr) + i(gfi+ggi)) = ∫₀^∞(gfr+i·gfi) + ∫₀^∞(ggr+i·ggi)`
   — the additive half of linearity for the constructive **complex** Mellin integral, the object the

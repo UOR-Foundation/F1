@@ -348,4 +348,17 @@ theorem riemannIntegral_add {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn
     (Rlim_add_const (dyadicR f 0) _ (dyadicSum_RReg hLd hLn hlipf hfcf) hZfReg)
     (Rlim_add_const (dyadicR g 0) _ (dyadicSum_RReg hLd hLn hlipg hfcg) hZgReg)
 
+/-- **`∫₀¹ f ≈ ∫₀¹ g` for `f ≈ g` pointwise** (shared `L`) — the certified integral respects `≈` of the
+    integrand, by antisymmetry of `riemannIntegral_le` (the base-integral companion of
+    `improperIntegral1_congr`/`halfLineIntegral_congr`). -/
+theorem riemannIntegral_congr {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlipf : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcf : ∀ x y, Req x y → Req (f x) (f y))
+    (hlipg : ∀ x y, Rle (Rabs (Rsub (g x) (g y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcg : ∀ x y, Req x y → Req (g x) (g y)) (hfg : ∀ x, Req (f x) (g x)) :
+    Req (riemannIntegral hLd hLn hlipf hfcf) (riemannIntegral hLd hLn hlipg hfcg) :=
+  Rle_antisymm
+    (riemannIntegral_le hLd hLn hlipf hfcf hlipg hfcg (fun x => Rle_of_Req (hfg x)))
+    (riemannIntegral_le hLd hLn hlipg hfcg hlipf hfcf (fun x => Rle_of_Req (Req_symm (hfg x))))
+
 end UOR.Bridge.F1Square.Analysis

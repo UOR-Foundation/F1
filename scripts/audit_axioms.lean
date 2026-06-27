@@ -3433,6 +3433,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannIntegral_nonneg
 #print axioms Analysis.Rlim_le_seq
 #print axioms Analysis.riemannIntegral_le
+#print axioms Analysis.riemannIntegral_congr
 #print axioms Analysis.genSum_Radd_of_termwise
 #print axioms Analysis.riemannIntegral_add
 #print axioms Analysis.riemannIntegral_const_gen
@@ -3444,6 +3445,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannIntegralI_nonneg
 #print axioms Analysis.riemannIntegralI_le
 #print axioms Analysis.riemannIntegralI_add
+#print axioms Analysis.riemannIntegralI_congr
 #print axioms Analysis.const_lip0
 #print axioms Analysis.Cintegral_const
 #print axioms Analysis.Qle_of_not_le

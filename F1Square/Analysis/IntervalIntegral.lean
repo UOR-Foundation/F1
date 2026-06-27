@@ -127,4 +127,19 @@ theorem riemannIntegralI_add {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hL
       (fun x y h => hfcfg _ _ (affineMap_congr a w ha hw h)))) ?_
   exact Rmul_distrib (ofQ w hw) _ _
 
+/-- **`∫ₐ^{a+w} f ≈ ∫ₐ^{a+w} g` for `f ≈ g` pointwise** (shared `L`) — the interval integral respects
+    `≈` of the integrand, by antisymmetry of `riemannIntegralI_le`. -/
+theorem riemannIntegralI_congr {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlipf : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcf : ∀ x y, Req x y → Req (f x) (f y))
+    (hlipg : ∀ x y, Rle (Rabs (Rsub (g x) (g y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcg : ∀ x y, Req x y → Req (g x) (g y))
+    (a w : Q) (ha : 0 < a.den) (hw : 0 < w.den) (hwn : 0 ≤ w.num) (hfg : ∀ x, Req (f x) (g x)) :
+    Req (riemannIntegralI hLd hLn hlipf hfcf a w ha hw hwn)
+        (riemannIntegralI hLd hLn hlipg hfcg a w ha hw hwn) :=
+  Rle_antisymm
+    (riemannIntegralI_le hLd hLn hlipf hfcf hlipg hfcg (fun x => Rle_of_Req (hfg x)) a w ha hw hwn)
+    (riemannIntegralI_le hLd hLn hlipg hfcg hlipf hfcf (fun x => Rle_of_Req (Req_symm (hfg x)))
+      a w ha hw hwn)
+
 end UOR.Bridge.F1Square.Analysis
