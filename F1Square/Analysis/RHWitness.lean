@@ -107,6 +107,29 @@ theorem witnessSum_nonneg : ∀ (ws : List Complex) (n : Nat),
       Rnonneg_Radd (witnessTerm_nonneg (h w (List.Mem.head rest)) n)
         (witnessSum_nonneg rest n (fun w' hw' => h w' (List.Mem.tail w hw')))
 
+/-- **The witness sum is additive over concatenation of the zero list**:
+    `witnessSum (l₁ ++ l₂) n = witnessSum l₁ n + witnessSum l₂ n`. A pure list-fold identity
+    (`Radd_assoc`), the analogue for the Li/zero-sum side of the integral's additive linearity. Its
+    `snoc` specialization (`List.range (M+1) = List.range M ++ [M]`) telescopes consecutive partial
+    sums of the `bl` witness, the increment the convergence seam `reg` is stated over. -/
+theorem witnessSum_append : ∀ (l₁ l₂ : List Complex) (n : Nat),
+    Req (witnessSum (l₁ ++ l₂) n) (Radd (witnessSum l₁ n) (witnessSum l₂ n))
+  | [], l₂, n =>
+      Req_symm (Req_trans (Radd_comm zero (witnessSum l₂ n)) (Radd_zero (witnessSum l₂ n)))
+  | (w :: rest), l₂, n =>
+      Req_trans
+        (Radd_congr (Req_refl (Rsub one (Cnpow w n).re)) (witnessSum_append rest l₂ n))
+        (Req_symm (Radd_assoc (Rsub one (Cnpow w n).re)
+          (witnessSum rest n) (witnessSum l₂ n)))
+
+/-- **The witness sum's partial-sum increment** (`snoc` form): appending one more zero `w` adds exactly
+    its per-zero term `1 − Re(wⁿ)` — `witnessSum (l ++ [w]) n = witnessSum l n + (1 − Re(wⁿ))`. This is
+    the forced shape of the `bl` partial sums `witnessSum ((List.range M).map …)` as `M` grows by one. -/
+theorem witnessSum_snoc (l : List Complex) (w : Complex) (n : Nat) :
+    Req (witnessSum (l ++ [w]) n) (Radd (witnessSum l n) (Rsub one (Cnpow w n).re)) :=
+  Req_trans (witnessSum_append l [w] n)
+    (Radd_congr (Req_refl (witnessSum l n)) (Radd_zero (Rsub one (Cnpow w n).re)))
+
 -- ===========================================================================
 -- The honest bridge: the witness's hypothesis IS RH.
 -- ===========================================================================

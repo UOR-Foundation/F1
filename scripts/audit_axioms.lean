@@ -2458,6 +2458,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.cnormSq_Cnpow_le_one
 #print axioms Analysis.witnessTerm_nonneg
 #print axioms Analysis.witnessSum_nonneg
+#print axioms Analysis.witnessSum_append
+#print axioms Analysis.witnessSum_snoc
 #print axioms Analysis.onLine_is_unit_modulus
 #print axioms Analysis.rh_witness
 #print axioms Analysis.rh_witness_onLine

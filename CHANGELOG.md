@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 (`bl` witness) — partial-sum telescoping `witnessSum_append`/`witnessSum_snoc`** (`Analysis/RHWitness.lean`):
+  the Li/zero-sum witness `Σ_w (1 − Re(wⁿ))` is additive over concatenation of the zero list
+  (`witnessSum (l₁++l₂) = witnessSum l₁ + witnessSum l₂`, pure `Radd_assoc` fold), with the `snoc`
+  increment `witnessSum (l ++ [w]) = witnessSum l + (1 − Re(wⁿ))`. This is the analogue, on the
+  explicit-formula/`bl` side, of the integral's additive linearity, and the exact shape of the `bl`
+  partial sums `witnessSum ((List.range M).map zeroCayley) n` as `M` grows by one — the increment the
+  convergence seam `reg` is stated over. Grep-verified novel, axiom-clean.
+
 - **Track 2 (integration) — scalar linearity lifted up the full Mellin stack** (`Analysis/IntervalIntegral.lean`,
   `Analysis/ImproperIntegral.lean`, `Analysis/ComplexIntegral.lean`): `riemannIntegralI_smul`
   (interval `∫ₐ^{a+w}`, left-commuting `q` past the width `w`), `integralTerm_smul`, `improperIntegral1_smul`
