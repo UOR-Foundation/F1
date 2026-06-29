@@ -175,6 +175,54 @@ theorem ChalfLineIntegral_neg {gr gi : Real → Real} {Lr Li Kr Ki : Q}
   ⟨halfLineIntegral_neg hLrd hLrn hlipr hfcr hlipnr hfcnr hKrd hKr0 hbr hbnr,
    halfLineIntegral_neg hLid hLin hlipi hfci hlipni hfcni hKid hKi0 hbi hbni⟩
 
+/-- **The complex Mellin integral respects a constant real-rational scalar**
+    `∫₀^∞ (q·(gr + i·gi)) = q·∫₀^∞ (gr + i·gi)` for `q : ℚ` — completing (with `ChalfLineIntegral_add`
+    and `_neg`) the **real-rational-linear-functional** structure of the constructive complex Mellin
+    integral, the form the Weil pairing's real test coefficients act through. Componentwise from the
+    real `halfLineIntegral_smul`; the result is the explicit complex pair `⟨q·∫gr, q·∫gi⟩` (a *real*
+    scalar multiple — the re/im-mixing complex `Cmul` scalar is a separate, downstream concern). -/
+theorem ChalfLineIntegral_smul {gr gi : Real → Real} {Lr Li Kr Ki : Q} (q : Q) (hq : 0 < q.den)
+    (hLrd : 0 < Lr.den) (hLrn : 0 ≤ Lr.num)
+    (hlipr : ∀ x y, Rle (Rabs (Rsub (gr x) (gr y))) (Rmul (ofQ Lr hLrd) (Rabs (Rsub x y))))
+    (hfcr : ∀ x y, Req x y → Req (gr x) (gr y))
+    (hlipqr : ∀ x y, Rle (Rabs (Rsub (Rmul (ofQ q hq) (gr x)) (Rmul (ofQ q hq) (gr y))))
+        (Rmul (ofQ Lr hLrd) (Rabs (Rsub x y))))
+    (hfcqr : ∀ x y, Req x y → Req (Rmul (ofQ q hq) (gr x)) (Rmul (ofQ q hq) (gr y)))
+    (hKrd : 0 < Kr.den) (hKr0 : 0 ≤ Kr.num)
+    (hbr : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul Kr (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKrd (digamma_succ_mul_pos hm))))
+          (integralTerm hLrd hLrn hlipr hfcr m)
+      ∧ Rle (integralTerm hLrd hLrn hlipr hfcr m)
+          (ofQ (mul Kr (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKrd (digamma_succ_mul_pos hm))))
+    (hbqr : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul Kr (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKrd (digamma_succ_mul_pos hm))))
+          (integralTerm hLrd hLrn hlipqr hfcqr m)
+      ∧ Rle (integralTerm hLrd hLrn hlipqr hfcqr m)
+          (ofQ (mul Kr (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKrd (digamma_succ_mul_pos hm))))
+    (hLid : 0 < Li.den) (hLin : 0 ≤ Li.num)
+    (hlipi : ∀ x y, Rle (Rabs (Rsub (gi x) (gi y))) (Rmul (ofQ Li hLid) (Rabs (Rsub x y))))
+    (hfci : ∀ x y, Req x y → Req (gi x) (gi y))
+    (hlipqi : ∀ x y, Rle (Rabs (Rsub (Rmul (ofQ q hq) (gi x)) (Rmul (ofQ q hq) (gi y))))
+        (Rmul (ofQ Li hLid) (Rabs (Rsub x y))))
+    (hfcqi : ∀ x y, Req x y → Req (Rmul (ofQ q hq) (gi x)) (Rmul (ofQ q hq) (gi y)))
+    (hKid : 0 < Ki.den) (hKi0 : 0 ≤ Ki.num)
+    (hbi : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul Ki (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKid (digamma_succ_mul_pos hm))))
+          (integralTerm hLid hLin hlipi hfci m)
+      ∧ Rle (integralTerm hLid hLin hlipi hfci m)
+          (ofQ (mul Ki (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKid (digamma_succ_mul_pos hm))))
+    (hbqi : ∀ m, ∀ hm : 1 ≤ m,
+      Rle (Rneg (ofQ (mul Ki (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKid (digamma_succ_mul_pos hm))))
+          (integralTerm hLid hLin hlipqi hfcqi m)
+      ∧ Rle (integralTerm hLid hLin hlipqi hfcqi m)
+          (ofQ (mul Ki (⟨1, (m + 1) * m⟩ : Q)) (Qmul_den_pos hKid (digamma_succ_mul_pos hm)))) :
+    Ceq (ChalfLineIntegral hLrd hLrn hlipqr hfcqr hKrd hKr0 hbqr
+            hLid hLin hlipqi hfcqi hKid hKi0 hbqi)
+        ⟨Rmul (ofQ q hq) (halfLineIntegral hLrd hLrn hlipr hfcr hKrd hKr0 hbr),
+         Rmul (ofQ q hq) (halfLineIntegral hLid hLin hlipi hfci hKid hKi0 hbi)⟩ :=
+  ⟨halfLineIntegral_smul q hq hLrd hLrn hlipr hfcr hlipqr hfcqr hKrd hKr0 hbr hbqr,
+   halfLineIntegral_smul q hq hLid hLin hlipi hfci hlipqi hfcqi hKid hKi0 hbi hbqi⟩
+
 /-- **The complex line integral respects `≈` of the integrand** (componentwise from
     `riemannIntegralI_congr`) — `∫_a^{a+w} z ≈ ∫_a^{a+w} z'` when the real and imaginary parts agree
     pointwise. -/

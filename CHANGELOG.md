@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 2 (integration) — scalar linearity lifted up the full Mellin stack** (`Analysis/IntervalIntegral.lean`,
+  `Analysis/ImproperIntegral.lean`, `Analysis/ComplexIntegral.lean`): `riemannIntegralI_smul`
+  (interval `∫ₐ^{a+w}`, left-commuting `q` past the width `w`), `integralTerm_smul`, `improperIntegral1_smul`
+  (the half-line tail, via `Rlim_ofQ_mul_of_approx` directly), `halfLineIntegral_smul` (`∫₀^∞ (q·f)=q·∫₀^∞ f`),
+  and `ChalfLineIntegral_smul` (complex Mellin, componentwise, real-rational scalar → explicit pair
+  `⟨q·∫gr, q·∫gi⟩`). **With `_add` and `_neg` at every layer, the constructive integral — through the complex
+  Mellin domain — is now a full real-rational-linear functional**, the form the Weil pairing's real test
+  coefficients act through. The re/im-mixing complex `Cmul` scalar remains the one deferred (downstream) case.
 - **Track 2 (integration) — scalar linearity `riemannIntegral_smul` (`∫(q·f)=q·∫f`)** via
   `Rlim_ofQ_mul_of_approx` (`Analysis/RlimProps.lean`, `Analysis/RiemannSum.lean`,
   `Analysis/DyadicIntegral.lean`): the scalar half of integral linearity — with `_add`/`_neg`, the

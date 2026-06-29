@@ -160,4 +160,28 @@ theorem riemannIntegralI_neg {f : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn 
       (fun x y h => hfcnf _ _ (affineMap_congr a w ha hw h))))
     (Rmul_neg_right _ _)
 
+/-- **The interval integral respects a constant scalar** `∫ₐ^{a+w} (q·f) = q·∫ₐ^{a+w} f` for `q : ℚ`
+    — `riemannIntegral_smul` on the affine-rescaled integrand, then left-commute the scalar `q` past
+    the width factor `w` (`w·(q·I) ≈ q·(w·I)` via `Rmul_assoc`/`Rmul_comm`). -/
+theorem riemannIntegralI_smul {f : Real → Real} {L : Q} (q : Q) (hq : 0 < q.den)
+    (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlipf : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcf : ∀ x y, Req x y → Req (f x) (f y))
+    (hlipqf : ∀ x y, Rle (Rabs (Rsub (Rmul (ofQ q hq) (f x)) (Rmul (ofQ q hq) (f y))))
+        (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcqf : ∀ x y, Req x y → Req (Rmul (ofQ q hq) (f x)) (Rmul (ofQ q hq) (f y)))
+    (a w : Q) (ha : 0 < a.den) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (riemannIntegralI hLd hLn hlipqf hfcqf a w ha hw hwn)
+        (Rmul (ofQ q hq) (riemannIntegralI hLd hLn hlipf hfcf a w ha hw hwn)) := by
+  refine Req_trans (Rmul_congr (Req_refl (ofQ w hw))
+    (riemannIntegral_smul (f := fun x => f (affineMap a w ha hw x)) q hq
+      (Qmul_den_pos hLd hw) (Int.mul_nonneg hLn hwn)
+      (affine_lip hLd hLn hlipf a w ha hw hwn)
+      (fun x y h => hfcf _ _ (affineMap_congr a w ha hw h))
+      (affine_lip hLd hLn hlipqf a w ha hw hwn)
+      (fun x y h => hfcqf _ _ (affineMap_congr a w ha hw h)))) ?_
+  exact Req_trans (Req_symm (Rmul_assoc (ofQ w hw) (ofQ q hq) _))
+    (Req_trans (Rmul_congr (Rmul_comm (ofQ w hw) (ofQ q hq)) (Req_refl _))
+      (Rmul_assoc (ofQ q hq) (ofQ w hw) _))
+
 end UOR.Bridge.F1Square.Analysis
