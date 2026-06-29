@@ -8,7 +8,8 @@ This is the constructive heart of the Bombieri–Lagarias *moment* reading, exte
 `witnessSum_eq_linear` line (`LiLinearize.lean`) one step further: where that factored a single
 moment `1/ρ` out of each per-zero term, the binomial expansion exposes the *full* moment polynomial
 `Σ_k (−1)^{k+1} C(n,k) (1/ρ)ᵏ`. The remaining `bl` content — the classical identity of the moments
-`Σ_ρ ρ^{−k}` with the `η`-polynomial — stays the single labelled seam; the crux fields stay `none`.
+`Σ_ρ ρ^{−k}` with the `ζ`-data (`−ζ′/ζ` Taylor coefficients plus the archimedean place) — stays the
+single labelled classical seam, not built here; the crux fields stay `none`.
 
 Nat-scalar multiplication `Cnsmul` keeps the coefficients in `ℕ` (Pascal's rule becomes the clean
 additivity `Cnsmul_add`), so no `ofReal`/`ofQ` embedding of the binomial coefficients is needed.
@@ -220,9 +221,10 @@ theorem Cnpow_one_sub_momentPoly {w u : Complex} (h : Ceq w (Cadd Cone (Cneg u))
 /-- **THE WITNESS TERM IN RECIPROCAL MOMENTS** (real `RHWitness` form): for `w = 1 − u`, the per-zero
     Li witness term `1 − Re(wⁿ)` equals `−Re(Σ_{k=1}^{n} C(n,k)·(−u)ᵏ)` — the real part of the negated
     reciprocal-moment polynomial. This is the per-zero summand of `witnessSum` (`RHWitness.lean`) written
-    over the explicit-formula moments `(1/ρ)ᵏ`; summing over the zeros and interchanging the two finite
+    over the reciprocal moments `(1/ρ)ᵏ`; summing over the zeros and interchanging the two finite
     sums gives `λₙ` as `Σ_{k=1}^{n} (−1)^{k+1} C(n,k)·M_k` with `M_k = Σ_ρ Re(ρ^{−k})` the order-`k`
-    reciprocal moment — leaving the single classical seam `M_k = η`-data. -/
+    reciprocal moment — leaving the classical seam (the explicit formula identifying each `M_k` with the
+    `ζ`-data, `−ζ′/ζ` Taylor coefficients plus the archimedean place), not built here. -/
 theorem witnessTerm_moment {w u : Complex} (h : Ceq w (Cadd Cone (Cneg u))) (n : Nat) :
     Req (Rsub one (Cnpow w n).re) (Rneg (reciprocalMomentPoly u n).re) :=
   (Cnpow_one_sub_momentPoly h n).1
@@ -280,10 +282,12 @@ theorem momentListPoly_swap (n : Nat) : ∀ (us : List Complex),
 /-- **`λₙ` AS A SUM OVER REPROCIPAL-MOMENT ORDERS** — the witness sum (`bl` zero-sum form of `λₙ`) over
     the Cayley factors `w = 1 − u` equals `−Σ_{k=1}^{n} Re(M_k)` where `M_k = Σ_{u∈us} C(n,k)·(−u)ᵏ` is the
     order-`k` reciprocal moment (`momentList`). Combining `witnessSum_eq_neg_momentList` with the order
-    interchange `momentListPoly_swap`: `Σ_w (1 − Re(wⁿ)) = −Re(Σ_{k=1}^{n} M_k)`. This is `λₙ`'s explicit
-    decomposition into the per-order reciprocal moments `Σ_ρ ρ^{−k}` — the structural endpoint of the
-    constructive moment expansion; the sole remaining classical input is the per-order identity of each
-    `M_k` with the `−ζ′/ζ` Taylor data (`η`-polynomial), the single labelled `bl` seam. -/
+    interchange `momentListPoly_swap`: `Σ_w (1 − Re(wⁿ)) = −Re(Σ_{k=1}^{n} M_k)`. This is the exact
+    (pure-algebra) decomposition of the witness sum into the per-order reciprocal moments `Σ_ρ ρ^{−k}` —
+    the structural endpoint of the constructive moment expansion. The remaining classical input is the
+    explicit formula identifying each zero-moment `Σ_ρ ρ^{−k}` with the computable `ζ`-data — the `−ζ′/ζ`
+    Taylor coefficients **together with the archimedean / trivial-zero place** (so the full `λₙ` splits as
+    `genuineArithSeq + genuineArchSeq`, not the `η`-part alone) — the labelled `bl` seam, not built here. -/
 theorem witnessSum_moment_order (n : Nat) (us : List Complex) :
     Req (witnessSum (us.map (fun u => Cadd Cone (Cneg u))) n)
         (Rneg (CsumN (fun k => momentList us n k) n).re) :=
