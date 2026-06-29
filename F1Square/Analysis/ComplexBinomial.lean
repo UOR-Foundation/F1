@@ -322,4 +322,35 @@ theorem momentListPoly_snoc (n : Nat) (l : List Complex) (u : Complex) :
   Ceq_trans (momentListPoly_append n l [u])
     (Cadd_congr (Ceq_refl (momentListPoly l n)) (cadd_zero (reciprocalMomentPoly u n)))
 
+-- ===========================================================================
+-- (G) Unification with the geometric linearization (`LiLinearize.cgeomSum`).
+-- ===========================================================================
+
+/-- `−(−z) ≈ z` (componentwise; local). -/
+private theorem Cneg_Cneg_loc (z : Complex) : Ceq (Cneg (Cneg z)) z :=
+  ⟨Rneg_neg z.re, Rneg_neg z.im⟩
+
+/-- **The two constructive linearizations of the Li term agree**: the binomial reciprocal-moment
+    polynomial equals `−u` times the geometric sum of `LiLinearize.lean`. For `w = 1 − u` (so `u = 1/ρ`
+    is the moment), both `reciprocalMomentPoly u n` (`Σ_{k=1}^{n} C(n,k)(−u)ᵏ`) and
+    `−u·Σ_{k<n} wᵏ` (the `cone_sub_npow_factor` form) are exactly `wⁿ − 1`, so they coincide:
+    `reciprocalMomentPoly u n ≈ −(u·Σ_{k<n} wᵏ)`. This pins the new binomial-moment representation to the
+    existing geometric one — no representation drift between `ComplexBinomial.lean` and `LiLinearize.lean`;
+    the same per-zero Li contribution, two algebraic forms. Pure algebra. -/
+theorem reciprocalMomentPoly_eq_neg_u_cgeomSum {w u : Complex} (h : Ceq w (Cadd Cone (Cneg u)))
+    (n : Nat) : Ceq (reciprocalMomentPoly u n) (Cneg (Cmul u (cgeomSum w n))) := by
+  -- `1 − w ≈ u`
+  have hu : Ceq (Cadd Cone (Cneg w)) u :=
+    Ceq_trans (Cadd_congr (Ceq_refl Cone) (Cneg_congr h))
+      (Ceq_trans (Cadd_congr (Ceq_refl Cone)
+          (Ceq_trans (Cneg_Cadd_loc Cone (Cneg u))
+            (Cadd_congr (Ceq_refl (Cneg Cone)) (Cneg_Cneg_loc u))))
+        (Ceq_trans (Ceq_symm (Cadd_assoc Cone (Cneg Cone) u))
+          (Ceq_trans (Cadd_congr (Cadd_neg Cone) (Ceq_refl u)) (czero_cadd u))))
+  -- `recip ≈ −(1 − wⁿ) ≈ −((1−w)·Σwᵏ) ≈ −(u·Σwᵏ)`
+  refine Ceq_trans (Ceq_trans (Ceq_symm (Cneg_Cneg_loc (reciprocalMomentPoly u n)))
+    (Cneg_congr (Ceq_symm (Cnpow_one_sub_momentPoly h n)))) ?_
+  exact Cneg_congr (Ceq_trans (cone_sub_npow_factor w n)
+    (Cmul_congr hu (Ceq_refl (cgeomSum w n))))
+
 end UOR.Bridge.F1Square.Analysis

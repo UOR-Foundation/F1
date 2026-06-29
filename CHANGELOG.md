@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 (item 6) — the two Li-term linearizations agree `reciprocalMomentPoly_eq_neg_u_cgeomSum`**
+  (`Analysis/ComplexBinomial.lean`): the binomial reciprocal-moment polynomial equals `−u` times the
+  geometric sum of `LiLinearize.lean`. For `w = 1 − u` (so `u = 1/ρ`), both `reciprocalMomentPoly u n`
+  (`Σ_{k=1}^{n} C(n,k)(−u)ᵏ`, from the binomial) and `−u·Σ_{k<n} wᵏ` (`cone_sub_npow_factor`) are exactly
+  `wⁿ − 1`, hence equal: `reciprocalMomentPoly u n ≈ −(u·Σ_{k<n} wᵏ)`. Pins the new binomial-moment
+  representation to the pre-existing geometric one — no representation drift between `ComplexBinomial.lean`
+  and `LiLinearize.lean`, the same per-zero Li contribution in two algebraic forms. Pure algebra,
+  axiom-clean, grep-novel.
+
 - **Track 1 (item 6) — moment-side closure `momentListPoly_append` / `momentListPoly_snoc`**
   (`Analysis/ComplexBinomial.lean`): the summed reciprocal-moment polynomial is additive over
   concatenation of the zero list (`momentListPoly (l₁++l₂) n = momentListPoly l₁ n + momentListPoly l₂ n`,
