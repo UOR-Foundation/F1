@@ -2460,6 +2460,15 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.witnessSum_nonneg
 #print axioms Analysis.witnessSum_append
 #print axioms Analysis.witnessSum_snoc
+#print axioms Analysis.Cnsmul_congr
+#print axioms Analysis.Cnsmul_one
+#print axioms Analysis.Cnsmul_add
+#print axioms Analysis.Cmul_Cnsmul
+#print axioms Analysis.Cmul_CsumN
+#print axioms Analysis.CsumN_congr_le
+#print axioms Analysis.CsumN_shift
+#print axioms Analysis.Cnpow_one_add_eq
+#print axioms Analysis.Cnpow_one_sub_eq
 #print axioms Analysis.onLine_is_unit_modulus
 #print axioms Analysis.rh_witness
 #print axioms Analysis.rh_witness_onLine

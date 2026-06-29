@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 (item 6, pure algebra) — the binomial theorem over the constructive `Complex` API**
+  `(1 + b)ⁿ ≈ Σ_{k=0}^{n} C(n,k)·bᵏ` (`Cnpow_one_add_eq`, new `Analysis/ComplexBinomial.lean`), and its
+  Cayley-factor consequence `Cnpow_one_sub_eq`: `w = 1 − u ⟹ wⁿ ≈ Σ_k C(n,k)·(−u)ᵏ`. For the
+  Bombieri–Lagarias factor `w = 1 − 1/ρ` the moment is `u = 1/ρ`, so this writes each per-zero power
+  `(1 − 1/ρ)ⁿ` over the explicit-formula **reciprocal moments** `(1/ρ)ᵏ = Σ_ρ ρ^{−k}` — the binomial
+  expansion applied to exactly the object the `bl` witness sum `Σ_w (1 − Re(wⁿ))` is built from,
+  extending the `witnessSum_eq_linear` moment-factoring line one step further (full moment polynomial,
+  not just the single `1/ρ`). The remaining classical content (moments `Σ_ρ ρ^{−k}` as the `η`-polynomial)
+  stays the single labelled seam; crux fields `none`. Built choice-free with nat-scalar `Cnsmul` (so
+  Pascal's rule `C(n+1,k)=C(n,k)+C(n,k−1)` is the clean complex additivity `Cnsmul_add`, no `ofReal`
+  embedding of coefficients), plus the supporting `Cmul_Cnsmul`, `Cmul_CsumN` (mult over finite sum),
+  `CsumN_congr_le` (bounded congruence), and the subtraction-free index shift `CsumN_shift`. Grep-verified
+  novel (the existing `Binomial.lean` is the ℚ binomial; this is the genuinely-complex one), axiom-clean.
+
 - **Track 1 (`bl` witness) — partial-sum telescoping `witnessSum_append`/`witnessSum_snoc`** (`Analysis/RHWitness.lean`):
   the Li/zero-sum witness `Σ_w (1 − Re(wⁿ))` is additive over concatenation of the zero list
   (`witnessSum (l₁++l₂) = witnessSum l₁ + witnessSum l₂`, pure `Radd_assoc` fold), with the `snoc`
