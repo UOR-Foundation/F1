@@ -2480,6 +2480,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.liRatio_eq_one_sub_inv
 #print axioms Analysis.liRatio_npow_moment
 #print axioms Analysis.liRatio_witnessTerm_moment
+#print axioms Analysis.hadamard_witnessSum_moment
 #print axioms Analysis.moment_re_eq_arithTail
 #print axioms Analysis.witnessSum_eq_genuineArith
 #print axioms Analysis.onLine_is_unit_modulus

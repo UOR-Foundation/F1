@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Track 1 (item 6) — the Hadamard/`bl` witness sum in reciprocal-moment-order form**
+  (`Analysis/MomentCayley.lean`, `hadamard_witnessSum_moment`): the item-6 object, assembled on the
+  *genuine* zeros. For a `HadamardXi` enumeration of the nontrivial zeros, the `bl` witness sum over its
+  `s = 1` factors equals `−Σ_{k=1}^{n} Re(M_k)` with `M_k = Σ_j C(n,k)(−1/ρⱼ)ᵏ` the order-`k` reciprocal
+  moment over the reciprocals `1/ρⱼ`: `Σ_j (1 − Re((1 − 1/ρⱼ)ⁿ)) = −Σ_{k} Re(M_k)`. Chains
+  `witnessSum_hadFactor_eq_liRatio` (Hadamard `s=1` factors = Cayley factors), the per-zero
+  `liRatio_eq_one_sub_inv` lifted across the list (`witnessSum_mapidx_congr` + `List.map_map`), and the
+  moment decomposition `witnessSum_moment_order` — `λₙ`'s zero-sum decomposed by moment order over the
+  actual Hadamard zero enumeration. The remaining classical content (`Σ_ρ ρ^{−k}` as the `ζ`-data with its
+  archimedean place; the `HadamardXi` convergence seam) is unchanged; crux `none`. Axiom-clean, grep-novel.
+
 - **Track 1 (item 6) — the moment expansion lands on the genuine Cayley object** (new
   `Analysis/MomentCayley.lean`, `liRatio_witnessTerm_moment` / `liRatio_npow_moment` /
   `liRatio_eq_one_sub_inv`): the abstract binomial moment machinery (`ComplexBinomial.lean`, for any

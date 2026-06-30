@@ -51,4 +51,32 @@ theorem liRatio_witnessTerm_moment (ρ : Complex) (k : Nat) (hk : Qlt (Qbound k)
         (Rneg (reciprocalMomentPoly (Cinv ρ k hk) n).re) :=
   witnessTerm_moment (liRatio_eq_one_sub_inv ρ k hk) n
 
+/-- **The Hadamard/`bl` witness sum in reciprocal-moment-order form** — the item-6 object, fully
+    assembled on the genuine zeros. For a `HadamardXi` enumeration of the nontrivial zeros, the `bl`
+    witness sum over its `s = 1` factors equals the negated real part of the per-order reciprocal-moment
+    sum over the reciprocals `1/ρⱼ = Cinv ρⱼ`:
+
+      `Σ_j (1 − Re((1 − 1/ρⱼ)ⁿ)) = −Σ_{k=1}^{n} Re(M_k)`,  `M_k = Σ_j C(n,k)(−1/ρⱼ)ᵏ`.
+
+    Chains `witnessSum_hadFactor_eq_liRatio` (Hadamard `s=1` factors are the Cayley factors), the
+    per-zero `liRatio_eq_one_sub_inv` lifted across the list (`witnessSum_mapidx_congr`), and the moment
+    decomposition `witnessSum_moment_order`. This is `λₙ`'s zero-sum decomposed by moment order, over the
+    *actual* Hadamard zero enumeration. The remaining classical content (the moments `Σ_ρ ρ^{−k}` as the
+    `ζ`-data with its archimedean place, and the `HadamardXi` convergence seam) is unchanged; crux `none`. -/
+theorem hadamard_witnessSum_moment {gs zs : Complex} (H : HadamardXi Cone gs zs) (M n : Nat) :
+    Req (witnessSum ((List.range M).map
+            (fun j => hadFactor Cone (H.ρ j) (H.kwit j) (H.hwit j))) n)
+        (Rneg (CsumN (fun k => momentList
+            ((List.range M).map (fun j => Cinv (H.ρ j) (H.kwit j) (H.hwit j))) n k) n).re) := by
+  refine Req_trans (witnessSum_hadFactor_eq_liRatio H M n) ?_
+  refine Req_trans (witnessSum_mapidx_congr _ _
+    (fun j => liRatio_eq_one_sub_inv (H.ρ j) (H.kwit j) (H.hwit j)) n (List.range M)) ?_
+  have hlist : ((List.range M).map (fun j => Cinv (H.ρ j) (H.kwit j) (H.hwit j))).map
+        (fun u => Cadd Cone (Cneg u))
+      = (List.range M).map (fun j => Cadd Cone (Cneg (Cinv (H.ρ j) (H.kwit j) (H.hwit j)))) := by
+    rw [List.map_map]; rfl
+  rw [← hlist]
+  exact witnessSum_moment_order n
+    ((List.range M).map (fun j => Cinv (H.ρ j) (H.kwit j) (H.hwit j)))
+
 end UOR.Bridge.F1Square.Analysis
