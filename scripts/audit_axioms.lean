@@ -3820,3 +3820,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Radd_eq_RsumL5
 #print axioms Analysis.W4_collect
 #print axioms Analysis.W4_expand
+#print axioms Analysis.half_four
+#print axioms Analysis.half_six
+#print axioms Analysis.fifth_five
+#print axioms Analysis.fifth_ten
+#print axioms Analysis.partA4_eq
+#print axioms Analysis.partC4_eq

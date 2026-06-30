@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`decompForm4` — the bound-ready trapezoidal residual decomposition** (`Analysis/GammaFourBracket.lean`,
+  defs `lhsForm4`/`decompForm4` + theorems `partA4_eq`/`partC4_eq`): the third `decompForm4` brick, the
+  degree-4 mirror of `decompForm3`. `lhsForm4 = ½a⁴u1 + ½b⁴u0 − (1/5)·δ·W₄` (the stage-1 residual after
+  `quintic_diff_identity`) is grouped by powers of `b` into `decompForm4 = b⁴·C2 + b³·R3 + b²·R2 + b·R1 + R0`
+  with `C2 = ½(u0+u1)−δ`, `R3 = 2δ(u1−δ)`, `R2 = δ²(3u1−2δ)`, `R1 = δ³(2u1−δ)`, `R0 = ½δ⁴u1 − (1/5)δ⁵`
+  (`δ = a−b`) — the coefficients that will make `b²·R2 ≤ 0` drop and leave the clean-telescoping terms.
+  `partA4_eq` expands `½a⁴u1` (via `quartic_binom`) and `partC4_eq` expands `(1/5)·δ·W₄` (via `W4_expand`),
+  each into 5 canonical `RprodL` monomials, with the coefficient-collapse helpers `half_four`/`half_six`/
+  `fifth_five`/`fifth_ten`. Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free,
+  no-smuggling audited.
 - **`W4_expand` — the quintic-factor expansion `W₄(b+δ, b)`** (`Analysis/GammaFourBracket.lean`,
   `a⁴+a³b+a²b²+ab³+b⁴ ≈ 5b⁴ + 10b³δ + 10b²δ² + 5bδ³ + δ⁴`, `δ = a−b`): the second `decompForm4` algebra
   brick — the `(a−b)·W₄` factor of the quintic difference `a⁵−b⁵` (`quintic_diff_identity`), with `a = b+δ`
