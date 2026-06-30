@@ -2419,6 +2419,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rlambda4
 #print axioms Analysis.genuineArith_four
 #print axioms Analysis.genuineLam_four
+#print axioms Analysis.genuineArith_five
+#print axioms Analysis.genuineLam_five
 #print axioms Analysis.etaFourSlice
 
 -- v0.20.0 stage F: the Real multiplicative normalizer (Analysis/RMulNF.lean) — κ-form companion of RAddNF.
@@ -2892,6 +2894,8 @@ open UOR.Bridge.F1Square
 -- v0.22.0 crux frontier n=4: the next conquerable coefficient = Pos Rlambda4 (γ₃-bearing).
 #print axioms Square.coupling_n4_iff_pos_lambda4
 #print axioms Square.crux_frontier_n4
+#print axioms Square.coupling_n5_iff_pos_lambda5
+#print axioms Square.crux_frontier_n5
 
 -- v0.21.0 stage G — uniform closure: closure is one structural fact, not enumeration (§2 thesis).
 #print axioms Square.enumeration_insufficient

@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The fifth Li coefficient `λ₅` as a closed-form constructive object** (new `Analysis/LambdaFive.lean`
+  + `Square/CruxFrontierN5.lean`, `Rlambda5`, `coupling_n5_iff_pos_lambda5`): the next rung of the
+  genuine λ-ladder, the FIRST to carry `γ₄` (`Rgamma4`). The new η-anchor is **`η₄ = −γ⁵ − 5γ³γ₁ − 5γγ₁²
+  − (5/2)γ²γ₂ − (5/2)γ₁γ₂ − (5/6)γγ₃ − (5/24)γ₄`**, derived from the `−ζ′/ζ` Laurent data via
+  `ηⱼ = (j+1)gⱼ₊₁` (`−log F = Σ gⱼuʲ`, `F = (s−1)ζ`) — the same recursion that reproduces `η₀..η₃`
+  exactly, and numerically confirmed (`η₄ ≈ −0.005539`, `λ₅^{arith} ≈ +1.45906`, `λ₅^{∞} ≈ −0.94094`,
+  `λ₅ ≈ +0.51812`, the standard Li value). `λ₅^{arith} = −(5η₀+10η₁+10η₂+5η₃+η₄)` and the closed form
+  meets the genuine ladder at `n = 5` (`genuineLam_five`), so the `n = 5` coupling conquest reduces
+  exactly to `Pos Rlambda5` (`coupling_n5_iff_pos_lambda5`/`crux_frontier_n5`), mirroring `n = 4`. This
+  builds the λ₅ OBJECT; it does NOT prove `Pos λ₅` (which awaits the `γ₄` numeric bracket + the
+  multi-constant assembly). `γ₄` enters `λ₅` only via `η₄` with the tiny FAVOURABLE coefficient
+  `+(5/24)γ₄ ≈ +0.0015`. Axiom-clean (`{propext, Quot.sound}`), choice-free, no-smuggling audited; the
+  crux fields stay `none`, RH open.
+
 - **The fourth Stieltjes constant `γ₄` as a genuine constructive real** (new `Analysis/GammaFour.lean`,
   `Rgamma4 := Rlim g4SeqDyadic g4SeqDyadic_RReg`, `γ₄ ≈ +0.00722`): the arithmetic-side prerequisite for the
   `n = 5` coupling rung (`λ₅`), built as the full degree-5 mirror of `GammaThree`'s `γ₃`. The
