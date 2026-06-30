@@ -1,18 +1,25 @@
 /-
-F1 square — Track 1, item 0 (the argument-range extension): the constructive arctangent PAST the
-value-identity radius `|t| < 1/16`, via the complementary-angle reduction `arctan t = π/2 − arctan(1/t)`.
+F1 square — Track 1, item 0 (the LARGE-argument end of the range extension): the constructive
+arctangent at large argument `|t| ≥ 16`, via the complementary-angle reduction
+`arctan(1/s) = π/2 − arctan s`, plus the real reflection identity `arctan s + arctan(1/s) = π/2`.
 
-The small-argument arctangent `RarctanR s` (`RArctan.lean`) is defined only for `|s| ≤ ρ < 1/16`. Its
-reciprocal `1/s` then lies OUTSIDE the radius (`|1/s| ≥ 1`), so `RarctanR` cannot reach it directly. The
-classical reflection identity `arctan(1/s) = π/2 − arctan(s)` supplies the value through the
-complementary angle — sidestepping the `1 − s·(1/s) = 0` singularity that blocks the tangent-addition
-route. We define `arctanExt s := π/2 − arctan s` and prove its defining value identity
-`tan(arctanExt s) = 1/s`, the `tan∘arctan = id` law extended to large arguments.
+The small-argument arctangent `RarctanR s` (`RArctan.lean`) is defined only for `|s| ≤ ρ < 1/16`. When
+`s` is that small, its reciprocal `1/s` (`≥ 16`) lies far outside the radius, so `RarctanR` cannot reach
+it directly. The classical reflection identity `arctan(1/s) = π/2 − arctan(s)` supplies the value through
+the complementary angle — sidestepping the `1 − s·(1/s) = 0` singularity that blocks the
+tangent-addition route. We define `arctanExt s := π/2 − arctan s` and prove its value identity
+`tan(arctanExt s) = 1/s`, the `tan∘arctan = id` law for the large-argument end.
 
-The kit is already built: the real-argument value identity `RarctanR_value_eq` (`tan(arctan s) = s`,
-`RArctanValue.lean`) and the complementary-tangent formula `Rsin_cos_pi_half_sub_tan_real`
-(`tan(π/2 − A) = 1/tan A`, `TanPiQuarter.lean`). This file composes them — the substrate `Carg`/`Clog`
-need to leave the principal sector (`|Im/Re| < 1/16`) toward `log ξ`.
+This is the real-level abstraction of the reduction `ComplexArgUpper.CargUpper`/`CargUpper_tan` already
+apply for the complex argument near the imaginary axis (same composition: `RarctanR_value_eq` +
+`Rsin_cos_pi_half_sub_tan_real`); the genuinely-new piece here is the explicit *real* reflection identity
+`RarctanR_add_RarctanExt` (`arctan s + arctan(1/s) = π/2`).
+
+**Scope (honest):** this covers only the LARGE-argument end (`|t| ≥ 16`, where the reciprocal `1/t < 1/16`
+re-enters the value-identity radius). The reciprocal reduction does NOT close the middle band
+`1/16 < |t| < 16` (there `1/t` is also outside `1/16`), which remains the genuine open part of the *full*
+argument-range extension `Carg`/`Clog` need toward `log ξ` — closing it needs either a larger
+value-identity radius or an addition-law stepping argument through the band.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited by `scripts/honesty_audit.sh`.
 The crux fields stay `none`; RH is open.
@@ -40,9 +47,10 @@ private theorem Radd_sub_self_comm (A B : Real) : Req (Radd A (Radd B (Rneg A)))
 
 /-- **★ The value identity for the extended arctangent** `tan(arctanExt s) = 1/s`: if `T·s = 1` (so
     `T = 1/s` is the large reciprocal), then `sin(arctanExt s) = T·cos(arctanExt s)`. This is
-    `tan∘arctan = id` PAST the value-identity radius — the argument-range extension. Composes the real
+    `tan∘arctan = id` at the LARGE-argument end (`|1/s| ≥ 16` when `|s| ≤ 1/16`). Composes the real
     value identity `RarctanR_value_eq` (`tan(arctan s) = s`) with the complementary-tangent formula
-    `Rsin_cos_pi_half_sub_tan_real` (`tan(π/2 − A) = 1/tan A`). -/
+    `Rsin_cos_pi_half_sub_tan_real` (`tan(π/2 − A) = 1/tan A`). (The real-level form of the reduction
+    `CargUpper_tan` applies for the complex argument; the middle band `1/16 < |t| < 16` is not covered.) -/
 theorem RarctanExt_value_eq (s T : Real) (ρ : Q) (hρ0 : 0 ≤ ρ.num) (hρd : 0 < ρ.den)
     (hlt : ρ.num.toNat < ρ.den) (hbs : ∀ n, Qle (Qabs (s.seq n)) ρ)
     (hlt16 : (mul ⟨16, 1⟩ ρ).num.toNat < (mul ⟨16, 1⟩ ρ).den)
