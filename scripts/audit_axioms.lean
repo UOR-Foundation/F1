@@ -3173,6 +3173,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.zeta4_lower
 #print axioms Analysis.zetaU_four_70_le
 #print axioms Analysis.zeta4_upper
+#print axioms Analysis.zetaSum_five_70_ge
+#print axioms Analysis.zeta5_lower
+#print axioms Analysis.zetaU_five_70_le
+#print axioms Analysis.zeta5_upper
 #print axioms Analysis.lnCubeOver_nonneg
 #print axioms Analysis.lnCubeSum_step
 #print axioms Analysis.lnCubeSum_mono

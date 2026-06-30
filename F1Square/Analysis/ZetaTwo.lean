@@ -240,4 +240,28 @@ theorem zeta4_upper : Rle (zeta 4 (by decide)) (ofQ (⟨1097, 1000⟩ : Q) (by d
   Rle_trans (zeta_le_partial 4 (by decide) 70)
     (Rle_ofQ_ofQ (zetaU_den_pos 4 70) (by decide) zetaU_four_70_le)
 
+set_option maxHeartbeats 4000000 in
+set_option maxRecDepth 8192 in
+/-- `Σ_{k=1}^{71} 1/k⁵ ≥ 1036/1000` (`ζ(5) ≈ 1.0369278`; one rational `decide`). -/
+theorem zetaSum_five_70_ge : Qle (⟨1036, 1000⟩ : Q) (zetaSum 5 70) := by decide
+
+/-- **`ζ(5) ≥ 1.036`** — lower bracket for `ζ(5) ≈ 1.0369278`. The `n = 5` archimedean coupling
+    (`genArchTerm 5 5`, the `ζ(5)` term) needs this lower bound (toward a future `Pos Rlambda5`),
+    exactly as `ζ(4)` feeds the `n = 4` rung. -/
+theorem zeta5_lower : Rle (ofQ (⟨1036, 1000⟩ : Q) (by decide)) (zeta 5 (by decide)) :=
+  Rle_trans (Rle_ofQ_ofQ (by decide) (zetaSum_den_pos 5 70) zetaSum_five_70_ge)
+    (zeta_ge_partial 5 (by decide) 70)
+
+set_option maxHeartbeats 4000000 in
+set_option maxRecDepth 8192 in
+/-- `zetaU 5 70 = Σ_{k=1}^{71} 1/k⁵ + 1/71 ≤ 1052/1000` (one rational `decide`; `≈ 1.0510`). -/
+theorem zetaU_five_70_le : Qle (zetaU 5 70) (⟨1052, 1000⟩ : Q) := by decide
+
+/-- **`ζ(5) ≤ 1.052`** — (loose) upper bracket for `ζ(5)`, via the decreasing upper sequence `zetaU`
+    at `N = 70`. With `zeta5_lower` this two-sided-brackets `ζ(5) ∈ [1.036, 1.052]` — the `ζ(5)`
+    constituent for the next (`n = 5`) coupling rung. -/
+theorem zeta5_upper : Rle (zeta 5 (by decide)) (ofQ (⟨1052, 1000⟩ : Q) (by decide)) :=
+  Rle_trans (zeta_le_partial 5 (by decide) 70)
+    (Rle_ofQ_ofQ (zetaU_den_pos 5 70) (by decide) zetaU_five_70_le)
+
 end UOR.Bridge.F1Square.Analysis

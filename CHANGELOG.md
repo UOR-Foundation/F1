@@ -16,6 +16,12 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **ζ-value brackets — `ζ(5) ∈ [1.036, 1.052]`** (`Analysis/ZetaTwo.lean`, `zeta5_lower`/`zeta5_upper`):
+  the next ζ-constituent for the future `n = 5` coupling rung, mirroring the `ζ(4)` block (partial-sum
+  lower `zetaSum_five_70_ge` and decreasing-upper `zetaU_five_70_le`, each one rational `decide` at
+  `N = 70`, lifted through the generic `zeta_ge_partial`/`zeta_le_partial`). Just as `ζ(4)` feeds
+  `Pos Rlambda4`, this is the `ζ(5)` prerequisite for a `Pos Rlambda5`. Axiom-clean, crux `none`.
+
 - **Stieltjes brackets — the γ₃ LOWER bracket `γ₃ ≥ −1/20`, completing the two-sided `−1/20 ≤ γ₃ ≤ 1/8`**
   (new `Analysis/GammaThreeLower.lean`, `Rgamma3_ge_neg005`): the companion of `GammaThreeBracket`'s
   `Rgamma3_le` (`γ₃ ≤ 1/8`), filling the documented gap (`γ₃` had an upper bracket but "no lower bracket
