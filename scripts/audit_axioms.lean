@@ -3826,3 +3826,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.fifth_ten
 #print axioms Analysis.partA4_eq
 #print axioms Analysis.partC4_eq
+#print axioms Analysis.Rmul_eq_RprodL6L
+#print axioms Analysis.quart_times_pair
+#print axioms Analysis.cube_times_triple
+#print axioms Analysis.pair_times_sqpair
+#print axioms Analysis.single_times_cubepair
+#print axioms Analysis.decompForm4_eq_RsumL
+#print axioms Analysis.lhsForm4_eq_RsumL
+#print axioms Analysis.decomp_generic4
+#print axioms Analysis.sStep4_decomp

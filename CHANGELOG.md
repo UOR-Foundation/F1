@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`sStep4_decomp` — the trapezoidal residual identity `sStep4 ≈ decompForm4`** (`Analysis/GammaFourBracket.lean`,
+  the keystone of the `decompForm4` machinery): `decompForm4_eq_RsumL` / `lhsForm4_eq_RsumL` each expand to the
+  same 11 canonical signed `RprodL` monomials (`b⁴C2`→3, `b³R3`→2, `b²R2`→2, `bR1`→2, `R0`→2), matched by
+  `decomp_generic4` (the keystone `Req (lhsForm4 …) (decompForm4 …)`, via a kernel-verified 11-element
+  `List.Perm` `[n2,n4,n6,n8,n10,n1,n3,n5,n7,n9,n11] ~ [n1..n11]`), and `sStep4_decomp` lands it at the log
+  atoms (`a=ln(p+1)`, `b=ln p`, `u0=1/p`, `u1=1/(p+1)`) by rewriting the quintic difference
+  `(ln(p+1))⁵−(ln p)⁵` through `quintic_diff_identity`. With this, the per-step trapezoidal residual `sStep4`
+  is now an exact `b`-power decomposition — the bound-ready form the `γ₄` lower bracket telescopes. New
+  degree-5/6 normalizers `Rmul_eq_RprodL6L`/`quart_times_pair`/`cube_times_triple`/`pair_times_sqpair`/
+  `single_times_cubepair`. Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, no-smuggling audited.
 - **`decompForm4` — the bound-ready trapezoidal residual decomposition** (`Analysis/GammaFourBracket.lean`,
   defs `lhsForm4`/`decompForm4` + theorems `partA4_eq`/`partC4_eq`): the third `decompForm4` brick, the
   degree-4 mirror of `decompForm3`. `lhsForm4 = ½a⁴u1 + ½b⁴u0 − (1/5)·δ·W₄` (the stage-1 residual after
