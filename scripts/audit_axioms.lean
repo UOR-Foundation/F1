@@ -3271,6 +3271,45 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.hSeq3_ge_gBound3lo
 #print axioms Analysis.gamma3_lo_decide
 #print axioms Analysis.Rgamma3_ge_neg005
+-- v0.22.0 crux frontier: γ₄ LOWER bracket (Analysis/GammaFourLower.lean) — `γ₄ ≥ −1/5`
+-- (`Rgamma4_ge_neg02`), the LOOSE lower bracket sufficient for `Pos λ₅` (`γ₄` enters λ₅ only via the
+--  small favourable `−(5/24)γ₄` term).  The loose `−1/5` target keeps the final big-integer `decide`
+--  at `N = 245`, inside the default kernel stack (the tight `−1/20` would need N ≳ 830 + `--tstack`).
+#print axioms Analysis.lnQuartSumLo_den_pos
+#print axioms Analysis.lnQuartSum_ge
+#print axioms Analysis.logQuintic_le
+#print axioms Analysis.halfQuartOver_le
+#print axioms Analysis.dquint_self_le
+#print axioms Analysis.b4C2_ge
+#print axioms Analysis.b3R3_ge
+#print axioms Analysis.b2R2_ge4
+#print axioms Analysis.bR1_ge4
+#print axioms Analysis.R0_ge4
+#print axioms Analysis.sStep4_lower_clean
+#print axioms Analysis.sStep4_lower_tele
+#print axioms Analysis.hSeq4_tele_lo
+#print axioms Analysis.hSeq4_lower_const
+#print axioms Analysis.hSeq4_le_g4Seq
+#print axioms Analysis.Rgamma4_ge_hSeq4
+#print axioms Analysis.gBound4lo_den_pos
+#print axioms Analysis.hSeq4_ge_gBound4lo
+#print axioms Analysis.gamma4_lo_decide
+#print axioms Analysis.Rgamma4_ge_neg02
+-- n=5 constant-precision brackets (Analysis/LambdaFivePrecision.lean) — tightened γ₁/γ₂/γ₃ + ζ(3)
+-- for the `Pos λ₅` margin (large-N `decide`, via the lakefile `--tstack`).
+#print axioms Analysis.corr_weaken500
+#print axioms Analysis.gamma3_40_decide
+#print axioms Analysis.Rgamma3_le_1_40
+#print axioms Analysis.corr2_weaken400
+#print axioms Analysis.gamma2_up_neg0003_decide
+#print axioms Analysis.Rgamma2_le_neg0003
+#print axioms Analysis.gamma2_ge_neg0014_decide
+#print axioms Analysis.Rgamma2_ge_neg0014
+#print axioms Analysis.corr1_weaken400
+#print axioms Analysis.gamma1_up_neg069_decide
+#print axioms Analysis.Rgamma1_le_neg069
+#print axioms Analysis.zetaU_three_500_le
+#print axioms Analysis.zeta3_le_1205
 #print axioms Analysis.WStep_le_Dsq_gen
 #print axioms Analysis.delta_ge_2over
 #print axioms Analysis.sum_2delta_le
@@ -3822,3 +3861,27 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.omega_abs_from_signed_pos
 #print axioms Analysis.omega_abs_from_signed_neg
 
+#print axioms Analysis.quartic_binom
+#print axioms Analysis.one_plus_four
+#print axioms Analysis.four_plus_one
+#print axioms Analysis.four_plus_six
+#print axioms Analysis.six_plus_four
+#print axioms Analysis.Radd_eq_RsumL4
+#print axioms Analysis.Radd_eq_RsumL5
+#print axioms Analysis.W4_collect
+#print axioms Analysis.W4_expand
+#print axioms Analysis.half_four
+#print axioms Analysis.half_six
+#print axioms Analysis.fifth_five
+#print axioms Analysis.fifth_ten
+#print axioms Analysis.partA4_eq
+#print axioms Analysis.partC4_eq
+#print axioms Analysis.Rmul_eq_RprodL6L
+#print axioms Analysis.quart_times_pair
+#print axioms Analysis.cube_times_triple
+#print axioms Analysis.pair_times_sqpair
+#print axioms Analysis.single_times_cubepair
+#print axioms Analysis.decompForm4_eq_RsumL
+#print axioms Analysis.lhsForm4_eq_RsumL
+#print axioms Analysis.decomp_generic4
+#print axioms Analysis.sStep4_decomp

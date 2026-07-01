@@ -16,6 +16,69 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **n=5 constant-precision brackets** (new `Analysis/LambdaFivePrecision.lean`, STEP 1 of the `Pos λ₅`
+  closure): the tightened Stieltjes/ζ brackets the n=5 margin needs — `γ₃ ≤ 1/40` (`Rgamma3_le_1_40`),
+  `γ₂ ≤ −3/1000` (`Rgamma2_le_neg0003`), `γ₂ ≥ −14/1000` (`Rgamma2_ge_neg0014`), `γ₁ ≤ −69/1000`
+  (`Rgamma1_le_neg069`), `ζ(3) ≤ 1.205` (`zeta3_le_1205`) — each a one-degree-up-precision mirror of the
+  existing bracket theorem at larger `N` and higher log-cap depth `T` (γ₃: T=21,N=650,j=500; γ₂/γ₁:
+  T=12,N=600/256,j=400), with the large-N `decide` accumulators reduced under the lakefile `--tstack`
+  and the correction-weakening lemmas (`corr_weaken500` etc.) handling the `2^1014`-scale middle terms
+  via a raised `exponentiation.threshold`. WHY: the `Pos λ₅` margin (−0.652 with the n≤4 brackets) is
+  dominated by `η₃`'s `choose 5 4 = ×5` amplification of the loose `γ₃ ≤ 1/8` — so n=5 needs these
+  tighter constants (not `γ₄`, whose bracket contributes only ±0.04). With them the margin turns
+  positive (+0.083). Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, no-smuggling
+  audited; crux fields `none`, RH open.
+- **`Rgamma4_ge_neg02` — the certified `γ₄` LOWER bracket `γ₄ ≥ −1/5`** (new `Analysis/GammaFourLower.lean`):
+  the numeric heart of the `n = 5` gate, completing the `decompForm4` ladder. The one-degree-up mirror of
+  `GammaThreeLower`: rational partial-sum lower bound `lnQuartSumLo` (Σ(ln k)⁴/k), the `logBound⁵`/`logBound⁴`
+  upper bounds for the subtracted `(1/5)(ln N)⁵` and `½(ln N)⁴/N` corrections, the five per-step LOWER
+  part-bounds against `decompForm4` (`b4C2_ge ≥ 0`, `b3R3_ge ≥ −27/D`, `b2R2_ge4 ≥ −16/D`, `bR1_ge4 ≥ −2/D`,
+  `R0_ge4 ≥ −1/D`, `D = p(p+1)`; via the polynomial-log caps `(ln p)²≤4p`/`(ln p)³≤27p`), telescoped to
+  `sStep4 ≥ −46/(p(p+1))` and `γ₄ ≥ hSeq4(N) − 46/(N+1)` (`Rgamma4_ge_hSeq4`, via `Rgamma4 = Rlim g4SeqDyadic`),
+  collapsed to the rational `gBound4lo` and closed by one big-integer kernel `decide` at `N = 245`. The target
+  is the LOOSE `−1/5` (not `−1/20`): `γ₄` enters `λ₅` only through the small favourable `−(5/24)γ₄` term, so
+  `−1/5` is amply sufficient for `Pos λ₅` while keeping the `decide` inside the default kernel stack (the tight
+  `−1/20` would force N ≳ 830, past the C-stack ceiling). Axiom-clean (`{propext, Quot.sound}`), no
+  `sorry`/`native_decide`, choice-free, no-smuggling audited; crux fields `none`, RH open.
+- **`sStep4_decomp` — the trapezoidal residual identity `sStep4 ≈ decompForm4`** (`Analysis/GammaFourBracket.lean`,
+  the keystone of the `decompForm4` machinery): `decompForm4_eq_RsumL` / `lhsForm4_eq_RsumL` each expand to the
+  same 11 canonical signed `RprodL` monomials (`b⁴C2`→3, `b³R3`→2, `b²R2`→2, `bR1`→2, `R0`→2), matched by
+  `decomp_generic4` (the keystone `Req (lhsForm4 …) (decompForm4 …)`, via a kernel-verified 11-element
+  `List.Perm` `[n2,n4,n6,n8,n10,n1,n3,n5,n7,n9,n11] ~ [n1..n11]`), and `sStep4_decomp` lands it at the log
+  atoms (`a=ln(p+1)`, `b=ln p`, `u0=1/p`, `u1=1/(p+1)`) by rewriting the quintic difference
+  `(ln(p+1))⁵−(ln p)⁵` through `quintic_diff_identity`. With this, the per-step trapezoidal residual `sStep4`
+  is now an exact `b`-power decomposition — the bound-ready form the `γ₄` lower bracket telescopes. New
+  degree-5/6 normalizers `Rmul_eq_RprodL6L`/`quart_times_pair`/`cube_times_triple`/`pair_times_sqpair`/
+  `single_times_cubepair`. Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, no-smuggling audited.
+- **`decompForm4` — the bound-ready trapezoidal residual decomposition** (`Analysis/GammaFourBracket.lean`,
+  defs `lhsForm4`/`decompForm4` + theorems `partA4_eq`/`partC4_eq`): the third `decompForm4` brick, the
+  degree-4 mirror of `decompForm3`. `lhsForm4 = ½a⁴u1 + ½b⁴u0 − (1/5)·δ·W₄` (the stage-1 residual after
+  `quintic_diff_identity`) is grouped by powers of `b` into `decompForm4 = b⁴·C2 + b³·R3 + b²·R2 + b·R1 + R0`
+  with `C2 = ½(u0+u1)−δ`, `R3 = 2δ(u1−δ)`, `R2 = δ²(3u1−2δ)`, `R1 = δ³(2u1−δ)`, `R0 = ½δ⁴u1 − (1/5)δ⁵`
+  (`δ = a−b`) — the coefficients that will make `b²·R2 ≤ 0` drop and leave the clean-telescoping terms.
+  `partA4_eq` expands `½a⁴u1` (via `quartic_binom`) and `partC4_eq` expands `(1/5)·δ·W₄` (via `W4_expand`),
+  each into 5 canonical `RprodL` monomials, with the coefficient-collapse helpers `half_four`/`half_six`/
+  `fifth_five`/`fifth_ten`. Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free,
+  no-smuggling audited.
+- **`W4_expand` — the quintic-factor expansion `W₄(b+δ, b)`** (`Analysis/GammaFourBracket.lean`,
+  `a⁴+a³b+a²b²+ab³+b⁴ ≈ 5b⁴ + 10b³δ + 10b²δ² + 5bδ³ + δ⁴`, `δ = a−b`): the second `decompForm4` algebra
+  brick — the `(a−b)·W₄` factor of the quintic difference `a⁵−b⁵` (`quintic_diff_identity`), with `a = b+δ`
+  substituted. Built by the clean factoring `W₄ = a⁴ + (a³+a²b+ab²+b³)·b`, reusing `quartic_binom` for `a⁴`
+  and the degree-3 `W_expand` for the inner cubic factor, then an aligned 5-term + 4-term collection
+  (`W4_collect`) — flatten to one 9-element `RsumL`, a kernel-verified `List.Perm` to bring like terms
+  adjacent, merge (new `one_plus_four`/`four_plus_one`/`four_plus_six`/`six_plus_four` coefficient lemmas,
+  `Radd_eq_RsumL4`/`RsumL5` flatteners), reassociate to the left-nested target. Axiom-clean
+  (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free, no-smuggling audited.
+- **`quartic_binom` — the degree-4 binomial identity over the constructive reals** (`Analysis/GammaFourBracket.lean`,
+  `(b+d)⁴ ≈ b⁴ + 4·b³d + 6·b²d² + 4·bd³ + d⁴`): the first reusable algebra brick of the `decompForm4`
+  trapezoidal decomposition that the `γ₄` numeric bracket rests on (the sole remaining `n = 5` gate
+  toward `Pos λ₅`). Built as a one-degree-up mirror of `cube_binom` — `cube_binom·(b+d)`, eight monomials
+  normalized to canonical coefficient-first form via `Rmul_swap_last`/`Rmul_comm`/`Rmul_assoc`, collected
+  through the `RsumL` append/permute machinery (a kernel-verified 8-element `List.Perm`), and merged with
+  `three_plus_one`/`three_plus_three`/`one_plus_three`. Elaborates in ~1 s at the default heartbeat budget
+  (the degree-4 explicit congruence is fast *when structurally exact*: any single mismatch triggers a
+  `whnf` blow-up, since the `Real` ops are reducible structure defs — the diagnostic lesson of this brick).
+  Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free, no-smuggling audited.
 - **The fifth Li coefficient `λ₅` as a closed-form constructive object** (new `Analysis/LambdaFive.lean`
   + `Square/CruxFrontierN5.lean`, `Rlambda5`, `coupling_n5_iff_pos_lambda5`): the next rung of the
   genuine λ-ladder, the FIRST to carry `γ₄` (`Rgamma4`). The new η-anchor is **`η₄ = −γ⁵ − 5γ³γ₁ − 5γγ₁²
