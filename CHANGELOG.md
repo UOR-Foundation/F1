@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Pos Rlambda5` — the fifth Li coefficient is positive** (new `Analysis/LambdaFivePos.lean`): the
+  `n = 5` prime–archimedean coupling coefficient is conquered — the FIRST new rung beyond `n = 4`, and the
+  first to carry `γ₄`. Certified `λ₅ ≥ 83316/10⁶ ≈ +0.0833` (true `λ₅ ≈ 0.518`), assembled from
+  `Rlambda5_arith ≥ 1018316/10⁶ ≈ +1.0183` (the η-anchor uppers `reta1_le5`…`reta4_le5` on the TIGHT
+  brackets of `LambdaFivePrecision`, via `Rlambda5_S_le`/`Rlambda5_arith_ge_r`) and
+  `genuineArchSeq 5 ≥ −935000/10⁶ = −0.935` (`genuineArchSeq5_ge`: `arch(5) = 1 − (5/2)(γ+log4π) +
+  (15/2)ζ(2) − (35/4)ζ(3) + (75/16)ζ(4) − (31/32)ζ(5)`, using the tightened `ζ(3) ≤ 1.205`). This required
+  the full n=5 constant-precision campaign: `γ₄` was NOT the sole gate — the margin (−0.652 with the n≤4
+  brackets) is dominated by `η₃`'s `choose(5,4) = ×5` amplification of the loose `γ₃ ≤ 1/8`, so the closure
+  needed the tighter `γ₃ ≤ 1/40`, `γ₂ ∈ [−0.014, −0.003]`, `γ₁ ≤ −69/1000`, `ζ(3) ≤ 1.205` (STEP 1), then
+  the direct η-by-η `λ₅^arith` lower bound + `arch(5)` lower bound + the `Pos` assembly (STEP 2-4, mirroring
+  `LambdaFourPos`). Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free,
+  no-smuggling audited; crux fields `none`, RH open.
 - **n=5 constant-precision brackets** (new `Analysis/LambdaFivePrecision.lean`, STEP 1 of the `Pos λ₅`
   closure): the tightened Stieltjes/ζ brackets the n=5 margin needs — `γ₃ ≤ 1/40` (`Rgamma3_le_1_40`),
   `γ₂ ≤ −3/1000` (`Rgamma2_le_neg0003`), `γ₂ ≥ −14/1000` (`Rgamma2_ge_neg0014`), `γ₁ ≤ −69/1000`
