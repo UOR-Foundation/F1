@@ -16,6 +16,12 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`coupling_n5_positive` — the `n = 5` prime–archimedean coupling is positive** (new
+  `Square/CruxN5Closed.lean`): composes `coupling_n5_iff_pos_lambda5` (the reduction of the coupling's
+  `n = 5` instance to the closed form `Rlambda5`) with `Rlambda5_pos`, conquering the `n = 5` coefficient
+  of `atlas_crux_localization`'s `∀ n, coupling(n) > 0` — the first new rung beyond `n = 4`, matching the
+  `coupling_head_positive` / `Rlambda2_pos` / `coupling_n3_positive` / `Rlambda4_pos` family. Does NOT close
+  the crux (the uniform `∀ n`, = RH). Axiom-clean; crux fields `none`.
 - **`Pos Rlambda5` — the fifth Li coefficient is positive** (new `Analysis/LambdaFivePos.lean`): the
   `n = 5` prime–archimedean coupling coefficient is conquered — the FIRST new rung beyond `n = 4`, and the
   first to carry `γ₄`. Certified `λ₅ ≥ 83316/10⁶ ≈ +0.0833` (true `λ₅ ≈ 0.518`), assembled from

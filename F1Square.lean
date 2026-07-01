@@ -266,6 +266,7 @@ import F1Square.Analysis.GammaFourLower
 import F1Square.Analysis.LambdaFourPos
 import F1Square.Analysis.LambdaFivePrecision
 import F1Square.Analysis.LambdaFivePos
+import F1Square.Square.CruxN5Closed
 import F1Square.Analysis.GammaOneBracket
 import F1Square.Analysis.GammaZeroBracket
 

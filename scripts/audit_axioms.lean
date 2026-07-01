@@ -3344,6 +3344,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.genuineArchSeq5_ge
 #print axioms Analysis.archLoR5_le
 #print axioms Analysis.Rlambda5_pos
+#print axioms Square.coupling_n5_positive
 #print axioms Analysis.WStep_le_Dsq_gen
 #print axioms Analysis.delta_ge_2over
 #print axioms Analysis.sum_2delta_le
