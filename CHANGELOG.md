@@ -16,6 +16,27 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`order1Class_pruned` — the ENTIRE order-1 candidate family is dead (third prune)**
+  (`Square/GateAFiniteList.lean`): for every η-data anchored through `η₂` (`StieltjesEta3`),
+  every atlas rule, every dimension, and EVERY real coefficient `c`, no Gate-A finite list of
+  order 1 exists. The two one-step relations at `n = 0, 1` force the coefficient-free product
+  identity `(2λ₂)² ≈ (2λ₃)(2λ₁)` (associativity/commutativity eliminate `c`), and the certified
+  brackets refute it outright: `(2λ₂)² ≥ 0.1594² = 0.02540836 > 0.02432430 ≥ 0.5108·0.04762 ≥
+  (2λ₃)(2λ₁)` (via `Rlambda2_ge`, `Rlambda3_le`, `Rlambda1_le`; refuted at witness index
+  `n = 2000` through the new `not_Rle_ofQ_of_witness`). Subsumes both earlier order-1 prunes on
+  η₂-anchored data, and records the structural law: order-K classes consume the first K+1 λ's
+  (anchors through `η_K`). The surviving Gate-A candidate frontier is order `K ≥ 2`.
+  Axiom-clean; crux fields `none`, RH open.
+- **`Rlambda3_le` — the `λ₃` UPPER bracket (`λ₃ ≤ 0.2554`), the second two-sided Li
+  coefficient** (new `Analysis/LambdaThreeUpper.lean`): consumes the fresh `log 4π` lower
+  (`arch(3) = 1 − (3/2)(γ+log4π) + (9/4)ζ(2) − (7/8)ζ(3) ≤ −1.008445`, `genuineArchSeq3_le`)
+  and two forced sharp ingredients on the arithmetic side (`λ₃^{arith} = −(3η₀+3η₁+η₂) ≤
+  1.2638249`, `Rlambda3_arith_le`): the MIXED-SIGN product upper `γγ₁ ≤ 0.577·(−0.0677) =
+  −0.0390629` (`Rgamma_gamma1_le` — its negativity is load-bearing; the two-sided abs bound
+  `|γγ₁| ≤ 0.044` overshoots the kill budget by 0.25) and the tight `γ₂ ≤ −3/1000`
+  (`Rgamma2_le_neg0003`, v0.22). Plus `Rgamma_cube_le` (`γ³ ≤ 0.578³`) and the named
+  `Rlambda2_ge` (`λ₂ ≥ 0.0797`, from the LambdaGap atoms). True values: `λ₃ ≈ 0.207639`,
+  `λ₂ ≈ 0.0923457`. Axiom-clean; crux fields `none`.
 - **`contractionClass_pruned` — the SECOND candidate class killed: the entire contraction class**
   (`Square/GateAFiniteList.lean`): no Gate-A finite list exists with order 1 and ANY real
   coefficient `c ≤ 1`, for every anchored η-data, rule, and dimension — `lamRec` forces

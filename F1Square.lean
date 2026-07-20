@@ -1454,14 +1454,18 @@ example :
         ¬ Square.GateAList E ι D 1 (fun _ => Analysis.one))
     ∧ (∀ (E : Analysis.StieltjesEta) (ι : Square.AtlasRule) (D : Nat) (c : Analysis.Real),
         Analysis.Rle c Analysis.one → ¬ Square.GateAList E ι D 1 (fun _ => c))
+    ∧ (∀ (E : Analysis.StieltjesEta3) (ι : Square.AtlasRule) (D : Nat) (c : Analysis.Real),
+        ¬ Square.GateAList E.toStieltjesEta ι D 1 (fun _ => c))
     ∧ Analysis.Rle (Analysis.ofQ (⟨253038, 100000⟩ : Analysis.Q) (by decide)) Analysis.Rlog4pic
     ∧ Analysis.Rle Analysis.Rlambda1 (Analysis.ofQ (⟨2381, 100000⟩ : Analysis.Q) (by decide))
+    ∧ Analysis.Rle Analysis.Rlambda3 (Analysis.ofQ (⟨2554, 10000⟩ : Analysis.Q) (by decide))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
    Analysis.Rlambda1_ne_Rlambda2,
    Square.constantClass_pruned,
    fun E ι D c hc => Square.contractionClass_pruned E ι D (c := c) hc,
-   Analysis.Rlog4pic_ge, Analysis.Rlambda1_le, rfl, rfl⟩
+   Square.order1Class_pruned,
+   Analysis.Rlog4pic_ge, Analysis.Rlambda1_le, Analysis.Rlambda3_le, rfl, rfl⟩
 
 end UOR.Bridge.F1Square

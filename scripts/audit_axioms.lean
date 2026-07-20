@@ -3955,3 +3955,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.satisfiesRec_order1_step
 #print axioms Square.contractionClass_lamRec_fails
 #print axioms Square.contractionClass_pruned
+
+-- The λ₂ lower + λ₃ upper brackets (LambdaGap.lean addition, new Analysis/LambdaThreeUpper.lean).
+#print axioms Analysis.Rlambda2_ge
+#print axioms Analysis.Rgamma_cube_le
+#print axioms Analysis.Rgamma_gamma1_le
+#print axioms Analysis.Rlambda3_arith_le
+#print axioms Analysis.genuineArchSeq3_le
+#print axioms Analysis.Rlambda3_le
+
+-- The full order-1 class kill (Square/GateAFiniteList.lean additions).
+#print axioms Square.not_Rle_ofQ_of_witness
+#print axioms Square.order1Class_lamRec_fails
+#print axioms Square.order1Class_pruned

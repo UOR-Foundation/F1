@@ -46,6 +46,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 
 import F1Square.Square.GateA
 import F1Square.Analysis.LambdaGap
+import F1Square.Analysis.LambdaThreeUpper
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -283,5 +284,113 @@ theorem contractionClass_lamRec_fails (E : StieltjesEta) {c : Real} (hc : Rle c 
 theorem contractionClass_pruned (E : StieltjesEta) (ι : AtlasRule) (D : Nat) {c : Real}
     (hc : Rle c one) : ¬ GateAList E ι D 1 (fun _ => c) :=
   fun h => contractionClass_lamRec_fails E hc h.lamRec
+
+-- ===========================================================================
+-- The third prune: the ENTIRE order-1 family, any real coefficient.
+-- ===========================================================================
+
+/-- Two rationals with `p > q + 2/(n+1)` at some witness index `n` refute `ofQ p ≤ ofQ q`. -/
+theorem not_Rle_ofQ_of_witness {p q : Q} (hp : 0 < p.den) (hq : 0 < q.den) (n : Nat)
+    (hwit : ¬ Qle p (add q ⟨2, n + 1⟩)) : ¬ Rle (ofQ p hp) (ofQ q hq) :=
+  fun h => hwit (h n)
+
+/-- **The whole order-1 family fails `lamRec`** — for ANY real coefficient `c`, and every
+    η-data anchored through `η₂`. The recurrence at `n = 0, 1` forces the coefficient-free
+    product identity `(2λ₂)² ≈ (2λ₃)(2λ₁)` (associativity/commutativity eliminate `c`), and
+    the certified brackets refute it:
+    `(2λ₂)² ≥ (0.1594)² = 0.02540836 > 0.02433 ≥ 0.5108·0.04762 ≥ (2λ₃)(2λ₁)`
+    (`Rlambda2_ge`, `Rlambda3_le`, `Rlambda1_le`, witness index `n = 2000`). -/
+theorem order1Class_lamRec_fails (E : StieltjesEta3) (c : Real) :
+    ¬ SatisfiesRec (fun _ => c) 1
+        (fun m => Radd (genuineLamSeq E.eta (1 + m)) (genuineLamSeq E.eta (1 + m))) := by
+  intro h
+  -- the two one-step relations, transported to the certified λ's
+  have r0 : Req (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))
+      (Rmul c (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))) :=
+    satisfiesRec_order1_step h 0
+  have r1 : Req (Radd (genuineLamSeq E.eta 3) (genuineLamSeq E.eta 3))
+      (Rmul c (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))) :=
+    satisfiesRec_order1_step h 1
+  have t0 : Req (Radd Rlambda2 Rlambda2) (Rmul c (Radd Rlambda1 Rlambda1)) :=
+    Req_trans (Radd_congr (Req_symm (genuineLam_two E.toStieltjesEta))
+        (Req_symm (genuineLam_two E.toStieltjesEta)))
+      (Req_trans r0 (Rmul_congr (Req_refl c)
+        (Radd_congr (genuineLam_one E.toStieltjesEta) (genuineLam_one E.toStieltjesEta))))
+  have t1 : Req (Radd Rlambda3 Rlambda3) (Rmul c (Radd Rlambda2 Rlambda2)) :=
+    Req_trans (Radd_congr (Req_symm (genuineLam_three E)) (Req_symm (genuineLam_three E)))
+      (Req_trans r1 (Rmul_congr (Req_refl c)
+        (Radd_congr (genuineLam_two E.toStieltjesEta) (genuineLam_two E.toStieltjesEta))))
+  -- the coefficient-free product identity (c is eliminated by assoc/comm)
+  have hprod : Req (Rmul (Radd Rlambda2 Rlambda2) (Radd Rlambda2 Rlambda2))
+      (Rmul (Radd Rlambda3 Rlambda3) (Radd Rlambda1 Rlambda1)) := by
+    refine Req_trans (Rmul_congr t0 (Req_refl (Radd Rlambda2 Rlambda2))) ?_
+    refine Req_trans (Rmul_assoc c (Radd Rlambda1 Rlambda1) (Radd Rlambda2 Rlambda2)) ?_
+    refine Req_trans (Rmul_congr (Req_refl c)
+      (Rmul_comm (Radd Rlambda1 Rlambda1) (Radd Rlambda2 Rlambda2))) ?_
+    refine Req_trans (Req_symm (Rmul_assoc c (Radd Rlambda2 Rlambda2)
+      (Radd Rlambda1 Rlambda1))) ?_
+    exact Rmul_congr (Req_symm t1) (Req_refl (Radd Rlambda1 Rlambda1))
+  -- the doubled brackets
+  have h2lo : Rle (ofQ (⟨1594, 10000⟩ : Q) (by decide)) (Radd Rlambda2 Rlambda2) := by
+    have hstep : Rle (Radd (ofQ (⟨797, 10000⟩ : Q) (by decide))
+        (ofQ (⟨797, 10000⟩ : Q) (by decide))) (Radd Rlambda2 Rlambda2) :=
+      Radd_le_add Rlambda2_ge Rlambda2_ge
+    exact Rle_trans (Rle_ofQ_ofQ (by decide) (by decide) (by decide))
+      (Rle_trans (Rle_ofQ_add_Radd (by decide) (by decide)) hstep)
+  have h3hi : Rle (Radd Rlambda3 Rlambda3) (ofQ (⟨5108, 10000⟩ : Q) (by decide)) := by
+    have hstep : Rle (Radd Rlambda3 Rlambda3)
+        (ofQ (add (⟨2554, 10000⟩ : Q) (⟨2554, 10000⟩ : Q)) (by decide)) :=
+      Rle_trans (Radd_le_add Rlambda3_le Rlambda3_le)
+        (Radd_Rle_ofQ_add (by decide) (by decide))
+    exact Rle_trans hstep (Rle_ofQ_ofQ (by decide) (by decide) (by decide))
+  have h1hi : Rle (Radd Rlambda1 Rlambda1) (ofQ (⟨4762, 100000⟩ : Q) (by decide)) := by
+    have hstep : Rle (Radd Rlambda1 Rlambda1)
+        (ofQ (add (⟨2381, 100000⟩ : Q) (⟨2381, 100000⟩ : Q)) (by decide)) :=
+      Rle_trans (Radd_le_add Rlambda1_le Rlambda1_le)
+        (Radd_Rle_ofQ_add (by decide) (by decide))
+    exact Rle_trans hstep (Rle_ofQ_ofQ (by decide) (by decide) (by decide))
+  have h2nn : Rnonneg (Radd Rlambda2 Rlambda2) :=
+    Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg
+      (Rnonneg_ofQ (by decide) (by decide))) h2lo)
+  have h1nn : Rnonneg (Radd Rlambda1 Rlambda1) :=
+    Rnonneg_Radd (Rnonneg_of_Pos Rlambda1_pos) (Rnonneg_of_Pos Rlambda1_pos)
+  -- the two product bounds
+  have hA : Rle (ofQ (mul (⟨1594, 10000⟩ : Q) (⟨1594, 10000⟩ : Q)) (by decide))
+      (Rmul (Radd Rlambda2 Rlambda2) (Radd Rlambda2 Rlambda2)) := by
+    have s1 : Rle (Rmul (ofQ (⟨1594, 10000⟩ : Q) (by decide))
+        (ofQ (⟨1594, 10000⟩ : Q) (by decide)))
+        (Rmul (Radd Rlambda2 Rlambda2) (ofQ (⟨1594, 10000⟩ : Q) (by decide))) :=
+      Rmul_le_Rmul_right (Rnonneg_ofQ (by decide) (by decide)) h2lo
+    have s2 : Rle (Rmul (Radd Rlambda2 Rlambda2) (ofQ (⟨1594, 10000⟩ : Q) (by decide)))
+        (Rmul (Radd Rlambda2 Rlambda2) (Radd Rlambda2 Rlambda2)) :=
+      Rmul_le_Rmul_left h2nn h2lo
+    exact Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ (by decide) (by decide))))
+      (Rle_trans s1 s2)
+  have hB : Rle (Rmul (Radd Rlambda3 Rlambda3) (Radd Rlambda1 Rlambda1))
+      (ofQ (mul (⟨5108, 10000⟩ : Q) (⟨4762, 100000⟩ : Q)) (by decide)) := by
+    have s1 : Rle (Rmul (Radd Rlambda3 Rlambda3) (Radd Rlambda1 Rlambda1))
+        (Rmul (ofQ (⟨5108, 10000⟩ : Q) (by decide)) (Radd Rlambda1 Rlambda1)) :=
+      Rmul_le_Rmul_right h1nn h3hi
+    have s2 : Rle (Rmul (ofQ (⟨5108, 10000⟩ : Q) (by decide)) (Radd Rlambda1 Rlambda1))
+        (Rmul (ofQ (⟨5108, 10000⟩ : Q) (by decide)) (ofQ (⟨4762, 100000⟩ : Q) (by decide))) :=
+      Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) h1hi
+    exact Rle_trans s1 (Rle_trans s2 (Rle_of_Req (Rmul_ofQ_ofQ (by decide) (by decide))))
+  -- the clash: 0.02540836 ≤ (2λ₂)² ≈ (2λ₃)(2λ₁) ≤ 0.02432430, refuted at witness n = 2000
+  have hfinal : Rle (ofQ (mul (⟨1594, 10000⟩ : Q) (⟨1594, 10000⟩ : Q)) (by decide))
+      (ofQ (mul (⟨5108, 10000⟩ : Q) (⟨4762, 100000⟩ : Q)) (by decide)) :=
+    Rle_trans hA (Rle_trans (Rle_of_Req hprod) hB)
+  exact not_Rle_ofQ_of_witness (by decide) (by decide) 2000 (by decide) hfinal
+
+/-- **THE THIRD PRUNE, RECORDED — the ENTIRE order-1 family is dead**: for every η-data
+    anchored through `η₂`, every atlas rule, every dimension, and EVERY real coefficient `c`,
+    there is no Gate-A finite list of order 1. No single-term generating recurrence carries
+    the Gate-A diagonal: the certified `λ₁, λ₂, λ₃` brackets refute the forced geometric
+    relation `λ₂² = λ₃λ₁` outright. (Subsumes `constantClass_pruned` and
+    `contractionClass_pruned` on η₂-anchored data; the kill consumed one more anchor than the
+    contraction kill — order-K classes consume the first K+1 λ's, i.e. anchors through η_K.)
+    The surviving frontier is order `K ≥ 2`. -/
+theorem order1Class_pruned (E : StieltjesEta3) (ι : AtlasRule) (D : Nat) (c : Real) :
+    ¬ GateAList E.toStieltjesEta ι D 1 (fun _ => c) :=
+  fun h => order1Class_lamRec_fails E c h.lamRec
 
 end UOR.Bridge.F1Square.Square

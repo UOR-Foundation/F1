@@ -216,6 +216,40 @@ theorem lambda_gap_lower :
 theorem lambda_gap_pos : Pos (Rsub (Radd Rlambda2 Rlambda2) Rtwolambda1) :=
   Pos_of_Rle_ofQ (by decide) (by decide) lambda_gap_lower
 
+/-- **`λ₂ ≥ 797/10000 = 0.0797`** (true value `0.0923457`) — the named lower bracket, from the
+    same atom bounds as the gap (`1 + 0.577 − 0.334084 + 0.1354 − 2.5316 + 1.233 = 0.079716`).
+    Consumed by the order-1 Gate-A class kill (`Square/GateAFiniteList.lean`). -/
+theorem Rlambda2_ge : Rle (ofQ (⟨797, 10000⟩ : Q) (by decide)) Rlambda2 := by
+  have hbOne : Rle (ofQ (⟨1, 1⟩ : Q) (by decide)) one := Rle_of_Req (Req_refl one)
+  have hbSq : Rle (ofQ (neg (mul (⟨578, 1000⟩ : Q) (⟨578, 1000⟩ : Q))) (by decide)) negSq :=
+    Rneg_ofQ_le (by decide) Rgamma_sq_le
+  have h2g1 : Rle (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) Rgamma1)
+      (ofQ (mul (⟨2, 1⟩ : Q) (⟨-677, 10000⟩ : Q)) (by decide)) :=
+    Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) Rgamma1_le_neg0677)
+      (Rle_of_Req (Rmul_ofQ_ofQ (by decide) (by decide)))
+  have hbG1 : Rle (ofQ (neg (mul (⟨2, 1⟩ : Q) (⟨-677, 10000⟩ : Q))) (by decide)) negG1 :=
+    Rneg_ofQ_le (by decide) h2g1
+  have hbL : Rle (ofQ (neg (⟨25316, 10000⟩ : Q)) (by decide)) negL :=
+    Rneg_ofQ_le (by decide) Rlog4pic_le
+  have hbZ : Rle (ofQ (mul (⟨3, 4⟩ : Q) (⟨1644, 1000⟩ : Q)) (by decide)) zT :=
+    Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ (by decide) (by decide))))
+      (Rmul_le_Rmul_left (Rnonneg_ofQ (by decide) (by decide)) zeta2_lower_tight)
+  have s0 : Rle (ofQ (⟨0, 1⟩ : Q) (by decide)) (RsumL []) := Rle_of_Req (Req_refl zero)
+  have v1 : Rle (ofQ (⟨12330, 10000⟩ : Q) (by decide)) (RsumL [zT]) :=
+    accum (by decide) (by decide) (by decide) hbZ s0 (by decide)
+  have v2 : Rle (ofQ (⟨-12986, 10000⟩ : Q) (by decide)) (RsumL [negL, zT]) :=
+    accum (by decide) (by decide) (by decide) hbL v1 (by decide)
+  have v3 : Rle (ofQ (⟨-11632, 10000⟩ : Q) (by decide)) (RsumL [negG1, negL, zT]) :=
+    accum (by decide) (by decide) (by decide) hbG1 v2 (by decide)
+  have v4 : Rle (ofQ (⟨-14973, 10000⟩ : Q) (by decide)) (RsumL [negSq, negG1, negL, zT]) :=
+    accum (by decide) (by decide) (by decide) hbSq v3 (by decide)
+  have v5 : Rle (ofQ (⟨-9203, 10000⟩ : Q) (by decide))
+      (RsumL [Rgamma_h, negSq, negG1, negL, zT]) :=
+    accum (by decide) (by decide) (by decide) Rgamma_h_ge_577 v4 (by decide)
+  have v6 : Rle (ofQ (⟨797, 10000⟩ : Q) (by decide)) (RsumL lam2L) :=
+    accum (by decide) (by decide) (by decide) hbOne v5 (by decide)
+  exact Rle_trans v6 (Rle_of_Req (Req_symm lam2_flat))
+
 /-- `0` is not strictly positive (the `Pos` witness inequality `1/(n+1) < 0` is absurd). -/
 theorem not_Pos_zero : ¬ Pos zero := by
   intro ⟨n, hn⟩
