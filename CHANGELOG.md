@@ -16,6 +16,33 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`tentPoleB_eq` — the tent's `f̃(0)` component ≈ `log 2`: THE SECOND EVALUATED WEIL-SLOT
+  COMPONENT, and the first integral evaluation to a NON-RATIONAL value** (new
+  `Analysis/ExpBounds.lean`, `Analysis/HarmonicLog.lean`, `Analysis/TentLogPiece.lean`;
+  Sonine route, step 2): the tent test's `∫₀^∞ f(x)/x dx` pole part is CONSTRUCTED as two
+  certified interval integrals and EVALUATED in the kernel:
+  `∫_{1/2}^{1}(2 − 1/x) + ∫_{1}^{2}(2/x − 1) ≈ (1 − log 2) + (2·log 2 − 1) = log 2`.
+  With `tentPoleA_eq` this completes the tent's pole block `f̃(1) + f̃(0) = 3/4 + log 2`.
+  The chain, bottom-up: (i) **`ExpBounds.lean`** — the series bounds `1 + q ≤ exp q`
+  (`RexpReal_ofQ_ge_one_add`) and the exact geometric cap `exp(1/(e+1)) ≤ (e+1)/e`
+  (`RexpReal_unit_le`, strengthened-induction closed form `expSum_unit_le_geom`), giving the
+  **per-step logarithm bracket** `1/(i+1) ≤ log(i+1) − log i ≤ 1/i` (`logN_step_lower/upper`,
+  via `RexpReal_reflects_le` — the constructive derivative of `log` at the integers);
+  (ii) **`HarmonicLog.lean`** — the telescoped wedge `log 2 ≤ Σ_{j<M} 1/(M+j) ≤ log 2 + 1/(2M)`
+  (`log2_le_hFold`/`hFold_le_log2_add`, through `logN_mul` and the exact telescoping defect
+  `hFold_eq_hFoldLo`), the harmonic Riemann-sum identity `R_N(1/(1+t)) = Σ_{j<M} 1/(M+j)`
+  (`riemannSum_gRecip`, per-point `clampedInv` evaluation + ℚ-fold), the new limit engine
+  `Rlim_eval_real` (rate-convergent Bishop limits evaluate to a REAL target — `Rlim_eval`
+  generalized, one extra regularity step of the target), and the headline
+  **`riemannIntegral_recip`: `∫₀¹ dx/(1+x) ≈ log 2`** — the constructive
+  fundamental-theorem step for `1/x`; (iii) **`TentLogPiece.lean`** — the two tent pieces
+  totalized with the FLOOR-1 clamp only (on `[1/2,1]` via `1/x = 2·(1/(2x))`, `2x ∈ [1,2]` —
+  no second clamp floor, no scaling identity), affine pullbacks POINTWISE congruent to
+  `2 − 2·gRecip` and `2·gRecip − 1` (`tent_pull1/2`), evaluated by gateway linearity
+  (`_const/_smul/_neg/_add`) over `riemannIntegral_recip`, assembled in `tentPoleB_eq`.
+  Also: order helpers (`Rsub_le_of_le_Radd`, `Radd_le_cancel_right`, `Rsub_shift_drop`,
+  `Rneg_involutive`, `Rmul_two_eq`). Root witness extended with `riemannIntegral_recip` and
+  `tentPoleB_eq`. Axiom-clean; crux fields `none`; RH open.
 - **`clampedInv` — the clamped-reciprocal gadget: the totalized `1/x` integrand** (new
   `Analysis/ClampedInv.lean`; Sonine route, the recorded next brick after `tentPoleA_eq`):
   `clampedInv a x := 1/max(x, a)` (rational floor `a > 0`) is a genuine TOTAL function of `x`

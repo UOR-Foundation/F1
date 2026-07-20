@@ -4074,3 +4074,66 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rinv_ofQ
 #print axioms Analysis.clampedInv_ofQ
 #print axioms Analysis.lip_mono
+
+-- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
+#print axioms Analysis.RexpReal_R_ge_one
+#print axioms Analysis.RexpReal_ofQ_ge_one_add
+#print axioms Analysis.qpow_unit
+#print axioms Analysis.expTerm_unit_le
+#print axioms Analysis.expSum_unit_le_geom
+#print axioms Analysis.expSum_unit_le
+#print axioms Analysis.RexpReal_unit_le
+#print axioms Analysis.logN_step_upper
+#print axioms Analysis.logN_step_lower
+
+-- The harmonic-log bridge and ∫₀¹ dx/(1+x) ≈ log 2 (new Analysis/HarmonicLog.lean).
+#print axioms Analysis.Rlim_eval_real
+#print axioms Analysis.Rneg_involutive
+#print axioms Analysis.Rsub_le_of_le_Radd
+#print axioms Analysis.Rsub_nonpos_of_Rle
+#print axioms Analysis.Radd_le_cancel_right
+#print axioms Analysis.Rsub_shift_drop
+#print axioms Analysis.hFold_den_pos
+#print axioms Analysis.hFoldLo_den_pos
+#print axioms Analysis.logN_telescope_upper
+#print axioms Analysis.logN_telescope_lower
+#print axioms Analysis.hFold_eq_hFoldLo
+#print axioms Analysis.log2_le_hFold
+#print axioms Analysis.hFold_le_log2_add
+#print axioms Analysis.hFold_log2_defect
+#print axioms Analysis.gRecip_lip
+#print axioms Analysis.gRecip_congr
+#print axioms Analysis.gRecip_point
+#print axioms Analysis.harmTermFold_den_pos
+#print axioms Analysis.RsumN_gRecip
+#print axioms Analysis.harmTermFold_scale
+#print axioms Analysis.riemannSum_gRecip
+#print axioms Analysis.dyadicR_gRecip_zero
+#print axioms Analysis.genSum_gRecip_rate
+#print axioms Analysis.riemannIntegral_recip_gen
+#print axioms Analysis.riemannIntegral_recip
+
+-- The tent f̃(0) component ≈ log 2 (new Analysis/TentLogPiece.lean).
+#print axioms Analysis.Rsub_Rneg_pair
+#print axioms Analysis.Rsub_const_sub
+#print axioms Analysis.Rmul_two_eq
+#print axioms Analysis.tentF1_lip
+#print axioms Analysis.tentF1_congr
+#print axioms Analysis.tentF2_lip
+#print axioms Analysis.tentF2_congr
+#print axioms Analysis.Rabs_Rsub_swap
+#print axioms Analysis.tent_arg1
+#print axioms Analysis.tent_pull1
+#print axioms Analysis.tent_pull2
+#print axioms Analysis.gRecip_lip_at
+#print axioms Analysis.s2g_lip
+#print axioms Analysis.s2g_congr
+#print axioms Analysis.n2g_lip
+#print axioms Analysis.n2g_congr
+#print axioms Analysis.G1_lip
+#print axioms Analysis.G1_congr
+#print axioms Analysis.G2_lip
+#print axioms Analysis.G2_congr
+#print axioms Analysis.tent_pieceB1
+#print axioms Analysis.tent_pieceB2
+#print axioms Analysis.tentPoleB_eq
