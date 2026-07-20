@@ -4383,3 +4383,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.t4A34_eq
 #print axioms Analysis.t4Ah_eq
 #print axioms Analysis.t4Aq_eq
+
+-- The t4PoleA assembly, part 1: the first exact piece value (∫₁²(2log2 − logx) = 1)
+-- and the Gn 3 telescope (new Analysis/T4PoleAAssembly.lean).
+#print axioms Analysis.t4A12_val
+#print axioms Analysis.t4A2334_val

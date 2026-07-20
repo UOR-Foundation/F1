@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4A12_val` + `t4A2334_val` — the `t4PoleA` assembly, part 1** (new
+  `Analysis/T4PoleAAssembly.lean`; Sonine route, step 2 — the `W(t4)` campaign): the
+  first *exact* piece value — `t4A12 ≈ 1` (`∫₁² (2log2 − log x) dx = 1`: the cone
+  height is `Gn 2`'s own log term definitionally, so the logs cancel inside the
+  piece) — and the middle-piece telescope `t4A23 + t4A34 ≈ (t4H + t4H) − (Gn 4 − Gn 2)`,
+  which drops `Gn 3` (the assembly's only `log 3` carrier) without ever expanding it.
+  Remaining for `t4PoleA ≈ 9/4`: expand `Gn 4 − Gn 2` through `logN 4 ≈ 2·logN 2`,
+  fold in `t4Ah`/`t4Aq`, cancel the `log 2` coefficient (`6 − 8 + 3/2 + 1/2 = 0`).
+  Axiom-clean; crux fields `none`.
 - **`t4A12/23/34/h/q` — the `t4PoleA` pieces, constructed and evaluated** (new
   `Analysis/T4PoleAPieces.lean`; Sonine route, step 2 — the `W(t4)` campaign): the five
   interval integrals of the cone tent `t4F(x) = 2log2 − |log x|` over `[1/4, 4]`, each
