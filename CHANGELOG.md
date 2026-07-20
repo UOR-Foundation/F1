@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Rlambda3_lt_Rlambda4` — `λ₃ < λ₄`, the Li head certified strictly increasing through
+  `n = 4`, and `convexClass3_pruned` — THE FIRST KILL AT ORDER 3** (new
+  `Analysis/LambdaFourThreeGap.lean`): `λ₄ − λ₃ ≥ 0.035` (true `0.178`). The route is the
+  DIFFERENCE, not the endpoints: bounding `λ₄` below and `λ₃` above separately fails
+  (`0.2185 < 0.2486`) because each `ηⱼ` bracket width is then paid twice, and at binomial
+  weights `3..6` that doubling swamps the true gap. The archimedean sides ARE cheap separately
+  (cost `≈ 0.008`, since the constant `1` cancels exactly and the `ζ` weights are small), so only
+  the arithmetic side needs an identity — `lambda4_arith_split`:
+  `λ₄^{arith} − λ₃^{arith} = −(η₀ + 3η₁ + 3η₂ + η₃)`, obtained from the `nsmulR` splits
+  (`nsmulR6_split`, `nsmulR4_split_left`) plus ONE 7-atom `RsumL` rearrangement whose
+  permutation is built STRUCTURALLY from `List.Perm.swap`/`cons`/`trans` (`decide` on
+  `List.Perm` is barred — it pulls `Classical.choice`). Two supporting brackets: the TIGHT
+  `reta3_le_t` (`η₃ ≤ 0.0462725`, on `γ₃ ≤ 1/40` and `γ₂ ≤ −0.003`; the stock `reta3_le`'s
+  `0.145303` rests on the loose `γ₃ ≤ 1/8` and is far too weak) and `genuineArchSeq4_ge_t`
+  (`arch(4) ≥ −1.024325`, the `ζ(3) ≤ 1.205` sharpening of the stock `−1.066325`, which misses
+  by `0.042`). `convexClass3_pruned` then kills the order-3 convex class — unreachable by the
+  contraction lever, whose order-3 form is true by only `1.3%`, whereas the convex lever needs
+  just `λ₃ < λ₄`, a `34%` margin. Axiom-clean; crux fields `none`, RH open.
 - **`convexClass12_pruned` / `convex_lamRec_fails` — the CONVEX-COMBINATION lever (sixth prune),
   general in the order** (`Square/GateAFiniteList.lean`): non-negative coefficients with
   `Σ aᵢ ≤ 1` cap `s K` by the maximum of the window (`convex_cap`, stated for arbitrary `K`), so

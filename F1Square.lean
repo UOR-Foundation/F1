@@ -1471,6 +1471,11 @@ example :
         ¬ Square.GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a)
     ∧ (Analysis.Pos (Analysis.Rsub Analysis.Rlambda2 Analysis.Rlambda1)
         ∧ Analysis.Pos (Analysis.Rsub Analysis.Rlambda3 Analysis.Rlambda2))
+    ∧ Analysis.Pos (Analysis.Rsub Analysis.Rlambda4 Analysis.Rlambda3)
+    ∧ (∀ (E : Analysis.StieltjesEta5) (ι : Square.AtlasRule) (D K : Nat) (a : Nat → Analysis.Real),
+        0 < K → K ≤ 3 → (∀ i, i < K → Analysis.Rnonneg (a i)) →
+        Analysis.Rle (Analysis.RsumN a K) Analysis.one →
+        ¬ Square.GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a)
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1482,6 +1487,8 @@ example :
    Analysis.Rlog4pic_ge, Analysis.Rlambda1_le, Analysis.Rlambda3_le,
    Analysis.Rlambda2_le, Analysis.Rlambda3_ge, Analysis.Rlambda4_le,
    fun E ι D K a hK hK4 ha => Square.nonPositiveClass_pruned E ι D hK hK4 ha,
-   Analysis.Rlambda_head_increasing, rfl, rfl⟩
+   Analysis.Rlambda_head_increasing, Analysis.Rlambda3_lt_Rlambda4,
+   fun E ι D K a hK hK3 ha hsum => Square.convexClass123_pruned E ι D hK hK3 ha hsum,
+   rfl, rfl⟩
 
 end UOR.Bridge.F1Square

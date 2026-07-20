@@ -3764,7 +3764,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rdiv_seq_le_B
 #print axioms Analysis.Rdiv_seq_ge_invB
 #print axioms Analysis.Rmul_y_Rdiv
-#print axioms Analysis.Rsub_Radd_cancel_left
 #print axioms Analysis.Qone_le_mul
 #print axioms Analysis.Qprod_lo
 #print axioms Analysis.QB_le_B2
@@ -4009,3 +4008,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.Rsub_double
 #print axioms Square.Pos_Rsub_double
 #print axioms Square.convexClass12_pruned
+
+-- The λ₄ − λ₃ gap: λ₃ < λ₄ (new Analysis/LambdaFourThreeGap.lean).
+#print axioms Analysis.nsmulR6_split
+#print axioms Analysis.nsmulR4_split_left
+#print axioms Analysis.lambda4_arith_split
+#print axioms Analysis.reta3_le_t
+#print axioms Analysis.etaGap43_le
+#print axioms Analysis.genuineArchSeq4_ge_t
+#print axioms Analysis.Radd_rearrange4_an
+#print axioms Analysis.Rsub_Radd_cancel_left
+#print axioms Analysis.lambda43_gap_lower
+#print axioms Analysis.Rlambda3_lt_Rlambda4
+
+-- The order-3 convex prune (Square/GateAFiniteList.lean).
+#print axioms Square.convexClass3_pruned
+#print axioms Square.convexClass123_pruned

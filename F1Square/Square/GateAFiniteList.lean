@@ -50,6 +50,7 @@ import F1Square.Analysis.LambdaThreeUpper
 import F1Square.Analysis.LambdaTwoThreePrecision
 import F1Square.Analysis.LambdaFourUpper
 import F1Square.Analysis.LambdaFivePos
+import F1Square.Analysis.LambdaFourThreeGap
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -716,6 +717,59 @@ theorem convexClass12_pruned (E : StieltjesEta3) (ι : AtlasRule) (D : Nat)
       | (n + 2), hn => exact absurd hn (by omega)
     · exact Pos_congr (Req_symm (Radd_congr e3 (Rneg_congr e2))) g23
 
+/-- **THE CONVEX CLASS AT ORDER 3 — now certified**, on the strength of `Rlambda3_lt_Rlambda4`
+    (`Analysis/LambdaFourThreeGap.lean`): no Gate-A finite list of order `3` has non-negative
+    coefficients summing to at most `1`. This is the first kill at order `3`, and it is NOT
+    reachable by the contraction lever, whose order-3 form `λ₄ > λ₁+λ₂+λ₃` is true only by
+    `1.3%` — far beyond the bracket. The convex lever needs only `λ₃ < λ₄`, a `34%` margin. -/
+theorem convexClass3_pruned (E : StieltjesEta4) (ι : AtlasRule) (D : Nat)
+    {a : Nat → Real} (ha : ∀ i, i < 3 → Rnonneg (a i)) (hsum : Rle (RsumN a 3) one) :
+    ¬ GateAList E.toStieltjesEta3.toStieltjesEta ι D 3 a := by
+  intro h
+  have e1 : Req (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1)) (Radd Rlambda1 Rlambda1) :=
+    Radd_congr (genuineLam_one E.toStieltjesEta3.toStieltjesEta)
+      (genuineLam_one E.toStieltjesEta3.toStieltjesEta)
+  have e2 : Req (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2)) (Radd Rlambda2 Rlambda2) :=
+    Radd_congr (genuineLam_two E.toStieltjesEta3.toStieltjesEta)
+      (genuineLam_two E.toStieltjesEta3.toStieltjesEta)
+  have e3 : Req (Radd (genuineLamSeq E.eta 3) (genuineLamSeq E.eta 3)) (Radd Rlambda3 Rlambda3) :=
+    Radd_congr (genuineLam_three E.toStieltjesEta3) (genuineLam_three E.toStieltjesEta3)
+  have e4 : Req (Radd (genuineLamSeq E.eta 4) (genuineLamSeq E.eta 4)) (Radd Rlambda4 Rlambda4) :=
+    Radd_congr (genuineLam_four E) (genuineLam_four E)
+  have n3 : Rnonneg (Radd Rlambda3 Rlambda3) :=
+    Rnonneg_Radd (Rnonneg_of_Pos Rlambda3_pos) (Rnonneg_of_Pos Rlambda3_pos)
+  have le12 : Rle (Radd Rlambda1 Rlambda1) (Radd Rlambda2 Rlambda2) :=
+    Rle_of_Rnonneg_Rsub (Rnonneg_of_Pos (Pos_Rsub_double Rlambda1_lt_Rlambda2))
+  have le23 : Rle (Radd Rlambda2 Rlambda2) (Radd Rlambda3 Rlambda3) :=
+    Rle_of_Rnonneg_Rsub (Rnonneg_of_Pos (Pos_Rsub_double Rlambda2_lt_Rlambda3))
+  refine convex_lamRec_fails 3 (M := Radd (genuineLamSeq E.eta 3) (genuineLamSeq E.eta 3))
+    (Rnonneg_congr (Req_symm e3) n3) ha hsum (fun i hi => ?_) ?_ h.lamRec
+  · match i, hi with
+    | 0, _ =>
+      exact Rle_trans (Rle_of_Req e1)
+        (Rle_trans (Rle_trans le12 le23) (Rle_of_Req (Req_symm e3)))
+    | 1, _ =>
+      exact Rle_trans (Rle_of_Req e2) (Rle_trans le23 (Rle_of_Req (Req_symm e3)))
+    | 2, _ => exact Rle_refl _
+    | (n + 3), hn => exact absurd hn (by omega)
+  · exact Pos_congr (Req_symm (Radd_congr e4 (Rneg_congr e3)))
+      (Pos_Rsub_double Rlambda3_lt_Rlambda4)
+
+/-- **The convex class is dead at every order `K = 1, 2, 3`** — the three instantiations of
+    `convex_lamRec_fails` the certified head `λ₁ < λ₂ < λ₃ < λ₄` supports. -/
+theorem convexClass123_pruned (E : StieltjesEta5) (ι : AtlasRule) (D : Nat) {K : Nat}
+    (hK : 0 < K) (hK3 : K ≤ 3) {a : Nat → Real} (ha : ∀ i, i < K → Rnonneg (a i))
+    (hsum : Rle (RsumN a K) one) :
+    ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a := by
+  match K, hK, hK3 with
+  | 1, _, _ =>
+    exact convexClass12_pruned E.toStieltjesEta4.toStieltjesEta3 ι D
+      (by omega) (by omega) ha hsum
+  | 2, _, _ =>
+    exact convexClass12_pruned E.toStieltjesEta4.toStieltjesEta3 ι D
+      (by omega) (by omega) ha hsum
+  | 3, _, _ => exact convexClass3_pruned E.toStieltjesEta4 ι D ha hsum
+
 -- ===========================================================================
 -- The prune ledger, as one kernel-checked statement.
 -- ===========================================================================
@@ -747,14 +801,13 @@ theorem gateA_prune_ledger (E : StieltjesEta5) (ι : AtlasRule) (D : Nat) :
         ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D 2 a)
     ∧ (∀ (K : Nat) (a : Nat → Real), 0 < K → K ≤ 4 → (∀ i, i < K → Rle (a i) zero) →
         ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a)
-    ∧ (∀ (K : Nat) (a : Nat → Real), 0 < K → K ≤ 2 → (∀ i, i < K → Rnonneg (a i)) →
+    ∧ (∀ (K : Nat) (a : Nat → Real), 0 < K → K ≤ 3 → (∀ i, i < K → Rnonneg (a i)) →
         Rle (RsumN a K) one →
         ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a) :=
   ⟨fun a => orderZeroClass_pruned _ ι D a,
    fun c => order1Class_pruned E.toStieltjesEta4.toStieltjesEta3 ι D c,
    fun _a h0 h1 => contractionClass2_pruned E.toStieltjesEta4.toStieltjesEta3 ι D h0 h1,
    fun _K _a hK hK4 ha => nonPositiveClass_pruned E ι D hK hK4 ha,
-   fun _K _a hK hK2 ha hsum =>
-     convexClass12_pruned E.toStieltjesEta4.toStieltjesEta3 ι D hK hK2 ha hsum⟩
+   fun K a hK hK3 ha hsum => convexClass123_pruned E ι D hK hK3 ha hsum⟩
 
 end UOR.Bridge.F1Square.Square
