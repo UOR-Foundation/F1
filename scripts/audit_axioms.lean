@@ -4296,6 +4296,8 @@ open UOR.Bridge.F1Square
 
 -- The ∫log layer, part 2a: Qmin + the per-index ceiling qCapQ + the two-sided band
 -- clamp qBandQ (new Analysis/BandClamp.lean).
+#print axioms Analysis.Qmin_eq_left
+#print axioms Analysis.Qmin_eq_right
 #print axioms Analysis.Qmin_den_pos
 #print axioms Analysis.Qmin_le_left
 #print axioms Analysis.Qmin_le_right
