@@ -4329,3 +4329,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.gLog2_lip
 #print axioms Analysis.gLog3_congr
 #print axioms Analysis.gLog3_lip
+
+-- The ∫log layer, part 2c(i): the uniform small-radius certificate for the
+-- log-of-rational bridge, general in the sample (new Analysis/LogRatCert.lean).
+#print axioms Analysis.radius_half_of_le4
+#print axioms Analysis.radius_half_proj
+#print axioms Analysis.sample_ge_one
