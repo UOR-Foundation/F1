@@ -4293,3 +4293,23 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Gn_tele_lower
 #print axioms Analysis.Gn_tele_upper
 #print axioms Analysis.logFold_gap
+
+-- The ∫log layer, part 2a: Qmin + the per-index ceiling qCapQ + the two-sided band
+-- clamp qBandQ (new Analysis/BandClamp.lean).
+#print axioms Analysis.Qmin_den_pos
+#print axioms Analysis.Qmin_le_left
+#print axioms Analysis.Qmin_le_right
+#print axioms Analysis.Qle_Qmin
+#print axioms Analysis.Qmin_const_lip
+#print axioms Analysis.qCapQ_le
+#print axioms Analysis.qCapQ_ge
+#print axioms Analysis.qCapQ_congr
+#print axioms Analysis.qCapQ_lipschitz
+#print axioms Analysis.qCapQ_eq_of_le
+#print axioms Analysis.qBandQ_ge
+#print axioms Analysis.qBandQ_le
+#print axioms Analysis.qBandQ_one_num_pos
+#print axioms Analysis.qBandQ_witness
+#print axioms Analysis.qBandQ_congr
+#print axioms Analysis.qBandQ_lipschitz
+#print axioms Analysis.qBandQ_eq_of_band
