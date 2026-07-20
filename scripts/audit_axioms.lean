@@ -4137,3 +4137,38 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.tent_pieceB1
 #print axioms Analysis.tent_pieceB2
 #print axioms Analysis.tentPoleB_eq
+
+-- General log-additivity + ∫₀¹ dx/(2+x) = log 3 − log 2 (new Analysis/HarmonicLog32.lean).
+#print axioms Analysis.logN_mul_gen
+#print axioms Analysis.Rle_Rsub_of_Radd_le
+#print axioms Analysis.log32_le_hFold
+#print axioms Analysis.hFold32_le
+#print axioms Analysis.hFold32_defect
+#print axioms Analysis.gRecip32_lip
+#print axioms Analysis.gRecip32_congr
+#print axioms Analysis.gRecip32_point
+#print axioms Analysis.harmTermFold32_den_pos
+#print axioms Analysis.RsumN_gRecip32
+#print axioms Analysis.harmTermFold32_scale
+#print axioms Analysis.riemannSum_gRecip32
+#print axioms Analysis.dyadicR_gRecip32_zero
+#print axioms Analysis.genSum_gRecip32_rate
+#print axioms Analysis.riemannIntegral_recip32_gen
+#print axioms Analysis.riemannIntegral_recip32
+
+-- The arch tail's [1,2] piece (new Analysis/TentArchPiece.lean).
+#print axioms Analysis.tentArch1_lip
+#print axioms Analysis.tentArch1_congr
+#print axioms Analysis.tent_arch_pull
+#print axioms Analysis.s4g32_lip
+#print axioms Analysis.s4g32_congr
+#print axioms Analysis.n4g32_lip
+#print axioms Analysis.n4g32_congr
+#print axioms Analysis.innerG_lip
+#print axioms Analysis.innerG_congr
+#print axioms Analysis.XG_lip
+#print axioms Analysis.XG_congr
+#print axioms Analysis.G3_lip
+#print axioms Analysis.G3_congr
+#print axioms Analysis.gRecip32_lip_at
+#print axioms Analysis.tent_arch12

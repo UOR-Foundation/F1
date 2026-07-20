@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`tent_arch12` — the archimedean tail's compact `[1,2]` piece ≈ `−1 − 6·log 2 + 4·log 3`,
+  and general log-additivity** (new `Analysis/HarmonicLog32.lean`,
+  `Analysis/TentArchPiece.lean`; Sonine route, step 2): the PV-cancelled tail integrand on
+  the tent's support, `∫₁² −(1 + 2/x − 4/(x+1)) dx`, is CONSTRUCTED (floor-1 clamp only —
+  `x ≥ 1`, `x+1 ≥ 2` on the domain) and EVALUATED:
+  `≈ −(1 + 2·log 2 − 4·(log 3 − log 2))`. The new core is
+  **`riemannIntegral_recip32`: `∫₀¹ dx/(2+x) ≈ log 3 − log 2`** — the base-`2M` harmonic
+  bridge (left sums are `H_{3M} − H_{2M}`, the wedge telescopes the per-step bracket from
+  `2M` to `3M` with width `1/(6M)`), whose only new analytic input is
+  **`logN_mul_gen`: `log(k·m) = log k + log m`** (the `logN_mul` doubling proof at an
+  arbitrary factor, via `exp` injectivity — `HarmonicLog`'s folds and telescopes were
+  already general in base and count). The pullback is pointwise congruent to
+  `−(1 + 2·gRecip − 4·gRecip32)` (`tent_arch_pull`) and gateway linearity reduces the value
+  to the two certified reciprocal integrals. Remaining for the full tail
+  `−1 − 6·log 2 + 3·log 3`: the improper piece past the support,
+  `∫₂^∞ −2/(x²−1) = −log 3`. Axiom-clean; crux fields `none`.
 - **`tentPoleB_eq` — the tent's `f̃(0)` component ≈ `log 2`: THE SECOND EVALUATED WEIL-SLOT
   COMPONENT, and the first integral evaluation to a NON-RATIONAL value** (new
   `Analysis/ExpBounds.lean`, `Analysis/HarmonicLog.lean`, `Analysis/TentLogPiece.lean`;

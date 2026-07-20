@@ -279,6 +279,8 @@ import F1Square.Analysis.ClampedInv
 import F1Square.Analysis.ExpBounds
 import F1Square.Analysis.HarmonicLog
 import F1Square.Analysis.TentLogPiece
+import F1Square.Analysis.HarmonicLog32
+import F1Square.Analysis.TentArchPiece
 
 open UOR.Primitives
 
@@ -1503,6 +1505,10 @@ example :
           Nat.one_pos (by decide) Analysis.gRecip_lip Analysis.gRecip_congr)
         (Analysis.logN 2 (by omega))
     ∧ Analysis.Req Analysis.tentPoleB (Analysis.logN 2 (by omega))
+    ∧ Analysis.Req
+        (Analysis.riemannIntegral (f := Analysis.gRecip32) (L := (⟨1, 1⟩ : Analysis.Q))
+          Nat.one_pos (by decide) Analysis.gRecip32_lip Analysis.gRecip32_congr)
+        (Analysis.Rsub (Analysis.logN 3 (by omega)) (Analysis.logN 2 (by omega)))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1521,6 +1527,7 @@ example :
    Analysis.clampedInv_ofQ (a := (⟨1, 2⟩ : Analysis.Q)) (q := (⟨2, 1⟩ : Analysis.Q))
      (by decide) (by decide) (by decide) (by decide) (by decide),
    Analysis.riemannIntegral_recip, Analysis.tentPoleB_eq,
+   Analysis.riemannIntegral_recip32,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square
