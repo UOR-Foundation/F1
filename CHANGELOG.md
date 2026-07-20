@@ -16,6 +16,27 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`clampedInv` — the clamped-reciprocal gadget: the totalized `1/x` integrand** (new
+  `Analysis/ClampedInv.lean`; Sonine route, the recorded next brick after `tentPoleA_eq`):
+  `clampedInv a x := 1/max(x, a)` (rational floor `a > 0`) is a genuine TOTAL function of `x`
+  carrying exactly the certified-integration gateway's data — congruence (`clampedInv_congr`),
+  the globally-Lipschitz bound with the RATIONAL constant `(1/a)²` (`clampedInv_lipschitz`),
+  non-negativity, inertness `≈ 1/x` on `[a, ∞)` (`clampedInv_eq_of_ge`), and seq-exact rational
+  evaluation `clampedInv a (ofQ q) ≈ ofQ (1/q)` for `q ≥ a` (`clampedInv_ofQ`, via the new
+  `Rinv_ofQ`). The design resolves `Rinv`'s witness-as-data obstruction to totality: the
+  per-index clamp `qClampQ a x` (seq `n ↦ max(xₙ, a)`, the floor-`a` generalization of
+  `qClampOne`; `1`-Lipschitz via `Qmax_const_lip`, inert on `[a,∞)`) keeps the argument `≥ a`
+  at EVERY index, so ONE witness (`k = 2·a.den`, `Qbound_lt_pos`) serves every `x`
+  (`qClampQ_witness`). The reciprocal side is fully algebraic over the `Rinv` laws — no
+  per-index reasoning about `Rmul`'s reindex: the Real-level difference identity
+  `1/u − 1/v ≈ (v−u)·((1/u)·(1/v))` (`Rinv_sub_Rinv`), the floor cap `1/u ≤ 1/a`
+  (`Rinv_le_ofQ_inv`), and the two-leg absolute assembly (`Rinv_abs_lipschitz`, the
+  `Rlog_abs_lipschitz` pattern). Plus `lip_mono` (Lipschitz-modulus upgrade, for aligning
+  the shared `L` that `riemannIntegral_add` requires) and `Qlt_of_Qlt_Qle`. With this,
+  partial fractions reduce every remaining tent-slot integrand (`2 − 1/x`,
+  `−(1 + 2/x − 4/(x+1))`, the shifted tail `−2/(u(u+2))`) to affine combinations the gateway
+  integrates. Wired into the root witness (`F1Square.lean`): the `(1/a)²` Lipschitz datum at
+  `a = 1/2` and the evaluation `clampedInv (1/2) 2 ≈ 1/2`. Axiom-clean; crux fields `none`.
 - **`tentPoleA_eq` — THE FIRST EVALUATED WEIL-SLOT COMPONENT** (new
   `Analysis/AffineIntegral.lean`; Sonine route, step 2 boundary moving): the tent test
   (piecewise-linear, knots `1/2, 1, 2` — the `X = 2` prime-free window, all prime-side

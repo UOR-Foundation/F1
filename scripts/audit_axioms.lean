@@ -4053,3 +4053,24 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.tent_piece1
 #print axioms Analysis.tent_piece2
 #print axioms Analysis.tentPoleA_eq
+
+-- The clamped-reciprocal gadget (new Analysis/ClampedInv.lean): the totalized
+-- 1/max(x,a) integrand — uniform witness, (1/a)²-Lipschitz, inert on [a,∞).
+#print axioms Analysis.Qlt_of_Qlt_Qle
+#print axioms Analysis.Qbound_lt_pos
+#print axioms Analysis.qClampQ_ge
+#print axioms Analysis.qClampQ_witness
+#print axioms Analysis.qClampQ_congr
+#print axioms Analysis.qClampQ_lipschitz
+#print axioms Analysis.qClampQ_eq_of_ge
+#print axioms Analysis.Rle_ofQ_qClampQ
+#print axioms Analysis.Rinv_le_ofQ_inv
+#print axioms Analysis.Rinv_sub_Rinv
+#print axioms Analysis.Rinv_abs_lipschitz
+#print axioms Analysis.clampedInv_congr
+#print axioms Analysis.Rnonneg_clampedInv
+#print axioms Analysis.clampedInv_lipschitz
+#print axioms Analysis.clampedInv_eq_of_ge
+#print axioms Analysis.Rinv_ofQ
+#print axioms Analysis.clampedInv_ofQ
+#print axioms Analysis.lip_mono

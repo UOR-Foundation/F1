@@ -275,6 +275,7 @@ import F1Square.Analysis.LogFourPiLower
 import F1Square.Analysis.LambdaFourUpper
 import F1Square.Analysis.IntegralEval
 import F1Square.Analysis.AffineIntegral
+import F1Square.Analysis.ClampedInv
 
 open UOR.Primitives
 
@@ -1481,6 +1482,19 @@ example :
     ∧ Analysis.Req (Analysis.riemannIntegral (f := fun x => x) (L := (⟨1, 1⟩ : Analysis.Q))
         (by decide) (by decide) Analysis.lip_id Analysis.congr_id) Analysis.half
     ∧ Analysis.Req Analysis.tentPoleA (Analysis.ofQ (⟨3, 4⟩ : Analysis.Q) (by decide))
+    ∧ (∀ x y : Analysis.Real, Analysis.Rle
+        (Analysis.Rabs (Analysis.Rsub
+          (Analysis.clampedInv (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide) x)
+          (Analysis.clampedInv (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide) y)))
+        (Analysis.Rmul (Analysis.ofQ
+          (Analysis.mul (Analysis.Qinv (⟨1, 2⟩ : Analysis.Q)) (Analysis.Qinv (⟨1, 2⟩ : Analysis.Q)))
+          (Analysis.Qmul_den_pos (Analysis.Qinv_den_pos (by decide))
+            (Analysis.Qinv_den_pos (by decide))))
+          (Analysis.Rabs (Analysis.Rsub x y))))
+    ∧ Analysis.Req
+        (Analysis.clampedInv (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide)
+          (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide)))
+        (Analysis.ofQ (Analysis.Qinv (⟨2, 1⟩ : Analysis.Q)) (Analysis.Qinv_den_pos (by decide)))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1495,6 +1509,9 @@ example :
    Analysis.Rlambda_head_increasing, Analysis.Rlambda3_lt_Rlambda4,
    fun E ι D K a hK hK3 ha hsum => Square.convexClass123_pruned E ι D hK hK3 ha hsum,
    Analysis.riemannIntegral_id, Analysis.tentPoleA_eq,
+   fun x y => Analysis.clampedInv_lipschitz (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide) x y,
+   Analysis.clampedInv_ofQ (a := (⟨1, 2⟩ : Analysis.Q)) (q := (⟨2, 1⟩ : Analysis.Q))
+     (by decide) (by decide) (by decide) (by decide) (by decide),
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square
