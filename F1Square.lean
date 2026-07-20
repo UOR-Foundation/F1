@@ -287,6 +287,9 @@ import F1Square.Square.TentSlot
 import F1Square.Square.BumpSlot
 import F1Square.Square.ConeTent
 import F1Square.Analysis.LogStep
+import F1Square.Analysis.BandClamp
+import F1Square.Analysis.LogIntegrand
+import F1Square.Analysis.LogRatCert
 
 open UOR.Primitives
 
