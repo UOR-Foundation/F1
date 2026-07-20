@@ -4313,3 +4313,19 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.qBandQ_congr
 #print axioms Analysis.qBandQ_lipschitz
 #print axioms Analysis.qBandQ_eq_of_band
+
+-- The ∫log layer, part 2b: the totalized log integrand gLog c (RlogPos over the band
+-- clamp), Lipschitz + congruence, instances c = 1, 2, 3 (new Analysis/LogIntegrand.lean).
+#print axioms Analysis.gLogArg_pos
+#print axioms Analysis.gLogArg_hi
+#print axioms Analysis.gLogArg_ge1
+#print axioms Analysis.gLogArg_lo
+#print axioms Analysis.gLogArg_witness
+#print axioms Analysis.gLog_congr_of
+#print axioms Analysis.gLog_lip_of
+#print axioms Analysis.gLog1_congr
+#print axioms Analysis.gLog1_lip
+#print axioms Analysis.gLog2_congr
+#print axioms Analysis.gLog2_lip
+#print axioms Analysis.gLog3_congr
+#print axioms Analysis.gLog3_lip
