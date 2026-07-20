@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Rlambda4_le` — the `λ₄` UPPER bracket (`λ₄ ≤ 0.563`), the fourth two-sided Li
+  coefficient** (new `Analysis/LambdaFourUpper.lean`): `λ₄^{arith} = −(4η₀+6η₁+4η₂+η₃) ≤
+  1.5458115` via the `η₃` floor `η₃ ≥ −0.0313379`, which needed four product LOWER bounds —
+  each the `ge`-mirror of a stock upper: `Rgamma_pow4_ge` (`γ⁴ ≥ 0.577⁴`),
+  `Rgamma_sq_gamma1_ge` (`γ²γ₁ ≥ 0.578²·(−0.0762)`, mixed sign), `Rgamma1_sq_ge`
+  (`γ₁² ≥ 0.0677²`, via the double-negation square identity), `Rgamma_gamma2_ge`
+  (`γγ₂ ≥ 0.578·(−0.014)`); and `arch(4) = 1 − 2(γ+log4π) + (9/2)ζ(2) − (7/2)ζ(3) +
+  (15/16)ζ(4) ≤ −0.9828225` (`genuineArchSeq4_le`, the third `log 4π`-lower consumer). True
+  value `λ₄ ≈ 0.385812`. The `λ₅` upper — the last 3×3-Hankel ingredient for the order-2
+  expansion kill — runs through the unbuilt `γ₄` upper, the next numeric campaign.
+  Axiom-clean; crux fields `none`, RH open.
 - **`contractionClass2_pruned` — the order-2 CONTRACTION class is dead (fourth prune)**
   (`Square/GateAFiniteList.lean`): no Gate-A finite list exists at order 2 with BOTH
   coefficients `≤ 1` (any reals), for every η₂-anchored η-data, rule, and dimension — the

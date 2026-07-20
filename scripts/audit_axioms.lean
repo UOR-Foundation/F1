@@ -3977,3 +3977,12 @@ open UOR.Bridge.F1Square
 -- The order-2 contraction-class kill (Square/GateAFiniteList.lean additions).
 #print axioms Square.contractionClass2_lamRec_fails
 #print axioms Square.contractionClass2_pruned
+
+-- The λ₄ upper bracket (new Analysis/LambdaFourUpper.lean): fourth two-sided λ.
+#print axioms Analysis.Rgamma_pow4_ge
+#print axioms Analysis.Rgamma_sq_gamma1_ge
+#print axioms Analysis.Rgamma1_sq_ge
+#print axioms Analysis.Rgamma_gamma2_ge
+#print axioms Analysis.Rlambda4_arith_le
+#print axioms Analysis.genuineArchSeq4_le
+#print axioms Analysis.Rlambda4_le
