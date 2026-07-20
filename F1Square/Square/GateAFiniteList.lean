@@ -47,6 +47,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 import F1Square.Square.GateA
 import F1Square.Analysis.LambdaGap
 import F1Square.Analysis.LambdaThreeUpper
+import F1Square.Analysis.LambdaTwoThreePrecision
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -392,5 +393,107 @@ theorem order1Class_lamRec_fails (E : StieltjesEta3) (c : Real) :
 theorem order1Class_pruned (E : StieltjesEta3) (ι : AtlasRule) (D : Nat) (c : Real) :
     ¬ GateAList E.toStieltjesEta ι D 1 (fun _ => c) :=
   fun h => order1Class_lamRec_fails E c h.lamRec
+
+-- ===========================================================================
+-- The fourth prune: the order-2 CONTRACTION class (both coefficients ≤ 1).
+-- ===========================================================================
+
+/-- **The order-2 contraction class fails `lamRec`**: with both coefficients `≤ 1` and the
+    doubled λ's non-negative, the recurrence at `n = 0` forces
+    `2λ₃ ≈ a₀·2λ₁ + a₁·2λ₂ ≤ 2λ₁ + 2λ₂ ≤ 0.25082`, refuted by `2λ₃ ≥ 0.2872`
+    (`Rlambda1_le`, `Rlambda2_le`, `Rlambda3_ge`; witness index `n = 100`). This contains the
+    shift candidate `(a₀, a₁) = (0, 1)` — the period-one-from-`n = 2` diagonals — as a special
+    case. -/
+theorem contractionClass2_lamRec_fails (E : StieltjesEta3) {a : Nat → Real}
+    (h0 : Rle (a 0) one) (h1 : Rle (a 1) one) :
+    ¬ SatisfiesRec a 2
+        (fun m => Radd (genuineLamSeq E.eta (1 + m)) (genuineLamSeq E.eta (1 + m))) := by
+  intro h
+  have hstep : Req (Radd (genuineLamSeq E.eta 3) (genuineLamSeq E.eta 3))
+      (Radd (Radd zero (Rmul (a 0) (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))))
+        (Rmul (a 1) (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2)))) := h 0
+  -- term 0: a₀·2λ'₁ ≤ 1·2λ'₁ ≈ 2λ'₁ ≤ 0.04762
+  have hs0nn : Rnonneg (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1)) :=
+    Rnonneg_congr (Req_symm (Radd_congr (genuineLam_one E.toStieltjesEta)
+        (genuineLam_one E.toStieltjesEta)))
+      (Rnonneg_Radd (Rnonneg_of_Pos Rlambda1_pos) (Rnonneg_of_Pos Rlambda1_pos))
+  have hs0hi : Rle (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))
+      (ofQ (⟨4762, 100000⟩ : Q) (by decide)) := by
+    have hdb : Rle (Radd Rlambda1 Rlambda1)
+        (ofQ (add (⟨2381, 100000⟩ : Q) (⟨2381, 100000⟩ : Q)) (by decide)) :=
+      Rle_trans (Radd_le_add Rlambda1_le Rlambda1_le)
+        (Radd_Rle_ofQ_add (by decide) (by decide))
+    exact Rle_trans (Rle_of_Req (Radd_congr (genuineLam_one E.toStieltjesEta)
+        (genuineLam_one E.toStieltjesEta)))
+      (Rle_trans hdb (Rle_ofQ_ofQ (by decide) (by decide) (by decide)))
+  have ht0 : Rle (Rmul (a 0) (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1)))
+      (ofQ (⟨4762, 100000⟩ : Q) (by decide)) :=
+    Rle_trans (Rmul_le_Rmul_right hs0nn h0)
+      (Rle_trans (Rle_of_Req (Req_trans
+          (Rmul_comm one (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1)))
+          (Rmul_one (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))))) hs0hi)
+  -- term 1: a₁·2λ'₂ ≤ 1·2λ'₂ ≈ 2λ'₂ ≤ 0.2032
+  have hs1nn : Rnonneg (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2)) :=
+    Rnonneg_congr (Req_symm (Radd_congr (genuineLam_two E.toStieltjesEta)
+        (genuineLam_two E.toStieltjesEta)))
+      (Rnonneg_Radd (Rnonneg_of_Pos Rlambda2_pos) (Rnonneg_of_Pos Rlambda2_pos))
+  have hs1hi : Rle (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))
+      (ofQ (⟨2032, 10000⟩ : Q) (by decide)) := by
+    have hdb : Rle (Radd Rlambda2 Rlambda2)
+        (ofQ (add (⟨1016, 10000⟩ : Q) (⟨1016, 10000⟩ : Q)) (by decide)) :=
+      Rle_trans (Radd_le_add Rlambda2_le Rlambda2_le)
+        (Radd_Rle_ofQ_add (by decide) (by decide))
+    exact Rle_trans (Rle_of_Req (Radd_congr (genuineLam_two E.toStieltjesEta)
+        (genuineLam_two E.toStieltjesEta)))
+      (Rle_trans hdb (Rle_ofQ_ofQ (by decide) (by decide) (by decide)))
+  have ht1 : Rle (Rmul (a 1) (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2)))
+      (ofQ (⟨2032, 10000⟩ : Q) (by decide)) :=
+    Rle_trans (Rmul_le_Rmul_right hs1nn h1)
+      (Rle_trans (Rle_of_Req (Req_trans
+          (Rmul_comm one (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2)))
+          (Rmul_one (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))))) hs1hi)
+  -- the whole right-hand side ≤ 0.25082
+  have hz : Rle zero (ofQ (⟨0, 1⟩ : Q) (by decide)) := Rle_of_Req (Req_refl zero)
+  have hin : Rle (Radd zero (Rmul (a 0)
+      (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))))
+      (ofQ (add (⟨0, 1⟩ : Q) (⟨4762, 100000⟩ : Q)) (by decide)) :=
+    Rle_trans (Radd_le_add hz ht0) (Radd_Rle_ofQ_add (by decide) (by decide))
+  have hup : Rle (Radd (Radd zero (Rmul (a 0)
+      (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))))
+      (Rmul (a 1) (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))))
+      (ofQ (⟨25082, 100000⟩ : Q) (by decide)) := by
+    have hsum : Rle (Radd (Radd zero (Rmul (a 0)
+        (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))))
+        (Rmul (a 1) (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))))
+        (ofQ (add (add (⟨0, 1⟩ : Q) (⟨4762, 100000⟩ : Q)) (⟨2032, 10000⟩ : Q)) (by decide)) :=
+      Rle_trans (Radd_le_add hin ht1) (Radd_Rle_ofQ_add (by decide) (by decide))
+    exact Rle_trans hsum (Rle_ofQ_ofQ (by decide) (by decide) (by decide))
+  -- the left-hand side ≥ 0.2872
+  have hlo : Rle (ofQ (⟨2872, 10000⟩ : Q) (by decide))
+      (Radd (genuineLamSeq E.eta 3) (genuineLamSeq E.eta 3)) := by
+    have hdb : Rle (ofQ (add (⟨1436, 10000⟩ : Q) (⟨1436, 10000⟩ : Q)) (by decide))
+        (Radd Rlambda3 Rlambda3) :=
+      Rle_trans (Rle_ofQ_add_Radd (by decide) (by decide))
+        (Radd_le_add Rlambda3_ge Rlambda3_ge)
+    exact Rle_trans (Rle_ofQ_ofQ (by decide) (by decide) (by decide))
+      (Rle_trans hdb (Rle_of_Req (Req_symm
+        (Radd_congr (genuineLam_three E) (genuineLam_three E)))))
+  -- the clash: 0.2872 ≤ 2λ'₃ ≈ RHS ≤ 0.25082, refuted at witness n = 100
+  have hfinal : Rle (ofQ (⟨2872, 10000⟩ : Q) (by decide))
+      (ofQ (⟨25082, 100000⟩ : Q) (by decide)) :=
+    Rle_trans hlo (Rle_trans (Rle_of_Req hstep) hup)
+  exact not_Rle_ofQ_of_witness (by decide) (by decide) 100 (by decide) hfinal
+
+/-- **THE FOURTH PRUNE, RECORDED — the order-2 contraction class is dead**: no Gate-A finite
+    list exists at order 2 with BOTH coefficients `≤ 1` — for every η₂-anchored η-data, every
+    atlas rule, and every dimension. The doubled Li sequence certifiably outruns any convex-ish
+    combination of its two predecessors (`λ₃ ≥ 0.1436 > 0.12541 ≥ λ₁ + λ₂`). Contains the
+    canonical shift class `(0, 1)`. The surviving order-2 candidates need a coefficient `> 1`;
+    their kill (the 3×3 Hankel determinant on `λ₁..λ₅`) needs `λ₄, λ₅` uppers — the `γ₄`
+    upper campaign, the next big numeric brick. -/
+theorem contractionClass2_pruned (E : StieltjesEta3) (ι : AtlasRule) (D : Nat)
+    {a : Nat → Real} (h0 : Rle (a 0) one) (h1 : Rle (a 1) one) :
+    ¬ GateAList E.toStieltjesEta ι D 2 a :=
+  fun h => contractionClass2_lamRec_fails E h0 h1 h.lamRec
 
 end UOR.Bridge.F1Square.Square

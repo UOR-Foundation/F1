@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`contractionClass2_pruned` — the order-2 CONTRACTION class is dead (fourth prune)**
+  (`Square/GateAFiniteList.lean`): no Gate-A finite list exists at order 2 with BOTH
+  coefficients `≤ 1` (any reals), for every η₂-anchored η-data, rule, and dimension — the
+  recurrence forces `2λ₃ ≈ a₀·2λ₁ + a₁·2λ₂ ≤ 2λ₁ + 2λ₂ ≤ 0.25082`, refuted by
+  `2λ₃ ≥ 0.2872` (witness `n = 100`). Contains the canonical shift class `(0, 1)`
+  (period-one-from-`n = 2` diagonals). The doubled Li sequence certifiably outruns any
+  sub-unit combination of its two predecessors: `λ₁ + λ₂ ≤ 0.12541 < 0.1436 ≤ λ₃`.
+  Surviving order-2 candidates need a coefficient `> 1`; their kill (the 3×3 Hankel
+  determinant on `λ₁..λ₅`) needs `λ₄, λ₅` uppers — the `γ₄`-upper campaign. Axiom-clean;
+  crux fields `none`.
+- **`Rlambda2_le` / `Rlambda3_ge` — the third two-sided Li coefficient and the tightened `λ₃`
+  lower** (new `Analysis/LambdaTwoThreePrecision.lean`): `λ₂ ≤ 1016/10⁴` (true `0.0923457`;
+  the `log 4π`-lower consumer, joining `Rlambda2_pos`/`Rlambda2_ge` — λ₂ two-sided), and
+  `λ₃ ≥ 1436/10⁴` (true `0.207639`; the stock positivity lower was `0.0584`): arithmetic side
+  tightened to `λ₃^{arith} ≥ 1.173914` (`Rlambda3_arith_ge_t`, via `reta1_le4`,
+  `Rgamma_cube_ge`, the sharp `Rgamma_gamma1_ge`, `Rgamma2_ge_neg0014`), archimedean side
+  reused (`archLoR_le`). Axiom-clean; crux fields `none`.
 - **`order1Class_pruned` — the ENTIRE order-1 candidate family is dead (third prune)**
   (`Square/GateAFiniteList.lean`): for every η-data anchored through `η₂` (`StieltjesEta3`),
   every atlas rule, every dimension, and EVERY real coefficient `c`, no Gate-A finite list of

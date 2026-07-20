@@ -3968,3 +3968,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.not_Rle_ofQ_of_witness
 #print axioms Square.order1Class_lamRec_fails
 #print axioms Square.order1Class_pruned
+
+-- The λ₂ upper / λ₃ tightened lower (new Analysis/LambdaTwoThreePrecision.lean).
+#print axioms Analysis.Rlambda2_le
+#print axioms Analysis.Rlambda3_arith_ge_t
+#print axioms Analysis.Rlambda3_ge
+
+-- The order-2 contraction-class kill (Square/GateAFiniteList.lean additions).
+#print axioms Square.contractionClass2_lamRec_fails
+#print axioms Square.contractionClass2_pruned

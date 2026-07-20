@@ -1456,9 +1456,14 @@ example :
         Analysis.Rle c Analysis.one → ¬ Square.GateAList E ι D 1 (fun _ => c))
     ∧ (∀ (E : Analysis.StieltjesEta3) (ι : Square.AtlasRule) (D : Nat) (c : Analysis.Real),
         ¬ Square.GateAList E.toStieltjesEta ι D 1 (fun _ => c))
+    ∧ (∀ (E : Analysis.StieltjesEta3) (ι : Square.AtlasRule) (D : Nat) (a : Nat → Analysis.Real),
+        Analysis.Rle (a 0) Analysis.one → Analysis.Rle (a 1) Analysis.one →
+        ¬ Square.GateAList E.toStieltjesEta ι D 2 a)
     ∧ Analysis.Rle (Analysis.ofQ (⟨253038, 100000⟩ : Analysis.Q) (by decide)) Analysis.Rlog4pic
     ∧ Analysis.Rle Analysis.Rlambda1 (Analysis.ofQ (⟨2381, 100000⟩ : Analysis.Q) (by decide))
     ∧ Analysis.Rle Analysis.Rlambda3 (Analysis.ofQ (⟨2554, 10000⟩ : Analysis.Q) (by decide))
+    ∧ Analysis.Rle Analysis.Rlambda2 (Analysis.ofQ (⟨1016, 10000⟩ : Analysis.Q) (by decide))
+    ∧ Analysis.Rle (Analysis.ofQ (⟨1436, 10000⟩ : Analysis.Q) (by decide)) Analysis.Rlambda3
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1466,6 +1471,8 @@ example :
    Square.constantClass_pruned,
    fun E ι D c hc => Square.contractionClass_pruned E ι D (c := c) hc,
    Square.order1Class_pruned,
-   Analysis.Rlog4pic_ge, Analysis.Rlambda1_le, Analysis.Rlambda3_le, rfl, rfl⟩
+   fun E ι D a h0 h1 => Square.contractionClass2_pruned E ι D (a := a) h0 h1,
+   Analysis.Rlog4pic_ge, Analysis.Rlambda1_le, Analysis.Rlambda3_le,
+   Analysis.Rlambda2_le, Analysis.Rlambda3_ge, rfl, rfl⟩
 
 end UOR.Bridge.F1Square
