@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`qBandQ` + `gLog` + `radius_half_of_le4` — the `∫ log` layer, parts 2a–2c(i)** (new
+  `Analysis/BandClamp.lean`, `Analysis/LogIntegrand.lean`, `Analysis/LogRatCert.lean`;
+  Sonine route, step 2 — the `W(t4)` campaign): (2a) the two-sided per-index band clamp
+  `qBandQ a b x` (`seqₙ = min(b, max(xₙ, a))`) with the new `Qmin` suite, `1`-Lipschitz,
+  congruent, inert on the band, uniform positivity witness — the totalizer manufacturing
+  exactly the seq-wise facts `RlogPos`'s lemmas consume; (2b) the totalized `log`
+  integrand `gLog c t = RlogPos(band_{[1,c+1]}(c+t))`, its congruence and `1`-Lipschitz
+  data general in the base with decidable certificate hypotheses, and the instances
+  `c = 1, 2, 3` (budgets `K_B = 42/64/90`, `K_BB = 90/280/714`, all certs by `decide`;
+  the presented-radius certs provably fail for `c ≥ 5` — concrete instances are the
+  design). The gateway objects `riemannIntegral (gLog c)` now construct; (2c-i) the
+  uniform small-radius certificate `2(a−d)² ≤ (a+d)²` for `d ≤ a ≤ 4d`, GENERAL in the
+  dyadic sample via the witness identity `(a+d)² − 2(a−d)² = (4d−a)(a−d) + ad + 3d²`
+  (`ring_uor` + `Int.mul_nonneg`, no size bound) — what lets `RlogPos_eq_Rlog` fire at
+  every sample of `∫₀¹ log(c+t)` uniformly. Remaining for the evaluation: the
+  log-of-rational bridge (exp-injectivity assembly), the `genSum` rate from `LogStep`'s
+  telescopes, `riemannIntegral_logC`. Axiom-clean; crux fields `none`.
 - **`Gn_step_lower`/`Gn_step_upper` + telescopes — the `∫ log` layer, part 1** (new
   `Analysis/LogStep.lean`; Sonine route, step 2 — the engine for the `W(t4)` campaign):
   with `Gn(n) = n·log n − n` (the `log` antiderivative at integer arguments,
