@@ -784,11 +784,23 @@ theorem convexClass123_pruned (E : StieltjesEta5) (ι : AtlasRule) (D : Nat) {K 
        `λ₁ + λ₂ < λ₃`;
     4. order `K = 1..4` with ALL coefficients `≤ 0` — the sign lever, uniform in the order.
 
-    What SURVIVES: order `2` with an expanding coefficient, orders `3, 4` with some positive
-    coefficient, and every order `K ≥ 5`. Each future rung `Pos λ_{K+1}` widens item 4 by one
-    order for free; the contraction lever (item 3) is mathematically exhausted at `K ≥ 4`
-    (`λ₅ < λ₁+λ₂+λ₃+λ₄`), and the convex-combination lever needs `λ₃ < λ₄`, i.e. a `λ₄` lower
-    above `0.2554`.
+    5. orders `K = 1, 2, 3` with non-negative coefficients summing to at most `1` — the convex
+       lever, on the certified strictly-increasing head `λ₁ < λ₂ < λ₃ < λ₄`.
+
+    What SURVIVES: order `2` with an expanding coefficient, orders `3, 4` with a coefficient
+    outside the convex/non-positive regions, and every order `K ≥ 5`.
+
+    THE THREE LEVERS AND WHERE EACH STOPS (recorded so none is re-attempted blindly):
+    - the SIGN lever (item 4) is free and uniform, and each future rung `Pos λ_{K+1}` widens it
+      by one order at no cost;
+    - the CONTRACTION lever (item 3) is mathematically exhausted at `K ≥ 4`
+      (`λ₅ ≈ 0.518 < λ₁+λ₂+λ₃+λ₄ ≈ 0.709`), and already only `1.3%`-true at `K = 3`;
+    - the CONVEX lever (item 5) needs `λ_K < λ_{K+1}`. It reaches `K = 3` on
+      `Rlambda3_lt_Rlambda4`. Extending to `K = 4` needs `λ₄ < λ₅`, and an exact rational check
+      of the same difference route gives only `λ₅ − λ₄ ≥ −0.195` (true `+0.132`): the slack is
+      dominated by `4η₃` (the `γ₃ ∈ [−1/20, 1/40]` width, `≈ 0.126`) and by `η₄`, which carries
+      `γ₄` with NO upper bracket built. So `K = 4` is blocked on the `γ₃` tightening and the
+      `γ₄`-upper campaign — a numeric program, not a mechanization gap.
 
     NOTHING here approaches the crux: pruning candidate classes narrows the search for the
     single certificate, it never produces one. The crux fields stay `none`. -/
