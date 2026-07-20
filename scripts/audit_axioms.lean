@@ -4203,3 +4203,28 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.tail_rate
 #print axioms Analysis.improperTail_eq
 #print axioms Analysis.tentArchTail_eq
+
+-- THE FIRST REALIZED WEIL SLOT + the first realized window-positivity instance
+-- (new Square/TentSlot.lean).
+#print axioms Square.tentF_supp_high
+#print axioms Square.tentF_supp_low
+#print axioms Square.tentF_two
+#print axioms Square.tentF_half
+#print axioms Square.tentF_one
+#print axioms Square.tentPrimePart_eq
+#print axioms Square.tentArchConst_eq
+#print axioms Square.tentWeilValue_eq
+#print axioms Square.tentL2q_den
+#print axioms Square.tentU32q_den
+#print axioms Square.tentL32q_den
+#print axioms Square.tent_L2
+#print axioms Square.tent_U32
+#print axioms Square.tent_L32
+#print axioms Square.tent_L3
+#print axioms Square.tentSLq_den
+#print axioms Square.tentTUq_den
+#print axioms Square.tentBUq_den
+#print axioms Square.tentPLq_den
+#print axioms Square.tent_B_le
+#print axioms Square.tent_P_ge
+#print axioms Square.tentWeilValue_pos

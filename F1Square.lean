@@ -283,6 +283,7 @@ import F1Square.Analysis.HarmonicLog32
 import F1Square.Analysis.TentArchPiece
 import F1Square.Analysis.HarmonicLogC
 import F1Square.Analysis.TentArchTail
+import F1Square.Square.TentSlot
 
 open UOR.Primitives
 
@@ -1525,6 +1526,8 @@ example :
             (Analysis.Rmul (Analysis.ofQ (⟨4, 1⟩ : Analysis.Q) (by decide))
               (Analysis.Rsub (Analysis.logN 3 (by omega)) (Analysis.logN 2 (by omega)))))))
           (Analysis.logN 3 (by omega)))
+    ∧ Analysis.Req (Analysis.weilPrimePart Square.tentTest) Analysis.zero
+    ∧ Analysis.Pos (Square.weilValue Square.tentSlot)
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1546,6 +1549,7 @@ example :
    Analysis.riemannIntegral_recip32,
    fun c hc => Analysis.riemannIntegral_recipC c hc,
    Analysis.improperTail_eq, Analysis.tentArchTail_eq,
+   Square.tentPrimePart_eq, Square.tentWeilValue_pos,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square

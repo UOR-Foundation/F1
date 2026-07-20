@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`tentSlot` + `tentWeilValue_pos` — THE FIRST REALIZED WEIL SLOT, and the first realized
+  window-positivity instance: `W(tent) > 0`** (new `Square/TentSlot.lean`; Sonine route,
+  step 2 boundary crossed for one genuine test): `Pairing.lean`'s `WeilSlot` interface is
+  INHABITED with every field a kernel-evaluated constructed integral — the tent test datum
+  `tentF : Q → Real` (piecewise-linear, knots `1/2, 1, 2`, Bombieri-admissible, support
+  proofs kernel-checked), poles `= tentPoleA + tentPoleB ≈ 3/4 + log 2`, archimedean tail
+  `= tentArchTail ≈ −1 − 6·log 2 + 3·log 3`. The finite-place side VANISHES
+  (`tentPrimePart_eq` — the `X = 2` prime-free window realized: the knots sit exactly at
+  the prime-2 evaluation points), the archimedean constant collapses (`f(1) = 1`), and the
+  Weil functional reduces to closed form (`tentWeilValue_eq`):
+  `W(tent) ≈ (3/4 + log 2) − ((log 4π + γ) + (−1 − 6·log 2 + 3·log 3))
+   = 7/4 + 7·log 2 − 3·log 3 − log 4π − γ ≈ +0.198`. **`tentWeilValue_pos` certifies
+  `W(tent) > 0`** — rational brackets for `log 2` and `log 3 − log 2` come from the
+  harmonic wedges at `M = 32` (`tent_L2`/`tent_U32`/`tent_L32`/`tent_L3`: the fold values
+  are exact rationals with ~10⁵⁰-digit-product denominators; ONE closing `decide` performs
+  the bignum arithmetic), `log 4π`/`γ` from the standing brackets. This is what
+  window-supported Weil positivity LOOKS like when realized — one test, one certified sign;
+  the pairing-family positivity (`∀` tests) remains the crux and is RH. Axiom-clean; crux
+  fields `none`.
 - **`tentArchTail_eq` — the tent's full archimedean tail ≈ `−1 − 6·log 2 + 3·log 3`: THE
   THIRD EVALUATED WEIL-SLOT COMPONENT, completing all three tent slot fields** (new
   `Analysis/TentArchTail.lean`; Sonine route, step 2): the improper part past the support,
