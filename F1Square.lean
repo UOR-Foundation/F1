@@ -294,6 +294,7 @@ import F1Square.Analysis.LogRatBridge
 import F1Square.Analysis.LogPointVal
 import F1Square.Analysis.LogRiemann
 import F1Square.Analysis.LogIntegralEval
+import F1Square.Analysis.T4PoleAPieces
 
 open UOR.Primitives
 

@@ -4367,3 +4367,19 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannIntegral_logC1
 #print axioms Analysis.riemannIntegral_logC2
 #print axioms Analysis.riemannIntegral_logC3
+
+-- The t4PoleA pieces: generic const±f integral vehicles + the five constructed interval
+-- integrals of the cone tent, evaluated (new Analysis/T4PoleAPieces.lean).
+#print axioms Analysis.lip_const_sub
+#print axioms Analysis.congr_const_sub
+#print axioms Analysis.lip_const_add
+#print axioms Analysis.congr_const_add
+#print axioms Analysis.lip_neg
+#print axioms Analysis.congr_neg
+#print axioms Analysis.int_const_add_eval
+#print axioms Analysis.int_const_sub_eval
+#print axioms Analysis.t4A12_eq
+#print axioms Analysis.t4A23_eq
+#print axioms Analysis.t4A34_eq
+#print axioms Analysis.t4Ah_eq
+#print axioms Analysis.t4Aq_eq

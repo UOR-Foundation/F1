@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4A12/23/34/h/q` — the `t4PoleA` pieces, constructed and evaluated** (new
+  `Analysis/T4PoleAPieces.lean`; Sonine route, step 2 — the `W(t4)` campaign): the five
+  interval integrals of the cone tent `t4F(x) = 2log2 − |log x|` over `[1/4, 4]`, each
+  a genuine constructed `riemannIntegral` in pulled-back unit form (`x = c + t` on
+  `[c, c+1]` at `c = 1, 2, 3`; `x = (1+t)/2` and `x = (1+t)/4` on the sub-unit
+  intervals, the substitution constants split by `log((1+t)w) = log(1+t) + log w` —
+  on `[1/4, 1/2]` the split *exactly cancels* the cone height, leaving the bare
+  `∫₀¹ log(1+t)`). Piece values kernel-evaluated against the `∫log` layer:
+  `2log2 − (Gn(c+1) − Gn(c))` for the three unit pieces, `(1/2)(log2 + (Gn2 − Gn1))`,
+  `(1/4)(Gn2 − Gn1)`. The generic vehicles `int_const_sub_eval`/`int_const_add_eval`
+  (`∫(C ∓ f) = C ∓ ∫f`, any Real constant, any modulus) and the certificate
+  combinators `lip_const_sub/add`, `lip_neg` (+ congr forms) are new reusable gateway
+  API. `t4PoleA` (the five-piece sum) is defined; the assembly `t4PoleA ≈ 9/4` (the
+  logs cancel exactly) is the companion brick. Axiom-clean; crux fields `none`.
 - **`riemannIntegral_logC1/2/3` — the `∫ log` layer, part 2c(v): the evaluation — THE
   `∫ log` LAYER IS COMPLETE** (new `Analysis/LogIntegralEval.lean`; Sonine route,
   step 2 — the `W(t4)` campaign): `∫₀¹ log(c+t) dt ≈ Gn(c+1) − Gn(c)`
