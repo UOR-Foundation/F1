@@ -4228,3 +4228,45 @@ open UOR.Bridge.F1Square
 #print axioms Square.tent_B_le
 #print axioms Square.tent_P_ge
 #print axioms Square.tentWeilValue_pos
+
+-- The bump slot: the first realized test whose support MEETS the primes (prime side
+-- = log 2), its evaluated integrals, and the first certified NEGATIVE Weil value
+-- (new Analysis/BumpPieces.lean + Square/BumpSlot.lean).
+#print axioms Analysis.bump_pieceA1
+#print axioms Analysis.bump_pieceA2
+#print axioms Analysis.bumpPoleA_eq
+#print axioms Analysis.bumpB1_lip
+#print axioms Analysis.bumpB1_congr
+#print axioms Analysis.bumpB2_lip
+#print axioms Analysis.bumpB2_congr
+#print axioms Analysis.bump_pieceB1
+#print axioms Analysis.bump_pieceB2
+#print axioms Analysis.bumpPoleB_eq
+#print axioms Analysis.bumpT1_lip
+#print axioms Analysis.bumpT1_congr
+#print axioms Analysis.bumpT2_lip
+#print axioms Analysis.bumpT2_congr
+#print axioms Analysis.bump_pieceT1
+#print axioms Analysis.bump_pieceT2
+#print axioms Analysis.bumpArchTail_eq
+#print axioms Square.bumpF_supp_high
+#print axioms Square.bumpF_supp_low
+#print axioms Square.bumpF_one
+#print axioms Square.bumpF_half
+#print axioms Square.bumpF_third
+#print axioms Square.bumpF_two
+#print axioms Square.bumpF_three
+#print axioms Square.bumpPrimePart_eq
+#print axioms Square.bumpArchConst_eq
+#print axioms Square.bumpWeilValue_eq
+#print axioms Square.bmpL2q_den
+#print axioms Square.bmpU32q_den
+#print axioms Square.bmpL43q_den
+#print axioms Square.bmp_L2
+#print axioms Square.bmp_U32
+#print axioms Square.bmp_L43
+#print axioms Square.bmpPUq_den
+#print axioms Square.bmpSLq_den
+#print axioms Square.bump_P_le
+#print axioms Square.bump_S_ge
+#print axioms Square.bumpWeilValue_neg

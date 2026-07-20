@@ -16,6 +16,34 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`bumpSlot` + `bumpWeilValue_neg` — THE FIRST REALIZED SLOT WITH A LIVE PRIME SIDE, and
+  the first certified NEGATIVE Weil value: `W(bump) < 0`** (new `Analysis/BumpPieces.lean` +
+  `Square/BumpSlot.lean`; Sonine route, step 2 — the frontier past the prime-free window):
+  the off-center tent with knots `1, 2, 3` (peak AT the prime `2`) is realized as a genuine
+  `WeilTest` (`bumpF : Q → Real`, `X = 3` — the first test whose support MEETS the primes;
+  it is the genuine function whose consumed evaluations `demoWeilTest` records), and its
+  `WeilSlot` is inhabited with every field a kernel-evaluated integral: poles
+  `= bumpPoleA + bumpPoleB ≈ 1 + (3·log 3 − 4·log 2)` (`bump_pieceA1/A2` the affine edges,
+  `bump_pieceB1/B2` the `f̃(0)` pieces `1 − 1/x` and `3/x − 1` through the reciprocal
+  bridges), archimedean tail `= bumpArchTail ≈ 6·log 2 − 3·log 3` — COMPACT for this test:
+  `f(1) = 0` kills both the `(2/x)f(1)` subtraction and the improper remainder, and the
+  PV-cancelled integrand reduces by exact rational algebra (`x/(x+1) = 1 − 1/(x+1)` on
+  `[1,2]`; partial fractions `−1 + 1/(x−1) + 2/(x+1)` on `[2,3]`, consuming the base-3
+  bridge `∫₀¹ dx/(3+x) ≈ log 4 − log 3`). The finite-place side is NONZERO
+  (`bumpPrimePart_eq ≈ log 2` — the prime `2` enters the assembled functional through the
+  peak, `Λ(3)` dying on the right knot), the archimedean constant vanishes (`f(1) = 0`),
+  and the value reduces to closed form (`bumpWeilValue_eq`):
+  `W(bump) = 1 + 6·log 3 − 11·log 2 ≈ −0.0329`. **`bumpWeilValue_neg` certifies
+  `W(bump) < 0`** via the harmonic wedges at `M = 128` (`bmp_L2`/`bmp_U32`/`bmp_L43`;
+  worst-case wedge error `7/256 ≈ 0.027` against margin `0.033`, realized margin `≈ 0.024`;
+  one closing bignum `decide`). WHAT THE SIGN MEANS: the Weil criterion is positivity on
+  the AUTOCORRELATION cone `g ⋆ g^τ`, and the bump is admissible but NOT an autocorrelation
+  (`f(1) = ∫|g|² = 0` forces `g = 0`) — so a certified `W < 0` is CONSISTENT with RH and is
+  the honest counterpart of `tentWeilValue_pos`: kernel-checked proof that Weil positivity
+  is NOT a pointwise feature of the admissible class — the `f, f̂` coupling structure
+  (Sonine steps 3–4) is load-bearing. The cancellation-not-magnitude finding (`α(2) < 0`,
+  `arch(1) < 0`), now at the level of the assembled functional. Root witness extended with
+  both facts; axiom-clean; crux fields `none`.
 - **`tentSlot` + `tentWeilValue_pos` — THE FIRST REALIZED WEIL SLOT, and the first realized
   window-positivity instance: `W(tent) > 0`** (new `Square/TentSlot.lean`; Sonine route,
   step 2 boundary crossed for one genuine test): `Pairing.lean`'s `WeilSlot` interface is

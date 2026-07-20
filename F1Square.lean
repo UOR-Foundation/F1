@@ -284,6 +284,7 @@ import F1Square.Analysis.TentArchPiece
 import F1Square.Analysis.HarmonicLogC
 import F1Square.Analysis.TentArchTail
 import F1Square.Square.TentSlot
+import F1Square.Square.BumpSlot
 
 open UOR.Primitives
 
@@ -1528,6 +1529,8 @@ example :
           (Analysis.logN 3 (by omega)))
     ∧ Analysis.Req (Analysis.weilPrimePart Square.tentTest) Analysis.zero
     ∧ Analysis.Pos (Square.weilValue Square.tentSlot)
+    ∧ Analysis.Req (Analysis.weilPrimePart Square.bumpTest) (Analysis.logN 2 (by omega))
+    ∧ Analysis.Pos (Analysis.Rneg (Square.weilValue Square.bumpSlot))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1550,6 +1553,7 @@ example :
    fun c hc => Analysis.riemannIntegral_recipC c hc,
    Analysis.improperTail_eq, Analysis.tentArchTail_eq,
    Square.tentPrimePart_eq, Square.tentWeilValue_pos,
+   Square.bumpPrimePart_eq, Square.bumpWeilValue_neg,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square
