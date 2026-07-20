@@ -4024,3 +4024,15 @@ open UOR.Bridge.F1Square
 -- The order-3 convex prune (Square/GateAFiniteList.lean).
 #print axioms Square.convexClass3_pruned
 #print axioms Square.convexClass123_pruned
+
+-- The integral evaluation layer (new Analysis/IntegralEval.lean): Rlim_eval + ∫₀¹ x = ½.
+#print axioms Analysis.Rlim_eval
+#print axioms Analysis.lip_id
+#print axioms Analysis.congr_id
+#print axioms Analysis.sumIota
+#print axioms Analysis.riemannSum_id
+#print axioms Analysis.ofQ_zero_num
+#print axioms Analysis.genSum_id_eval
+#print axioms Analysis.gauss_defect_le
+#print axioms Analysis.genSum_id_rate
+#print axioms Analysis.riemannIntegral_id

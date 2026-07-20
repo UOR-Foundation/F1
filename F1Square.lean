@@ -273,6 +273,7 @@ import F1Square.Analysis.LambdaGap
 import F1Square.Square.GateAFiniteList
 import F1Square.Analysis.LogFourPiLower
 import F1Square.Analysis.LambdaFourUpper
+import F1Square.Analysis.IntegralEval
 
 open UOR.Primitives
 

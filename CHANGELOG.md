@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`riemannIntegral_id` — `∫₀¹ x dx ≈ 1/2`, the first NON-CONSTANT certified integral
+  evaluation, and `Rlim_eval`, the limit-evaluation engine** (new `Analysis/IntegralEval.lean`;
+  Sonine route, step 1): the Weil pairing's interface fields are integrals whose
+  piecewise-polynomial closed forms are "routine but unverified in print" (`Weil.lean`) —
+  reducing them in the kernel bottoms out in evaluating the gateway's integrals on explicit
+  integrands, and the gateway had only `riemannIntegral_const`. Now built: `Rlim_eval` (a
+  Bishop limit whose terms sit within `1/(j+1)` of a rational `c` IS `ofQ c` — proof at the
+  diagonal, where the rate hypothesis at index `m = 2n+1` lands the `Radd`-inflated sample
+  exactly on the limit's `4n+3` approximant), the `ℚ`-level Gauss fold `sumIota`,
+  `riemannSum_id` (`R_N(id) = N/(2(N+1))`), `genSum_id_eval`/`genSum_id_rate` (the telescoped
+  dyadic sums sit within `1/(2·2^M)` of `1/2`), and the evaluation itself. With the existing
+  `_const`/`_add`/`_smul`/`_neg` linear API, every piecewise-LINEAR integrand now evaluates in
+  closed form over rational intervals — the stratum the tent-window Weil tests live in; the
+  realized `WeilSlot` (tent test, `X = 2`, prime-free window) is the recorded next brick.
+  Mechanization note: a flipped `Req_symm` on an `Rneg_ofQ` congruence sent the unifier into
+  structure-eta defeq on symbolic-`2^M` rationals (a `whnf` timeout) — congruence direction
+  matters even between defeq-close terms. Axiom-clean; crux fields `none`.
 - **`Rlambda3_lt_Rlambda4` — `λ₃ < λ₄`, the Li head certified strictly increasing through
   `n = 4`, and `convexClass3_pruned` — THE FIRST KILL AT ORDER 3** (new
   `Analysis/LambdaFourThreeGap.lean`): `λ₄ − λ₃ ≥ 0.035` (true `0.178`). The route is the
