@@ -290,6 +290,8 @@ import F1Square.Analysis.LogStep
 import F1Square.Analysis.BandClamp
 import F1Square.Analysis.LogIntegrand
 import F1Square.Analysis.LogRatCert
+import F1Square.Analysis.LogRatBridge
+import F1Square.Analysis.LogPointVal
 
 open UOR.Primitives
 
@@ -1557,6 +1559,14 @@ example :
           (Analysis.Gn (i + 1) (by omega))
         ∧ Analysis.Rle (Analysis.Gn (i + 1) (by omega))
           (Analysis.Radd (Analysis.Gn i hi) (Analysis.logN (i + 1) (by omega))))
+    -- the ∫log point values: gLog c (j/(N+1)) ≈ logN(c(N+1)+j) − logN(N+1), general
+    -- in the dyadic sample (the 2c(ii) exp-injectivity bridge + the 2c(iii) collapse)
+    ∧ (∀ (c : Nat) (hc1 : 1 ≤ c) (hc3 : c ≤ 3) (j N : Nat) (hj : j ≤ N + 1)
+        (ha1 : 1 ≤ c * (N + 1) + j),
+        Analysis.Req
+          (Analysis.gLog c (Analysis.ofQ (⟨(j : Int), N + 1⟩ : Analysis.Q) (Nat.succ_pos N)))
+          (Analysis.Rsub (Analysis.logN (c * (N + 1) + j) ha1)
+            (Analysis.logN (N + 1) (Nat.succ_pos N))))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1582,6 +1592,7 @@ example :
    Square.bumpPrimePart_eq, Square.bumpWeilValue_neg,
    Square.t4F_one, Square.t4PrimePart_eq,
    fun i hi => ⟨Analysis.Gn_step_lower i hi, Analysis.Gn_step_upper i hi⟩,
+   fun c hc1 hc3 j N hj ha1 => Analysis.gLog_point c hc1 hc3 j N hj ha1,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square

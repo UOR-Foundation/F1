@@ -16,6 +16,27 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`RlogPos_ofQ_eq_logN` + `gLog_point` — the `∫ log` layer, parts 2c(ii)–(iii): the
+  log-of-rational bridge and the point values** (new `Analysis/LogRatBridge.lean`,
+  `Analysis/LogPointVal.lean`; Sonine route, step 2 — the `W(t4)` campaign): (2c-ii)
+  `RlogPos (ofQ ⟨a,d⟩) ≈ logN a − logN d` on the band `d ≤ a ≤ 4d`, by
+  **exp-injectivity** — `exp(RlogPos(a/d) + logN d) ≈ (a/d)·d ≈ a ≈ exp(logN a)`
+  (`RexpReal_add`, `Rexp_log_ratQ`, `Rexp_logN`), cancelled by the general
+  `RexpReal_inj_gen` (no nonnegativity side conditions, so no `logN` monotonicity
+  needed); the radius certificate consumed is exactly part 2c(i)'s `radius_half_proj`,
+  fed to `RlogPos_eq_Rlog` at the presented modulus `B = a/d`. No new series, no new
+  integral — an identity between two already-constructed logarithms. (2c-iii) the point
+  values `gLog c (j/(N+1)) ≈ logN(c(N+1)+j) − logN(N+1)` for `1 ≤ c ≤ 3`, `j ≤ N+1`,
+  GENERAL in the dyadic sample — every fold of every Riemann sum of `∫₀¹ log(c+t) dt`
+  routes through this single theorem: the constant-real sum collapses
+  (`c + j/(N+1) ≈ (c(N+1)+j)/(N+1)`), the band clamp is inert on the sample
+  (`qBandQ_eq_of_band`), `RlogPos_congr` fires at `B = c+1`
+  (`radius_half_proj (c+1) 1` — the two `c ≤ 3` constraints, the modulus certificate
+  and the bridge band, are the same constraint), and the bridge lands the `logN`
+  difference that `LogStep`'s telescopes speak. Root witness clause added (the ∀-shape
+  point-value fact); audit entries added. Remaining for `riemannIntegral_logC`: the
+  `genSum` rate (the `HarmonicLogC` schedule over `Gn`'s telescopes) and
+  `Rlim_eval_real` wiring. Axiom-clean; crux fields `none`.
 - **`qBandQ` + `gLog` + `radius_half_of_le4` — the `∫ log` layer, parts 2a–2c(i)** (new
   `Analysis/BandClamp.lean`, `Analysis/LogIntegrand.lean`, `Analysis/LogRatCert.lean`;
   Sonine route, step 2 — the `W(t4)` campaign): (2a) the two-sided per-index band clamp

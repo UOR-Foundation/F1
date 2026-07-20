@@ -4337,3 +4337,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.radius_half_of_le4
 #print axioms Analysis.radius_half_proj
 #print axioms Analysis.sample_ge_one
+
+-- The ∫log layer, part 2c(ii): the log-of-rational bridge, RlogPos(a/d) ≈ logN a − logN d
+-- via exp-injectivity, general on the band d ≤ a ≤ 4d (new Analysis/LogRatBridge.lean).
+#print axioms Analysis.RlogPos_ofQ_eq_logN
+
+-- The ∫log layer, part 2c(iii): the point values, gLog c (j/(N+1)) ≈ logN(c(N+1)+j) −
+-- logN(N+1), general in the dyadic sample (new Analysis/LogPointVal.lean).
+#print axioms Analysis.gLog_point
