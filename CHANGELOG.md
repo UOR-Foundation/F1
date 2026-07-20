@@ -16,6 +16,33 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`gateA_prune_ledger` — the Gate-A prune ledger as one kernel-checked statement, plus two
+  new order-uniform kills** (`Square/GateAFiniteList.lean`):
+  - **`nonPositiveClass_pruned` (fifth prune, uniform in the order)**: no Gate-A finite list has
+    ALL coefficients `≤ 0`, at EVERY order `K = 1..4` — for every η₄-anchored η-data, rule, and
+    dimension. Unlike the contraction prunes this needs NO numerics: a combination of
+    non-negative terms with non-positive coefficients is non-positive (`RsumN_nonpos`), while
+    every doubled Li value in reach is strictly positive. The general core
+    (`nonPositive_lamRec_fails`) is stated for arbitrary `K`; the `K ≤ 4` ceiling is exactly the
+    reach of the certified `Pos λₙ` rungs, so each future rung widens this prune by one order
+    for free.
+  - **`orderZeroClass_pruned`**: the degenerate order `K = 0` is dead for free (the empty
+    recurrence forces `2λₙ ≈ 0`, refuted by `Pos λ₁`).
+  - **`gateA_prune_ledger`** bundles all four killed classes and records the surviving space:
+    order `2` with an expanding coefficient, orders `3, 4` with some positive coefficient, and
+    every order `K ≥ 5`.
+  - RECORDED BOUNDARY (so the route is not re-attempted): the contraction lever
+    `λ_{K+1} > λ₁ + … + λ_K` is TRUE at `K = 1, 2`, true-but-razor-thin at `K = 3`
+    (`0.3858` vs `0.3230`, needing the `λ₄` lower to ~1% of truth), and **FALSE from `K = 4`**
+    (`λ₅ ≈ 0.518 < λ₁+λ₂+λ₃+λ₄ ≈ 0.7088`) — mathematically exhausted, not under-certified.
+  Axiom-clean; crux fields `none`, RH open.
+- **`Rlambda_head_increasing` — the certified Li head is STRICTLY INCREASING** (`λ₁ < λ₂ < λ₃`,
+  `Analysis/LambdaTwoThreePrecision.lean`): `Rlambda1_lt_Rlambda2` (gap `≥ 0.05589`) and
+  `Rlambda2_lt_Rlambda3` (gap `≥ 0.042`), from the now-disjoint brackets. Sharpens
+  `Rlambda1_ne_Rlambda2` from *distinct* to *ordered*, and is the shape the cheaper
+  convex-combination prune consumes (`Σaᵢ = 1, aᵢ ≥ 0` forces `λ_{K+1} ≤ λ_K`); extending it to
+  `λ₃ < λ₄` needs a `λ₄` lower above `0.2554` — blocked on the `γ₁` bracket, whose 12%-wide
+  spread dominates the `η₁` slack at coefficient `6`.
 - **`Rlambda4_le` — the `λ₄` UPPER bracket (`λ₄ ≤ 0.563`), the fourth two-sided Li
   coefficient** (new `Analysis/LambdaFourUpper.lean`): `λ₄^{arith} = −(4η₀+6η₁+4η₂+η₃) ≤
   1.5458115` via the `η₃` floor `η₃ ≥ −0.0313379`, which needed four product LOWER bounds —

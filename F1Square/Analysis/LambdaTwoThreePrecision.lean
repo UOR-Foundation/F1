@@ -25,6 +25,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 
 import F1Square.Analysis.LambdaThreeUpper
 import F1Square.Analysis.LambdaFourPos
+import F1Square.Analysis.LambdaGap
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -187,5 +188,42 @@ theorem Rlambda3_ge : Rle (ofQ (⟨1436, 10000⟩ : Q) (by decide)) Rlambda3 := 
     Rle_trans (Rle_ofQ_add_Radd (by decide) (by decide))
       (Radd_le_add Rlambda3_arith_ge_t archLoR_le)
   exact Rle_trans (Rle_ofQ_ofQ (by decide) (by decide) (by decide)) hsum
+
+-- ===========================================================================
+-- The certified STRICT MONOTONICITY of the Li head.
+-- ===========================================================================
+
+/-- **`λ₁ < λ₂`** with the certified gap `λ₂ − λ₁ ≥ 0.05589` — from the disjoint brackets
+    `λ₁ ≤ 0.02381 < 0.0797 ≤ λ₂`. (A sharper form of `Rlambda1_ne_Rlambda2`: not merely
+    distinct, but ORDERED.) -/
+theorem Rlambda1_lt_Rlambda2 : Pos (Rsub Rlambda2 Rlambda1) := by
+  have hn : Rle (ofQ (neg (⟨2381, 100000⟩ : Q)) (by decide)) (Rneg Rlambda1) :=
+    Rneg_ofQ_le (by decide) Rlambda1_le
+  have hsum : Rle (ofQ (add (⟨797, 10000⟩ : Q) (neg (⟨2381, 100000⟩ : Q))) (by decide))
+      (Rsub Rlambda2 Rlambda1) :=
+    Rle_trans (Rle_ofQ_add_Radd (by decide) (by decide)) (Radd_le_add Rlambda2_ge hn)
+  exact Pos_of_Rle_ofQ (c := add (⟨797, 10000⟩ : Q) (neg (⟨2381, 100000⟩ : Q)))
+    (by decide) (by decide) hsum
+
+/-- **`λ₂ < λ₃`** with the certified gap `λ₃ − λ₂ ≥ 0.042` — from `λ₂ ≤ 0.1016 < 0.1436 ≤ λ₃`. -/
+theorem Rlambda2_lt_Rlambda3 : Pos (Rsub Rlambda3 Rlambda2) := by
+  have hn : Rle (ofQ (neg (⟨1016, 10000⟩ : Q)) (by decide)) (Rneg Rlambda2) :=
+    Rneg_ofQ_le (by decide) Rlambda2_le
+  have hsum : Rle (ofQ (add (⟨1436, 10000⟩ : Q) (neg (⟨1016, 10000⟩ : Q))) (by decide))
+      (Rsub Rlambda3 Rlambda2) :=
+    Rle_trans (Rle_ofQ_add_Radd (by decide) (by decide)) (Radd_le_add Rlambda3_ge hn)
+  exact Pos_of_Rle_ofQ (c := add (⟨1436, 10000⟩ : Q) (neg (⟨1016, 10000⟩ : Q)))
+    (by decide) (by decide) hsum
+
+/-- **The certified head of the Li sequence is STRICTLY INCREASING**: `λ₁ < λ₂ < λ₃`.
+
+    This is the shape any future *convex-combination* prune consumes (`Σ aᵢ = 1`, `aᵢ ≥ 0`
+    forces `λ_{K+1} ≤ max λᵢ = λ_K`, refuted by `λ_K < λ_{K+1}`) — a far cheaper lever than
+    the contraction prune's `λ_{K+1} > λ₁ + … + λ_K`. Extending it to `λ₃ < λ₄` needs a `λ₄`
+    LOWER above `0.2554` (true `λ₄ ≈ 0.3858`, so a ~34% margin — feasible, but blocked on the
+    `γ₁` bracket, whose 12%-wide spread dominates the `η₁` slack at coefficient `6`). -/
+theorem Rlambda_head_increasing :
+    Pos (Rsub Rlambda2 Rlambda1) ∧ Pos (Rsub Rlambda3 Rlambda2) :=
+  ⟨Rlambda1_lt_Rlambda2, Rlambda2_lt_Rlambda3⟩
 
 end UOR.Bridge.F1Square.Analysis

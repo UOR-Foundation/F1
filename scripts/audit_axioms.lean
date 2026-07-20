@@ -3986,3 +3986,17 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rlambda4_arith_le
 #print axioms Analysis.genuineArchSeq4_le
 #print axioms Analysis.Rlambda4_le
+
+-- The Li-head strict monotonicity (Analysis/LambdaTwoThreePrecision.lean additions).
+#print axioms Analysis.Rlambda1_lt_Rlambda2
+#print axioms Analysis.Rlambda2_lt_Rlambda3
+#print axioms Analysis.Rlambda_head_increasing
+
+-- The general-order sign prune, the K=0 kill, and the prune ledger (GateAFiniteList.lean).
+#print axioms Square.Rmul_nonpos_of_nonpos
+#print axioms Square.RsumN_nonpos
+#print axioms Square.not_Pos_of_Rle_zero
+#print axioms Square.nonPositive_lamRec_fails
+#print axioms Square.nonPositiveClass_pruned
+#print axioms Square.orderZeroClass_pruned
+#print axioms Square.gateA_prune_ledger

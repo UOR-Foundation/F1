@@ -48,6 +48,8 @@ import F1Square.Square.GateA
 import F1Square.Analysis.LambdaGap
 import F1Square.Analysis.LambdaThreeUpper
 import F1Square.Analysis.LambdaTwoThreePrecision
+import F1Square.Analysis.LambdaFourUpper
+import F1Square.Analysis.LambdaFivePos
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -495,5 +497,154 @@ theorem contractionClass2_pruned (E : StieltjesEta3) (ι : AtlasRule) (D : Nat)
     {a : Nat → Real} (h0 : Rle (a 0) one) (h1 : Rle (a 1) one) :
     ¬ GateAList E.toStieltjesEta ι D 2 a :=
   fun h => contractionClass2_lamRec_fails E h0 h1 h.lamRec
+
+-- ===========================================================================
+-- The fifth prune: NON-POSITIVE coefficients, at EVERY order `K = 1..4`.
+--
+-- WHY THIS SHAPE, and where the contraction route stops. The two contraction prunes above
+-- exploit `λ_{K+1} > λ₁ + … + λ_K`. That inequality is TRUE at `K = 1, 2` (proven above) and
+-- true-but-razor-thin at `K = 3` (`λ₄ ≈ 0.3858` vs `λ₁+λ₂+λ₃ ≈ 0.3230`, needing the `λ₄` lower
+-- to within ~1% of truth — far beyond the current bracket), and it is **FALSE from `K = 4` on**
+-- (`λ₅ ≈ 0.518 < λ₁+λ₂+λ₃+λ₄ ≈ 0.7088`). So the contraction lever is mathematically exhausted,
+-- not merely under-certified — recorded here so the route is not re-attempted.
+--
+-- The lever that DOES generalize over the order is the sign of the coefficients: a combination
+-- of non-negative terms with non-positive coefficients is non-positive, while every doubled Li
+-- value in reach is strictly positive. This kills one direction of the coefficient space at
+-- every order at once, with no per-order numerics.
+-- ===========================================================================
+
+/-- A non-positive coefficient against a non-negative term gives a non-positive product. -/
+theorem Rmul_nonpos_of_nonpos {c s : Real} (hc : Rle c zero) (hs : Rnonneg s) :
+    Rle (Rmul c s) zero :=
+  Rle_trans (Rmul_le_Rmul_right hs hc)
+    (Rle_of_Req (Req_trans (Rmul_comm zero s) (Rmul_zero s)))
+
+/-- A linear combination of non-negative terms with non-positive coefficients is non-positive. -/
+theorem RsumN_nonpos {a s : Nat → Real} (K : Nat)
+    (ha : ∀ i, i < K → Rle (a i) zero) (hs : ∀ i, i < K → Rnonneg (s i)) :
+    Rle (RsumN (fun i => Rmul (a i) (s i)) K) zero :=
+  Rle_trans (RsumN_le (G := fun _ => zero) K
+      (fun i hi => Rmul_nonpos_of_nonpos (ha i hi) (hs i hi)))
+    (Rle_of_Req (RsumN_zero K (fun _ _ => Req_refl zero)))
+
+/-- A real bounded above by `0` is not strictly positive. -/
+theorem not_Pos_of_Rle_zero {z : Real} (h : Rle z zero) : ¬ Pos z := by
+  refine not_Pos_of_Rnonneg_Rneg (Rnonneg_congr ?_ (Rnonneg_Rsub_of_Rle h))
+  exact Req_trans (Radd_comm zero (Rneg z)) (Radd_zero (Rneg z))
+
+/-- **THE NON-POSITIVE-COEFFICIENT CORE, general in the order `K`**: if every coefficient is
+    `≤ 0` and the first `K` terms are non-negative, the recurrence forces `s K ≤ 0` — refuting
+    any strictly positive `s K`. No numerics, no bound on `K`. -/
+theorem nonPositive_lamRec_fails {a s : Nat → Real} (K : Nat)
+    (ha : ∀ i, i < K → Rle (a i) zero) (hs : ∀ i, i < K → Rnonneg (s i))
+    (hpos : Pos (s K)) : ¬ SatisfiesRec a K s := by
+  intro h
+  have h0 := h 0
+  simp only [Nat.zero_add] at h0
+  exact not_Pos_of_Rle_zero (Rle_trans (Rle_of_Req h0) (RsumN_nonpos K ha hs)) hpos
+
+/-- The doubled genuine Li values are non-negative at `n = 1..4` (from `Pos λ₁..λ₄`). -/
+private theorem dblLam_nonneg (E : StieltjesEta5) : ∀ i, i < 4 →
+    Rnonneg (Radd (genuineLamSeq E.eta (1 + i)) (genuineLamSeq E.eta (1 + i)))
+  | 0, _ => Rnonneg_of_Pos (Pos_congr
+      (Radd_congr (Req_symm (genuineLam_one E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta))
+        (Req_symm (genuineLam_one E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta)))
+      (Pos_Radd_self Rlambda1_pos))
+  | 1, _ => Rnonneg_of_Pos (Pos_congr
+      (Radd_congr (Req_symm (genuineLam_two E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta))
+        (Req_symm (genuineLam_two E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta)))
+      (Pos_Radd_self Rlambda2_pos))
+  | 2, _ => Rnonneg_of_Pos (Pos_congr
+      (Radd_congr (Req_symm (genuineLam_three E.toStieltjesEta4.toStieltjesEta3))
+        (Req_symm (genuineLam_three E.toStieltjesEta4.toStieltjesEta3)))
+      (Pos_Radd_self Rlambda3_pos))
+  | 3, _ => Rnonneg_of_Pos (Pos_congr
+      (Radd_congr (Req_symm (genuineLam_four E.toStieltjesEta4))
+        (Req_symm (genuineLam_four E.toStieltjesEta4)))
+      (Pos_Radd_self Rlambda4_pos))
+  | (n + 4), h => absurd h (by omega)
+
+/-- The doubled genuine Li value is strictly positive at `n = 2..5` (from `Pos λ₂..λ₅`). -/
+private theorem dblLam_pos (E : StieltjesEta5) : ∀ K, 0 < K → K ≤ 4 →
+    Pos (Radd (genuineLamSeq E.eta (1 + K)) (genuineLamSeq E.eta (1 + K)))
+  | 0, h, _ => absurd h (by omega)
+  | 1, _, _ => Pos_congr
+      (Radd_congr (Req_symm (genuineLam_two E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta))
+        (Req_symm (genuineLam_two E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta)))
+      (Pos_Radd_self Rlambda2_pos)
+  | 2, _, _ => Pos_congr
+      (Radd_congr (Req_symm (genuineLam_three E.toStieltjesEta4.toStieltjesEta3))
+        (Req_symm (genuineLam_three E.toStieltjesEta4.toStieltjesEta3)))
+      (Pos_Radd_self Rlambda3_pos)
+  | 3, _, _ => Pos_congr
+      (Radd_congr (Req_symm (genuineLam_four E.toStieltjesEta4))
+        (Req_symm (genuineLam_four E.toStieltjesEta4)))
+      (Pos_Radd_self Rlambda4_pos)
+  | 4, _, _ => Pos_congr
+      (Radd_congr (Req_symm (genuineLam_five E)) (Req_symm (genuineLam_five E)))
+      (Pos_Radd_self Rlambda5_pos)
+  | (n + 5), _, h => absurd h (by omega)
+
+/-- **THE FIFTH PRUNE, RECORDED — no Gate-A finite list has all-non-positive coefficients, at
+    EVERY order `K = 1..4`**: for every η₄-anchored η-data, every atlas rule, every dimension,
+    and every coefficient family with `aᵢ ≤ 0` for all `i < K`. Unlike the contraction prunes
+    this is uniform in the order and needs no numerics — only the certified positivity of
+    `λ₁..λ₅`. (The `K ≤ 4` ceiling is exactly the reach of the certified `Pos λₙ` rungs: the
+    argument extends to any `K` for which `Pos λ_{K+1}` is proven, so each future rung widens
+    this prune by one order for free.) -/
+theorem nonPositiveClass_pruned (E : StieltjesEta5) (ι : AtlasRule) (D : Nat) {K : Nat}
+    (hK : 0 < K) (hK4 : K ≤ 4) {a : Nat → Real} (ha : ∀ i, i < K → Rle (a i) zero) :
+    ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a :=
+  fun h => nonPositive_lamRec_fails K ha
+    (fun i hi => dblLam_nonneg E i (by omega)) (dblLam_pos E K hK hK4) h.lamRec
+
+/-- **The degenerate order `K = 0` is dead**, for free and for every coefficient family: the
+    empty recurrence forces `2λₙ ≈ 0` at every index, refuted by `Pos λ₁`. (Recorded so the
+    prune ledger covers the order axis with no gap at its base.) -/
+theorem orderZeroClass_pruned (E : StieltjesEta) (ι : AtlasRule) (D : Nat) (a : Nat → Real) :
+    ¬ GateAList E ι D 0 a := by
+  intro h
+  have h0 := h.lamRec 0
+  simp only [Nat.zero_add] at h0
+  exact not_Pos_of_Rle_zero (Rle_of_Req h0)
+    (Pos_congr (Radd_congr (Req_symm (genuineLam_one E)) (Req_symm (genuineLam_one E)))
+      (Pos_Radd_self Rlambda1_pos))
+
+-- ===========================================================================
+-- The prune ledger, as one kernel-checked statement.
+-- ===========================================================================
+
+/-- **THE GATE-A PRUNE LEDGER** — everything the certificate front has killed, in one place.
+    For every η₄-anchored η-data `E`, every atlas rule `ι`, and every dimension `D`, NO Gate-A
+    finite list exists in any of these classes:
+
+    1. order `0` (any coefficients) — the degenerate empty recurrence;
+    2. order `1`, ANY real coefficient — the Hankel-2 clash `(2λ₂)² ≉ (2λ₃)(2λ₁)`;
+    3. order `2` with both coefficients `≤ 1` (contains the shift class `(0,1)`) —
+       `λ₁ + λ₂ < λ₃`;
+    4. order `K = 1..4` with ALL coefficients `≤ 0` — the sign lever, uniform in the order.
+
+    What SURVIVES: order `2` with an expanding coefficient, orders `3, 4` with some positive
+    coefficient, and every order `K ≥ 5`. Each future rung `Pos λ_{K+1}` widens item 4 by one
+    order for free; the contraction lever (item 3) is mathematically exhausted at `K ≥ 4`
+    (`λ₅ < λ₁+λ₂+λ₃+λ₄`), and the convex-combination lever needs `λ₃ < λ₄`, i.e. a `λ₄` lower
+    above `0.2554`.
+
+    NOTHING here approaches the crux: pruning candidate classes narrows the search for the
+    single certificate, it never produces one. The crux fields stay `none`. -/
+theorem gateA_prune_ledger (E : StieltjesEta5) (ι : AtlasRule) (D : Nat) :
+    (∀ a : Nat → Real,
+        ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D 0 a)
+    ∧ (∀ c : Real,
+        ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D 1 (fun _ => c))
+    ∧ (∀ a : Nat → Real, Rle (a 0) one → Rle (a 1) one →
+        ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D 2 a)
+    ∧ (∀ (K : Nat) (a : Nat → Real), 0 < K → K ≤ 4 → (∀ i, i < K → Rle (a i) zero) →
+        ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a) :=
+  ⟨fun a => orderZeroClass_pruned _ ι D a,
+   fun c => order1Class_pruned E.toStieltjesEta4.toStieltjesEta3 ι D c,
+   fun _a h0 h1 => contractionClass2_pruned E.toStieltjesEta4.toStieltjesEta3 ι D h0 h1,
+   fun _K _a hK hK4 ha => nonPositiveClass_pruned E ι D hK hK4 ha⟩
 
 end UOR.Bridge.F1Square.Square
