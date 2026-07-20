@@ -4189,3 +4189,17 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.genSum_gRecipC_rate
 #print axioms Analysis.riemannIntegral_recipC_gen
 #print axioms Analysis.riemannIntegral_recipC
+
+-- The improper archimedean tail = log 3 and the assembled tail (new Analysis/TentArchTail.lean).
+#print axioms Analysis.tail_step_alg
+#print axioms Analysis.hTail_lip
+#print axioms Analysis.hTail_congr
+#print axioms Analysis.diffC_lip
+#print axioms Analysis.diffC_congr
+#print axioms Analysis.hTail_pull
+#print axioms Analysis.integralTerm_hTail
+#print axioms Analysis.genSum_hTail
+#print axioms Analysis.tail_decay
+#print axioms Analysis.tail_rate
+#print axioms Analysis.improperTail_eq
+#print axioms Analysis.tentArchTail_eq

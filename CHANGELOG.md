@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`tentArchTail_eq` — the tent's full archimedean tail ≈ `−1 − 6·log 2 + 3·log 3`: THE
+  THIRD EVALUATED WEIL-SLOT COMPONENT, completing all three tent slot fields** (new
+  `Analysis/TentArchTail.lean`; Sonine route, step 2): the improper part past the support,
+  `∫₁^∞ (1/w − 1/(w+2)) dw = ∫₂^∞ 2/(x²−1) dx ≈ log 3` (`improperTail_eq`), is the FIRST
+  EVALUATED `improperIntegral1` — a certified half-line integral reduced in the kernel. Each
+  unit block `T m = ∫_{m+1}^{m+2} hTail` is two instances of the general-base bridge
+  (`integralTerm_hTail : T m ≈ [log(m+2)−log(m+1)] − [log(m+4)−log(m+3)]`); the `K = 3`
+  decay hypothesis comes from the per-step logarithm bracket (`T m ∈ [1/(m+2) − 1/(m+3),
+  1/(m+1) − 1/(m+4)] ⊆ [0, 3/((m+1)m)]`, `tail_decay`); the partial sums TELESCOPE
+  (`genSum_hTail : Σ_{i<N} T i ≈ (log(N+1) − log 1) − (log(N+3) − log 3)`, a three-line
+  additive rearrangement per step, `tail_step_alg`); the defect `log(N+3) − log(N+1) ≤
+  2/(N+1)` (the bracket twice) beats the schedule `digammaMidx 3 j = 4(j+1)`, and
+  `Rlim_eval_real` evaluates the limit. Assembled: `tentArchTail = tent_arch12 −
+  improperTail ≈ −(1 + 2·log 2 − 4·(log 3 − log 2)) − log 3 = −1 − 6·log 2 + 3·log 3`.
+  With `tentPoleA_eq` (3/4), `tentPoleB_eq` (log 2), and `weilArchConst` already
+  constructed, ALL `WeilSlot` interface fields for the tent test are now kernel-evaluated —
+  the realized slot instance and `weilValue` are the next (assembly) brick. Axiom-clean;
+  crux fields `none`.
 - **`riemannIntegral_recipC` — the GENERAL-BASE harmonic bridge: `∫₀¹ dx/(c+x) ≈
   log(c+1) − log c` for EVERY natural base `c ≥ 1`** (new `Analysis/HarmonicLogC.lean`;
   Sonine route, step 2): the `HarmonicLog32` construction with the base as a parameter —
