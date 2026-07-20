@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4Test` + `t4PrimePart_eq` — THE FIRST CONE-SHAPED TEST DATUM WITH A LIVE PRIME SIDE**
+  (new `Square/ConeTent.lean`; Sonine route, step 2 — toward the autocorrelation cone): the
+  square-scale symmetric log-tent `t4F(x) = 2·log 2 − |log x|` on `[1/4, 4]` realized as a
+  genuine `WeilTest` (`X = 4`). The key unblocking observation: in the log variable the
+  test is the autocorrelation of the box on `[−log 2, log 2]` — the box with RATIONAL knots
+  `[1/2, 2]` in `x` — so at SQUARE scales `X = c²` the `√2` obstruction (recorded against
+  the scale-2 tent, generating box knots `2^{∓1/2}`) vanishes. The datum is log-valued at
+  rational points (`f(a/b) = 2·log 2 ∓ (log a − log b)`), which `WeilTest.f : Q → Real`
+  carries natively; `f(1) = 2·log 2 > 0` (`t4F_one`) is the on-cone marker `∫|g|²` that the
+  off-cone bump lacked. The finite-place side is EVALUATED in closed form
+  (`t4PrimePart_eq`): `primes(t4) ≈ log 2·(3/2·log 2) + log 3·(4/3·(2·log 2 − log 3))`
+  `≈ 0.9924` — the prime `2` enters with the test's own log-weight (`Λ(2)·f(2) = (log 2)²`),
+  the prime `3` through the symmetric pair `f(3) = f(1/3)`, and the `Λ(4) = log 2` term
+  dies on the knot `f(4) = 0` by `log`-multiplicativity. HONEST SCOPE: datum + prime side
+  only — the slot integrals need the certified `∫ log` layer (not yet built), and the exact
+  CC weight normalization of the cone element is deliberately not asserted (`t4F` is
+  claimed as the log-coordinate autocorrelation shape only). Root witness extended with
+  `t4F_one` and `t4PrimePart_eq`; axiom-clean; crux fields `none`.
 - **`bumpSlot` + `bumpWeilValue_neg` — THE FIRST REALIZED SLOT WITH A LIVE PRIME SIDE, and
   the first certified NEGATIVE Weil value: `W(bump) < 0`** (new `Analysis/BumpPieces.lean` +
   `Square/BumpSlot.lean`; Sonine route, step 2 — the frontier past the prime-free window):

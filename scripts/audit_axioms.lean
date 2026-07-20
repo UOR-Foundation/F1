@@ -4270,3 +4270,17 @@ open UOR.Bridge.F1Square
 #print axioms Square.bump_P_le
 #print axioms Square.bump_S_ge
 #print axioms Square.bumpWeilValue_neg
+
+-- The cone-shaped test: the square-scale log-tent (autocorrelation shape, rational
+-- generating box [1/2, 2]), the first cone-shaped datum with a live prime side, and
+-- its evaluated finite-place side (new Square/ConeTent.lean).
+#print axioms Square.t4F_supp_high
+#print axioms Square.t4F_supp_low
+#print axioms Square.t4F_one
+#print axioms Square.t4F_two
+#print axioms Square.t4F_half
+#print axioms Square.t4F_three
+#print axioms Square.t4F_third
+#print axioms Square.t4F_four
+#print axioms Square.t4F_quarter
+#print axioms Square.t4PrimePart_eq

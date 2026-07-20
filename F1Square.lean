@@ -285,6 +285,7 @@ import F1Square.Analysis.HarmonicLogC
 import F1Square.Analysis.TentArchTail
 import F1Square.Square.TentSlot
 import F1Square.Square.BumpSlot
+import F1Square.Square.ConeTent
 
 open UOR.Primitives
 
@@ -1531,6 +1532,22 @@ example :
     ∧ Analysis.Pos (Square.weilValue Square.tentSlot)
     ∧ Analysis.Req (Analysis.weilPrimePart Square.bumpTest) (Analysis.logN 2 (by omega))
     ∧ Analysis.Pos (Analysis.Rneg (Square.weilValue Square.bumpSlot))
+    ∧ Analysis.Req (Square.t4F ⟨1, 1⟩)
+        (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
+          (Analysis.logN 2 (by omega)))
+    ∧ Analysis.Req (Analysis.weilPrimePart Square.t4Test)
+        (Analysis.Radd
+          (Analysis.Rmul (Analysis.logN 2 (by omega))
+            (Analysis.Radd (Analysis.logN 2 (by omega))
+              (Analysis.Rmul (Analysis.ofQ (⟨1, 2⟩ : Analysis.Q) (by decide))
+                (Analysis.logN 2 (by omega)))))
+          (Analysis.Rmul (Analysis.logN 3 (by omega))
+            (Analysis.Radd
+              (Analysis.Rsub (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
+                  (Analysis.logN 2 (by omega))) (Analysis.logN 3 (by omega)))
+              (Analysis.Rmul (Analysis.ofQ (⟨1, 3⟩ : Analysis.Q) (by decide))
+                (Analysis.Rsub (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
+                    (Analysis.logN 2 (by omega))) (Analysis.logN 3 (by omega)))))))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1554,6 +1571,7 @@ example :
    Analysis.improperTail_eq, Analysis.tentArchTail_eq,
    Square.tentPrimePart_eq, Square.tentWeilValue_pos,
    Square.bumpPrimePart_eq, Square.bumpWeilValue_neg,
+   Square.t4F_one, Square.t4PrimePart_eq,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square
