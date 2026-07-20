@@ -16,6 +16,41 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`GateA_of_finiteList` — the Gate-A finite-list template (certificate front, workstream 2)**
+  (new `Square/GateAFiniteList.lean`): Gate A specified as a finite exact hypothesis list around a
+  generating recurrence, exactly as the certificate front prescribes — fix `D`, an order `K` and
+  coefficients `a`, and require the `K` base identities `gramOf ι D (1+i) (1+i) ≈ 2λ_{1+i}`, the
+  order-`K` recurrence on the embedding's squared-norm diagonal (`gramRec`), and the SAME
+  recurrence on the doubled genuine Li sequence (`lamRec`) — bundled as `GateAList`. The reduction
+  theorem `GateA_of_finiteList` proves the list implies `RealizesDiag` (hence, Gate B being free,
+  `LiNonneg (genuineLamSeq)` — `finiteList_is_liNonneg`, the honest ledger: a satisfied list IS the
+  crux content, and satisfiability is NEVER asserted). Engine: `linRec_unique` — two sequences
+  under one order-`K` linear recurrence over the constructive reals with `≈`-equal initial window
+  coincide (course-of-values induction, fully kernel-checked). Two-sided guards in the
+  `GateA.lean` discipline: `finiteList_satisfiable` (at the template square the constant rule
+  passes the WHOLE list and the reduction delivers `RealizesDiag` end to end) and
+  `finiteList_can_fail` (the zero rule satisfies both recurrences yet its base identity is
+  refuted — the base carries content). Every candidate `(ι, D, K, a)` is henceforth checked
+  against this one list. Axiom-clean; crux fields `none`, RH open.
+- **`constantClass_pruned` — the first candidate class killed through the template (workstream 1
+  record)**: the order-1 constant class `(K, a) = (1, 1)` — every rule whose Gate-A diagonal is
+  period-one from `n = 1` — is refuted for EVERY anchored η-data, every atlas rule `ι`, and every
+  dimension `D` at once: its `lamRec` forces `2λ₂ ≈ 2λ₁` (`constantClass_lamRec_fails`, via
+  `satisfiesRec_const_step` + `Rdouble_inj`), contradicting the certified gap. One finite
+  certified fact kills the infinite class — the template doing its prune job.
+- **`Rlambda1_ne_Rlambda2` — the first certified SEPARATION of two Li coefficients** (new
+  `Analysis/LambdaGap.lean`): `2λ₂ − 2λ₁ ≥ 1130/10⁴ = 0.113` (`lambda_gap_lower`, true value
+  `≈ 0.1385`), hence `Pos (2λ₂ − 2λ₁)` and `λ₁ ≉ λ₂`. The route dodges the missing `log 4π`
+  LOWER bracket entirely: in `(λ₂ + λ₂) − Rtwolambda1` the `log 4π` atoms cancel
+  ALGEBRAICALLY (one `RsumL_cancel_anywhere` pair in the `RAddNF` normalizer), and every
+  surviving atom enters with the sign whose certified bracket already exists (`γ ≥ 0.577`,
+  `γ² ≤ 0.578²`, `γ₁ ≤ −0.0677`, `log 4π ≤ 2.5316`, `ζ(2) ≥ 1.644`) — no new numerics. KEY
+  mechanization gotcha, recorded for reuse: equating two differently-associated `RsumL`
+  list spellings by defeq sends the unifier through transient comparisons of DIFFERENT `Real`
+  atoms into the Bishop-reindexed `.seq` towers (observed 11 GB OOM); the fix is to bridge each
+  `++`-spelling to the common cons literal by an ALIGNED `List`-level `rfl` and `rw` the
+  composed equations into the goal — element comparisons stay syntactic (6 MB). Axiom-clean;
+  crux fields `none`.
 - **`coupling_n5_positive` — the `n = 5` prime–archimedean coupling is positive** (new
   `Square/CruxN5Closed.lean`): composes `coupling_n5_iff_pos_lambda5` (the reduction of the coupling's
   `n = 5` instance to the closed form `Rlambda5`) with `Rlambda5_pos`, conquering the `n = 5` coefficient

@@ -269,6 +269,8 @@ import F1Square.Analysis.LambdaFivePos
 import F1Square.Square.CruxN5Closed
 import F1Square.Analysis.GammaOneBracket
 import F1Square.Analysis.GammaZeroBracket
+import F1Square.Analysis.LambdaGap
+import F1Square.Square.GateAFiniteList
 
 open UOR.Primitives
 
@@ -1432,5 +1434,27 @@ example :
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨Square.stageG_frontier_located.1, Square.stageG_frontier_located.2.1,
    Square.sigmaMetric_not_psd, rfl, rfl⟩
+
+/-- Elaboration-checked witness binding **the Gate-A finite-list template and its first prune**
+    (`Analysis/LambdaGap.lean`, `Square/GateAFiniteList.lean`): Gate A specified as a finite exact
+    hypothesis list around a generating recurrence (`GateAList`: K base identities + one recurrence
+    on each side), with the reduction theorem — the list implies Gate A, hence
+    `LiNonneg (genuineLamSeq)` (first conjunct; the reduction is real, its satisfiability for the
+    genuine square is RH and is NEVER asserted). The certified gap `λ₁ ≉ λ₂` (second conjunct,
+    from `2λ₂ − 2λ₁ ≥ 0.113` — the `log 4π` atoms cancel, every survivor has a stock bracket)
+    prunes the entire order-1 constant candidate class, for every anchored η-data, every atlas
+    rule, and every dimension at once (third conjunct). Positivity is not output: the crux fields
+    stay `none` — RH OPEN. -/
+example :
+    (∀ (E : Analysis.StieltjesEta) (ι : Square.AtlasRule) (D K : Nat) (a : Nat → Analysis.Real),
+        Square.GateAList E ι D K a → Li.LiNonneg (Analysis.genuineLamSeq E.eta))
+    ∧ (¬ Analysis.Req Analysis.Rlambda1 Analysis.Rlambda2)
+    ∧ (∀ (E : Analysis.StieltjesEta) (ι : Square.AtlasRule) (D : Nat),
+        ¬ Square.GateAList E ι D 1 (fun _ => Analysis.one))
+    ∧ f1SquareStatus.hodgeIndexHolds = none
+    ∧ f1SquareStatus.liPositivityHolds = none :=
+  ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
+   Analysis.Rlambda1_ne_Rlambda2,
+   Square.constantClass_pruned, rfl, rfl⟩
 
 end UOR.Bridge.F1Square

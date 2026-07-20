@@ -3909,3 +3909,22 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.lhsForm4_eq_RsumL
 #print axioms Analysis.decomp_generic4
 #print axioms Analysis.sStep4_decomp
+
+-- The λ₂ − λ₁ gap (Analysis/LambdaGap.lean): the first certified separation of Li coefficients.
+#print axioms Analysis.lambda_gap_lower
+#print axioms Analysis.lambda_gap_pos
+#print axioms Analysis.not_Pos_zero
+#print axioms Analysis.Rlambda1_ne_Rlambda2
+
+-- The Gate-A finite-list template + the constant-class prune (Square/GateAFiniteList.lean).
+#print axioms Square.SatisfiesRec_congr
+#print axioms Square.linRec_unique
+#print axioms Square.satisfiesRec_const
+#print axioms Square.satisfiesRec_const_step
+#print axioms Square.realizesDiag_of_finiteList
+#print axioms Square.GateA_of_finiteList
+#print axioms Square.finiteList_is_liNonneg
+#print axioms Square.finiteList_satisfiable
+#print axioms Square.finiteList_can_fail
+#print axioms Square.constantClass_lamRec_fails
+#print axioms Square.constantClass_pruned
