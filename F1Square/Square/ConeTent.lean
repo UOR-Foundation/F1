@@ -9,7 +9,7 @@ form (`t4PrimePart_eq`): the primes `2` and `3` and the prime power `4` all sit 
 support, and
 
     `primes(t4) ≈ log 2·(log 2 + ½·log 2) + log 3·((2·log 2 − log 3) + ⅓·(2·log 2 − log 3))`
-    (`= (3/2)·(log 2)² + (4/3)·log 3·(2·log 2 − log 3) ≈ 0.9924`;
+    (`= (3/2)·(log 2)² + (4/3)·log 3·(2·log 2 − log 3) ≈ 1.1421`;
      the `Λ(4) = log 2` term dies on the knot `f(4) = 0`).
 
 WHY THIS SHAPE. In the logarithmic variable `u = log x` the test is the tent
@@ -183,7 +183,7 @@ set_option maxHeartbeats 400000 in
     `primes(t4) ≈ log 2·(log 2 + ½·log 2) + log 3·((2·log 2 − log 3) + ⅓·(2·log 2 − log 3))`
     — the prime `2` enters with the test's own `log`-weight (`Λ(2)·f(2) = (log 2)²`), the
     prime `3` through the symmetric pair `f(3) = f(1/3) = 2·log 2 − log 3`, and the
-    `Λ(4) = log 2` term dies on the knot `f(4) = 0`. Numerically `≈ 0.9924`. -/
+    `Λ(4) = log 2` term dies on the knot `f(4) = 0`. Numerically `≈ 1.1421`. -/
 theorem t4PrimePart_eq : Req (weilPrimePart t4Test)
     (Radd
       (Rmul (logN 2 (by omega))

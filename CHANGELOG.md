@@ -27,7 +27,7 @@ audit-visible hypothesis, never an axiom).
   carries natively; `f(1) = 2·log 2 > 0` (`t4F_one`) is the on-cone marker `∫|g|²` that the
   off-cone bump lacked. The finite-place side is EVALUATED in closed form
   (`t4PrimePart_eq`): `primes(t4) ≈ log 2·(3/2·log 2) + log 3·(4/3·(2·log 2 − log 3))`
-  `≈ 0.9924` — the prime `2` enters with the test's own log-weight (`Λ(2)·f(2) = (log 2)²`),
+  `≈ 1.1421` — the prime `2` enters with the test's own log-weight (`Λ(2)·f(2) = (log 2)²`),
   the prime `3` through the symmetric pair `f(3) = f(1/3)`, and the `Λ(4) = log 2` term
   dies on the knot `f(4) = 0` by `log`-multiplicativity. HONEST SCOPE: datum + prime side
   only — the slot integrals need the certified `∫ log` layer (not yet built), and the exact
