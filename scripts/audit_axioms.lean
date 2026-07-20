@@ -4345,3 +4345,12 @@ open UOR.Bridge.F1Square
 -- The ∫log layer, part 2c(iii): the point values, gLog c (j/(N+1)) ≈ logN(c(N+1)+j) −
 -- logN(N+1), general in the dyadic sample (new Analysis/LogPointVal.lean).
 #print axioms Analysis.gLog_point
+
+-- The ∫log layer, part 2c(iv): the Riemann-sum fold + collapse, the logFold bracket
+-- between Gn differences, and the scale identity (new Analysis/LogRiemann.lean).
+#print axioms Analysis.RsumN_gLog
+#print axioms Analysis.riemannSum_gLog
+#print axioms Analysis.logFold_le_Gn
+#print axioms Analysis.Gn_le_logFold
+#print axioms Analysis.Gn_scale_expand
+#print axioms Analysis.Gn_scale_identity

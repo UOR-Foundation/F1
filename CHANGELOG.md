@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`riemannSum_gLog` + `Gn_scale_identity` — the `∫ log` layer, part 2c(iv): the Riemann
+  sums and the scale identity** (new `Analysis/LogRiemann.lean`; Sonine route, step 2 —
+  the `W(t4)` campaign): the four structural facts turning the point values and the
+  `LogStep` telescopes into the dyadic rate for `∫₀¹ log(c+t) dt` — the fold
+  (`RsumN_gLog`: `Σ_{i<k} gLog c (i/(N+1)) ≈ logFold(c(N+1), k) − k·log(N+1)`, `k ≤ N+1`),
+  the collapse (`riemannSum_gLog`: the full sum
+  `≈ (1/(N+1))·logFold(c(N+1), N+1) − log(N+1)`), the two-sided bracket
+  (`logFold_le_Gn`/`Gn_le_logFold`: `ΔGn − hFold(A,M) ≤ logFold(A,M) ≤ ΔGn`, closing
+  `LogStep`'s telescopes into `Rle` pairs against `ΔGn = Gn(A+M) − Gn(A)`), and the
+  scale identity (`Gn_scale_identity`:
+  `(1/M)·(Gn((c+1)M) − Gn(cM)) ≈ (Gn(c+1) − Gn(c)) + log M`, via `Gn_scale_expand` —
+  `logN_mul_gen` driven through the antiderivative). The `− log(N+1)` of the collapse
+  exactly absorbs the `+ log M` of the identity, so the Riemann sums converge to
+  `Gn(c+1) − Gn(c)` with defect `(1/M)·hFold(cM,M) ≤ 1/(cM)` — the rate at the
+  `digammaMidx` schedule and `Rlim_eval_real` are the next brick. Axiom-clean; crux
+  fields `none`.
 - **`RlogPos_ofQ_eq_logN` + `gLog_point` — the `∫ log` layer, parts 2c(ii)–(iii): the
   log-of-rational bridge and the point values** (new `Analysis/LogRatBridge.lean`,
   `Analysis/LogPointVal.lean`; Sonine route, step 2 — the `W(t4)` campaign): (2c-ii)

@@ -292,6 +292,7 @@ import F1Square.Analysis.LogIntegrand
 import F1Square.Analysis.LogRatCert
 import F1Square.Analysis.LogRatBridge
 import F1Square.Analysis.LogPointVal
+import F1Square.Analysis.LogRiemann
 
 open UOR.Primitives
 
