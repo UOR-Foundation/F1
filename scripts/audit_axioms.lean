@@ -4036,3 +4036,20 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.gauss_defect_le
 #print axioms Analysis.genSum_id_rate
 #print axioms Analysis.riemannIntegral_id
+
+-- The affine evaluation layer + the first evaluated Weil-slot component
+-- (IntegralEval.lean addition, new Analysis/AffineIntegral.lean).
+#print axioms Analysis.riemannIntegral_id_gen
+#print axioms Analysis.lip_const
+#print axioms Analysis.congr_const
+#print axioms Analysis.lip_scaled
+#print axioms Analysis.congr_scaled
+#print axioms Analysis.lip_affine
+#print axioms Analysis.congr_affine
+#print axioms Analysis.riemannIntegral_scaled
+#print axioms Analysis.riemannIntegral_affine
+#print axioms Analysis.affine_pullback_eq
+#print axioms Analysis.lip_id_ge
+#print axioms Analysis.tent_piece1
+#print axioms Analysis.tent_piece2
+#print axioms Analysis.tentPoleA_eq

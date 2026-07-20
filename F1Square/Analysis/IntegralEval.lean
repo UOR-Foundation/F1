@@ -183,37 +183,47 @@ theorem gauss_defect_le {M j : Nat} (hj : j + 1 ≤ 2 ^ M) :
   push_cast at hjc
   omega
 
-/-- The rate: the telescoped sums sit within `1/(j+1)` of `1/2` (`M = 2(j+1)`, and
-    `j + 1 ≤ 2^M`, so the defect `1/(2·2^M)` is small enough). -/
-theorem genSum_id_rate (j : Nat) :
-    Rle (Rabs (Rsub (genSum (dyadicTerm (fun x => x)) (digammaMidx (⟨1, 1⟩ : Q) j))
+/-- The rate, general in the Lipschitz datum: the telescoped sums sit within `1/(j+1)` of
+    `1/2` for EVERY schedule (`M = digammaMidx L j ≥ j + 1`, so `1/(2·2^M) ≤ 1/(j+1)`). -/
+theorem genSum_id_rate (L : Q) (j : Nat) :
+    Rle (Rabs (Rsub (genSum (dyadicTerm (fun x => x)) (digammaMidx L j))
         (ofQ (⟨1, 2⟩ : Q) (by decide))))
       (ofQ (⟨1, j + 1⟩ : Q) (Nat.succ_pos j)) := by
-  have heval := genSum_id_eval (digammaMidx (⟨1, 1⟩ : Q) j)
+  have heval := genSum_id_eval (digammaMidx L j)
   refine Rle_trans (Rle_of_Req (Rabs_congr (Rsub_congr heval
     (Req_refl (ofQ (⟨1, 2⟩ : Q) (by decide)))))) ?_
   refine gauss_defect_le ?_
-  have hM : digammaMidx (⟨1, 1⟩ : Q) j = 2 * (j + 1) := rfl
-  rw [hM]
   have h1 : j + 1 < 2 ^ (j + 1) := Nat.lt_two_pow_self
-  have h2 : 2 ^ (j + 1) ≤ 2 ^ (2 * (j + 1)) := Nat.pow_le_pow_right (by decide) (by omega)
+  have h2 : 2 ^ (j + 1) ≤ 2 ^ (digammaMidx L j) := by
+    refine Nat.pow_le_pow_right (by decide) ?_
+    show j + 1 ≤ (L.num.toNat + 1) * (j + 1)
+    have h3 : 1 * (j + 1) ≤ (L.num.toNat + 1) * (j + 1) :=
+      Nat.mul_le_mul_right (j + 1) (by omega)
+    omega
   omega
 
-/-- **`∫₀¹ x dx ≈ 1/2`** — the first non-constant certified integral evaluation: the anchor
-    `D₀ = 0` and the telescoped limit evaluates to `1/2` by the rate + `Rlim_eval`. -/
-theorem riemannIntegral_id :
-    Req (riemannIntegral (f := fun x => x) (L := (⟨1, 1⟩ : Q)) (by decide) (by decide)
-      lip_id congr_id) half := by
+/-- **`∫₀¹ x dx ≈ 1/2`, general in the Lipschitz datum** — the value is `1/2` for every
+    valid `(L, hlip, hfc)` (the schedule changes, the limit does not): the anchor `D₀ = 0`
+    and the telescoped limit evaluates by the rate + `Rlim_eval`. -/
+theorem riemannIntegral_id_gen {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlip : ∀ x y, Rle (Rabs (Rsub x y)) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfc : ∀ x y : Real, Req x y → Req x y) :
+    Req (riemannIntegral (f := fun x => x) hLd hLn hlip hfc) half := by
   show Req (Radd (dyadicR (fun x => x) 0) _) half
   have hD0 : Req (dyadicR (fun x => x) 0) zero :=
     Req_trans (riemannSum_id (2 ^ 0 - 1)) (ofQ_zero_num _)
-  have hlim : Req (Rlim (fun j => genSum (dyadicTerm (fun x => x))
-      (digammaMidx (⟨1, 1⟩ : Q) j))
-      (dyadicSum_RReg (by decide) (by decide) lip_id congr_id))
+  have hlim : Req (Rlim (fun j => genSum (dyadicTerm (fun x => x)) (digammaMidx L j))
+      (dyadicSum_RReg hLd hLn hlip hfc))
       (ofQ (⟨1, 2⟩ : Q) (by decide)) :=
-    Rlim_eval _ (by decide) (fun j => genSum_id_rate j)
+    Rlim_eval _ (by decide) (fun j => genSum_id_rate L j)
   refine Req_trans (Radd_congr hD0 hlim) ?_
   exact Req_trans (Radd_comm zero (ofQ (⟨1, 2⟩ : Q) (by decide)))
     (Radd_zero (ofQ (⟨1, 2⟩ : Q) (by decide)))
+
+/-- **`∫₀¹ x dx ≈ 1/2`** — the headline instance at the canonical modulus `L = 1`. -/
+theorem riemannIntegral_id :
+    Req (riemannIntegral (f := fun x => x) (L := (⟨1, 1⟩ : Q)) (by decide) (by decide)
+      lip_id congr_id) half :=
+  riemannIntegral_id_gen (by decide) (by decide) lip_id congr_id
 
 end UOR.Bridge.F1Square.Analysis

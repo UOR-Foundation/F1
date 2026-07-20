@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`tentPoleA_eq` — THE FIRST EVALUATED WEIL-SLOT COMPONENT** (new
+  `Analysis/AffineIntegral.lean`; Sonine route, step 2 boundary moving): the tent test
+  (piecewise-linear, knots `1/2, 1, 2` — the `X = 2` prime-free window, all prime-side
+  evaluations vanishing) has its `∫₀^∞ f(x) dx` pole part CONSTRUCTED as certified interval
+  integrals AND evaluated in the kernel:
+  `∫_{1/2}^{1} (2x−1) dx + ∫_{1}^{2} (2−x) dx ≈ 1/4 + 1/2 = 3/4` (`tent_piece1`/`tent_piece2`/
+  `tentPoleA_eq`) — a `WeilSlot` interface integral reduced, not carried as data. Built on the
+  new affine evaluation layer: `lip_const`/`lip_scaled`/`lip_affine` (Lipschitz data for any
+  modulus dominating the slope), `riemannIntegral_scaled` (`∫₀¹ q·x = q/2`),
+  `riemannIntegral_affine` (`∫₀¹ (α + qx) = α + q/2`), `affine_pullback_eq` (the interval
+  pullback of an affine map is affine), and the schedule-general `riemannIntegral_id_gen`
+  (the value `1/2` for EVERY valid Lipschitz datum — the L-irrelevance the `smul` route
+  needs). RECORDED for the next brick: the tent's remaining components (`f̃(0) = log 2`, the
+  archimedean tail `−1 − 6log2 + 3log3`) have rational-function integrands
+  (`2 − 1/x`, `−(x²−x+2)/(x(x+1))`, `−2/(x²−1)` past support — the PV singularity cancels
+  exactly against the `f(1)`-subtraction); their construction needs a globally-Lipschitz
+  clamped-reciprocal gadget over `Rinv` (the `RmaxZero` clamp keeps the argument `≥ a > 0`
+  pointwise, so the `Rinv` witness is uniform). Axiom-clean; crux fields `none`.
 - **`riemannIntegral_id` — `∫₀¹ x dx ≈ 1/2`, the first NON-CONSTANT certified integral
   evaluation, and `Rlim_eval`, the limit-evaluation engine** (new `Analysis/IntegralEval.lean`;
   Sonine route, step 1): the Weil pairing's interface fields are integrals whose

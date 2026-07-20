@@ -274,6 +274,7 @@ import F1Square.Square.GateAFiniteList
 import F1Square.Analysis.LogFourPiLower
 import F1Square.Analysis.LambdaFourUpper
 import F1Square.Analysis.IntegralEval
+import F1Square.Analysis.AffineIntegral
 
 open UOR.Primitives
 
@@ -1477,6 +1478,9 @@ example :
         0 < K → K ≤ 3 → (∀ i, i < K → Analysis.Rnonneg (a i)) →
         Analysis.Rle (Analysis.RsumN a K) Analysis.one →
         ¬ Square.GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a)
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := fun x => x) (L := (⟨1, 1⟩ : Analysis.Q))
+        (by decide) (by decide) Analysis.lip_id Analysis.congr_id) Analysis.half
+    ∧ Analysis.Req Analysis.tentPoleA (Analysis.ofQ (⟨3, 4⟩ : Analysis.Q) (by decide))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1490,6 +1494,7 @@ example :
    fun E ι D K a hK hK4 ha => Square.nonPositiveClass_pruned E ι D hK hK4 ha,
    Analysis.Rlambda_head_increasing, Analysis.Rlambda3_lt_Rlambda4,
    fun E ι D K a hK hK3 ha hsum => Square.convexClass123_pruned E ι D hK hK3 ha hsum,
+   Analysis.riemannIntegral_id, Analysis.tentPoleA_eq,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square
