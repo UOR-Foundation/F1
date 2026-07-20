@@ -612,6 +612,111 @@ theorem orderZeroClass_pruned (E : StieltjesEta) (ι : AtlasRule) (D : Nat) (a :
       (Pos_Radd_self Rlambda1_pos))
 
 -- ===========================================================================
+-- The sixth prune: the CONVEX-COMBINATION lever, general in the order.
+--
+-- The cheapest lever available, and the one that scales: if the coefficients are non-negative
+-- with `Σ aᵢ ≤ 1`, the recurrence caps `s K` by the MAXIMUM of the first `K` terms — so a
+-- sequence that strictly exceeds that maximum kills the class. Against the doubled Li sequence
+-- the required input is just `λ_K < λ_{K+1}` (certified at `K = 1, 2` by
+-- `Rlambda_head_increasing`), instead of the contraction lever's far heavier
+-- `λ_{K+1} > λ₁ + … + λ_K`.
+-- ===========================================================================
+
+/-- `Σ (F i · M) ≈ (Σ F) · M` — the right-scalar pull-out. -/
+theorem RsumN_mul_right (F : Nat → Real) (M : Real) (N : Nat) :
+    Req (RsumN (fun i => Rmul (F i) M) N) (Rmul (RsumN F N) M) := by
+  induction N with
+  | zero => exact Req_symm (Req_trans (Rmul_comm zero M) (Rmul_zero M))
+  | succ n ih =>
+    exact Req_trans (Radd_congr ih (Req_refl _))
+      (Req_symm (Rmul_distrib_right (RsumN F n) (F n) M))
+
+/-- `x ≤ y` gives `x − y ≤ 0`. -/
+theorem Rle_Rsub_zero_of_Rle {x y : Real} (h : Rle x y) : Rle (Rsub x y) zero :=
+  Rle_trans (Radd_le_add h (Rle_refl (Rneg y))) (Rle_of_Req (Radd_neg y))
+
+/-- **THE CONVEX CAP**: non-negative coefficients summing to at most `1`, against terms all
+    bounded by a non-negative `M`, cap the next term by `M`. General in the order `K`. -/
+theorem convex_cap {a s : Nat → Real} (K : Nat) {M : Real} (hM : Rnonneg M)
+    (ha : ∀ i, i < K → Rnonneg (a i)) (hsum : Rle (RsumN a K) one)
+    (hs : ∀ i, i < K → Rle (s i) M) (h : SatisfiesRec a K s) : Rle (s K) M := by
+  have h0 := h 0
+  simp only [Nat.zero_add] at h0
+  refine Rle_trans (Rle_of_Req h0) ?_
+  refine Rle_trans (RsumN_le K (fun i hi => Rmul_le_Rmul_left (ha i hi) (hs i hi))) ?_
+  refine Rle_trans (Rle_of_Req (RsumN_mul_right a M K)) ?_
+  exact Rle_trans (Rmul_le_Rmul_right hM hsum)
+    (Rle_of_Req (Req_trans (Rmul_comm one M) (Rmul_one M)))
+
+/-- **THE CONVEX-COMBINATION CORE**: a convex coefficient family cannot drive a sequence
+    strictly above the maximum of its own window. General in the order `K`; the only numeric
+    input is the strict growth `Pos (s K − M)`. -/
+theorem convex_lamRec_fails {a s : Nat → Real} (K : Nat) {M : Real} (hM : Rnonneg M)
+    (ha : ∀ i, i < K → Rnonneg (a i)) (hsum : Rle (RsumN a K) one)
+    (hs : ∀ i, i < K → Rle (s i) M) (hgrow : Pos (Rsub (s K) M)) :
+    ¬ SatisfiesRec a K s :=
+  fun h => not_Pos_of_Rle_zero (Rle_Rsub_zero_of_Rle (convex_cap K hM ha hsum hs h)) hgrow
+
+/-- Doubling a difference: `2a − 2b ≈ (a−b) + (a−b)`. -/
+theorem Rsub_double (a b : Real) :
+    Req (Rsub (Radd a a) (Radd b b)) (Radd (Rsub a b) (Rsub a b)) :=
+  Req_trans (Radd_congr (Req_refl (Radd a a)) (Rneg_Radd b b))
+    (Radd_rearrange4 a a (Rneg b) (Rneg b))
+
+/-- A strict gap doubles. -/
+theorem Pos_Rsub_double {a b : Real} (h : Pos (Rsub a b)) :
+    Pos (Rsub (Radd a a) (Radd b b)) :=
+  Pos_congr (Req_symm (Rsub_double a b)) (Pos_Radd_self h)
+
+/-- **THE SIXTH PRUNE — the convex class is dead at orders `K = 1, 2`**: no Gate-A finite list
+    has non-negative coefficients summing to at most `1`, for every η₂-anchored η-data, every
+    rule, and every dimension. (At `K = 1, 2` this is implied by the contraction prunes; it is
+    stated because the LEVER, unlike those, scales: `convex_lamRec_fails` is general in `K` and
+    needs only `λ_K < λ_{K+1}`. The `K = 3` instance is a one-liner the moment
+    `Pos (λ₄ − λ₃)` is certified — an arithmetic check confirms
+    `λ₄ − λ₃ ≥ 0.047033` is already reachable from brackets IN STOCK, through the difference
+    identity `λ₄ − λ₃ = γ − 3η₁ − 3η₂ − η₃ − ½(γ+log4π) + (9/4)ζ(2) − (21/8)ζ(3) + (15/16)ζ(4)`,
+    whose additive-cancellation mechanization is the outstanding work; bounding `λ₄` and `λ₃`
+    separately does NOT suffice — `0.2185 < 0.2486` — because it pays each `η` bracket width
+    twice.) -/
+theorem convexClass12_pruned (E : StieltjesEta3) (ι : AtlasRule) (D : Nat)
+    {a : Nat → Real} {K : Nat} (hK : 0 < K) (hK2 : K ≤ 2)
+    (ha : ∀ i, i < K → Rnonneg (a i)) (hsum : Rle (RsumN a K) one) :
+    ¬ GateAList E.toStieltjesEta ι D K a := by
+  intro h
+  -- the doubled genuine head, transported to the certified λ's
+  have e1 : Req (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1)) (Radd Rlambda1 Rlambda1) :=
+    Radd_congr (genuineLam_one E.toStieltjesEta) (genuineLam_one E.toStieltjesEta)
+  have e2 : Req (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2)) (Radd Rlambda2 Rlambda2) :=
+    Radd_congr (genuineLam_two E.toStieltjesEta) (genuineLam_two E.toStieltjesEta)
+  have e3 : Req (Radd (genuineLamSeq E.eta 3) (genuineLamSeq E.eta 3)) (Radd Rlambda3 Rlambda3) :=
+    Radd_congr (genuineLam_three E) (genuineLam_three E)
+  have g12 : Pos (Rsub (Radd Rlambda2 Rlambda2) (Radd Rlambda1 Rlambda1)) :=
+    Pos_Rsub_double Rlambda1_lt_Rlambda2
+  have g23 : Pos (Rsub (Radd Rlambda3 Rlambda3) (Radd Rlambda2 Rlambda2)) :=
+    Pos_Rsub_double Rlambda2_lt_Rlambda3
+  have n1 : Rnonneg (Radd Rlambda1 Rlambda1) :=
+    Rnonneg_Radd (Rnonneg_of_Pos Rlambda1_pos) (Rnonneg_of_Pos Rlambda1_pos)
+  have n2 : Rnonneg (Radd Rlambda2 Rlambda2) :=
+    Rnonneg_Radd (Rnonneg_of_Pos Rlambda2_pos) (Rnonneg_of_Pos Rlambda2_pos)
+  match K, hK, hK2 with
+  | 1, _, _ =>
+    refine convex_lamRec_fails 1 (M := Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))
+      (Rnonneg_congr (Req_symm e1) n1) ha hsum (fun i hi => ?_) ?_ h.lamRec
+    · exact (by omega : i = 0) ▸ Rle_refl _
+    · exact Pos_congr (Req_symm (Radd_congr e2 (Rneg_congr e1))) g12
+  | 2, _, _ =>
+    refine convex_lamRec_fails 2 (M := Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))
+      (Rnonneg_congr (Req_symm e2) n2) ha hsum (fun i hi => ?_) ?_ h.lamRec
+    · match i, hi with
+      | 0, _ =>
+        exact Rle_trans (Rle_of_Req e1) (Rle_trans
+          (Rle_of_Rnonneg_Rsub (Rnonneg_of_Pos g12)) (Rle_of_Req (Req_symm e2)))
+      | 1, _ => exact Rle_refl _
+      | (n + 2), hn => exact absurd hn (by omega)
+    · exact Pos_congr (Req_symm (Radd_congr e3 (Rneg_congr e2))) g23
+
+-- ===========================================================================
 -- The prune ledger, as one kernel-checked statement.
 -- ===========================================================================
 
@@ -641,10 +746,15 @@ theorem gateA_prune_ledger (E : StieltjesEta5) (ι : AtlasRule) (D : Nat) :
     ∧ (∀ a : Nat → Real, Rle (a 0) one → Rle (a 1) one →
         ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D 2 a)
     ∧ (∀ (K : Nat) (a : Nat → Real), 0 < K → K ≤ 4 → (∀ i, i < K → Rle (a i) zero) →
+        ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a)
+    ∧ (∀ (K : Nat) (a : Nat → Real), 0 < K → K ≤ 2 → (∀ i, i < K → Rnonneg (a i)) →
+        Rle (RsumN a K) one →
         ¬ GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a) :=
   ⟨fun a => orderZeroClass_pruned _ ι D a,
    fun c => order1Class_pruned E.toStieltjesEta4.toStieltjesEta3 ι D c,
    fun _a h0 h1 => contractionClass2_pruned E.toStieltjesEta4.toStieltjesEta3 ι D h0 h1,
-   fun _K _a hK hK4 ha => nonPositiveClass_pruned E ι D hK hK4 ha⟩
+   fun _K _a hK hK4 ha => nonPositiveClass_pruned E ι D hK hK4 ha,
+   fun _K _a hK hK2 ha hsum =>
+     convexClass12_pruned E.toStieltjesEta4.toStieltjesEta3 ι D hK hK2 ha hsum⟩
 
 end UOR.Bridge.F1Square.Square

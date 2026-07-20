@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`convexClass12_pruned` / `convex_lamRec_fails` — the CONVEX-COMBINATION lever (sixth prune),
+  general in the order** (`Square/GateAFiniteList.lean`): non-negative coefficients with
+  `Σ aᵢ ≤ 1` cap `s K` by the maximum of the window (`convex_cap`, stated for arbitrary `K`), so
+  a sequence strictly exceeding that maximum kills the class. Against the doubled Li sequence the
+  numeric input is only `λ_K < λ_{K+1}` — certified at `K = 1, 2` by `Rlambda_head_increasing` —
+  instead of the contraction lever's far heavier `λ_{K+1} > λ₁ + … + λ_K`. Supporting substrate:
+  `RsumN_mul_right`, `Rle_Rsub_zero_of_Rle`, `Rsub_double`/`Pos_Rsub_double` (a strict gap
+  doubles). RECORDED for the next session: the `K = 3` instance is a one-liner once
+  `Pos (λ₄ − λ₃)` is certified, and an exact rational check confirms
+  **`λ₄ − λ₃ ≥ 0.047033` is already reachable from brackets IN STOCK** through the difference
+  identity `λ₄ − λ₃ = γ − 3η₁ − 3η₂ − η₃ − ½(γ+log4π) + (9/4)ζ(2) − (21/8)ζ(3) + (15/16)ζ(4)`;
+  the outstanding work is purely the additive-cancellation mechanization (a 7-atom `RsumL`
+  rearrangement after `nsmulR` splitting — note `decide` on `List.Perm` is barred, it pulls
+  `Classical.choice`). Bounding `λ₄` and `λ₃` separately does NOT suffice (`0.2185 < 0.2486`):
+  it pays each `η` bracket width twice, which is exactly what the difference avoids.
 - **`gateA_prune_ledger` — the Gate-A prune ledger as one kernel-checked statement, plus two
   new order-uniform kills** (`Square/GateAFiniteList.lean`):
   - **`nonPositiveClass_pruned` (fifth prune, uniform in the order)**: no Gate-A finite list has

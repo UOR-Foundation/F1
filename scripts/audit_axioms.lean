@@ -4000,3 +4000,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.nonPositiveClass_pruned
 #print axioms Square.orderZeroClass_pruned
 #print axioms Square.gateA_prune_ledger
+
+-- The convex-combination lever (Square/GateAFiniteList.lean, sixth prune).
+#print axioms Square.RsumN_mul_right
+#print axioms Square.Rle_Rsub_zero_of_Rle
+#print axioms Square.convex_cap
+#print axioms Square.convex_lamRec_fails
+#print axioms Square.Rsub_double
+#print axioms Square.Pos_Rsub_double
+#print axioms Square.convexClass12_pruned
