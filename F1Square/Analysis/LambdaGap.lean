@@ -222,6 +222,27 @@ theorem not_Pos_zero : ¬ Pos zero := by
   simp only [Qlt, Qbound, zero_seq] at hn
   omega
 
+/-- **The order clash**: a real cannot be strictly positive while its negation is non-negative
+    (seq-level: `Pos` gives an approximant above `Qbound n`, `Rnonneg (−z)` pins it below). -/
+theorem not_Pos_of_Rnonneg_Rneg {z : Real} (hn : Rnonneg (Rneg z)) : ¬ Pos z := by
+  intro ⟨n, hlt⟩
+  have h : Qle (neg (Qbound n)) (neg (z.seq n)) := hn n
+  simp only [Qle, Qlt, Qbound, neg] at h hlt
+  push_cast at h hlt
+  have hneg : -(z.seq n).num * ((n : Int) + 1) = -((z.seq n).num * ((n : Int) + 1)) :=
+    Int.neg_mul _ _
+  rw [hneg] at h
+  omega
+
+/-- `λ₁ + λ₁ ≈ 2λ₁` — the doubled first coefficient meets its integer-coefficient form. -/
+theorem Rlambda1_double_eq : Req (Radd Rlambda1 Rlambda1) Rtwolambda1 :=
+  Req_trans (Req_symm (Rhalf_Radd Rtwolambda1 Rtwolambda1)) (Rhalf_add_self Rtwolambda1)
+
+/-- **`Pos (2λ₂ − (λ₁ + λ₁))`** — the gap against the doubled `λ₁` directly. -/
+theorem lambda_gap_pos_double : Pos (Rsub (Radd Rlambda2 Rlambda2) (Radd Rlambda1 Rlambda1)) :=
+  Pos_congr (Radd_congr (Req_refl (Radd Rlambda2 Rlambda2))
+    (Rneg_congr (Req_symm Rlambda1_double_eq))) lambda_gap_pos
+
 /-- **`λ₁ ≉ λ₂` — the first certified separation of two Li coefficients.** If `λ₁ ≈ λ₂` then
     `λ₂ + λ₂ ≈ λ₁ + λ₁ ≈ 2λ₁` (`Rhalf` algebra), so the gap `2λ₂ − 2λ₁ ≈ 0`, contradicting
     `lambda_gap_pos`. -/

@@ -16,6 +16,31 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`contractionClass_pruned` — the SECOND candidate class killed: the entire contraction class**
+  (`Square/GateAFiniteList.lean`): no Gate-A finite list exists with order 1 and ANY real
+  coefficient `c ≤ 1`, for every anchored η-data, rule, and dimension — `lamRec` forces
+  `2λ₂ ≈ c·2λ₁ ≤ 2λ₁` (via `satisfiesRec_order1_step`, `Pos λ₁`, and `Rmul` monotonicity),
+  clashing with the certified gap through the new order-clash lemma `not_Pos_of_Rnonneg_Rneg`
+  (`Pos z` and `Rnonneg (−z)` are contradictory at the approximant level) and
+  `lambda_gap_pos_double` (`Pos (2λ₂ − (λ₁+λ₁))`, from `lambda_gap_pos` via
+  `Rlambda1_double_eq`). Strictly generalizes `constantClass_pruned` (`c = 1`): the doubled Li
+  sequence certifiably EXPANDS at its first step, so no non-expanding order-1 rule can carry the
+  Gate-A diagonal. The surviving order-1 candidates are the strict expansions `c > 1`; their kill
+  (`λ₃λ₁ vs λ₂²`) needs a `λ₃` upper — the next bracket. Axiom-clean; crux fields `none`.
+- **`Rlog4pic_ge` — the `log 4π` LOWER bracket (`log 4π ≥ 2.53038`) and the first TWO-SIDED Li
+  coefficient (`Rlambda1_le : λ₁ ≤ 0.02381`)** (new `Analysis/LogFourPiLower.lean`): the substrate
+  carried only upper log brackets (built for the λ-positivity proofs) plus the crude `log π ≥ 1`;
+  every λ UPPER bound — what the next Gate-A prunes consume — needs `log 4π` from below. Built:
+  `artSum_le_base` (NEW substrate lemma — artanh partial sums are monotone in the base, via
+  `qpow_le_base`), `Rpi_seq_ge_314` (every Machin approximant `≥ 3.14`, the depth-6 sharpening of
+  `Rpi_seq_ge_three`: `arctan(1/5) ≥ 0.197354`, `arctan(1/239) ≤ 0.004226`, tail `(1/2)¹⁵`),
+  `tmap_ge_314` (`q ≥ 3.14 ⟹ tmap q ≥ 107/207`, exactly `tmap(3.14)`), hence
+  `RpiTmap ≥ 107/207` pointwise; then `log 2 ≥ 2·artSum(1/3,8) ≥ 0.69314` (`Rlog2c_ge_69314`) and
+  `log π ≥ 2·artSum(107/207,5) ≥ 1.1441` (`Rlogpic_ge_11441`, base- then depth-monotonicity
+  through the artanh diagonal), assembling to `log 4π ≥ 253038/10⁵` (true `2.531024`; upper
+  companion `2.5316`). From it `2λ₁ ≤ 0.04762` (`Rtwolambda1_le`) and `λ₁ ≤ 2381/10⁵`
+  (true `0.0230957`) — with `Rlambda1_pos` the first Li coefficient is bracketed two-sidedly.
+  Axiom-clean; crux fields `none`, RH open.
 - **`GateA_of_finiteList` — the Gate-A finite-list template (certificate front, workstream 2)**
   (new `Square/GateAFiniteList.lean`): Gate A specified as a finite exact hypothesis list around a
   generating recurrence, exactly as the certificate front prescribes — fix `D`, an order `K` and

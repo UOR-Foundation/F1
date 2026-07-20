@@ -3928,3 +3928,30 @@ open UOR.Bridge.F1Square
 #print axioms Square.finiteList_can_fail
 #print axioms Square.constantClass_lamRec_fails
 #print axioms Square.constantClass_pruned
+
+-- The log 4π lower bracket + λ₁ upper (Analysis/LogFourPiLower.lean): first two-sided λ.
+#print axioms Analysis.qpow_le_base
+#print axioms Analysis.artTerm_le_base
+#print axioms Analysis.artSum_le_base
+#print axioms Analysis.Rpi_seq_ge_314
+#print axioms Analysis.tmap_ge_314
+#print axioms Analysis.RpiTmap_ge_107207
+#print axioms Analysis.Rartanh_third_ge
+#print axioms Analysis.Rlog2c_ge
+#print axioms Analysis.Rlog2c_ge_69314
+#print axioms Analysis.Rartanh_RpiTmap_ge_deep
+#print axioms Analysis.Rlogpic_ge
+#print axioms Analysis.Rlogpic_ge_11441
+#print axioms Analysis.Rlog4pic_ge
+#print axioms Analysis.Rtwolambda1_le
+#print axioms Analysis.Rlambda1_le
+
+-- The order clash + doubled-λ₁ gap (Analysis/LambdaGap.lean additions).
+#print axioms Analysis.not_Pos_of_Rnonneg_Rneg
+#print axioms Analysis.Rlambda1_double_eq
+#print axioms Analysis.lambda_gap_pos_double
+
+-- The contraction-class prune (Square/GateAFiniteList.lean additions).
+#print axioms Square.satisfiesRec_order1_step
+#print axioms Square.contractionClass_lamRec_fails
+#print axioms Square.contractionClass_pruned

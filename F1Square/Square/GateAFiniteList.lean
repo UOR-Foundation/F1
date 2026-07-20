@@ -105,6 +105,12 @@ theorem satisfiesRec_const_step {s : Nat → Real}
   exact Req_trans (Radd_comm zero (Rmul one (s n)))
     (Req_trans (Radd_zero (Rmul one (s n))) (Req_trans (Rmul_comm one (s n)) (Rmul_one (s n))))
 
+/-- An order-1 recurrence with ANY coefficient `c` forces the one-step multiplicative relation
+    `s(n+1) ≈ c·s(n)`. -/
+theorem satisfiesRec_order1_step {c : Real} {s : Nat → Real}
+    (h : SatisfiesRec (fun _ => c) 1 s) (n : Nat) : Req (s (n + 1)) (Rmul c (s n)) :=
+  Req_trans (h n) (Req_trans (Radd_comm zero (Rmul c (s n))) (Radd_zero (Rmul c (s n))))
+
 -- ===========================================================================
 -- The reduction: finite list ⟹ RealizesDiag (generic square, then Gate A).
 -- ===========================================================================
@@ -227,5 +233,55 @@ theorem constantClass_lamRec_fails (E : StieltjesEta) :
 theorem constantClass_pruned (E : StieltjesEta) (ι : AtlasRule) (D : Nat) :
     ¬ GateAList E ι D 1 (fun _ => one) :=
   fun h => constantClass_lamRec_fails E h.lamRec
+
+-- ===========================================================================
+-- The second prune: the entire CONTRACTION class (order 1, any coefficient ≤ 1).
+-- ===========================================================================
+
+/-- **The contraction class fails `lamRec`**: an order-1 recurrence with ANY real coefficient
+    `c ≤ 1` forces `2λ₂ ≈ c·2λ₁ ≤ 2λ₁` (using `Pos λ₁`, so the doubled `λ₁` is non-negative),
+    contradicting the certified gap `2λ₂ − 2λ₁ > 0` (`lambda_gap_pos_double`) through the order clash
+    `not_Pos_of_Rnonneg_Rneg`. -/
+theorem contractionClass_lamRec_fails (E : StieltjesEta) {c : Real} (hc : Rle c one) :
+    ¬ SatisfiesRec (fun _ => c) 1
+        (fun m => Radd (genuineLamSeq E.eta (1 + m)) (genuineLamSeq E.eta (1 + m))) := by
+  intro h
+  -- the one-step relation at n = 0, transported to the certified λ's
+  have hstep : Req (Radd (genuineLamSeq E.eta 2) (genuineLamSeq E.eta 2))
+      (Rmul c (Radd (genuineLamSeq E.eta 1) (genuineLamSeq E.eta 1))) :=
+    satisfiesRec_order1_step h 0
+  have h2 : Req (Radd Rlambda2 Rlambda2) (Rmul c (Radd Rlambda1 Rlambda1)) :=
+    Req_trans (Radd_congr (Req_symm (genuineLam_two E)) (Req_symm (genuineLam_two E)))
+      (Req_trans hstep (Rmul_congr (Req_refl c)
+        (Radd_congr (genuineLam_one E) (genuineLam_one E))))
+  -- contraction: c·(λ₁+λ₁) ≤ 1·(λ₁+λ₁) ≈ λ₁+λ₁ (the doubled λ₁ is non-negative)
+  have h1n : Rnonneg (Radd Rlambda1 Rlambda1) :=
+    Rnonneg_Radd (Rnonneg_of_Pos Rlambda1_pos) (Rnonneg_of_Pos Rlambda1_pos)
+  have hb : Rle (Rmul c (Radd Rlambda1 Rlambda1)) (Radd Rlambda1 Rlambda1) :=
+    Rle_trans (Rmul_le_Rmul_right h1n hc)
+      (Rle_of_Req (Req_trans (Rmul_comm one (Radd Rlambda1 Rlambda1))
+        (Rmul_one (Radd Rlambda1 Rlambda1))))
+  have hle : Rle (Radd Rlambda2 Rlambda2) (Radd Rlambda1 Rlambda1) :=
+    Rle_trans (Rle_of_Req h2) hb
+  -- the clash with the certified gap
+  have hneg : Rnonneg (Rneg (Rsub (Radd Rlambda2 Rlambda2) (Radd Rlambda1 Rlambda1))) := by
+    refine Rnonneg_congr ?_ (Rnonneg_Rsub_of_Rle hle)
+    exact Req_symm (Req_trans
+      (Rneg_Radd (Radd Rlambda2 Rlambda2) (Rneg (Radd Rlambda1 Rlambda1)))
+      (Req_trans (Radd_congr (Req_refl (Rneg (Radd Rlambda2 Rlambda2)))
+        (Rneg_neg (Radd Rlambda1 Rlambda1)))
+        (Radd_comm (Rneg (Radd Rlambda2 Rlambda2)) (Radd Rlambda1 Rlambda1))))
+  exact not_Pos_of_Rnonneg_Rneg hneg lambda_gap_pos_double
+
+/-- **THE SECOND PRUNE, RECORDED — the contraction class is dead**: no Gate-A finite list
+    exists with order 1 and ANY coefficient `c ≤ 1` — for every anchored η-data, every atlas
+    rule, and every dimension. This strictly generalizes `constantClass_pruned` (`c = 1`):
+    the doubled Li sequence certifiably EXPANDS at the first step (`2λ₂ > 2λ₁ ≥ 0`), so no
+    non-expanding order-1 rule can carry the Gate-A diagonal. The surviving order-1 candidates
+    are the strict expansions `c > 1`; killing those needs `λ₃λ₁ vs λ₂²` (a `λ₃` upper — the
+    next bracket on the certificate front). -/
+theorem contractionClass_pruned (E : StieltjesEta) (ι : AtlasRule) (D : Nat) {c : Real}
+    (hc : Rle c one) : ¬ GateAList E ι D 1 (fun _ => c) :=
+  fun h => contractionClass_lamRec_fails E hc h.lamRec
 
 end UOR.Bridge.F1Square.Square
