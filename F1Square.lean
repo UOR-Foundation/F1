@@ -293,6 +293,7 @@ import F1Square.Analysis.LogRatCert
 import F1Square.Analysis.LogRatBridge
 import F1Square.Analysis.LogPointVal
 import F1Square.Analysis.LogRiemann
+import F1Square.Analysis.LogIntegralEval
 
 open UOR.Primitives
 
@@ -1568,6 +1569,20 @@ example :
           (Analysis.gLog c (Analysis.ofQ (⟨(j : Int), N + 1⟩ : Analysis.Q) (Nat.succ_pos N)))
           (Analysis.Rsub (Analysis.logN (c * (N + 1) + j) ha1)
             (Analysis.logN (N + 1) (Nat.succ_pos N))))
+    -- the certified log integrals: ∫₀¹ log(c+t) dt = Gn(c+1) − Gn(c), c = 1, 2, 3
+    -- (the ∫log layer complete — the values the t4 pole pieces consume)
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := Analysis.gLog 1)
+          (L := (⟨1, 1⟩ : Analysis.Q)) Nat.one_pos (by decide)
+          Analysis.gLog1_lip Analysis.gLog1_congr)
+        (Analysis.Rsub (Analysis.Gn 2 (by omega)) (Analysis.Gn 1 (by omega)))
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := Analysis.gLog 2)
+          (L := (⟨1, 1⟩ : Analysis.Q)) Nat.one_pos (by decide)
+          Analysis.gLog2_lip Analysis.gLog2_congr)
+        (Analysis.Rsub (Analysis.Gn 3 (by omega)) (Analysis.Gn 2 (by omega)))
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := Analysis.gLog 3)
+          (L := (⟨1, 1⟩ : Analysis.Q)) Nat.one_pos (by decide)
+          Analysis.gLog3_lip Analysis.gLog3_congr)
+        (Analysis.Rsub (Analysis.Gn 4 (by omega)) (Analysis.Gn 3 (by omega)))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1594,6 +1609,8 @@ example :
    Square.t4F_one, Square.t4PrimePart_eq,
    fun i hi => ⟨Analysis.Gn_step_lower i hi, Analysis.Gn_step_upper i hi⟩,
    fun c hc1 hc3 j N hj ha1 => Analysis.gLog_point c hc1 hc3 j N hj ha1,
+   Analysis.riemannIntegral_logC1, Analysis.riemannIntegral_logC2,
+   Analysis.riemannIntegral_logC3,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square

@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`riemannIntegral_logC1/2/3` — the `∫ log` layer, part 2c(v): the evaluation — THE
+  `∫ log` LAYER IS COMPLETE** (new `Analysis/LogIntegralEval.lean`; Sonine route,
+  step 2 — the `W(t4)` campaign): `∫₀¹ log(c+t) dt ≈ Gn(c+1) − Gn(c)`
+  (`= (c+1)log(c+1) − c·log c − 1`), certified for `c = 1, 2, 3` on the `1`-Lipschitz
+  data — the second non-rational family of certified integral evaluations (after the
+  harmonic `recipC` family), and the values the five `t4PoleA` pieces consume. The
+  assembly: the dyadic defect `|D_m − (Gn(c+1) − Gn(c))| ≤ (1/2^m)·hFold(c·2^m, 2^m)
+  ≤ 1/2^m` (`dyadicR_gLog_defect`, from the part 2c(iv) collapse + bracket + scale
+  identity, with `hFold_le_ratio`: the harmonic block is at most `M/A`); the anchor
+  `D₀ = gLog c (0) ≈ log c`; the `digammaMidx` schedule (`genSum_gLog_rate`) and
+  `Rlim_eval_real` — the `HarmonicLogC` template end to end. General-base engine
+  `riemannIntegral_logC_gen` (Lipschitz datum a hypothesis); root witness clauses for
+  the three instances; audit entries. Next: the five `t4PoleA` pieces (`[k, k+1]` at
+  `c = 1, 2, 3` direct; `[1/4, 1/2]`, `[1/2, 1]` by affine substitution with the log
+  constants split off), whose logs cancel to the exact `9/4`. Axiom-clean; crux
+  fields `none`.
 - **`riemannSum_gLog` + `Gn_scale_identity` — the `∫ log` layer, part 2c(iv): the Riemann
   sums and the scale identity** (new `Analysis/LogRiemann.lean`; Sonine route, step 2 —
   the `W(t4)` campaign): the four structural facts turning the point values and the

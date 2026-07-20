@@ -4354,3 +4354,16 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Gn_le_logFold
 #print axioms Analysis.Gn_scale_expand
 #print axioms Analysis.Gn_scale_identity
+
+-- The ∫log layer, part 2c(v): the evaluation — ∫₀¹ log(c+t) dt = Gn(c+1) − Gn(c),
+-- rate + Rlim_eval_real, headline instances c = 1, 2, 3 (new Analysis/LogIntegralEval.lean).
+#print axioms Analysis.hFold_le_ratio
+#print axioms Analysis.scaled_hFold_le
+#print axioms Analysis.dyadicR_gLog_pow
+#print axioms Analysis.dyadicR_gLog_zero
+#print axioms Analysis.dyadicR_gLog_defect
+#print axioms Analysis.genSum_gLog_rate
+#print axioms Analysis.riemannIntegral_logC_gen
+#print axioms Analysis.riemannIntegral_logC1
+#print axioms Analysis.riemannIntegral_logC2
+#print axioms Analysis.riemannIntegral_logC3
