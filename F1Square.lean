@@ -286,6 +286,7 @@ import F1Square.Analysis.TentArchTail
 import F1Square.Square.TentSlot
 import F1Square.Square.BumpSlot
 import F1Square.Square.ConeTent
+import F1Square.Analysis.LogStep
 
 open UOR.Primitives
 
@@ -1548,6 +1549,11 @@ example :
               (Analysis.Rmul (Analysis.ofQ (⟨1, 3⟩ : Analysis.Q) (by decide))
                 (Analysis.Rsub (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
                     (Analysis.logN 2 (by omega))) (Analysis.logN 3 (by omega)))))))
+    ∧ (∀ (i : Nat) (hi : 1 ≤ i),
+        Analysis.Rle (Analysis.Radd (Analysis.Gn i hi) (Analysis.logN i hi))
+          (Analysis.Gn (i + 1) (by omega))
+        ∧ Analysis.Rle (Analysis.Gn (i + 1) (by omega))
+          (Analysis.Radd (Analysis.Gn i hi) (Analysis.logN (i + 1) (by omega))))
     ∧ f1SquareStatus.hodgeIndexHolds = none
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
@@ -1572,6 +1578,7 @@ example :
    Square.tentPrimePart_eq, Square.tentWeilValue_pos,
    Square.bumpPrimePart_eq, Square.bumpWeilValue_neg,
    Square.t4F_one, Square.t4PrimePart_eq,
+   fun i hi => ⟨Analysis.Gn_step_lower i hi, Analysis.Gn_step_upper i hi⟩,
    rfl, rfl⟩
 
 end UOR.Bridge.F1Square

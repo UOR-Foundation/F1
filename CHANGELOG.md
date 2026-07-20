@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Gn_step_lower`/`Gn_step_upper` + telescopes — the `∫ log` layer, part 1** (new
+  `Analysis/LogStep.lean`; Sonine route, step 2 — the engine for the `W(t4)` campaign):
+  with `Gn(n) = n·log n − n` (the `log` antiderivative at integer arguments,
+  `Gn_one ≈ −1`), the unit step is bracketed by the endpoint samples,
+  `Gn(i) + log i ≤ Gn(i+1) ≤ Gn(i) + log(i+1)` — PURE ALGEBRA over the per-step
+  logarithm bracket (`ExpBounds.lean`): multiply `1/(i+1) + log i ≤ log(i+1)` by `i+1`
+  (resp. `log(i+1) ≤ 1/i + log i` by `i`) and the rational parts collapse to `1`.
+  Telescoping (`Gn_tele_lower`/`Gn_tele_upper`) gives the two-sided Riemann bound
+  `Gn(A) + Σ_{j<c} log(A+j) ≤ Gn(A+c) ≤ Gn(A) + Σ_{j<c} log(A+j+1)`, and the fold gap
+  is bounded by the EXISTING rational harmonic fold (`logFold_gap`:
+  `Σ log(A+j+1) ≤ Σ log(A+j) + hFold A c`). Since the dyadic Riemann samples of a `log`
+  integrand at rational points ARE `logN` differences at integer arguments
+  (`log(c + j/2^m) = logN(c·2^m + j) − logN(2^m)`), this is exactly the rate content for
+  `∫₀¹ log(c+t) dt = (c+1)·log(c+1) − c·log c − 1` at defect `hFold(c·2^m, 2^m) ≤ 1/(c·2^m)`
+  — part 2 wires it into the gateway. Verified target (30-digit numeric check recorded):
+  `W(t4) = 9/4 + 4(log 2)² − [primes + (log 4π + γ)·2 log 2 + tail] ≈ +0.0981 > 0`, the
+  sign RH demands on the cone; the tail's dilog piece (`−Li₂(−3)`) will be certified by
+  brackets, not closed form. Root witness extended with the step-bracket pair (∀-clause);
+  axiom-clean; crux fields `none`.
 - **`t4Test` + `t4PrimePart_eq` — THE FIRST CONE-SHAPED TEST DATUM WITH A LIVE PRIME SIDE**
   (new `Square/ConeTent.lean`; Sonine route, step 2 — toward the autocorrelation cone): the
   square-scale symmetric log-tent `t4F(x) = 2·log 2 − |log x|` on `[1/4, 4]` realized as a

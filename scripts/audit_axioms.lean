@@ -4284,3 +4284,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.t4F_four
 #print axioms Square.t4F_quarter
 #print axioms Square.t4PrimePart_eq
+
+-- The ∫log layer, part 1: the antiderivative step bracket Gn(i)+log i ≤ Gn(i+1) ≤
+-- Gn(i)+log(i+1), its telescopes, and the harmonic gap bound (new Analysis/LogStep.lean).
+#print axioms Analysis.Gn_one
+#print axioms Analysis.Gn_step_lower
+#print axioms Analysis.Gn_step_upper
+#print axioms Analysis.Gn_tele_lower
+#print axioms Analysis.Gn_tele_upper
+#print axioms Analysis.logFold_gap
