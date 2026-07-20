@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`riemannIntegral_recipC` — the GENERAL-BASE harmonic bridge: `∫₀¹ dx/(c+x) ≈
+  log(c+1) − log c` for EVERY natural base `c ≥ 1`** (new `Analysis/HarmonicLogC.lean`;
+  Sonine route, step 2): the `HarmonicLog32` construction with the base as a parameter —
+  left sums are `H_{(c+1)M} − H_{cM}`, the wedge telescopes `cM → (c+1)M` with width
+  `1/(c(c+1)M)` (both cancellations by `logN_mul_gen`), anchor `D₀ = 1/c`. This is the
+  block engine the improper archimedean tail needs: `∫₂^∞ −2/(x²−1) dx = −log 3` is a
+  `genSum` of unit blocks `∫_{m+1}^{m+2}(1/w − 1/(w+2))` (`ImproperIntegral.lean`), and each
+  block is `[log(m+2)−log(m+1)] − [log(m+4)−log(m+3)]` — two instances of this theorem;
+  the partial sums telescope to `log 3 − (log(N+3) − log(N+1))` with defect `≤ 2/(N+1)` by
+  the per-step bracket, so `Rlim_eval_real` will close the tail. Wired into the root witness
+  as a universally-quantified clause (`∀ c ≥ 1`). Axiom-clean; crux fields `none`.
 - **`tent_arch12` — the archimedean tail's compact `[1,2]` piece ≈ `−1 − 6·log 2 + 4·log 3`,
   and general log-additivity** (new `Analysis/HarmonicLog32.lean`,
   `Analysis/TentArchPiece.lean`; Sonine route, step 2): the PV-cancelled tail integrand on

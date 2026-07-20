@@ -4172,3 +4172,20 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.G3_congr
 #print axioms Analysis.gRecip32_lip_at
 #print axioms Analysis.tent_arch12
+
+-- The general-base harmonic bridge ∫₀¹ dx/(c+x) = log(c+1) − log c (new Analysis/HarmonicLogC.lean).
+#print axioms Analysis.logC_le_hFold
+#print axioms Analysis.hFoldC_le
+#print axioms Analysis.hFoldC_defect
+#print axioms Analysis.gRecipC_lip
+#print axioms Analysis.gRecipC_congr
+#print axioms Analysis.gRecipC_lip_at
+#print axioms Analysis.gRecipC_point
+#print axioms Analysis.harmTermFoldC_den_pos
+#print axioms Analysis.RsumN_gRecipC
+#print axioms Analysis.harmTermFoldC_scale
+#print axioms Analysis.riemannSum_gRecipC
+#print axioms Analysis.dyadicR_gRecipC_zero
+#print axioms Analysis.genSum_gRecipC_rate
+#print axioms Analysis.riemannIntegral_recipC_gen
+#print axioms Analysis.riemannIntegral_recipC
