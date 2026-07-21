@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 12 — the PARALLELOGRAM LAW and the squared-distance
+  geometry** (new `Square/Parallelogram.lean`): bilinearity completed on the second slot
+  (`innerN_add_right`/`innerN_sub_right`); **`parallelogram`** —
+  `⟨f+g,f+g⟩ + ⟨f−g,f−g⟩ ≈ 2⟨f,f⟩ + 2⟨g,g⟩` (bilinear expansion, the `±⟨f,g⟩, ±⟨g,f⟩` cross
+  terms cancelling as multiset pairs in the `RsumL` normalizer) — the identity certifying the
+  pairing is genuine inner-product geometry; `dist2 = ⟨f−g,f−g⟩` (the substrate has no sqrt,
+  so the metric geometry runs on the square) with nonneg/self/symm and
+  **`dist2_doubling`** — `d²(f,h) ≤ 2d²(f,g) + 2d²(g,h)`, the quasi-triangle inequality that
+  Cauchy sequences and completions are phrased with sqrt-free, an immediate corollary of the
+  parallelogram law. The completion axis now has its metric substrate. Honest scope: fixed
+  truncation, no completion constructed, L² mirror banked (needs `L2Test.neg`); crux `none`.
 - **The pre-Hilbert layer, brick 11 — PARSEVAL at the full indicator basis** (new
   `Square/Parseval.lean`): at the complete finite basis the layer's Bessel inequality
   SATURATES — `fourierC_indic` (`⟨f,δₖ⟩_N ≈ f(k)`: the coefficients are the coordinates),

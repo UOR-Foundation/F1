@@ -4742,3 +4742,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.proj_indic_eq
 #print axioms Square.parseval_indic
 #print axioms Square.bessel_saturates_at_indic
+
+-- THE PRE-HILBERT LAYER, brick 12 (Square/Parallelogram.lean) — the parallelogram law (the
+-- identity certifying genuine inner-product geometry; cross terms cancel in the RsumL
+-- multiset) and the sqrt-free squared-distance geometry with the doubling quasi-triangle.
+#print axioms Square.innerN_add_right
+#print axioms Square.innerN_sub_right
+#print axioms Square.parallelogram
+#print axioms Square.dist2_nonneg
+#print axioms Square.dist2_self
+#print axioms Square.dist2_symm
+#print axioms Square.dist2_doubling
