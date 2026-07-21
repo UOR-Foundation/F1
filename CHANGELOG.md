@@ -16,6 +16,40 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4WeilValue_pos` — `W(t4) > 0`: THE FIRST CERTIFIED POSITIVITY ON THE
+  AUTOCORRELATION CONE with a live prime side** (new `Square/ConeSlot.lean`): `t4Slot`
+  realizes the cone-shaped log-tent as a `WeilSlot` with every interface field a genuine
+  constructed integral — poles `= t4PoleA + t4PoleB ≈ 9/4 + t4H²`, archimedean tail
+  `= t4ArchTail ≈ t4H·log(3/2) − t4Dilog` (assembled from the compact reciprocal half,
+  the constructed dilog, and the improper remainder; the `log 5` telescopes cancel,
+  `t4ArchTail_eq`) — and `t4WeilValue_eq` gives the closed form with the dilog carried
+  as the constructed object. The sign (margin `≈ +0.0558`) closes through `M = 512`
+  harmonic wedges (`log 2`, `log 3/2`, `log 3`, both sides), the standing
+  `log 4π`/`γ` brackets, the rational dilog lower bound, and one exact rational
+  `decide`. NOT claimed: positivity for the cone — that uniform statement is RH; the
+  crux fields stay `none`.
+- **`t4Dilog_ge` — the dilog constructed and bounded, fully rationally** (new
+  `Analysis/DilogPhi.lean`, `DilogPhiVal.lean`, `DilogPieces.lean`, `DilogValue.lean`):
+  the last new object of the `W(t4)` campaign, `∫₁⁴ log x/(x−1) dx = −Li₂(−3) ≈ 1.93939`
+  (no log closed form), realized through the kernel identity
+  `log x/(x−1) = ∫₀¹ ds/(1+s(x−1))` — the removable singularity at `x = 1` REMOVED BY
+  CONSTRUCTION. The kernel `Φ(u) = ∫₀¹ clampedInv 1 (1+s·band₍₀,₃₎(u)) ds` is a certified
+  integral for every real `u` (16-Lipschitz via the integral of the pointwise bound;
+  antitone at rationals); every inner sample at rational `(s,u)` is the exact rational
+  `1/(1+su)`, so the level sums are single rationals (`phiRat`) and the monotone bracket
+  collapses `Φ` to `decide` material. The three pieces `∫₀¹ Φ(c'+t) dt` sum to `t4Dilog`,
+  and **`t4Dilog ≥ 1909/1000`** closes with one rational `decide` over `3×16×128`-point
+  folds — no logs, no wedges anywhere in the bracket.
+- **`riemannIntegral_anti_upper/lower` — the monotone dyadic bracket** (new
+  `Analysis/MonotoneIntegral.lean`): for a sample-antitone integrand ONE finite dyadic
+  sum brackets the certified integral, `D_M − V/2^M ≤ ∫₀¹ f ≤ D_M` — the refinement
+  regroup factored Lipschitz-free (`riemannSum_refine_regroup`), antitone pair terms
+  (`refine_anti`/`refine_gap`), the accumulated geometric level gap
+  (`dyadicR_level_anti`/`level_gap`), and the limit transfer (`Rlim_le_const` + the new
+  `const_le_Rlim` mirror) under the schedule `M ≤ digammaMidx L j` (arranged by
+  weakening `L`). Plus `riemannIntegral_le_sample` (sample-only integrand comparison)
+  and the reusables `RsumN_telescope`, `Rneg_Rsub_flip`, `Rle_Radd_of_Rsub_le`. The
+  bracket engine for integrals with no closed form.
 - **`t4B12/23/34/h/q` — the `t4PoleB` pieces, part 4: constructed and evaluated** (in
   `Analysis/T4PoleBPieces.lean`): the five interval integrals of `t4F(x)/x` over
   `[1/4, 4]`, each a genuine constructed `riemannIntegral` — the three unit pieces

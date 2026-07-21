@@ -4583,3 +4583,35 @@ open UOR.Bridge.F1Square
 -- The certified dilog lower bound t4Dilog ≥ 1.909 (true ≈ 1.93939): the first fully
 -- rational bracket of a log-type integral (new Analysis/DilogValue.lean).
 #print axioms Analysis.t4Dilog_ge
+
+-- THE REALIZED CONE SLOT (new Square/ConeSlot.lean): t4Slot (every field a genuine
+-- constructed integral), the closed form, and **W(t4) > 0** — the first certified
+-- positivity on the autocorrelation cone with a live prime side (margin ≈ +0.0558;
+-- M = 512 wedges + the rational dilog bound). One cone element, NOT the cone
+-- (uniform positivity on the cone = RH); crux fields stay none.
+#print axioms Square.t4U2q_den
+#print axioms Square.t4L2q_den
+#print axioms Square.t4_U2
+#print axioms Square.t4_L2
+#print axioms Square.t4U32q_den
+#print axioms Square.t4_U32
+#print axioms Square.t4L32q_den
+#print axioms Square.t4_L32
+#print axioms Square.t4U3q_den
+#print axioms Square.t4_U3
+#print axioms Square.t4L3q_den
+#print axioms Square.t4_L3
+#print axioms Square.t4H_le
+#print axioms Square.t4H_ge
+#print axioms Square.t4ArchConst_eq
+#print axioms Square.t4ArchTail_eq
+#print axioms Square.t4WeilValue_eq
+#print axioms Square.t4PLq_den
+#print axioms Square.t4Sq_den
+#print axioms Square.t4BUq_den
+#print axioms Square.t4_P_ge
+#print axioms Square.t4_S_ge
+#print axioms Square.t4_S_nonneg
+#print axioms Square.t4_S_le
+#print axioms Square.t4_B_le
+#print axioms Square.t4WeilValue_pos

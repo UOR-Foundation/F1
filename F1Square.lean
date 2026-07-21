@@ -310,6 +310,7 @@ import F1Square.Analysis.DilogPhi
 import F1Square.Analysis.DilogPhiVal
 import F1Square.Analysis.DilogPieces
 import F1Square.Analysis.DilogValue
+import F1Square.Square.ConeSlot
 
 open UOR.Primitives
 
