@@ -4507,3 +4507,14 @@ open UOR.Bridge.F1Square
 -- bases 2, 3, 4, telescoping to t4H·(log5 − log2); new Analysis/T4ArchPieces.lean).
 #print axioms Analysis.t4Trecip_eq
 #print axioms Analysis.t4Trecip_sum
+
+-- The t4 arch tail, part 2: the improper remainder ∫₁^∞ (1/(w+2) − 1/(w+4)) = log5 −
+-- log3 (the shifted TentArchTail mirror; new Analysis/T4TailImproper.lean).
+#print axioms Analysis.t4Tail_lip
+#print axioms Analysis.t4Tail_congr
+#print axioms Analysis.t4Tail_pull
+#print axioms Analysis.integralTerm_t4Tail
+#print axioms Analysis.genSum_t4Tail
+#print axioms Analysis.t4tail_decay
+#print axioms Analysis.t4tail_rate
+#print axioms Analysis.t4Improper_eq

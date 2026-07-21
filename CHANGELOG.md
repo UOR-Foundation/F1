@@ -25,6 +25,15 @@ audit-visible hypothesis, never an axiom).
   `log2·Δlog₁ + ½ΔHn₁`, `½ΔHn₁`. `t4PoleB` (the five-piece sum) is defined; the
   `4(log2)² = t4H·t4H` assembly is the companion brick. Axiom-clean; crux fields
   `none`.
+- **`t4Improper_eq` — the `t4` arch tail, part 2: the improper remainder** (new
+  `Analysis/T4TailImproper.lean`): `∫₁^∞ (1/(w+2) − 1/(w+4)) dw ≈ log 5 − log 3` —
+  the substituted `∫₄^∞ 2/(x²−1) dx`, the second evaluated `improperIntegral1` (the
+  shifted mirror of the tent\'s): blocks pull back to `gRecipC (m+3) − gRecipC (m+5)`
+  and evaluate by `recipC_gen`; the partial sums telescope
+  (`(log(N+3) − log3) − (log(N+5) − log5)`, `tail_step_alg`); block decay `K = 3`;
+  deviation `≤ (2N+7)/((N+4)(N+3))` against the `K = 3` schedule. Remaining for the
+  tail: the dilog half (`∫₁⁴ log x/(x−1)`, two-sided bracket) and the slot assembly.
+  Axiom-clean; crux fields `none`.
 - **`t4Trecip_sum` — the `t4` arch tail, part 1: the compact reciprocal half** (new
   `Analysis/T4ArchPieces.lean`): the arch tail\'s compact integrand on `[1,4]`
   collapses to `2log2/(x+1) − log x/(x−1)`; the reciprocal half is realized as three

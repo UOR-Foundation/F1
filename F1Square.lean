@@ -304,6 +304,7 @@ import F1Square.Analysis.LogOverXEval
 import F1Square.Analysis.RecipSmulEval
 import F1Square.Analysis.T4PoleBPieces
 import F1Square.Analysis.T4ArchPieces
+import F1Square.Analysis.T4TailImproper
 
 open UOR.Primitives
 
