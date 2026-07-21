@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`riemannSum_gLx` — the `∫ log/x` layer, part 6: the point values and the Riemann
+  fold** (new `Analysis/LogOverXSum.lean`): `gLx c (j/(N+1)) ≈ 2(log(c(N+1)+j) −
+  log(N+1))·(N+1)/(c(N+1)+j)` (`gLx_point`, free from `gLog_point` + `gRecipC_point`),
+  the fold `Σ_{i<k} gLx ≈ (N+1)·hsSample(c(N+1), k) − 2log(N+1)·harmTermFoldC(k)`
+  (`RsumN_gLx` — the log² content lands in `LogSqStep`'s sample fold, the cross term in
+  `HarmonicLogC`'s harmonic fold), and the collapse `riemannSum (gLx c) N ≈
+  hsSample(c(N+1), N+1) − 2log(N+1)·hFold(c(N+1), N+1)` (`riemannSum_gLx`). Next: the
+  `Hn` scale identity (`(a+b)²` expansion over `logN_mul_gen`) and the rate.
+  Axiom-clean; crux fields `none`.
 - **`gLx` + `gLx_lip_of` — the `∫ log/x` layer, part 5: the integrand family** (new
   `Analysis/LogOverX.lean`): the totalized integrand
   `gLx c t = (gLog c t + gLog c t)·gRecipC c t` (`= 2·log(c+t)/(c+t)` on `[0,1]`) with

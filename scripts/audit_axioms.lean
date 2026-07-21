@@ -4428,3 +4428,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.gRecipC_abs
 #print axioms Analysis.gLx_congr_of
 #print axioms Analysis.gLx_lip_of
+
+-- The ∫log/x layer, part 6: the point values and the Riemann fold/collapse
+-- (new Analysis/LogOverXSum.lean).
+#print axioms Analysis.gLx_point
+#print axioms Analysis.RsumN_gLx
+#print axioms Analysis.riemannSum_gLx

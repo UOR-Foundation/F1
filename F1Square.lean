@@ -298,6 +298,7 @@ import F1Square.Analysis.T4PoleAPieces
 import F1Square.Analysis.T4PoleAAssembly
 import F1Square.Analysis.LogSqStep
 import F1Square.Analysis.LogOverX
+import F1Square.Analysis.LogOverXSum
 
 open UOR.Primitives
 
