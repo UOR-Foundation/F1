@@ -76,4 +76,66 @@ theorem Hn_step_upper (i : Nat) (hi : 1 ≤ i) :
   Rle_trans (Rle_of_Req (Hn_diff i hi))
     (Rmul_le_Rmul_right (logsum_nonneg i hi) (logStep_diff_upper i hi))
 
+
+-- ===========================================================================
+-- Part 2: the step-folds and the telescopes.
+-- ===========================================================================
+
+/-- `x − y ≤ c ⟹ x ≤ y + c` (private copy). -/
+private theorem hs_le_Radd {x y c : Real} (h : Rle (Rsub x y) c) : Rle x (Radd y c) := by
+  have h1 : Rle (Radd (Rsub x y) y) (Radd c y) := Radd_le_add h (Rle_refl y)
+  have h2 : Req (Radd (Rsub x y) y) x :=
+    Req_trans (Radd_assoc x (Rneg y) y)
+      (Req_trans (Radd_congr (Req_refl x)
+        (Req_trans (Radd_comm (Rneg y) y) (Radd_neg y))) (Radd_zero x))
+  exact Rle_trans (Rle_of_Req (Req_symm h2)) (Rle_trans h1 (Rle_of_Req (Radd_comm c y)))
+
+/-- The lower step-fold `Σ_{j<c} (log(A+j) + log(A+j+1))/(A+j+1)` — the summed lower
+    sides of the `Hn` step bracket. -/
+def hsFoldLo (A : Nat) (hA : 1 ≤ A) : Nat → Real
+  | 0 => zero
+  | (c + 1) => Radd (hsFoldLo A hA c)
+      (Rmul (ofQ (⟨1, A + c + 1⟩ : Q) (Nat.succ_pos (A + c)))
+        (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega))))
+
+/-- The upper step-fold `Σ_{j<c} (log(A+j) + log(A+j+1))/(A+j)`. -/
+def hsFoldHi (A : Nat) (hA : 1 ≤ A) : Nat → Real
+  | 0 => zero
+  | (c + 1) => Radd (hsFoldHi A hA c)
+      (Rmul (ofQ (⟨1, A + c⟩ : Q) (show 0 < A + c by omega))
+        (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega))))
+
+/-- **The telescope, lower side**: `Hn(A) + Σ_{j<c} stepLo(A+j) ≤ Hn(A+c)` — general in
+    the base and the count. -/
+theorem Hn_tele_lower (A : Nat) (hA : 1 ≤ A) : ∀ c : Nat,
+    Rle (Radd (Hn A hA) (hsFoldLo A hA c)) (Hn (A + c) (by omega)) := by
+  intro c
+  induction c with
+  | zero => exact Rle_of_Req (Radd_zero (Hn A hA))
+  | succ k ih =>
+    show Rle (Radd (Hn A hA) (Radd (hsFoldLo A hA k)
+        (Rmul (ofQ (⟨1, A + k + 1⟩ : Q) (Nat.succ_pos (A + k)))
+          (Radd (logN (A + k + 1) (by omega)) (logN (A + k) (by omega))))))
+      (Hn (A + k + 1) (by omega))
+    refine Rle_trans (Rle_of_Req (Req_symm (Radd_assoc (Hn A hA) (hsFoldLo A hA k) _))) ?_
+    refine Rle_trans (Radd_le_add ih (Rle_refl _)) ?_
+    refine Rle_trans (Radd_le_add (Rle_refl (Hn (A + k) (by omega)))
+      (Hn_step_lower (A + k) (by omega))) ?_
+    exact Rle_of_Req (Radd_Rsub_cancel (Hn (A + k + 1) (by omega)) (Hn (A + k) (by omega)))
+
+/-- **The telescope, upper side**: `Hn(A+c) ≤ Hn(A) + Σ_{j<c} stepHi(A+j)`. -/
+theorem Hn_tele_upper (A : Nat) (hA : 1 ≤ A) : ∀ c : Nat,
+    Rle (Hn (A + c) (by omega)) (Radd (Hn A hA) (hsFoldHi A hA c)) := by
+  intro c
+  induction c with
+  | zero => exact Rle_of_Req (Req_symm (Radd_zero (Hn A hA)))
+  | succ k ih =>
+    show Rle (Hn (A + k + 1) (by omega))
+      (Radd (Hn A hA) (Radd (hsFoldHi A hA k)
+        (Rmul (ofQ (⟨1, A + k⟩ : Q) (show 0 < A + k by omega))
+          (Radd (logN (A + k + 1) (by omega)) (logN (A + k) (by omega))))))
+    refine Rle_trans (Rle_trans (hs_le_Radd (Hn_step_upper (A + k) (by omega)))
+      (Radd_le_add ih (Rle_refl _))) ?_
+    exact Rle_of_Req (Radd_assoc (Hn A hA) (hsFoldHi A hA k) _)
+
 end UOR.Bridge.F1Square.Analysis

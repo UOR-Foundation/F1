@@ -4402,3 +4402,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Hn_one
 #print axioms Analysis.Hn_step_lower
 #print axioms Analysis.Hn_step_upper
+
+-- The ∫log/x layer, part 2: the step-folds and the Hn telescopes.
+#print axioms Analysis.Hn_tele_lower
+#print axioms Analysis.Hn_tele_upper

@@ -16,6 +16,13 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Hn_tele_lower/upper` — the `∫ log/x` layer, part 2: the telescopes** (in
+  `Analysis/LogSqStep.lean`; toward `poleB = 4(log2)²`): the step-folds
+  `hsFoldLo/hsFoldHi` (`Σ_{j<c} (log(A+j) + log(A+j+1))·w` at the lower/upper step
+  weights `w = 1/(A+j+1), 1/(A+j)`) and the two-sided telescope
+  `Hn(A) + foldLo ≤ Hn(A+c) ≤ Hn(A) + foldHi`, general in the base and the count —
+  the `Gn_tele` pattern one level up. Next: the fold gap and the `log/x` Riemann
+  comparison. Axiom-clean; crux fields `none`.
 - **`Hn_step_lower/upper` — the `∫ log/x` layer, part 1: the `log²` step bracket** (new
   `Analysis/LogSqStep.lean`; Sonine route, step 2 — the `W(t4)` campaign, toward
   `poleB = 4(log2)²`): the antiderivative object `Hn(n) = (log n)²` (`= 2·∫₁ⁿ log x/x`)
