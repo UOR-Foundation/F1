@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 14 — the L² MIRROR of the completion axis** (new
+  `Square/PairingLimitI.lean`): `L2Test.neg`/`L2Test.sub` (closure under negation —
+  reusing the existing `lip_neg`/`congr_neg` — and subtraction; with `add` and `mul` the
+  test class is a commutative algebra with subtraction); `innerI_neg_left` (`⟨−φ,ψ⟩ ≈
+  −⟨φ,ψ⟩` — the negated test has the SAME product modulus definitionally, one congruence +
+  `riemannIntegral_neg`) and `innerI_sub_left`; `dist2I` (the L² squared distance);
+  `innerI_sub_sq_le` (L² Cauchy–Schwarz continuity, from brick 9's integral CS at the
+  difference test); **`pairingILim`** — the L² pairings along a squared-Cauchy sequence of
+  tests are `RReg` and their Bishop limit exists with effective rate `≤ 2/(j+1)`
+  (`pairingILim_dist`). The completion axis is now open on BOTH the discrete and the
+  function-space side. Honest scope: pairing values only; no completed L², no limit member,
+  no strong convergence, nothing toward `f,f̂`; crux fields `none`.
 - **The pre-Hilbert layer, brick 13 — THE PAIRING EXTENDS TO CAUCHY SEQUENCES: the
   completion axis opened** (new `Square/PairingLimit.lean`): `inner_sub_sq_le` — the
   Cauchy–Schwarz continuity of the pairing, `(⟨f,g⟩−⟨f',g⟩)² ≤ d²(f,f')·⟨g,g⟩` (the modulus

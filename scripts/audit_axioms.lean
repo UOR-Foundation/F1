@@ -4761,3 +4761,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.inner_sub_sq_le
 #print axioms Square.pairing_RReg
 #print axioms Square.pairingLim_dist
+
+-- THE PRE-HILBERT LAYER, brick 14 (Square/PairingLimitI.lean) — the L² mirror of the
+-- completion axis: negation/subtraction on the test class, the L² squared distance, the L²
+-- Cauchy–Schwarz continuity, and the extended L² pairing along squared-Cauchy sequences.
+#print axioms Square.innerI_neg_left
+#print axioms Square.innerI_sub_left
+#print axioms Square.dist2I_nonneg
+#print axioms Square.innerI_sub_sq_le
+#print axioms Square.pairingI_RReg
+#print axioms Square.pairingILim_dist
