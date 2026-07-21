@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4B12/23/34/h/q` — the `t4PoleB` pieces, part 4: constructed and evaluated** (in
+  `Analysis/T4PoleBPieces.lean`): the five interval integrals of `t4F(x)/x` over
+  `[1/4, 4]`, each a genuine constructed `riemannIntegral` — the three unit pieces
+  `t4H·recip − ½·gLx` at shared modulus `2 + LxQ c`, the `[1/2,1]` piece
+  `log2·recip + ½·gLx`, the `[1/4,1/2]` piece `½·gLx` (the substitution constant
+  cancels the cone height, as in poleA) — with values `t4H·Δlog_c − ½ΔHn_c`,
+  `log2·Δlog₁ + ½ΔHn₁`, `½ΔHn₁`. `t4PoleB` (the five-piece sum) is defined; the
+  `4(log2)² = t4H·t4H` assembly is the companion brick. Axiom-clean; crux fields
+  `none`.
 - **`t4B_lower_eval` — the `t4PoleB` pieces, part 3: the lower pieces** (in
   `Analysis/T4PoleBPieces.lean`): `∫₀¹ (C·(1/(c+t)) + (1/2)·gLx c) dt ≈ C·Δlog_c +
   (1/2)·ΔHn_c`, generic in the bounded real constant — the `[1/2, 1]` piece at

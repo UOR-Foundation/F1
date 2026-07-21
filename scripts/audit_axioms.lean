@@ -4492,3 +4492,10 @@ open UOR.Bridge.F1Square
 -- measure dx/x pulls back with NO outer weight).
 #print axioms Analysis.posHalf_abs
 #print axioms Analysis.t4B_lower_eval
+
+-- The t4PoleB pieces, part 4: the five constructed pieces and their evaluations.
+#print axioms Analysis.t4B12_eq
+#print axioms Analysis.t4B23_eq
+#print axioms Analysis.t4B34_eq
+#print axioms Analysis.t4Bh_eq
+#print axioms Analysis.t4Bq_eq

@@ -236,4 +236,152 @@ theorem t4B_lower_eval (c : Nat) (hc1 : 1 ≤ c) (hc3 : c ≤ 3) (C : Real) {Bq 
           (gLx_lip_of c hc3 hgl x y))
         (gLx_congr_of c hgc) hsch)
 
+
+-- ===========================================================================
+-- Part 4: the five constructed pieces.
+-- ===========================================================================
+
+/-- **`[1, 2]`**: `∫ (2log2 − log x)/x`, constructed (`c = 1`). -/
+def t4B12 : Real :=
+  riemannIntegral
+    (f := fun t => Radd (Rmul t4H (gRecipC 1 t))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide)) (gLx 1 t)))
+    (L := add (mul (⟨2, 1⟩ : Q) (⟨1, 1⟩ : Q)) (LxQ 1))
+    (by decide) (by decide)
+    (fun x y => lip_mono
+      (add_den_pos (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 1))) (by decide) (by decide)
+      (Rnonneg_Rabs _)
+      (add_lip (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 1))
+        (smul_lip Nat.one_pos t4H_abs Nat.one_pos (by decide) (gRecipC_lip 1))
+        (smul_lip (by decide) negHalf_abs (LxQ_den_pos 1) (LxQ_num_nonneg 1)
+          (gLx_lip_of 1 (by omega) gLog1_lip)) x y))
+    (add_congr_fn (smul_congr t4H (gRecipC_congr 1))
+      (smul_congr (ofQ (⟨-1, 2⟩ : Q) (by decide)) (gLx_congr_of 1 gLog1_congr)))
+
+/-- `t4B12 ≈ 2log2·(log 2 − log 1) − (1/2)·(Hn 2 − Hn 1)`. -/
+theorem t4B12_eq : Req t4B12
+    (Radd (Rmul t4H (Rsub (logN 2 (by omega)) (logN 1 (by omega))))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 2 (by omega)) (Hn 1 (by omega))))) :=
+  t4B_upper_eval 1 (by omega) (by omega) gLog1_lip gLog1_congr
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (fun j => by show 5 * (j + 1) ≤ 7 * (j + 1); omega)
+
+/-- **`[2, 3]`**: `∫ (2log2 − log x)/x`, constructed (`c = 2`). -/
+def t4B23 : Real :=
+  riemannIntegral
+    (f := fun t => Radd (Rmul t4H (gRecipC 2 t))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide)) (gLx 2 t)))
+    (L := add (mul (⟨2, 1⟩ : Q) (⟨1, 1⟩ : Q)) (LxQ 2))
+    (by decide) (by decide)
+    (fun x y => lip_mono
+      (add_den_pos (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 2))) (by decide) (by decide)
+      (Rnonneg_Rabs _)
+      (add_lip (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 2))
+        (smul_lip Nat.one_pos t4H_abs Nat.one_pos (by decide) (gRecipC_lip 2))
+        (smul_lip (by decide) negHalf_abs (LxQ_den_pos 2) (LxQ_num_nonneg 2)
+          (gLx_lip_of 2 (by omega) gLog2_lip)) x y))
+    (add_congr_fn (smul_congr t4H (gRecipC_congr 2))
+      (smul_congr (ofQ (⟨-1, 2⟩ : Q) (by decide)) (gLx_congr_of 2 gLog2_congr)))
+
+/-- `t4B23 ≈ 2log2·(log 3 − log 2) − (1/2)·(Hn 3 − Hn 2)`. -/
+theorem t4B23_eq : Req t4B23
+    (Radd (Rmul t4H (Rsub (logN 3 (by omega)) (logN 2 (by omega))))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 3 (by omega)) (Hn 2 (by omega))))) :=
+  t4B_upper_eval 2 (by omega) (by omega) gLog2_lip gLog2_congr
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (fun j => by show 5 * (j + 1) ≤ 9 * (j + 1); omega)
+
+/-- **`[3, 4]`**: `∫ (2log2 − log x)/x`, constructed (`c = 3`). -/
+def t4B34 : Real :=
+  riemannIntegral
+    (f := fun t => Radd (Rmul t4H (gRecipC 3 t))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide)) (gLx 3 t)))
+    (L := add (mul (⟨2, 1⟩ : Q) (⟨1, 1⟩ : Q)) (LxQ 3))
+    (by decide) (by decide)
+    (fun x y => lip_mono
+      (add_den_pos (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 3))) (by decide) (by decide)
+      (Rnonneg_Rabs _)
+      (add_lip (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 3))
+        (smul_lip Nat.one_pos t4H_abs Nat.one_pos (by decide) (gRecipC_lip 3))
+        (smul_lip (by decide) negHalf_abs (LxQ_den_pos 3) (LxQ_num_nonneg 3)
+          (gLx_lip_of 3 (by omega) gLog3_lip)) x y))
+    (add_congr_fn (smul_congr t4H (gRecipC_congr 3))
+      (smul_congr (ofQ (⟨-1, 2⟩ : Q) (by decide)) (gLx_congr_of 3 gLog3_congr)))
+
+/-- `t4B34 ≈ 2log2·(log 4 − log 3) − (1/2)·(Hn 4 − Hn 3)`. -/
+theorem t4B34_eq : Req t4B34
+    (Radd (Rmul t4H (Rsub (logN 4 (by omega)) (logN 3 (by omega))))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 4 (by omega)) (Hn 3 (by omega))))) :=
+  t4B_upper_eval 3 (by omega) (by omega) gLog3_lip gLog3_congr
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (fun j => by show 5 * (j + 1) ≤ 11 * (j + 1); omega)
+
+/-- **`[1/2, 1]`**: `∫ (2log2 + log x)/x` — pulls back to `(log2 + log(1+t))/(1+t)`,
+    no outer weight (`dx/x` scale-invariant). -/
+def t4Bh : Real :=
+  riemannIntegral
+    (f := fun t => Radd (Rmul (logN 2 (by omega)) (gRecipC 1 t))
+      (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx 1 t)))
+    (L := add (mul (⟨1, 1⟩ : Q) (⟨1, 1⟩ : Q)) (LxQ 1))
+    (by decide) (by decide)
+    (fun x y => lip_mono
+      (add_den_pos (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 1))) (by decide) (by decide)
+      (Rnonneg_Rabs _)
+      (add_lip (Qmul_den_pos Nat.one_pos Nat.one_pos)
+        (Qmul_den_pos (by decide) (LxQ_den_pos 1))
+        (smul_lip Nat.one_pos oneL_abs Nat.one_pos (by decide) (gRecipC_lip 1))
+        (smul_lip (by decide) posHalf_abs (LxQ_den_pos 1) (LxQ_num_nonneg 1)
+          (gLx_lip_of 1 (by omega) gLog1_lip)) x y))
+    (add_congr_fn (smul_congr (logN 2 (by omega)) (gRecipC_congr 1))
+      (smul_congr (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx_congr_of 1 gLog1_congr)))
+
+/-- `t4Bh ≈ log2·(log2 − log1) + (1/2)·(Hn 2 − Hn 1)`. -/
+theorem t4Bh_eq : Req t4Bh
+    (Radd (Rmul (logN 2 (by omega)) (Rsub (logN 2 (by omega)) (logN 1 (by omega))))
+      (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 2 (by omega)) (Hn 1 (by omega))))) :=
+  t4B_lower_eval 1 (by omega) (by omega) (logN 2 (by omega)) (by decide) (by decide)
+    oneL_abs gLog1_lip gLog1_congr
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (fun j => by show 5 * (j + 1) ≤ 6 * (j + 1); omega)
+
+/-- **`[1/4, 1/2]`**: `∫ (2log2 + log x)/x` — pulls back to `log(1+t)/(1+t)
+    = (1/2)·gLx 1`, the substitution constant cancelling the cone height. -/
+def t4Bq : Real :=
+  riemannIntegral
+    (f := fun t => Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx 1 t))
+    (L := LxQ 1) (by decide) (by decide)
+    (fun x y => lip_mono (Qmul_den_pos (by decide) (LxQ_den_pos 1)) (by decide)
+      (by decide) (Rnonneg_Rabs _)
+      (smul_lip (by decide) posHalf_abs (LxQ_den_pos 1) (LxQ_num_nonneg 1)
+        (gLx_lip_of 1 (by omega) gLog1_lip) x y))
+    (smul_congr (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx_congr_of 1 gLog1_congr))
+
+/-- `t4Bq ≈ (1/2)·(Hn 2 − Hn 1)`. -/
+theorem t4Bq_eq : Req t4Bq
+    (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rsub (Hn 2 (by omega)) (Hn 1 (by omega)))) := by
+  refine Req_trans (riemannIntegral_smul (⟨1, 2⟩ : Q) (by decide) (by decide) (by decide)
+    (fun x y => lip_mono (LxQ_den_pos 1) (by decide) (by decide) (Rnonneg_Rabs _)
+      (gLx_lip_of 1 (by omega) gLog1_lip x y))
+    (gLx_congr_of 1 gLog1_congr) _ _) ?_
+  exact Rmul_congr (Req_refl _)
+    (riemannIntegral_gLx_gen 1 (by omega) (by omega) (by decide) (by decide)
+      (fun x y => lip_mono (LxQ_den_pos 1) (by decide) (by decide) (Rnonneg_Rabs _)
+        (gLx_lip_of 1 (by omega) gLog1_lip x y))
+      (gLx_congr_of 1 gLog1_congr)
+      (fun j => by show 5 * (j + 1) ≤ 5 * (j + 1); omega))
+
+/-- **The `t4` test's `∫ f/x` pole component, CONSTRUCTED**: the five pieces summed. -/
+def t4PoleB : Real := Radd (Radd (Radd t4B12 t4B23) (Radd t4B34 t4Bh)) t4Bq
+
 end UOR.Bridge.F1Square.Analysis
