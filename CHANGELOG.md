@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 7 — BILINEARITY of the L² pairing** (new
+  `Analysis/IntegralBilinear.lean`): the bounded-Lipschitz test class is closed under addition
+  (`L2Test.add`, summed certificates via the existing `Radd_lipschitz_real` + triangle);
+  `lip_weaken` (a certificate at `L` is one at any `L' ≥ L`) puts all three integrands of a
+  sum at the common modulus where `riemannIntegral_add` applies, and certificate independence
+  moves each end back to its canonical certificate: **`innerI_add_left`**
+  (`⟨φ+φ',ψ⟩ ≈ ⟨φ,ψ⟩+⟨φ',ψ⟩`) and `innerI_add_right` (by symmetry). With `innerI_symm`, the
+  L² pairing is now a genuine symmetric additive pairing on the test class — the
+  function-space mirror of brick 1's discrete `innerN` laws. Banked next: the integral
+  Cauchy–Schwarz (uniform-weight Riemann-sum route). Crux fields `none`.
 - **The pre-Hilbert layer, brick 6 — CERTIFICATE INDEPENDENCE of the certified integral**
   (new `Analysis/IntegralCertIrrel.lean`): `riemannIntegral` depends only on the integrand,
   not on which Lipschitz certificate constructed it (`riemannIntegral_certif_irrel`). The

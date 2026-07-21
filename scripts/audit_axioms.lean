@@ -4696,3 +4696,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.digammaMidx_ge
 #print axioms Analysis.riemannIntegral_certif_irrel
 #print axioms Analysis.innerI_symm
+
+-- THE PRE-HILBERT LAYER, brick 7 (Analysis/IntegralBilinear.lean) — bilinearity of the L²
+-- pairing: the test class closed under addition, certificates weakened to a common modulus,
+-- additivity in both slots via certificate independence.
+#print axioms Analysis.lip_weaken
+#print axioms Analysis.innerI_add_left
+#print axioms Analysis.innerI_add_right
