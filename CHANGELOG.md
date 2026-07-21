@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4B_upper_eval` — the `t4PoleB` pieces, part 2: the upper pieces** (in
+  `Analysis/T4PoleBPieces.lean`): `∫₀¹ (t4H·(1/(c+t)) + (−1/2)·gLx c) dt ≈
+  t4H·(log(c+1) − log c) − (1/2)·(Hn(c+1) − Hn(c))` — the pulled-back
+  `∫_c^{c+1} (2log2 − log x)/x dx`, general in the base (`1 ≤ c ≤ 3`) with the
+  weakening certificates (`Qle` to the shared modulus) as decidable hypotheses;
+  through `riemannIntegral_add`, the real-scalar reciprocal engine at `B = 2`, and
+  the `gLx` engine. Next: the three upper instances, the two lower pieces
+  (`(1/2)`, `(1/4)`-weighted), and the `4(log2)²` assembly. Axiom-clean; crux fields
+  `none`.
 - **`smul_lip`/`add_lip` + `t4H_abs` — the `t4PoleB` pieces, part 1: the combinators**
   (new `Analysis/T4PoleBPieces.lean`): the generic Lipschitz combinators the poleB
   piece integrands (`C·gRecipC + q·gLx`) consume — `|C| ≤ B` gives `C·f` at `B·L_f`;

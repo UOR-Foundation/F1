@@ -4481,3 +4481,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.t4H_nonneg
 #print axioms Analysis.t4H_abs
 #print axioms Analysis.oneL_abs
+
+-- The t4PoleB pieces, part 2: the upper-piece evaluation (t4H·recip − ½·gLx).
+#print axioms Analysis.negHalf_abs
+#print axioms Analysis.LxQ_den_pos
+#print axioms Analysis.LxQ_num_nonneg
+#print axioms Analysis.t4B_upper_eval
