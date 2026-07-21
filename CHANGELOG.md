@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`hsFold_gap` — the `∫ log/x` layer, part 3: the fold gap** (in
+  `Analysis/LogSqStep.lean`): `hsFoldHi ≤ hsFoldLo + Σ_{j<c} 2(K+1)/((A+j)(A+j+1))`
+  for any cap `A + c ≤ K` — the KEY insight verified in the kernel: the crude
+  `log n ≤ n` bound (`logN_le_self`) suffices, because the harmonic cells
+  `1/((A+j)(A+j+1))` telescope to `≤ c/A²`, killing a factor of `A ~ cM` (the scaled
+  defect decays like `1/M` with no log-precision anywhere). Per-cell:
+  `Rmul_sub_distrib_right` collapses the weight difference to the harmonic cell.
+  Next: the `log/x` Riemann fold comparison and the eval
+  `∫₀¹ 2log(c+t)/(c+t) = Hn(c+1) − Hn(c)`. Axiom-clean; crux fields `none`.
 - **`Hn_tele_lower/upper` — the `∫ log/x` layer, part 2: the telescopes** (in
   `Analysis/LogSqStep.lean`; toward `poleB = 4(log2)²`): the step-folds
   `hsFoldLo/hsFoldHi` (`Σ_{j<c} (log(A+j) + log(A+j+1))·w` at the lower/upper step

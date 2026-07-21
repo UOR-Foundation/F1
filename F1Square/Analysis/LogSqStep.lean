@@ -138,4 +138,89 @@ theorem Hn_tele_upper (A : Nat) (hA : 1 ≤ A) : ∀ c : Nat,
       (Radd_le_add ih (Rle_refl _))) ?_
     exact Rle_of_Req (Radd_assoc (Hn A hA) (hsFoldHi A hA k) _)
 
+
+-- ===========================================================================
+-- Part 3: the fold gap — crude `log ≤ n` suffices, the harmonic telescope pays.
+-- ===========================================================================
+
+/-- The rational gap fold `Σ_{j<c} 2(K+1)/((A+j)(A+j+1))`. -/
+def gapQ (A K : Nat) : Nat → Q
+  | 0 => ⟨0, 1⟩
+  | (c + 1) => add (gapQ A K c)
+      ⟨((2 * (K + 1) : Nat) : Int), (A + c) * (A + c + 1)⟩
+
+theorem gapQ_den_pos (A K : Nat) (hA : 1 ≤ A) : ∀ c, 0 < (gapQ A K c).den
+  | 0 => Nat.one_pos
+  | (c + 1) => add_den_pos (gapQ_den_pos A K hA c)
+      (Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c)))
+
+/-- The per-cell gap: `stepHi ≤ stepLo + 2(K+1)/((A+c)(A+c+1))` — the weight
+    difference is the harmonic cell `1/((A+c)(A+c+1))`, and the log sum is crudely
+    bounded by `2(K+1)` (`logN_le_self`). -/
+private theorem hs_cell_gap (A c K : Nat) (hA : 1 ≤ A) (hcK : A + c ≤ K) :
+    Rle (Rmul (ofQ (⟨1, A + c⟩ : Q) (show 0 < A + c by omega))
+        (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega))))
+      (Radd (Rmul (ofQ (⟨1, A + c + 1⟩ : Q) (Nat.succ_pos (A + c)))
+          (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega))))
+        (ofQ (⟨((2 * (K + 1) : Nat) : Int), (A + c) * (A + c + 1)⟩ : Q)
+          (Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))))) := by
+  have hD : 0 < ((⟨1, (A + c) * (A + c + 1)⟩ : Q)).den :=
+    Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))
+  have hqeq : Qeq (add (⟨1, A + c⟩ : Q) (neg (⟨1, A + c + 1⟩ : Q)))
+      (⟨1, (A + c) * (A + c + 1)⟩ : Q) := by
+    simp only [Qeq, add, neg]; push_cast; ring_uor
+  have hq1 : Qle (⟨((A + c + 1 : Nat) : Int), 1⟩ : Q) (⟨((K + 1 : Nat) : Int), 1⟩ : Q) := by
+    show ((A + c + 1 : Nat) : Int) * 1 ≤ ((K + 1 : Nat) : Int) * 1
+    push_cast; omega
+  have hq2 : Qle (⟨((A + c : Nat) : Int), 1⟩ : Q) (⟨((K + 1 : Nat) : Int), 1⟩ : Q) := by
+    show ((A + c : Nat) : Int) * 1 ≤ ((K + 1 : Nat) : Int) * 1
+    push_cast; omega
+  have hsum : Qeq (add (⟨((K + 1 : Nat) : Int), 1⟩ : Q) (⟨((K + 1 : Nat) : Int), 1⟩ : Q))
+      (⟨((2 * (K + 1) : Nat) : Int), 1⟩ : Q) := by
+    simp only [Qeq, add]; push_cast; ring_uor
+  have hS : Rle (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega)))
+      (ofQ (⟨((2 * (K + 1) : Nat) : Int), 1⟩ : Q) Nat.one_pos) :=
+    Rle_trans (Radd_le_add
+        (Rle_trans (logN_le_self (A + c + 1) (by omega))
+          (Rle_ofQ_ofQ Nat.one_pos Nat.one_pos hq1))
+        (Rle_trans (logN_le_self (A + c) (by omega))
+          (Rle_ofQ_ofQ Nat.one_pos Nat.one_pos hq2)))
+      (Rle_of_Req (Req_trans (Radd_ofQ_ofQ Nat.one_pos Nat.one_pos)
+        (ofQ_congr (add_den_pos Nat.one_pos Nat.one_pos) Nat.one_pos hsum)))
+  have hqeq2 : Qeq (mul (⟨1, (A + c) * (A + c + 1)⟩ : Q) (⟨((2 * (K + 1) : Nat) : Int), 1⟩ : Q))
+      (⟨((2 * (K + 1) : Nat) : Int), (A + c) * (A + c + 1)⟩ : Q) := by
+    simp only [Qeq, mul]; push_cast; ring_uor
+  refine hs_le_Radd ?_
+  refine Rle_trans (Rle_of_Req (Req_symm (Rmul_sub_distrib_right
+    (ofQ (⟨1, A + c⟩ : Q) (show 0 < A + c by omega))
+    (ofQ (⟨1, A + c + 1⟩ : Q) (Nat.succ_pos (A + c))) _))) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_congr
+    (Req_trans (Rsub_ofQ_ofQ (show 0 < A + c by omega) (Nat.succ_pos (A + c)))
+      (ofQ_congr (b := (⟨1, (A + c) * (A + c + 1)⟩ : Q))
+        (add_den_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))) hD hqeq))
+    (Req_refl _))) ?_
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ hD (show (0 : Int) ≤ (⟨1, (A + c) * (A + c + 1)⟩ : Q).num from (by decide : (0 : Int) ≤ 1))) hS) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ hD Nat.one_pos)) ?_
+  exact Rle_of_Req (ofQ_congr (Qmul_den_pos hD Nat.one_pos)
+    (Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))) hqeq2)
+
+/-- **The fold gap**: `hsFoldHi ≤ hsFoldLo + Σ_{j<c} 2(K+1)/((A+j)(A+j+1))` for any
+    cap `A + c ≤ K` — the crude `log ≤ n` bound suffices because the harmonic cells
+    telescope to `≤ c/A²`, killing a factor of `A ~ cM` (scaled defect `~ 1/M`). -/
+theorem hsFold_gap (A K : Nat) (hA : 1 ≤ A) : ∀ c, A + c ≤ K →
+    Rle (hsFoldHi A hA c)
+      (Radd (hsFoldLo A hA c) (ofQ (gapQ A K c) (gapQ_den_pos A K hA c))) := by
+  intro c
+  induction c with
+  | zero => exact fun _ => Rle_of_Req (Req_symm (Radd_zero zero))
+  | succ k ih =>
+    intro hK
+    show Rle (Radd (hsFoldHi A hA k) _) _
+    refine Rle_trans (Radd_le_add (ih (by omega)) (hs_cell_gap A k K hA (by omega))) ?_
+    refine Rle_trans (Rle_of_Req (Radd_swap (hsFoldLo A hA k)
+      (ofQ (gapQ A K k) (gapQ_den_pos A K hA k)) _ _)) ?_
+    exact Rle_of_Req (Radd_congr (Req_refl _)
+      (Radd_ofQ_ofQ (gapQ_den_pos A K hA k)
+        (Nat.mul_pos (show 0 < A + k by omega) (Nat.succ_pos (A + k)))))
+
 end UOR.Bridge.F1Square.Analysis

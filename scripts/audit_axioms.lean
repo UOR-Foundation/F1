@@ -4406,3 +4406,7 @@ open UOR.Bridge.F1Square
 -- The ∫log/x layer, part 2: the step-folds and the Hn telescopes.
 #print axioms Analysis.Hn_tele_lower
 #print axioms Analysis.Hn_tele_upper
+
+-- The ∫log/x layer, part 3: the fold gap (crude log ≤ n + the harmonic telescope).
+#print axioms Analysis.gapQ_den_pos
+#print axioms Analysis.hsFold_gap
