@@ -4388,3 +4388,11 @@ open UOR.Bridge.F1Square
 -- and the Gn 3 telescope (new Analysis/T4PoleAAssembly.lean).
 #print axioms Analysis.t4A12_val
 #print axioms Analysis.t4A2334_val
+
+-- The t4PoleA assembly, part 2: NF components and the exact value 9/4.
+#print axioms Analysis.gn21_nf
+#print axioms Analysis.gn42_nf
+#print axioms Analysis.a2334_nf
+#print axioms Analysis.ah_nf
+#print axioms Analysis.aq_nf
+#print axioms Analysis.t4PoleA_eq

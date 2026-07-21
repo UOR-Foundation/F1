@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4PoleA_eq` — `t4PoleA ≈ 9/4`, EXACT** (`Analysis/T4PoleAAssembly.lean` part 2;
+  Sonine route, step 2 — the `W(t4)` campaign): the cone tent's `∫ f` pole component
+  evaluates to the exact rational `9/4` — the `log 2` coefficient cancels
+  (`−2 + 3/2 + 1/2 = 0`) and the rationals total `1 + 2 − 1/2 − 1/4 = 9/4`. Assembly
+  through a normal form `a·log2 + q` (rational `a, q`): `Gn 2 − Gn 1 ≈ 2log2 − 1`
+  (`gn21_nf`), `Gn 4 − Gn 2 ≈ 6log2 − 2` (`gn42_nf`, via `logN 4 ≈ 2·logN 2`), the
+  telescoped middle `t4A23 + t4A34 ≈ −2log2 + 2`, `t4Ah ≈ (3/2)log2 − 1/2`,
+  `t4Aq ≈ (1/2)log2 − 1/4`, summed by the NF kit (`ta_nf_add`/`ta_nf_smul` +
+  scalar-collapse privates). First of the three `t4` slot components pinned; next:
+  poleB (`= 4(log2)²`) and the archimedean tail (the dilog bracket). Axiom-clean;
+  crux fields `none`.
 - **`t4A12_val` + `t4A2334_val` — the `t4PoleA` assembly, part 1** (new
   `Analysis/T4PoleAAssembly.lean`; Sonine route, step 2 — the `W(t4)` campaign): the
   first *exact* piece value — `t4A12 ≈ 1` (`∫₁² (2log2 − log x) dx = 1`: the cone
