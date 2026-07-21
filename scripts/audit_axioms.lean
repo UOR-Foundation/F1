@@ -4502,3 +4502,8 @@ open UOR.Bridge.F1Square
 
 -- The t4PoleB assembly: t4PoleB = t4H·t4H = 4(log2)^2, EXACT.
 #print axioms Analysis.t4PoleB_eq
+
+-- The t4 arch tail, part 1: the compact reciprocal half (recipC_smul instances at
+-- bases 2, 3, 4, telescoping to t4H·(log5 − log2); new Analysis/T4ArchPieces.lean).
+#print axioms Analysis.t4Trecip_eq
+#print axioms Analysis.t4Trecip_sum

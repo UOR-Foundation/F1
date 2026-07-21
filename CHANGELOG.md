@@ -25,6 +25,14 @@ audit-visible hypothesis, never an axiom).
   `log2·Δlog₁ + ½ΔHn₁`, `½ΔHn₁`. `t4PoleB` (the five-piece sum) is defined; the
   `4(log2)² = t4H·t4H` assembly is the companion brick. Axiom-clean; crux fields
   `none`.
+- **`t4Trecip_sum` — the `t4` arch tail, part 1: the compact reciprocal half** (new
+  `Analysis/T4ArchPieces.lean`): the arch tail\'s compact integrand on `[1,4]`
+  collapses to `2log2/(x+1) − log x/(x−1)`; the reciprocal half is realized as three
+  constructed pieces `∫₀¹ t4H/(b+t) dt ≈ t4H·(log(b+1) − log b)` (bases `2, 3, 4`,
+  `riemannIntegral_recipC_smul` at weakened modulus `5`), telescoping to
+  `t4H·(log5 − log2)`. Remaining for the tail: the dilog half (`log x/(x−1)`,
+  two-sided bracket) and the improper remainder (`−t4H·(log5 − log3)`, the
+  `TentArchTail` telescope mirror). Axiom-clean; crux fields `none`.
 - **`t4PoleB_eq` — `t4PoleB ≈ (2log2)² = 4(log2)²`, EXACT** (in
   `Analysis/T4PoleBPieces.lean`): the cone tent\'s `∫ f/x` pole component evaluates to
   the exact square `t4H·t4H`. The five constructed pieces (`t4B12/23/34/h/q`, part 4)
