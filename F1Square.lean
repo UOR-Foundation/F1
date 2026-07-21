@@ -306,6 +306,10 @@ import F1Square.Analysis.T4PoleBPieces
 import F1Square.Analysis.T4ArchPieces
 import F1Square.Analysis.T4TailImproper
 import F1Square.Analysis.MonotoneIntegral
+import F1Square.Analysis.DilogPhi
+import F1Square.Analysis.DilogPhiVal
+import F1Square.Analysis.DilogPieces
+import F1Square.Analysis.DilogValue
 
 open UOR.Primitives
 

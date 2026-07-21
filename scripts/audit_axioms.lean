@@ -4536,3 +4536,50 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.dyadicR_level_gap
 #print axioms Analysis.riemannIntegral_anti_upper
 #print axioms Analysis.riemannIntegral_anti_lower
+
+-- The dilog kernel Φ(u) = ∫₀¹ ds/(1+s·band(u)): the totalized integrand of the t4
+-- dilog ∫₁⁴ logx/(x−1)dx with the removable singularity REMOVED BY CONSTRUCTION
+-- (new Analysis/DilogPhi.lean).
+#print axioms Analysis.bandU_congr
+#print axioms Analysis.bandU_lip
+#print axioms Analysis.bandU_nonneg
+#print axioms Analysis.bandU_le
+#print axioms Analysis.bandU_abs
+#print axioms Analysis.bandU_ofQ
+#print axioms Analysis.Qinv_anti
+#print axioms Analysis.one_add_mul_num_pos
+#print axioms Analysis.one_le_one_add_mul
+#print axioms Analysis.phiInner_congr
+#print axioms Analysis.phiInner_lip
+#print axioms Analysis.Phi_congr
+#print axioms Analysis.Phi_diff_le
+#print axioms Analysis.Phi_lip
+#print axioms Analysis.phiInner_ofQ
+#print axioms Analysis.Phi_ofQ_anti
+
+-- The dilog kernel's rational brackets: phiRat(u,2^M−1) − (3/4)/2^M ≤ Φ(u) ≤ phiRat —
+-- the whole sample layer is exact rational arithmetic (new Analysis/DilogPhiVal.lean).
+#print axioms Analysis.qFoldPhi_den_pos
+#print axioms Analysis.phiRat_den_pos
+#print axioms Analysis.RsumN_phi_eq
+#print axioms Analysis.riemannSum_phi_eq
+#print axioms Analysis.phiInner_sampleAnti
+#print axioms Analysis.phiInner_var
+#print axioms Analysis.phi_sched
+#print axioms Analysis.Phi_ofQ_le
+#print axioms Analysis.Phi_ofQ_ge
+
+-- The constructed t4 dilog: three kernel pieces ∫₀¹Φ(c'+t)dt and the outer monotone
+-- bracket machinery (new Analysis/DilogPieces.lean).
+#print axioms Analysis.dgPiece_congr
+#print axioms Analysis.dgPiece_lip
+#print axioms Analysis.dgPiece_sampleAnti
+#print axioms Analysis.qFoldLo_den_pos
+#print axioms Analysis.RsumN_dg_ge
+#print axioms Analysis.dyadicR_dg_ge
+#print axioms Analysis.dg_var
+#print axioms Analysis.dilogPiece_ge
+
+-- The certified dilog lower bound t4Dilog ≥ 1.909 (true ≈ 1.93939): the first fully
+-- rational bracket of a log-type integral (new Analysis/DilogValue.lean).
+#print axioms Analysis.t4Dilog_ge
