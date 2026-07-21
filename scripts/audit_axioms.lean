@@ -4396,3 +4396,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.ah_nf
 #print axioms Analysis.aq_nf
 #print axioms Analysis.t4PoleA_eq
+
+-- The ∫log/x layer, part 1: the log-squared antiderivative Hn = (log n)^2 and its
+-- unit-step bracket via difference of squares (new Analysis/LogSqStep.lean).
+#print axioms Analysis.Hn_one
+#print axioms Analysis.Hn_step_lower
+#print axioms Analysis.Hn_step_upper

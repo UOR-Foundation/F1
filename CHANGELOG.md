@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Hn_step_lower/upper` — the `∫ log/x` layer, part 1: the `log²` step bracket** (new
+  `Analysis/LogSqStep.lean`; Sonine route, step 2 — the `W(t4)` campaign, toward
+  `poleB = 4(log2)²`): the antiderivative object `Hn(n) = (log n)²` (`= 2·∫₁ⁿ log x/x`)
+  with `Hn(1) ≈ 0` and the two-sided unit-step bracket
+  `(log i + log(i+1))/(i+1) ≤ Hn(i+1) − Hn(i) ≤ (log i + log(i+1))/i`, GENERAL in `i` —
+  the difference of squares collapses the step (`Rmul_sub_add_self`), the certified
+  per-step log bracket (`ExpBounds`) bounds the first factor, and `Rnonneg_logN` carries
+  the product. The exact mirror of `LogStep`'s `Gn` engine one level up; the telescopes
+  over `i = c·2^m + j` and the `log/x` Riemann comparison are the next bricks.
+  Axiom-clean; crux fields `none`.
 - **`t4PoleA_eq` — `t4PoleA ≈ 9/4`, EXACT** (`Analysis/T4PoleAAssembly.lean` part 2;
   Sonine route, step 2 — the `W(t4)` campaign): the cone tent's `∫ f` pole component
   evaluates to the exact rational `9/4` — the `log 2` coefficient cancels

@@ -296,6 +296,7 @@ import F1Square.Analysis.LogRiemann
 import F1Square.Analysis.LogIntegralEval
 import F1Square.Analysis.T4PoleAPieces
 import F1Square.Analysis.T4PoleAAssembly
+import F1Square.Analysis.LogSqStep
 
 open UOR.Primitives
 
