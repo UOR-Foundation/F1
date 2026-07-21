@@ -4518,3 +4518,21 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.t4tail_decay
 #print axioms Analysis.t4tail_rate
 #print axioms Analysis.t4Improper_eq
+
+-- The monotone dyadic bracket: for sample-antitone integrands ONE finite dyadic sum
+-- brackets the certified integral (D_M − V/2^M ≤ ∫₀¹f ≤ D_M) — the bracket engine for
+-- integrals with no closed form (new Analysis/MonotoneIntegral.lean).
+#print axioms Analysis.const_le_Rlim
+#print axioms Analysis.RsumN_telescope
+#print axioms Analysis.Rneg_Rsub_flip
+#print axioms Analysis.Rle_Radd_of_Rsub_le
+#print axioms Analysis.riemannIntegral_le_sample
+#print axioms Analysis.riemannSum_refine_regroup
+#print axioms Analysis.riemannSum_refine_anti
+#print axioms Analysis.riemannSum_refine_gap
+#print axioms Analysis.dyadicR_anti_step
+#print axioms Analysis.dyadicR_gap_step
+#print axioms Analysis.dyadicR_level_anti
+#print axioms Analysis.dyadicR_level_gap
+#print axioms Analysis.riemannIntegral_anti_upper
+#print axioms Analysis.riemannIntegral_anti_lower

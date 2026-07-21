@@ -305,6 +305,7 @@ import F1Square.Analysis.RecipSmulEval
 import F1Square.Analysis.T4PoleBPieces
 import F1Square.Analysis.T4ArchPieces
 import F1Square.Analysis.T4TailImproper
+import F1Square.Analysis.MonotoneIntegral
 
 open UOR.Primitives
 
