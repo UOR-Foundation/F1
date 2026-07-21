@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`dyadicR_gLx_defect` — the `∫ log/x` layer, part 8b-ii: the dyadic defect** (new
+  `Analysis/LogOverXEval.lean`): `|D_m − (Hn(c+1) − Hn(c))| ≤ (5m+5)/2^m` — the
+  convergence core of `∫₀¹ 2log(c+t)/(c+t) dt`. The deviation decomposes exactly
+  (`lxe_insert`) into the sample-bracket slack (`≤ (2m+5)·2^m/A²`, capped gap + the
+  `M/A²` reverse) plus the cross term `2·log(2^m)·(Δlog − hFold)` (`≤ 2m/(c(c+1)2^m)`,
+  the harmonic wedge absorbing the scale identity\'s cross term), totalling
+  `(4m+5)/2^m`. GOTCHA confirmed: `ring_uor` mis-atomizes repeated cast occurrences
+  (`↑2^m` thrice) — use core `Int.add_mul`/`Int.mul_assoc` on cast-heavy goals.
+  Remaining: the `digammaMidx` rate + `Rlim_eval_real` + instances. Axiom-clean; crux
+  fields `none`.
 - **`lxr_cap` + `Hn_sample_upper_cap` — the `∫ log/x` layer, part 8b-i: the rate
   ingredients** (new `Analysis/LogOverXRate.lean`): the schedule arithmetic
   `5(j+1) ≤ m ⟹ (5m+5)(j+1) ≤ 2^m` (via `m(m+1) ≤ 2^m`, `m ≥ 5`), the per-cell

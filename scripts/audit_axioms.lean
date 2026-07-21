@@ -4453,3 +4453,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.lxr_cap
 #print axioms Analysis.Hn_sample_upper_cap
 #print axioms Analysis.gapQE_le
+
+-- The ∫log/x layer, part 8b-ii: the dyadic defect |D_m − (Hn(c+1) − Hn(c))| ≤ (5m+5)/2^m
+-- (new Analysis/LogOverXEval.lean).
+#print axioms Analysis.dyadicR_gLx_pow
+#print axioms Analysis.dyadicR_gLx_defect
