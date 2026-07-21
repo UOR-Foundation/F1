@@ -313,6 +313,7 @@ import F1Square.Analysis.DilogValue
 import F1Square.Square.ConeSlot
 import F1Square.Square.PreHilbert
 import F1Square.Square.SelfAdjoint
+import F1Square.Square.Projection
 
 open UOR.Primitives
 

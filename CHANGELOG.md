@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 3 — orthogonal projection and BESSEL'S INEQUALITY** (new
+  `Square/Projection.lean`): orthonormal families (`OrthoFam`), Fourier coefficients
+  `cₖ = ⟨f,eₖ⟩_N`, the finite-rank projection `Pf = Σ cₖeₖ` with `proj_coeff` (coefficients
+  reproduced, by sifting through orthonormality) and `inner_proj`/`proj_self_inner`
+  (`⟨f,Pf⟩ ≈ Σcₖ² ≈ ⟨Pf,Pf⟩`); **`bessel`**: `Σ_{k<K} ⟨f,eₖ⟩² ≤ ⟨f,f⟩_N` via
+  `⟨f−Pf, f−Pf⟩ ≥ 0` — constructive, sqrt-free, no division; `indic_ortho` (the coordinate
+  indicators are the skeleton's orthonormal basis). THE SONINE INSTANCE: the skeleton's band
+  restriction is now a genuine projection OPERATOR — `bandProj` is idempotent
+  (`bandProj_idem`) and self-adjoint (`bandProj_self_adjoint`), and
+  `bandProj_pairing_nonneg` gives `weilQuad (multForm burnolMult) (bandProj c) N ≥ 0` for
+  EVERY test family, unconditionally — pairing ∘ projection ≥ 0 with no support hypothesis
+  left to the caller. Honest scope: Bessel not Parseval — no completeness, no claim the band
+  projection is the genuine `f,f̂` co-support coupling; crux fields `none`.
 - **The pre-Hilbert layer, brick 2 — self-adjoint operators at the truncated level** (new
   `Square/SelfAdjoint.lean`): kernels act as operators (`applyN B c N = (Σ_j B(i,j)cⱼ)ᵢ`); the
   Weil quadratic form IS the inner product against the action (`weilQuad_eq_inner`:

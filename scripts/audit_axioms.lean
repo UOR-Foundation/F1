@@ -4645,3 +4645,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.applyN_multForm
 #print axioms Square.multForm_self_adjoint
 #print axioms Square.burnol_pairing_eq_inner
+
+-- THE PRE-HILBERT LAYER, brick 3 (Square/Projection.lean) — orthogonal projection and Bessel:
+-- Fourier coefficients, the finite-rank projection, Bessel's inequality (sqrt-free), the
+-- indicator basis, and the Sonine band restriction as a genuine self-adjoint idempotent
+-- projection with unconditional pairing-positivity on its range.
+#print axioms Square.innerN_neg_left
+#print axioms Square.innerN_sub_left
+#print axioms Square.inner_proj
+#print axioms Square.proj_coeff
+#print axioms Square.proj_self_inner
+#print axioms Square.bessel
+#print axioms Square.indic_ortho
+#print axioms Square.bandProj_band
+#print axioms Square.bandProj_idem
+#print axioms Square.bandProj_self_adjoint
+#print axioms Square.bandProj_pairing_nonneg
