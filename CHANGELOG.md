@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`hsFold_gap_cap` + `logN_two_pow_le` — the `∫ log/x` layer, part 8a: the
+  log-aware gap** (in `Analysis/LogSqStep.lean`): the rate ledger showed the part-3
+  crude cap does NOT decay once unscaled (the sample fold is already the scaled
+  Riemann sum), so the fold gap is re-proven with an arbitrary per-cell log-sum cap
+  `E` (`hsFold_gap_cap`, cells `E/((A+j)(A+j+1))`), fed by the new magnitude bounds
+  `log 2 ≤ 1` (`Rlog_le_sub_one` at the rational base) and `log(2^m) ≤ m`
+  (`logN_pow_two` + the `k·x ≤ k` fold) — at `M = 2^m` the cap is `E ~ 2m + 4` and
+  the telescoped gap is `~ m/M`, which the `digammaMidx` schedule absorbs
+  (`m² ≤ 2^m`). Axiom-clean; crux fields `none`.
 - **`Hn_scale_diff` — the `∫ log/x` layer, part 7: the scale identity** (in
   `Analysis/LogSqStep.lean`): `Hn(kM) ≈ Hn(k) + (2·log M·log k + Hn(M))`
   (`Hn_scale_expand`, the `(a+b)²` expansion over `logN_mul_gen`) and the difference

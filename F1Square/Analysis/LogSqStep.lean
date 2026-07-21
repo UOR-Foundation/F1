@@ -394,4 +394,101 @@ theorem Hn_scale_diff (c M : Nat) (hc : 1 ≤ c) (hM : 1 ≤ M) :
   exact Req_symm (Rmul_sub_distrib (Radd (logN M hM) (logN M hM))
     (logN (c + 1) (by omega)) (logN c hc))
 
+
+-- ===========================================================================
+-- Part 8a: `log(2^m) ≤ m` and the capped fold gap.
+-- ===========================================================================
+
+/-- `log 2 ≤ 1` (`log x ≤ x − 1` at the rational base). -/
+theorem logN_two_le_one : Rle (logN 2 (by omega)) (ofQ (⟨1, 1⟩ : Q) Nat.one_pos) := by
+  refine Rle_trans (Rlog_le_sub_one (⟨2, 1⟩ : Q) Nat.one_pos (by decide) (by decide)
+    (by decide)) ?_
+  exact Rle_of_Req (ofQ_congr (Qsub_den_pos Nat.one_pos Nat.one_pos) Nat.one_pos (by decide))
+
+/-- `k·x ≤ k` for `x ≤ 1`. -/
+private theorem hs_nsmul_le (x : Real) (hx : Rle x (ofQ (⟨1, 1⟩ : Q) Nat.one_pos)) :
+    ∀ k : Nat, Rle (Rnsmul k x) (ofQ (⟨(k : Int), 1⟩ : Q) Nat.one_pos)
+  | 0 => Rle_of_Req (Req_of_seq_Qeq (fun _ =>
+      (by decide : Qeq (⟨0, 1⟩ : Q) (⟨((0 : Nat) : Int), 1⟩ : Q))))
+  | (k + 1) => by
+    rw [Rnsmul_succ]
+    refine Rle_trans (Radd_le_add hx (hs_nsmul_le x hx k)) ?_
+    refine Rle_of_Req (Req_trans (Radd_ofQ_ofQ Nat.one_pos Nat.one_pos)
+      (ofQ_congr (b := (⟨((k + 1 : Nat) : Int), 1⟩ : Q))
+        (add_den_pos Nat.one_pos Nat.one_pos) Nat.one_pos ?_))
+    show Qeq (add (⟨1, 1⟩ : Q) (⟨(k : Int), 1⟩ : Q)) (⟨((k + 1 : Nat) : Int), 1⟩ : Q)
+    simp only [Qeq, add]; push_cast; ring_uor
+
+/-- **`log(2^m) ≤ m`**. -/
+theorem logN_two_pow_le (m : Nat) :
+    Rle (logN (2 ^ m) Nat.one_le_two_pow) (ofQ (⟨(m : Int), 1⟩ : Q) Nat.one_pos) :=
+  Rle_trans (Rle_of_Req (logN_pow_two m)) (hs_nsmul_le _ logN_two_le_one m)
+
+/-- The `E`-capped rational gap fold `Σ_{j<c} E/((A+j)(A+j+1))`. -/
+def gapQE (A E : Nat) : Nat → Q
+  | 0 => ⟨0, 1⟩
+  | (c + 1) => add (gapQE A E c) ⟨(E : Int), (A + c) * (A + c + 1)⟩
+
+theorem gapQE_den_pos (A E : Nat) (hA : 1 ≤ A) : ∀ c, 0 < (gapQE A E c).den
+  | 0 => Nat.one_pos
+  | (c + 1) => add_den_pos (gapQE_den_pos A E hA c)
+      (Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c)))
+
+/-- The capped per-cell gap: `stepHi ≤ stepLo + E/((A+c)(A+c+1))` given the log-sum
+    cap at this cell. -/
+private theorem hs_cell_gap_cap (A c E : Nat) (hA : 1 ≤ A)
+    (hcap : Rle (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega)))
+      (ofQ (⟨(E : Int), 1⟩ : Q) Nat.one_pos)) :
+    Rle (Rmul (ofQ (⟨1, A + c⟩ : Q) (show 0 < A + c by omega))
+        (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega))))
+      (Radd (Rmul (ofQ (⟨1, A + c + 1⟩ : Q) (Nat.succ_pos (A + c)))
+          (Radd (logN (A + c + 1) (by omega)) (logN (A + c) (by omega))))
+        (ofQ (⟨(E : Int), (A + c) * (A + c + 1)⟩ : Q)
+          (Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))))) := by
+  have hD : 0 < ((⟨1, (A + c) * (A + c + 1)⟩ : Q)).den :=
+    Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))
+  have hqeq : Qeq (add (⟨1, A + c⟩ : Q) (neg (⟨1, A + c + 1⟩ : Q)))
+      (⟨1, (A + c) * (A + c + 1)⟩ : Q) := by
+    simp only [Qeq, add, neg]; push_cast; ring_uor
+  have hqeq2 : Qeq (mul (⟨1, (A + c) * (A + c + 1)⟩ : Q) (⟨(E : Int), 1⟩ : Q))
+      (⟨(E : Int), (A + c) * (A + c + 1)⟩ : Q) := by
+    simp only [Qeq, mul]; push_cast; ring_uor
+  refine hs_le_Radd ?_
+  refine Rle_trans (Rle_of_Req (Req_symm (Rmul_sub_distrib_right
+    (ofQ (⟨1, A + c⟩ : Q) (show 0 < A + c by omega))
+    (ofQ (⟨1, A + c + 1⟩ : Q) (Nat.succ_pos (A + c))) _))) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_congr
+    (Req_trans (Rsub_ofQ_ofQ (show 0 < A + c by omega) (Nat.succ_pos (A + c)))
+      (ofQ_congr (b := (⟨1, (A + c) * (A + c + 1)⟩ : Q))
+        (add_den_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))) hD hqeq))
+    (Req_refl _))) ?_
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ hD
+    (show (0 : Int) ≤ (⟨1, (A + c) * (A + c + 1)⟩ : Q).num from
+      (by decide : (0 : Int) ≤ 1))) hcap) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ hD Nat.one_pos)) ?_
+  exact Rle_of_Req (ofQ_congr (Qmul_den_pos hD Nat.one_pos)
+    (Nat.mul_pos (show 0 < A + c by omega) (Nat.succ_pos (A + c))) hqeq2)
+
+/-- **The capped fold gap**: `hsFoldHi ≤ hsFoldLo + Σ_{j<c} E/((A+j)(A+j+1))`, given a
+    per-cell log-sum cap `E` — the log-aware version whose slack DECAYS after the
+    harmonic telescope (`E ~ 2m + 4` at `M = 2^m`, so the gap is `~ m/M`). -/
+theorem hsFold_gap_cap (A E : Nat) (hA : 1 ≤ A) : ∀ c,
+    (∀ j, j < c → Rle (Radd (logN (A + j + 1) (by omega)) (logN (A + j) (by omega)))
+      (ofQ (⟨(E : Int), 1⟩ : Q) Nat.one_pos)) →
+    Rle (hsFoldHi A hA c)
+      (Radd (hsFoldLo A hA c) (ofQ (gapQE A E c) (gapQE_den_pos A E hA c))) := by
+  intro c
+  induction c with
+  | zero => exact fun _ => Rle_of_Req (Req_symm (Radd_zero zero))
+  | succ k ih =>
+    intro hcap
+    show Rle (Radd (hsFoldHi A hA k) _) _
+    refine Rle_trans (Radd_le_add (ih (fun j hj => hcap j (by omega)))
+      (hs_cell_gap_cap A k E hA (hcap k (by omega)))) ?_
+    refine Rle_trans (Rle_of_Req (Radd_swap (hsFoldLo A hA k)
+      (ofQ (gapQE A E k) (gapQE_den_pos A E hA k)) _ _)) ?_
+    exact Rle_of_Req (Radd_congr (Req_refl _)
+      (Radd_ofQ_ofQ (gapQE_den_pos A E hA k)
+        (Nat.mul_pos (show 0 < A + k by omega) (Nat.succ_pos (A + k)))))
+
 end UOR.Bridge.F1Square.Analysis

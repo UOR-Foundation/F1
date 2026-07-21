@@ -4438,3 +4438,10 @@ open UOR.Bridge.F1Square
 -- The ∫log/x layer, part 7: the Hn scale identity ((a+b)-squared over logN_mul_gen).
 #print axioms Analysis.Hn_scale_expand
 #print axioms Analysis.Hn_scale_diff
+
+-- The ∫log/x layer, part 8a: log(2^m) ≤ m and the E-capped fold gap (the log-aware
+-- slack that decays like m/M after the harmonic telescope).
+#print axioms Analysis.logN_two_le_one
+#print axioms Analysis.logN_two_pow_le
+#print axioms Analysis.gapQE_den_pos
+#print axioms Analysis.hsFold_gap_cap
