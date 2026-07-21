@@ -4413,3 +4413,8 @@ open UOR.Bridge.F1Square
 
 -- The ∫log/x layer, part 4a: the sample fold and its foldHi comparison.
 #print axioms Analysis.hsSample_le_foldHi
+
+-- The ∫log/x layer, part 4b: the reverse slack and the two-sided sample bracket.
+#print axioms Analysis.hsFoldHi_le_sample
+#print axioms Analysis.Hn_sample_upper
+#print axioms Analysis.Hn_sample_lower

@@ -250,4 +250,91 @@ theorem hsSample_le_foldHi (A : Nat) (hA : 1 ≤ A) : ∀ c,
       (show (0 : Int) ≤ (⟨1, A + k⟩ : Q).num from (by decide : (0 : Int) ≤ 1))) ?_
     exact Radd_le_add (logN_mono (by omega) (Nat.le_succ (A + k))) (Rle_refl _)
 
+
+-- ===========================================================================
+-- Part 4b: the reverse slack and the two-sided sample bracket against `ΔHn`.
+-- ===========================================================================
+
+/-- The per-cell reverse slack: `stepHi ≤ sample + 1/A²` — the cell difference is the
+    weighted log step `δ/(A+k) ≤ 1/(A+k)² ≤ 1/A²`. -/
+private theorem hs_cell_sample (A k : Nat) (hA : 1 ≤ A) :
+    Rle (Rmul (ofQ (⟨1, A + k⟩ : Q) (show 0 < A + k by omega))
+        (Radd (logN (A + k + 1) (by omega)) (logN (A + k) (by omega))))
+      (Radd (Rmul (ofQ (⟨1, A + k⟩ : Q) (show 0 < A + k by omega))
+          (Radd (logN (A + k) (by omega)) (logN (A + k) (by omega))))
+        (ofQ (⟨1, A * A⟩ : Q) (Nat.mul_pos hA hA))) := by
+  have hw : 0 < ((⟨1, A + k⟩ : Q)).den := (show 0 < A + k by omega)
+  have hq : Qle (mul (⟨1, A + k⟩ : Q) (⟨1, A + k⟩ : Q)) (⟨1, A * A⟩ : Q) := by
+    show (1 : Int) * 1 * ((A * A : Nat) : Int) ≤ 1 * (((A + k) * (A + k) : Nat) : Int)
+    have hNat : A * A ≤ (A + k) * (A + k) :=
+      Nat.mul_le_mul (Nat.le_add_right A k) (Nat.le_add_right A k)
+    have hInt : ((A * A : Nat) : Int) ≤ (((A + k) * (A + k) : Nat) : Int) :=
+      Int.ofNat_le.mpr hNat
+    push_cast at hInt ⊢
+    omega
+  refine hs_le_Radd ?_
+  refine Rle_trans (Rle_of_Req (Req_symm (Rmul_sub_distrib
+    (ofQ (⟨1, A + k⟩ : Q) hw) _ _))) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_congr (Req_refl _)
+    (Req_trans (Rsub_Radd_Radd (logN (A + k + 1) (by omega)) (logN (A + k) (by omega))
+      (logN (A + k) (by omega)) (logN (A + k) (by omega)))
+      (Req_trans (Radd_congr (Req_refl _) (Radd_neg (logN (A + k) (by omega))))
+        (Radd_zero _))))) ?_
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ hw
+    (show (0 : Int) ≤ (⟨1, A + k⟩ : Q).num from (by decide : (0 : Int) ≤ 1)))
+    (logStep_diff_upper (A + k) (by omega))) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ hw hw)) ?_
+  exact Rle_ofQ_ofQ (Qmul_den_pos hw hw) (Nat.mul_pos hA hA) hq
+
+/-- **The reverse slack**: `hsFoldHi ≤ hsSample + c/A²` — the summed weighted log
+    steps. -/
+theorem hsFoldHi_le_sample (A : Nat) (hA : 1 ≤ A) : ∀ c,
+    Rle (hsFoldHi A hA c)
+      (Radd (hsSample A hA c) (ofQ (⟨(c : Int), A * A⟩ : Q) (Nat.mul_pos hA hA))) := by
+  intro c
+  induction c with
+  | zero =>
+    refine Rle_trans (Rle_zero_of_Rnonneg (Rnonneg_ofQ (Nat.mul_pos hA hA)
+      (show (0 : Int) ≤ (⟨((0 : Nat) : Int), A * A⟩ : Q).num from
+        (by decide : (0 : Int) ≤ ((0 : Nat) : Int))))) ?_
+    exact Rle_of_Req (Req_symm (Req_trans (Radd_comm zero _) (Radd_zero _)))
+  | succ k ih =>
+    show Rle (Radd (hsFoldHi A hA k) _) _
+    refine Rle_trans (Radd_le_add ih (hs_cell_sample A k hA)) ?_
+    refine Rle_trans (Rle_of_Req (Radd_swap (hsSample A hA k)
+      (ofQ (⟨(k : Int), A * A⟩ : Q) (Nat.mul_pos hA hA)) _ _)) ?_
+    refine Rle_of_Req (Radd_congr (Req_refl _)
+      (Req_trans (Radd_ofQ_ofQ (Nat.mul_pos hA hA) (Nat.mul_pos hA hA))
+        (ofQ_congr (b := (⟨((k + 1 : Nat) : Int), A * A⟩ : Q))
+          (add_den_pos (Nat.mul_pos hA hA) (Nat.mul_pos hA hA))
+          (Nat.mul_pos hA hA) ?_)))
+    show Qeq (add (⟨(k : Int), A * A⟩ : Q) (⟨1, A * A⟩ : Q))
+      (⟨((k + 1 : Nat) : Int), A * A⟩ : Q)
+    simp only [Qeq, add]; push_cast; ring_uor
+
+/-- **The sample bracket, upper side**: `hsSample ≤ (Hn(A+M) − Hn(A)) + gapQ` (any cap
+    `A + M ≤ K`). -/
+theorem Hn_sample_upper (A M K : Nat) (hA : 1 ≤ A) (hK : A + M ≤ K) :
+    Rle (hsSample A hA M)
+      (Radd (Rsub (Hn (A + M) (by omega)) (Hn A hA))
+        (ofQ (gapQ A K M) (gapQ_den_pos A K hA M))) :=
+  Rle_trans (hsSample_le_foldHi A hA M)
+    (Rle_trans (hsFold_gap A K hA M hK)
+      (Radd_le_add
+        (Rle_Rsub_of_Radd_le (Rle_trans
+          (Rle_of_Req (Radd_comm (hsFoldLo A hA M) (Hn A hA)))
+          (Hn_tele_lower A hA M)))
+        (Rle_refl _)))
+
+/-- **The sample bracket, lower side**: `(Hn(A+M) − Hn(A)) − M/A² ≤ hsSample`. -/
+theorem Hn_sample_lower (A M : Nat) (hA : 1 ≤ A) :
+    Rle (Rsub (Rsub (Hn (A + M) (by omega)) (Hn A hA))
+        (ofQ (⟨(M : Int), A * A⟩ : Q) (Nat.mul_pos hA hA)))
+      (hsSample A hA M) := by
+  have hup : Rle (Rsub (Hn (A + M) (by omega)) (Hn A hA)) (hsFoldHi A hA M) :=
+    Rsub_le_of_le_Radd (Hn_tele_upper A hA M)
+  refine Rsub_le_of_le_Radd ?_
+  refine Rle_trans (Rle_trans hup (hsFoldHi_le_sample A hA M)) ?_
+  exact Rle_of_Req (Radd_comm _ _)
+
 end UOR.Bridge.F1Square.Analysis

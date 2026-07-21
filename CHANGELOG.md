@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Hn_sample_upper/lower` — the `∫ log/x` layer, part 4b: the two-sided sample
+  bracket** (in `Analysis/LogSqStep.lean`): the reverse slack `hsFoldHi ≤ hsSample +
+  c/A²` (per cell the weighted log step `δ/(A+k) ≤ 1/(A+k)² ≤ 1/A²`, summed at the
+  common denominator `A²`), and the combined bracket
+  `(Hn(A+M) − Hn(A)) − M/A² ≤ hsSample ≤ (Hn(A+M) − Hn(A)) + gapQ` — the sample fold
+  (the exact `log/x` Riemann-sum shape) is now two-sided against the `log²`
+  antiderivative difference, with both slacks decaying like `1/M` after scaling. Next:
+  the `log/x` integrand family and the rate wiring. Axiom-clean; crux fields `none`.
 - **`hsSample_le_foldHi` — the `∫ log/x` layer, part 4a: the sample fold** (in
   `Analysis/LogSqStep.lean`): `hsSample = Σ_{j<c} 2·log(A+j)/(A+j)` — the exact shape
   the `log/x` Riemann sums take — with the cell-wise comparison
