@@ -4418,3 +4418,13 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.hsFoldHi_le_sample
 #print axioms Analysis.Hn_sample_upper
 #print axioms Analysis.Hn_sample_lower
+
+-- The ∫log/x layer, part 5: the integrand family gLx = 2·gLog·gRecipC with bounds,
+-- congruence, and the product-Lipschitz certificate (new Analysis/LogOverX.lean).
+#print axioms Analysis.gLog_nonneg
+#print axioms Analysis.gLog_le
+#print axioms Analysis.twoGLog_abs
+#print axioms Analysis.twoF_lip
+#print axioms Analysis.gRecipC_abs
+#print axioms Analysis.gLx_congr_of
+#print axioms Analysis.gLx_lip_of

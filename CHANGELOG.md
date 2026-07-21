@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`gLx` + `gLx_lip_of` — the `∫ log/x` layer, part 5: the integrand family** (new
+  `Analysis/LogOverX.lean`): the totalized integrand
+  `gLx c t = (gLog c t + gLog c t)·gRecipC c t` (`= 2·log(c+t)/(c+t)` on `[0,1]`) with
+  the full gateway data — the uniform bounds `0 ≤ gLog c ≤ c` (`gLog_le`, the first
+  consumer of `RlogPos_le_sub_one`: `log x ≤ x − 1` at the presented band modulus) and
+  `|gRecipC| ≤ 1` (`Rinv_le_ofQ_inv` over the clamp floor), the doubled-integrand
+  `2`-Lipschitz combinator `twoF_lip` (generic in the `1`-Lipschitz factor), and the
+  product-Lipschitz certificate `gLx_lip_of` at constant `2c·1 + 1·2 = 2c + 2`
+  (`Rmul_lipschitz` — its first gateway consumer). The objects
+  `riemannIntegral (gLx c)` construct for `c = 1, 2, 3`. Next: the point values and
+  the rate against `Hn(c+1) − Hn(c)`. Axiom-clean; crux fields `none`.
 - **`Hn_sample_upper/lower` — the `∫ log/x` layer, part 4b: the two-sided sample
   bracket** (in `Analysis/LogSqStep.lean`): the reverse slack `hsFoldHi ≤ hsSample +
   c/A²` (per cell the weighted log step `δ/(A+k) ≤ 1/(A+k)² ≤ 1/A²`, summed at the
