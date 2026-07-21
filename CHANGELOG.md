@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`riemannIntegral_recipC_smul` — the real-scalar reciprocal evaluation** (new
+  `Analysis/RecipSmulEval.lean`): `∫₀¹ C·(1/(c+t)) dt ≈ C·(log(c+1) − log c)` for a
+  REAL constant `C` with `|C| ≤ B`, `B.num ≤ 5` — the first real-scalar integral
+  evaluation, possible because the reciprocal family\'s Riemann sums are EXACT
+  rationals (`riemannSum_gRecipC = hFold`), so the dyadic sums scale by `C` exactly
+  (`riemannSum_smul` is real-scalar) and the defect is `|C|·wedge ≤ B/(c(c+1)2^m)`.
+  This is the engine the `t4` poleB pieces need for their `2log2·(1/x)` halves; the
+  `(1/2)·gLx` halves use the rational-scalar API. Next: the five poleB pieces and the
+  `4(log2)²` assembly. Axiom-clean; crux fields `none`.
 - **`riemannIntegral_gLx1/2/3` — the `∫ log/x` layer COMPLETE: the evaluation** (in
   `Analysis/LogOverXEval.lean`): `∫₀¹ 2·log(c+t)/(c+t) dt ≈ Hn(c+1) − Hn(c)`
   (`= log²(c+1) − log²c`), certified for `c = 1, 2, 3` at the product-Lipschitz datum

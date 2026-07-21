@@ -4467,3 +4467,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannIntegral_gLx1
 #print axioms Analysis.riemannIntegral_gLx2
 #print axioms Analysis.riemannIntegral_gLx3
+
+-- The real-scalar reciprocal evaluation: ∫₀¹ C·(1/(c+t)) = C·(log(c+1) − log c) for
+-- bounded real C (new Analysis/RecipSmulEval.lean) — the poleB pieces' engine.
+#print axioms Analysis.riemannIntegral_recipC_smul

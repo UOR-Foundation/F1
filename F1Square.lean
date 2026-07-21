@@ -301,6 +301,7 @@ import F1Square.Analysis.LogOverX
 import F1Square.Analysis.LogOverXSum
 import F1Square.Analysis.LogOverXRate
 import F1Square.Analysis.LogOverXEval
+import F1Square.Analysis.RecipSmulEval
 
 open UOR.Primitives
 
