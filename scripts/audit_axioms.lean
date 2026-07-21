@@ -4445,3 +4445,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.logN_two_pow_le
 #print axioms Analysis.gapQE_den_pos
 #print axioms Analysis.hsFold_gap_cap
+
+-- The ∫log/x layer, part 8b-i: the rate ingredients (schedule arithmetic, per-cell
+-- log cap, capped sample bracket, rational gap collapse; new Analysis/LogOverXRate.lean).
+#print axioms Analysis.lxr_sched
+#print axioms Analysis.logN_succ_le_two
+#print axioms Analysis.lxr_cap
+#print axioms Analysis.Hn_sample_upper_cap
+#print axioms Analysis.gapQE_le

@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`lxr_cap` + `Hn_sample_upper_cap` — the `∫ log/x` layer, part 8b-i: the rate
+  ingredients** (new `Analysis/LogOverXRate.lean`): the schedule arithmetic
+  `5(j+1) ≤ m ⟹ (5m+5)(j+1) ≤ 2^m` (via `m(m+1) ≤ 2^m`, `m ≥ 5`), the per-cell
+  log-sum cap `≤ 2m + 4` at `M = 2^m` (`logN_mono` into `(c+1)2^m`, split by
+  `logN_mul_gen`, `log(c+1) ≤ 2`, `log(2^m) ≤ m`), the capped sample bracket
+  `hsSample ≤ ΔHn + gapQE`, and the rational collapse `gapQE ≤ E·c/A²`. What remains
+  for `∫₀¹ 2log(c+t)/(c+t) = Hn(c+1) − Hn(c)`: the rate core (triangle over the
+  three slack terms + `Hn_scale_diff` + `hFoldC_defect`) and the `Rlim` wiring.
+  Axiom-clean; crux fields `none`.
 - **`hsFold_gap_cap` + `logN_two_pow_le` — the `∫ log/x` layer, part 8a: the
   log-aware gap** (in `Analysis/LogSqStep.lean`): the rate ledger showed the part-3
   crude cap does NOT decay once unscaled (the sample fold is already the scaled
