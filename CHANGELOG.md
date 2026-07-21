@@ -16,6 +16,13 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`t4B_lower_eval` — the `t4PoleB` pieces, part 3: the lower pieces** (in
+  `Analysis/T4PoleBPieces.lean`): `∫₀¹ (C·(1/(c+t)) + (1/2)·gLx c) dt ≈ C·Δlog_c +
+  (1/2)·ΔHn_c`, generic in the bounded real constant — the `[1/2, 1]` piece at
+  `C = log 2` and the `[1/4, 1/2]` piece\'s scaffold. The simplifying observation:
+  the poleB measure `dx/x` is scale-INVARIANT, so the sub-unit pieces pull back with
+  NO outer weight (`[1/2,1] ↦ (log2 + log(1+t))/(1+t) dt` exactly). Next: the five
+  instances and the `4(log2)²` assembly. Axiom-clean; crux fields `none`.
 - **`t4B_upper_eval` — the `t4PoleB` pieces, part 2: the upper pieces** (in
   `Analysis/T4PoleBPieces.lean`): `∫₀¹ (t4H·(1/(c+t)) + (−1/2)·gLx c) dt ≈
   t4H·(log(c+1) − log c) − (1/2)·(Hn(c+1) − Hn(c))` — the pulled-back

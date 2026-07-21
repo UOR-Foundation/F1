@@ -4487,3 +4487,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.LxQ_den_pos
 #print axioms Analysis.LxQ_num_nonneg
 #print axioms Analysis.t4B_upper_eval
+
+-- The t4PoleB pieces, part 3: the lower-piece evaluation (C·recip + ½·gLx; the log
+-- measure dx/x pulls back with NO outer weight).
+#print axioms Analysis.posHalf_abs
+#print axioms Analysis.t4B_lower_eval

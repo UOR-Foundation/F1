@@ -169,4 +169,71 @@ theorem t4B_upper_eval (c : Nat) (hc1 : 1 ≤ c) (hc3 : c ≤ 3)
           (gLx_lip_of c hc3 hgl x y))
         (gLx_congr_of c hgc) hsch)
 
+
+-- ===========================================================================
+-- Part 3: the lower-piece evaluation — `(2log2 + log x)/x` pulls back with NO outer
+-- weight (`dx/x` is scale-invariant): `[1/2,1] ↦ (log2 + log(1+t))/(1+t)`,
+-- `[1/4,1/2] ↦ log(1+t)/(1+t)`.
+-- ===========================================================================
+
+/-- `|1/2| ≤ 1/2`. -/
+theorem posHalf_abs :
+    Rle (Rabs (ofQ (⟨1, 2⟩ : Q) (by decide))) (ofQ (⟨1, 2⟩ : Q) (by decide)) :=
+  Rle_of_Req (Rabs_ofQ (by decide))
+
+set_option maxHeartbeats 1600000 in
+/-- **The mixed-piece evaluation with a `+(1/2)·gLx` tail**, generic in the bounded
+    real constant `C`: `∫₀¹ (C·(1/(c+t)) + (1/2)·gLx c) dt ≈ C·(log(c+1) − log c) +
+    (1/2)·(Hn(c+1) − Hn(c))` — the `[1/2, 1]` piece at `C = log 2`, `c = 1`. -/
+theorem t4B_lower_eval (c : Nat) (hc1 : 1 ≤ c) (hc3 : c ≤ 3) (C : Real) {Bq : Q}
+    (hBd : 0 < Bq.den) (hB5 : Bq.num.toNat ≤ 5) (hCb : Rle (Rabs C) (ofQ Bq hBd))
+    (hgl : ∀ x y : Real, Rle (Rabs (Rsub (gLog c x) (gLog c y)))
+      (Rmul (ofQ (⟨1, 1⟩ : Q) (by decide)) (Rabs (Rsub x y))))
+    (hgc : ∀ x y : Real, Req x y → Req (gLog c x) (gLog c y))
+    {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hq1 : Qle (mul Bq (⟨1, 1⟩ : Q)) L)
+    (hqx : Qle (LxQ c) L)
+    (hq2 : Qle (mul (⟨1, 2⟩ : Q) (LxQ c)) L)
+    (hqS : Qle (add (mul Bq (⟨1, 1⟩ : Q)) (mul (⟨1, 2⟩ : Q) (LxQ c))) L)
+    (hsch : ∀ j, 5 * (j + 1) ≤ digammaMidx L j) :
+    Req (riemannIntegral
+        (f := fun t => Radd (Rmul C (gRecipC c t))
+          (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx c t)))
+        hLd hLn
+        (fun x y => lip_mono
+          (add_den_pos (Qmul_den_pos hBd Nat.one_pos)
+            (Qmul_den_pos (by decide) (LxQ_den_pos c))) hLd hqS (Rnonneg_Rabs _)
+          (add_lip (Qmul_den_pos hBd Nat.one_pos)
+            (Qmul_den_pos (by decide) (LxQ_den_pos c))
+            (smul_lip hBd hCb Nat.one_pos (by decide) (gRecipC_lip c))
+            (smul_lip (by decide) posHalf_abs (LxQ_den_pos c) (LxQ_num_nonneg c)
+              (gLx_lip_of c hc3 hgl)) x y))
+        (add_congr_fn (smul_congr C (gRecipC_congr c))
+          (smul_congr (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx_congr_of c hgc))))
+      (Radd (Rmul C (Rsub (logN (c + 1) (by omega)) (logN c hc1)))
+        (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide))
+          (Rsub (Hn (c + 1) (by omega)) (Hn c hc1)))) := by
+  refine Req_trans (riemannIntegral_add (f := fun t => Rmul C (gRecipC c t))
+    (g := fun t => Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx c t)) hLd hLn
+    (fun x y => lip_mono (Qmul_den_pos hBd Nat.one_pos) hLd hq1
+      (Rnonneg_Rabs _) (smul_lip hBd hCb Nat.one_pos (by decide)
+        (gRecipC_lip c) x y))
+    (smul_congr C (gRecipC_congr c))
+    (fun x y => lip_mono (Qmul_den_pos (by decide) (LxQ_den_pos c)) hLd hq2
+      (Rnonneg_Rabs _) (smul_lip (by decide) posHalf_abs (LxQ_den_pos c)
+        (LxQ_num_nonneg c) (gLx_lip_of c hc3 hgl) x y))
+    (smul_congr (ofQ (⟨1, 2⟩ : Q) (by decide)) (gLx_congr_of c hgc))
+    _ _) ?_
+  refine Radd_congr ?_ ?_
+  · exact riemannIntegral_recipC_smul c hc1 C hBd hB5 hCb hLd hLn _ _ hsch
+  · refine Req_trans (riemannIntegral_smul (⟨1, 2⟩ : Q) (by decide) hLd hLn
+      (fun x y => lip_mono (LxQ_den_pos c) hLd hqx (Rnonneg_Rabs _)
+        (gLx_lip_of c hc3 hgl x y))
+      (gLx_congr_of c hgc) _ _) ?_
+    exact Rmul_congr (Req_refl _)
+      (riemannIntegral_gLx_gen c hc1 hc3 hLd hLn
+        (fun x y => lip_mono (LxQ_den_pos c) hLd hqx (Rnonneg_Rabs _)
+          (gLx_lip_of c hc3 hgl x y))
+        (gLx_congr_of c hgc) hsch)
+
 end UOR.Bridge.F1Square.Analysis
