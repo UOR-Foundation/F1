@@ -314,6 +314,7 @@ import F1Square.Square.ConeSlot
 import F1Square.Square.PreHilbert
 import F1Square.Square.SelfAdjoint
 import F1Square.Square.Projection
+import F1Square.Square.StableInner
 
 open UOR.Primitives
 

@@ -4661,3 +4661,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.bandProj_idem
 #print axioms Square.bandProj_self_adjoint
 #print axioms Square.bandProj_pairing_nonneg
+
+-- THE PRE-HILBERT LAYER, brick 4 (Square/StableInner.lean) — the N → ∞ passage for the
+-- finitely-supported space: truncated inner products and Weil pairings STABILIZE past the
+-- support bound (the direct limit is attained); the band projection acts on the space.
+#print axioms Square.RsumN_stable
+#print axioms Square.innerN_stable
+#print axioms Square.innerN_welldef
+#print axioms Square.weilQuad_stable
+#print axioms Square.weilQuad_welldef
+#print axioms Square.FinSupp_bandProj

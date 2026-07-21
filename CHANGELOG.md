@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 4 — the `N → ∞` passage: the truncated forms STABILIZE**
+  (new `Square/StableInner.lean`): for finitely-supported test families (`FinSupp`) the
+  truncated sums, inner products, and Weil pairings stop moving past the support bound
+  (`RsumN_stable`/`innerN_stable`/`weilQuad_stable`), so the direct limit is ATTAINED —
+  `innerN_welldef` and `weilQuad_welldef` make `⟨f,g⟩` and `weilQuad M c` genuine numbers on
+  the finitely-supported space (any two truncations past the bound agree), collapsing the
+  `∀ N` direct-limit quantifier of `WeilPSD` to a single value on each test; the band
+  projection acts on the space (`FinSupp_bandProj`). Honest scope: stabilization on the dense
+  finitely-supported subspace — no completion constructed; crux fields `none`.
 - **The pre-Hilbert layer, brick 3 — orthogonal projection and BESSEL'S INEQUALITY** (new
   `Square/Projection.lean`): orthonormal families (`OrthoFam`), Fourier coefficients
   `cₖ = ⟨f,eₖ⟩_N`, the finite-rank projection `Pf = Σ cₖeₖ` with `proj_coeff` (coefficients
