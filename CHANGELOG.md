@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`Hn_scale_diff` — the `∫ log/x` layer, part 7: the scale identity** (in
+  `Analysis/LogSqStep.lean`): `Hn(kM) ≈ Hn(k) + (2·log M·log k + Hn(M))`
+  (`Hn_scale_expand`, the `(a+b)²` expansion over `logN_mul_gen`) and the difference
+  `Hn((c+1)M) − Hn(cM) ≈ (Hn(c+1) − Hn(c)) + 2·log M·(log(c+1) − log c)` — `Hn(M)`
+  and `log²M` cancel, leaving exactly the cross term that the collapse\'s
+  `−2·log(N+1)·hFold` will absorb (`hFoldC_defect`: `hFold ≈ log(c+1) − log c` within
+  `1/(c(c+1)M)`). All pieces for the `gLx` rate are now on the table. Axiom-clean;
+  crux fields `none`.
 - **`riemannSum_gLx` — the `∫ log/x` layer, part 6: the point values and the Riemann
   fold** (new `Analysis/LogOverXSum.lean`): `gLx c (j/(N+1)) ≈ 2(log(c(N+1)+j) −
   log(N+1))·(N+1)/(c(N+1)+j)` (`gLx_point`, free from `gLog_point` + `gRecipC_point`),

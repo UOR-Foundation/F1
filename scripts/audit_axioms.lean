@@ -4434,3 +4434,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.gLx_point
 #print axioms Analysis.RsumN_gLx
 #print axioms Analysis.riemannSum_gLx
+
+-- The ∫log/x layer, part 7: the Hn scale identity ((a+b)-squared over logN_mul_gen).
+#print axioms Analysis.Hn_scale_expand
+#print axioms Analysis.Hn_scale_diff

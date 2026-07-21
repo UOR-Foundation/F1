@@ -337,4 +337,61 @@ theorem Hn_sample_lower (A M : Nat) (hA : 1 ≤ A) :
   refine Rle_trans (Rle_trans hup (hsFoldHi_le_sample A hA M)) ?_
   exact Rle_of_Req (Radd_comm _ _)
 
+
+-- ===========================================================================
+-- Part 7: the `Hn` scale identity — `(a+b)²` over `log(kM) = log k + log M`.
+-- ===========================================================================
+
+/-- `(b+b)·a ≈ b·a + b·a`. -/
+private theorem hs_two_mul (a b : Real) :
+    Req (Rmul (Radd b b) a) (Radd (Rmul b a) (Rmul b a)) :=
+  Req_trans (Rmul_comm (Radd b b) a)
+    (Req_trans (Rmul_distrib a b b)
+      (Radd_congr (Rmul_comm a b) (Rmul_comm a b)))
+
+/-- **The `Hn` scale expansion**: `Hn(kM) ≈ Hn(k) + (2·log M·log k + Hn(M))`. -/
+theorem Hn_scale_expand (k M : Nat) (hk : 1 ≤ k) (hM : 1 ≤ M) :
+    Req (Hn (k * M) (Nat.mul_pos hk hM))
+      (Radd (Hn k hk)
+        (Radd (Rmul (Radd (logN M hM) (logN M hM)) (logN k hk)) (Hn M hM))) := by
+  have h0 : Req (logN (k * M) (Nat.mul_pos hk hM)) (Radd (logN k hk) (logN M hM)) :=
+    Req_symm (logN_mul_gen k M hk hM)
+  refine Req_trans (Rmul_congr h0 h0) ?_
+  refine Req_trans (Rmul_distrib (Radd (logN k hk) (logN M hM)) (logN k hk) (logN M hM)) ?_
+  refine Req_trans (Radd_congr
+    (Req_trans (Rmul_comm _ (logN k hk)) (Rmul_distrib (logN k hk) (logN k hk) (logN M hM)))
+    (Req_trans (Rmul_comm _ (logN M hM)) (Rmul_distrib (logN M hM) (logN k hk) (logN M hM)))) ?_
+  refine Req_trans (Radd_assoc (Rmul (logN k hk) (logN k hk))
+    (Rmul (logN k hk) (logN M hM))
+    (Radd (Rmul (logN M hM) (logN k hk)) (Rmul (logN M hM) (logN M hM)))) ?_
+  refine Radd_congr (Req_refl _) ?_
+  refine Req_trans (Req_symm (Radd_assoc (Rmul (logN k hk) (logN M hM))
+    (Rmul (logN M hM) (logN k hk)) (Rmul (logN M hM) (logN M hM)))) ?_
+  refine Radd_congr ?_ (Req_refl _)
+  refine Req_trans (Radd_congr (Rmul_comm (logN k hk) (logN M hM)) (Req_refl _)) ?_
+  exact Req_symm (hs_two_mul (logN k hk) (logN M hM))
+
+/-- **The `Hn` scale difference**: `Hn((c+1)M) − Hn(cM) ≈ (Hn(c+1) − Hn(c)) +
+    2·log M·(log(c+1) − log c)` — `Hn(M)` and the `log²M` cancel. -/
+theorem Hn_scale_diff (c M : Nat) (hc : 1 ≤ c) (hM : 1 ≤ M) :
+    Req (Rsub (Hn ((c + 1) * M) (Nat.mul_pos (by omega) hM))
+        (Hn (c * M) (Nat.mul_pos hc hM)))
+      (Radd (Rsub (Hn (c + 1) (by omega)) (Hn c hc))
+        (Rmul (Radd (logN M hM) (logN M hM))
+          (Rsub (logN (c + 1) (by omega)) (logN c hc)))) := by
+  refine Req_trans (Rsub_congr (Hn_scale_expand (c + 1) M (by omega) hM)
+    (Hn_scale_expand c M hc hM)) ?_
+  refine Req_trans (Rsub_Radd_Radd (Hn (c + 1) (by omega))
+    (Radd (Rmul (Radd (logN M hM) (logN M hM)) (logN (c + 1) (by omega))) (Hn M hM))
+    (Hn c hc)
+    (Radd (Rmul (Radd (logN M hM) (logN M hM)) (logN c hc)) (Hn M hM))) ?_
+  refine Radd_congr (Req_refl _) ?_
+  refine Req_trans (Rsub_Radd_Radd
+    (Rmul (Radd (logN M hM) (logN M hM)) (logN (c + 1) (by omega))) (Hn M hM)
+    (Rmul (Radd (logN M hM) (logN M hM)) (logN c hc)) (Hn M hM)) ?_
+  refine Req_trans (Radd_congr (Req_refl _) (Radd_neg (Hn M hM))) ?_
+  refine Req_trans (Radd_zero _) ?_
+  exact Req_symm (Rmul_sub_distrib (Radd (logN M hM) (logN M hM))
+    (logN (c + 1) (by omega)) (logN c hc))
+
 end UOR.Bridge.F1Square.Analysis
