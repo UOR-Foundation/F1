@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 1 — the Sonine route's step 3 OPENED** (new
+  `Square/PreHilbert.lean`): the truncated inner product `⟨f,g⟩_N = Σ_{i<N} fᵢgᵢ` on test
+  families, with the four inner-product laws (`innerN_symm`/`innerN_add_left`/
+  `innerN_smul_left`/`innerN_self_nonneg`), prefix monotonicity of the squared norm
+  (`innerN_self_mono` — the directed structure the completion-free layer works with), and the
+  **sqrt-free Cauchy–Schwarz** (`cauchy_schwarz`) via the **Lagrange identity**
+  (`lagrange_identity`): the Cauchy–Schwarz defect `⟨f,f⟩⟨g,g⟩ − ⟨f,g⟩²` is exhibited as the
+  EXPLICIT sum of 2×2 minors `Σ_{i<j} (fᵢgⱼ − fⱼgᵢ)²` — no discriminant, no division, no square
+  root (the substrate has none): the certificate is the SOS itself, the intrinsic-certificate
+  shape of the discharge form realized unconditionally at the pre-Hilbert level. Plus the
+  finite-sum plumbing (`RsumN_neg`/`RsumN_sub`/`RsumN_le_prefix`/`Rsub_sq_expand`). Honest
+  scope: finite truncations only — no L², no completeness, no operators; crux fields `none`.
 - **`t4WeilValue_pos` — `W(t4) > 0`: THE FIRST CERTIFIED POSITIVITY ON THE
   AUTOCORRELATION CONE with a live prime side** (new `Square/ConeSlot.lean`): `t4Slot`
   realizes the cone-shaped log-tent as a `WeilSlot` with every interface field a genuine

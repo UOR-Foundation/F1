@@ -4615,3 +4615,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.t4_S_le
 #print axioms Square.t4_B_le
 #print axioms Square.t4WeilValue_pos
+
+-- THE PRE-HILBERT LAYER, brick 1 (Square/PreHilbert.lean) — the Sonine route's step 3 opened:
+-- the truncated inner product with the four inner-product laws, prefix monotonicity, and the
+-- sqrt-free Cauchy–Schwarz via the LAGRANGE IDENTITY (the defect as an explicit SOS).
+#print axioms Square.RsumN_neg
+#print axioms Square.RsumN_sub
+#print axioms Square.RsumN_le_prefix
+#print axioms Square.innerN_congr
+#print axioms Square.innerN_symm
+#print axioms Square.innerN_add_left
+#print axioms Square.innerN_smul_left
+#print axioms Square.innerN_self_nonneg
+#print axioms Square.innerN_self_mono
+#print axioms Square.lagSOS_nonneg
+#print axioms Square.Rsub_sq_expand
+#print axioms Square.lagrange_identity
+#print axioms Square.cauchy_schwarz

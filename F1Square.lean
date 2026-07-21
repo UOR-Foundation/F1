@@ -311,6 +311,7 @@ import F1Square.Analysis.DilogPhiVal
 import F1Square.Analysis.DilogPieces
 import F1Square.Analysis.DilogValue
 import F1Square.Square.ConeSlot
+import F1Square.Square.PreHilbert
 
 open UOR.Primitives
 
