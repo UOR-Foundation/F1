@@ -4733,3 +4733,4 @@ open UOR.Bridge.F1Square
 #print axioms Square.clamp01_ofQ
 #print axioms Square.innerI_abs_le
 #print axioms Square.mellinMoment_cs
+#print axioms Square.mellinMoment_zero

@@ -32,6 +32,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 -/
 
 import F1Square.Square.IntegralCSFull
+import F1Square.Analysis.IntegralBilinear
 import F1Square.Analysis.BandClamp
 
 namespace UOR.Bridge.F1Square.Square
@@ -161,5 +162,20 @@ theorem mellinMoment_cs (φ : L2Test) (n : Nat) :
     Rle (Rmul (mellinMoment φ n) (mellinMoment φ n))
         (Rmul (innerI φ φ) (innerI (powTest n) (powTest n))) :=
   innerI_cauchy_schwarz φ (powTest n)
+
+/-- **The zeroth moment is the plain integral**: `mellinMoment φ 0 ≈ ∫₀¹ φ` — pointwise
+    `φ·1 ≈ φ` at the shared modulus, then certificate independence back to `φ`'s own
+    certificate. The moment map is anchored to the certified integral. -/
+theorem mellinMoment_zero (φ : L2Test) :
+    Req (mellinMoment φ 0) (riemannIntegral φ.hLd φ.hLn φ.hlip φ.hfc) := by
+  have hQ : Qeq φ.L (l2L φ oneTest) := by
+    show Qeq φ.L (add (UOR.Bridge.F1Square.Analysis.mul φ.M (⟨0, 1⟩ : Q))
+      (UOR.Bridge.F1Square.Analysis.mul (⟨1, 1⟩ : Q) φ.L))
+    simp only [Qeq, add, mul]; push_cast; ring_uor
+  have hlip' := lip_weaken φ.hLd (l2L_den φ oneTest) (Qeq_le hQ) φ.hlip
+  refine Req_trans (riemannIntegral_congr (l2L_den φ oneTest) (l2L_num φ oneTest)
+    (l2lip φ oneTest) (l2fc φ oneTest) hlip' φ.hfc (fun x => Rmul_one (φ.f x))) ?_
+  exact riemannIntegral_certif_irrel (l2L_den φ oneTest) (l2L_num φ oneTest) hlip' φ.hfc
+    φ.hLd φ.hLn φ.hlip φ.hfc
 
 end UOR.Bridge.F1Square.Square
