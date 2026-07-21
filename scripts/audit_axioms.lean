@@ -4712,3 +4712,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannSum_cauchy_schwarz
 #print axioms Square.riemannSum_abs_le
 #print axioms Square.riemannIntegral_dyadic_dist
+
+-- THE PRE-HILBERT LAYER, brick 9 (Square/IntegralCSFull.lean) — THE INTEGRAL CAUCHY–SCHWARZ:
+-- ⟨φ,ψ⟩² ≤ ⟨φ,φ⟩·⟨ψ,ψ⟩ for the L² pairing, by the ε-collapse over the per-level CS and the
+-- effective dyadic error bound; the discrete Lagrange SOS carried through the dyadic limit.
+#print axioms Square.Rabs_prod_diff
+#print axioms Square.Rabs_le_of_close
+#print axioms Square.qmul_eps_le
+#print axioms Square.qmul_eps_le_left
+#print axioms Square.l2bd
+#print axioms Square.innerI_cauchy_schwarz

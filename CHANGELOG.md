@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 9 — THE INTEGRAL CAUCHY–SCHWARZ** (new
+  `Square/IntegralCSFull.lean`): **`innerI_cauchy_schwarz`** — `⟨φ,ψ⟩² ≤ ⟨φ,φ⟩·⟨ψ,ψ⟩` for
+  the L² pairing over the certified integral, sqrt-free, division-free, completion-free. The
+  ε-collapse: `a² − bc = (a² − Aₖ²) + (Aₖ² − BₖCₖ) + (BₖCₖ − bc)` through the level-`(k+1)`
+  dyadic sums — the middle `≤ 0` at every level (brick 8's per-level CS, i.e. brick 1's
+  discrete Lagrange SOS through the sampled families), the outer two `O(1/(k+1))` via the
+  effective error bound, the uniform sum bounds, and the product-difference telescope
+  (`Rabs_prod_diff`); closed by the one-sided ε-collapse. With symmetry (brick 6) and
+  bilinearity (brick 7), `innerI` now satisfies ALL the inner-product laws the discrete
+  `innerN` does — the L² side of the step-3 layer has its Cauchy–Schwarz. Helpers:
+  `Rabs_le_of_close`, `qmul_eps_le`/`qmul_eps_le_left`, `l2bd`. Crux fields `none`.
 - **The pre-Hilbert layer, brick 8 — per-level Cauchy–Schwarz + the effective dyadic error
   bound** (new `Square/IntegralCS.lean`): `riemannSum_cauchy_schwarz` — at every partition
   level `R_N(fg)² ≤ R_N(f²)·R_N(g²)`, because the `RsumN` core of a product Riemann sum IS
