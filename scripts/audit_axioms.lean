@@ -4632,3 +4632,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.Rsub_sq_expand
 #print axioms Square.lagrange_identity
 #print axioms Square.cauchy_schwarz
+
+-- THE PRE-HILBERT LAYER, brick 2 (Square/SelfAdjoint.lean) — kernels as operators and finite
+-- self-adjointness: weilQuad = ⟨c, B·c⟩, symmetric kernels self-adjoint via the real Fubini
+-- exchange, and the Sonine skeleton's multiplier form as the self-adjoint diagonal instance.
+#print axioms Square.RsumN_swap
+#print axioms Square.RsumN_mul_const
+#print axioms Square.weilQuad_eq_inner
+#print axioms Square.applyN_self_adjoint
+#print axioms Square.gramOf_sym
+#print axioms Square.multForm_sym
+#print axioms Square.applyN_multForm
+#print axioms Square.multForm_self_adjoint
+#print axioms Square.burnol_pairing_eq_inner

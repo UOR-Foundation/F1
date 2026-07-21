@@ -67,7 +67,7 @@ theorem RsumN_le_prefix {F : Nat → Real} (hF : ∀ i, Rnonneg (F i)) {n N : Na
 
 /-- Right-constant pull-out `Σ (F i · M) ≈ (Σ F) · M`, derived from the left pull by
     commutativity. -/
-private theorem RsumN_mul_const (F : Nat → Real) (M : Real) (N : Nat) :
+theorem RsumN_mul_const (F : Nat → Real) (M : Real) (N : Nat) :
     Req (RsumN (fun i => Rmul (F i) M) N) (Rmul (RsumN F N) M) :=
   Req_trans (RsumN_congr N (fun i _ => Rmul_comm (F i) M))
     (Req_trans (Req_symm (Rmul_RsumN_left M F N)) (Rmul_comm M (RsumN F N)))

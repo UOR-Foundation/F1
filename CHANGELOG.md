@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 2 — self-adjoint operators at the truncated level** (new
+  `Square/SelfAdjoint.lean`): kernels act as operators (`applyN B c N = (Σ_j B(i,j)cⱼ)ᵢ`); the
+  Weil quadratic form IS the inner product against the action (`weilQuad_eq_inner`:
+  `weilQuad B c N ≈ ⟨c, B·c⟩_N` — form language and operator language coincide); symmetric
+  kernels are self-adjoint (`applyN_self_adjoint`: `⟨B·c, d⟩ ≈ ⟨c, B·d⟩`, via the new real
+  finite Fubini `RsumN_swap`); and the Sonine skeleton's multiplier form is the motivating
+  instance — symmetric (`multForm_sym`), diagonal (`applyN_multForm`: `((multForm α)·c)(i) ≈
+  α(i)cᵢ`), self-adjoint (`multForm_self_adjoint`), with the Burnol pairing as its quadratic
+  form (`burnol_pairing_eq_inner`) — the language step 4 (the band-coupling positivity) has to
+  be phrased in. Honest scope: finite truncations, no completeness/spectral theory; crux `none`.
 - **The pre-Hilbert layer, brick 1 — the Sonine route's step 3 OPENED** (new
   `Square/PreHilbert.lean`): the truncated inner product `⟨f,g⟩_N = Σ_{i<N} fᵢgᵢ` on test
   families, with the four inner-product laws (`innerN_symm`/`innerN_add_left`/
