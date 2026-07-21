@@ -4778,3 +4778,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.sqCauchy_pairing
 #print axioms Square.limMember_coord_dist
 #print axioms Square.limMember_converges
+
+-- THE PRE-HILBERT LAYER, brick 16 (Square/CompleteComplement.lean) — the Sonine complement is
+-- CLOSED under completion: band vanishing passes to limit members, and the skeleton's
+-- unconditional complement-positivity survives the limit.
+#print axioms Square.limMember_band_zero
+#print axioms Square.sonine_complement_complete

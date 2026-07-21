@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 16 — THE SONINE COMPLEMENT IS CLOSED UNDER COMPLETION**
+  (new `Square/CompleteComplement.lean`): `limMember_band_zero` — band-vanishing Cauchy
+  sequences have band-vanishing limit members (the band coordinate of the limit is the limit
+  of the band coordinates); **`sonine_complement_complete`** — the skeleton's unconditional
+  complement-positivity survives the passage to limits: the Weil multiplier pairing of every
+  constructed limit member is `≥ 0` at every truncation. The completion arc closes its loop
+  with the skeleton dichotomy: the projection subspace is complete and positivity is not
+  lost in the limit — so what step 4 must supply is exactly the coupling BEYOND this closed
+  subspace, not limit bookkeeping inside it. Honest scope: the skeleton's band condition
+  only; nothing about the genuine `f,f̂` coupling (step 4, = RH); crux fields `none`.
 - **The pre-Hilbert layer, brick 15 — STRONG COMPLETENESS at fixed truncation: the limit
   member CONSTRUCTED** (new `Square/Completion.lean`): for a `dist2`-Cauchy sequence
   (`SqCauchy`, the canonical sqrt-free squared modulus), the limit member exists as a
