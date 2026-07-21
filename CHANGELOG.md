@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 15 — STRONG COMPLETENESS at fixed truncation: the limit
+  member CONSTRUCTED** (new `Square/Completion.lean`): for a `dist2`-Cauchy sequence
+  (`SqCauchy`, the canonical sqrt-free squared modulus), the limit member exists as a
+  CONSTRUCTION — each coordinate is the extended pairing against the indicator basis
+  (`limMember F N hF = fun i => pairingLim F δᵢ`); `sqCauchy_pairing` transfers the modulus
+  through `⟨δᵢ,δᵢ⟩ ≈ 1` (on the truncation) / `≈ 0` (beyond); `limMember_coord_dist` gives
+  the coordinatewise canonical rate `2/(j+1)` (the coefficients ARE the coordinates, brick
+  11); **`limMember_converges`** — `d²(F j, limMember) ≤ N·(2/(j+1))²`: every Cauchy
+  sequence converges in `dist2` to its constructed limit, choice-free, with an effective
+  rate. The pre-Hilbert space at fixed truncation is COMPLETE. Honest scope: fixed
+  truncation only — the truncation-uniform completion and the L² strong completeness remain
+  open; crux fields `none`.
 - **The pre-Hilbert layer, brick 14 — the L² MIRROR of the completion axis** (new
   `Square/PairingLimitI.lean`): `L2Test.neg`/`L2Test.sub` (closure under negation —
   reusing the existing `lip_neg`/`congr_neg` — and subtraction; with `add` and `mul` the

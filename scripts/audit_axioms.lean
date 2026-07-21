@@ -4771,3 +4771,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_sub_sq_le
 #print axioms Square.pairingI_RReg
 #print axioms Square.pairingILim_dist
+
+-- THE PRE-HILBERT LAYER, brick 15 (Square/Completion.lean) — STRONG COMPLETENESS at fixed
+-- truncation: the limit member CONSTRUCTED (coordinates = extended pairings against the
+-- indicator basis), coordinate rates, and dist2-convergence with effective rate N·(2/(j+1))².
+#print axioms Square.sqCauchy_pairing
+#print axioms Square.limMember_coord_dist
+#print axioms Square.limMember_converges

@@ -325,6 +325,7 @@ import F1Square.Square.Parseval
 import F1Square.Square.Parallelogram
 import F1Square.Square.PairingLimit
 import F1Square.Square.PairingLimitI
+import F1Square.Square.Completion
 
 open UOR.Primitives
 
