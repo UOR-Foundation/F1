@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 8 — per-level Cauchy–Schwarz + the effective dyadic error
+  bound** (new `Square/IntegralCS.lean`): `riemannSum_cauchy_schwarz` — at every partition
+  level `R_N(fg)² ≤ R_N(f²)·R_N(g²)`, because the `RsumN` core of a product Riemann sum IS
+  (definitionally) brick 1's truncated inner product of the sampled families, so the discrete
+  sqrt-free Cauchy–Schwarz applies and the uniform weight `1/(N+1)` squares out
+  (`(wA)² ≈ w²A² ≤ w²BC ≈ (wB)(wC)`, `RprodL` reassociation); `riemannSum_abs_le` (bounded
+  integrand ⟹ `|R_N(h)| ≤ M`); **`riemannIntegral_dyadic_dist`** — `|∫₀¹f − D_m| ≤ (⌈L⌉+2)/m`
+  at every level `m ≥ 1` (telescoping Cauchy modulus to the schedule, distance-to-limit past
+  it): every certified integral now carries an explicit rational error at every dyadic
+  Riemann sum. These are the two analytic inputs of the integral Cauchy–Schwarz; the
+  ε-collapse assembly is the banked next brick. Crux fields `none`.
 - **The pre-Hilbert layer, brick 7 — BILINEARITY of the L² pairing** (new
   `Analysis/IntegralBilinear.lean`): the bounded-Lipschitz test class is closed under addition
   (`L2Test.add`, summed certificates via the existing `Radd_lipschitz_real` + triangle);

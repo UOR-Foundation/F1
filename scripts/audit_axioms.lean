@@ -4703,3 +4703,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.lip_weaken
 #print axioms Analysis.innerI_add_left
 #print axioms Analysis.innerI_add_right
+
+-- THE PRE-HILBERT LAYER, brick 8 (Square/IntegralCS.lean) — the per-level Cauchy–Schwarz for
+-- Riemann sums (brick 1's discrete CS through the definitional sample-family identification,
+-- uniform weight squaring out sqrt-free), the uniform bound on Riemann sums, and the effective
+-- dyadic error bound |∫f − D_m| ≤ (⌈L⌉+2)/m. Plus Rabs_Rsub_symm made public (brick 6).
+#print axioms Analysis.Rabs_Rsub_symm
+#print axioms Square.riemannSum_cauchy_schwarz
+#print axioms Square.riemannSum_abs_le
+#print axioms Square.riemannIntegral_dyadic_dist

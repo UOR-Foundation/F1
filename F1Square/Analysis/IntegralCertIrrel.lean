@@ -172,7 +172,7 @@ theorem genSum_gap {T : Nat → Real} {K : Q} (hKd : 0 < K.den) (hKn : 0 ≤ K.n
 -- ===========================================================================
 
 /-- `|x − y| ≈ |y − x|`. -/
-private theorem Rabs_Rsub_symm (x y : Real) : Req (Rabs (Rsub x y)) (Rabs (Rsub y x)) :=
+theorem Rabs_Rsub_symm (x y : Real) : Req (Rabs (Rsub x y)) (Rabs (Rsub y x)) :=
   Req_trans (Rabs_congr (Req_symm (Rneg_Rsub_flip y x))) (Rabs_Rneg (Rsub y x))
 
 /-- Every digamma schedule is at least the index: `j + 1 ≤ digammaMidx B j`. -/

@@ -318,6 +318,7 @@ import F1Square.Square.StableInner
 import F1Square.Analysis.IntegralInner
 import F1Square.Analysis.IntegralCertIrrel
 import F1Square.Analysis.IntegralBilinear
+import F1Square.Square.IntegralCS
 
 open UOR.Primitives
 
