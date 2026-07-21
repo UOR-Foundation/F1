@@ -4671,3 +4671,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.weilQuad_stable
 #print axioms Square.weilQuad_welldef
 #print axioms Square.FinSupp_bandProj
+
+-- THE PRE-HILBERT LAYER, brick 5 (Analysis/IntegralInner.lean) — the L² pairing over the
+-- certified integral: the bounded-Lipschitz test class, innerI = ∫₀¹ φ·ψ with the product
+-- certificate, norm positivity, and symmetry up to the certificate.
+#print axioms Analysis.l2L_den
+#print axioms Analysis.l2L_num
+#print axioms Analysis.l2lip
+#print axioms Analysis.l2fc
+#print axioms Analysis.innerI_self_nonneg
+#print axioms Analysis.l2lip_swap
+#print axioms Analysis.l2fc_swap
+#print axioms Analysis.innerI_symm_certif

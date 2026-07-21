@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 5 — the L² PAIRING OVER THE CERTIFIED INTEGRAL** (new
+  `Analysis/IntegralInner.lean`): `L2Test` bundles a test function with the gateway's data
+  (rational Lipschitz modulus, rational global bound, the three certificates — the class the
+  realized Weil tests live in); `innerI φ ψ = ∫₀¹ φ·ψ` is the certified integral of the
+  product (certificate from the existing `Rmul_lipschitz`, constant `M_φL_ψ + M_ψL_φ`) — the
+  first genuine function-space inner product of the step-3 layer, a constructed real, not an
+  interface field; `innerI_self_nonneg` (`∫₀¹ φ² ≥ 0`) and `innerI_symm_certif` (symmetry at
+  the shared product certificate). Banked next, in order: certificate-independence of
+  `riemannIntegral` (the two-schedule limit comparison), bilinearity at a common weakened
+  modulus, the integral Cauchy–Schwarz. Honest scope: no completion, no measure theory; crux
+  fields `none`.
 - **The pre-Hilbert layer, brick 4 — the `N → ∞` passage: the truncated forms STABILIZE**
   (new `Square/StableInner.lean`): for finitely-supported test families (`FinSupp`) the
   truncated sums, inner products, and Weil pairings stop moving past the support bound
