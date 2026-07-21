@@ -16,6 +16,13 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`hsSample_le_foldHi` — the `∫ log/x` layer, part 4a: the sample fold** (in
+  `Analysis/LogSqStep.lean`): `hsSample = Σ_{j<c} 2·log(A+j)/(A+j)` — the exact shape
+  the `log/x` Riemann sums take — with the cell-wise comparison
+  `hsSample ≤ hsFoldHi` (`2·log(A+j) ≤ log(A+j) + log(A+j+1)` by `logN_mono`, same
+  weight). With the telescopes and the fold gap this brackets the sample fold against
+  `Hn(A+c) − Hn(A)` from above; the reverse slack (`foldHi ≤ sample + c/A²`, via the
+  step bracket squared) is the next brick. Axiom-clean; crux fields `none`.
 - **`hsFold_gap` — the `∫ log/x` layer, part 3: the fold gap** (in
   `Analysis/LogSqStep.lean`): `hsFoldHi ≤ hsFoldLo + Σ_{j<c} 2(K+1)/((A+j)(A+j+1))`
   for any cap `A + c ≤ K` — the KEY insight verified in the kernel: the crude

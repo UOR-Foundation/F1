@@ -223,4 +223,31 @@ theorem hsFold_gap (A K : Nat) (hA : 1 ≤ A) : ∀ c, A + c ≤ K →
       (Radd_ofQ_ofQ (gapQ_den_pos A K hA k)
         (Nat.mul_pos (show 0 < A + k by omega) (Nat.succ_pos (A + k)))))
 
+
+-- ===========================================================================
+-- Part 4a: the sample fold — the shape the `log/x` Riemann sums take.
+-- ===========================================================================
+
+/-- The sample fold `Σ_{j<c} 2·log(A+j)/(A+j)` (written `(log(A+j) + log(A+j))·(1/(A+j))`
+    to align cell-wise with the step-folds). -/
+def hsSample (A : Nat) (hA : 1 ≤ A) : Nat → Real
+  | 0 => zero
+  | (c + 1) => Radd (hsSample A hA c)
+      (Rmul (ofQ (⟨1, A + c⟩ : Q) (show 0 < A + c by omega))
+        (Radd (logN (A + c) (by omega)) (logN (A + c) (by omega))))
+
+/-- **The sample fold sits under the upper step-fold**: cell-wise `2·log(A+j) ≤
+    log(A+j) + log(A+j+1)` (`logN_mono`), same weight. -/
+theorem hsSample_le_foldHi (A : Nat) (hA : 1 ≤ A) : ∀ c,
+    Rle (hsSample A hA c) (hsFoldHi A hA c) := by
+  intro c
+  induction c with
+  | zero => exact Rle_refl zero
+  | succ k ih =>
+    show Rle (Radd (hsSample A hA k) _) (Radd (hsFoldHi A hA k) _)
+    refine Radd_le_add ih ?_
+    refine Rmul_le_Rmul_left (Rnonneg_ofQ (show 0 < A + k by omega)
+      (show (0 : Int) ≤ (⟨1, A + k⟩ : Q).num from (by decide : (0 : Int) ≤ 1))) ?_
+    exact Radd_le_add (logN_mono (by omega) (Nat.le_succ (A + k))) (Rle_refl _)
+
 end UOR.Bridge.F1Square.Analysis

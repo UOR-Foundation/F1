@@ -4410,3 +4410,6 @@ open UOR.Bridge.F1Square
 -- The ∫log/x layer, part 3: the fold gap (crude log ≤ n + the harmonic telescope).
 #print axioms Analysis.gapQ_den_pos
 #print axioms Analysis.hsFold_gap
+
+-- The ∫log/x layer, part 4a: the sample fold and its foldHi comparison.
+#print axioms Analysis.hsSample_le_foldHi
