@@ -16,6 +16,13 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`smul_lip`/`add_lip` + `t4H_abs` — the `t4PoleB` pieces, part 1: the combinators**
+  (new `Analysis/T4PoleBPieces.lean`): the generic Lipschitz combinators the poleB
+  piece integrands (`C·gRecipC + q·gLx`) consume — `|C| ≤ B` gives `C·f` at `B·L_f`;
+  `f + g` at `L_f + L_g` — plus the cone-height bounds `0 ≤ t4H = 2log2 ≤ 2` and
+  `|log 2| ≤ 1`, feeding `riemannIntegral_recipC_smul` at `B = 2` resp. `B = 1`.
+  Next: the five piece definitions and evaluations, then the `4(log2)²` assembly.
+  Axiom-clean; crux fields `none`.
 - **`riemannIntegral_recipC_smul` — the real-scalar reciprocal evaluation** (new
   `Analysis/RecipSmulEval.lean`): `∫₀¹ C·(1/(c+t)) dt ≈ C·(log(c+1) − log c)` for a
   REAL constant `C` with `|C| ≤ B`, `B.num ≤ 5` — the first real-scalar integral

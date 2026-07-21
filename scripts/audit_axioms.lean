@@ -4471,3 +4471,13 @@ open UOR.Bridge.F1Square
 -- The real-scalar reciprocal evaluation: ∫₀¹ C·(1/(c+t)) = C·(log(c+1) − log c) for
 -- bounded real C (new Analysis/RecipSmulEval.lean) — the poleB pieces' engine.
 #print axioms Analysis.riemannIntegral_recipC_smul
+
+-- The t4PoleB pieces, part 1: the smul/add Lipschitz combinators and the cone-height
+-- bounds (new Analysis/T4PoleBPieces.lean).
+#print axioms Analysis.smul_lip
+#print axioms Analysis.smul_congr
+#print axioms Analysis.add_lip
+#print axioms Analysis.add_congr_fn
+#print axioms Analysis.t4H_nonneg
+#print axioms Analysis.t4H_abs
+#print axioms Analysis.oneL_abs
