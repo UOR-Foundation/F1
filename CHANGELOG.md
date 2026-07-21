@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 10 — the test ALGEBRA and the integer Mellin moments** (new
+  `Square/TestAlgebra.lean`): `L2Test.mul` — the bounded-Lipschitz class is **closed under
+  multiplication** with every certificate field an already-proven lemma (`l2L`/`l2lip`/`l2fc`/
+  `l2bd`); with `L2Test.add` the class is a genuine function algebra, and pointwise product is
+  the autocorrelation-side operation. `clamp01`/`clampTest` (the `[0,1]` band clamp as a
+  1-Lipschitz test, inert on unit-interval rationals), `oneTest`, and `powTest n` (clamped
+  monomials by iterated product — certificates compose automatically).
+  **`mellinMoment φ n = ∫₀¹ φ·clamp01ⁿ`** — the integer-point Mellin data of every test as
+  certified reals, with the uniform pairing bound (`innerI_abs_le`, now public) and the
+  L²-boundedness of the moment functionals (`mellinMoment_cs`). Honest scope: the moment
+  skeleton is to the transform what the discrete band skeleton is to the Sonine space — NOT
+  the Mellin transform (no continuous parameter, no half-line, no inversion); crux `none`.
 - **The pre-Hilbert layer, brick 9 — THE INTEGRAL CAUCHY–SCHWARZ** (new
   `Square/IntegralCSFull.lean`): **`innerI_cauchy_schwarz`** — `⟨φ,ψ⟩² ≤ ⟨φ,φ⟩·⟨ψ,ψ⟩` for
   the L² pairing over the certified integral, sqrt-free, division-free, completion-free. The

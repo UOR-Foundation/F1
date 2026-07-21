@@ -4722,3 +4722,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.qmul_eps_le_left
 #print axioms Square.l2bd
 #print axioms Square.innerI_cauchy_schwarz
+
+-- THE PRE-HILBERT LAYER, brick 10 (Square/TestAlgebra.lean) — the test ALGEBRA (closure under
+-- multiplication, every certificate an existing lemma), the clamped identity/monomial tests,
+-- the integer Mellin moments, and the uniform pairing bound.
+#print axioms Square.clamp01_congr
+#print axioms Square.clamp01_nonneg
+#print axioms Square.clamp01_le_one
+#print axioms Square.clamp01_abs
+#print axioms Square.clamp01_ofQ
+#print axioms Square.innerI_abs_le
+#print axioms Square.mellinMoment_cs
