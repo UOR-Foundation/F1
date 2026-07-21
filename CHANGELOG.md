@@ -25,6 +25,15 @@ audit-visible hypothesis, never an axiom).
   `log2·Δlog₁ + ½ΔHn₁`, `½ΔHn₁`. `t4PoleB` (the five-piece sum) is defined; the
   `4(log2)² = t4H·t4H` assembly is the companion brick. Axiom-clean; crux fields
   `none`.
+- **`t4PoleB_eq` — `t4PoleB ≈ (2log2)² = 4(log2)²`, EXACT** (in
+  `Analysis/T4PoleBPieces.lean`): the cone tent\'s `∫ f/x` pole component evaluates to
+  the exact square `t4H·t4H`. The five constructed pieces (`t4B12/23/34/h/q`, part 4)
+  telescope: the upper `A`-cluster gives `t4H·(log4 − log1) = t4H·t4H` and the
+  `B`-cluster `−(1/2)·(Hn4 − Hn1) = −(1/2)·t4H·t4H` (both `log3`/`Hn3` drop without
+  expansion), the lower pieces give `log2² + log2² = (1/2)·t4H·t4H`, and the halves
+  cancel to the square. The SECOND `t4` slot component pinned (after `t4PoleA = 9/4`);
+  remaining for `W(t4)`: the archimedean tail (recipC pieces + the dilog bracket) and
+  the sign theorem. Axiom-clean; crux fields `none`.
 - **`t4B_lower_eval` — the `t4PoleB` pieces, part 3: the lower pieces** (in
   `Analysis/T4PoleBPieces.lean`): `∫₀¹ (C·(1/(c+t)) + (1/2)·gLx c) dt ≈ C·Δlog_c +
   (1/2)·ΔHn_c`, generic in the bounded real constant — the `[1/2, 1]` piece at

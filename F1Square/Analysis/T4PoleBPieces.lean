@@ -384,4 +384,136 @@ theorem t4Bq_eq : Req t4Bq
 /-- **The `t4` test's `∫ f/x` pole component, CONSTRUCTED**: the five pieces summed. -/
 def t4PoleB : Real := Radd (Radd (Radd t4B12 t4B23) (Radd t4B34 t4Bh)) t4Bq
 
+
+-- ===========================================================================
+-- Part 5: the assembly — `t4PoleB ≈ t4H·t4H` (`= 4(log2)²`, EXACT).
+-- ===========================================================================
+
+/-- `(d + d) ≈ 2·d` (private copy). -/
+private theorem tb_two_smul (d : Real) :
+    Req (Radd d d) (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide)) d) :=
+  Req_symm (Req_trans (Rmul_congr
+      (Req_trans (ofQ_congr (by decide) (add_den_pos (by decide) (by decide))
+        (by decide : Qeq (⟨2, 1⟩ : Q) (add (⟨1, 1⟩ : Q) (⟨1, 1⟩ : Q))))
+        (Req_symm (Radd_ofQ_ofQ (by decide) (by decide)))) (Req_refl d))
+    (Req_trans (Rmul_comm (Radd one one) d)
+      (Req_trans (Rmul_distrib d one one)
+        (Radd_congr (Rmul_one d) (Rmul_one d)))))
+
+/-- `log2 + log2 ≈ t4H`. -/
+private theorem tb_LL : Req (Radd (logN 2 (by omega)) (logN 2 (by omega))) t4H :=
+  tb_two_smul (logN 2 (by omega))
+
+/-- `log 4 ≈ t4H`. -/
+private theorem tb_l4 : Req (logN 4 (by omega)) t4H :=
+  Req_trans (Req_symm (logN_mul_gen 2 2 (by omega) (by omega))) tb_LL
+
+/-- The upper `A`-cluster telescopes: `Σ_c t4H·Δlog_c ≈ t4H·t4H`. -/
+private theorem tb_Acluster :
+    Req (Radd (Radd (Rmul t4H (Rsub (logN 2 (by omega)) (logN 1 (by omega))))
+        (Rmul t4H (Rsub (logN 3 (by omega)) (logN 2 (by omega)))))
+      (Rmul t4H (Rsub (logN 4 (by omega)) (logN 3 (by omega)))))
+      (Rmul t4H t4H) := by
+  refine Req_trans (Radd_congr (Req_symm (Rmul_distrib t4H
+    (Rsub (logN 2 (by omega)) (logN 1 (by omega)))
+    (Rsub (logN 3 (by omega)) (logN 2 (by omega)))))
+    (Req_refl _)) ?_
+  refine Req_trans (Req_symm (Rmul_distrib t4H _ _)) ?_
+  refine Rmul_congr (Req_refl t4H) ?_
+  refine Req_trans (Radd_congr (Req_trans (Radd_comm _ _)
+    (Rsub_telescope (logN 3 (by omega)) (logN 2 (by omega)) (logN 1 (by omega))))
+    (Req_refl _)) ?_
+  refine Req_trans (Radd_comm _ _) ?_
+  refine Req_trans (Rsub_telescope (logN 4 (by omega)) (logN 3 (by omega))
+    (logN 1 (by omega))) ?_
+  refine Req_trans (Rsub_congr (Req_refl _) logN_one) ?_
+  exact Req_trans (Rsub_zero _) tb_l4
+
+/-- The upper `B`-cluster telescopes: `Σ_c (−1/2)·ΔHn_c ≈ (−1/2)·(t4H·t4H)`. -/
+private theorem tb_Bcluster :
+    Req (Radd (Radd (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 2 (by omega)) (Hn 1 (by omega))))
+        (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide))
+          (Rsub (Hn 3 (by omega)) (Hn 2 (by omega)))))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 4 (by omega)) (Hn 3 (by omega)))))
+      (Rmul (ofQ (⟨-1, 2⟩ : Q) (by decide)) (Rmul t4H t4H)) := by
+  refine Req_trans (Radd_congr (Req_symm (Rmul_distrib (ofQ (⟨-1, 2⟩ : Q) (by decide))
+    (Rsub (Hn 2 (by omega)) (Hn 1 (by omega)))
+    (Rsub (Hn 3 (by omega)) (Hn 2 (by omega))))) (Req_refl _)) ?_
+  refine Req_trans (Req_symm (Rmul_distrib (ofQ (⟨-1, 2⟩ : Q) (by decide)) _ _)) ?_
+  refine Rmul_congr (Req_refl _) ?_
+  refine Req_trans (Radd_congr (Req_trans (Radd_comm _ _)
+    (Rsub_telescope (Hn 3 (by omega)) (Hn 2 (by omega)) (Hn 1 (by omega))))
+    (Req_refl _)) ?_
+  refine Req_trans (Radd_comm _ _) ?_
+  refine Req_trans (Rsub_telescope (Hn 4 (by omega)) (Hn 3 (by omega)) (Hn 1 (by omega))) ?_
+  refine Req_trans (Rsub_congr (Req_refl _) Hn_one) ?_
+  refine Req_trans (Rsub_zero _) ?_
+  exact Rmul_congr tb_l4 tb_l4
+
+/-- The `[1/2,1]` head: `log2·(log2 − log1) ≈ log2·log2`. -/
+private theorem tb_C :
+    Req (Rmul (logN 2 (by omega)) (Rsub (logN 2 (by omega)) (logN 1 (by omega))))
+      (Rmul (logN 2 (by omega)) (logN 2 (by omega))) :=
+  Rmul_congr (Req_refl _) (Req_trans (Rsub_congr (Req_refl _) logN_one) (Rsub_zero _))
+
+/-- The two half-`ΔHn` tails sum to `Hn 2 = log2·log2`. -/
+private theorem tb_D :
+    Req (Radd (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 2 (by omega)) (Hn 1 (by omega))))
+      (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide))
+        (Rsub (Hn 2 (by omega)) (Hn 1 (by omega)))))
+      (Rmul (logN 2 (by omega)) (logN 2 (by omega))) := by
+  refine Req_trans (tb_smul_add (by decide) (by decide) _) ?_
+  refine Req_trans (Rmul_congr (ofQ_congr (b := (⟨1, 1⟩ : Q))
+    (add_den_pos (by decide) (by decide)) (by decide) (by decide)) (Req_refl _)) ?_
+  refine Req_trans (Rone_mul _) ?_
+  exact Req_trans (Rsub_congr (Req_refl _) Hn_one) (Rsub_zero _)
+
+/-- `log2·log2 + log2·log2 ≈ (1/2)·(t4H·t4H)`. -/
+private theorem tb_half :
+    Req (Radd (Rmul (logN 2 (by omega)) (logN 2 (by omega)))
+        (Rmul (logN 2 (by omega)) (logN 2 (by omega))))
+      (Rmul (ofQ (⟨1, 2⟩ : Q) (by decide)) (Rmul t4H t4H)) := by
+  refine Req_trans (Req_symm (Rmul_distrib (logN 2 (by omega))
+    (logN 2 (by omega)) (logN 2 (by omega)))) ?_
+  refine Req_trans (Rmul_congr (Req_refl _) tb_LL) ?_
+  refine Req_symm ?_
+  refine Req_trans (Req_symm (Rmul_assoc (ofQ (⟨1, 2⟩ : Q) (by decide)) t4H t4H)) ?_
+  refine Rmul_congr ?_ (Req_refl t4H)
+  refine Req_trans (Req_symm (Rmul_assoc (ofQ (⟨1, 2⟩ : Q) (by decide))
+    (ofQ (⟨((2 : Nat) : Int), 1⟩ : Q) Nat.one_pos) (logN 2 (by omega)))) ?_
+  refine Req_trans (Rmul_congr (Req_trans (Rmul_ofQ_ofQ (by decide) Nat.one_pos)
+    (ofQ_congr (b := (⟨1, 1⟩ : Q)) (Qmul_den_pos (by decide) Nat.one_pos)
+      (by decide) (by decide))) (Req_refl _)) ?_
+  exact Rone_mul _
+
+set_option maxHeartbeats 1600000 in
+/-- **★ `t4PoleB ≈ t4H·t4H = 4(log2)²` — the cone tent's `∫ f/x` pole component,
+    EXACT**: the upper telescopes give `t4H·log4 − ½·Hn4 = 4L² − 2L²`, the lower
+    pieces give `L² + L²`, and the halves cancel to the exact square. -/
+theorem t4PoleB_eq : Req t4PoleB (Rmul t4H t4H) := by
+  show Req (Radd (Radd (Radd t4B12 t4B23) (Radd t4B34 t4Bh)) t4Bq) _
+  refine Req_trans (Radd_congr (Radd_congr (Radd_congr t4B12_eq t4B23_eq)
+    (Radd_congr t4B34_eq t4Bh_eq)) t4Bq_eq) ?_
+  -- regroup ((U1+U2)+(U3+Lo1))+Lo2 ≈ ((U1+U2)+U3) + (Lo1+Lo2)
+  refine Req_trans (Radd_congr (Req_symm (Radd_assoc _ _ _)) (Req_refl _)) ?_
+  refine Req_trans (Radd_assoc _ _ _) ?_
+  -- split the upper cluster into A- and B-parts (two swaps)
+  refine Req_trans (Radd_congr (Req_trans (Radd_congr (Radd_swap _ _ _ _) (Req_refl _))
+    (Radd_swap _ _ _ _)) (Req_refl _)) ?_
+  -- evaluate the four clusters
+  refine Req_trans (Radd_congr (Radd_congr tb_Acluster tb_Bcluster)
+    (Req_trans (Radd_assoc _ _ _) (Radd_congr tb_C tb_D))) ?_
+  -- (P + (−½)P) + (L² + L²) ≈ (P + (−½)P) + (½)P ≈ P
+  refine Req_trans (Radd_congr (Req_refl _) tb_half) ?_
+  refine Req_trans (Radd_assoc _ _ _) ?_
+  refine Req_trans (Radd_congr (Req_refl _)
+    (Req_trans (tb_smul_add (by decide) (by decide) _)
+      (Req_trans (Rmul_congr (ofQ_congr (b := (⟨0, 1⟩ : Q))
+        (add_den_pos (by decide) (by decide)) (by decide) (by decide)) (Req_refl _))
+        (Req_trans (Rmul_comm _ _) (Rmul_zero _))))) ?_
+  exact Radd_zero _
+
 end UOR.Bridge.F1Square.Analysis

@@ -4499,3 +4499,6 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.t4B34_eq
 #print axioms Analysis.t4Bh_eq
 #print axioms Analysis.t4Bq_eq
+
+-- The t4PoleB assembly: t4PoleB = t4H·t4H = 4(log2)^2, EXACT.
+#print axioms Analysis.t4PoleB_eq
