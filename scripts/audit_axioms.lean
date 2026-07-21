@@ -4683,3 +4683,16 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.l2lip_swap
 #print axioms Analysis.l2fc_swap
 #print axioms Analysis.innerI_symm_certif
+
+-- THE PRE-HILBERT LAYER, brick 6 (Analysis/IntegralCertIrrel.lean) — CERTIFICATE INDEPENDENCE
+-- of the certified integral (the value depends only on the integrand): the telescoping Cauchy
+-- modulus of the dyadic sums, the two-sided distance-to-limit, the rate-generalized limit
+-- evaluation, and the L² pairing's honest symmetry.
+#print axioms Analysis.RTendsTo_le_Rsub
+#print axioms Analysis.Rabs_dist_Rlim
+#print axioms Analysis.Rlim_eval_real_rate
+#print axioms Analysis.dyadicTerm_abs_bound
+#print axioms Analysis.genSum_gap
+#print axioms Analysis.digammaMidx_ge
+#print axioms Analysis.riemannIntegral_certif_irrel
+#print axioms Analysis.innerI_symm

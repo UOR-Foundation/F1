@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 6 — CERTIFICATE INDEPENDENCE of the certified integral**
+  (new `Analysis/IntegralCertIrrel.lean`): `riemannIntegral` depends only on the integrand,
+  not on which Lipschitz certificate constructed it (`riemannIntegral_certif_irrel`). The
+  engine: `genSum_gap` — the telescoping Cauchy modulus of the dyadic sums (`1/((m+1)m) =
+  1/m − 1/(m+1)`, so the increment tail between levels `M ≤ M'` telescopes EXACTLY to
+  `≤ K/M`, no geometric estimate); `Rabs_dist_Rlim` (two-sided `|X m − lim X| ≤ 2/(m+1)`,
+  with the `RTendsTo_le_Rsub` mirror); `Rlim_eval_real_rate` (`Rlim_eval_real` at an
+  arbitrary linear rate `C/(j+1)`); the two digamma schedules both reach level `≥ j+1` at
+  index `j`, so the `L'`-scheduled sums converge to the `L`-scheduled limit at rate
+  `(⌈L⌉+2)/(j+1)` and the Bishop limits agree. Payoff: **`innerI_symm`** — the L² pairing is
+  honestly symmetric (`⟨φ,ψ⟩ ≈ ⟨ψ,φ⟩`, no shared-certificate caveat), a genuine symmetric
+  pairing on the bounded-Lipschitz class. Scope: the base integral on `[0,1]`; improper and
+  complex layers keep per-certificate congruences; crux fields `none`.
 - **The pre-Hilbert layer, brick 5 — the L² PAIRING OVER THE CERTIFIED INTEGRAL** (new
   `Analysis/IntegralInner.lean`): `L2Test` bundles a test function with the gateway's data
   (rational Lipschitz modulus, rational global bound, the three certificates — the class the
