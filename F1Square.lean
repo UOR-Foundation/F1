@@ -323,6 +323,7 @@ import F1Square.Square.IntegralCSFull
 import F1Square.Square.TestAlgebra
 import F1Square.Square.Parseval
 import F1Square.Square.Parallelogram
+import F1Square.Square.PairingLimit
 
 open UOR.Primitives
 

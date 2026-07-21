@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 13 — THE PAIRING EXTENDS TO CAUCHY SEQUENCES: the
+  completion axis opened** (new `Square/PairingLimit.lean`): `inner_sub_sq_le` — the
+  Cauchy–Schwarz continuity of the pairing, `(⟨f,g⟩−⟨f',g⟩)² ≤ d²(f,f')·⟨g,g⟩` (the modulus
+  of continuity squared, since the substrate has no sqrt); `pairing_RReg` — a sequence of
+  test families squared-Cauchy against `g` (`d²(Fⱼ,Fₖ)·⟨g,g⟩ ≤ (1/(j+1)+1/(k+1))²`) has
+  `RReg` pairings, the squared modulus converting to the canonical linear rate through the
+  existing `Rle_of_Rsq_le` (order-reflection of squaring) and `RReg_of_real_bound` (the
+  completeness bridge); **`pairingLim`** — the extended pairing value `lim_j ⟨Fⱼ,g⟩` exists
+  as a constructed real with the effective rate `pairingLim_dist` (`≤ 2/(j+1)`). The pairing
+  extends past finite approximation — the weak-limit half of completeness, the honest
+  constructive one available without countable choice. Honest scope: pairing values only, no
+  completed space, no limit member, no strong convergence; crux fields `none`.
 - **The pre-Hilbert layer, brick 12 — the PARALLELOGRAM LAW and the squared-distance
   geometry** (new `Square/Parallelogram.lean`): bilinearity completed on the second slot
   (`innerN_add_right`/`innerN_sub_right`); **`parallelogram`** —

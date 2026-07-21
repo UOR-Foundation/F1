@@ -4753,3 +4753,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.dist2_self
 #print axioms Square.dist2_symm
 #print axioms Square.dist2_doubling
+
+-- THE PRE-HILBERT LAYER, brick 13 (Square/PairingLimit.lean) — the completion axis opened:
+-- Cauchy–Schwarz continuity of the pairing (squared modulus), the squared-Cauchy-to-RReg
+-- conversion (order-reflection of squaring + the completeness bridge), the extended pairing
+-- value pairingLim with its effective Bishop rate.
+#print axioms Square.inner_sub_sq_le
+#print axioms Square.pairing_RReg
+#print axioms Square.pairingLim_dist
