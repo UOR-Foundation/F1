@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 11 — PARSEVAL at the full indicator basis** (new
+  `Square/Parseval.lean`): at the complete finite basis the layer's Bessel inequality
+  SATURATES — `fourierC_indic` (`⟨f,δₖ⟩_N ≈ f(k)`: the coefficients are the coordinates),
+  `proj_indic_eq` (the projection onto the full basis is the identity on the truncation),
+  **`parseval_indic`** (`Σ_{k<N} ⟨f,δₖ⟩² ≈ ⟨f,f⟩_N`), and `bessel_saturates_at_indic`
+  (the ≤ and the ≈ side by side). The Bessel/Parseval boundary is now kernel-checked: the
+  infinite-dimensional statement is exactly what a completion — and only a completion — would
+  add. Honest scope: finite truncations; no infinite-dimensional Parseval, no completeness;
+  crux fields `none`.
 - **The pre-Hilbert layer, brick 10 — the test ALGEBRA and the integer Mellin moments** (new
   `Square/TestAlgebra.lean`): `L2Test.mul` — the bounded-Lipschitz class is **closed under
   multiplication** with every certificate field an already-proven lemma (`l2L`/`l2lip`/`l2fc`/

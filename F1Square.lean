@@ -321,6 +321,7 @@ import F1Square.Analysis.IntegralBilinear
 import F1Square.Square.IntegralCS
 import F1Square.Square.IntegralCSFull
 import F1Square.Square.TestAlgebra
+import F1Square.Square.Parseval
 
 open UOR.Primitives
 

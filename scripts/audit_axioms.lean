@@ -4734,3 +4734,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_abs_le
 #print axioms Square.mellinMoment_cs
 #print axioms Square.mellinMoment_zero
+
+-- THE PRE-HILBERT LAYER, brick 11 (Square/Parseval.lean) — Parseval at the full indicator
+-- basis: the Fourier coefficients are the coordinates, the projection is the identity on the
+-- truncation, and Bessel SATURATES — the finite-complete case of the completeness axis.
+#print axioms Square.fourierC_indic
+#print axioms Square.proj_indic_eq
+#print axioms Square.parseval_indic
+#print axioms Square.bessel_saturates_at_indic
