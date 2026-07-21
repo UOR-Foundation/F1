@@ -4458,3 +4458,12 @@ open UOR.Bridge.F1Square
 -- (new Analysis/LogOverXEval.lean).
 #print axioms Analysis.dyadicR_gLx_pow
 #print axioms Analysis.dyadicR_gLx_defect
+
+-- The ∫log/x layer, part 8c: the anchor, the schedule rate, and the EVALUATION —
+-- ∫₀¹ 2log(c+t)/(c+t) dt = Hn(c+1) − Hn(c) at c = 1, 2, 3.
+#print axioms Analysis.dyadicR_gLx_zero
+#print axioms Analysis.genSum_gLx_rate
+#print axioms Analysis.riemannIntegral_gLx_gen
+#print axioms Analysis.riemannIntegral_gLx1
+#print axioms Analysis.riemannIntegral_gLx2
+#print axioms Analysis.riemannIntegral_gLx3

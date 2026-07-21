@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`riemannIntegral_gLx1/2/3` — the `∫ log/x` layer COMPLETE: the evaluation** (in
+  `Analysis/LogOverXEval.lean`): `∫₀¹ 2·log(c+t)/(c+t) dt ≈ Hn(c+1) − Hn(c)`
+  (`= log²(c+1) − log²c`), certified for `c = 1, 2, 3` at the product-Lipschitz datum
+  `2c+2` — the THIRD certified evaluation family (after the harmonic `recipC` and the
+  `∫log` `Gn` families), and the engine `poleB = 4(log2)²` consumes. Assembly: the
+  anchor `D₀ = (1/c)·2·log c`, the schedule rate at any `midx ≥ 5(j+1)` (discharged
+  per instance: `2c+3 ≥ 5`), `Rlim_eval_real`. Next: the five `t4` poleB pieces and
+  the `4(log2)²` assembly (mirror of `t4PoleA`). Axiom-clean; crux fields `none`.
 - **`dyadicR_gLx_defect` — the `∫ log/x` layer, part 8b-ii: the dyadic defect** (new
   `Analysis/LogOverXEval.lean`): `|D_m − (Hn(c+1) − Hn(c))| ≤ (5m+5)/2^m` — the
   convergence core of `∫₀¹ 2log(c+t)/(c+t) dt`. The deviation decomposes exactly
