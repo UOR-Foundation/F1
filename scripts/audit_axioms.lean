@@ -5064,3 +5064,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentSqTail_exact_le
 #print axioms Square.momentSqTail_le
 #print axioms Square.momentSqSum_le
+
+-- THE PRE-HILBERT LAYER, brick 40 (Square/MomentNorm.lean) — THE ℓ² NORM OF THE MOMENT SEQUENCE
+-- AS A CONSTRUCTED REAL: brick 39's tail rate becomes Bishop regularity under the index rescale
+-- N = c(j+1), c ≥ 2M², so Σ_n ⟨φ,xⁿ⟩² is an Rlim with 0 ≤ · ≤ 2M² and the canonical rate.
+#print axioms Analysis.RsumN_split_at
+#print axioms Square.momentSqSum_split
+#print axioms Square.momentSqTail_nonneg
+#print axioms Square.momentSqSum_mono
+#print axioms Square.momentSqSum_diff_le
+#print axioms Square.momScale_bound
+#print axioms Square.momentSqIdx_rate
+#print axioms Square.momentSqIdx_mono
+#print axioms Square.momentSqIdx_RReg
+#print axioms Square.momentL2Sq_nonneg
+#print axioms Square.momentL2Sq_le
+#print axioms Square.momentL2Sq_approx

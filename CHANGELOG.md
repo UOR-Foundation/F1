@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 40 — THE `ℓ²` NORM OF THE MOMENT SEQUENCE, AS A CONSTRUCTED
+  REAL** (new `Square/MomentNorm.lean`): `‖φ̂‖² := Σ_n ⟨φ, xⁿ⟩²` is now an object
+  (`momentL2Sq`, a genuine `Real` — not a supremum, not a hypothesis), with
+  `0 ≤ ‖φ̂‖² ≤ 2·M_φ²` (`momentL2Sq_nonneg`, `momentL2Sq_le`) and the partial sums converging
+  to it at the canonical rate (`momentL2Sq_approx`). Constructively "monotone and bounded"
+  does *not* give a limit — a modulus is required, and brick 39's uniform tail bound is
+  exactly one. The construction turns rate into Bishop regularity by **rescaling the index**:
+  read the partial sums along `N = c·(j+1)` for any natural `c ≥ 2M_φ²` (`momScale`, here
+  `2|M.num|² + 1`, which works because `M.den ≥ 1`), so consecutive reads differ by at most
+  `2M²/(c(j+1)+1) ≤ 1/(j+1)` — the `RReg` modulus on the nose (`momentSqIdx_RReg`), and `Rlim`
+  applies. Supporting pieces: the reusable substrate split
+  `Σ_{i<N+K} = Σ_{i<N} + Σ_{i<K}(N+i)` (`RsumN_split_at`), the monotonicity that comes free
+  from the terms being squares (`momentSqSum_mono`), and the Cauchy rate `momentSqSum_diff_le`.
+  HONEST SCOPE: the `ℓ²` norm of the *moment* sequence of a bounded-Lipschitz test on `[0,1]`
+  — not a norm on a completed function space, not the completion axis's truncation-uniform
+  weights, and nothing about the Weil form. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 39 — THE `ℓ²` DATUM, WITH AN EXPLICIT TAIL RATE** (new
   `Square/MomentSummable.lean`): the squared moments are not merely bounded, they are
   **summable**, and the tails are certified small —
