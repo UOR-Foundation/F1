@@ -346,6 +346,7 @@ import F1Square.Square.DeepMember
 import F1Square.Square.MomentLaw
 import F1Square.Square.HilbertGram
 import F1Square.Square.DeepMemberThree
+import F1Square.Square.CoSupportStrict
 
 open UOR.Primitives
 

@@ -5000,6 +5000,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_zeroL2
 #print axioms Square.innerI_natScale_val
 #print axioms Square.powTest_window_one
+#print axioms Square.pv_add
+#print axioms Square.pv_neg
+#print axioms Square.pv_scale
+#print axioms Square.fv_add
+#print axioms Square.fv_neg
+#print axioms Square.fv_scale
 #print axioms Square.deep3_supp
 #print axioms Square.deep3_moment_zero
 #print axioms Square.deep3_moment_one
@@ -5008,3 +5014,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.deep3_value_tenth
 #print axioms Square.deep3_apart
 #print axioms Square.weil_psd_deep3
+
+-- THE PRE-HILBERT LAYER, brick 36 (Square/CoSupportStrict.lean) — THE CO-SUPPORT FILTRATION
+-- DOES NOT COLLAPSE: deep3's THIRD moment is −1/2520 ≠ 0 (read off the Hilbert matrix), so
+-- deep3 sits in level 3 and not level 4; with brick 25's bumpU at level 0, two witnessed
+-- strictness levels.
+#print axioms Square.deep3_moment_three
+#print axioms Square.deep3_not_hatVanishes_four
+#print axioms Square.cosupport_strict_at_three
+#print axioms Square.cosupport_strict_at_zero

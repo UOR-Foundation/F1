@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 36 — THE CO-SUPPORT FILTRATION DOES NOT COLLAPSE** (new
+  `Square/CoSupportStrict.lean`): the nested subspaces
+  `HatVanishes · 0 ⊇ HatVanishes · 1 ⊇ ⋯` are STRICTLY decreasing at the realized levels, each
+  strictness witnessed by a constructed test in one level and provably not the next.
+  Membership was the earlier bricks' work; strictness needs the first NON-vanishing moment,
+  and brick 34's Gram closed form supplies it by arithmetic alone: **`deep3_moment_three`** —
+  `(1/5 + 30/7 + 14/9) − (10/6 + 35/8) = 1903/315 − 145/24 = −1/2520 ≠ 0`, hence
+  **`deep3_not_hatVanishes_four`** and `cosupport_strict_at_three` (level 3 properly contains
+  level 4). At the bottom, `cosupport_strict_at_zero` records brick 25's `bumpU = x(1−x)`
+  (`f̂(0) = 1/6 ≠ 0`) in the vacuous level 0 and not level 1. Brick 35's six value-chaining
+  helpers (`pv_add`/`pv_neg`/`pv_scale`, `fv_add`/`fv_neg`/`fv_scale`) are promoted to public
+  — they are the reusable half. Why it matters: a condition that collapsed past some depth
+  would make the genuine `f, f̂` space finite-dimensional in the relevant direction, and the
+  coupling step 4 needs could not be an infinite-dimensional phenomenon; strictness at the
+  realized depths is the finite shadow of that non-collapse — evidence, stated as exactly
+  that. Honest scope: two witnessed levels (`0 ⊋ 1`, `3 ⊋ 4`), NOT a proof that every level
+  is strict, and nothing about the Weil form; step 4 is RH. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 35 — THE `K = 3` CO-SUPPORT MEMBER, READ OFF THE HILBERT
   MATRIX** (new `Square/DeepMemberThree.lean`): with brick 34's Gram closed form, a member at
   depth `K` is no longer a construction problem but a rational linear system —

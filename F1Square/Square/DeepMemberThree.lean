@@ -116,43 +116,45 @@ theorem innerI_natScale_val (φ ψ : L2Test) {a : Q} (had : 0 < a.den)
 attribute [irreducible] natScale
 
 -- ===========================================================================
--- Value-chaining helpers.
+-- Value-chaining helpers (public: the reusable half of this brick — an
+-- integer-coefficient combination's value, pointwise and in the pairing, is assembled by
+-- chaining these against certified component values).
 -- ===========================================================================
 
-private theorem pv_add {A B ψ : L2Test} {a b v : Q} (had : 0 < a.den) (hbd : 0 < b.den)
+theorem pv_add {A B ψ : L2Test} {a b v : Q} (had : 0 < a.den) (hbd : 0 < b.den)
     (hvd : 0 < v.den) (hA : Req (innerI A ψ) (ofQ a had)) (hB : Req (innerI B ψ) (ofQ b hbd))
     (hq : Qeq (add a b) v) : Req (innerI (L2Test.add A B) ψ) (ofQ v hvd) :=
   Req_trans (innerI_add_left A B ψ)
     (Req_trans (Radd_congr hA hB)
       (Req_trans (Radd_ofQ_ofQ had hbd) (Req_of_seq_Qeq (fun _ => hq))))
 
-private theorem pv_neg {A ψ : L2Test} {a v : Q} (had : 0 < a.den) (hvd : 0 < v.den)
+theorem pv_neg {A ψ : L2Test} {a v : Q} (had : 0 < a.den) (hvd : 0 < v.den)
     (hA : Req (innerI A ψ) (ofQ a had)) (hq : Qeq (neg a) v) :
     Req (innerI (L2Test.neg A) ψ) (ofQ v hvd) :=
   Req_trans (innerI_neg_left A ψ)
     (Req_trans (Rneg_congr hA)
       (Req_trans (Rneg_ofQ a had) (Req_of_seq_Qeq (fun _ => hq))))
 
-private theorem pv_scale (k : Nat) {A ψ : L2Test} {a v : Q} (had : 0 < a.den)
+theorem pv_scale (k : Nat) {A ψ : L2Test} {a v : Q} (had : 0 < a.den)
     (hvd : 0 < v.den) (hA : Req (innerI A ψ) (ofQ a had))
     (hq : Qeq (mul (⟨(k : Int), 1⟩ : Q) a) v) :
     Req (innerI (natScale k A) ψ) (ofQ v hvd) :=
   Req_trans (innerI_natScale_val A ψ had hA k) (Req_of_seq_Qeq (fun _ => hq))
 
-private theorem fv_add {A B : L2Test} {x : Real} {a b v : Q} (had : 0 < a.den)
+theorem fv_add {A B : L2Test} {x : Real} {a b v : Q} (had : 0 < a.den)
     (hbd : 0 < b.den) (hvd : 0 < v.den) (hA : Req (A.f x) (ofQ a had))
     (hB : Req (B.f x) (ofQ b hbd)) (hq : Qeq (add a b) v) :
     Req ((L2Test.add A B).f x) (ofQ v hvd) :=
   Req_trans (Radd_congr hA hB)
     (Req_trans (Radd_ofQ_ofQ had hbd) (Req_of_seq_Qeq (fun _ => hq)))
 
-private theorem fv_neg {A : L2Test} {x : Real} {a v : Q} (had : 0 < a.den) (hvd : 0 < v.den)
+theorem fv_neg {A : L2Test} {x : Real} {a v : Q} (had : 0 < a.den) (hvd : 0 < v.den)
     (hA : Req (A.f x) (ofQ a had)) (hq : Qeq (neg a) v) :
     Req ((L2Test.neg A).f x) (ofQ v hvd) :=
   Req_trans (Rneg_congr hA)
     (Req_trans (Rneg_ofQ a had) (Req_of_seq_Qeq (fun _ => hq)))
 
-private theorem fv_scale (k : Nat) {A : L2Test} {x : Real} {a v : Q} (had : 0 < a.den)
+theorem fv_scale (k : Nat) {A : L2Test} {x : Real} {a v : Q} (had : 0 < a.den)
     (hvd : 0 < v.den) (hA : Req (A.f x) (ofQ a had))
     (hq : Qeq (mul (⟨(k : Int), 1⟩ : Q) a) v) :
     Req ((natScale k A).f x) (ofQ v hvd) :=
