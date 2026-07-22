@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 44 — THE COMPLETED MEMBER *IS* THE MOMENT SEQUENCE** (new
+  `Square/MomentMember.lean`): the identification brick 43 deliberately declined to claim.
+  **`limMemberU (momIdx φ) _ i ≈ ⟨φ, xⁱ⟩`** (`limMemberU_momIdx`), so the object brick 17
+  constructs from the `ℓ²` data is `momSeq φ` on the nose — the very sequence the skeleton's
+  unconditional positivity consumes (`weil_psd_on_cosupport`) — and strong convergence reads
+  directly on it: `d²(momIdx φ j, momSeq φ) ≤ N·(2/(j+1))²` at every truncation
+  (`momIdx_converges_to_momSeq`). This is where brick 38's *sharp* decay earns its keep a
+  second time: the limit is evaluated at a **uniform** linear rate (`Rlim_eval_real_rate`),
+  which needs `|momIdx φ j i − ⟨φ,xⁱ⟩| ≤ C/(j+1)` for EVERY `j`, not merely eventually. Below
+  the cut the difference is literally zero; above it the cut condition `c(j+1)² ≤ i` forces
+  `j+1 ≤ i` (`cut_index_le`), so `|⟨φ,xⁱ⟩| ≤ M/(i+1)` is already `≤ C/(j+1)` at `C = momScale φ`
+  (`momScale_ge_num`, `moment_rate_cross`). A merely bounded moment sequence would leave only
+  an eventual bound, which the uniform-rate evaluator cannot use. HONEST SCOPE: the completed
+  member of the moment cuts, identified — still the compact `[0,1]` moment map of a
+  bounded-Lipschitz test, not the `L²` function-space completion, and nothing about the Weil
+  form. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 43 — THE FIRST GENUINE `ℓ²` INSTANCE OF THE
   TRUNCATION-UNIFORM COMPLETION** (new `Square/MomentCompletion.lean`): the moment vector of
   any bounded-Lipschitz test, cut along a **quadratically** rescaled truncation, satisfies the

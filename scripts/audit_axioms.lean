@@ -5117,3 +5117,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.momIdx_rate
 #print axioms Square.momIdx_sqCauchyU
 #print axioms Square.momIdx_completes
+
+-- THE PRE-HILBERT LAYER, brick 44 (Square/MomentMember.lean) — THE COMPLETED MEMBER IS THE
+-- MOMENT SEQUENCE: limMemberU (momIdx φ) i ≈ ⟨φ,xⁱ⟩ (uniform-rate limit evaluation, powered
+-- by brick 38's sharp decay), so the cuts converge strongly to momSeq φ at every truncation.
+#print axioms Square.momScale_ge_num
+#print axioms Square.cut_index_le
+#print axioms Square.limMemberU_momIdx
+#print axioms Square.momIdx_converges_to_momSeq
