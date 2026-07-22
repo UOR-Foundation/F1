@@ -4979,3 +4979,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.genSum_powTest_rate
 #print axioms Square.riemannIntegral_powTest_succ
 #print axioms Square.mellinMoment_clamp_general
+
+-- THE PRE-HILBERT LAYER, brick 34 (Square/HilbertGram.lean) — THE HILBERT MATRIX IS THE GRAM
+-- MATRIX OF THE MONOMIAL BAND: the monomial tests multiply (xⁱ·xʲ = x^{i+j}), ∫₀¹ clampᵐ =
+-- 1/(m+1) for EVERY m, ⟨xⁱ,xʲ⟩ = 1/(i+j+1) in closed form, its symmetry, the moment map on
+-- the monomials, and brick 33's Hausdorff law recovered as the i = 1 row.
+#print axioms Square.powTest_mul
+#print axioms Square.riemannIntegral_powTest_all
+#print axioms Square.innerI_powTest_hilbert
+#print axioms Square.hilbertGram_symm
+#print axioms Square.mellinMoment_powTest
+#print axioms Square.mellinMoment_clamp_via_hilbert

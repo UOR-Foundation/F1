@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 34 — THE HILBERT MATRIX IS THE GRAM MATRIX OF THE MONOMIAL
+  BAND** (new `Square/HilbertGram.lean`): **`⟨xⁱ, xʲ⟩ = 1/(i+j+1)`**
+  (`innerI_powTest_hilbert`) — the band the co-support condition is orthogonality *to*
+  (brick 28's weld) now has its Gram matrix in closed form at every entry. Two ingredients:
+  `powTest_mul` (the monomial tests multiply, `xⁱ·xʲ = x^{i+j}` pointwise by induction through
+  `Rmul_assoc`, so the pairing's integrand IS a single monomial) and
+  `riemannIntegral_powTest_all` (`∫₀¹ clamp01ᵐ = 1/(m+1)` for EVERY `m`, brick 33's law plus
+  the constant case), reached at the pairing's own modulus by transport and certificate
+  independence. Corollaries: `hilbertGram_symm`, `mellinMoment_powTest`, and
+  **`mellinMoment_clamp_via_hilbert`** — brick 33's Hausdorff law recovered as the `i = 1`
+  row, so the moment law is the Hilbert matrix's first row. Honest scope: the Gram matrix
+  only — no positive-definiteness, no inverse, no conditioning, and nothing about the Weil
+  form; positivity on the band's orthogonal complement is step 4 and is RH. The crux fields
+  stay `none`.
+
 - **The pre-Hilbert layer, brick 33 — THE HAUSDORFF MOMENT LAW** (new
   `Square/MomentLaw.lean`): **`mellinMoment clampTest n ≈ 1/(n+2)` for EVERY `n`** — one
   theorem subsuming the five per-degree engines; the clamp's moment sequence is the full
