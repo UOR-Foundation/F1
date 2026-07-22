@@ -337,6 +337,7 @@ import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare
 import F1Square.Square.CoSupportMember
 import F1Square.Square.MomentCube
+import F1Square.Square.CubicMember
 
 open UOR.Primitives
 

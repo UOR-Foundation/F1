@@ -16,6 +16,26 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 27 — THE NONZERO CO-SUPPORT SUBSPACE MEMBER** (new
+  `Square/CubicMember.lean`): a genuine nonzero `[0,1]`-supported test INSIDE
+  `HatVanishes · 1`. The member is the cubic bump `cubeBump = bumpU·(1−2·clamp)`
+  (`x(1−x)(1−2x)`), realized by the test-algebra combinators alone: `cubeBump_supp` (the
+  `bumpU` factor kills every window point), **`mellinMoment_cubeBump`** — the zeroth moment
+  vanishes EXACTLY (`(1/2 − 1/3) − (2/3 − 1/2) = 0`: the integrand expands pointwise to the
+  certified test tree `(c − c²) − ((c² + c²) − (c³ + c³))`, chosen to match the derivation so
+  no seq-level add/neg reshuffle — which the reindexing Bishop `Radd` does not admit — is
+  needed; the three engine values cancel at one shared modulus through
+  `riemannIntegral_add`/`_neg`), **`cubeBump_hatVanishes`** (membership via the brick-22
+  moment bridge), and **`cubeBump_value_quarter`/`cubeBump_apart`** (`f(1/4) ≈ 3/32`, `Pos`).
+  With brick 25 the co-support geometry is complete on constructed objects: the vanishing
+  subspace is PROPER (`bumpU` outside) and INHABITED BEYOND ZERO (`cubeBump` inside, apart
+  from zero). Mechanization note: the whnf-timeout gotcha struck again and was resolved
+  structurally, not by heartbeats — den-proof terms must match the component rational's shape
+  (`add_den_pos` forces an `add`-shaped metavariable; use `by decide` for `neg`-shaped
+  components). Honest scope: one member at `K = 1`; deeper `K` needs higher-degree
+  evaluations; no coupling — positivity on the co-support class is step 4 and is RH. The crux
+  fields stay `none`.
+
 - **The pre-Hilbert layer, brick 26 — THE CUBIC EVALUATION** (new `Square/MomentCube.lean`):
   **`∫₀¹ clamp01(x)³ dx ≈ 1/4`** — the evaluation engine mirrored one more degree up:
   `sumCubesQ` (Nicomachus, `Σ i³ = (k(k−1)/2)²`), `riemannSum_clampCube`

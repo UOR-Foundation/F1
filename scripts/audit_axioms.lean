@@ -4894,3 +4894,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.genSum_clampCube_rate
 #print axioms Square.riemannIntegral_clampCube_gen
 #print axioms Square.mellinMoment_clamp_two
+
+-- THE PRE-HILBERT LAYER, brick 27 (Square/CubicMember.lean) — THE NONZERO CO-SUPPORT SUBSPACE
+-- MEMBER: the cubic bump x(1−x)(1−2x) is [0,1]-supported, its zeroth moment vanishes exactly
+-- (the three engine values cancel at one shared modulus), it is IN HatVanishes · 1, and it is
+-- apart from zero at x = 1/4 (value 3/32, Pos).
+#print axioms Square.cubeBump_supp
+#print axioms Square.mellinMoment_cubeBump
+#print axioms Square.cubeBump_hatVanishes
+#print axioms Square.cubeBump_value_quarter
+#print axioms Square.cubeBump_apart
