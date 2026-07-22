@@ -4913,3 +4913,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.hatVanishes_iff_orthogonal
 #print axioms Square.orthogonal_band_add
 #print axioms Square.cubePair_orthogonal
+
+-- THE PRE-HILBERT LAYER, brick 29 (Square/BandBridge.lean) — THE BAND BRIDGE: the moment map
+-- relates the monomial band to the skeleton's indicator band (momSeq_fourier), pushes the
+-- co-support condition to the skeleton's band condition, fixes the moment sequence under
+-- bandProj, and fires the skeleton's unconditional complement-positivity on genuine f,f̂
+-- data (weil_psd_on_cosupport) with its zero-member instance.
+#print axioms Square.momSeq_fourier
+#print axioms Square.momSeq_band_vanishes
+#print axioms Square.momSeq_bandProj_fixed
+#print axioms Square.weil_psd_on_cosupport
+#print axioms Square.weil_psd_cosupport_instance

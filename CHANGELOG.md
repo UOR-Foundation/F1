@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 29 — THE BAND BRIDGE** (new `Square/BandBridge.lean`): the
+  moment map `momSeq φ = (mellinMoment φ n)ₙ` carries `f, f̂` data into the discrete
+  skeleton, relating the two bands: `momSeq_fourier` (`⟨momSeq φ, δₖ⟩_N ≈ ⟨φ, xᵏ⟩` — the
+  indicator directions correspond to the monomial directions along the moment map),
+  `momSeq_band_vanishes` (the co-support condition pushes forward to the skeleton's band
+  condition), `momSeq_bandProj_fixed` (a `K = 2` co-support test's moment sequence is FIXED
+  by the skeleton's `bandProj` — it already lives in the Sonine complement), and the
+  capstone **`weil_psd_on_cosupport`**: for a `[0,1]`-supported test with `HatVanishes φ 2`,
+  the discrete Weil multiplier form is nonnegative on its moment sequence at every
+  truncation — `burnol_pairing_psd_on_sonine`'s band hypothesis discharged by the
+  CONSTRUCTED transform's vanishing, not assumed of an abstract coefficient family. The
+  skeleton's unconditional positivity realized on genuine `f, f̂` data; no RH. Honest scope:
+  the bridge runs through the moment map at the Burnol skeleton's single-index band; the
+  positivity is the skeleton's diagonal form on moment data, not the Weil functional on the
+  test space, and not positivity beyond the complement (step 4, = RH); the `K = 2` instance
+  is inhabited by the zero member only — a nonzero `K = 2` member needs the quartic engine
+  (banked). The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 28 — THE WELD** (new `Square/CoSupportWeld.lean`): the
   transform-side co-support condition IS an orthogonality condition —
   **`hatVanishes_iff_orthogonal`**: for `[0,1]`-supported tests,
