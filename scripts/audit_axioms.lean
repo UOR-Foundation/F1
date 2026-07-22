@@ -5097,3 +5097,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.deep4_apart
 #print axioms Square.weil_psd_deep4
 #print axioms Square.cosupport_chain_strict_five
+
+-- THE PRE-HILBERT LAYER, brick 42 (Square/CoSupportEnergy.lean) — DEEP CO-SUPPORT MEANS SMALL
+-- MOMENT ENERGY: depth K kills the head of the squared-moment sum outright, so every partial
+-- sum is a tail and brick 39's rate bounds them all: ‖φ̂‖² ≤ 2M²/(K+1); full co-support ⟹ 0.
+#print axioms Square.momentSqSum_zero
+#print axioms Square.momentSqSum_le_of_moments
+#print axioms Square.momentL2Sq_le_of_moments
+#print axioms Square.momentL2Sq_le_of_hatVanishes
+#print axioms Square.momentL2Sq_zero_of_moments

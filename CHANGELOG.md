@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 42 — DEEP CO-SUPPORT MEANS SMALL MOMENT ENERGY** (new
+  `Square/CoSupportEnergy.lean`): the filtration's levels are not just properly nested
+  (bricks 36–37, 41), they are quantitatively **thin** —
+  **`φ ∈ HatVanishes · K ⟹ ‖φ̂‖² = Σ_n ⟨φ, xⁿ⟩² ≤ 2·M_φ²/(K+1)`**
+  (`momentL2Sq_le_of_hatVanishes`), and full co-support (every moment vanishing) gives energy
+  exactly zero (`momentL2Sq_zero_of_moments`). The proof is bricks 39–40 doing their job
+  together: depth `K` kills the head of the sum outright (`momentSqSum_zero` — the first `K`
+  terms are literally zero), so *every* partial sum is a tail, and brick 39's uniform tail
+  bound read at `N = K` bounds them all at once (`momentSqSum_le_of_moments`, by cases on
+  `N ≤ K` or `N = K + d`); brick 40's `Rlim` then inherits the bound termwise through
+  `Rlim_le_ofQ` — no epsilon argument, because the bound is uniform in the index rather than
+  approached in the limit. HONEST SCOPE: a rate for the moment energy of a bounded-Lipschitz
+  test on `[0,1]` in terms of co-support depth. It bounds nothing about the Weil functional,
+  and says nothing about whether a nonzero test with all moments vanishing exists (the
+  determinacy question is untouched). Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 41 — THE `K = 4` CO-SUPPORT MEMBER, AND THE STRICT CHAIN
   EXTENDED** (new `Square/DeepMemberFour.lean`):
   `deep4 = x − 15x² + 70x³ − 140x⁴ + 126x⁵ − 42x⁶`, the nonzero rational solution of
