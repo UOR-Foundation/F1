@@ -4831,3 +4831,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.twTerm_add
 #print axioms Square.twTail_add
 #print axioms Square.mellinHat_add
+
+-- THE PRE-HILBERT LAYER, brick 22 (Square/HatVanishes.lean) — THE CO-SUPPORT PREDICATE:
+-- bundled all-order window decay (weakening + addition), HatVanishes with its downward
+-- filtration and SUBSPACE closure (mellinHat_add against 0+0≈0), the compact/moment bridge,
+-- and nonvacuity via the constructed zero test with all moments evaluated to 0.
+#print axioms Square.windowDecay_weaken
+#print axioms Square.allDecay_weaken
+#print axioms Square.windowDecay_add
+#print axioms Square.allDecay_add
+#print axioms Square.allDecay_of_supp
+#print axioms Square.hatVanishes_mono
+#print axioms Square.hatVanishes_add
+#print axioms Square.hatVanishes_of_moments
+#print axioms Square.zeroL2_supp
+#print axioms Square.mellinMoment_zeroL2
+#print axioms Square.hatVanishes_zeroL2

@@ -332,6 +332,7 @@ import F1Square.Analysis.MellinDecay
 import F1Square.Square.WindowPower
 import F1Square.Square.MellinHat
 import F1Square.Square.MellinLinear
+import F1Square.Square.HatVanishes
 
 open UOR.Primitives
 

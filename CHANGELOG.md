@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 22 — THE CO-SUPPORT PREDICATE** (new
+  `Square/HatVanishes.lean`): the transform-side vanishing condition is now a stated,
+  subspace-shaped, inhabited predicate about constructed transforms. The decay data is
+  bundled — `WindowDecay` (the exponent-`(n+2)` bound `mellinHat` consumes) and `AllDecay`
+  (every order at one constant, the superpolynomial-decay class) — with the two laws that
+  make shared constants reachable: weakening in `C` (`windowDecay_weaken`/`allDecay_weaken`
+  via `qmul_le_right_mono`) and addition at the summed constant (`windowDecay_add`/
+  `allDecay_add`, triangle against the distributed bound). On that class **`HatVanishes φ K`**
+  (`f̂(n) ≈ 0` for `n < K`) with: `hatVanishes_mono` (downward filtration),
+  **`hatVanishes_add`** — THE SUBSPACE THEOREM (brick 21's `mellinHat_add` against
+  `0 + 0 ≈ 0`), and `hatVanishes_of_moments` — the compact bridge welding the predicate to
+  the brick-10 moment skeleton through `mellinHat_compact`. Nonvacuity: the constructed zero
+  test `zeroL2`, all moments evaluated to `0` (`mellinMoment_zeroL2`, integrand pointwise
+  `≈ 0` → congruence to the constant integrand → `riemannIntegral_const_gen`), and
+  `hatVanishes_zeroL2` placing it in the class at every `K`. Honest scope: integer points
+  only, no band-indexed vanishing set tied to `bandProj`, no NONZERO member yet (banked
+  next), no coupling — positivity on a co-support class is step 4 and is RH. The crux fields
+  stay `none`.
+
 - **The pre-Hilbert layer, brick 21 — THE TRANSFORM IS LINEAR** (new
   `Square/MellinLinear.lean`): **`mellinHat_add`** — `(φ+ψ)^(n) ≈ φ̂(n) + ψ̂(n)` at a shared
   decay constant (the shared-modulus design of `riemannIntegral_add`): the compact piece by
