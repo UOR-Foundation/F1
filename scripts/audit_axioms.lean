@@ -4807,3 +4807,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.powWinTest_succ_inert
 #print axioms Square.qmul_le_right_mono
 #print axioms Square.powWinTest_M_le
+
+-- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
+-- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
+-- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
+#print axioms Square.qmul_le_left_mono
+#print axioms Square.twTerm_bound

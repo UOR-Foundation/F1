@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 20 — THE MELLIN TRANSFORM AT INTEGER POINTS** (new
+  `Square/MellinHat.lean`): **`mellinHat φ n = mellinMoment φ n + twTail φ n` — the first
+  constructed value of the `f ↦ f̂` direction**, `f̂(n) = ∫₀^∞ φ(t)·tⁿ dt` as a certified
+  real for every test with exponent-`(n+2)` window decay. The twisted integrand is built per
+  window from the algebra (`φ · powWinTest m n`, brick 19 — equal to `φ·tⁿ` on the window by
+  inertness); `tw_collapse` — the exponent-generic estimate
+  `C·(m+2)ⁿ/(m+1)^{n+2} ≤ (C·2ⁿ)/((m+1)m)` from the Nat core
+  `(m+2)ⁿ(m+1)m ≤ 2ⁿ(m+1)^{n+2}`, power atoms generalized before the ring normalizer;
+  `twTerm_bound` — the twisted window integrals obey the gateway's `K/((m+1)m)` shape at
+  `K := C·2ⁿ` (brick 18's window bound, `powWinTest_M_le` feeding the power factor);
+  **`twTail`** — the twisted half-line tail as a Bishop limit (`genSum_RReg` at modulus
+  `C·2ⁿ`); plus the public `qmul_le_left_mono`. Honest scope: integer points only,
+  window-clamped twist; no continuous parameter, no transform pair, no inversion, no
+  coupling; crux fields `none`.
 - **The pre-Hilbert layer, brick 19 — the WINDOW POWER substrate of the Mellin twist** (new
   `Square/WindowPower.lean`): the transform's `tⁿ` twist grows on the half-line, so it is no
   single global test — but on each window `[m+1, m+2]` it is one: `bandTest m` (the

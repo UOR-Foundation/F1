@@ -330,6 +330,7 @@ import F1Square.Square.CompleteComplement
 import F1Square.Square.UniformCompletion
 import F1Square.Analysis.MellinDecay
 import F1Square.Square.WindowPower
+import F1Square.Square.MellinHat
 
 open UOR.Primitives
 
