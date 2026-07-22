@@ -4882,3 +4882,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.mellinHat_bumpU_value
 #print axioms Square.mellinHat_bumpU_pos
 #print axioms Square.bumpU_not_hatVanishes
+
+-- THE PRE-HILBERT LAYER, brick 26 (Square/MomentCube.lean) — THE CUBIC EVALUATION: the
+-- Nicomachus fold, the clamped-cube Riemann sums and telescoped evaluation with rational
+-- defect, ∫₀¹ clamp01³ ≈ 1/4 general in the Lipschitz datum, and the clamp's third Mellin
+-- datum mellinMoment clampTest 2 ≈ 1/4.
+#print axioms Square.sumCubesQ
+#print axioms Square.riemannSum_clampCube
+#print axioms Square.genSum_clampCube_eval
+#print axioms Square.cube_defect_le
+#print axioms Square.genSum_clampCube_rate
+#print axioms Square.riemannIntegral_clampCube_gen
+#print axioms Square.mellinMoment_clamp_two

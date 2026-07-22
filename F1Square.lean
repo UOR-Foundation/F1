@@ -336,6 +336,7 @@ import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare
 import F1Square.Square.CoSupportMember
+import F1Square.Square.MomentCube
 
 open UOR.Primitives
 

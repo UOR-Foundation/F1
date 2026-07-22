@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 26 — THE CUBIC EVALUATION** (new `Square/MomentCube.lean`):
+  **`∫₀¹ clamp01(x)³ dx ≈ 1/4`** — the evaluation engine mirrored one more degree up:
+  `sumCubesQ` (Nicomachus, `Σ i³ = (k(k−1)/2)²`), `riemannSum_clampCube`
+  (`= N²/(4(N+1)²)` at the inert samples), `genSum_clampCube_eval` + `cube_defect_le` (the
+  numerator collapses to `−(8N+4)`), the schedule-uniform rate, and
+  `riemannIntegral_clampCube_gen` by `Rlim_eval`; payoff `mellinMoment clampTest 2 ≈ 1/4`.
+  The clamp's moment data now reads `(1/2, 1/3, 1/4, …)` — three values of the Hausdorff
+  sequence, and the last evaluation the nonzero co-support member (`x(1−x)(1−2x)`, zeroth
+  moment `1/2 − 1 + 1/2 = 0`) consumes. Honest scope: the general `1/(n+2)` law remains open;
+  no coupling; step 4 is RH. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 25 — THE FIRST NONZERO TRANSFORM VALUE** (new
   `Square/CoSupportMember.lean`): a genuine `[0,1]`-supported test with **`f̂(0) ≈ 1/6 > 0`**,
   and the co-support subspace is PROPER. The member is the unit bump `bumpU = clamp·(1−clamp)`
