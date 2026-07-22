@@ -4936,3 +4936,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.genSum_clampQuad_rate
 #print axioms Square.riemannIntegral_clampQuad_gen
 #print axioms Square.mellinMoment_clamp_three
+
+-- THE PRE-HILBERT LAYER, brick 31 (Square/MomentQuintic.lean) — THE QUINTIC EVALUATION: the
+-- quintic fold Σi⁵ = k²(k−1)²(2k²−2k−1)/12, the clamped-quintic Riemann sums and telescoped
+-- evaluation (N⁴ cancels; numerator −(36N³+78N²+48N+12) ≤ 72(N+1)³), ∫₀¹ clamp01⁵ ≈ 1/6
+-- general in the Lipschitz datum, and mellinMoment clampTest 4 ≈ 1/6.
+#print axioms Square.sumQuinticsQ
+#print axioms Square.riemannSum_clampQuint
+#print axioms Square.genSum_clampQuint_eval
+#print axioms Square.quint_defect_le
+#print axioms Square.genSum_clampQuint_rate
+#print axioms Square.riemannIntegral_clampQuint_gen
+#print axioms Square.mellinMoment_clamp_four

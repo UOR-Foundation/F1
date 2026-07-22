@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 31 — THE QUINTIC EVALUATION** (new
+  `Square/MomentQuintic.lean`): **`∫₀¹ clamp01(x)⁵ dx ≈ 1/6`** — the engine at degree five:
+  `sumQuinticsQ` (`Σ i⁵ = k²(k−1)²(2k²−2k−1)/12`), `riemannSum_clampQuint`
+  (`= N²(2N²+2N−1)/(12(N+1)⁴)`), `genSum_clampQuint_eval` + `quint_defect_le` (the `N⁴`
+  terms again cancel; numerator `−(36N³+78N²+48N+12) ≤ 72(N+1)³` coefficientwise), the
+  schedule-uniform rate, `riemannIntegral_clampQuint_gen`, and
+  `mellinMoment_clamp_four ≈ 1/6`. The clamp's moment data reads
+  `(1/2, 1/3, 1/4, 1/5, 1/6, …)`; with brick 30 both engines the nonzero `K = 2` co-support
+  member `x(1−x)(1−5x+5x²)` consumes are delivered. Honest scope: degree `n = 4`; the
+  general law remains open; no coupling; step 4 is RH. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 30 — THE QUARTIC EVALUATION** (new
   `Square/MomentQuartic.lean`): **`∫₀¹ clamp01(x)⁴ dx ≈ 1/5`** — the engine at degree four:
   `sumQuarticsQ` (Faulhaber, `Σ i⁴ = k(k−1)(2k−1)(3k²−3k−1)/30`), `riemannSum_clampQuad`
