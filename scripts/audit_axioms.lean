@@ -4904,3 +4904,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.cubeBump_hatVanishes
 #print axioms Square.cubeBump_value_quarter
 #print axioms Square.cubeBump_apart
+
+-- THE PRE-HILBERT LAYER, brick 28 (Square/CoSupportWeld.lean) — THE WELD: the f,f̂ pair
+-- object (MellinPair), the compact pair's hat = the L² pairing against monomials, the
+-- EQUIVALENCE HatVanishes ⟺ orthogonality to the monomial band, span-extension by
+-- bilinearity, and the realized nonzero instance (the cubic bump pair).
+#print axioms Square.mellinPair_hat_compact
+#print axioms Square.hatVanishes_iff_orthogonal
+#print axioms Square.orthogonal_band_add
+#print axioms Square.cubePair_orthogonal

@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 28 — THE WELD** (new `Square/CoSupportWeld.lean`): the
+  transform-side co-support condition IS an orthogonality condition —
+  **`hatVanishes_iff_orthogonal`**: for `[0,1]`-supported tests,
+  `HatVanishes φ K ⟺ ⟨φ, xⁿ⟩ ≈ 0 for all n < K`. The `f, f̂` pair is bundled (`MellinPair`,
+  a test with its all-order decay data; `MellinPair.hat` its transform;
+  `MellinPair.hat_compact` the pair-level `f̂(n) ≈ ⟨φ, xⁿ⟩`), the condition extends over the
+  band's span by bilinearity (`orthogonal_band_add`), and the realized instance is genuine:
+  `cubePair_orthogonal` — the certified NONZERO cubic bump is orthogonal to the `K = 1`
+  monomial band with its transform vanishing there. The function-space mirror of the
+  skeleton's `c(i) = 0` band condition, now about constructed `f` and constructed `f̂`.
+  Honest scope: the band is the MONOMIAL band, not yet the skeleton's indicator band (that
+  relation is the remaining welding step toward `bandProj`); no continuous parameter, no
+  inversion; positivity on the orthogonal complement is step 4 and is RH. The crux fields
+  stay `none`.
+
 - **The pre-Hilbert layer, brick 27 — THE NONZERO CO-SUPPORT SUBSPACE MEMBER** (new
   `Square/CubicMember.lean`): a genuine nonzero `[0,1]`-supported test INSIDE
   `HatVanishes · 1`. The member is the cubic bump `cubeBump = bumpU·(1−2·clamp)`
