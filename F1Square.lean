@@ -345,6 +345,7 @@ import F1Square.Square.MomentQuintic
 import F1Square.Square.DeepMember
 import F1Square.Square.MomentLaw
 import F1Square.Square.HilbertGram
+import F1Square.Square.DeepMemberThree
 
 open UOR.Primitives
 

@@ -4990,3 +4990,21 @@ open UOR.Bridge.F1Square
 #print axioms Square.hilbertGram_symm
 #print axioms Square.mellinMoment_powTest
 #print axioms Square.mellinMoment_clamp_via_hilbert
+
+-- THE PRE-HILBERT LAYER, brick 35 (Square/DeepMemberThree.lean) — THE K=3 CO-SUPPORT MEMBER
+-- READ OFF THE HILBERT MATRIX: the reusable integer-scaling helper natScale with its support/
+-- pointwise/pairing transfer laws, and deep3 = x − 10x² + 30x³ − 35x⁴ + 14x⁵ with three
+-- vanishing moments, membership, apartness, and the skeleton positivity at depth 3.
+#print axioms Square.natScale_supp
+#print axioms Square.natScale_val
+#print axioms Square.innerI_zeroL2
+#print axioms Square.innerI_natScale_val
+#print axioms Square.powTest_window_one
+#print axioms Square.deep3_supp
+#print axioms Square.deep3_moment_zero
+#print axioms Square.deep3_moment_one
+#print axioms Square.deep3_moment_two
+#print axioms Square.deep3_hatVanishes
+#print axioms Square.deep3_value_tenth
+#print axioms Square.deep3_apart
+#print axioms Square.weil_psd_deep3

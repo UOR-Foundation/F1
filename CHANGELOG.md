@@ -16,6 +16,26 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 35 — THE `K = 3` CO-SUPPORT MEMBER, READ OFF THE HILBERT
+  MATRIX** (new `Square/DeepMemberThree.lean`): with brick 34's Gram closed form, a member at
+  depth `K` is no longer a construction problem but a rational linear system —
+  `Σᵢ aᵢ/(i+n+1) = 0` for `n < K` plus `Σᵢ aᵢ = 0` — solved at `K = 3` by
+  `a = (1, −10, 30, −35, 14)`: **`deep3 = x − 10x² + 30x³ − 35x⁴ + 14x⁵`**. The reusable half
+  is **`natScale k φ`** (the `k`-fold sum) with its three transfer laws — support, pointwise
+  values, pairing values (`innerI_natScale_val`, on `innerI_zeroL2`) — so integer-coefficient
+  combinations are assembled and evaluated without hand-built addition trees. Delivered:
+  `deep3_supp` (`45 − 45 = 0` at every window point), `deep3_moment_zero/_one/_two` (each a
+  `decide`-able rational identity over the Hilbert entries), **`deep3_hatVanishes`**,
+  `deep3_value_tenth` (`p(1/10) = 333/12500`) with `deep3_apart`, and **`weil_psd_deep3`** —
+  the skeleton's unconditional positivity on a member whose transform vanishes at THREE
+  integer points. Mechanization note: the member is built as `P − N` through
+  `L2Test.sub`/`innerI_sub_left`, NOT as a `neg`-wrapped summand — a `L2Test.neg` at the head
+  of a deep test tree sends `innerI` unification into a whnf blowup that survives 2M
+  heartbeats (bisected; the same chain with the `neg` removed elaborates instantly). Honest
+  scope: one member at `K = 3`; the positivity is still the skeleton's diagonal multiplier
+  form on moment data, not the Weil functional, and not positivity beyond the complement
+  (step 4, = RH). The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 34 — THE HILBERT MATRIX IS THE GRAM MATRIX OF THE MONOMIAL
   BAND** (new `Square/HilbertGram.lean`): **`⟨xⁱ, xʲ⟩ = 1/(i+j+1)`**
   (`innerI_powTest_hilbert`) — the band the co-support condition is orthogonality *to*
