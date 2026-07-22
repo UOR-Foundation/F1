@@ -4847,3 +4847,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.zeroL2_supp
 #print axioms Square.mellinMoment_zeroL2
 #print axioms Square.hatVanishes_zeroL2
+
+-- THE PRE-HILBERT LAYER, brick 23 (Square/MomentValue.lean + Analysis/IntegralLocal.lean) —
+-- THE MOMENT MAP TAKES CERTIFIED NONZERO VALUES: the unit-local congruence (antisymmetry of
+-- riemannIntegral_le_unit), the clamp's domain-local inertness, and the exact evaluations
+-- mellinMoment oneTest 0 ≈ 1 and mellinMoment clampTest 0 ≈ 1/2 — the moment functionals
+-- provably separate tests.
+#print axioms Analysis.riemannIntegral_congr_unit
+#print axioms Square.clamp01_inert
+#print axioms Square.mellinMoment_one_zero
+#print axioms Square.mellinMoment_clamp_zero

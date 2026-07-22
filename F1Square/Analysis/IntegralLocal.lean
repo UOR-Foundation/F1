@@ -42,6 +42,23 @@ theorem riemannIntegral_le_unit {f g : Real → Real} {L : Q} (hLd : 0 < L.den) 
   exact Rle_trans (Rlim_le_seq hZfReg hZgReg hZle)
     (Rle_of_Req (Rlim_add_const (dyadicR g 0) _ (dyadicSum_RReg hLd hLn hlipg hfcg) hZgReg))
 
+/-- **`∫₀¹ f ≈ ∫₀¹ g` from `f ≈ g` on `[0, 1]` only** (shared modulus `L`) — the unit-local
+    congruence, by antisymmetry of the unit-local monotonicity. The lemma every evaluation of a
+    clamped integrand runs through: the integrand need only agree with its closed form on the
+    integration domain. -/
+theorem riemannIntegral_congr_unit {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)
+    (hlipf : ∀ x y, Rle (Rabs (Rsub (f x) (f y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcf : ∀ x y, Req x y → Req (f x) (f y))
+    (hlipg : ∀ x y, Rle (Rabs (Rsub (g x) (g y))) (Rmul (ofQ L hLd) (Rabs (Rsub x y))))
+    (hfcg : ∀ x y, Req x y → Req (g x) (g y))
+    (hfg : ∀ x, Rle zero x → Rle x one → Req (f x) (g x)) :
+    Req (riemannIntegral hLd hLn hlipf hfcf) (riemannIntegral hLd hLn hlipg hfcg) :=
+  Rle_antisymm
+    (riemannIntegral_le_unit hLd hLn hlipf hfcf hlipg hfcg
+      (fun x h0 h1 => Rle_of_Req (hfg x h0 h1)))
+    (riemannIntegral_le_unit hLd hLn hlipg hfcg hlipf hfcf
+      (fun x h0 h1 => Rle_of_Req (Req_symm (hfg x h0 h1))))
+
 /-- **`∫_a^{a+w} f ≤ ∫_a^{a+w} g` from `f ≤ g` on the affine image of `[0,1]`** (i.e. on `[a, a+w]`),
     `w ≥ 0`, shared modulus `L`. -/
 theorem riemannIntegralI_le_unit {f g : Real → Real} {L : Q} (hLd : 0 < L.den) (hLn : 0 ≤ L.num)

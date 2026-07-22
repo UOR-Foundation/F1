@@ -333,6 +333,7 @@ import F1Square.Square.WindowPower
 import F1Square.Square.MellinHat
 import F1Square.Square.MellinLinear
 import F1Square.Square.HatVanishes
+import F1Square.Square.MomentValue
 
 open UOR.Primitives
 

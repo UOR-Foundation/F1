@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 23 — THE MOMENT MAP TAKES CERTIFIED NONZERO VALUES** (new
+  `Square/MomentValue.lean`; `Analysis/IntegralLocal.lean` gains the unit-local congruence):
+  **`riemannIntegral_congr_unit`** — `∫₀¹ f ≈ ∫₀¹ g` from agreement on `[0,1]` only
+  (antisymmetry of `riemannIntegral_le_unit`), the lemma every clamped-integrand evaluation
+  runs through; `clamp01_inert` (the band identity at real arguments); and the first nonzero
+  values of the transform-side data: `mellinMoment oneTest 0 ≈ 1` (constant integral through
+  the global congruence) and **`mellinMoment clampTest 0 ≈ 1/2`** (clamp inert on the sampling
+  domain → unit-local congruence to the identity integrand at the shared modulus `L = 1` →
+  `riemannIntegral_id_gen`). With brick 22's `mellinMoment_zeroL2 ≈ 0` the moment functionals
+  provably separate tests. Honest scope: compact `[0,1]` moment values, NOT transform values
+  (`clampTest` has no half-line decay); the first nonzero full-transform value is the banked
+  next construction. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 22 — THE CO-SUPPORT PREDICATE** (new
   `Square/HatVanishes.lean`): the transform-side vanishing condition is now a stated,
   subspace-shaped, inhabited predicate about constructed transforms. The decay data is
