@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 38 — THE SHARP MOMENT DECAY** (new
+  `Square/MomentDecay.lean`): **`|⟨φ, xⁿ⟩| ≤ M_φ/(n+1)`** (`mellinMoment_abs_le`) for every
+  test of the bounded-Lipschitz class — the first quantitative rate on the moment map, and
+  the sharp one (attained in order at `φ = xᵏ`, where `⟨xᵏ,xⁿ⟩ = 1/(k+n+1)`). It matters that
+  the route is comparison and not Cauchy–Schwarz: CS through `⟨xⁿ,xⁿ⟩ = 1/(2n+1)` gives only
+  `O(1/√n)`, whose squares are *not* summable, whereas `O(1/n)` makes the squared moments
+  summable — the `ℓ²` datum the completion axis wants rather than a merely bounded sequence.
+  Proof: on `[0,1]` the monomial is nonnegative (`powTest_nonneg`), so `φ(x)·xⁿ ≤ M_φ·xⁿ`
+  pointwise; `riemannIntegral_le_unit` integrates it against `riemannIntegral_smul` and brick
+  34's `∫₀¹ xⁿ = 1/(n+1)`, at a three-term shared modulus (each summand present so every
+  weakening is a `Qle_self_add` — `|M| ≥ 1` is not available). New reusable piece:
+  `lip_smul_of` (scalar Lipschitz transfer, `q·f` is `|q|·L_f`-Lipschitz). The lower half is
+  free: the upper bound at `L2Test.neg φ`, which carries the SAME `M`, with `innerI_neg_left`
+  flipping the sign. Honest scope: a rate on the compact `[0,1]` moment map; not the
+  truncation-uniform `ℓ²` weights of the completion axis (those are about the discrete
+  coordinates), and nothing about the Weil form; step 4 is RH. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 37 — THE STRICT CHAIN THROUGH DEPTH 4** (new
   `Square/CoSupportChain.lean`): the co-support filtration is strictly decreasing at *every*
   level the layer has reached —

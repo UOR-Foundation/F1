@@ -5042,3 +5042,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.lin2_hatVanishes
 #print axioms Square.lin2_not_hatVanishes_three
 #print axioms Square.cosupport_chain_strict
+
+-- THE PRE-HILBERT LAYER, brick 38 (Square/MomentDecay.lean) — THE SHARP MOMENT DECAY:
+-- monomial nonnegativity, scalar Lipschitz transfer, and |⟨φ,xⁿ⟩| ≤ M_φ/(n+1) by two-sided
+-- comparison on the sampling domain (the lower half free from L2Test.neg, which keeps M).
+#print axioms Square.powTest_nonneg
+#print axioms Square.lip_smul_of
+#print axioms Square.mellinMoment_le
+#print axioms Square.mellinMoment_abs_le
