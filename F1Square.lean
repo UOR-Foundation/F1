@@ -342,6 +342,7 @@ import F1Square.Square.CoSupportWeld
 import F1Square.Square.BandBridge
 import F1Square.Square.MomentQuartic
 import F1Square.Square.MomentQuintic
+import F1Square.Square.DeepMember
 
 open UOR.Primitives
 

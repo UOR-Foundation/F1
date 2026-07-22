@@ -4948,3 +4948,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.genSum_clampQuint_rate
 #print axioms Square.riemannIntegral_clampQuint_gen
 #print axioms Square.mellinMoment_clamp_four
+
+-- THE PRE-HILBERT LAYER, brick 32 (Square/DeepMember.lean) — THE NONZERO K=2 CO-SUPPORT
+-- MEMBER: deepBump = x(1−x)(1−5x+5x²) in expanded linear form; both moments vanish by
+-- bilinearity against the engine values; unit support from p(1)=0; apartness at 1/10
+-- (99/2000); HatVanishes at K=2; and the capstone weil_psd_nonzero_instance — the
+-- skeleton's unconditional positivity on genuinely nonzero f,f̂ data.
+#print axioms Square.deepBump_moment_zero
+#print axioms Square.deepBump_moment_one
+#print axioms Square.deepBump_supp
+#print axioms Square.deepBump_value_tenth
+#print axioms Square.deepBump_apart
+#print axioms Square.deepBump_hatVanishes
+#print axioms Square.weil_psd_nonzero_instance

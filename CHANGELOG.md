@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 32 — THE NONZERO `K = 2` CO-SUPPORT MEMBER** (new
+  `Square/DeepMember.lean`): **`deepBump = x(1−x)(1−5x+5x²)`**, realized in EXPANDED linear
+  form `c − 6c² + 10c³ − 5c⁴` from the test algebra, so the moments split by the pairing's
+  BILINEARITY (`innerI_add_left`/`innerI_neg_left` through the `pair_add` split-and-collapse
+  helper) into the certified engine values of bricks 23–31, which cancel exactly:
+  `∫p = 1/2 − 2 + 5/2 − 1 = 0` and `∫xp = 1/3 − 3/2 + 2 − 5/6 = 0` — no product expansion,
+  no shared-modulus juggling. Unit support from `p(1) = 0` (the saturated clamp collapses the
+  coefficient tree to `(1+10) − (6+5) = 0`); apartness at `x = 1/10` (`p(1/10) = 99/2000`,
+  `Pos`); **`deepBump_hatVanishes`** places it in `HatVanishes · 2`; and the capstone
+  **`weil_psd_nonzero_instance`**: the skeleton's unconditional complement-positivity
+  (`weil_psd_on_cosupport`, brick 29) fires on the moment sequence of a certified NONZERO
+  test whose CONSTRUCTED transform vanishes on the band — genuinely nonzero `f, f̂` data in
+  the Sonine complement, no RH. Honest scope: one member at `K = 2`; the positivity remains
+  the skeleton's diagonal multiplier form on moment data — not the Weil functional on the
+  test space, and not positivity beyond the complement (step 4, = RH). The crux fields stay
+  `none`.
+
 - **The pre-Hilbert layer, brick 31 — THE QUINTIC EVALUATION** (new
   `Square/MomentQuintic.lean`): **`∫₀¹ clamp01(x)⁵ dx ≈ 1/6`** — the engine at degree five:
   `sumQuinticsQ` (`Σ i⁵ = k²(k−1)²(2k²−2k−1)/12`), `riemannSum_clampQuint`
