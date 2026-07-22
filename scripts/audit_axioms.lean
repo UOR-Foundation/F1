@@ -5125,3 +5125,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.cut_index_le
 #print axioms Square.limMemberU_momIdx
 #print axioms Square.momIdx_converges_to_momSeq
+
+-- THE PRE-HILBERT LAYER, brick 45 (Square/MomentEnergyDetect.lean) — THE ENERGY DETECTS THE
+-- MOMENTS: ⟨φ,xⁿ⟩² ≤ momentL2Sq φ for every n (the X k ≤ lim X direction via term_le_Rlim), so
+-- any moment apart from zero forces Pos energy; capstone Pos (momentL2Sq deep3) via ⟨deep3,x³⟩².
+#print axioms Square.momentSqSum_le_momentL2Sq
+#print axioms Square.mellinMoment_sq_le_momentL2Sq
+#print axioms Square.momentL2Sq_pos_of_moment
+#print axioms Square.deep3_moment_three_sq_pos
+#print axioms Square.momentL2Sq_deep3_pos

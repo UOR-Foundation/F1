@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 45 — THE ENERGY DETECTS THE MOMENTS** (new
+  `Square/MomentEnergyDetect.lean`): the "from the limit" companion to brick 42.
+  **`⟨φ, xⁿ⟩² ≤ momentL2Sq φ`** for every `n` (`mellinMoment_sq_le_momentL2Sq`), so any moment
+  apart from zero forces the energy apart from zero (`momentL2Sq_pos_of_moment`). Brick 42
+  bounded the energy from ABOVE by co-support depth; this bounds it from BELOW by every squared
+  moment, and together they say the energy sees exactly the moment data. The enabler is
+  `momentSqSum φ N ≤ momentL2Sq φ` (`momentSqSum_le_momentL2Sq`) — the `X k ≤ lim X` direction,
+  available because the rescaled partial sums are monotone (`term_le_Rlim`); a `≤ Rlim` from a
+  fixed term was the one comparison the completion axis lacked (`Rlim_le_ofQ` only bounds the
+  limit from above). Capstone: the constructed `K = 3` member `deep3` has third moment `−1/2520`,
+  apart from zero, so **`Pos (momentL2Sq deep3)`** — a certified NONZERO moment energy, as a
+  genuinely nonzero not-full-co-support test must carry. HONEST SCOPE: a lower bound on the
+  `ℓ²` moment energy by individual squared moments — still the compact `[0,1]` moment map,
+  nothing about the Weil form. It does NOT settle determinacy (a nonzero test with all moments
+  zero would need `momentL2Sq φ = 0 → φ = 0`, a moment-problem uniqueness this does not
+  provide). Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 44 — THE COMPLETED MEMBER *IS* THE MOMENT SEQUENCE** (new
   `Square/MomentMember.lean`): the identification brick 43 deliberately declined to claim.
   **`limMemberU (momIdx φ) _ i ≈ ⟨φ, xⁱ⟩`** (`limMemberU_momIdx`), so the object brick 17
