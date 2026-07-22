@@ -4791,3 +4791,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.limMember_coherent
 #print axioms Square.limMemberU_eq
 #print axioms Square.limMemberU_converges
+
+-- THE PRE-HILBERT LAYER, brick 18 (Analysis/MellinDecay.lean) — the Mellin front opened: the
+-- window bound (pointwise window bound ⟹ |∫ window| ≤ w·B), the decaying test class
+-- MellinTest, the derived gateway data, and the certified half-line integral ∫₀^∞ φ.
+#print axioms Analysis.riemannIntegralI_abs_le_window
+#print axioms Analysis.mellinTerm_bound
+#print axioms Analysis.mellinIntegral_nonneg

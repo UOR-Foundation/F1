@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 18 — THE MELLIN FRONT OPENED: the decaying test class and
+  `∫₀^∞ φ`** (new `Analysis/MellinDecay.lean`): `riemannIntegralI_abs_le_window` — the
+  missing bridge from pointwise to window data: an integrand bounded by `B` on `[a, a+w]`
+  has `|∫_a^{a+w} f| ≤ w·B` (window-local comparison against `±B`-constants, whose interval
+  integrals evaluate through certificate independence); `MellinTest` — an `L2Test` bundled
+  with quadratic pointwise decay `|f| ≤ C/(m+1)²` per window; `mellinTerm_bound` — the
+  derived two-sided `C/((m+1)m)` gateway data; **`mellinIntegral φ = ∫₀^∞ φ`** — the
+  certified full Mellin-domain integral of every decaying test (compact gateway piece plus
+  convergent half-line tail), with nonnegativity. The `f,f̂` objects live over this domain;
+  the transform's `t^{s−1}` twist is the banked next brick. Honest scope: the half-line
+  integral only — NOT the Mellin transform (no twist, no pair, no inversion); crux `none`.
 - **The pre-Hilbert layer, brick 17 — THE TRUNCATION-UNIFORM COMPLETION** (new
   `Square/UniformCompletion.lean`): the fixed-truncation fence of brick 15 removed —
   `limMember_coherent` (the limit coordinates are truncation-COHERENT: members built at any
