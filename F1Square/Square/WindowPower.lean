@@ -100,4 +100,42 @@ theorem powWinTest_succ_inert (m n : Nat) {x : Real}
     Req ((powWinTest m (n + 1)).f x) (Rmul ((powWinTest m n).f x) x) :=
   Rmul_congr (Req_refl _) (bandTest_inert m hlo hhi)
 
+/-- Right multiplication by a nonnegative rational is monotone: `p ≤ q, s ≥ 0 ⟹ p·s ≤ q·s`. -/
+theorem qmul_le_right_mono {p q s : Q} (h : Qle p q) (hs : 0 ≤ s.num) :
+    Qle (mul p s) (mul q s) := by
+  simp only [Qle, mul] at h ⊢
+  push_cast
+  have e1 : (p.num * s.num) * ((q.den : Int) * (s.den : Int))
+      = (s.num * (s.den : Int)) * (p.num * (q.den : Int)) := by ring_uor
+  have e2 : (q.num * s.num) * ((p.den : Int) * (s.den : Int))
+      = (s.num * (s.den : Int)) * (q.num * (p.den : Int)) := by ring_uor
+  rw [e1, e2]
+  exact Int.mul_le_mul_of_nonneg_left h (Int.mul_nonneg hs (Int.ofNat_nonneg s.den))
+
+/-- **The accumulated bound of the window power is at most `(m+2)ⁿ`** — the datum the twisted
+    tail's convergence estimate consumes. -/
+theorem powWinTest_M_le (m : Nat) :
+    ∀ n, Qle ((powWinTest m n).M) (⟨(((m + 2) ^ n : Nat) : Int), 1⟩ : Q)
+  | 0 => by
+    show (1 : Int) * 1 ≤ (((m + 2) ^ 0 : Nat) : Int) * 1
+    rw [Nat.pow_zero]
+    omega
+  | n + 1 => by
+    have ih := powWinTest_M_le m n
+    show Qle (mul ((powWinTest m n).M) (⟨(m : Int) + 2, 1⟩ : Q))
+      (⟨(((m + 2) ^ (n + 1) : Nat) : Int), 1⟩ : Q)
+    have h1 : Qle (mul ((powWinTest m n).M) (⟨(m : Int) + 2, 1⟩ : Q))
+        (mul (⟨(((m + 2) ^ n : Nat) : Int), 1⟩ : Q) (⟨(m : Int) + 2, 1⟩ : Q)) :=
+      qmul_le_right_mono ih (by show (0 : Int) ≤ (m : Int) + 2; omega)
+    refine Qle_trans (Qmul_den_pos Nat.one_pos Nat.one_pos) h1 (Qeq_le ?_)
+    have hcast : (((m + 2) ^ (n + 1) : Nat) : Int)
+        = (((m + 2) ^ n : Nat) : Int) * (((m + 2) : Nat) : Int) := by
+      rw [Nat.pow_succ]
+      exact Int.ofNat_mul _ _
+    show ((((m + 2) ^ n : Nat) : Int) * ((m : Int) + 2)) * ((1 : Nat) : Int)
+        = (((m + 2) ^ (n + 1) : Nat) : Int) * (((1 * 1 : Nat)) : Int)
+    rw [hcast]
+    push_cast
+    ring_uor
+
 end UOR.Bridge.F1Square.Square

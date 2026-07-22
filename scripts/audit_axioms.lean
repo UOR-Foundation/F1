@@ -4805,3 +4805,5 @@ open UOR.Bridge.F1Square
 #print axioms Square.bandTest_inert
 #print axioms Square.powWinTest_zero
 #print axioms Square.powWinTest_succ_inert
+#print axioms Square.qmul_le_right_mono
+#print axioms Square.powWinTest_M_le
