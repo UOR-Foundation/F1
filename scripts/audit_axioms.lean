@@ -4924,3 +4924,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.momSeq_bandProj_fixed
 #print axioms Square.weil_psd_on_cosupport
 #print axioms Square.weil_psd_cosupport_instance
+
+-- THE PRE-HILBERT LAYER, brick 30 (Square/MomentQuartic.lean) — THE QUARTIC EVALUATION: the
+-- Faulhaber fold, the clamped-quartic Riemann sums and telescoped evaluation (the N⁴ terms
+-- cancel in the defect), ∫₀¹ clamp01⁴ ≈ 1/5 general in the Lipschitz datum, and the clamp's
+-- fourth Mellin datum mellinMoment clampTest 3 ≈ 1/5.
+#print axioms Square.sumQuarticsQ
+#print axioms Square.riemannSum_clampQuad
+#print axioms Square.genSum_clampQuad_eval
+#print axioms Square.quad_defect_le
+#print axioms Square.genSum_clampQuad_rate
+#print axioms Square.riemannIntegral_clampQuad_gen
+#print axioms Square.mellinMoment_clamp_three

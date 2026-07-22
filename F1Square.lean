@@ -340,6 +340,7 @@ import F1Square.Square.MomentCube
 import F1Square.Square.CubicMember
 import F1Square.Square.CoSupportWeld
 import F1Square.Square.BandBridge
+import F1Square.Square.MomentQuartic
 
 open UOR.Primitives
 

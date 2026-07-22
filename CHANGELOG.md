@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 30 — THE QUARTIC EVALUATION** (new
+  `Square/MomentQuartic.lean`): **`∫₀¹ clamp01(x)⁴ dx ≈ 1/5`** — the engine at degree four:
+  `sumQuarticsQ` (Faulhaber, `Σ i⁴ = k(k−1)(2k−1)(3k²−3k−1)/30`), `riemannSum_clampQuad`
+  (`= N(2N+1)(3N²+3N−1)/(30(N+1)⁴)`), `genSum_clampQuad_eval` + `quad_defect_le` (the `N⁴`
+  terms cancel; the numerator collapses to `−(75N³+175N²+125N+30)` and the coefficientwise
+  bound `≤ 150(N+1)³` closes it, nonlinear monomials as `omega` atoms over explicit
+  nonnegativity facts), the schedule-uniform rate, `riemannIntegral_clampQuad_gen` by
+  `Rlim_eval`, and `mellinMoment_clamp_three ≈ 1/5`. The clamp's moment data reads
+  `(1/2, 1/3, 1/4, 1/5, …)`; first of the two engines (with the quintic) that the nonzero
+  `K = 2` co-support member `x(1−x)(1−5x+5x²)` consumes. Honest scope: degree `n = 3`; the
+  general law remains open; no coupling; step 4 is RH. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 29 — THE BAND BRIDGE** (new `Square/BandBridge.lean`): the
   moment map `momSeq φ = (mellinMoment φ n)ₙ` carries `f, f̂` data into the discrete
   skeleton, relating the two bands: `momSeq_fourier` (`⟨momSeq φ, δₖ⟩_N ≈ ⟨φ, xᵏ⟩` — the
