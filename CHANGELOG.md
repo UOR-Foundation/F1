@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 21 — THE TRANSFORM IS LINEAR** (new
+  `Square/MellinLinear.lean`): **`mellinHat_add`** — `(φ+ψ)^(n) ≈ φ̂(n) + ψ̂(n)` at a shared
+  decay constant (the shared-modulus design of `riemannIntegral_add`): the compact piece by
+  brick 7's pairing additivity at the monomial test, the tail by `twTail_add` (window sums
+  add termwise via `twTerm_add` — the `innerI_add_left` pattern at the interval level through
+  the new `riemannIntegralI_certif_irrel` — and the Bishop limits combine by
+  `Rlim_add_of_approx` on the SAME schedule). With linearity the transform-side vanishing
+  conditions cut out SUBSPACES of the test class — the shape the co-support coupling
+  consumes. Plus `Qle_self_add_l` made public (brick 7). Honest scope: additivity only — no
+  scalar action, no continuous parameter, no coupling; crux fields `none`.
 - **`mellinHat_compact` — the transform of a compactly supported test IS its moment
   sequence** (in `Square/MellinHat.lean`): if `φ` vanishes on `[1,∞)` (at every window
   point), the twisted tail vanishes term by term (each `twTerm ≈ 0` by the window bound at

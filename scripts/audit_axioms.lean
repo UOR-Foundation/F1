@@ -4821,3 +4821,13 @@ open UOR.Bridge.F1Square
 -- twisted tail, and mellinHat φ n = moment + tail — the first constructed f̂ value.
 #print axioms Square.qmul_le_left_mono
 #print axioms Square.twTerm_bound
+
+-- THE PRE-HILBERT LAYER, brick 21 (Square/MellinLinear.lean) — THE TRANSFORM IS LINEAR:
+-- interval-integral certificate independence and congruence, additivity of the twisted window
+-- integrals and tails (shared decay constant/schedule), and mellinHat_add — transform-side
+-- vanishing conditions now cut out subspaces. Plus Qle_self_add_l made public (brick 7).
+#print axioms Analysis.Qle_self_add_l
+#print axioms Square.riemannIntegralI_certif_irrel
+#print axioms Square.twTerm_add
+#print axioms Square.twTail_add
+#print axioms Square.mellinHat_add

@@ -36,7 +36,7 @@ theorem lip_weaken {f : Real → Real} {L L' : Q} (hLd : 0 < L.den) (hL'd : 0 < 
   lip_q_of_lip_real hL'd (Rle_ofQ_ofQ hLd hL'd h) hlip
 
 /-- `x ≤ p + x` for `p` with nonnegative numerator (the left-slot mirror of `Qle_self_add`). -/
-private theorem Qle_self_add_l {x p : Q} (hp : 0 ≤ p.num) : Qle x (add p x) := by
+theorem Qle_self_add_l {x p : Q} (hp : 0 ≤ p.num) : Qle x (add p x) := by
   show x.num * ((p.den * x.den : Nat) : Int) ≤ (p.num * x.den + x.num * p.den) * (x.den : Int)
   push_cast
   have e1 : x.num * ((p.den : Int) * (x.den : Int))

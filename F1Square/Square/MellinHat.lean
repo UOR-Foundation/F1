@@ -61,7 +61,7 @@ private theorem pow_window_core (m n : Nat) :
     _ = 2 ^ n * (m + 1) ^ (n + 2) := by rw [h3]
 
 /-- **The exponent-generic collapse**: `C·(m+2)ⁿ/(m+1)^{n+2} ≤ (C·2ⁿ)/((m+1)m)`. -/
-private theorem tw_collapse {C : Q} (hCd : 0 < C.den) (hCn : 0 ≤ C.num) (m n : Nat) :
+private theorem tw_collapse {C : Q} (_hCd : 0 < C.den) (hCn : 0 ≤ C.num) (m n : Nat) :
     Qle (mul (mul C (⟨1, (m + 1) ^ (n + 2)⟩ : Q)) (⟨(((m + 2) ^ n : Nat) : Int), 1⟩ : Q))
         (mul (mul C (⟨((2 ^ n : Nat) : Int), 1⟩ : Q)) (⟨1, (m + 1) * m⟩ : Q)) := by
   show ((C.num * 1) * (((m + 2) ^ n : Nat) : Int))
@@ -176,5 +176,74 @@ def mellinHat (φ : L2Test) (n : Nat) {C : Q} (hCd : 0 < C.den) (hCn : 0 ≤ C.n
         (ofQ (mul C (⟨1, (m + 1) ^ (n + 2)⟩ : Q))
           (Qmul_den_pos hCd (Nat.pos_pow_of_pos _ (Nat.succ_pos m))))) : Real :=
   Radd (mellinMoment φ n) (twTail φ n hCd hCn hdec)
+
+-- ===========================================================================
+-- The first evaluation: compactly supported tests.
+-- ===========================================================================
+
+/-- A test vanishing on the half-line windows satisfies the decay hypothesis at `C = 0`. -/
+theorem hdec_of_supp (φ : L2Test) (n : Nat)
+    (hsupp : ∀ m : Nat, ∀ x, Rle zero x → Rle x one →
+      Req (φ.f (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q)
+        Nat.one_pos (by decide) x)) zero) :
+    ∀ m : Nat, ∀ x, Rle zero x → Rle x one →
+      Rle (Rabs (φ.f (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q)
+            Nat.one_pos (by decide) x)))
+        (ofQ (mul (⟨0, 1⟩ : Q) (⟨1, (m + 1) ^ (n + 2)⟩ : Q))
+          (Qmul_den_pos (by decide) (Nat.pos_pow_of_pos _ (Nat.succ_pos m)))) := by
+  intro m x h0 h1
+  refine Rle_trans (Rle_of_Req (Req_trans (Rabs_congr (hsupp m x h0 h1)) Rabs_zero)) ?_
+  exact Rle_zero_of_Rnonneg (Rnonneg_ofQ _ (by show (0 : Int) ≤ 0 * 1; decide))
+
+/-- **THE TRANSFORM OF A COMPACTLY SUPPORTED TEST IS ITS MOMENT SEQUENCE**: if `φ` vanishes on
+    `[1, ∞)` (at every window point), then `f̂(n) ≈ mellinMoment φ n` — the twisted tail
+    vanishes term by term, and the constructed transform collapses to brick 10's moments. The
+    first evaluation of `mellinHat`, welding the compact and half-line Mellin objects. -/
+theorem mellinHat_compact (φ : L2Test) (n : Nat)
+    (hsupp : ∀ m : Nat, ∀ x, Rle zero x → Rle x one →
+      Req (φ.f (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q)
+        Nat.one_pos (by decide) x)) zero) :
+    Req (mellinHat φ n (by decide) (by show (0 : Int) ≤ 0; decide)
+          (hdec_of_supp φ n hsupp))
+        (mellinMoment φ n) := by
+  have htw : ∀ m, Req (twTerm φ n m) zero := by
+    intro m
+    have hpt : ∀ x, Rle zero x → Rle x one →
+        Rle (Rabs ((fun t => Rmul (φ.f t) ((powWinTest m n).f t))
+            (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) x)))
+          (ofQ (⟨0, 1⟩ : Q) (by decide)) := by
+      intro x h0 h1
+      refine Rle_of_Req (Req_trans (Rabs_congr (Req_trans
+        (Rmul_congr (hsupp m x h0 h1) (Req_refl _))
+        (Req_trans (Rmul_comm zero _) (Rmul_zero _)))) Rabs_zero)
+    have habs : Rle (Rabs (twTerm φ n m))
+        (ofQ (mul (⟨1, 1⟩ : Q) (⟨0, 1⟩ : Q))
+          (Qmul_den_pos (by decide) (by decide))) :=
+      riemannIntegralI_abs_le_window (l2L_den φ (powWinTest m n))
+        (l2L_num φ (powWinTest m n)) (l2lip φ (powWinTest m n)) (l2fc φ (powWinTest m n))
+        (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) (⟨0, 1⟩ : Q)
+        Nat.one_pos (by decide) (by decide) (by decide) hpt
+    have hz : Req (ofQ (mul (⟨1, 1⟩ : Q) (⟨0, 1⟩ : Q))
+        (Qmul_den_pos (by decide) (by decide))) zero :=
+      Req_of_seq_Qeq (fun n => by
+        show Qeq (mul (⟨1, 1⟩ : Q) (⟨0, 1⟩ : Q)) (⟨0, 1⟩ : Q)
+        decide)
+    have hup : Rle (twTerm φ n m) zero :=
+      Rle_trans (Rle_of_Rabs_le habs) (Rle_of_Req hz)
+    have hlo : Rle zero (twTerm φ n m) := by
+      have h1 := Rneg_le_of_Rabs_le habs
+      refine Rle_trans (Rle_of_Req (Req_symm (Req_trans (Rneg_congr hz)
+        (Req_trans (Req_symm (Radd_zero (Rneg zero)))
+          (Req_trans (Radd_comm (Rneg zero) zero) (Radd_neg zero)))))) h1
+    exact Rle_antisymm hup hlo
+  have hgs : ∀ M, Req (genSum (fun m => twTerm φ n m) M) zero := by
+    intro M
+    induction M with
+    | zero => exact Req_refl zero
+    | succ k ih => exact Req_trans (Radd_congr ih (htw k)) (Radd_zero zero)
+  have htail : Req (twTail φ n (by decide) (by show (0 : Int) ≤ 0; decide)
+      (hdec_of_supp φ n hsupp)) zero :=
+    Rlim_zero _ _ (fun j => hgs _)
+  exact Req_trans (Radd_congr (Req_refl _) htail) (Radd_zero _)
 
 end UOR.Bridge.F1Square.Square
