@@ -5050,3 +5050,17 @@ open UOR.Bridge.F1Square
 #print axioms Square.lip_smul_of
 #print axioms Square.mellinMoment_le
 #print axioms Square.mellinMoment_abs_le
+
+-- THE PRE-HILBERT LAYER, brick 39 (Square/MomentSummable.lean) — THE ℓ² DATUM: the squared
+-- moments are summable with an explicit tail rate, Σ_{i<K} ⟨φ,x^{N+i}⟩² ≤ 2M²/(N+1) uniformly
+-- in K, off the EXACT telescoping sum Σ_{i<K} 2/((N+i+1)(N+i+2)) = 2K/((N+1)(N+K+1)).
+#print axioms Square.Rsq_le_of_abs_le
+#print axioms Square.teleTerm_den
+#print axioms Square.teleFrom_den
+#print axioms Square.teleFrom_step
+#print axioms Square.teleFrom_eq
+#print axioms Square.teleFrom_le
+#print axioms Square.mellinMoment_sq_le
+#print axioms Square.momentSqTail_exact_le
+#print axioms Square.momentSqTail_le
+#print axioms Square.momentSqSum_le

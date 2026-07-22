@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 39 — THE `ℓ²` DATUM, WITH AN EXPLICIT TAIL RATE** (new
+  `Square/MomentSummable.lean`): the squared moments are not merely bounded, they are
+  **summable**, and the tails are certified small —
+  **`Σ_{i<K} ⟨φ, x^{N+i}⟩² ≤ 2·M_φ²/(N+1)` uniformly in `K`** (`momentSqTail_le`), so the
+  window sums go to zero at rate `1/(N+1)`; at `N = 0` this is the uniform partial-sum bound
+  `Σ_{n<K} ⟨φ, xⁿ⟩² ≤ 2·M_φ²` (`momentSqSum_le`). This is what brick 38's *sharp* decay was
+  for: the Cauchy–Schwarz rate `O(1/√n)` has non-summable squares, while the square of the
+  comparison rate is dominated by the telescoping term `2/((n+1)(n+2))` — the domination is
+  the one rational fact `n+2 ≤ 2(n+1)` (`mellinMoment_sq_le`). The dominating series is then
+  summed **exactly**, not estimated: `Σ_{i<K} 2/((N+i+1)(N+i+2)) = 2K/((N+1)(N+K+1))`
+  (`teleFrom_eq`), a closed form at every window `(N, K)`, from which the uniform bound is one
+  rational comparison (`teleFrom_le`). New reusable piece: `Rsq_le_of_abs_le` (`|m| ≤ B`,
+  `B ≥ 0` ⟹ `m² ≤ B²`, routed through `|m·m| = |m|·|m|` so no sign case split). HONEST SCOPE:
+  a summability rate for the compact `[0,1]` moment map on the bounded-Lipschitz class — *not*
+  the completion axis's truncation-uniform `ℓ²` weights (those are about `innerN`'s discrete
+  coordinates), and nothing about the Weil form. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 38 — THE SHARP MOMENT DECAY** (new
   `Square/MomentDecay.lean`): **`|⟨φ, xⁿ⟩| ≤ M_φ/(n+1)`** (`mellinMoment_abs_le`) for every
   test of the bounded-Lipschitz class — the first quantitative rate on the moment map, and
