@@ -4961,3 +4961,21 @@ open UOR.Bridge.F1Square
 #print axioms Square.deepBump_apart
 #print axioms Square.deepBump_hatVanishes
 #print axioms Square.weil_psd_nonzero_instance
+
+-- THE PRE-HILBERT LAYER, brick 33 (Square/MomentLaw.lean) — THE HAUSDORFF MOMENT LAW: the
+-- discrete mean-value bracket (pow_succ_lower/upper), the telescoped power-sum bounds, the
+-- uniform defect, and mellinMoment clampTest n ≈ 1/(n+2) for EVERY n (subsuming the five
+-- per-degree engines).
+#print axioms Square.pow_succ_lower
+#print axioms Square.pow_succ_upper
+#print axioms Square.powSum_lower
+#print axioms Square.powSum_upper
+#print axioms Square.powTest_sample
+#print axioms Square.powSum_fold
+#print axioms Square.riemannSum_powTest
+#print axioms Square.powSum_defect_le
+#print axioms Square.powTest_dyadicR0
+#print axioms Square.genSum_powTest_eval
+#print axioms Square.genSum_powTest_rate
+#print axioms Square.riemannIntegral_powTest_succ
+#print axioms Square.mellinMoment_clamp_general

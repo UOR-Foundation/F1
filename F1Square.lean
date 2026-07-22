@@ -343,6 +343,7 @@ import F1Square.Square.BandBridge
 import F1Square.Square.MomentQuartic
 import F1Square.Square.MomentQuintic
 import F1Square.Square.DeepMember
+import F1Square.Square.MomentLaw
 
 open UOR.Primitives
 

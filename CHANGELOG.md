@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 33 — THE HAUSDORFF MOMENT LAW** (new
+  `Square/MomentLaw.lean`): **`mellinMoment clampTest n ≈ 1/(n+2)` for EVERY `n`** — one
+  theorem subsuming the five per-degree engines; the clamp's moment sequence is the full
+  Hausdorff moment data of Lebesgue measure on `[0,1]`. No Faulhaber folds: the engine is the
+  discrete mean-value bracket `(m+1)·iᵐ ≤ (i+1)^(m+1) − i^(m+1) ≤ (m+1)·(i+1)ᵐ`
+  (`pow_succ_lower`/`_upper`, by induction with the Nat identities discharged through `Int`
+  ring normalization), which telescopes to `(m+1)·Σiᵐ ≤ N^(m+1) ≤ (m+1)·(Σiᵐ + Nᵐ)`
+  (`powSum_lower`/`_upper`), so the left Riemann sums sit within `1/(N+1)` of `1/(m+1)`
+  UNIFORMLY in the degree (`powSum_defect_le`), and `Rlim_eval` closes every degree by the
+  same rate (`riemannIntegral_powTest_succ`: `∫₀¹ clamp01^(k+1) ≈ 1/(k+2)`). Mechanization:
+  the cast-dedup gotcha bites hard at symbolic exponents — `push_cast` expands
+  `↑((N+1)^m) → (↑(N+1))^m`, so pow-cast atoms must be `generalize`d to plain Nat variables
+  *before* `push_cast`, and the numerator bound is proved as a single all-Nat inequality cast
+  once at the end (`omega` for the Nat-subtraction cast, `Int.natCast_mul`/`Int.natAbs_ofNat`
+  for the rest). Honest scope: all integer moments; the continuous Mellin parameter,
+  transform pair, and inversion remain open; no coupling; step 4 is RH. The crux fields stay
+  `none`.
+
 - **The pre-Hilbert layer, brick 32 — THE NONZERO `K = 2` CO-SUPPORT MEMBER** (new
   `Square/DeepMember.lean`): **`deepBump = x(1−x)(1−5x+5x²)`**, realized in EXPANDED linear
   form `c − 6c² + 10c³ − 5c⁴` from the test algebra, so the moments split by the pairing's
