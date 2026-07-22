@@ -5134,3 +5134,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_pos_of_moment
 #print axioms Square.deep3_moment_three_sq_pos
 #print axioms Square.momentL2Sq_deep3_pos
+
+-- THE PRE-HILBERT LAYER, brick 46 (Square/MomentGram.lean) — UNIFORM CAUCHY–SCHWARZ FOR MOMENT
+-- SEQUENCES: (Σ_{n<N} ⟨φ,xⁿ⟩⟨ψ,xⁿ⟩)² ≤ momentL2Sq φ · momentL2Sq ψ at every truncation, from
+-- the finite Lagrange-CS on the moment coordinate vectors + brick 45's partial-energy bound.
+#print axioms Square.crossMomSum_diag
+#print axioms Square.crossMomSum_sq_le

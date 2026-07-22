@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 46 — A UNIFORM CAUCHY–SCHWARZ FOR THE MOMENT SEQUENCES** (new
+  `Square/MomentGram.lean`): the cross moment sums are controlled by the two `ℓ²` energies at
+  every truncation at once —
+  **`(Σ_{n<N} ⟨φ,xⁿ⟩·⟨ψ,xⁿ⟩)² ≤ momentL2Sq φ · momentL2Sq ψ`** (`crossMomSum_sq_le`). The proof
+  is the finite Hilbert core meeting brick 45: the moment sequence is literally a coordinate
+  vector (`momSeq φ n = ⟨φ,xⁿ⟩`), so the layer's sqrt-free finite Cauchy–Schwarz (`cauchy_schwarz`,
+  via the Lagrange identity) applies verbatim, and brick 45's `momentSqSum φ N ≤ momentL2Sq φ`
+  lifts each diagonal factor from the partial energy to the total (product monotonicity closing
+  it). No new limit is constructed — a uniform bound on finite sums, so the `ℓ²` cross geometry
+  is exhibited without a fresh completion. HONEST SCOPE: the `ℓ²` geometry of the moment map on
+  bounded-Lipschitz tests, not an inner product on a completed function space, nothing about the
+  Weil form. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 45 — THE ENERGY DETECTS THE MOMENTS** (new
   `Square/MomentEnergyDetect.lean`): the "from the limit" companion to brick 42.
   **`⟨φ, xⁿ⟩² ≤ momentL2Sq φ`** for every `n` (`mellinMoment_sq_le_momentL2Sq`), so any moment
