@@ -4784,3 +4784,10 @@ open UOR.Bridge.F1Square
 -- unconditional complement-positivity survives the limit.
 #print axioms Square.limMember_band_zero
 #print axioms Square.sonine_complement_complete
+
+-- THE PRE-HILBERT LAYER, brick 17 (Square/UniformCompletion.lean) — the truncation-uniform
+-- completion: the limit coordinates are truncation-COHERENT, the diagonal member is one
+-- infinite object, and it converges in dist2 at EVERY truncation.
+#print axioms Square.limMember_coherent
+#print axioms Square.limMemberU_eq
+#print axioms Square.limMemberU_converges

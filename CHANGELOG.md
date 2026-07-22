@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 17 — THE TRUNCATION-UNIFORM COMPLETION** (new
+  `Square/UniformCompletion.lean`): the fixed-truncation fence of brick 15 removed —
+  `limMember_coherent` (the limit coordinates are truncation-COHERENT: members built at any
+  two truncations agree where both are defined, since both are Bishop limits of sequences
+  pointwise `≈ F j i`); `limMemberU` (the diagonal member — ONE infinite object, coordinate
+  `i` built at truncation `i+1`); `limMemberU_eq` (it agrees with every fixed-truncation
+  member on its range); **`limMemberU_converges`** — for a truncation-uniform squared-Cauchy
+  sequence (`SqCauchyU`), the single member satisfies `d²(F j, limMemberU) ≤ N·(2/(j+1))²`
+  at EVERY truncation: strong convergence of one uniformly constructed infinite object,
+  choice-free. Honest scope: per-`N` rate with a uniform CONSTRUCTION, not a
+  truncation-uniform rate (that needs genuine ℓ² summability data, fenced open); the L²
+  function-space strong completeness remains the last completeness lack; crux fields `none`.
 - **The pre-Hilbert layer, brick 16 — THE SONINE COMPLEMENT IS CLOSED UNDER COMPLETION**
   (new `Square/CompleteComplement.lean`): `limMember_band_zero` — band-vanishing Cauchy
   sequences have band-vanishing limit members (the band coordinate of the limit is the limit

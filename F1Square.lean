@@ -327,6 +327,7 @@ import F1Square.Square.PairingLimit
 import F1Square.Square.PairingLimitI
 import F1Square.Square.Completion
 import F1Square.Square.CompleteComplement
+import F1Square.Square.UniformCompletion
 
 open UOR.Primitives
 
