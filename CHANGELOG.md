@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 43 — THE FIRST GENUINE `ℓ²` INSTANCE OF THE
+  TRUNCATION-UNIFORM COMPLETION** (new `Square/MomentCompletion.lean`): the moment vector of
+  any bounded-Lipschitz test, cut along a **quadratically** rescaled truncation, satisfies the
+  completion axis's own interface — **`momIdx_sqCauchyU : SqCauchyU (momIdx φ)`**, i.e.
+  `∀ N, d²(momIdx φ j, momIdx φ k) ≤ (1/(j+1) + 1/(k+1))²` with the modulus *independent of the
+  truncation `N`*. So brick 17's `limMemberU`/`limMemberU_converges` fires on real `ℓ²` data
+  rather than on a hypothesis (`momIdx_completes`): the layer's completion axis and its
+  `L²`/moment axis meet. The rescale is the content — brick 39's tail bound is `2M²/(a+1)` at
+  cut `a` while the canonical Cauchy modulus is a SQUARE, so brick 40's linear rescale
+  `a = c(j+1)` (enough for the norm) is too slow; the truncation-uniform statement needs
+  `a = c·(j+1)²`, discharging through the same `scale_cross` step at `k = (j+1)²` (that lemma
+  promoted from private to public for the second consumer). The termwise input is that cutting
+  a coordinate only removes energy (`momTrunc_diff_sq_le`), so the whole squared distance is a
+  TAIL of the squared-moment series at every truncation at once (`dist2_momTrunc_le`). HONEST
+  SCOPE: a realized `SqCauchyU` instance from the compact `[0,1]` moment map — the completion
+  axis's "genuine `ℓ²` weights" supplied by an actual object, NOT the `L²` function-space
+  strong completeness (still open); the identification of the resulting `limMemberU` with the
+  moment sequence itself is not claimed. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 42 — DEEP CO-SUPPORT MEANS SMALL MOMENT ENERGY** (new
   `Square/CoSupportEnergy.lean`): the filtration's levels are not just properly nested
   (bricks 36–37, 41), they are quantitatively **thin** —

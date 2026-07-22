@@ -353,6 +353,7 @@ import F1Square.Square.MomentSummable
 import F1Square.Square.MomentNorm
 import F1Square.Square.DeepMemberFour
 import F1Square.Square.CoSupportEnergy
+import F1Square.Square.MomentCompletion
 
 open UOR.Primitives
 

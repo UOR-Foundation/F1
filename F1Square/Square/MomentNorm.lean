@@ -107,8 +107,11 @@ theorem momScale_bound (φ : L2Test) :
 def momentSqIdx (φ : L2Test) (j : Nat) : Real :=
   momentSqSum φ (momScale φ * (j + 1))
 
-/-- The cross-multiplication that makes the rescale work: `2M²/(c(k+1)+1) ≤ 1/(k+1)`. -/
-private theorem scale_cross {A d2 c k : Int} (h1 : (1 : Int) ≤ d2) (hk : (0 : Int) ≤ k)
+/-- **The cross-multiplication that makes any index rescale work**: from `2A ≤ c·d₂` and
+    `k ≥ 0`, `A·2·k ≤ d₂·(c·k + 1)` — i.e. `2M²/(c·k+1) ≤ 1/k` once the denominators are
+    cleared. Public: every rescaled read of the moment tail (linear `k = j+1` here, quadratic
+    `k = (j+1)²` in the truncation-uniform completion) discharges through this one step. -/
+theorem scale_cross {A d2 c k : Int} (h1 : (1 : Int) ≤ d2) (hk : (0 : Int) ≤ k)
     (h : 2 * A ≤ c * d2) : A * 2 * k ≤ 1 * (d2 * (c * k + 1)) := by
   have e1 : A * 2 * k = (2 * A) * k := by ring_uor
   have s1 : (2 * A) * k ≤ (c * d2) * k := Int.mul_le_mul_of_nonneg_right h hk

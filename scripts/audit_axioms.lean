@@ -5074,6 +5074,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentSqSum_mono
 #print axioms Square.momentSqSum_diff_le
 #print axioms Square.momScale_bound
+#print axioms Square.scale_cross
 #print axioms Square.momentSqIdx_rate
 #print axioms Square.momentSqIdx_mono
 #print axioms Square.momentSqIdx_RReg
@@ -5106,3 +5107,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_le_of_moments
 #print axioms Square.momentL2Sq_le_of_hatVanishes
 #print axioms Square.momentL2Sq_zero_of_moments
+
+-- THE PRE-HILBERT LAYER, brick 43 (Square/MomentCompletion.lean) — THE FIRST GENUINE ℓ²
+-- INSTANCE OF THE TRUNCATION-UNIFORM COMPLETION: the moment vector, cut at the QUADRATIC
+-- rescale c(j+1)², satisfies SqCauchyU (modulus independent of the truncation N).
+#print axioms Square.momTrunc_diff_sq_le
+#print axioms Square.RsumN_momTailTerm_le
+#print axioms Square.dist2_momTrunc_le
+#print axioms Square.momIdx_rate
+#print axioms Square.momIdx_sqCauchyU
+#print axioms Square.momIdx_completes
