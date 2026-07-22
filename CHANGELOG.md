@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 19 — the WINDOW POWER substrate of the Mellin twist** (new
+  `Square/WindowPower.lean`): the transform's `tⁿ` twist grows on the half-line, so it is no
+  single global test — but on each window `[m+1, m+2]` it is one: `bandTest m` (the
+  `qBandQ`-clamped identity: 1-Lipschitz, bounded by `m+2`, INERT on its window,
+  `bandTest_inert ≈ t`) and `powWinTest m n` (its `n`-th power by iterated `L2Test.mul` —
+  certificates compose automatically through the test algebra; `powWinTest_succ_inert`:
+  recursively `≈ (previous)·t` on the window, base `≡ 1`, so the window power IS `tⁿ`
+  there). The twisted integrand of the transform at integer `n` on window `m` is the algebra
+  product `φ · powWinTest m n` — automatic certificates, agreeing with `φ(t)·tⁿ` on the
+  window. The twisted tail (summing window integrals under exponent-strengthened decay) is
+  the banked next brick. Honest scope: per-window powers and inertness only — no transform,
+  no tail, no pair; crux fields `none`.
 - **The pre-Hilbert layer, brick 18 — THE MELLIN FRONT OPENED: the decaying test class and
   `∫₀^∞ φ`** (new `Analysis/MellinDecay.lean`): `riemannIntegralI_abs_le_window` — the
   missing bridge from pointwise to window data: an integrand bounded by `B` on `[a, a+w]`

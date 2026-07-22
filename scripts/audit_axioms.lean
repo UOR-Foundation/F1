@@ -4798,3 +4798,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.riemannIntegralI_abs_le_window
 #print axioms Analysis.mellinTerm_bound
 #print axioms Analysis.mellinIntegral_nonneg
+
+-- THE PRE-HILBERT LAYER, brick 19 (Square/WindowPower.lean) — the window power substrate of
+-- the Mellin twist: the band-clamped identity per half-line window as a test (inert on its
+-- window) and its iterated powers through the test algebra.
+#print axioms Square.bandTest_inert
+#print axioms Square.powWinTest_zero
+#print axioms Square.powWinTest_succ_inert
