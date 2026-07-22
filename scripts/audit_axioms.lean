@@ -4869,3 +4869,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.genSum_clampSq_rate
 #print axioms Square.riemannIntegral_clampSq_gen
 #print axioms Square.mellinMoment_clamp_one
+
+-- THE PRE-HILBERT LAYER, brick 25 (Square/CoSupportMember.lean) — THE FIRST NONZERO TRANSFORM
+-- VALUE: the band clamp's saturation side, the [0,1]-supported unit bump x(1−x) with
+-- mellinMoment 1/6, the transform value f̂(0) ≈ 1/6 with Pos, and the properness of the
+-- co-support subspace (bumpU is not in HatVanishes · 1).
+#print axioms Square.qCapQ_eq_of_ge
+#print axioms Square.clamp01_sat
+#print axioms Square.affine_window_ge_one
+#print axioms Square.bumpU_supp
+#print axioms Square.mellinMoment_bumpU
+#print axioms Square.mellinHat_bumpU_value
+#print axioms Square.mellinHat_bumpU_pos
+#print axioms Square.bumpU_not_hatVanishes

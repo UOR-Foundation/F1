@@ -335,6 +335,7 @@ import F1Square.Square.MellinLinear
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare
+import F1Square.Square.CoSupportMember
 
 open UOR.Primitives
 

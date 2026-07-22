@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 25 — THE FIRST NONZERO TRANSFORM VALUE** (new
+  `Square/CoSupportMember.lean`): a genuine `[0,1]`-supported test with **`f̂(0) ≈ 1/6 > 0`**,
+  and the co-support subspace is PROPER. The member is the unit bump `bumpU = clamp·(1−clamp)`
+  (`x(1−x)` on `[0,1]`), realized by the test-algebra combinators alone. New substrate:
+  `qCapQ_eq_of_ge` (the band clamp's missing saturation side) → `clamp01_sat`
+  (`clamp01 x ≈ 1` for `x ≥ 1`) → with the affine window's lower bound
+  (`affine_window_ge_one`), `bumpU_supp` — the first NONZERO member of the compact class.
+  `mellinMoment_bumpU` evaluates `∫₀¹ x(1−x) = 1/6` (pointwise collapse to `clamp − clamp²`,
+  certificate transport to the shared modulus, integral additivity, bricks 23–24's values
+  `1/2 − 1/3`); `mellinHat_bumpU_value`/`mellinHat_bumpU_pos` carry it through
+  `mellinHat_compact` to the transform — the first strict positivity (`Pos`) of the
+  constructed `f̂`; and `bumpU_not_hatVanishes` shows `bumpU ∉ HatVanishes · 1`, so with brick
+  22's zero member the vanishing subspace is both inhabited and strict: the co-support
+  condition genuinely cuts. Honest scope: the nonzero member OF the subspace (the cubic bump
+  `x(1−x)(1−2x)`, needing `∫x³ = 1/4`) is banked next; no coupling; step 4 is RH. The crux
+  fields stay `none`.
+
 - **The pre-Hilbert layer, brick 24 — THE FIRST QUADRATIC EVALUATION OF THE GATEWAY** (new
   `Square/MomentSquare.lean`): **`∫₀¹ clamp01(x)² dx ≈ 1/3`** — the identity engine of
   `IntegralEval.lean` mirrored one polynomial degree up on the globally-Lipschitz *clamped*
