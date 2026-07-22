@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 37 — THE STRICT CHAIN THROUGH DEPTH 4** (new
+  `Square/CoSupportChain.lean`): the co-support filtration is strictly decreasing at *every*
+  level the layer has reached —
+  `HatVanishes · 0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4` (**`cosupport_chain_strict`**). Brick 36 witnessed the two
+  ends; this brick fills the middle with the two members the Hilbert system supplies:
+  **`lin1 = x − 3x² + 2x³`** (moment `0` vanishes as `1 − 1`, moment `1` is
+  `11/15 − 3/4 = −1/60`) and **`lin2 = x − 6x² + 10x³ − 5x⁴`** (moments `0, 1` vanish as
+  `3 − 3` and `7/3 − 7/3`, moment `2` is `23/12 − 67/35 = 1/420`). Each is unit-supported
+  (coefficients sum to zero), apart from zero (`lin1(1/10) = 9/125`, `lin2(1/10) = 99/2000`),
+  in its level and provably not the next. Every moment is read straight off
+  `⟨xⁱ, xʲ⟩ = 1/(i+j+1)` — no new integration, and both members are assembled in the `P − N`
+  linear form brick 35's now-public helpers evaluate mechanically (`sub_ofQ_val` promoted too).
+  Honest scope: strictness at the four realized levels, each by an explicit constructed test;
+  NOT a proof that every level is strict — that needs the Hilbert sections' invertibility in
+  general — and nothing about the Weil form; step 4 is RH. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 36 — THE CO-SUPPORT FILTRATION DOES NOT COLLAPSE** (new
   `Square/CoSupportStrict.lean`): the nested subspaces
   `HatVanishes · 0 ⊇ HatVanishes · 1 ⊇ ⋯` are STRICTLY decreasing at the realized levels, each

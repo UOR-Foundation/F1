@@ -5019,7 +5019,26 @@ open UOR.Bridge.F1Square
 -- DOES NOT COLLAPSE: deep3's THIRD moment is −1/2520 ≠ 0 (read off the Hilbert matrix), so
 -- deep3 sits in level 3 and not level 4; with brick 25's bumpU at level 0, two witnessed
 -- strictness levels.
+#print axioms Square.sub_ofQ_val
 #print axioms Square.deep3_moment_three
 #print axioms Square.deep3_not_hatVanishes_four
 #print axioms Square.cosupport_strict_at_three
 #print axioms Square.cosupport_strict_at_zero
+
+-- THE PRE-HILBERT LAYER, brick 37 (Square/CoSupportChain.lean) — THE STRICT CHAIN THROUGH
+-- DEPTH 4: the depth-1 member x − 3x² + 2x³ and the depth-2 member x − 6x² + 10x³ − 5x⁴,
+-- each in P−N linear form with membership, first-non-vanishing moment, support and
+-- apartness — filling brick 36's middle so 0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4 is strict throughout.
+#print axioms Square.lin1_supp
+#print axioms Square.lin1_moment_zero
+#print axioms Square.lin1_moment_one
+#print axioms Square.lin1_hatVanishes
+#print axioms Square.lin1_not_hatVanishes_two
+#print axioms Square.lin1_apart
+#print axioms Square.lin2_supp
+#print axioms Square.lin2_moment_zero
+#print axioms Square.lin2_moment_one
+#print axioms Square.lin2_moment_two
+#print axioms Square.lin2_hatVanishes
+#print axioms Square.lin2_not_hatVanishes_three
+#print axioms Square.cosupport_chain_strict

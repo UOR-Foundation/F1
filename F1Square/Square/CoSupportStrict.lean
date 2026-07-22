@@ -39,8 +39,9 @@ open UOR.Bridge.F1Square.Analysis
 
 set_option maxRecDepth 8000
 
-/-- `ofQ a − ofQ b ≈ ofQ v` when `a − b = v` at the `ℚ` level. -/
-private theorem sub_ofQ_val {a b v : Q} (had : 0 < a.den) (hbd : 0 < b.den) (hvd : 0 < v.den)
+/-- `ofQ a − ofQ b ≈ ofQ v` when `a − b = v` at the `ℚ` level (public: every `P − N` member
+    evaluation ends here). -/
+theorem sub_ofQ_val {a b v : Q} (had : 0 < a.den) (hbd : 0 < b.den) (hvd : 0 < v.den)
     (hq : Qeq (add a (neg b)) v) :
     Req (Rsub (ofQ a had) (ofQ b hbd)) (ofQ v hvd) :=
   Req_trans (Radd_congr (Req_refl _) (Rneg_ofQ b hbd))
