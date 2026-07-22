@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 24 — THE FIRST QUADRATIC EVALUATION OF THE GATEWAY** (new
+  `Square/MomentSquare.lean`): **`∫₀¹ clamp01(x)² dx ≈ 1/3`** — the identity engine of
+  `IntegralEval.lean` mirrored one polynomial degree up on the globally-Lipschitz *clamped*
+  square (the bare `x²` is not admissible): the `ℚ`-level square fold (`sumSquaresQ`,
+  `Σ i² = k(k−1)(2k−1)/6`), the exact Riemann sums (`riemannSum_clampSq`, clamp inert at the
+  dyadic samples), the telescoped evaluation and rational defect (`genSum_clampSq_eval`,
+  `sq_defect_le` — the numerator collapses to `−(9N+6)` at the symbolic level via the
+  `natAbs` bridge), the schedule-uniform rate, and `riemannIntegral_clampSq_gen` by
+  `Rlim_eval`. Payoff: **`mellinMoment clampTest 1 ≈ 1/3`** — the pairing integrand
+  `clamp·(1·clamp)` collapses globally to the clamped square at the pairing's own modulus by
+  transport. The clamp's moment data now reads `(1/2, 1/3, …)`: the Hausdorff moment sequence
+  of Lebesgue measure on `[0,1]`, value by value in the kernel. Honest scope: degree `n = 1`;
+  the general `1/(n+2)` law and any transform value remain open. The crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 23 — THE MOMENT MAP TAKES CERTIFIED NONZERO VALUES** (new
   `Square/MomentValue.lean`; `Analysis/IntegralLocal.lean` gains the unit-local congruence):
   **`riemannIntegral_congr_unit`** — `∫₀¹ f ≈ ∫₀¹ g` from agreement on `[0,1]` only

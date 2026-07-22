@@ -4857,3 +4857,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.clamp01_inert
 #print axioms Square.mellinMoment_one_zero
 #print axioms Square.mellinMoment_clamp_zero
+
+-- THE PRE-HILBERT LAYER, brick 24 (Square/MomentSquare.lean) — THE FIRST QUADRATIC
+-- EVALUATION OF THE GATEWAY: the square fold, the clamped-square Riemann sums and telescoped
+-- dyadic evaluation with its rational defect, ∫₀¹ clamp01² ≈ 1/3 general in the Lipschitz
+-- datum, and the clamp's second Mellin datum mellinMoment clampTest 1 ≈ 1/3.
+#print axioms Square.sumSquaresQ
+#print axioms Square.riemannSum_clampSq
+#print axioms Square.genSum_clampSq_eval
+#print axioms Square.sq_defect_le
+#print axioms Square.genSum_clampSq_rate
+#print axioms Square.riemannIntegral_clampSq_gen
+#print axioms Square.mellinMoment_clamp_one
