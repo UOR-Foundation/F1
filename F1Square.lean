@@ -351,6 +351,7 @@ import F1Square.Square.CoSupportChain
 import F1Square.Square.MomentDecay
 import F1Square.Square.MomentSummable
 import F1Square.Square.MomentNorm
+import F1Square.Square.DeepMemberFour
 
 open UOR.Primitives
 

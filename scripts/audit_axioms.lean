@@ -5080,3 +5080,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_nonneg
 #print axioms Square.momentL2Sq_le
 #print axioms Square.momentL2Sq_approx
+
+-- THE PRE-HILBERT LAYER, brick 41 (Square/DeepMemberFour.lean) — THE K=4 CO-SUPPORT MEMBER:
+-- deep4 = x − 15x² + 70x³ − 140x⁴ + 126x⁵ − 42x⁶, read off the Hilbert matrix; first
+-- non-vanishing moment ⟨deep4,x⁴⟩ = 1/13860, so the strict chain extends to 0 ⊋ … ⊋ 5.
+#print axioms Square.deep4_supp
+#print axioms Square.deep4_moment_zero
+#print axioms Square.deep4_moment_one
+#print axioms Square.deep4_moment_two
+#print axioms Square.deep4_moment_three
+#print axioms Square.deep4_hatVanishes
+#print axioms Square.deep4_moment_four
+#print axioms Square.deep4_not_hatVanishes_five
+#print axioms Square.cosupport_strict_at_four
+#print axioms Square.deep4_value_tenth
+#print axioms Square.deep4_apart
+#print axioms Square.weil_psd_deep4
+#print axioms Square.cosupport_chain_strict_five

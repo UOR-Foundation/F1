@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 41 — THE `K = 4` CO-SUPPORT MEMBER, AND THE STRICT CHAIN
+  EXTENDED** (new `Square/DeepMemberFour.lean`):
+  `deep4 = x − 15x² + 70x³ − 140x⁴ + 126x⁵ − 42x⁶`, the nonzero rational solution of
+  `Σᵢ aᵢ/(i+n+1) = 0` for `n = 0,1,2,3` together with the support condition `Σᵢ aᵢ = 0` —
+  a finite linear-algebra problem over brick 34's Gram closed form, not a construction
+  problem. Delivered: `deep4_supp` (`197 − 197 = 0`), the four vanishing moments,
+  **`deep4_hatVanishes`** (`HatVanishes deep4 4`), the first non-vanishing moment
+  `⟨deep4, x⁴⟩ = 1291/60 − 14911/693 = 1/13860` (`deep4_moment_four`, read off the same Gram
+  matrix — no new integration), hence `deep4 ∉ HatVanishes · 5` and
+  **`cosupport_strict_at_four`**. With brick 37's witnesses this gives
+  **`cosupport_chain_strict_five`**: `0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4 ⊋ 5`, every level properly containing
+  the next, each by an explicit constructed test. The member is apart from zero
+  (`deep4(1/10) = 3609/500000`), so **`weil_psd_deep4`** fires the skeleton's unconditional
+  positivity on genuinely nonzero `f, f̂` data whose transform vanishes at four integer points.
+  HONEST SCOPE: one more member and one more strict level — NOT a proof that every level is
+  inhabited or strict (that needs invertibility of the Hilbert sections in general), and the
+  positivity is still the skeleton's diagonal multiplier form on moment data. Step 4 is RH;
+  the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 40 — THE `ℓ²` NORM OF THE MOMENT SEQUENCE, AS A CONSTRUCTED
   REAL** (new `Square/MomentNorm.lean`): `‖φ̂‖² := Σ_n ⟨φ, xⁿ⟩²` is now an object
   (`momentL2Sq`, a genuine `Real` — not a supremum, not a hypothesis), with
