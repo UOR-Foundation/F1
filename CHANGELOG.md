@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 47 — THE MOMENT ENERGY IS A MOMENT-INVARIANT** (new
+  `Square/MomentInvariant.lean`): **`(∀ n, ⟨φ,xⁿ⟩ ≈ ⟨ψ,xⁿ⟩) ⟹ momentL2Sq φ ≈ momentL2Sq ψ`**
+  (`momentL2Sq_congr`) — the well-definedness the `ℓ²` norm needs to be a norm *on the moment
+  sequence* rather than an artifact of the construction. The norm was built through an index
+  rescale keyed to the test's own bound `M_φ` (`momScale φ`), so a priori two tests with the
+  same moments but different `M` read their limits along different schedules; this shows the
+  value is the same regardless — the rescale is scaffolding, not content. The proof is brick 45
+  used both ways: equal moments give equal partial energies (`momentSqSum_congr`), so each
+  rescaled read of one energy equals a partial energy of the other, which brick 45 bounds by its
+  total; `Rlim_le_const` gives `≤` and symmetry closes it. Capstone: a second certified nonzero
+  energy, `Pos (momentL2Sq bumpU)` off `⟨bumpU, x⁰⟩ = 1/6`. HONEST SCOPE: well-definedness of
+  the `ℓ²` moment energy for bounded-Lipschitz tests on `[0,1]`, nothing about the Weil form.
+  Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 46 — A UNIFORM CAUCHY–SCHWARZ FOR THE MOMENT SEQUENCES** (new
   `Square/MomentGram.lean`): the cross moment sums are controlled by the two `ℓ²` energies at
   every truncation at once —

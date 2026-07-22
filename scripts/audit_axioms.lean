@@ -5140,3 +5140,11 @@ open UOR.Bridge.F1Square
 -- the finite Lagrange-CS on the moment coordinate vectors + brick 45's partial-energy bound.
 #print axioms Square.crossMomSum_diag
 #print axioms Square.crossMomSum_sq_le
+
+-- THE PRE-HILBERT LAYER, brick 47 (Square/MomentInvariant.lean) — THE MOMENT ENERGY IS A
+-- MOMENT-INVARIANT: equal moments ⟹ equal momentL2Sq (the rescale is scaffolding, not content),
+-- via brick 45 both ways through Rlim_le_const; second nonzero instance Pos (momentL2Sq bumpU).
+#print axioms Square.momentSqSum_congr
+#print axioms Square.momentL2Sq_le_of_moments_eq
+#print axioms Square.momentL2Sq_congr
+#print axioms Square.momentL2Sq_bumpU_pos
