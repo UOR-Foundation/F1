@@ -7,12 +7,12 @@ The twist `tⁿ` grows, so the twisted integrand is built per window from the al
 `[m+1, m+2]` it is the product test `φ · powWinTest m n` (brick 19), whose window integral is
 `twTerm`. Convergence trades decay for growth:
 
-- `tw_collapse` — the exponent-generic estimate `C·(m+2)ⁿ/(m+1)^{n+2} ≤ (C·2ⁿ)/((m+1)m)`,
-  from the Nat core `(m+2)ⁿ·(m+1)·m ≤ 2ⁿ·(m+1)^{n+2}` (`(m+2)ⁿ ≤ (2(m+1))ⁿ` plus two spare
-  `(m+1)` factors), the power atoms generalized before the ring normalizer.
+- `tw_collapse` — the exponent-generic estimate `C·(m+2)ⁿ/(m+1)^{n+2} ≤ C·2ⁿ/((m+1)m)`, from
+  the Nat core `(m+2)ⁿ·(m+1)·m ≤ 2ⁿ·(m+1)^{n+2}` (`(m+2)ⁿ ≤ (2(m+1))ⁿ` and two spare `(m+1)`
+  factors), the power atoms generalized before the ring normalizer.
 - `twTerm_bound` — for a test with exponent-`(n+2)` window decay, the twisted window integrals
-  obey the gateway's `K/((m+1)m)` shape with `K := C·2ⁿ` (brick 18's window bound against the
-  product's pointwise bound, `powWinTest_M_le` feeding the power factor).
+  obey the gateway's `K/((m+1)m)` shape with `K := C·2ⁿ` (the window bound of brick 18 against
+  the product's pointwise bound, `powWinTest_M_le` feeding the power factor).
 - **`twTail`** — the twisted half-line tail `∫₁^∞ φ(t)·tⁿ dt` as a Bishop limit
   (`genSum_RReg` at modulus `C·2ⁿ`), and **`mellinHat φ n = mellinMoment φ n + twTail`** —
   the transform at the integer point `n`: compact piece (brick 10's moment, the `[0,1]` twist)
@@ -61,7 +61,7 @@ private theorem pow_window_core (m n : Nat) :
     _ = 2 ^ n * (m + 1) ^ (n + 2) := by rw [h3]
 
 /-- **The exponent-generic collapse**: `C·(m+2)ⁿ/(m+1)^{n+2} ≤ (C·2ⁿ)/((m+1)m)`. -/
-private theorem tw_collapse {C : Q} (_hCd : 0 < C.den) (hCn : 0 ≤ C.num) (m n : Nat) :
+private theorem tw_collapse {C : Q} (hCd : 0 < C.den) (hCn : 0 ≤ C.num) (m n : Nat) :
     Qle (mul (mul C (⟨1, (m + 1) ^ (n + 2)⟩ : Q)) (⟨(((m + 2) ^ n : Nat) : Int), 1⟩ : Q))
         (mul (mul C (⟨((2 ^ n : Nat) : Int), 1⟩ : Q)) (⟨1, (m + 1) * m⟩ : Q)) := by
   show ((C.num * 1) * (((m + 2) ^ n : Nat) : Int))
@@ -147,11 +147,11 @@ theorem twTerm_bound (φ : L2Test) (n : Nat) {C : Q} (hCd : 0 < C.den) (hCn : 0 
     exact qmul_le_left_mono
       (Int.mul_nonneg hCn (by show (0 : Int) ≤ 1; decide))
       (powWinTest_M_le m n)
-  have habs' : Rle (Rabs (twTerm φ n m))
+  have habs2 : Rle (Rabs (twTerm φ n m))
       (ofQ (mul (mul C (⟨((2 ^ n : Nat) : Int), 1⟩ : Q)) (⟨1, (m + 1) * m⟩ : Q))
         (Qmul_den_pos (Qmul_den_pos hCd Nat.one_pos) (digamma_succ_mul_pos hm))) :=
     Rle_trans habs (Rle_ofQ_ofQ _ _ hq)
-  exact ⟨Rneg_le_of_Rabs_le habs', Rle_of_Rabs_le habs'⟩
+  exact ⟨Rneg_le_of_Rabs_le habs2, Rle_of_Rabs_le habs2⟩
 
 /-- **The twisted half-line tail** `∫₁^∞ φ(t)·tⁿ dt` — the Bishop limit of the twisted window
     sums, regular at the modulus `C·2ⁿ`. -/

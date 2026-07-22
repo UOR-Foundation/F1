@@ -16,6 +16,13 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`mellinHat_compact` — the transform of a compactly supported test IS its moment
+  sequence** (in `Square/MellinHat.lean`): if `φ` vanishes on `[1,∞)` (at every window
+  point), the twisted tail vanishes term by term (each `twTerm ≈ 0` by the window bound at
+  `B = 0` and `Rle_antisymm`, the `genSum`s collapse, `Rlim_zero` kills the tail) and
+  `f̂(n) ≈ mellinMoment φ n` — the first EVALUATION of the constructed transform, welding
+  the compact (brick 10) and half-line (bricks 18–20) Mellin objects into one; with
+  `hdec_of_supp` (vanishing satisfies the decay hypothesis at `C = 0`). Crux fields `none`.
 - **The pre-Hilbert layer, brick 20 — THE MELLIN TRANSFORM AT INTEGER POINTS** (new
   `Square/MellinHat.lean`): **`mellinHat φ n = mellinMoment φ n + twTail φ n` — the first
   constructed value of the `f ↦ f̂` direction**, `f̂(n) = ∫₀^∞ φ(t)·tⁿ dt` as a certified

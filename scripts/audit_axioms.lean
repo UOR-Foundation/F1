@@ -4813,3 +4813,11 @@ open UOR.Bridge.F1Square
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
 #print axioms Square.qmul_le_left_mono
 #print axioms Square.twTerm_bound
+#print axioms Square.hdec_of_supp
+#print axioms Square.mellinHat_compact
+
+-- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
+-- POINTS: the exponent-generic twisted collapse, the twisted gateway data, the convergent
+-- twisted tail, and mellinHat φ n = moment + tail — the first constructed f̂ value.
+#print axioms Square.qmul_le_left_mono
+#print axioms Square.twTerm_bound
