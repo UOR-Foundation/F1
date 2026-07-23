@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 50 — THE MOMENT PAIRING IS SYMMETRIC AND UNIFORMLY BOUNDED**
+  (new `Square/MomentPairingLaws.lean`): the two laws that make brick 49's `⟪φ,ψ⟫` behave like
+  an inner product rather than an arbitrary limit — **`⟪φ,ψ⟫ ≈ ⟪ψ,φ⟫`** (`crossMomL2_symm`) and
+  **`|⟪φ,ψ⟫| ≤ 2·M_φ·M_ψ`** (`crossMomL2_abs_le`). Symmetry is not free: the two limits run
+  along *different rescale schedules* (`crossScale φ ψ` and `crossScale ψ φ` agree only up to
+  `Nat.mul_comm`), so the sequences are not syntactically the same; `crossScale_comm` aligns the
+  cuts and then `innerN_symm` matches them termwise through `Rlim_congr`. The bound is the
+  window bound read from cut `0` — every partial cross sum is already within `2M_φM_ψ` of zero —
+  inherited by the limit from both sides (`Rlim_le_ofQ` above, `const_le_Rlim` below). On the
+  diagonal it recovers brick 40's `momentL2Sq φ ≤ 2M_φ²` from the pairing side
+  (`momentL2Sq_le_via_pairing`). Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 49 — THE BILINEAR MOMENT PAIRING CONVERGES** (new
   `Square/MomentPairing.lean`): the off-diagonal companion to the `ℓ²` norm —
   **`⟪φ,ψ⟫ := Σ_n ⟨φ,xⁿ⟩·⟨ψ,xⁿ⟩` now exists as a constructed real** (`crossMomL2`), with the

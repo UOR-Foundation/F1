@@ -5176,3 +5176,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.crossMomL2_approx
 #print axioms Square.crossIdx_diag_mono
 #print axioms Square.crossMomL2_diag
+
+-- THE PRE-HILBERT LAYER, brick 50 (Square/MomentPairingLaws.lean) — THE PAIRING IS SYMMETRIC AND
+-- UNIFORMLY BOUNDED: ⟪φ,ψ⟫ ≈ ⟪ψ,φ⟫ (cuts aligned by crossScale_comm, then innerN_symm through
+-- Rlim_congr) and |⟪φ,ψ⟫| ≤ 2MφMψ (the window bound from cut 0, inherited from both sides).
+#print axioms Square.crossScale_comm
+#print axioms Square.crossMomL2_symm
+#print axioms Square.crossMomSum_abs_le
+#print axioms Square.crossMomL2_abs_le
+#print axioms Square.momentL2Sq_le_via_pairing

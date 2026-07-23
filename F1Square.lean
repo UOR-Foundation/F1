@@ -360,6 +360,7 @@ import F1Square.Square.MomentGram
 import F1Square.Square.MomentInvariant
 import F1Square.Square.CoSupportCompletion
 import F1Square.Square.MomentPairing
+import F1Square.Square.MomentPairingLaws
 
 open UOR.Primitives
 
