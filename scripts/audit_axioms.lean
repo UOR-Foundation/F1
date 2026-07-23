@@ -5351,3 +5351,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_congr_of_dist2I
 #print axioms Square.moments_vanish_congr_of_dist2I
 #print axioms Square.innerI_deep3_self_not_zero
+
+-- THE PRE-HILBERT LAYER, brick 64 (Square/PolyDeterminacy.lean) — DETERMINACY ON THE POLYNOMIAL
+-- CLASS AND A DEGREE FLOOR: for a d-coefficient integer polynomial test, d vanishing moments
+-- force zero L² energy, hence EVERY moment zero (brick 63). Contrapositive: a nonzero member of
+-- co-support level K needs more than K coefficients — the growth deep3..deep6 exhibit is forced.
+#print axioms Square.innerI_natScale_zero
+#print axioms Square.innerI_polyN_zero
+#print axioms Square.innerI_polyPN_zero
+#print axioms Square.innerI_polyPN_self_zero
+#print axioms Square.polyPN_all_moments_zero
+#print axioms Square.momentL2Sq_polyPN_zero
+#print axioms Square.polyPN_degree_floor
+#print axioms Square.polyPN_level_null

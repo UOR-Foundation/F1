@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 64 — DETERMINACY ON THE POLYNOMIAL CLASS, AND A DEGREE FLOOR
+  FOR CO-SUPPORT MEMBERS** (new `Square/PolyDeterminacy.lean`): the layer's first determinacy
+  result, and the structural reason the built members grow in degree with their level.
+  - For an integer-coefficient polynomial test with `d` coefficients (`polyPN a b d`, the repo's
+    own positive/negative-part idiom): **first `d` moments vanish ⟹ `⟨p,p⟩ ≈ 0` ⟹ every moment
+    vanishes** (`innerI_polyPN_self_zero`, `polyPN_all_moments_zero`, `momentL2Sq_polyPN_zero`).
+  - Read backwards it is a **degree floor** (`polyPN_degree_floor`, `polyPN_level_null`): a
+    polynomial test that is not L²-null cannot sit in co-support level `d` on `d` coefficients, so
+    a nonzero level-`K` member needs more than `K` of them. The built members obey it exactly —
+    `deep3` is in level 3 and runs to `x⁴`, `deep6` is in level 6 and runs to `x⁸` — and this says
+    that growth is **forced**, not an artifact of how the members were solved.
+  - No approximation theory is used: expanding `p` in the *first* slot, bilinearity turns `⟨p,p⟩`
+    into a `ℕ`-scaled sum of `⟨xⁱ,p⟩ = ⟨p,xⁱ⟩` over `i < d`, each a hypothesis; the scaling
+    transfer is brick 43's `pv_scale` at the rational value `0`, so the sealed (`@[irreducible]`)
+    `natScale` is never unfolded. The step from zero energy to every moment is brick 63.
+  - Honest scope: determinacy for **polynomial** tests only. The general question — a nonzero
+    bounded-Lipschitz test with every moment vanishing — is untouched; it needs a constructive
+    approximation theorem (Bernstein) the repo does not have. Step 4 is RH; crux fields `none`.
+
 - **The pre-Hilbert layer, brick 63 — THE MOMENT GEOMETRY IS AN L² INVARIANT** (new
   `Square/L2MomentBridge.lean`): the compatibility law between the layer's two energies — the
   function-space `⟨φ,φ⟩ = ∫₀¹ φ²` (bricks 9–14) and the `ℓ²` moment energy `‖φ̂‖²` (bricks 40–61).
