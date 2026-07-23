@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 49 — THE BILINEAR MOMENT PAIRING CONVERGES** (new
+  `Square/MomentPairing.lean`): the off-diagonal companion to the `ℓ²` norm —
+  **`⟪φ,ψ⟫ := Σ_n ⟨φ,xⁿ⟩·⟨ψ,xⁿ⟩` now exists as a constructed real** (`crossMomL2`), with the
+  diagonal identity **`⟪φ,φ⟫ ≈ momentL2Sq φ`** (`crossMomL2_diag`) and the canonical convergence
+  rate (`crossMomL2_approx`). Brick 46 bounded the cross sums uniformly; this shows they actually
+  converge, so the moment sequences carry a genuine bilinear pairing and not merely a norm.
+  THE SQUARE ROOT IS EXACT, which is what keeps it sqrt-free: the Cauchy modulus needs an
+  absolute bound on a window, and Cauchy–Schwarz on the window against brick 39's two tails gives
+  `(2M_φ²/(a+1))·(2M_ψ²/(a+1))` — the *exact square of the rational* `2M_φM_ψ/(a+1)`
+  (`crossBound`), so `Rle_of_Rsq_le` converts the squared bound to the linear one with no square
+  root anywhere (the substrate has none on general reals, and none is needed; the AM-GM route
+  `|ab| ≤ ½(a²+b²)` would need a real algebraic expansion, this needs only rational arithmetic).
+  The rescale is then LINEAR — the modulus wanted is `1/(j+1)`, not its square — reusing brick
+  40's `scale_cross` with `crossScale φ ψ = 2|M_φ.num||M_ψ.num| + 1`. The diagonal identity
+  sandwiches two differently-rescaled limits via brick 45 and `term_le_Rlim`. HONEST SCOPE: the
+  bilinear `ℓ²` pairing of moment sequences of bounded-Lipschitz tests on `[0,1]` — a pairing on
+  moment data, not an inner product on a completed function space, and nothing about the Weil
+  form. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 48 — THE SKELETON'S POSITIVITY FIRES ON THE COMPLETED `ℓ²`
   MEMBER** (new `Square/CoSupportCompletion.lean`): the co-support result moves off finite
   moment data and onto the truncation-uniform limit object the completion axis constructs —

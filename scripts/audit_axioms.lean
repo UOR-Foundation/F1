@@ -5159,3 +5159,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.weil_psd_completed_deep4
 #print axioms Square.completed_cosupport_nonzero
 #print axioms Square.deep3_momIdx_converges
+
+-- THE PRE-HILBERT LAYER, brick 49 (Square/MomentPairing.lean) — THE BILINEAR MOMENT PAIRING
+-- CONVERGES: ⟪φ,ψ⟫ = Σ_n ⟨φ,xⁿ⟩⟨ψ,xⁿ⟩ as a constructed real, with ⟪φ,φ⟫ ≈ momentL2Sq φ. The
+-- window CS bound is the EXACT square of the rational 2MφMψ/(a+1), so Rle_of_Rsq_le is sqrt-free.
+#print axioms Square.crossWindow_diag
+#print axioms Square.crossBound_den
+#print axioms Square.crossBound_num
+#print axioms Square.crossWindow_sq_le
+#print axioms Square.crossWindow_abs_le
+#print axioms Square.crossMomSum_split
+#print axioms Square.crossMomSum_diff_abs_le
+#print axioms Square.crossScale_bound
+#print axioms Square.crossIdx_dist
+#print axioms Square.crossIdx_RReg
+#print axioms Square.crossMomL2_approx
+#print axioms Square.crossIdx_diag_mono
+#print axioms Square.crossMomL2_diag

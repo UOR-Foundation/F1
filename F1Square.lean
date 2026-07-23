@@ -359,6 +359,7 @@ import F1Square.Square.MomentEnergyDetect
 import F1Square.Square.MomentGram
 import F1Square.Square.MomentInvariant
 import F1Square.Square.CoSupportCompletion
+import F1Square.Square.MomentPairing
 
 open UOR.Primitives
 
