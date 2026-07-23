@@ -367,6 +367,7 @@ import F1Square.Square.CoSupportPairing
 import F1Square.Square.DeepMemberFive
 import F1Square.Square.CoSupportDimension
 import F1Square.Square.MomentPairingNeg
+import F1Square.Square.CoSupportSubspace
 
 open UOR.Primitives
 

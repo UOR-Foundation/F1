@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 57 — THE CO-SUPPORT LEVELS ARE GENUINE LINEAR SUBSPACES** (new
+  `Square/CoSupportSubspace.lean`): brick 22 gave closure under `+` at a shared decay constant;
+  on compact support the rest follows cleanly, because there the predicate *is* moment-vanishing
+  and the moment map is linear — **`hatVanishes_neg`, `hatVanishes_sub`, `hatVanishes_natScale`**
+  (plus the compact restatement `hatVanishes_add_supp`), with the support side closed alongside
+  (`unitSupported_neg`/`_add`/`_sub`). The payoff is **`combo345_in_level_three`**: EVERY
+  natural-coefficient combination `a·deep3 + b·deep4 + c·deep5` lies in level `3`. Read with
+  brick 55 — those three are independent as far as the moment functionals at `3,4,5` see them —
+  each realized level carries an infinite, genuinely multi-dimensional family rather than one
+  witness and its multiples. This matters for the route because step 4's coupling would have to
+  act on a *space*. HONEST SCOPE: closure under the linear operations on the compact-support
+  branch (decay constant `0`); the general shared-`C` statement remains brick 22's addition only.
+  Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 56 — THE PAIRING IS LINEAR, AND HENCE CONTINUOUS IN THE TEST**
   (new `Square/MomentPairingNeg.lean`): brick 52 gave additivity; this gives the other half of
   linearity and reads off the consequence — **`⟪−φ,ψ⟫ ≈ −⟪φ,ψ⟫`** (`crossMomL2_neg_left`),

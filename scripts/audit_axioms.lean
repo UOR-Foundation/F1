@@ -5259,3 +5259,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.crossMomL2_neg_left
 #print axioms Square.crossMomL2_sub_left
 #print axioms Square.crossMomL2_dist_le
+
+-- THE PRE-HILBERT LAYER, brick 57 (Square/CoSupportSubspace.lean) — THE CO-SUPPORT LEVELS ARE
+-- GENUINE LINEAR SUBSPACES: closed under neg/add/sub/natScale on compact support (via the
+-- moment route), so EVERY natural-coefficient combination of deep3/deep4/deep5 lies in level 3.
+#print axioms Square.unitSupported_neg
+#print axioms Square.unitSupported_add
+#print axioms Square.unitSupported_sub
+#print axioms Square.hatVanishes_neg
+#print axioms Square.hatVanishes_add_supp
+#print axioms Square.hatVanishes_sub
+#print axioms Square.hatVanishes_natScale
+#print axioms Square.combo345_supp
+#print axioms Square.combo345_in_level_three
