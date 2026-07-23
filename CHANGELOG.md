@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 52 — THE MOMENT PAIRING IS BILINEAR** (new
+  `Square/MomentPairingBilinear.lean`): the last inner-product law, and the one the substrate
+  makes hardest — **`⟪φ + ψ, χ⟫ ≈ ⟪φ, χ⟫ + ⟪ψ, χ⟫`** (`crossMomL2_add_left`). At every *finite*
+  truncation the identity is exact (the moment map is additive, so the coefficient vectors add
+  and `innerN_add_left` splits the sum); the difficulty is entirely in the limit, since `RReg` is
+  not closed under addition here and the three pairings are `Rlim`s along three *different*
+  rescale schedules, leaving no common index for a termwise comparison. The fix is to compare at
+  a COMMON CUT instead of at the schedules: the window bound gives more than convergence along
+  the chosen schedule — *any* cut beyond the `j`-th scheduled one is within `1/(j+1)` of the
+  scheduled read (`crossMomSum_dist_scheduled`), hence within `3/(j+1)` of the limit
+  (**`crossMomSum_dist_limit`**, the reusable half: the pairing may be read off *any*
+  sufficiently deep partial sum, not only the rescaled ones the construction happened to use).
+  At the cut `(c₁+c₂+c₃)·(k+1)` all three are within `3/(k+1)` of partial sums satisfying the
+  identity exactly, so the gap is `9/(k+1)` for every `k` and the Archimedean criterion closes
+  both directions. New reusable piece: `Rabs_sub_triangle`. With brick 50's symmetry it transfers
+  to the right slot. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 51 — CAUCHY–SCHWARZ AT THE LIMIT** (new
   `Square/MomentPairingCS.lean`): brick 46's uniform bound on the *finite* cross sums is upgraded
   to the pairing itself — **`⟪φ,ψ⟫² ≤ momentL2Sq φ · momentL2Sq ψ`** (`crossMomL2_sq_le`). With

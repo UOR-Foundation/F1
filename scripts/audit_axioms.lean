@@ -5195,3 +5195,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.crossMomL2_add_idx_abs_le
 #print axioms Square.crossGap_le
 #print axioms Square.crossMomL2_sq_le
+
+-- THE PRE-HILBERT LAYER, brick 52 (Square/MomentPairingBilinear.lean) — THE PAIRING IS BILINEAR:
+-- ⟪φ+ψ,χ⟫ ≈ ⟪φ,χ⟫+⟪ψ,χ⟫. RReg is not closed under +, and the three limits run along different
+-- schedules, so the comparison is made at a COMMON CUT (crossMomSum_dist_limit: the pairing can
+-- be read off ANY deep partial sum), where the finite identity is exact.
+#print axioms Square.Rabs_sub_triangle
+#print axioms Square.crossMomSum_dist_scheduled
+#print axioms Square.crossMomSum_dist_limit
+#print axioms Square.momSeq_add
+#print axioms Square.crossMomSum_add_left
+#print axioms Square.crossMomL2_add_left
