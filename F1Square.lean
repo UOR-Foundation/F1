@@ -371,6 +371,7 @@ import F1Square.Square.CoSupportSubspace
 import F1Square.Square.CoSupportFamily
 import F1Square.Square.MomentQuadratic
 import F1Square.Square.DeepMemberSix
+import F1Square.Square.MomentDefinite
 
 open UOR.Primitives
 

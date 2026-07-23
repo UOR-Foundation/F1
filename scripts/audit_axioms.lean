@@ -5308,3 +5308,17 @@ open UOR.Bridge.F1Square
 #print axioms Square.cosupport_strict_at_six
 #print axioms Square.cosupport_chain_strict_seven
 #print axioms Square.weil_psd_deep6
+
+-- THE PRE-HILBERT LAYER, brick 61 (Square/MomentDefinite.lean) — POLARIZATION AND THE NULL
+-- SPACE: 4⟪φ,ψ⟫ ≈ ‖(φ+ψ)^‖² − ‖(φ−ψ)^‖², and ‖φ̂‖² ≈ 0 ⟺ every moment vanishes, with the null
+-- space annihilating the whole pairing (Cauchy–Schwarz). The constructive step is square-root
+-- free: Rle_of_Rsq_le reflects the order through squaring, so x² ≈ 0 gives x ≈ 0 with no root.
+#print axioms Square.Req_zero_of_sq_zero
+#print axioms Square.moments_zero_of_momentL2Sq_zero
+#print axioms Square.momentL2Sq_zero_iff
+#print axioms Square.crossMomL2_zero_of_null
+#print axioms Square.crossMomL2_zero_of_moments
+#print axioms Square.momentL2Sq_polarization
+#print axioms Square.crossMomL2_congr_of_energies
+#print axioms Square.deep3_not_null
+#print axioms Square.deep3_moment_not_all_zero

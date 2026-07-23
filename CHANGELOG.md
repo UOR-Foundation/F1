@@ -16,6 +16,29 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 61 — POLARIZATION AND THE NULL SPACE** (new
+  `Square/MomentDefinite.lean`): the two laws that upgrade bricks 49–59's positive-semi-definite
+  pairing to an inner product with a *characterized* kernel.
+  - **The polarization identity** (`momentL2Sq_polarization`):
+    `4·⟪φ,ψ⟫ ≈ ‖(φ+ψ)^‖² − ‖(φ−ψ)^‖²`, stated multiplication-free (`(X+X)+(X+X)`), since the
+    substrate carries no scalar action on `Real`. Brick 59 expanded the energy by the pairing;
+    this inverts it, so the two constructions are one quadratic functional and the pairing carries
+    no information its own diagonal does not. `crossMomL2_congr_of_energies` reads it as rigidity.
+  - **The null-space characterization** (`momentL2Sq_zero_iff`): `‖φ̂‖² ≈ 0` iff every moment
+    `⟨φ, xⁿ⟩` vanishes. Brick 42 gave one direction; the converse is new and turns on a
+    **square-root-free "no nilpotents" step** (`Req_zero_of_sq_zero`): `Rle_of_Rsq_le` reflects the
+    order through squaring on the non-negatives, so `|x|·|x| ≈ 0 ≈ 0·0` forces `|x| ≤ 0` outright
+    — no root is ever extracted.
+  - **The null space is a radical** (`crossMomL2_zero_of_null`): via Cauchy–Schwarz (brick 51) and
+    the same vanishing step, a null test pairs to zero against *every* `ψ`, so the form descends to
+    a definite inner product on the quotient.
+  - Realized: `deep3_not_null` / `deep3_moment_not_all_zero` — the constructed `K = 3` member is
+    outside the null space, by brick 45's certified positive energy.
+  - Honest scope: this *characterizes* the null space as the moment-null tests; it does **not**
+    show that space is trivial. Whether a nonzero bounded-Lipschitz test on `[0,1]` can have every
+    moment vanish is the determinacy question, untouched. Nothing here touches the Weil form; step
+    4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 60 — THE `K = 6` CO-SUPPORT MEMBER** (new
   `Square/DeepMemberSix.lean`):
   `deep6 = x − 28x² + 252x³ − 1050x⁴ + 2310x⁵ − 2772x⁶ + 1716x⁷ − 429x⁸`, the solution of the
