@@ -373,6 +373,7 @@ import F1Square.Square.MomentQuadratic
 import F1Square.Square.DeepMemberSix
 import F1Square.Square.MomentDefinite
 import F1Square.Square.L2Complete
+import F1Square.Square.L2MomentBridge
 
 open UOR.Primitives
 

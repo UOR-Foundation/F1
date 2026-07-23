@@ -5339,3 +5339,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.pairingIU_const
 #print axioms Square.pairingIU_zero_of_moments
 #print axioms Square.pairingIU_cosupport_closed
+
+-- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
+-- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
+-- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
+-- is determinacy, untouched. Capstone: the moment side certifies ∫₀¹ deep3² apart from zero.
+#print axioms Square.innerI_zero_of_innerI_self_zero
+#print axioms Square.moments_zero_of_innerI_self_zero
+#print axioms Square.momentL2Sq_zero_of_innerI_self_zero
+#print axioms Square.mellinMoment_congr_of_dist2I
+#print axioms Square.momentL2Sq_congr_of_dist2I
+#print axioms Square.moments_vanish_congr_of_dist2I
+#print axioms Square.innerI_deep3_self_not_zero

@@ -16,6 +16,26 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 63 — THE MOMENT GEOMETRY IS AN L² INVARIANT** (new
+  `Square/L2MomentBridge.lean`): the compatibility law between the layer's two energies — the
+  function-space `⟨φ,φ⟩ = ∫₀¹ φ²` (bricks 9–14) and the `ℓ²` moment energy `‖φ̂‖²` (bricks 40–61).
+  - `⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0`
+    (`moments_zero_of_innerI_self_zero`, `momentL2Sq_zero_of_innerI_self_zero`), and the L²-null
+    tests are a radical — they pair to zero with everything (`innerI_zero_of_innerI_self_zero`),
+    the L² mirror of brick 61's `crossMomL2_zero_of_null`.
+  - `d²(φ,ψ) ≈ 0` transfers the moments (`mellinMoment_congr_of_dist2I`), hence the `ℓ²` energy
+    (`momentL2Sq_congr_of_dist2I`, through brick 47) and the co-support depth
+    (`moments_vanish_congr_of_dist2I`): the whole moment geometry **descends to the L² quotient**,
+    which is the compatibility the completion axis needs — brick 62's extended pairing is indexed
+    by L²-Cauchy sequences while bricks 40–61 live on moment sequences.
+  - Nothing new is constructed: brick 9's integral Cauchy–Schwarz supplies
+    `⟨φ,xⁿ⟩² ≤ ⟨φ,φ⟩·⟨xⁿ,xⁿ⟩`, fed through brick 61's square-root-free vanishing step.
+  - Capstone `innerI_deep3_self_not_zero`: brick 45's certified nonzero *moment* energy (from the
+    exact rational third moment `−1/2520`) turns into a certified nonzero *L²* energy — a fact
+    about an integral, proved entirely on the moment side.
+  - Honest scope: the containment runs **one way only** (L²-null ⊆ moment-null). The converse is
+    the determinacy question and is untouched. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 62 — THE UNIFORM L² COMPLETENESS CRITERION** (new
   `Square/L2Complete.lean`): brick 14 built the extended L² pairing `pairingILim` along a sequence
   of tests, but behind a hypothesis mentioning the *second slot* (`d²(Φⱼ,Φₖ)·⟨ψ,ψ⟩` small), so it
