@@ -375,6 +375,7 @@ import F1Square.Square.MomentDefinite
 import F1Square.Square.L2Complete
 import F1Square.Square.L2MomentBridge
 import F1Square.Square.PolyDeterminacy
+import F1Square.Square.PolyMoment
 
 open UOR.Primitives
 

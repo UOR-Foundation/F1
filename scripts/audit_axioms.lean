@@ -5364,3 +5364,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_polyPN_zero
 #print axioms Square.polyPN_degree_floor
 #print axioms Square.polyPN_level_null
+
+-- THE PRE-HILBERT LAYER, brick 65 (Square/PolyMoment.lean) — EVERY POLYNOMIAL TEST'S MOMENT IN
+-- CLOSED FORM: ⟨Σ a_i xⁱ, xⁿ⟩ = Σ a_i/(i+n+1), read off the Hilbert matrix. One theorem replacing
+-- every per-member hand computation; co-support becomes a finite rational linear system, and with
+-- brick 64 the d×d system already kills the whole moment sequence. Cross-checked on lin1 (−1/60).
+#print axioms Square.polyMomQ_den
+#print axioms Square.mellinMoment_polyN
+#print axioms Square.mellinMoment_polyPN
+#print axioms Square.polyPN_moments_zero_of_rational
+#print axioms Square.polyPN_all_moments_zero_of_rational
+#print axioms Square.polyMoment_lin1_zero
+#print axioms Square.polyMoment_lin1_one

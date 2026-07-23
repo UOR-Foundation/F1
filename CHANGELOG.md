@@ -16,6 +16,27 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 65 — EVERY POLYNOMIAL TEST'S MOMENT, IN CLOSED FORM** (new
+  `Square/PolyMoment.lean`): `⟨Σ_{i<d} a_i xⁱ, xⁿ⟩ = Σ_{i<d} a_i/(i+n+1)`
+  (`mellinMoment_polyN`, `mellinMoment_polyPN`) — an explicit **rational**, read straight off
+  brick 34's Hilbert matrix.
+  - Every constructed member so far (`cubeBump`, the quartic, `deep3 … deep6`, `lin1`, `lin2`) had
+    its moments evaluated by a hand-built `pv_add`/`pv_scale` chain, one theorem per degree per
+    member. This is the general law those chains were instances of, proved once by induction on
+    the coefficient count.
+  - Consequence: the polynomial co-support theory is **finite rational linear algebra**. Level `K`
+    membership is the `K` rational equations `polyMomQ a n d = polyMomQ b n d`
+    (`polyPN_moments_zero_of_rational`), and with brick 64 the case `K = d` already forces the
+    *whole* moment sequence to vanish (`polyPN_all_moments_zero_of_rational`). Constructing a
+    member at any depth is a `ℚ`-linear solve against the Hilbert matrix — no new integration, no
+    new per-degree engine.
+  - Cross-checked against an independently hand-computed value: the same coefficient data as
+    brick 36's `lin1 = x − 3x² + 2x³`, run through `polyMomQ`, reproduces `⟨lin1,x⁰⟩ = 0` and
+    `⟨lin1,x¹⟩ = −1/60` (`polyMoment_lin1_zero`, `polyMoment_lin1_one`).
+  - Honest scope: a closed form for the moments. It says nothing about *which* coefficient vectors
+    solve the system (existence at general `K` is still the hypergeometric identity the layer
+    cannot reach), nothing about the support side, and nothing about the Weil form.
+
 - **The pre-Hilbert layer, brick 64 — DETERMINACY ON THE POLYNOMIAL CLASS, AND A DEGREE FLOOR
   FOR CO-SUPPORT MEMBERS** (new `Square/PolyDeterminacy.lean`): the layer's first determinacy
   result, and the structural reason the built members grow in degree with their level.
