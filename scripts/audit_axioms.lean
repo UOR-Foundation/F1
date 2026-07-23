@@ -5148,3 +5148,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_le_of_moments_eq
 #print axioms Square.momentL2Sq_congr
 #print axioms Square.momentL2Sq_bumpU_pos
+
+-- THE PRE-HILBERT LAYER, brick 48 (Square/CoSupportCompletion.lean) — THE SKELETON'S POSITIVITY
+-- ON THE COMPLETED ℓ² MEMBER: the band coordinate of limMemberU (momIdx φ) is φ's first moment
+-- (brick 44), killed by co-support, so burnol_pairing_psd_on_sonine fires at the completion
+-- level on truncation-uniform data of certified nonzero energy (deep3, deep4 instances).
+#print axioms Square.limMemberU_momIdx_band_zero
+#print axioms Square.weil_psd_on_completed_cosupport
+#print axioms Square.weil_psd_completed_deep3
+#print axioms Square.weil_psd_completed_deep4
+#print axioms Square.completed_cosupport_nonzero
+#print axioms Square.deep3_momIdx_converges

@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 48 — THE SKELETON'S POSITIVITY FIRES ON THE COMPLETED `ℓ²`
+  MEMBER** (new `Square/CoSupportCompletion.lean`): the co-support result moves off finite
+  moment data and onto the truncation-uniform limit object the completion axis constructs —
+  **`Rnonneg (weilQuad (multForm burnolMult) (limMemberU (momIdx φ) _) N)`**
+  (`weil_psd_on_completed_cosupport`) for every `[0,1]`-supported test whose transform vanishes
+  at `0, 1`, at every truncation. The band hypothesis is discharged, not assumed: the completed
+  member's band coordinate *is* the test's first moment (brick 44), which co-support kills
+  (`limMemberU_momIdx_band_zero`). WHY IT IS NOT A RESTATEMENT of brick 16's
+  `sonine_complement_complete`: that carried positivity through a completion for a
+  *fixed-truncation* member of an *abstract* band-vanishing Cauchy family; here the family is
+  the moment data of a constructed test, the member is *truncation-uniform*, convergence is
+  strong at every truncation (`deep3_momIdx_converges`), and the member is **not the zero
+  sequence** — `completed_cosupport_nonzero` records `Pos (momentL2Sq deep3)` from brick 45, so
+  the completion-level positivity is not vacuous. Instances at `deep3` and `deep4`. HONEST
+  SCOPE: still the discrete diagonal-multiplier form on moment data, now at the completion
+  level — NOT the Weil functional on the test space, and NOT positivity beyond the complement.
+  Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 47 — THE MOMENT ENERGY IS A MOMENT-INVARIANT** (new
   `Square/MomentInvariant.lean`): **`(∀ n, ⟨φ,xⁿ⟩ ≈ ⟨ψ,xⁿ⟩) ⟹ momentL2Sq φ ≈ momentL2Sq ψ`**
   (`momentL2Sq_congr`) — the well-definedness the `ℓ²` norm needs to be a norm *on the moment
