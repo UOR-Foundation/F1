@@ -5185,3 +5185,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.crossMomSum_abs_le
 #print axioms Square.crossMomL2_abs_le
 #print axioms Square.momentL2Sq_le_via_pairing
+
+-- THE PRE-HILBERT LAYER, brick 51 (Square/MomentPairingCS.lean) — CAUCHY–SCHWARZ AT THE LIMIT:
+-- ⟪φ,ψ⟫² ≤ momentL2Sq φ · momentL2Sq ψ. The squared bound passes through the Bishop limit by
+-- difference-of-squares (small factor × bounded factor) + the Archimedean Rle_of_Rsub_le_eps.
+#print axioms Square.crossTwo_den
+#print axioms Square.crossTwo_num
+#print axioms Square.crossBound_add_self
+#print axioms Square.crossMomL2_add_idx_abs_le
+#print axioms Square.crossGap_le
+#print axioms Square.crossMomL2_sq_le

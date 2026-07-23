@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 51 — CAUCHY–SCHWARZ AT THE LIMIT** (new
+  `Square/MomentPairingCS.lean`): brick 46's uniform bound on the *finite* cross sums is upgraded
+  to the pairing itself — **`⟪φ,ψ⟫² ≤ momentL2Sq φ · momentL2Sq ψ`** (`crossMomL2_sq_le`). With
+  bricks 49–50 this completes the sqrt-free inner-product geometry on moment sequences: a
+  symmetric bilinear pairing, its diagonal the `ℓ²` energy, obeying Cauchy–Schwarz. Passing a
+  *squared* bound through a Bishop limit is the interesting step, since the substrate has no
+  square root and `Rlim` does not commute with multiplication; the route avoids both by the
+  difference-of-squares identity `x² − X² = (x − X)(x + X)`, which makes the gap a PRODUCT of one
+  small factor (`|x − X_k| ≤ 2/(k+1)`, the convergence rate) and one merely bounded factor
+  (`|x + X_k| ≤ 2·(2M_φM_ψ)`, brick 50 on both terms). The gap is then `O(1/(k+1))` for every `k`,
+  and the Archimedean criterion `Rle_of_Rsub_le_eps` converts that into the bound — no expansion
+  of `(X + e)²`, no square root. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 50 — THE MOMENT PAIRING IS SYMMETRIC AND UNIFORMLY BOUNDED**
   (new `Square/MomentPairingLaws.lean`): the two laws that make brick 49's `⟪φ,ψ⟫` behave like
   an inner product rather than an arbitrary limit — **`⟪φ,ψ⟫ ≈ ⟪ψ,φ⟫`** (`crossMomL2_symm`) and

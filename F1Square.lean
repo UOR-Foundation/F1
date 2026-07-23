@@ -361,6 +361,7 @@ import F1Square.Square.MomentInvariant
 import F1Square.Square.CoSupportCompletion
 import F1Square.Square.MomentPairing
 import F1Square.Square.MomentPairingLaws
+import F1Square.Square.MomentPairingCS
 
 open UOR.Primitives
 
