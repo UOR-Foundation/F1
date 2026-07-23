@@ -5322,3 +5322,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.crossMomL2_congr_of_energies
 #print axioms Square.deep3_not_null
 #print axioms Square.deep3_moment_not_all_zero
+
+-- THE PRE-HILBERT LAYER, brick 62 (Square/L2Complete.lean) — THE UNIFORM L² COMPLETENESS
+-- CRITERION: a ψ-FREE squared-Cauchy condition on a sequence of tests (L2CauchyU) yields the
+-- extended L² pairing against EVERY test, by rescaling the index along the test's own rational
+-- energy bound (selfBnd). Payoff: the co-support levels are closed under L² limits of functions.
+#print axioms Square.selfQ_den
+#print axioms Square.selfBnd_pos
+#print axioms Square.selfQ_le
+#print axioms Square.innerI_self_le_selfBnd
+#print axioms Square.dist2I_scaled_le
+#print axioms Square.pairingIU_RReg
+#print axioms Square.pairingIU_dist
+#print axioms Square.dist2I_self
+#print axioms Square.L2CauchyU_const
+#print axioms Square.pairingIU_const
+#print axioms Square.pairingIU_zero_of_moments
+#print axioms Square.pairingIU_cosupport_closed

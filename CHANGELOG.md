@@ -16,6 +16,28 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 62 — THE UNIFORM L² COMPLETENESS CRITERION** (new
+  `Square/L2Complete.lean`): brick 14 built the extended L² pairing `pairingILim` along a sequence
+  of tests, but behind a hypothesis mentioning the *second slot* (`d²(Φⱼ,Φₖ)·⟨ψ,ψ⟩` small), so it
+  had to be re-verified per `ψ` and was never instantiated. This removes that.
+  - **`L2CauchyU Φ := ∀ j k, d²(Φⱼ,Φₖ) ≤ (1/(j+1) + 1/(k+1))²`** — a condition on the sequence
+    ALONE — yields the extended pairing `pairingIU Φ ψ` against **every** test, at rate `2/(j+1)`.
+  - The bridge is bricks 40/43's move: an index rescale turns a rate into a Bishop modulus. Each
+    test carries a *natural-number* bound on its own energy (`selfBnd`, `innerI_self_le_selfBnd`,
+    read off brick 10's uniform pairing bound); reading `Φ` along `j ↦ selfBnd ψ·(j+1)` divides the
+    modulus by `S`, hence the squared modulus by `S²`, and one factor of `S` is exactly what the
+    energy costs (`dist2I_scaled_le`). The estimate is a rational *identity*
+    (`1/(S(j+1)) + 1/(S(k+1)) = (1/S)·(1/(j+1) + 1/(k+1))`) plus `S ≤ S²` — no approximation.
+  - **The payoff**: the co-support levels are closed under L² limits *of functions*
+    (`pairingIU_zero_of_moments`, `pairingIU_cosupport_closed`) — bricks 48 and 57 closed the
+    co-support under the test algebra and under completion of coefficient vectors; this closes it
+    in the function-space topology the genuine Sonine condition lives in.
+  - Non-vacuity and faithfulness: `dist2I_self`, `L2CauchyU_const`, `pairingIU_const` (on a
+    constant sequence the extended pairing is the pairing).
+  - Honest scope: this constructs the extended pairing **values** on the completion, not a limit
+    *function* — no completed L² space of functions, no limit member, no inversion. Nothing touches
+    the Weil form; step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 61 — POLARIZATION AND THE NULL SPACE** (new
   `Square/MomentDefinite.lean`): the two laws that upgrade bricks 49–59's positive-semi-definite
   pairing to an inner product with a *characterized* kernel.
