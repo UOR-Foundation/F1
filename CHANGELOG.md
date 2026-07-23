@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 59 — THE MOMENT ENERGY IS A QUADRATIC FORM, AND THE PAIRING IS
+  ITS POLAR FORM** (new `Square/MomentQuadratic.lean`):
+  **`‖(φ+ψ)^‖² ≈ (‖φ̂‖² + ⟪φ,ψ⟫) + (⟪φ,ψ⟫ + ‖ψ̂‖²)`** (`momentL2Sq_add`), the sign-flipped
+  companion (`momentL2Sq_sub`), and **the parallelogram law**
+  `‖(φ+ψ)^‖² + ‖(φ−ψ)^‖² ≈ (‖φ̂‖² + ‖ψ̂‖²) + (‖φ̂‖² + ‖ψ̂‖²)` (`momentL2Sq_parallelogram`). So the
+  `ℓ²` energy of bricks 40–47 and the bilinear pairing of bricks 49–52, 56 are two faces of ONE
+  object: the energy is the pairing's diagonal (brick 49) and expands by the pairing (here) —
+  exactly the structure a positivity argument acts on, rather than two separately-constructed
+  limits. No new limit: everything is derived from the diagonal identity, symmetry and
+  left-additivity, with symmetry supplying the right-slot laws (`crossMomL2_add_right`,
+  `crossMomL2_neg_right`, `momentL2Sq_neg`). The parallelogram's four cross terms `+X,+X,−X,−X`
+  cancel through the `RsumL` additive normalizer — `ring_uor` is `Int`/`Q`-only and the pointwise
+  route would clear denominators multiplicatively — and the cancellation needs NO permutation:
+  `RsumL_cancel_anywhere` splits the list in place, twice. Step 4 is RH; the crux fields stay
+  `none`.
+
 - **The pre-Hilbert layer, brick 58 — THE POSITIVITY FIRES ON AN INFINITE FAMILY OF NONZERO
   CO-SUPPORT MEMBERS** (new `Square/CoSupportFamily.lean`): bricks 29 and 48 fired the skeleton's
   unconditional positivity at single constructed members; brick 57 made the levels linear

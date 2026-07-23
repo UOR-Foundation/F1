@@ -5280,3 +5280,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.combo345_weil_psd_completed
 #print axioms Square.combo345_moment_three_sq
 #print axioms Square.combo345_energy_pos
+
+-- THE PRE-HILBERT LAYER, brick 59 (Square/MomentQuadratic.lean) — THE MOMENT ENERGY IS A
+-- QUADRATIC FORM: ‖(φ+ψ)^‖² expands by the pairing, and the parallelogram law holds. Derived
+-- from the diagonal identity + symmetry + left-additivity; the ±X cancellation runs through the
+-- RsumL additive normalizer (two in-place RsumL_cancel_anywhere splits, no permutation needed).
+#print axioms Square.crossMomL2_add_right
+#print axioms Square.crossMomL2_neg_right
+#print axioms Square.momentL2Sq_neg
+#print axioms Square.momentL2Sq_add
+#print axioms Square.momentL2Sq_sub
+#print axioms Square.momentL2Sq_parallelogram
