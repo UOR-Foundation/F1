@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 60 — THE `K = 6` CO-SUPPORT MEMBER** (new
+  `Square/DeepMemberSix.lean`):
+  `deep6 = x − 28x² + 252x³ − 1050x⁴ + 2310x⁵ − 2772x⁶ + 1716x⁷ − 429x⁸`, the solution of the
+  depth-6 moment system over brick 34's Gram form (coefficients summing `4279 − 4279 = 0`). Six
+  vanishing moments, then the first non-vanishing one read off the same matrix with no new
+  integration — `⟨deep6, x⁶⟩ = 95311/280 − 2190451/6435 = 1/360360` — so `deep6 ∉ HatVanishes · 7`
+  (`cosupport_strict_at_six`), and with bricks 37, 41 and 54 the chain reads
+  **`0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4 ⊋ 5 ⊋ 6 ⊋ 7`** (`cosupport_chain_strict_seven`). `weil_psd_deep6` fires the
+  skeleton's unconditional positivity on a test whose transform vanishes at six integer points.
+  HONEST SCOPE: one more member and one more strict level — NOT a proof that every level is
+  inhabited or strict. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 59 — THE MOMENT ENERGY IS A QUADRATIC FORM, AND THE PAIRING IS
   ITS POLAR FORM** (new `Square/MomentQuadratic.lean`):
   **`‖(φ+ψ)^‖² ≈ (‖φ̂‖² + ⟪φ,ψ⟫) + (⟪φ,ψ⟫ + ‖ψ̂‖²)`** (`momentL2Sq_add`), the sign-flipped

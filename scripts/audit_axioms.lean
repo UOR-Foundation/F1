@@ -5291,3 +5291,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_add
 #print axioms Square.momentL2Sq_sub
 #print axioms Square.momentL2Sq_parallelogram
+
+-- THE PRE-HILBERT LAYER, brick 60 (Square/DeepMemberSix.lean) — THE K=6 CO-SUPPORT MEMBER:
+-- deep6 = x − 28x² + 252x³ − 1050x⁴ + 2310x⁵ − 2772x⁶ + 1716x⁷ − 429x⁸; first non-vanishing
+-- moment ⟨deep6,x⁶⟩ = 95311/280 − 2190451/6435 = 1/360360, so the chain reaches 0 ⊋ … ⊋ 7.
+#print axioms Square.deep6_supp
+#print axioms Square.deep6_moment_zero
+#print axioms Square.deep6_moment_one
+#print axioms Square.deep6_moment_two
+#print axioms Square.deep6_moment_three
+#print axioms Square.deep6_moment_four
+#print axioms Square.deep6_moment_five
+#print axioms Square.deep6_hatVanishes
+#print axioms Square.deep6_moment_six
+#print axioms Square.deep6_not_hatVanishes_seven
+#print axioms Square.cosupport_strict_at_six
+#print axioms Square.cosupport_chain_strict_seven
+#print axioms Square.weil_psd_deep6

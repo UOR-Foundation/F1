@@ -370,6 +370,7 @@ import F1Square.Square.MomentPairingNeg
 import F1Square.Square.CoSupportSubspace
 import F1Square.Square.CoSupportFamily
 import F1Square.Square.MomentQuadratic
+import F1Square.Square.DeepMemberSix
 
 open UOR.Primitives
 
