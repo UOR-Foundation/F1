@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 53 — DEEP CO-SUPPORT IS NEARLY ORTHOGONAL TO EVERYTHING** (new
+  `Square/CoSupportPairing.lean`): brick 42's diagonal rate, generalized to the bilinear pairing —
+  **`φ ∈ HatVanishes · K ⟹ |⟪φ, ψ⟫| ≤ 2·M_φ·M_ψ/(K+1)` for EVERY `ψ`**
+  (`crossMomL2_abs_le_of_hatVanishes`). Brick 42 said a depth-`K` member carries little moment
+  *energy* (`‖φ̂‖² ≤ 2M_φ²/(K+1)`), which is the case `ψ = φ`; this says the same member is nearly
+  perpendicular to the whole space, at the same rate, with the bound linear in each test's own
+  `M`. So the deep levels of the filtration are not merely thin — they are nearly orthogonal to
+  everything the layer can pair them against. The proof is the co-support condition eating the
+  head of the series: below `K` the `φ`-moments vanish, so every cross partial sum is *literally*
+  a window from the cut `K` (`crossMomSum_zero_below`, `crossMomSum_eq_window`), and brick 49's
+  window bound applies uniformly in the window length; the limit inherits from both sides as in
+  brick 50. Instance at `deep3` (rate `1/4`). Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 52 — THE MOMENT PAIRING IS BILINEAR** (new
   `Square/MomentPairingBilinear.lean`): the last inner-product law, and the one the substrate
   makes hardest — **`⟪φ + ψ, χ⟫ ≈ ⟪φ, χ⟫ + ⟪ψ, χ⟫`** (`crossMomL2_add_left`). At every *finite*

@@ -5206,3 +5206,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.momSeq_add
 #print axioms Square.crossMomSum_add_left
 #print axioms Square.crossMomL2_add_left
+
+-- THE PRE-HILBERT LAYER, brick 53 (Square/CoSupportPairing.lean) — DEEP CO-SUPPORT IS NEARLY
+-- ORTHOGONAL TO EVERYTHING: |⟪φ,ψ⟫| ≤ 2MφMψ/(K+1) for EVERY ψ when φ ∈ HatVanishes·K (brick 42's
+-- diagonal rate made bilinear). Co-support eats the head, so every partial sum is a K-window.
+#print axioms Square.crossMomSum_zero_below
+#print axioms Square.crossMomSum_eq_window
+#print axioms Square.crossMomSum_abs_le_of_moments
+#print axioms Square.crossMomL2_abs_le_of_moments
+#print axioms Square.crossMomL2_abs_le_of_hatVanishes
+#print axioms Square.deep3_crossMomL2_abs_le
