@@ -5216,3 +5216,21 @@ open UOR.Bridge.F1Square
 #print axioms Square.crossMomL2_abs_le_of_moments
 #print axioms Square.crossMomL2_abs_le_of_hatVanishes
 #print axioms Square.deep3_crossMomL2_abs_le
+
+-- THE PRE-HILBERT LAYER, brick 54 (Square/DeepMemberFive.lean) — THE K=5 CO-SUPPORT MEMBER:
+-- deep5 = x − 21x² + 140x³ − 420x⁴ + 630x⁵ − 462x⁶ + 132x⁷; first non-vanishing moment
+-- ⟨deep5,x⁵⟩ = 748873/9009 − 665/8 = −1/72072, so the strict chain reaches 0 ⊋ … ⊋ 6.
+#print axioms Square.deep5_supp
+#print axioms Square.deep5_moment_zero
+#print axioms Square.deep5_moment_one
+#print axioms Square.deep5_moment_two
+#print axioms Square.deep5_moment_three
+#print axioms Square.deep5_moment_four
+#print axioms Square.deep5_hatVanishes
+#print axioms Square.deep5_moment_five
+#print axioms Square.deep5_not_hatVanishes_six
+#print axioms Square.cosupport_strict_at_five
+#print axioms Square.cosupport_chain_strict_six
+#print axioms Square.deep5_value_tenth
+#print axioms Square.deep5_apart
+#print axioms Square.weil_psd_deep5

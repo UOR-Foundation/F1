@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 54 — THE `K = 5` CO-SUPPORT MEMBER** (new
+  `Square/DeepMemberFive.lean`):
+  `deep5 = x − 21x² + 140x³ − 420x⁴ + 630x⁵ − 462x⁶ + 132x⁷`, the solution of the depth-5 moment
+  system over brick 34's Gram form. Five vanishing moments, then the first non-vanishing one read
+  off the same matrix with no new integration — `⟨deep5, x⁵⟩ = 748873/9009 − 665/8 = −1/72072` —
+  so `deep5 ∉ HatVanishes · 6` (`cosupport_strict_at_five`) and, with bricks 37 and 41, the chain
+  reads **`0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4 ⊋ 5 ⊋ 6`** (`cosupport_chain_strict_six`). The member is apart from
+  zero at `deep5(1/10) = −3843/625000` — the first constructed member whose sample value is
+  NEGATIVE, so apartness is witnessed on the negation — and `weil_psd_deep5` fires the skeleton's
+  unconditional positivity on a nonzero test whose transform vanishes at five integer points.
+  HONEST SCOPE: one more member and one more strict level, NOT a proof that every level is
+  inhabited or strict. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 53 — DEEP CO-SUPPORT IS NEARLY ORTHOGONAL TO EVERYTHING** (new
   `Square/CoSupportPairing.lean`): brick 42's diagonal rate, generalized to the bilinear pairing —
   **`φ ∈ HatVanishes · K ⟹ |⟪φ, ψ⟫| ≤ 2·M_φ·M_ψ/(K+1)` for EVERY `ψ`**
