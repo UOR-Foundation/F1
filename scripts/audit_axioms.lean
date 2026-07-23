@@ -5250,3 +5250,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.combo345_moment_three
 #print axioms Square.combo345_moment_four
 #print axioms Square.deep34_independent
+
+-- THE PRE-HILBERT LAYER, brick 56 (Square/MomentPairingNeg.lean) — THE PAIRING IS LINEAR AND
+-- CONTINUOUS IN THE TEST: ⟪−φ,ψ⟫ ≈ −⟪φ,ψ⟫ (common-cut again, the schedules differ), hence
+-- ⟪φ−ψ,χ⟫ ≈ ⟪φ,χ⟫−⟪ψ,χ⟫ and |⟪φ,χ⟫−⟪ψ,χ⟫| ≤ 2·M_{φ−ψ}·M_χ.
+#print axioms Square.momSeq_neg
+#print axioms Square.crossMomSum_neg_left
+#print axioms Square.crossMomL2_neg_left
+#print axioms Square.crossMomL2_sub_left
+#print axioms Square.crossMomL2_dist_le

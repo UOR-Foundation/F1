@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 56 — THE PAIRING IS LINEAR, AND HENCE CONTINUOUS IN THE TEST**
+  (new `Square/MomentPairingNeg.lean`): brick 52 gave additivity; this gives the other half of
+  linearity and reads off the consequence — **`⟪−φ,ψ⟫ ≈ −⟪φ,ψ⟫`** (`crossMomL2_neg_left`),
+  **`⟪φ−ψ,χ⟫ ≈ ⟪φ,χ⟫ − ⟪ψ,χ⟫`** (`crossMomL2_sub_left`), and the modulus of continuity
+  **`|⟪φ,χ⟫ − ⟪ψ,χ⟫| ≤ 2·M_{φ−ψ}·M_χ`** (`crossMomL2_dist_le`): two tests close in the bound `M`
+  of their difference have close pairings against every fixed `χ`. With bricks 49–52 the moment
+  pairing is now a symmetric, bilinear, Cauchy–Schwarz-obeying, continuous form. Negation needed
+  the same care as addition: `⟪−φ,ψ⟫` and `⟪φ,ψ⟫` are `Rlim`s along *different* rescale schedules
+  (`crossScale (−φ) ψ` need not equal `crossScale φ ψ`), so the comparison is again made at a
+  COMMON CUT, where `crossMomSum_neg_left` is exact and brick 52's `crossMomSum_dist_limit`
+  carries both sides. Subtraction is then free, `L2Test.sub` being `add _ (neg _)` by definition.
+  Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 55 — THE CO-SUPPORT LEVELS ARE NOT ONE-DIMENSIONAL** (new
   `Square/CoSupportDimension.lean`): level `HatVanishes · 3` carries a family of at least
   dimension two, so its inhabitation is not the accident of a single witness and its multiples.

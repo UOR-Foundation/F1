@@ -366,6 +366,7 @@ import F1Square.Square.MomentPairingBilinear
 import F1Square.Square.CoSupportPairing
 import F1Square.Square.DeepMemberFive
 import F1Square.Square.CoSupportDimension
+import F1Square.Square.MomentPairingNeg
 
 open UOR.Primitives
 
