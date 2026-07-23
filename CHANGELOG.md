@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 58 — THE POSITIVITY FIRES ON AN INFINITE FAMILY OF NONZERO
+  CO-SUPPORT MEMBERS** (new `Square/CoSupportFamily.lean`): bricks 29 and 48 fired the skeleton's
+  unconditional positivity at single constructed members; brick 57 made the levels linear
+  subspaces; this draws the consequence at the whole realized family. For every `a, b, c : ℕ` the
+  combination `combo345 a b c` lies in level `3`, so **`combo345_weil_psd`** and — at the
+  truncation-uniform *completed* `ℓ²` member — **`combo345_weil_psd_completed`** hold at every
+  truncation. The family is non-vacuous *uniformly*: whenever `a ≥ 1` the member carries strictly
+  positive moment energy (**`combo345_energy_pos`**), because brick 55's table reads the third
+  moment off the first coefficient exactly (`⟨combo345 a b c, x³⟩ = −a/2520`, squaring to
+  `a²/6350400`) and brick 45 turns a nonzero moment into `Pos` energy. So the positivity fires on
+  infinitely many genuinely nonzero members, indexed faithfully by `a`, not on a family that
+  might collapse to the zero sequence. HONEST SCOPE: still the discrete diagonal-multiplier form
+  on moment data, now over a realized infinite family rather than single instances — NOT the Weil
+  functional on the test space, NOT positivity beyond the complement. Step 4 is RH; the crux
+  fields stay `none`.
+
 - **The pre-Hilbert layer, brick 57 — THE CO-SUPPORT LEVELS ARE GENUINE LINEAR SUBSPACES** (new
   `Square/CoSupportSubspace.lean`): brick 22 gave closure under `+` at a shared decay constant;
   on compact support the rest follows cleanly, because there the predicate *is* moment-vanishing

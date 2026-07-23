@@ -5272,3 +5272,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.hatVanishes_natScale
 #print axioms Square.combo345_supp
 #print axioms Square.combo345_in_level_three
+
+-- THE PRE-HILBERT LAYER, brick 58 (Square/CoSupportFamily.lean) — POSITIVITY ON AN INFINITE
+-- FAMILY: every combo345 a b c lies in level 3, so the skeleton's positivity fires on all of
+-- them (and on their completed ℓ² members); a ≥ 1 gives certified nonzero moment energy.
+#print axioms Square.combo345_weil_psd
+#print axioms Square.combo345_weil_psd_completed
+#print axioms Square.combo345_moment_three_sq
+#print axioms Square.combo345_energy_pos
