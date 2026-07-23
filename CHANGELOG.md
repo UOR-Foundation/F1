@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 55 — THE CO-SUPPORT LEVELS ARE NOT ONE-DIMENSIONAL** (new
+  `Square/CoSupportDimension.lean`): level `HatVanishes · 3` carries a family of at least
+  dimension two, so its inhabitation is not the accident of a single witness and its multiples.
+  `deep3`, `deep4`, `deep5` all lie in level `3` (`deep345_in_level_three`), and the moment
+  functionals at `3, 4, 5` separate them in a TRIANGULAR pattern — every entry read off brick
+  34's Hilbert matrix with no new integration (`cosupport_triangular_table`, with the three new
+  evaluations `⟨deep3,x⁴⟩ = −1/1260`, `⟨deep3,x⁵⟩ = −1/924`, `⟨deep4,x⁵⟩ = 1/5544`).
+  Lower-triangular with nonzero diagonal, so the coefficients come off one at a time:
+  **`deep34_independent`** does the first two — the `x³` moment sees only `deep3`, then the `x⁴`
+  moment only `deep4`. New reusable pieces: `nat_eq_zero_of_ofQ_zero` and its negated companion,
+  which turn a vanishing constructed real `ofQ ⟨a,d⟩ ≈ 0` back into `a = 0` (the substrate has no
+  `ofQ` injectivity lemma, so the honest route is to exhibit the `Pos` witness a nonzero `a`
+  would supply and collide it with `not_Pos_zero`). HONEST SCOPE: independence over NATURAL
+  coefficients, and only for the first TWO of the three members — the third step's rational
+  identity carries denominators (`924·5544·72072`) that blow the elaborator's whnf budget, and is
+  not worth a workaround for a statement the table already exhibits. Not a dimension formula, not
+  a basis, nothing about unconstructed levels. Step 4 is RH; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 54 — THE `K = 5` CO-SUPPORT MEMBER** (new
   `Square/DeepMemberFive.lean`):
   `deep5 = x − 21x² + 140x³ − 420x⁴ + 630x⁵ − 462x⁶ + 132x⁷`, the solution of the depth-5 moment

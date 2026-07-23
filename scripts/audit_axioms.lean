@@ -5234,3 +5234,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.deep5_value_tenth
 #print axioms Square.deep5_apart
 #print axioms Square.weil_psd_deep5
+
+-- THE PRE-HILBERT LAYER, brick 55 (Square/CoSupportDimension.lean) — THE CO-SUPPORT LEVELS ARE
+-- NOT ONE-DIMENSIONAL: deep3/deep4/deep5 all lie in level 3 and the moment functionals at 3,4,5
+-- separate them TRIANGULARLY (nonzero diagonal); the first two coefficients are extracted, via
+-- nat_eq_zero_of_ofQ_zero (no ofQ-injectivity in the substrate — collide Pos with not_Pos_zero).
+#print axioms Square.nat_eq_zero_of_ofQ_zero
+#print axioms Square.nat_eq_zero_of_ofQ_neg_zero
+#print axioms Square.deep3_moment_four
+#print axioms Square.deep4_moment_five
+#print axioms Square.deep3_moment_five
+#print axioms Square.cosupport_triangular_table
+#print axioms Square.deep345_in_level_three
+#print axioms Square.combo345_moment
+#print axioms Square.combo345_moment_three
+#print axioms Square.combo345_moment_four
+#print axioms Square.deep34_independent
