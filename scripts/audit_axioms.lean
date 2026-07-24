@@ -5547,3 +5547,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegral_zero_of_partition_zero
 #print axioms Square.innerI_self_zero_of_unit_zero
 #print axioms Square.innerI_self_zero_iff_unit_zero
+
+-- THE PRE-HILBERT LAYER, brick 82 (Square/L2MetricIff.lean) — THE L² DISTANCE IS A GENUINE METRIC
+-- ON [0,1]: brick 80 (separation, forward) + brick 81 (reverse definiteness on the difference
+-- test) close the two-directional iff — dist2I φ ψ ≈ 0 ⟺ φ, ψ agree at every point of [0,1]. The
+-- L² distance-squared vanishes EXACTLY on the pointwise-[0,1]-equality relation.
+#print axioms Square.dist2I_zero_iff_pointwise_eq

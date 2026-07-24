@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 82 — THE `L²` DISTANCE IS A GENUINE METRIC ON `[0,1]`** (new
+  `Square/L2MetricIff.lean`): the two-directional separation iff
+  (`dist2I_zero_iff_pointwise_eq`): `dist2I φ ψ ≈ 0 ⟺ ∀ x ∈ [0,1], φ(x) ≈ ψ(x)`. Brick 80 forward
+  (separation) + brick 81 reverse (definiteness) applied to the difference test `L2Test.sub φ ψ`
+  (whose value at `x` is `φ(x) − ψ(x)` definitionally). So the `L²` distance-squared vanishes
+  **exactly** on the pointwise-`[0,1]`-equality relation — a genuine metric there, zero set neither
+  coarser nor finer than pointwise agreement. **Honest scope**: the separation iff on `[0,1]`, not a
+  full isometry, not the moment problem. Nothing touches the Weil form; step 4 is RH; crux fields
+  stay `none`.
 - **The pre-Hilbert layer, brick 81 — `⟨φ,φ⟩` IS A DEFINITE INNER PRODUCT ON `[0,1]`** (new
   `Square/L2DefiniteIff.lean`): the reverse of brick 79, closing definiteness to an **iff**
   (`innerI_self_zero_iff_unit_zero`): `∫₀¹ φ² ≈ 0 ⟺ ∀ x ∈ [0,1], φ(x) ≈ 0`. The new direction — a

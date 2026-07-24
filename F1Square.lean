@@ -393,6 +393,7 @@ import F1Square.Square.DyadicDense
 import F1Square.Square.DyadicDenseReal
 import F1Square.Square.L2Separation
 import F1Square.Square.L2DefiniteIff
+import F1Square.Square.L2MetricIff
 
 open UOR.Primitives
 
