@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 70 — EVERY INTERVAL SPLITS AT ITS MIDPOINT** (new
+  `Square/IntervalSplit.lean`): `∫_a^{a+w} f ≈ ∫_a^{a+w/2} f + ∫_{a+w/2}^{a+w} f`
+  (`riemannIntegralI_split_half`). Brick 68 split `[0,1]`; this is the general law, and iterating
+  it reaches every dyadic sub-interval of every interval.
+  - The mechanism is that the affine pullbacks **compose**: `α_{a,w} ∘ α_{0,1/2} = α_{a,w/2}` and
+    `α_{a,w} ∘ α_{1/2,1/2} = α_{a+w/2,w/2}` (`affineMap_half_left`, `affineMap_half_right`). So
+    brick 68 applied to `f ∘ α_{a,w}` already produces the two half-interval integrands — once the
+    certificate moduli `(L·w)·½` and `L·(w/2)` are reconciled. They are `Qeq`-equal but not
+    syntactically equal, and that reconciliation is the reusable half of the brick:
+    `riemannIntegral_congr_mod` (weaken to a common modulus, move the certificate, transport the
+    integrand).
+  - Honest scope: one split, at the midpoint of an arbitrary interval. **Iterating it is left to
+    the consumer** — no induction over subdivisions is performed here — and nothing about
+    non-dyadic split points is claimed. Integration substrate; the crux fields stay `none`.
+
 - **Certified integration, brick 69 — POSITIVE ON A PIECE ⟹ POSITIVE OVERALL** (new
   `Square/IntegralPiece.lean`): the first use of brick 68's splitting law, in the shape every
   downstream consumer wants. For a non-negative Lipschitz integrand each half of `[0,1]` is a

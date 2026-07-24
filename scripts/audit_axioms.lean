@@ -5424,3 +5424,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegral_ge_right_half
 #print axioms Square.riemannIntegral_pos_of_left_half
 #print axioms Square.riemannIntegral_pos_of_right_half
+
+-- CERTIFIED INTEGRATION, brick 70 (Square/IntervalSplit.lean) — EVERY INTERVAL SPLITS AT ITS
+-- MIDPOINT: ∫_a^{a+w} f ≈ ∫_a^{a+w/2} f + ∫_{a+w/2}^{a+w} f. Brick 68 split [0,1]; this is the
+-- general law, and iterating it reaches every dyadic sub-interval of every interval. Mechanism:
+-- the affine pullbacks COMPOSE (α_{a,w}∘α_{0,1/2} = α_{a,w/2}), so each piece is already the right
+-- interval integral once the moduli (L·w)·½ vs L·(w/2) are reconciled by riemannIntegral_congr_mod.
+#print axioms Square.halfQ_den
+#print axioms Square.halfQ_num
+#print axioms Square.riemannIntegral_congr_mod
+#print axioms Square.affineMap_half_left
+#print axioms Square.affineMap_half_right
+#print axioms Square.riemannIntegralI_split_half
