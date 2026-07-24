@@ -5444,3 +5444,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegralI_congr_Q
 #print axioms Square.riemannIntegralI_ge_left_half
 #print axioms Square.riemannIntegralI_ge_right_half
+
+-- CERTIFIED INTEGRATION, brick 72 (Square/DyadicDescent.lean) — EVERY DYADIC SUB-INTERVAL
+-- LOWER-BOUNDS THE WHOLE: for f ≥ 0 and j < 2^m, ∫ over [a+j·w/2^m, a+(j+1)·w/2^m] ≤ ∫ over
+-- [a,a+w]. The induction bricks 70/71 were built for; the piece may be arbitrarily small, which is
+-- what a locality argument needs. j sits inside the den-positivity PROOF TERMS, so it is eliminated
+-- by subst (from ∃ q, j = 2q ∨ j = 2q+1), never by rw.
+#print axioms Square.two_pow_pos
+#print axioms Square.dyadW_den
+#print axioms Square.dyadW_num
+#print axioms Square.dyadA_den
+#print axioms Square.riemannIntegralI_ge_dyadic

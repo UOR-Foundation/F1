@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 72 — EVERY DYADIC SUB-INTERVAL LOWER-BOUNDS THE WHOLE** (new
+  `Square/DyadicDescent.lean`): for a non-negative integrand and `j < 2^m`,
+  `∫_{a+j·w/2^m}^{a+(j+1)·w/2^m} f ≤ ∫_a^{a+w} f` (`riemannIntegralI_ge_dyadic`) — the induction
+  bricks 70 and 71 were built for, and the form "positive on a piece ⟹ positive overall" has to
+  take before it is usable, since the piece may be **arbitrarily small**.
+  - The induction is on the depth: at depth `m+1` the index splits as `j = 2q` or `j = 2q+1`, and
+    the interval is exactly the left or right half of the depth-`m` interval at `q`, so brick 71's
+    one-step bound applies and the hypothesis finishes. Brick 71's `riemannIntegralI_congr_Q`
+    bridges the two computed endpoint forms.
+  - Mechanically: `j` occurs inside the denominator-positivity **proof terms** the statement
+    carries, so it is eliminated by `subst` (obtained from `∃ q, j = 2q ∨ j = 2q+1`) and never by
+    `rw`, which would not be type-correct; the depth is moved by `Nat.pow_succ` inside the `Qeq`
+    goals only, where no proof terms live.
+  - Honest scope: a lower bound by **one** dyadic sub-interval. This is not a subdivision identity
+    (the pieces are never summed), and it is **not yet** `L²` definiteness: that still needs the
+    constructive location step — choosing the piece around a point of non-vanishing using only
+    rational comparisons, never a decidable order on reals.
+
 - **Certified integration, brick 71 — A HALF LOWER-BOUNDS ITS INTERVAL, AND ENDPOINTS ONLY
   MATTER UP TO `Qeq`** (new `Square/IntervalPiece.lean`): the general form of brick 69, plus the
   congruence an induction over dyadic descents actually needs.
