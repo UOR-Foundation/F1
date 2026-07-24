@@ -23,9 +23,16 @@ second, bilinearity turns `⟨p,p⟩` into a `ℕ`-scaled sum of `⟨xⁱ, p⟩ 
 the rational value `0`, so the sealed (`@[irreducible]`) `natScale` never has to be unfolded. The
 step from `⟨p,p⟩ ≈ 0` to *every* moment is brick 63.
 
-HONEST SCOPE. Determinacy for **polynomial** tests only. The general question — a nonzero
-bounded-Lipschitz test on `[0,1]` with every moment vanishing — is untouched; it needs a
-constructive approximation theorem (Bernstein) the repo does not have. The support side is also
+HONEST SCOPE — READ THIS BEFORE PARAPHRASING THE RESULT. What is proven is determinacy at the
+**moment / energy** level: `d` vanishing moments force `⟨p,p⟩ ≈ 0` and force *every* moment to
+vanish. It is **NOT** proven that `p` is the zero function. Going from `∫₀¹ p² ≈ 0` to `p(x) ≈ 0`
+pointwise needs interval splitting of the certified integral (`∫₀¹ = ∫₀^a + ∫_a^1`), which the
+integral API does **not** have — it carries only nonneg/le/add/congr/neg/smul on a fixed interval.
+So "a polynomial with all moments zero is zero" is a **stronger statement than this file proves**;
+the correct summary is "a polynomial test with `d` coefficients and `d` vanishing moments is
+moment-null and L²-energy-null". Determinacy for **polynomial** tests, in that sense, only. The
+general question — a nonzero bounded-Lipschitz test on `[0,1]` with every moment vanishing — is
+untouched; it needs a constructive approximation theorem (Bernstein) the repo does not have. The support side is also
 untouched: `polyPN a b d` is `[0,1]`-supported exactly when `Σ a_i = Σ b_i` (the "both parts sum
 to the same value" condition the built members satisfy), which is not needed here because the
 statement is at the moment level. Nothing touches the Weil form. Step 4 is RH. The crux fields
