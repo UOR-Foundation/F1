@@ -5588,3 +5588,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.twTail_neg
 #print axioms Square.mellinHat_neg
 #print axioms Square.mellinHat_sub
+
+-- THE PRE-HILBERT LAYER, brick 87 (Square/MellinInjective.lean) — THE MELLIN TRANSFORM IS INJECTIVE
+-- ON THE COMPACT POLYNOMIAL CLASS: a compactly supported polynomial test whose transform vanishes
+-- below its coefficient count (HatVanishes … d) is the zero FUNCTION on [0,1] — brick 64's
+-- polyPN_level_null (co-support ⟹ L²-null) welded to brick 79's definiteness (L²-null ⟹ pointwise
+-- zero). The injectivity half of the transform pair, for the polynomial class.
+#print axioms Square.polyPN_hatVanishes_zero_function

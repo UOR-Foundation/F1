@@ -398,6 +398,7 @@ import F1Square.Square.CoSupportFunction
 import F1Square.Square.CoSupportDistinct
 import F1Square.Square.CoSupportPairwise
 import F1Square.Square.MellinLinearNeg
+import F1Square.Square.MellinInjective
 
 open UOR.Primitives
 

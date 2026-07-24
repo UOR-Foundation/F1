@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 87 — THE MELLIN TRANSFORM IS INJECTIVE ON THE COMPACT POLYNOMIAL
+  CLASS** (new `Square/MellinInjective.lean`): a compactly supported polynomial test whose transform
+  vanishes below its coefficient count (`HatVanishes … d`, i.e. `f̂(n) = 0` for `n < d`) is the zero
+  **function** on `[0,1]` (`polyPN_hatVanishes_zero_function`) — a one-line weld of `polyPN_level_null`
+  (brick 64: co-support ⟹ `L²`-null) with `innerI_self_zero_imp_zero` (brick 79: `L²`-null ⟹ pointwise
+  zero). Since for compact support the transform is the moment sequence (`mellinHat_compact`), this is
+  the injectivity half of the transform pair, realized on the polynomial class. **Honest scope**:
+  injectivity on the *polynomial* class only — not the general transform pair / inversion, not the
+  continuous parameter, and not injectivity beyond polynomials (that is the open general-determinacy
+  question, needing Bernstein). Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 86 — THE MELLIN TRANSFORM RESPECTS NEGATION AND SUBTRACTION** (new
   `Square/MellinLinearNeg.lean`): `(−φ)^(n) ≈ −φ̂(n)` (`mellinHat_neg` — moment by `innerI_neg_left`,
   twisted window by `riemannIntegralI_neg` = `twTerm_neg`, tail by `genSum_Rneg_of_termwise` +
