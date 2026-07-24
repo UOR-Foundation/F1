@@ -16,6 +16,30 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 66 — THE MEMBER GENERATOR, AND THE `K = 7` MEMBER IN FIFTEEN
+  LINES** (new `Square/PolyMember.lean`): brick 65 turned a polynomial test's moments into an
+  explicit rational; this turns that into a *constructor*.
+  - **The support law** (`polyPN_supp`): a `ℤ`-coefficient polynomial test is `[0,1]`-supported
+    exactly when its two coefficient sums agree. That is the "both parts sum to the same value"
+    identity every constructed member has quietly satisfied (`deep6`'s parts both sum to `4279`) —
+    now a theorem, because `clamp01` is `1` past `1`, so the value on every half-line window *is*
+    the coefficient sum (`polyN_window_val`).
+  - **The generator** (`polyPN_hatVanishes`): matching coefficient sums plus `K` matching Hilbert
+    contractions produce a certified depth-`K` co-support member. Solve the `ℚ`-linear Hilbert
+    system, get a member — no per-degree integration, no hand-built `pv_`/`fv_` chains.
+  - **Exercised at once**: `deep7 = x − 36x² + 420x³ − 2310x⁴ + 6930x⁵ − 12012x⁶ + 12012x⁷ −
+    6435x⁸ + 1430x⁹` (both parts summing to `20793`), first non-vanishing moment
+    `⟨deep7, x⁷⟩ = −1/1750320`. The strict filtration chain reaches `0 ⊋ 1 ⊋ ⋯ ⊋ 8`
+    (`cosupport_chain_strict_eight`) and the skeleton's positivity fires on it (`weil_psd_deep7`).
+    Every one of those is now a `decide` on rational arithmetic — fifteen lines where brick 60
+    needed a two-hundred-line file.
+  - Honest scope: a **constructor, not an existence theorem**. It says a *given* solution of the
+    rational system yields a member, not that solutions exist at every depth — that is still the
+    hypergeometric identity the layer cannot reach; each `deepK` is found by a `ℚ`-linear solve
+    outside the kernel and certified inside it. The positivity remains the skeleton's diagonal
+    multiplier form on moment data, not the Weil functional on the test space. Step 4 is RH; the
+    crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 65 — EVERY POLYNOMIAL TEST'S MOMENT, IN CLOSED FORM** (new
   `Square/PolyMoment.lean`): `⟨Σ_{i<d} a_i xⁱ, xⁿ⟩ = Σ_{i<d} a_i/(i+n+1)`
   (`mellinMoment_polyN`, `mellinMoment_polyPN`) — an explicit **rational**, read straight off

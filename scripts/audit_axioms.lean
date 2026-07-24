@@ -5376,3 +5376,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.polyPN_all_moments_zero_of_rational
 #print axioms Square.polyMoment_lin1_zero
 #print axioms Square.polyMoment_lin1_one
+
+-- THE PRE-HILBERT LAYER, brick 66 (Square/PolyMember.lean) — THE MEMBER GENERATOR: matching
+-- coefficient sums give [0,1] support (the "both parts sum to the same value" condition, now a
+-- theorem), and K matching Hilbert contractions give HatVanishes · K. Exercised at once: deep7
+-- (K=7, first non-vanishing moment −1/1750320) takes the strict chain to 0 ⊋ … ⊋ 8.
+#print axioms Square.coefSumQ_den
+#print axioms Square.polyN_window_val
+#print axioms Square.polyPN_supp
+#print axioms Square.polyPN_hatVanishes
+#print axioms Square.deep7_supp
+#print axioms Square.deep7_hatVanishes
+#print axioms Square.deep7_moment_seven
+#print axioms Square.deep7_not_hatVanishes_eight
+#print axioms Square.cosupport_strict_at_seven
+#print axioms Square.cosupport_chain_strict_eight
+#print axioms Square.weil_psd_deep7
