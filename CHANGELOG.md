@@ -16,6 +16,26 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 79 — DEFINITENESS AT EVERY POINT OF `[0,1]`** (new
+  `Square/DyadicDenseReal.lean`): every unit-interval real is dyadically approximable
+  (`dyadicApproximable_of_unit`), discharging brick 76's `DyadicApproximable` hypothesis for an
+  **arbitrary** `x ∈ [0,1]`. So `∫₀¹ φ² ≈ 0 ⟹ φ(x) ≈ 0` at **every** point
+  (`innerI_self_zero_imp_zero`), and a polynomial test with `d` vanishing moments is the zero
+  **function** on `[0,1]` (`polyPN_unit_zero`) — brick 64's moment-determinacy upgraded to a
+  function-level determinacy on the polynomial class.
+  - The mechanism is the one bricks 68–78 assembled: locate the real's own rational approximant
+    `x.seq N` to within `1/(N+1)` (`Rabs_sub_seq_le`), floor it to a dyadic point (brick 75), clamp
+    the index into range (brick 77), transport the vanishing value by the Lipschitz certificate
+    (brick 76). The one genuinely new ingredient is the **out-of-range case analysis**: the
+    approximant need not lie in `[0,1)`, so when it dips below `0` or reaches `1` the clamped point
+    sits at the boundary and the distance is bounded there directly from `0 ≤ x ≤ 1` (`case_lo`,
+    `case_hi`), not through the floor (`case_mid`). This is what the brick-78 note flagged as the one
+    remaining, purely-mechanical step; it is now performed.
+  - **Honest scope**: point-definiteness at every real point of `[0,1]` — a statement about the
+    value of a bounded-Lipschitz test at a point, **not** the moment problem. A nonzero test with
+    every *moment* vanishing is a different question, still open, still needing a constructive
+    approximation theorem (Bernstein) the repo does not have. Nothing touches the Weil form; step 4
+    is RH; the crux fields stay `none`.
 - **The pre-Hilbert layer, brick 78 — DEFINITENESS AT EVERY RATIONAL POINT** (new
   `Square/DyadicDense.lean`): the rationals of `[0,1)` are dyadically approximable
   (`dyadicApproximable_ofQ` — brick 75's floor + brick 77's clamp + `2^m` outrunning any rational

@@ -5519,3 +5519,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.dyadicApproximable_ofQ
 #print axioms Square.innerI_self_zero_imp_rational_zero
 #print axioms Square.polyPN_rational_zero
+
+-- THE PRE-HILBERT LAYER, brick 79 (Square/DyadicDenseReal.lean) — DEFINITENESS AT EVERY POINT OF
+-- [0,1]: every unit-interval real is dyadically approximable (locate x.seq N within 1/(N+1), floor
+-- + clamp to a dyadic point, transport the vanishing value by Lipschitz), so ∫₀¹φ² ≈ 0 kills φ at
+-- EVERY point. The out-of-range approximant (below 0 / in range / at-or-above 1) is the new work;
+-- the polynomial class is thereby the zero FUNCTION on [0,1].
+#print axioms Square.dyadicApproximable_of_unit
+#print axioms Square.innerI_self_zero_imp_zero
+#print axioms Square.polyPN_unit_zero
