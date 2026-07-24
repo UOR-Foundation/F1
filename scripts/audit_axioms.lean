@@ -5578,3 +5578,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.deep3_deep5_distinct_on_unit
 #print axioms Square.deep4_deep5_distinct_on_unit
 #print axioms Square.deep345_pairwise_distinct_on_unit
+
+-- THE PRE-HILBERT LAYER, brick 86 (Square/MellinLinearNeg.lean) — THE MELLIN TRANSFORM RESPECTS
+-- NEGATION AND SUBTRACTION: (−φ)^(n) ≈ −φ̂(n) (mellinHat_neg: moment by innerI_neg_left, twisted
+-- window by riemannIntegralI_neg = twTerm_neg, tail by genSum_Rneg_of_termwise + Rlim_neg =
+-- twTail_neg) and (φ−ψ)^(n) ≈ φ̂(n) − ψ̂(n) (mellinHat_sub, composing add+neg). So HatVanishes cuts
+-- out genuine linear subspaces, closed under +, −, scalar negation.
+#print axioms Square.twTerm_neg
+#print axioms Square.twTail_neg
+#print axioms Square.mellinHat_neg
+#print axioms Square.mellinHat_sub

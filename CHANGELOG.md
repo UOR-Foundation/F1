@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 86 — THE MELLIN TRANSFORM RESPECTS NEGATION AND SUBTRACTION** (new
+  `Square/MellinLinearNeg.lean`): `(−φ)^(n) ≈ −φ̂(n)` (`mellinHat_neg` — moment by `innerI_neg_left`,
+  twisted window by `riemannIntegralI_neg` = `twTerm_neg`, tail by `genSum_Rneg_of_termwise` +
+  `Rlim_neg` = `twTail_neg`) and `(φ−ψ)^(n) ≈ φ̂(n) − ψ̂(n)` (`mellinHat_sub`, composing add+neg
+  through `L2Test.sub = add _ (neg _)`). With `mellinHat_add`, the transform's linear structure is
+  complete, so the transform-side vanishing conditions (`HatVanishes`) cut out genuine linear
+  **sub**spaces of the test class. **Honest scope**: the transform's linearity at the integer sample
+  points `f̂(n)` on the decaying-test class — not the continuous Mellin parameter, the transform
+  *pair*, or inversion, which remain open. Nothing touches the Weil form; step 4 is RH; crux fields
+  stay `none`.
 - **The pre-Hilbert layer, brick 85 — THE THREE FLAGSHIP LEVEL-3 MEMBERS ARE PAIRWISE-DISTINCT
   FUNCTIONS ON `[0,1]`** (new `Square/CoSupportPairwise.lean`): brick 84's bridge across all three
   pairs — `deep3`/`deep4` and `deep3`/`deep5` differ at the third moment (`−1/2520` vs `0`),
