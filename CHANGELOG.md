@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Toward density (in `Square/L2Definite.lean`)** — `sq_ge_on_piece_near`: brick 74's piece lemma
+  with the hypothesis `ofQ A ≈ p` weakened to `|ofQ A − p| ≤ W`, the drop across the piece becoming
+  `2·Lg·W`. This is the reusable half of the extension from dyadic points to **all** points: for a
+  general real `x` one cannot ask for a dyadic endpoint *equal* to `x`, only for one within a
+  chosen width. The extension itself is **not** done — it additionally needs a constructive
+  rational-to-dyadic floor (`j := ⌊q·2^m⌋` on a rational approximant of `x`, computable since `ℚ`
+  has decidable order, then clamped into `[0, 2^m)`), which is not built.
+
 - **The pre-Hilbert layer, brick 74 — THE L² INNER PRODUCT IS DEFINITE AT DYADIC POINTS** (new
   `Square/L2Definite.lean`): `φ(j/2^m)² > 0 ⟹ ∫₀¹ φ² > 0` (`innerI_self_pos_of_dyadic`), hence
   `∫₀¹ φ² ≈ 0` forces `φ` to vanish at every dyadic point of `[0,1)`

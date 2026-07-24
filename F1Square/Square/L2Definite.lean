@@ -107,6 +107,13 @@ theorem affineMap_dist_le (A W : Q) (hA : 0 < A.den) (hW : 0 < W.den) (hWn : 0 �
   refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ hW hWn) hxabs) ?_
   exact Rle_of_Req (Rmul_one _)
 
+/-- `|a − c| ≤ |a − b| + |b − c|` (local copy). -/
+private theorem abs_sub_tri3 (a b c : Real) :
+    Rle (Rabs (Rsub a c)) (Radd (Rabs (Rsub a b)) (Rabs (Rsub b c))) := by
+  refine Rle_trans (Rle_of_Req (Rabs_congr (Req_symm (Radd_Rsub_Rsub b c a)))) ?_
+  refine Rle_trans (Rabs_Radd (Rsub b c) (Rsub a b)) ?_
+  exact Rle_of_Req (Radd_comm (Rabs (Rsub b c)) (Rabs (Rsub a b)))
+
 /-- `c − (a − y) ≈ RsumL [c, −a, y]` — flattening, so the swap below is a permutation.
     (The pointwise route is NOT available: the two sides put `c` and `y` at different
     reindexing depths, so `Req_of_seq_Qeq` would be comparing different approximants.) -/
@@ -254,5 +261,59 @@ theorem polyPN_dyadic_zero (a b : Nat → Nat) (d : Nat)
     (m j : Nat) (hj : j < 2 ^ m) :
     Req ((polyPN a b d).f (ofQ (⟨(j : Int), 2 ^ m⟩ : Q) (two_pow_pos m))) zero :=
   innerI_self_zero_imp_dyadic_zero (polyPN a b d) (innerI_polyPN_self_zero a b d h) m j hj
+
+-- ===========================================================================
+-- Toward density: the piece lemma with the point only NEAR the endpoint.
+-- ===========================================================================
+
+set_option maxHeartbeats 1000000 in
+/-- **THE PIECE CARRIES A CONSTANT, FOR A NEARBY POINT**: `sq_ge_on_piece` with the hypothesis
+    `ofQ A ≈ p` weakened to `|ofQ A − p| ≤ W`. The drop across the piece is then at most `2·Lg·W`
+    rather than `Lg·W`, since the point may sit a full width away from the endpoint.
+
+    This is the reusable half of the density extension: for a general real `x` one cannot ask for
+    a dyadic endpoint EQUAL to `x`, only for one within a chosen width. -/
+theorem sq_ge_on_piece_near (φ : L2Test) (A W : Q) (hAd : 0 < A.den) (hWd : 0 < W.den)
+    (hWn : 0 ≤ W.num) (p : Real)
+    (hnear : Rle (Rabs (Rsub (ofQ A hAd) p)) (ofQ W hWd))
+    (a : Q) (had : 0 < a.den)
+    (hale : Rle (ofQ a had) (Rmul (φ.f p) (φ.f p)))
+    (hLW : Qle (mul (l2L φ φ) (mul (⟨2, 1⟩ : Q) W)) (mul a (⟨1, 2⟩ : Q)))
+    (x : Real) (h0 : Rle zero x) (h1 : Rle x one) :
+    Rle (ofQ (mul a (⟨1, 2⟩ : Q)) (Qmul_den_pos had (by decide)))
+      (Rmul (φ.f (affineMap A W hAd hWd x)) (φ.f (affineMap A W hAd hWd x))) := by
+  have hhd : 0 < (mul a (⟨1, 2⟩ : Q)).den := Qmul_den_pos had (by decide)
+  have h2Wd : 0 < (mul (⟨2, 1⟩ : Q) W).den := Qmul_den_pos (by decide) hWd
+  -- distance from `p` to the running point: through the endpoint, so two widths
+  have hdist : Rle (Rabs (Rsub p (affineMap A W hAd hWd x))) (ofQ (mul (⟨2, 1⟩ : Q) W) h2Wd) := by
+    have hb1 : Rle (Rabs (Rsub p (ofQ A hAd))) (ofQ W hWd) :=
+      Rle_trans (Rle_of_Req (Req_symm (Rabs_Rneg _)))
+        (Rle_trans (Rle_of_Req (Rabs_congr (Rneg_Rsub_flip _ _))) hnear)
+    have hb2 : Rle (Rabs (Rsub (ofQ A hAd) (affineMap A W hAd hWd x))) (ofQ W hWd) :=
+      Rle_trans (Rle_of_Req (Req_symm (Rabs_Rneg _)))
+        (Rle_trans (Rle_of_Req (Rabs_congr (Rneg_Rsub_flip _ _)))
+          (affineMap_dist_le A W hAd hWd hWn x h0 h1))
+    refine Rle_trans (abs_sub_tri3 p (ofQ A hAd) (affineMap A W hAd hWd x)) ?_
+    refine Rle_trans (Radd_le_add hb1 hb2) ?_
+    refine Rle_trans (Rle_of_Req (Radd_ofQ_ofQ hWd hWd)) ?_
+    exact Rle_ofQ_ofQ _ h2Wd (Qeq_le (by simp only [Qeq, add, mul]; push_cast; ring_uor))
+  have hdrop : Rle (Rabs (Rsub (Rmul (φ.f p) (φ.f p))
+        (Rmul (φ.f (affineMap A W hAd hWd x)) (φ.f (affineMap A W hAd hWd x)))))
+      (ofQ (mul (l2L φ φ) (mul (⟨2, 1⟩ : Q) W)) (Qmul_den_pos (l2L_den φ φ) h2Wd)) := by
+    refine Rle_trans (l2lip φ φ p (affineMap A W hAd hWd x)) ?_
+    refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ (l2L_den φ φ) (l2L_num φ φ)) hdist) ?_
+    exact Rle_of_Req (Rmul_ofQ_ofQ (l2L_den φ φ) h2Wd)
+  have hsub : Rle (Rsub (Rmul (φ.f p) (φ.f p))
+      (Rmul (φ.f (affineMap A W hAd hWd x)) (φ.f (affineMap A W hAd hWd x))))
+      (ofQ (mul a (⟨1, 2⟩ : Q)) hhd) :=
+    Rle_trans (Rle_Rabs_self _) (Rle_trans hdrop (Rle_ofQ_ofQ _ hhd hLW))
+  have h1' : Rle (Rsub (ofQ a had)
+      (Rmul (φ.f (affineMap A W hAd hWd x)) (φ.f (affineMap A W hAd hWd x))))
+      (ofQ (mul a (⟨1, 2⟩ : Q)) hhd) :=
+    Rle_trans (Rsub_le_mono hale (Rle_refl _)) hsub
+  refine Rle_trans (Rle_of_Req ?_) (Rle_sub_swap h1')
+  refine Req_symm (sub_ofQ_val had hhd hhd ?_)
+  show Qeq (add a (neg (mul a (⟨1, 2⟩ : Q)))) (mul a (⟨1, 2⟩ : Q))
+  simp only [Qeq, add, neg, mul]; push_cast; ring_uor
 
 end UOR.Bridge.F1Square.Square

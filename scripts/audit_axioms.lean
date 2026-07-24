@@ -5476,3 +5476,6 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_self_pos_of_dyadic
 #print axioms Square.innerI_self_zero_imp_dyadic_zero
 #print axioms Square.polyPN_dyadic_zero
+-- brick 74b: the piece lemma with the point only NEAR the endpoint — the reusable half of the
+-- density extension (a general real has no dyadic endpoint EQUAL to it, only ones within a width).
+#print axioms Square.sq_ge_on_piece_near
