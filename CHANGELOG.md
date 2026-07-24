@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 88 — THE MELLIN TRANSFORM SEPARATES POLYNOMIAL TESTS** (new
+  `Square/MellinInjectivePair.lean`): the two-test form of injectivity — two compactly supported
+  polynomial tests whose transforms (= moments) agree below `max d d'` are the same function on
+  `[0,1]` (`polyPN_moment_eq_imp_function_eq`). The difference `p − q` is decomposed through
+  `innerI`-bilinearity (`innerI_sub_left`) into `polyN` pieces, each killed by brick 64's
+  `innerI_polyPN_zero` — so no coefficient addition through the sealed `natScale` is needed — giving
+  `⟨p−q, p−q⟩ ≈ 0`, and brick 79's definiteness forces `p ≈ q` pointwise on `[0,1]`. **Honest scope**:
+  separation on the *polynomial* class — the uniqueness direction of the transform pair there, not
+  the full pair/inversion, not the continuous parameter, not beyond polynomials (the open
+  general-determinacy question, Bernstein). Nothing touches the Weil form; step 4 is RH; crux fields
+  stay `none`.
 - **The pre-Hilbert layer, brick 87 — THE MELLIN TRANSFORM IS INJECTIVE ON THE COMPACT POLYNOMIAL
   CLASS** (new `Square/MellinInjective.lean`): a compactly supported polynomial test whose transform
   vanishes below its coefficient count (`HatVanishes … d`, i.e. `f̂(n) = 0` for `n < d`) is the zero

@@ -5595,3 +5595,13 @@ open UOR.Bridge.F1Square
 -- polyPN_level_null (co-support ⟹ L²-null) welded to brick 79's definiteness (L²-null ⟹ pointwise
 -- zero). The injectivity half of the transform pair, for the polynomial class.
 #print axioms Square.polyPN_hatVanishes_zero_function
+
+-- THE PRE-HILBERT LAYER, brick 88 (Square/MellinInjectivePair.lean) — THE MELLIN TRANSFORM SEPARATES
+-- POLYNOMIAL TESTS: two compact polynomial tests with transforms (= moments) agreeing below max d d'
+-- are the same function on [0,1] (polyPN_moment_eq_imp_function_eq). The difference is decomposed via
+-- innerI-bilinearity into polyN pieces (each killed by brick 64's innerI_polyPN_zero) — no natScale
+-- coefficient addition needed — so ⟨p−q,p−q⟩≈0, then brick 79 definiteness gives p≈q on [0,1]. The
+-- uniqueness direction of the transform pair, on the polynomial class.
+#print axioms Square.innerI_polyPN_diff_zero
+#print axioms Square.innerI_polyPN_diff_self_zero
+#print axioms Square.polyPN_moment_eq_imp_function_eq
