@@ -27,7 +27,13 @@ The limit is then three applications of `riemannIntegral_dyadic_dist` and the Ar
 criterion: the gap is `(D + E)/(k+1)` for every `k`, where `D` and `E` are the two effective
 dyadic error constants.
 
-HONEST SCOPE. One split, at the midpoint, for the Lipschitz class on `[0,1]`. Composing it under
+HONEST SCOPE. One split, at the midpoint, for the Lipschitz class on `[0,1]`.
+NOTE ON "the Lipschitz class on `[0,1]`". The hypothesis `hlip` quantifies over ALL reals, not
+just `[0,1]`, so the class is the GLOBALLY Lipschitz functions — `x(1−x)` as a bare function is
+not in it, and callers supply a clamped representative (`clampTest`). This is the standing
+convention of the `riemannIntegral` gateway and of `L2Test`, inherited rather than introduced
+here, but the shorter phrase reads as a weaker requirement than the statement imposes.
+ Composing it under
 the affine pullback gives every dyadic subdivision, but that composition is not performed here,
 and nothing about non-dyadic split points is claimed. Nothing here touches the Weil form or the
 crux; it is integration substrate. The crux fields stay `none`.

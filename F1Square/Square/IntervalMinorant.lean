@@ -7,7 +7,9 @@ BOUND ON A PIECE IS A NUMERIC LOWER BOUND ON THE INTEGRAL** —
 together with the identification of the unit interval integral with the plain one
 (`riemannIntegralI_unit`). With brick 72 these compose into the shape the definiteness argument
 needs: a positive constant on one dyadic piece forces the whole integral positive
-(`riemannIntegral_pos_of_piece`).
+(`riemannIntegral_pos_of_piece`) — **for a non-negative integrand**. That hypothesis
+(`hgnn : ∀ x, Rnonneg (g x)`) is load-bearing and easy to lose in prose: without it the other
+pieces could cancel the good one, and the descent of brick 72 does not hold.
 
 Everything here is assembly. The constant integrand is certified at modulus `0` (`const_lip0`),
 so it must be weakened to the integrand's own modulus before `riemannIntegralI_le_unit` — which is

@@ -2,10 +2,13 @@
 F1 square — **the pre-Hilbert layer, brick 74** (`L2Definite.lean`): **THE L² INNER PRODUCT IS
 DEFINITE AT DYADIC POINTS** —
 
-    `∫₀¹ φ² ≈ 0`  ⟹  `φ(j/2^m) ≈ 0`  for every dyadic point of `[0,1)`
-      (`innerI_self_zero_imp_dyadic_zero`),
+    `φ(p)² > 0`  ⟹  `∫₀¹ φ² > 0`            (`innerI_self_pos_of_dyadic`, the primary form)
+    `∫₀¹ φ² ≈ 0`  ⟹  `φ(j/2^m) ≈ 0`         (`innerI_self_zero_imp_dyadic_zero`)
 
-equivalently in the form actually proven, `φ(p)² > 0 ⟹ ∫₀¹ φ² > 0` (`innerI_self_pos_of_dyadic`).
+for every dyadic point of `[0,1)`. The second is **not** a mere restatement of the first: passing
+between them classically would be a contraposition, which is unavailable here. It is derived
+constructively instead, through `¬Pos x → Rle x zero` (valid because `¬Pos` already says every
+approximant sits below `1/(n+1)`). Both are proven separately below.
 This is what the locality chain of bricks 68–73 was built for, and it is the step that upgrades
 "moment-null" to "the zero function" on the polynomial class (`polyPN_dyadic_zero`).
 

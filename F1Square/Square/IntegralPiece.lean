@@ -18,9 +18,20 @@ form needs the split at an arbitrary interval `[a, a+w]`, which is brick 68 comp
 affine pullback and is not done here.
 
 HONEST SCOPE. Monotonicity of the certified integral against its two halves, for a non-negative
-Lipschitz integrand on `[0,1]`. Integration substrate — nothing here touches the Weil form, and
+Lipschitz integrand on `[0,1]`.
+NOTE ON "the Lipschitz class on `[0,1]`". The hypothesis `hlip` quantifies over ALL reals, not
+just `[0,1]`, so the class is the GLOBALLY Lipschitz functions — `x(1−x)` as a bare function is
+not in it, and callers supply a clamped representative (`clampTest`). This is the standing
+convention of the `riemannIntegral` gateway and of `L2Test`, inherited rather than introduced
+here, but the shorter phrase reads as a weaker requirement than the statement imposes.
+ Integration substrate — nothing here touches the Weil form, and
 nothing here is yet an `L²` definiteness statement (that needs the arbitrary-interval split and a
 constructive way to locate a point of non-vanishing). The crux fields stay `none`.
+
+SUPERSEDED. Brick 71 (`IntervalPiece.lean`) proves these for an ARBITRARY interval `[a, a+w]`,
+of which the four results here are the `a = 0, w = 1` case. They are kept because they are the
+first, most readable instance of the pattern and are cited by the CHANGELOG, but new work should
+use `riemannIntegralI_ge_left_half` / `_ge_right_half` instead.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited by
 `scripts/honesty_audit.sh`.

@@ -15,7 +15,13 @@ congruence an induction cannot connect its two sides at all. It follows from bri
 `riemannIntegral_congr_mod`: the pulled-back integrands agree pointwise because
 `ofQ a + ofQ w·x ≈ ofQ a' + ofQ w'·x`, and the moduli `L·w`, `L·w'` are `Qeq`-equal.
 
-HONEST SCOPE. The one-step bound and the endpoint congruence. The descent to a depth-`m` dyadic
+HONEST SCOPE. The one-step bound and the endpoint congruence.
+NOTE ON "the Lipschitz class on `[0,1]`". The hypothesis `hlip` quantifies over ALL reals, not
+just `[0,1]`, so the class is the GLOBALLY Lipschitz functions — `x(1−x)` as a bare function is
+not in it, and callers supply a clamped representative (`clampTest`). This is the standing
+convention of the `riemannIntegral` gateway and of `L2Test`, inherited rather than introduced
+here, but the shorter phrase reads as a weaker requirement than the statement imposes.
+ The descent to a depth-`m` dyadic
 sub-interval is the induction these support and is **not** performed here. Integration substrate;
 nothing here touches the Weil form. The crux fields stay `none`.
 
