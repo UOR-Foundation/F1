@@ -388,6 +388,7 @@ import F1Square.Square.L2Definite
 import F1Square.Square.DyadicApprox
 import F1Square.Square.L2DefiniteDensity
 import F1Square.Analysis.RSeqApprox
+import F1Square.Square.DyadicClamp
 
 open UOR.Primitives
 

@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 77 — THE CLAMPED DYADIC INDEX** (new `Square/DyadicClamp.lean`):
+  the second piece brick 76 named as missing. Brick 75's floor `⌊q·2^m⌋` lands in `[0, 2^m)` only
+  when `q` is already in `[0,1)`, but the density argument feeds it the approximants `x.seq N` of a
+  real `x ∈ [0,1]`, which need **not** be in range. `dyadJC q m := min (⌊q·2^m⌋) (2^m − 1)` caps
+  it; `dyadJC_lt` is unconditional, and `dyadJC_approx` shows the clamp is inert in range so brick
+  75's estimate survives.
+  - Honest scope: the clamped index and its range bound only. It does **not** prove the
+    approximation quality of the clamped point for an *out-of-range* `q` — that needs the
+    (decidable) case analysis on `q` below `0` / in range / at-or-above `1`, which is not carried
+    out. So `DyadicApproximable` is **still not discharged** and brick 74's definiteness remains
+    stated at dyadic points.
+
 - **Substrate — A REAL IS WITHIN `1/(N+1)` OF ITS OWN APPROXIMANT** (new
   `Analysis/RSeqApprox.lean`): `|x − ofQ (x.seq N)| ≤ 1/(N+1)` (`Rabs_sub_seq_le`, and the flipped
   orientation `Rabs_seq_sub_le`). One of the two pieces brick 76 named as missing. It says a Bishop

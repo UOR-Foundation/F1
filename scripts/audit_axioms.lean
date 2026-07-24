@@ -5503,3 +5503,11 @@ open UOR.Bridge.F1Square
 -- read off a rational within a prescribed distance and then locate THAT (decidable).
 #print axioms Analysis.Rabs_sub_seq_le
 #print axioms Analysis.Rabs_seq_sub_le
+
+-- THE PRE-HILBERT LAYER, brick 77 (Square/DyadicClamp.lean) — THE CLAMPED DYADIC INDEX: brick 75's
+-- floor lands in [0,2^m) only for an in-range rational, but the density argument feeds it the
+-- approximants x.seq N of a real in [0,1], which need NOT be in range. dyadJC caps the floor; the
+-- range bound is unconditional, and the clamp is inert (so brick 75's estimate survives) in range.
+#print axioms Square.dyadJC_lt
+#print axioms Square.dyadJC_eq_of_lt
+#print axioms Square.dyadJC_approx
