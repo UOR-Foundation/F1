@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 75 — EVERY RATIONAL HAS A DYADIC POINT WITHIN `1/2^m`** (new
+  `Square/DyadicApprox.lean`): `0 ≤ q`, `q.num.toNat < q.den` gives `j = ⌊q·2^m⌋ < 2^m` with
+  `|q − j/2^m| ≤ 1/2^m` (`dyadJ_lt`, `dyadApprox_spec`) — the constructive floor the density
+  extension of brick 74 was missing.
+  - **This is where the constructivity actually lives.** One cannot locate a *real* (given `x`
+    there is no deciding `x ≤ 1/2`), but one *can* locate a *rational*, because `ℚ` has decidable
+    order and `ℕ` division is computable. Every real carries rational approximants `x.seq N` of
+    known accuracy, so locating the rational suffices.
+  - The witness is `ℕ` division and its correctness is the division algorithm and nothing else:
+    `d·j + r = n·2^m` with `r < d` *is* `|q − j/2^m| ≤ 1/2^m` after clearing denominators.
+  - Two gate catches, both `Classical.choice` leaks that `lake build` accepted and `#print axioms`
+    rejected: **`omega` reasons classically about `n / d` when the divisor is a variable**, and
+    `Nat.lt_of_mul_lt_mul_left` is itself choice-dependent. Both replaced by explicit choice-free
+    steps (`bracket_core`'s two `calc`s; a `Nat.lt_or_ge` split for the cancellation).
+  - Honest scope: the **rational** half of the density argument, complete and self-contained. The
+    assembly — pushing it through `x.seq N` to a real `x`, then through `sq_ge_on_piece_near` to
+    conclude `φ(x) ≈ 0` for every `x ∈ [0,1]` — is **not** performed. Until it is, brick 74's
+    definiteness remains stated at dyadic points.
+
 - **Toward density (in `Square/L2Definite.lean`)** — `sq_ge_on_piece_near`: brick 74's piece lemma
   with the hypothesis `ofQ A ≈ p` weakened to `|ofQ A − p| ≤ W`, the drop across the piece becoming
   `2·Lg·W`. This is the reusable half of the extension from dyadic points to **all** points: for a

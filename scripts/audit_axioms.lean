@@ -5479,3 +5479,12 @@ open UOR.Bridge.F1Square
 -- brick 74b: the piece lemma with the point only NEAR the endpoint — the reusable half of the
 -- density extension (a general real has no dyadic endpoint EQUAL to it, only ones within a width).
 #print axioms Square.sq_ge_on_piece_near
+
+-- CERTIFIED INTEGRATION, brick 75 (Square/DyadicApprox.lean) — EVERY RATIONAL HAS A DYADIC POINT
+-- WITHIN 1/2^m: the constructive floor ⌊q·2^m⌋ as ℕ division, with the division algorithm as its
+-- whole correctness proof. This is where the constructivity of the density argument lives: one
+-- cannot locate a REAL, but one can locate a RATIONAL, and every real carries rational approximants.
+#print axioms Square.dyadJ_bracket
+#print axioms Square.dyadJ_lt
+#print axioms Square.dyadApprox_gen
+#print axioms Square.dyadApprox_spec
