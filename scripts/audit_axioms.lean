@@ -5496,3 +5496,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.abs_le_of_near_dyadic
 #print axioms Square.zero_of_dyadic_approximable
 #print axioms Square.dyadicApproximable_dyadPt
+
+-- THE REAL-TO-APPROXIMANT BOUND (Analysis/RSeqApprox.lean) — |x − ofQ (x.seq N)| ≤ 1/(N+1): a
+-- Bishop real's rational data is an EFFECTIVE approximation with a known rate. This is the missing
+-- half of the density argument for L2Definite: one cannot locate a real by comparison, but one can
+-- read off a rational within a prescribed distance and then locate THAT (decidable).
+#print axioms Analysis.Rabs_sub_seq_le
+#print axioms Analysis.Rabs_seq_sub_le

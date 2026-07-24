@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Substrate — A REAL IS WITHIN `1/(N+1)` OF ITS OWN APPROXIMANT** (new
+  `Analysis/RSeqApprox.lean`): `|x − ofQ (x.seq N)| ≤ 1/(N+1)` (`Rabs_sub_seq_le`, and the flipped
+  orientation `Rabs_seq_sub_le`). One of the two pieces brick 76 named as missing. It says a Bishop
+  real's rational data is an *effective* approximation with a known rate, which is what makes the
+  density argument possible: one cannot locate a real by comparison, but one can read off a
+  rational within a prescribed distance and locate **that**, which is decidable. Definitional
+  unwinding plus regularity — `Rsub x (ofQ q)` reads at `2n+1`, and the slack `1/(2n+2) ≤ 2/(n+1)`
+  closes it.
+
 - **The pre-Hilbert layer, brick 76 — THE TRANSPORT HALF OF DENSITY** (new
   `Square/L2DefiniteDensity.lean`): brick 74 gave `∫₀¹ φ² ≈ 0 ⟹ φ(p) ≈ 0` at dyadic `p`; this
   carries the value to any point the dyadics approximate.
