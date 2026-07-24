@@ -16,6 +16,28 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 74 — THE L² INNER PRODUCT IS DEFINITE AT DYADIC POINTS** (new
+  `Square/L2Definite.lean`): `φ(j/2^m)² > 0 ⟹ ∫₀¹ φ² > 0` (`innerI_self_pos_of_dyadic`), hence
+  `∫₀¹ φ² ≈ 0` forces `φ` to vanish at every dyadic point of `[0,1)`
+  (`innerI_self_zero_imp_dyadic_zero`). This is what the locality chain of bricks 68–73 was for.
+  - **The constructive point.** A definiteness argument classically picks a neighbourhood of a
+    point where `|φ|` is large; constructively one may not *locate* a real, since given `x₀` there
+    is no deciding whether `x₀ ≤ 1/2`. Restricting to **dyadic** points dissolves this: `p = j/2^m`
+    already *is* a dyadic endpoint, so the piece is the depth-`(M+m)` interval at index `j·2^M`,
+    computed entirely in `ℕ`. No order on reals is decided anywhere.
+  - The rest is arithmetic on `g = φ·φ`, already certified with modulus `l2L φ φ`: `Pos (g p)`
+    gives a rational `a > 0` below it (`Pos_imp_ofQ_le`); the depth is chosen so the Lipschitz drop
+    across the piece is `≤ a/2` (`exists_depth`, via `Nat.lt_two_pow_self`), leaving `g ≥ a/2`
+    there (`sq_ge_on_piece`); brick 73 converts that into `Pos (∫₀¹ g)`.
+  - **Brick 64 is upgraded on the polynomial class** (`polyPN_dyadic_zero`): a `d`-coefficient
+    polynomial test with `d` vanishing moments is zero at every dyadic point — determinacy at the
+    level of the *function*, not only its moments. `PolyDeterminacy.lean`'s scope note is corrected
+    accordingly (it had said the pointwise step was unreachable for want of interval splitting;
+    bricks 68–73 supply exactly that, so the note was stale).
+  - Honest scope: definiteness **at dyadic points**. Extending to every real point is a density
+    argument and is **not** performed here; nor is the moment problem — this says nothing about
+    whether a nonzero test can have all *moments* vanishing, which still needs Bernstein.
+
 - **Certified integration, brick 73 — A POINTWISE BOUND ON A PIECE IS A NUMERIC BOUND ON THE
   INTEGRAL** (new `Square/IntervalMinorant.lean`): `c ≤ g` on `[a, a+w]` gives
   `w·c ≤ ∫_a^{a+w} g` (`riemannIntegralI_ge_const`), plus `riemannIntegralI_unit` identifying

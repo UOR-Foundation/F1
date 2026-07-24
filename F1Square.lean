@@ -384,12 +384,14 @@ import F1Square.Square.IntervalSplit
 import F1Square.Square.IntervalPiece
 import F1Square.Square.DyadicDescent
 import F1Square.Square.IntervalMinorant
+import F1Square.Square.L2Definite
 import F1Square.Square.IntegralSplit
 import F1Square.Square.IntegralPiece
 import F1Square.Square.IntervalSplit
 import F1Square.Square.IntervalPiece
 import F1Square.Square.DyadicDescent
 import F1Square.Square.IntervalMinorant
+import F1Square.Square.L2Definite
 
 open UOR.Primitives
 

@@ -5463,3 +5463,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegralI_ge_const
 #print axioms Square.riemannIntegralI_unit
 #print axioms Square.riemannIntegral_pos_of_piece
+
+-- THE PRE-HILBERT LAYER, brick 74 (Square/L2Definite.lean) — THE L² INNER PRODUCT IS DEFINITE AT
+-- DYADIC POINTS: φ(j/2^m)² > 0 ⟹ ∫₀¹ φ² > 0, hence ∫₀¹ φ² ≈ 0 ⟹ φ vanishes at every dyadic
+-- point. Restricting to DYADIC points removes the constructive location problem entirely — the
+-- point IS a dyadic endpoint, so the enclosing piece is computed in ℕ with no real order decided.
+-- Upgrades brick 64's determinacy from the moments to the FUNCTION on the polynomial class.
+#print axioms Square.sq_nonneg_pt
+#print axioms Square.exists_depth
+#print axioms Square.affineMap_dist_le
+#print axioms Square.sq_ge_on_piece
+#print axioms Square.innerI_self_pos_of_dyadic
+#print axioms Square.innerI_self_zero_imp_dyadic_zero
+#print axioms Square.polyPN_dyadic_zero
