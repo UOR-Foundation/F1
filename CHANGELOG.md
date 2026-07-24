@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 85 — THE THREE FLAGSHIP LEVEL-3 MEMBERS ARE PAIRWISE-DISTINCT
+  FUNCTIONS ON `[0,1]`** (new `Square/CoSupportPairwise.lean`): brick 84's bridge across all three
+  pairs — `deep3`/`deep4` and `deep3`/`deep5` differ at the third moment (`−1/2520` vs `0`),
+  `deep4`/`deep5` at the fourth (`1/13860` vs `0`) — bundled as `deep345_pairwise_distinct_on_unit`.
+  So the moment-table independence (`deep345_independent`) is fully upgraded to a function-level
+  statement for the realized triple. **Honest scope**: pairwise distinctness (each pair does not
+  agree everywhere — the constructive negation), weaker than function-level linear independence of
+  the triple; realized members only. Nothing touches the Weil form; step 4 is RH; crux fields stay
+  `none`.
 - **The pre-Hilbert layer, brick 84 — DISTINCT CO-SUPPORT LEVELS ARE DISTINCT FUNCTIONS ON
   `[0,1]`** (new `Square/CoSupportDistinct.lean`): the reusable bridge
   `distinct_on_unit_of_moment_ne` — two tests whose *difference* carries a nonzero moment cannot

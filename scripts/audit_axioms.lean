@@ -5570,3 +5570,11 @@ open UOR.Bridge.F1Square
 -- [0,1] — upgrading the moment-table independence to function level.
 #print axioms Square.distinct_on_unit_of_moment_ne
 #print axioms Square.deep3_deep4_distinct_on_unit
+
+-- THE PRE-HILBERT LAYER, brick 85 (Square/CoSupportPairwise.lean) — THE THREE FLAGSHIP LEVEL-3
+-- MEMBERS ARE PAIRWISE-DISTINCT FUNCTIONS ON [0,1]: brick 84's technique across all three pairs
+-- (deep3/deep4 & deep3/deep5 differ at moment 3 = −1/2520 vs 0; deep4/deep5 differ at moment 4 =
+-- 1/13860 vs 0), upgrading deep345_independent from moments to functions for the realized triple.
+#print axioms Square.deep3_deep5_distinct_on_unit
+#print axioms Square.deep4_deep5_distinct_on_unit
+#print axioms Square.deep345_pairwise_distinct_on_unit
