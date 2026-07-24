@@ -5537,3 +5537,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.dist2I_zero_imp_pointwise_eq
 #print axioms Square.innerI_sub_self_zero_imp_pointwise_eq
 #print axioms Square.polyPN_dist2I_zero_imp_eq
+
+-- THE PRE-HILBERT LAYER, brick 81 (Square/L2DefiniteIff.lean) — ⟨φ,φ⟩ IS A DEFINITE INNER PRODUCT
+-- ON [0,1]: the reverse of brick 79. A function vanishing at every point of [0,1] has zero L²
+-- energy (riemannIntegral_zero_of_partition_zero: the Riemann sums sample only i/(N+1) ∈ [0,1), so
+-- partition-point vanishing kills every sum, hence dyadic sums, hence the telescoping limit). With
+-- brick 79 forward this closes the iff (innerI_self_zero_iff_unit_zero) — the L² seminorm is a
+-- genuine norm mod pointwise-[0,1] equality.
+#print axioms Square.riemannIntegral_zero_of_partition_zero
+#print axioms Square.innerI_self_zero_of_unit_zero
+#print axioms Square.innerI_self_zero_iff_unit_zero

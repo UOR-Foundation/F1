@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 81 — `⟨φ,φ⟩` IS A DEFINITE INNER PRODUCT ON `[0,1]`** (new
+  `Square/L2DefiniteIff.lean`): the reverse of brick 79, closing definiteness to an **iff**
+  (`innerI_self_zero_iff_unit_zero`): `∫₀¹ φ² ≈ 0 ⟺ ∀ x ∈ [0,1], φ(x) ≈ 0`. The new direction — a
+  test vanishing at every point of `[0,1]` has zero `L²` energy (`innerI_self_zero_of_unit_zero`) —
+  goes through a **`[0,1]`-restricted** integral argument: the certified Riemann sums sample only the
+  rational partition points `i/(N+1) ∈ [0,1)`, so an integrand vanishing there has every Riemann sum
+  zero, hence every dyadic sum, hence the telescoping limit zero
+  (`riemannIntegral_zero_of_partition_zero`, via `riemannSum_congr` + `RsumN_const` +
+  `genSum_telescope` + `Rlim_zero`). The generic congruence lemmas quantify over *all* reals and are
+  unusable here (the converse is false off `[0,1]`, where the integral is blind), so the
+  partition-restricted lemma is the load-bearing new piece.
+  - Together the two directions make the `L²` seminorm a genuine **norm** on the bounded-Lipschitz
+    class mod pointwise-`[0,1]` equality: the pairing is positive-**definite**. **Honest scope**:
+    still not the moment problem (a nonzero test with every *moment* vanishing needs Bernstein).
+    Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 80 — THE `L²` INNER PRODUCT SEPARATES POINTS OF `[0,1]`** (new
   `Square/L2Separation.lean`): two tests at `L²` distance zero agree at every point of `[0,1]`
   (`dist2I_zero_imp_pointwise_eq`) — brick 79's point-definiteness applied to the difference test
