@@ -16,6 +16,30 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 68 — THE INTEGRAL SPLITS AT THE MIDPOINT** (new
+  `Square/IntegralSplit.lean`): `∫₀¹ f ≈ ∫₀^{1/2} f + ∫_{1/2}^1 f`
+  (`riemannIntegral_split_half`), the one structural law the integral gateway did not have.
+  - Every prior law of the gateway — `riemannIntegral_nonneg`, `_le`, `_add`, `_congr`, `_neg`,
+    `_smul` and their interval mirrors — acts on a **fixed** interval. Nothing related an integral
+    to integrals over its sub-intervals, which is why "positive on a piece ⟹ positive overall"
+    had no route, and with it `∫₀¹ φ² ≈ 0 ⟹ φ ≈ 0` (L² definiteness) — the step that would let
+    brick 64's determinacy be stated as "is the zero function" rather than "is moment-null".
+  - The proof is exact at every finite level: the partition points of the two halves at level `m`
+    **interleave** into those of `f` at level `m+1` (`affine_left_point`, `affine_right_point`), so
+    `½·D_m(f(x/2)) + ½·D_m(f((1+x)/2)) = D_{m+1}(f)` as a finite identity (`riemannSum_halves`,
+    `dyadicR_halves`) with `RsumN_split_at` doing the two-block flattening. Only then is a limit
+    taken: three `riemannIntegral_dyadic_dist` reads at a common depth, gap `(D+E)/(k+1)` for every
+    `k`, closed both ways by the Archimedean criterion.
+  - Two mechanization notes worth keeping: the `Nat` indices sit inside the `Nat.succ_pos` proof
+    terms the denominators carry, so they must be moved by `subst`-based index congruences
+    (`riemannSum_idx`, `RsumN_idx`), never by `rw`; and `riemannIntegral`'s implicit integrand
+    must **not** be left to unification against an inline lambda carrying `by decide` proofs —
+    that whnf-explodes, and naming the pullbacks (`halfL`, `halfR`) fixes it.
+  - Honest scope: one split, at the midpoint, for the Lipschitz class on `[0,1]`. Composing it
+    under the affine pullback gives every dyadic subdivision, but that composition is not performed
+    here, and nothing about non-dyadic split points is claimed. Integration substrate only —
+    nothing here touches the Weil form; the crux fields stay `none`.
+
 - **The pre-Hilbert layer, brick 67 — THE LEVEL IS AT LEAST THREE-DIMENSIONAL, AND A RETRACTION**
   (new `Square/CoSupportDimThree.lean`): `a·deep3 + b·deep4 + c·deep5` with vanishing `x³`, `x⁴`
   and `x⁵` moments forces `a = b = c = 0` (`deep345_independent`) — the third coefficient brick 55

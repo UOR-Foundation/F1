@@ -5400,3 +5400,18 @@ open UOR.Bridge.F1Square
 -- DEFAULT heartbeat budget, because the assembled identity is linear in the coefficients.
 #print axioms Square.combo345_moment_five
 #print axioms Square.deep345_independent
+
+-- CERTIFIED INTEGRATION, THE SPLITTING LAW (Square/IntegralSplit.lean) — ∫₀¹ f ≈ ∫₀^{1/2} f +
+-- ∫_{1/2}^1 f. The one structural law the integral gateway lacked: every prior law acted on a
+-- FIXED interval, so "positive on a piece ⟹ positive overall" had no route. Proof: an EXACT
+-- finite identity on the dyadic sums (the two half partitions interleave into the finer one),
+-- then three riemannIntegral_dyadic_dist reads at a common depth + the Archimedean criterion.
+#print axioms Square.riemannSum_idx
+#print axioms Square.RsumN_idx
+#print axioms Square.affine_left_point
+#print axioms Square.affine_right_point
+#print axioms Square.riemannSum_halves
+#print axioms Square.dyadicR_halves
+#print axioms Square.dyadicR_halves_named
+#print axioms Square.riemannIntegral_split_half_gen
+#print axioms Square.riemannIntegral_split_half
