@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 73 — A POINTWISE BOUND ON A PIECE IS A NUMERIC BOUND ON THE
+  INTEGRAL** (new `Square/IntervalMinorant.lean`): `c ≤ g` on `[a, a+w]` gives
+  `w·c ≤ ∫_a^{a+w} g` (`riemannIntegralI_ge_const`), plus `riemannIntegralI_unit` identifying
+  `∫_0^{0+1}` with the plain `∫₀¹`. Composed with brick 72: **a positive constant on one dyadic
+  piece forces the whole integral positive** (`riemannIntegral_pos_of_piece`).
+  - The comparison used is the **local** one (`riemannIntegralI_le_unit`), needing `c ≤ g` only on
+    the affine image of `[0,1]` — i.e. only on the piece. That locality is the whole point: the
+    bound is available on the small interval and nowhere else.
+  - Honest scope: this consumes a piece and a certified bound on it and produces the integral
+    bound. It does **not** produce them. For `L²` definiteness one still has to choose the dyadic
+    depth from the Lipschitz constant and the size of `|φ|` at the point — the arithmetic step,
+    not done here.
+
 - **Certified integration, brick 72 — EVERY DYADIC SUB-INTERVAL LOWER-BOUNDS THE WHOLE** (new
   `Square/DyadicDescent.lean`): for a non-negative integrand and `j < 2^m`,
   `∫_{a+j·w/2^m}^{a+(j+1)·w/2^m} f ≤ ∫_a^{a+w} f` (`riemannIntegralI_ge_dyadic`) — the induction

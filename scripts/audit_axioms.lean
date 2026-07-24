@@ -5455,3 +5455,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.dyadW_num
 #print axioms Square.dyadA_den
 #print axioms Square.riemannIntegralI_ge_dyadic
+
+-- CERTIFIED INTEGRATION, brick 73 (Square/IntervalMinorant.lean) — A POINTWISE LOWER BOUND ON A
+-- PIECE IS A NUMERIC LOWER BOUND ON THE INTEGRAL: c ≤ g on [a,a+w] ⟹ w·c ≤ ∫_a^{a+w} g, via the
+-- LOCAL comparison riemannIntegralI_le_unit (the bound is needed only on the piece). Composed with
+-- brick 72's descent: a positive constant on one dyadic piece forces the whole integral positive.
+#print axioms Square.riemannIntegralI_ge_const
+#print axioms Square.riemannIntegralI_unit
+#print axioms Square.riemannIntegral_pos_of_piece
