@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 80 — THE `L²` INNER PRODUCT SEPARATES POINTS OF `[0,1]`** (new
+  `Square/L2Separation.lean`): two tests at `L²` distance zero agree at every point of `[0,1]`
+  (`dist2I_zero_imp_pointwise_eq`) — brick 79's point-definiteness applied to the difference test
+  (`dist2I φ ψ = ⟨φ−ψ, φ−ψ⟩`, so `≈ 0` forces `(φ−ψ)(x) ≈ 0`, and `(φ−ψ)(x) = φ(x) − ψ(x)`
+  definitionally). The `L²` class thereby **injects into the values on `[0,1]`**: the pairing's null
+  relation is pointwise equality there, so the completion axis is a genuine *pre-Hilbert* structure,
+  not merely semi-normed. Specialized to the polynomial class in `polyPN_dist2I_zero_imp_eq`.
+  - **Honest scope**: one direction, on `[0,1]` only — separation (injectivity into functions on
+    `[0,1]`), not a full isometry. The converse (agree on `[0,1]` ⟹ `dist2I ≈ 0`) is the
+    integral-of-a-vanishing-integrand direction, false off `[0,1]` and needing a `[0,1]`-restricted
+    argument not performed. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 79 — DEFINITENESS AT EVERY POINT OF `[0,1]`** (new
   `Square/DyadicDenseReal.lean`): every unit-interval real is dyadically approximable
   (`dyadicApproximable_of_unit`), discharging brick 76's `DyadicApproximable` hypothesis for an

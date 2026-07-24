@@ -391,6 +391,7 @@ import F1Square.Analysis.RSeqApprox
 import F1Square.Square.DyadicClamp
 import F1Square.Square.DyadicDense
 import F1Square.Square.DyadicDenseReal
+import F1Square.Square.L2Separation
 
 open UOR.Primitives
 

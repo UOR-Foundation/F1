@@ -5528,3 +5528,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.dyadicApproximable_of_unit
 #print axioms Square.innerI_self_zero_imp_zero
 #print axioms Square.polyPN_unit_zero
+
+-- THE PRE-HILBERT LAYER, brick 80 (Square/L2Separation.lean) — THE L² INNER PRODUCT SEPARATES
+-- POINTS OF [0,1]: brick 79's point-definiteness applied to the difference test — dist2I φ ψ ≈ 0
+-- forces (φ−ψ)(x) ≈ 0 at every point of [0,1], i.e. φ(x) ≈ ψ(x). So the L² class injects into the
+-- values on [0,1] (a genuine SEPARATING form). One direction; the converse is the [0,1]-restricted
+-- integral-of-a-vanishing-integrand direction, not performed.
+#print axioms Square.dist2I_zero_imp_pointwise_eq
+#print axioms Square.innerI_sub_self_zero_imp_pointwise_eq
+#print axioms Square.polyPN_dist2I_zero_imp_eq
