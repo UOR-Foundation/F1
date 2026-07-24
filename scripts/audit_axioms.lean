@@ -5436,3 +5436,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.affineMap_half_left
 #print axioms Square.affineMap_half_right
 #print axioms Square.riemannIntegralI_split_half
+
+-- CERTIFIED INTEGRATION, brick 71 (Square/IntervalPiece.lean) — A HALF OF AN INTERVAL LOWER-BOUNDS
+-- IT, and interval integrals see their endpoints only through Qeq. The Qeq congruence is what an
+-- induction over dyadic descents needs: a descent computes endpoints (a + 2q·w/2^{m+1} vs
+-- a + q·w/2^m) that are equal rationals but not equal terms.
+#print axioms Square.riemannIntegralI_congr_Q
+#print axioms Square.riemannIntegralI_ge_left_half
+#print axioms Square.riemannIntegralI_ge_right_half

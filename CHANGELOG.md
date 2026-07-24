@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 71 — A HALF LOWER-BOUNDS ITS INTERVAL, AND ENDPOINTS ONLY
+  MATTER UP TO `Qeq`** (new `Square/IntervalPiece.lean`): the general form of brick 69, plus the
+  congruence an induction over dyadic descents actually needs.
+  - `riemannIntegralI_ge_left_half` / `_ge_right_half`: for a non-negative integrand each half of
+    `[a, a+w]` lower-bounds it — brick 70's split with the other half thrown away.
+  - `riemannIntegralI_congr_Q`: interval integrals depend on `(a, w)` only through `Qeq`. This was
+    quietly missing and blocks any descent on its own: a descent computes `a + 2q·w/2^{m+1}` on one
+    route and `a + q·w/2^m` on the other, which are equal **rationals** but not equal **terms**, so
+    the two sides of an induction could not be connected at all. It follows from brick 70's
+    `riemannIntegral_congr_mod` — the pulled-back integrands agree pointwise and the moduli `L·w`,
+    `L·w'` are `Qeq`-equal.
+  - Honest scope: the one-step bound and the endpoint congruence. The descent to a depth-`m` dyadic
+    sub-interval is the induction these support and is **not** performed here.
+
 - **Certified integration, brick 70 — EVERY INTERVAL SPLITS AT ITS MIDPOINT** (new
   `Square/IntervalSplit.lean`): `∫_a^{a+w} f ≈ ∫_a^{a+w/2} f + ∫_{a+w/2}^{a+w} f`
   (`riemannIntegralI_split_half`). Brick 68 split `[0,1]`; this is the general law, and iterating
