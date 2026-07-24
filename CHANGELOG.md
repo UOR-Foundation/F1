@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 69 — POSITIVE ON A PIECE ⟹ POSITIVE OVERALL** (new
+  `Square/IntegralPiece.lean`): the first use of brick 68's splitting law, in the shape every
+  downstream consumer wants. For a non-negative Lipschitz integrand each half of `[0,1]` is a
+  lower bound for the whole integral (`riemannIntegral_ge_left_half`,
+  `riemannIntegral_ge_right_half`), so `Pos` on a half gives `Pos` overall
+  (`riemannIntegral_pos_of_left_half`, `riemannIntegral_pos_of_right_half`).
+  - Before brick 68 this could not be said at all: every gateway law acted on a fixed interval, so
+    a bound established on part of the domain had no route to the whole. With the split it is
+    three lines — the other half is non-negative, so it can only help.
+  - Honest scope: the **coarsest** scale of the statement — halves, not arbitrary sub-intervals.
+    The general form needs the split at an arbitrary `[a, a+w]` (brick 68 composed under the
+    affine pullback), which is *not* done here, and this is therefore **not yet** an `L²`
+    definiteness statement: that additionally needs a constructive way to locate a point of
+    non-vanishing inside a dyadic piece using only rational comparisons.
+
 - **Certified integration, brick 68 — THE INTEGRAL SPLITS AT THE MIDPOINT** (new
   `Square/IntegralSplit.lean`): `∫₀¹ f ≈ ∫₀^{1/2} f + ∫_{1/2}^1 f`
   (`riemannIntegral_split_half`), the one structural law the integral gateway did not have.

@@ -5415,3 +5415,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.dyadicR_halves_named
 #print axioms Square.riemannIntegral_split_half_gen
 #print axioms Square.riemannIntegral_split_half
+
+-- CERTIFIED INTEGRATION, brick 69 (Square/IntegralPiece.lean) — POSITIVE ON A PIECE ⟹ POSITIVE
+-- OVERALL: for a non-negative Lipschitz integrand, each half of [0,1] lower-bounds the whole
+-- integral, so Pos on a half gives Pos overall. The first use of brick 68's splitting law; before
+-- it, a bound established on part of the domain could not be transported to the whole at all.
+#print axioms Square.riemannIntegral_ge_left_half
+#print axioms Square.riemannIntegral_ge_right_half
+#print axioms Square.riemannIntegral_pos_of_left_half
+#print axioms Square.riemannIntegral_pos_of_right_half

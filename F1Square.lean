@@ -379,7 +379,9 @@ import F1Square.Square.PolyMoment
 import F1Square.Square.PolyMember
 import F1Square.Square.CoSupportDimThree
 import F1Square.Square.IntegralSplit
+import F1Square.Square.IntegralPiece
 import F1Square.Square.IntegralSplit
+import F1Square.Square.IntegralPiece
 
 open UOR.Primitives
 
