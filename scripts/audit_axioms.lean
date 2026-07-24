@@ -5511,3 +5511,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.dyadJC_lt
 #print axioms Square.dyadJC_eq_of_lt
 #print axioms Square.dyadJC_approx
+
+-- THE PRE-HILBERT LAYER, brick 78 (Square/DyadicDense.lean) — DEFINITENESS AT EVERY RATIONAL POINT:
+-- the rationals of [0,1) are dyadically approximable (brick 75's floor + brick 77's clamp + 2^m
+-- outrunning any rational), which discharges brick 76's hypothesis there. So ∫₀¹φ² ≈ 0 kills φ at
+-- every rational, and brick 64's polynomial determinacy reaches the FUNCTION on a dense point set.
+#print axioms Square.dyadicApproximable_ofQ
+#print axioms Square.innerI_self_zero_imp_rational_zero
+#print axioms Square.polyPN_rational_zero

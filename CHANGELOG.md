@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 78 — DEFINITENESS AT EVERY RATIONAL POINT** (new
+  `Square/DyadicDense.lean`): the rationals of `[0,1)` are dyadically approximable
+  (`dyadicApproximable_ofQ` — brick 75's floor + brick 77's clamp + `2^m` outrunning any rational
+  via `exists_depth`), which **discharges brick 76's `DyadicApproximable` hypothesis on the
+  rationals**. So `∫₀¹ φ² ≈ 0 ⟹ φ(q) ≈ 0` at every rational `q ∈ [0,1)`
+  (`innerI_self_zero_imp_rational_zero`), and brick 64's polynomial determinacy reaches the
+  **function** on a dense point set (`polyPN_rational_zero`). Every step is a `ℚ` computation; no
+  real is compared to anything.
+  - This is a strict strengthening of brick 74 (dyadic points → all rationals). The extension to
+    **all** reals is now purely mechanical in shape — `Rabs_sub_seq_le` plus the triangle
+    inequality, with the out-of-range approximant handled by a decidable case split — but is **not**
+    performed here.
+  - Honest scope: definiteness at every rational point, still not all points, and it says nothing
+    about the moment problem (a nonzero test with all *moments* vanishing, still open, still needs
+    Bernstein).
+
 - **The pre-Hilbert layer, brick 77 — THE CLAMPED DYADIC INDEX** (new `Square/DyadicClamp.lean`):
   the second piece brick 76 named as missing. Brick 75's floor `⌊q·2^m⌋` lands in `[0, 2^m)` only
   when `q` is already in `[0,1)`, but the density argument feeds it the approximants `x.seq N` of a
