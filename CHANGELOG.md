@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 83 — THE CO-SUPPORT MEMBERS ARE GENUINELY NONZERO FUNCTIONS ON
+  `[0,1]`** (new `Square/CoSupportFunction.lean`): the function-level upgrade the definiteness iff
+  unlocks. A test with nonzero `L²` self-energy cannot vanish identically on `[0,1]`
+  (`not_vanishing_of_innerI_self_not_zero`, the `.mpr` of `innerI_self_zero_iff_unit_zero`
+  contraposed). Chained against the certified `Pos` moment-energy (`momentL2Sq_zero_of_innerI...`
+  contrapositive), `deep3` (`deep3_not_vanishing_on_unit`) and the whole `combo345 a b c` family with
+  `a ≥ 1` (`combo345_not_vanishing_on_unit`) are honestly nonzero **functions** on `[0,1]` — the
+  filtration's distinct levels are now witnessed by tests that genuinely differ *as functions* there,
+  not merely in their moments.
+  - **Honest scope**: `¬ (∀ x ∈ [0,1], φ(x) ≈ 0)` — "does not vanish identically", the constructive
+    negation of universal vanishing, NOT a constructed point of non-vanishing. The co-support
+    skeleton's positivity is still diagonal-multiplier level only. Nothing touches the Weil form;
+    step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 82 — THE `L²` DISTANCE IS A GENUINE METRIC ON `[0,1]`** (new
   `Square/L2MetricIff.lean`): the two-directional separation iff
   (`dist2I_zero_iff_pointwise_eq`): `dist2I φ ψ ≈ 0 ⟺ ∀ x ∈ [0,1], φ(x) ≈ ψ(x)`. Brick 80 forward

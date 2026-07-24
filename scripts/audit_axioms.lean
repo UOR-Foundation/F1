@@ -5553,3 +5553,12 @@ open UOR.Bridge.F1Square
 -- test) close the two-directional iff — dist2I φ ψ ≈ 0 ⟺ φ, ψ agree at every point of [0,1]. The
 -- L² distance-squared vanishes EXACTLY on the pointwise-[0,1]-equality relation.
 #print axioms Square.dist2I_zero_iff_pointwise_eq
+
+-- THE PRE-HILBERT LAYER, brick 83 (Square/CoSupportFunction.lean) — THE CO-SUPPORT MEMBERS ARE
+-- GENUINELY NONZERO FUNCTIONS ON [0,1]: the .mpr of the definiteness iff (brick 81), contraposed —
+-- a test with nonzero L² self-energy cannot vanish identically on [0,1]. Chained against the
+-- certified Pos moment-energy, deep3 and the combo345 (a≥1) family are honestly nonzero FUNCTIONS
+-- on [0,1], upgrading the filtration's strictness from moments to functions.
+#print axioms Square.not_vanishing_of_innerI_self_not_zero
+#print axioms Square.deep3_not_vanishing_on_unit
+#print axioms Square.combo345_not_vanishing_on_unit
