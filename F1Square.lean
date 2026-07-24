@@ -377,6 +377,7 @@ import F1Square.Square.L2MomentBridge
 import F1Square.Square.PolyDeterminacy
 import F1Square.Square.PolyMoment
 import F1Square.Square.PolyMember
+import F1Square.Square.CoSupportDimThree
 
 open UOR.Primitives
 

@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 67 — THE LEVEL IS AT LEAST THREE-DIMENSIONAL, AND A RETRACTION**
+  (new `Square/CoSupportDimThree.lean`): `a·deep3 + b·deep4 + c·deep5` with vanishing `x³`, `x⁴`
+  and `x⁵` moments forces `a = b = c = 0` (`deep345_independent`) — the third coefficient brick 55
+  left open.
+  - The missing entry was the `x⁵` row, the one all three members contribute to
+    (`−1/924`, `1/5544`, `−1/72072`), whose assembled identity carries the product denominator
+    `924·5544·72072 ≈ 3.7·10¹¹`.
+  - **Retraction.** Brick 55's docstring recorded that step as overrunning the elaborator's whnf
+    budget and "not worth a workaround". **That record was wrong.** The assembled identity is
+    *linear* in the coefficients, so `ring_uor` normalises it in a single pass, and
+    `combo345_moment_five` elaborates at the **default** heartbeat budget with no `set_option` at
+    all. Nothing conceptual and nothing mechanical was in the way. `CoSupportDimension.lean`'s
+    header and `deep34_independent`'s docstring are corrected in this commit to say so.
+  - Consequence: co-support level `3` carries three `ℕ`-independent constructed members, so
+    brick 58's `ℕ`-parametrized family is genuinely three-parameter.
+  - Honest scope: independence over `ℕ` coefficients of three constructed members, read off the
+    exact moment table — still not a dimension formula, still nothing about unrealized levels.
+
 - **The pre-Hilbert layer, brick 66 — THE MEMBER GENERATOR, AND THE `K = 7` MEMBER IN FIFTEEN
   LINES** (new `Square/PolyMember.lean`): brick 65 turned a polynomial test's moments into an
   explicit rational; this turns that into a *constructor*.

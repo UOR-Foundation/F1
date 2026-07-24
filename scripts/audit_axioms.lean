@@ -5392,3 +5392,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.cosupport_strict_at_seven
 #print axioms Square.cosupport_chain_strict_eight
 #print axioms Square.weil_psd_deep7
+
+-- THE PRE-HILBERT LAYER, brick 67 (Square/CoSupportDimThree.lean) — THE LEVEL IS AT LEAST
+-- THREE-DIMENSIONAL: the x⁵ row of the triangular table, where all three members contribute,
+-- closing the third coefficient brick 55 left open. Brick 55's recorded blocker (denominators
+-- 924·5544·72072 overrunning the elaborator) was WRONG and is retracted: this elaborates at the
+-- DEFAULT heartbeat budget, because the assembled identity is linear in the coefficients.
+#print axioms Square.combo345_moment_five
+#print axioms Square.deep345_independent

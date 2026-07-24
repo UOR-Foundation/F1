@@ -21,10 +21,12 @@ injectivity lemma, so the honest route is to exhibit the `Pos` witness a nonzero
 and collide it with `not_Pos_zero`. Its companion `nat_eq_zero_of_ofQ_neg_zero` handles the
 negative entries, which here are most of them.
 
-HONEST SCOPE. Independence over NATURAL-number coefficients, and only for the first TWO of the
-three members: the third step's rational identity carries denominators (`924·5544·72072`) that
-blow the elaborator's whnf budget, and is not worth a workaround for a statement the table
-already exhibits. So this is a two-dimensionality result plus the full table, not a dimension
+HONEST SCOPE. Independence over NATURAL-number coefficients, and here only for the first TWO of
+the three members. (The third step is NOT blocked: brick 67 closes it in
+`CoSupportDimThree.lean`, at the default elaboration budget. The claim previously recorded here —
+that the `x⁵` identity's denominators `924·5544·72072` overrun the elaborator — was simply
+wrong, and is retracted; the identity is linear in the coefficients, so `ring_uor` normalises it
+in one pass.) So this file is a two-dimensionality result plus the full table, not a dimension
 formula, not a basis, and nothing about levels the layer has not constructed. Step 4 is RH. The
 crux fields stay `none`.
 
@@ -241,9 +243,9 @@ theorem combo345_moment_four (b c : Nat) :
 /-- **THE FIRST TWO MEMBERS ARE INDEPENDENT**: if `a·deep3 + b·deep4 + c·deep5` has vanishing
     moments at `3` and `4`, then `a = b = 0`. The triangular table reads the coefficients off one
     at a time — the `x³` moment sees only `deep3`, and then the `x⁴` moment only `deep4`. So the
-    level-`3` family is at least TWO-dimensional; the third coefficient is left open here (the
-    `x⁵` step's rational identity carries denominators that blow the elaborator's whnf budget,
-    and is not worth a workaround for a strictly weaker statement than the table already gives). -/
+    level-`3` family is at least TWO-dimensional. The third coefficient is taken in brick 67
+    (`deep345_independent`); the note that once stood here, claiming the `x⁵` step's denominators
+    overrun the elaborator, was wrong and is retracted. -/
 theorem deep34_independent (a b c : Nat)
     (h3 : Req (innerI (combo345 a b c) (powTest 3)) zero)
     (h4 : Req (innerI (combo345 0 b c) (powTest 4)) zero) :
