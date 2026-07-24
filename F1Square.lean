@@ -386,6 +386,7 @@ import F1Square.Square.DyadicDescent
 import F1Square.Square.IntervalMinorant
 import F1Square.Square.L2Definite
 import F1Square.Square.DyadicApprox
+import F1Square.Square.L2DefiniteDensity
 
 open UOR.Primitives
 

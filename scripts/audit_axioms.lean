@@ -5488,3 +5488,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.dyadJ_lt
 #print axioms Square.dyadApprox_gen
 #print axioms Square.dyadApprox_spec
+
+-- THE PRE-HILBERT LAYER, brick 76 (Square/L2DefiniteDensity.lean) — THE TRANSPORT HALF OF DENSITY:
+-- with brick 74's dyadic zero, the Lipschitz certificate carries |φ(x)| ≤ L·|x−p| to any nearby
+-- point, and the Archimedean criterion closes it. STATED UNDER a DyadicApproximable hypothesis
+-- which is NOT discharged for general x — so this does not by itself lift brick 74 off the dyadics.
+#print axioms Square.abs_le_of_near_dyadic
+#print axioms Square.zero_of_dyadic_approximable
+#print axioms Square.dyadicApproximable_dyadPt

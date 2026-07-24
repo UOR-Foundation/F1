@@ -16,6 +16,23 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 76 — THE TRANSPORT HALF OF DENSITY** (new
+  `Square/L2DefiniteDensity.lean`): brick 74 gave `∫₀¹ φ² ≈ 0 ⟹ φ(p) ≈ 0` at dyadic `p`; this
+  carries the value to any point the dyadics approximate.
+  - `abs_le_of_near_dyadic`: `|φ(x)| ≤ L·|x − p|` — one line of Lipschitz, since `φ(p) ≈ 0`.
+  - `zero_of_dyadic_approximable`: if every rate is met by some dyadic point, `φ(x) ≈ 0`, by the
+    Archimedean criterion.
+  - What this buys is that the remaining work is now a **single, purely metric** statement with no
+    analysis in it: `DyadicApproximable x`. Non-vacuous (`dyadicApproximable_dyadPt`).
+  - **Honest scope — what is and is not proven.** `zero_of_dyadic_approximable` is stated *under*
+    `DyadicApproximable x` as a **hypothesis, not discharged here** for general `x ∈ [0,1]`. So
+    this brick does **not** by itself upgrade brick 74 from dyadic points to all points.
+    Discharging it needs two things the repo still lacks: a bound `|x − ofQ (x.seq N)| ≤ 1/(N+1)`
+    relating a real to its own approximants, and a clamp of `⌊q·2^m⌋` into `[0, 2^m)` for a
+    rational that may sit slightly outside `[0,1)` (brick 75 supplies the floor but assumes the
+    rational is already in range). Until both land, the definiteness statement of record remains
+    `innerI_self_zero_imp_dyadic_zero`, at dyadic points.
+
 - **Certified integration, brick 75 — EVERY RATIONAL HAS A DYADIC POINT WITHIN `1/2^m`** (new
   `Square/DyadicApprox.lean`): `0 ≤ q`, `q.num.toNat < q.den` gives `j = ⌊q·2^m⌋ < 2^m` with
   `|q − j/2^m| ≤ 1/2^m` (`dyadJ_lt`, `dyadApprox_spec`) — the constructive floor the density
