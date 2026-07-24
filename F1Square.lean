@@ -395,6 +395,7 @@ import F1Square.Square.L2Separation
 import F1Square.Square.L2DefiniteIff
 import F1Square.Square.L2MetricIff
 import F1Square.Square.CoSupportFunction
+import F1Square.Square.CoSupportDistinct
 
 open UOR.Primitives
 

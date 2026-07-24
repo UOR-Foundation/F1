@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 84 — DISTINCT CO-SUPPORT LEVELS ARE DISTINCT FUNCTIONS ON
+  `[0,1]`** (new `Square/CoSupportDistinct.lean`): the reusable bridge
+  `distinct_on_unit_of_moment_ne` — two tests whose *difference* carries a nonzero moment cannot
+  agree pointwise on `[0,1]` (metric iff brick 82 + moment bridge brick 63). Applied to the
+  filtration: `deep3` (level 3, third moment `−1/2520`) and `deep4` (level 4, third moment `0`)
+  differ in `⟨deep3−deep4, x³⟩ = −1/2520 ≠ 0`, hence are genuinely distinct **functions** on `[0,1]`
+  (`deep3_deep4_distinct_on_unit`) — the moment-table independence (`deep345_independent`) upgraded
+  to function level. **Honest scope**: `¬ (∀ x ∈ [0,1], φ(x) ≈ ψ(x))` — "do not agree everywhere",
+  the constructive negation, not a constructed point of disagreement; realized members only. Nothing
+  touches the Weil form; step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 83 — THE CO-SUPPORT MEMBERS ARE GENUINELY NONZERO FUNCTIONS ON
   `[0,1]`** (new `Square/CoSupportFunction.lean`): the function-level upgrade the definiteness iff
   unlocks. A test with nonzero `L²` self-energy cannot vanish identically on `[0,1]`

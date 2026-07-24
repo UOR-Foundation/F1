@@ -5562,3 +5562,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.not_vanishing_of_innerI_self_not_zero
 #print axioms Square.deep3_not_vanishing_on_unit
 #print axioms Square.combo345_not_vanishing_on_unit
+
+-- THE PRE-HILBERT LAYER, brick 84 (Square/CoSupportDistinct.lean) — DISTINCT CO-SUPPORT LEVELS ARE
+-- DISTINCT FUNCTIONS ON [0,1]: the reusable bridge distinct_on_unit_of_moment_ne (a nonzero moment
+-- of φ−ψ ⟹ φ,ψ don't agree on [0,1], via the metric iff brick 82 + moment bridge brick 63). deep3
+-- (level 3, 3rd moment −1/2520) and deep4 (level 4, 3rd moment 0) are thereby distinct FUNCTIONS on
+-- [0,1] — upgrading the moment-table independence to function level.
+#print axioms Square.distinct_on_unit_of_moment_ne
+#print axioms Square.deep3_deep4_distinct_on_unit
