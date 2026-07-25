@@ -5985,3 +5985,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.powMinusTest_f_eq
 #print axioms Square.clampProdTest_eq_on_unit
 #print axioms Square.bernR_eq_scaled_clampProd
+
+-- REAL-SCALAR LINEARITY OF THE CERTIFIED INTEGRAL (Analysis/IntegralRsmul.lean) — the missing real
+-- coefficient case of integral linearity: ∫₀¹ (c·f) = c·∫₀¹ f for c : Real (riemannIntegral_Rsmul),
+-- the piece the "full linear-algebra API" lacked beyond the rational riemannIntegral_smul. The new
+-- ingredient is that a real scalar commutes with the Bishop limit (Rmul_Rlim_of_approx): the gap
+-- |lim(c·X) - c·lim X| telescopes through (c·X)_m to (2 + 2·xBound c)/(m+1) via the convergence rate
+-- (Rabs_dist_Rlim) and |c| ≤ xBound c (Rabs_le_ofQ_xBound), and the real squeeze (Req_of_Rle_ofQ_all)
+-- closes. The Bernstein determinacy arc needs it to pull the real coefficient φ(k/n) out of ∫φ·(c·b).
+#print axioms Analysis.Rabs_le_ofQ_xBound
+#print axioms Analysis.Rmul_Rlim_of_approx
+#print axioms Analysis.riemannIntegral_Rsmul

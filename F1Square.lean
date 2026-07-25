@@ -325,6 +325,7 @@ import F1Square.Square.Projection
 import F1Square.Square.StableInner
 import F1Square.Analysis.IntegralInner
 import F1Square.Analysis.IntegralCertIrrel
+import F1Square.Analysis.IntegralRsmul
 import F1Square.Analysis.IntegralBilinear
 import F1Square.Square.IntegralCS
 import F1Square.Square.IntegralCSFull

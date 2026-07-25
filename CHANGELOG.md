@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Real-scalar linearity of the certified integral** (new `Analysis/IntegralRsmul.lean`):
+  `∫₀¹ (c·f) = c·∫₀¹ f` for **any** `c : Real` (`riemannIntegral_Rsmul`) — the real-coefficient case the
+  linear-algebra API was missing beyond the rational `riemannIntegral_smul`. The one new analytic
+  ingredient is that a real scalar commutes with the Bishop limit, `lim (c·X) = c·(lim X)`
+  (`Rmul_Rlim_of_approx`): where the rational version leaned on `Rlim_ofQ_mul_of_approx` (tied to
+  `ofQ q`), this is proved directly from the two-sided convergence rate `|X m − lim X| ≤ 2/(m+1)`
+  (`Rabs_dist_Rlim`) and the canonical bound `|c| ≤ xBound c` (`Rabs_le_ofQ_xBound`, from `canon_bound`)
+  — the gap `|lim(c·X) − c·lim X|` telescopes through `(c·X)_m` to `(2 + 2·xBound c)/(m+1)`, and the
+  real-level squeeze (`Req_of_Rle_ofQ_all`) closes. **Why**: the Bernstein determinacy arc integrates
+  `φ` against `B_n(φ) = Σ_k φ(k/n)·b_{n,k}`, whose coefficients `φ(k/n)` are reals; pulling the real
+  coefficient out of `∫φ·(c·b_{n,k}) = c·∫φ·b_{n,k} = c·0 = 0` needs exactly this law. **Honest scope**:
+  real-scalar linearity of the base integral over `[0,1]`; general infrastructure, nothing here touches
+  the Weil form or determinacy directly. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₂ — THE CLAMPED BASIS MATCHES THE HONEST ONE ON `[0,1]`** (new
   `Square/BernsteinClampMatch.lean`): `bernR x n k ≈ C(n,k)·(clampProdTest k (n−k)).f x` for `0 ≤ x ≤ 1`
   (`bernR_eq_scaled_clampProd`) — the weld between the clamped building blocks (genuine
