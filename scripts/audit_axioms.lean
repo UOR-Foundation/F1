@@ -5766,3 +5766,13 @@ open UOR.Bridge.F1Square
 -- case (riemannIntegral_abs_le, the global |∫| ≤ B) and affine helper (affine_upper) carry no audit
 -- line (private). This is the locality tool for the a→0 Mellin limit.
 #print axioms Square.riemannIntegral_dyadic_tail_bound
+
+-- THE PRE-HILBERT LAYER, brick 108 (Square/ContinuousMomentTailBound.lean) — THE FLOOR DEFECT DECAYS
+-- LIKE 1/2^m: |compactMoment φ (1/2^m) 1 − mellinMoment φ 1| ≤ 2·M_φ·(1/2^m). The difference of the
+-- continuous-floor and integer Mellin moments is innerI φ of the difference test (via innerI_sub_right,
+-- the second-slot subtraction derived from innerI_symm + innerI_sub_left); its integrand vanishes on
+-- the dyadic tail [1/2^m,1] (brick 106: compactPow 1 ≈ clamp01, and (powTest 1).f = one·clamp01 ≈
+-- clamp01) and is bounded by 2·M_φ, so the dyadic tail bound (brick 107) gives the geometric decay.
+-- The a→0 Mellin limit made quantitative, with an explicit modulus of convergence.
+#print axioms Square.innerI_sub_right
+#print axioms Square.compactMomentOne_sub_mellin_bound

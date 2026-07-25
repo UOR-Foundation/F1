@@ -419,6 +419,7 @@ import F1Square.Square.ContinuousMomentTwo
 import F1Square.Square.ContinuousMomentGeneral
 import F1Square.Square.ContinuousMomentGenTwo
 import F1Square.Square.ContinuousMomentClamp
+import F1Square.Square.ContinuousMomentTailBound
 
 open UOR.Primitives
 

@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 108 — THE FLOOR DEFECT DECAYS LIKE `1/2^m`** (new
+  `Square/ContinuousMomentTailBound.lean`): `|compactMoment φ (1/2^m) 1 − mellinMoment φ 1| ≤
+  2·M_φ·(1/2^m)` (`compactMomentOne_sub_mellin_bound`) — **the `a → 0` Mellin limit made quantitative**.
+  Brick 106 pins the two integrands together on `[1/2^m, 1]`, so their difference `φ·(compactPow − clamp)`
+  vanishes there and is bounded by `2·M_φ` on `[0, 1/2^m)`; realized as `innerI φ (compactPowTest −ₜ
+  powTest 1)` through the new second-slot subtraction `innerI_sub_right` (derived from `innerI_symm` and
+  the first-slot `innerI_sub_left`), it feeds the dyadic tail bound (brick 107) to give the geometric
+  `2·M_φ/2^m` decay. As the depth `m → ∞` the floor `1/2^m → 0` and the defect vanishes — an explicit
+  modulus of convergence for the floor-dependence brick 106 localized. **Honest scope**: a quantitative
+  floor-defect bound at `s = 1`, compact side; NOT the transform pair, NOT inversion, NOT yet the
+  continuous parameter as a limit object. Step 4 is RH; crux fields stay `none`.
 - **Certified integration, brick 107 — THE DYADIC TAIL BOUND** (new `Square/IntegralTailBound.lean`): a
   globally-bounded (`|f| ≤ B`), Lipschitz integrand that vanishes on the dyadic tail `[1/2^m, 1]` has
   `|∫₀¹ f| ≤ B·(1/2^m)` (`riemannIntegral_dyadic_tail_bound`). Induction on the depth `m` via the
