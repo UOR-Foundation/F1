@@ -420,6 +420,7 @@ import F1Square.Square.ContinuousMomentGeneral
 import F1Square.Square.ContinuousMomentGenTwo
 import F1Square.Square.ContinuousMomentClamp
 import F1Square.Square.ContinuousMomentTailBound
+import F1Square.Square.ContinuousMomentLimit
 
 open UOR.Primitives
 

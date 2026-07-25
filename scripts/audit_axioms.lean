@@ -5776,3 +5776,14 @@ open UOR.Bridge.F1Square
 -- The a→0 Mellin limit made quantitative, with an explicit modulus of convergence.
 #print axioms Square.innerI_sub_right
 #print axioms Square.compactMomentOne_sub_mellin_bound
+
+-- THE PRE-HILBERT LAYER, brick 109 (Square/ContinuousMomentLimit.lean) — THE a→0 MELLIN LIMIT AS A
+-- CONSTRUCTED LIMIT OBJECT: Rlim_{j→∞} compactMoment φ (1/2^{r(j)}) 1 ≈ mellinMoment φ 1
+-- (compactMomentOne_limit_eq_mellin). The depth reindex r(j)=(⌈2·M_φ⌉+1)(j+1) absorbs the constant
+-- (via n<2^n), so the reindexed sequence lies within 1/(j+1) of the Mellin moment (compactMomentSeq_rate);
+-- it is regular (compactMomentSeq_RReg, triangle through the limit) and its Bishop limit IS the Mellin
+-- moment (Rlim_eval_real_rate). The continuous parameter proper at the transform boundary s=1: the
+-- compact totalization's floor dependence is a removable artifact. momRate/compactMomentSeq are defs.
+#print axioms Square.compactMomentSeq_rate
+#print axioms Square.compactMomentSeq_RReg
+#print axioms Square.compactMomentOne_limit_eq_mellin

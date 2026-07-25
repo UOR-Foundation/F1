@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 109 — THE `a → 0` MELLIN LIMIT AS A CONSTRUCTED LIMIT OBJECT** (new
+  `Square/ContinuousMomentLimit.lean`): the compact Mellin moment at `s = 1` converges, as the floor
+  `1/2^{r(j)} → 0`, to the integer Mellin moment — `Rlim (compactMomentSeq φ) ≈ mellinMoment φ 1`
+  (`compactMomentOne_limit_eq_mellin`). Brick 108's quantitative defect `2·M_φ·(1/2^m)` is packaged into
+  a genuine Bishop limit: the depth reindex `r(j) = (⌈2·M_φ⌉+1)·(j+1)` absorbs the constant `2·M_φ` (via
+  `n < 2^n`), so the reindexed sequence `compactMomentSeq φ j = compactMoment φ (1/2^{r(j)}) 1` lies
+  within `1/(j+1)` of the target (`compactMomentSeq_rate`); it is a regular sequence
+  (`compactMomentSeq_RReg`, the triangle through the shared limit) whose Bishop limit **is**
+  `mellinMoment φ 1` (`Rlim_eval_real_rate`). This is "the continuous parameter proper" at the
+  transform's boundary `s = 1`: the compact totalization's floor dependence is a removable artifact and
+  the limit recovers the genuine integer Mellin moment. **Honest scope**: the `a → 0` limit at `s = 1`
+  as a constructed real limit; NOT the transform pair, NOT inversion, NOT the full continuous
+  `s`-parameter transform. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 108 — THE FLOOR DEFECT DECAYS LIKE `1/2^m`** (new
   `Square/ContinuousMomentTailBound.lean`): `|compactMoment φ (1/2^m) 1 − mellinMoment φ 1| ≤
   2·M_φ·(1/2^m)` (`compactMomentOne_sub_mellin_bound`) — **the `a → 0` Mellin limit made quantitative**.
