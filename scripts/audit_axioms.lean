@@ -5887,3 +5887,9 @@ open UOR.Bridge.F1Square
 -- compactMomentGenLim_zeroL2 (transform of the zero test = 0) is the induction base, via Rlim_zero.
 #print axioms Square.compactMomentGenLim_zeroL2
 #print axioms Square.compactMomentGenLim_natScale
+
+-- THE PRE-HILBERT LAYER, brick 122 (Square/ContinuousMomentGenFamily.lean) — THE ℤ-LINEAR TRANSFORM
+-- COMPUTES ON THE ℤ⁺-CLAMP FAMILY: compactMomentGenLim (k·clampTest) n ≈ k/(n+2)
+-- (compactMomentGenLim_natScale_clamp), the concrete payoff of the linearity arc — homogeneity
+-- (brick 121) carries the single-test closed form 1/(n+2) (brick 116) across the whole ℤ⁺-orbit.
+#print axioms Square.compactMomentGenLim_natScale_clamp

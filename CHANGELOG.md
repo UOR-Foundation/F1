@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 122 — THE ℤ-LINEAR TRANSFORM COMPUTES ON A ℤ⁺-FAMILY** (new
+  `Square/ContinuousMomentGenFamily.lean`): `compactMomentGenLim (k·clampTest) n ≈ k/(n+2)`
+  (`compactMomentGenLim_natScale_clamp`), for every integer scale `k` and integer exponent `n`. The
+  concrete payoff of the linearity arc: homogeneity (brick 121) carries the single-test closed form
+  `1/(n+2)` (brick 116) across the whole `ℤ⁺`-orbit of `clampTest` with no new analysis —
+  `transform(k·clampTest)(n) ≈ k·(1/(n+2)) = k/(n+2)` — exhibiting the continuous transform as a genuinely
+  *computable* `ℤ`-linear map on an infinite family of tests, not merely an existence object. **Honest
+  scope**: a closed-form evaluation on the `ℤ⁺`-clamp family at integer exponents; NOT the
+  pairing/inversion, NOT any positivity. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 121 — THE CONTINUOUS TRANSFORM IS ℤ⁺-HOMOGENEOUS** (new
   `Square/ContinuousMomentGenScale.lean`): `compactMomentGenLim (k·φ) s ≈ k·compactMomentGenLim φ s`
   (`compactMomentGenLim_natScale`), where `k·φ = natScale k φ` is the `k`-fold sum of a test and the
