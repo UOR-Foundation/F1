@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick E — THE BERNSTEIN VARIANCE IDENTITY** (new
+  `Square/BernsteinVariance.lean`): `Σ_{k=0}^n (k−nx)²·b_{n,k}(x) = nx(1−x)` (`bernR_variance`) — THE
+  estimate the Bernstein operator's ε-δ convergence divides by (Chebyshev: `Σ_{|k/n−x|>δ} b ≤
+  x(1−x)/(nδ²) ≤ 1/(4nδ²)`), the gateway from the moment identities to convergence. Expand `(k−nx)²`
+  (`Rsub_sq_expand`), split by `RsumN` linearity into the second factorial moment + mean
+  (`Σk²b = Σk(k−1)b + Σkb`, `bernR_sq` + `bernR_mean`), the partition of unity (`bernR_partition`), and
+  the doubled cross term, then collapse the `(nx)²` contributions
+  (`(n(n−1)x² + nx + n²x²) − 2·n²x² = nx − nx² = nx(1−x)`). The real-algebra runs manually (no `ring`
+  over abstract reals): additive rearrangements go through `Rsub_Radd_Radd`, the `(nx)²`-cancellation
+  through a purpose-built `var_collapse`. Minted: `RofNat_sub` (`ℕ→ℝ` respects truncated subtraction).
+  **Honest scope**: the variance identity over `Real`; NOT the ε-δ convergence yet, NOT the
+  moment-integral, NOT determinacy, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **The Bernstein arc, sub-brick D — THE BERNSTEIN SECOND FACTORIAL MOMENT** (extends
   `Analysis/BernsteinMoments.lean`): `Σ_{k=0}^n k(k−1)·b_{n,k}(x) = n(n−1)·x²` (`bernR_sq`) — the second
   moment the variance needs (`Σ k²·b = Σ k(k−1)·b + Σ k·b`). The `k = 0, 1` terms drop; each `k = j+2`

@@ -5938,3 +5938,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.dfact_choose
 #print axioms Analysis.bernR_sq_term
 #print axioms Analysis.bernR_sq
+
+-- THE BERNSTEIN ARC, sub-brick E (Square/BernsteinVariance.lean) — THE BERNSTEIN VARIANCE IDENTITY
+-- Σ_{k=0}^n (k-nx)²·b_{n,k}(x) = nx(1-x) (bernR_variance), the estimate the Bernstein convergence
+-- divides by (Chebyshev). Expand (k-nx)² (Rsub_sq_expand), split by RsumN linearity into the second
+-- factorial moment + mean (bernR_sq + bernR_mean), the partition (bernR_partition), and the cross term,
+-- then collapse the (nx)² terms. Minted RofNat_sub (ℕ→ℝ respects truncated subtraction).
+#print axioms Square.RofNat_sub
+#print axioms Square.bernR_variance
