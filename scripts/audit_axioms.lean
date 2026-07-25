@@ -5794,3 +5794,13 @@ open UOR.Bridge.F1Square
 -- clampedInv_eq_of_ge (above the floor the clamped reciprocal IS 1/x). The positivity witness for x is
 -- free from x ≥ a > 0 (Pos_mono). The structural fact the general-s a→0 limit rests on.
 #print axioms Square.compactPow_floor_indep_real
+
+-- THE PRE-HILBERT LAYER, brick 111 (Square/ContinuousMomentGenTail.lean) — THE COMPACT MELLIN MOMENT AT
+-- GENERAL s IS CAUCHY IN THE FLOOR: |compactMoment φ (1/2^p) s − compactMoment φ (1/2^q) s| ≤
+-- 2·M_φ·(1/2^p) for p ≤ q (compactMoment_floor_diff_bound). At general real s there is no integer
+-- target (unlike s=1, brick 109) — the deliverable is that the floor sequence CONVERGES. The two
+-- integrands agree on the overlap [1/2^p,1] (real-level floor-independence, brick 110), so their
+-- difference (innerI φ of the difference test, via innerI_sub_right) vanishes on the dyadic tail and is
+-- bounded by 2·M_φ; the dyadic tail bound (brick 107) gives the geometric decay. compactPowTestF/
+-- compactMomentF are defs (no audit line). Structurally identical to brick 108.
+#print axioms Square.compactMoment_floor_diff_bound

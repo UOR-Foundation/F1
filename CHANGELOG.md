@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 111 — THE COMPACT MELLIN MOMENT AT GENERAL `s` IS CAUCHY IN THE
+  FLOOR** (new `Square/ContinuousMomentGenTail.lean`): `|compactMoment φ (1/2^p) s − compactMoment φ
+  (1/2^q) s| ≤ 2·M_φ·(1/2^p)` for `p ≤ q` (`compactMoment_floor_diff_bound`). At general real `s` there
+  is no integer target (unlike `s = 1`, brick 109), so the deliverable is that the floor sequence
+  CONVERGES — this brick supplies the Cauchy estimate. The two compact-power integrands agree on the
+  overlap `[1/2^p, 1]` (real-level floor-independence, brick 110), so their difference — realized as
+  `innerI φ (compactPowTest_p −ₜ compactPowTest_q)` through `innerI_sub_right` — vanishes on that dyadic
+  tail and is bounded by `2·M_φ`, and the dyadic tail bound (brick 107) gives the geometric decay.
+  Structurally identical to brick 108, with real-level floor-independence replacing the clamp identity.
+  **Honest scope**: the Cauchy estimate at general `s`; NOT the limit object yet (brick 112). Step 4 is
+  RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 110 — REAL-LEVEL FLOOR INDEPENDENCE** (new
   `Square/ContinuousMomentFloorReal.lean`): `compactPow a s x ≈ compactPow a' s x` for every real
   `x ≥` both floors (`compactPow_floor_indep_real`), lifting brick 97's rational-point
