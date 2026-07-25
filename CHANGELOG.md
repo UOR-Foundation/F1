@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 110 — REAL-LEVEL FLOOR INDEPENDENCE** (new
+  `Square/ContinuousMomentFloorReal.lean`): `compactPow a s x ≈ compactPow a' s x` for every real
+  `x ≥` both floors (`compactPow_floor_indep_real`), lifting brick 97's rational-point
+  floor-independence to all reals. The certified integral only needed rationals for the fixed-floor
+  moment, but the `a → 0` limit at general `s` needs the difference of two integrands to vanish on the
+  whole overlap `[max(a,a'), 1]`. Real-level inertness (`clampedInv_eq_of_ge`: above the floor the
+  clamped reciprocal IS `1/x`) supplies it — above both floors both compact powers equal
+  `gPowClamp(−s)(1/x)`; the positivity witness for `x` is free from `x ≥ a > 0` (`Pos_mono`). **Honest
+  scope**: floor-independence of the integrand at every real point above both floors; NOT the limit,
+  NOT any `x^s` identification. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 109 — THE `a → 0` MELLIN LIMIT AS A CONSTRUCTED LIMIT OBJECT** (new
   `Square/ContinuousMomentLimit.lean`): the compact Mellin moment at `s = 1` converges, as the floor
   `1/2^{r(j)} → 0`, to the integer Mellin moment — `Rlim (compactMomentSeq φ) ≈ mellinMoment φ 1`

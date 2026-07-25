@@ -5787,3 +5787,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.compactMomentSeq_rate
 #print axioms Square.compactMomentSeq_RReg
 #print axioms Square.compactMomentOne_limit_eq_mellin
+
+-- THE PRE-HILBERT LAYER, brick 110 (Square/ContinuousMomentFloorReal.lean) — REAL-LEVEL FLOOR
+-- INDEPENDENCE: compactPow a s x ≈ compactPow a' s x for EVERY real x ≥ both floors
+-- (compactPow_floor_indep_real), lifting brick 97's rational-point floor-independence to all reals via
+-- clampedInv_eq_of_ge (above the floor the clamped reciprocal IS 1/x). The positivity witness for x is
+-- free from x ≥ a > 0 (Pos_mono). The structural fact the general-s a→0 limit rests on.
+#print axioms Square.compactPow_floor_indep_real
