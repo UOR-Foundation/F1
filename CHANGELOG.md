@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₁ — THE BERNSTEIN BASIS PAIRS TO ZERO** (new
+  `Square/BernsteinBasisZero.lean`): for a test `φ` whose *every* integer moment vanishes,
+  `⟨φ, C(n,k)·xᵏ·(1−x)ⁿ⁻ᵏ⟩ = ∫₀¹ φ(x)·b_{n,k}(x) dx ≈ 0` (`innerI_bernBasis_zero`) — the FIRST
+  integration step of the determinacy arc. Bernstein's theorem writes `B_n(φ) = Σ_k φ(k/n)·b_{n,k}`, so
+  `∫₀¹ φ·B_n(φ) = Σ_k φ(k/n)·∫₀¹ φ·b_{n,k}`; the real coefficients `φ(k/n)` are only outer factors, so
+  the operator integral collapses once each single-basis integral vanishes. The proof needs **no**
+  monomial bookkeeping and **no** signed-binomial `polyPN`: the basis factor obeys the Pascal recursion
+  `xᵏ(1−x)ᵐ⁺¹ = xᵏ(1−x)ᵐ − xᵏ⁺¹(1−x)ᵐ` (`clampProd_step_pt`), so by induction on `m`, bilinearity
+  (`innerI_sub_right`) and unit-restriction congruence (`innerI_right_congr_on_unit`, brick 90) reduce
+  every basis pairing to the base moment `⟨φ, xᵏ⟩ = mellinMoment φ k ≈ 0` (`innerI_clampProd_zero`). The
+  clamped building blocks (`powTest`, `1 − clampTest`) keep everything a genuine bounded-Lipschitz test
+  and agree with the honest `bernR` on `[0,1]` — the only place the certified integral samples.
+  **Honest scope**: the single-basis moment-integral over `Real`; NOT yet the operator integral (needs
+  the `bernR`-matching and the finite sum), NOT the deviation integral, NOT determinacy, NOT inversion,
+  NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick G — THE BERNSTEIN OPERATOR + POINTWISE DEVIATION** (new
   `Square/BernsteinDeviation.lean`): the Bernstein operator `B_n(φ)(x) = Σ_{k=0}^n φ(k/n)·b_{n,k}(x)`
   (`bernOp`, `n ≥ 1`) and its pointwise distance to `φ`, `|B_n(φ)(x) − φ(x)| ≤ L·Σ|k/n − x|·b_{n,k}(x)`

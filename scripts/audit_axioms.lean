@@ -5963,3 +5963,13 @@ open UOR.Bridge.F1Square
 -- the free-variable sample point k/n never whnf-blows-up.
 #print axioms Square.bernOp_unfold
 #print axioms Square.bernOp_deviation
+
+-- THE BERNSTEIN ARC, sub-brick H₁ (Square/BernsteinBasisZero.lean) — THE BERNSTEIN BASIS PAIRS TO ZERO
+-- against a moment-null test: ⟨φ, C(n,k)·xᵏ·(1-x)ⁿ⁻ᵏ⟩ = ∫₀¹ φ·b_{n,k} ≈ 0 when every moment of φ
+-- vanishes (innerI_bernBasis_zero). The first integration step of the determinacy arc: the real
+-- coefficients φ(k/n) of B_n(φ)=Σφ(k/n)b are only outer factors, so the operator integral collapses
+-- once each single-basis integral vanishes. No monomial bookkeeping — the Pascal recursion
+-- xᵏ(1-x)ᵐ⁺¹ = xᵏ(1-x)ᵐ - xᵏ⁺¹(1-x)ᵐ (clampProd_step_pt), by induction on m via innerI_sub_right +
+-- unit-restriction congruence, reduces every basis pairing to the base moment ⟨φ,xᵏ⟩ (innerI_clampProd_zero).
+#print axioms Square.innerI_clampProd_zero
+#print axioms Square.innerI_bernBasis_zero
