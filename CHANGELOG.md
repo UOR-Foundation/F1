@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 91 — THE `L²` METRIC FACTORS THROUGH `[0,1]`-RESTRICTION** (new
+  `Square/PairingUnitDist.lean`): `dist2I` depends only on the `[0,1]`-restrictions of both tests —
+  `φ ≈ φ'`, `ψ ≈ ψ'` on `[0,1]` ⟹ `dist2I φ ψ ≈ dist2I φ' ψ'` (`dist2I_congr_on_unit`), via brick 90's
+  two-argument congruence on `φ − ψ`. Together with bricks 82/89/90, the `L²` inner product and its
+  metric are a genuine *well-defined and definite* structure on the `[0,1]`-equivalence classes of
+  tests. **Honest scope**: well-definedness of the metric on the `[0,1]`-restriction, not the
+  `L²`-function-space limit member (open), not the moment problem. Nothing touches the Weil form; step
+  4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 90 — THE `L²` PAIRING FACTORS THROUGH `[0,1]`-RESTRICTION** (new
   `Square/PairingUnitCongr.lean`): tests agreeing on `[0,1]` pair identically with everything —
   `∀ x ∈ [0,1], φ(x) ≈ φ'(x)` ⟹ `⟨φ,ψ⟩ ≈ ⟨φ',ψ⟩` for every `ψ` (`innerI_left_congr_on_unit`), and by

@@ -5620,3 +5620,9 @@ open UOR.Bridge.F1Square
 -- innerI_symm). So ⟨·,·⟩ is a genuine bilinear form on the [0,1]-equivalence classes of tests.
 #print axioms Square.innerI_left_congr_on_unit
 #print axioms Square.innerI_right_congr_on_unit
+
+-- THE PRE-HILBERT LAYER, brick 91 (Square/PairingUnitDist.lean) — THE L² METRIC FACTORS THROUGH
+-- [0,1]-RESTRICTION: dist2I depends only on the [0,1]-restrictions of both tests
+-- (dist2I_congr_on_unit, via brick 90's two-argument congruence on φ−ψ). With bricks 82/89/90 the L²
+-- inner product and its metric are a well-defined, definite structure on the [0,1]-equivalence classes.
+#print axioms Square.dist2I_congr_on_unit
