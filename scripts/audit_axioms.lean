@@ -5848,3 +5848,12 @@ open UOR.Bridge.F1Square
 -- of clampTest obeys the Hausdorff law mellinMoment clampTest n = 1/(n+2) (brick 33). End-to-end
 -- verification that the continuous-transform stack produces the correct number.
 #print axioms Square.compactMomentGenLim_clamp_eq
+
+-- THE PRE-HILBERT LAYER, brick 117 (Square/ContinuousMomentGenRate.lean) — THE CONTINUOUS TRANSFORM IS
+-- THE a→0 LIMIT AT EVERY FLOOR (schedule-independent): |compactMoment φ (1/2^m) s − compactMomentGenLim
+-- φ s| ≤ 2·M_φ·(1/2^m) (compactMomentF_dist_lim). Brick 112 defined the transform along ONE reindex
+-- schedule; this proves the value is the honest a→0 limit at EVERY floor, uniformly in the reindex —
+-- the schedule-independence the transform-as-a-map (linearity, the pairing) requires. Triangulates
+-- through the reindexed sequence at depth j=m+k (brick 111 + Rabs_dist_Rlim), Archimedean collapse
+-- removes the residual. abs_sub_tri'/le_momRate private.
+#print axioms Square.compactMomentF_dist_lim

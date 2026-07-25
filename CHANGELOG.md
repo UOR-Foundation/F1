@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 117 — THE CONTINUOUS TRANSFORM IS THE `a → 0` LIMIT AT EVERY FLOOR**
+  (new `Square/ContinuousMomentGenRate.lean`): `|compactMoment φ (1/2^m) s − compactMomentGenLim φ s| ≤
+  2·M_φ·(1/2^m)` (`compactMomentF_dist_lim`) — the transform value is **schedule-independent**. Brick 112
+  defined the continuous transform as the Bishop limit along one reindex schedule `r(j) = momRate φ j`;
+  to use it as a structured map (linearity, the pairing) the value must be the honest `a → 0` limit at
+  every floor, not just the reindexed ones. This supplies exactly that, with an explicit rate,
+  triangulating through the reindexed sequence at depth `j = m + k` (brick 111's floor-Cauchy bound for
+  the `[m, r(j)]` gap, `Rabs_dist_Rlim` for the `[r(j), lim]` gap) and killing the residual `2/(k+1)`
+  with the Archimedean collapse. **Honest scope**: the schedule-independent convergence rate — the
+  ingredient the transform's linearity consumes; NOT the pair or inversion yet. Step 4 is RH; crux fields
+  stay `none`.
 - **The pre-Hilbert layer, brick 116 — THE CONTINUOUS TRANSFORM COMPUTES** (new
   `Square/ContinuousMomentClampValue.lean`): `compactMomentGenLim clampTest n ≈ 1/(n+2)`
   (`compactMomentGenLim_clamp_eq`) — a concrete closed-form evaluation of the abstract `a → 0` continuous
