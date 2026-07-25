@@ -5707,3 +5707,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.rrpowPos_ofQ_eq
 #print axioms Square.gPowClamp_ofQ_eq
 #print axioms Square.compactPow_ofQ_pow
+
+-- THE PRE-HILBERT LAYER, brick 101 (Square/ContinuousMomentValueAll.lean) — THE t^s IDENTIFICATION AT
+-- ALL RATIONAL POINTS OF (a,1]: compactPow a s (q) ≈ q^s for every rational q ∈ (a,1], no lower cutoff.
+-- Brick 100's q ≥ 1/4 cap (the [1,4] radius of RlogPos_ofQ_eq_logN) is lifted by RlogPos_eq_Rlog_gen at
+-- K=(A+D)², where the convergence condition 1 ≤ K·(1−ρ²) becomes 1 ≤ 4AD (true ∀ A,D ≥ 1). So
+-- RlogPos_ofQ_eq_logN_all evaluates log(A/D)=logN A−logN D for all A≥D≥1, and the whole chain
+-- (rrpowPos_ofQ_eq_all → gPowClamp_ofQ_eq_all → compactPow_ofQ_pow_all) drops the A≤4D hypothesis. Now
+-- covers every rational partition point i/(N+1) ∈ [a,1] the certified integral samples.
+#print axioms Square.RlogPos_ofQ_eq_logN_all
+#print axioms Square.rrpowPos_ofQ_eq_all
+#print axioms Square.gPowClamp_ofQ_eq_all
+#print axioms Square.compactPow_ofQ_pow_all

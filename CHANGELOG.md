@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 101 — THE `t^s` IDENTIFICATION AT ALL RATIONAL POINTS OF `(a,1]`** (new
+  `Square/ContinuousMomentValueAll.lean`): `compactPow a s (q) ≈ q^s` for every rational `q ∈ (a,1]`,
+  with NO lower cutoff (`compactPow_ofQ_pow_all`). Brick 100 was capped at `q ≥ 1/4` by the `[1,4]`
+  radius of `RlogPos_ofQ_eq_logN`; that cap is lifted here by the general bridge `RlogPos_eq_Rlog_gen` at
+  `K = (A+D)²` — for the base `A/D` the convergence condition `1 ≤ K·(1−ρ²)` (with `ρ = (A−D)/(A+D)`,
+  `1−ρ² = 4AD/(A+D)²`) becomes `1 ≤ 4AD`, true for all `A, D ≥ 1`. So `RlogPos_ofQ_eq_logN_all` evaluates
+  `log(A/D) = logN A − logN D` for every `A ≥ D ≥ 1`, and the whole chain (`rrpowPos_ofQ_eq_all` →
+  `gPowClamp_ofQ_eq_all` → `compactPow_ofQ_pow_all`) drops the `A ≤ 4D` hypothesis throughout. The
+  identification now holds at EVERY rational partition point `i/(N+1) ∈ [a,1]` the certified integral
+  samples. **Honest scope**: covers all rational `q ∈ (a,1]`; the general REAL-`t` identification and the
+  `a → 0` limit remain separate steps. No transform pair, no inversion, no positivity. Step 4 is RH; crux
+  fields stay `none`.
 - **The pre-Hilbert layer, brick 100 — THE `t^s` IDENTIFICATION AT RATIONAL POINTS** (new
   `Square/ContinuousMomentValue.lean`): `compactPow a s (q) ≈ exp(−s·(log q_den − log q_num)) = q^s`
   (`compactPow_ofQ_pow`) for every rational `q ∈ [max(a, 1/4), 1]` — the genuine `t^s` identification the
