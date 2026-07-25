@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₄ — THE BERNSTEIN OPERATOR AS A TEST + ITS MOMENT-INTEGRAL** (new
+  `Square/BernsteinOperatorTest.lean`): the clamped operator `B_n(φ) = Σ_k φ(k/n)·C(n,k)·clamp01ᵏ(1−clamp01)ⁿ⁻ᵏ`
+  is realized as a genuine `L2Test` (`bernOpCTest`) that (a) **pairs to zero** against a moment-null `φ`,
+  `⟨φ, B_n(φ)⟩ ≈ 0` (`innerI_bernOpCTest_zero`) — each summand is a real coefficient times a single-basis
+  integral that already vanishes (`innerI_constMul_zero ∘ innerI_clampProd_zero`), finite-additive via
+  `innerI_L2sumN_zero`; and (b) **agrees with the honest `bernOp`** on `[0,1]`,
+  `(bernOpCTest φ n hn).f x ≈ B_n(φ)(x)` (`bernOpCTest_eq_on_unit`, via the H₂ match + associativity), so
+  the pointwise deviation bound (sub-brick G) transfers to it. Together these are exactly `∫₀¹ φ·B_n(φ) = 0`
+  plus the handle on `∫₀¹ φ·(φ − B_n(φ))` the determinacy step consumes. The real coefficients `φ(k/n)`
+  (which cannot scale an `L2Test`) are carried as constant tests (H₃) with `C(n,k)` folded in, so the
+  operator stays bounded-Lipschitz and the pairing is finite-additive. **Honest scope**: the operator as
+  a test, its vanishing pairing, and its `[0,1]`-agreement; NOT yet the deviation integral, NOT `⟨φ,φ⟩ ≈ 0`,
+  NOT determinacy. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₃ — THE CONSTANT TEST + REAL-SCALAR PAIRING LAW** (new
   `Square/ConstScale.lean`): `⟨φ, (constTest c)·ψ⟩ ≈ c·⟨φ, ψ⟩` (`innerI_constMul`), hence
   `⟨φ, (constTest c)·ψ⟩ ≈ 0` when `⟨φ, ψ⟩ ≈ 0` (`innerI_constMul_zero`). The Bernstein operator

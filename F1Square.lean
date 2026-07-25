@@ -331,6 +331,7 @@ import F1Square.Square.IntegralCS
 import F1Square.Square.IntegralCSFull
 import F1Square.Square.TestAlgebra
 import F1Square.Square.ConstScale
+import F1Square.Square.BernsteinOperatorTest
 import F1Square.Square.Parseval
 import F1Square.Square.Parallelogram
 import F1Square.Square.PairingLimit

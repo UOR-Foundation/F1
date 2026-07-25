@@ -6005,3 +6005,16 @@ open UOR.Bridge.F1Square
 -- riemannIntegral_Rsmul pulls c out.
 #print axioms Square.innerI_constMul
 #print axioms Square.innerI_constMul_zero
+
+-- THE BERNSTEIN ARC, sub-brick H₄ (Square/BernsteinOperatorTest.lean) — THE BERNSTEIN OPERATOR AS A
+-- TEST + ITS MOMENT-INTEGRAL. The clamped operator B_n(φ) is realized as an L2Test
+-- (bernOpCTest = Σ_k (constTest φ(k/n)·C(n,k))·(clampProdTest k (n-k))) that (a) pairs to zero against a
+-- moment-null φ (innerI_bernOpCTest_zero: ⟨φ, B_nφ⟩ ≈ 0 — each summand is a real coeff times a vanishing
+-- single-basis integral, finite-additive via innerI_L2sumN_zero) and (b) agrees with the honest bernOp
+-- on [0,1] (bernOpCTest_eq_on_unit, via H₂ + assoc). Together: ∫₀¹ φ·B_nφ = 0 plus the handle on
+-- ∫₀¹ φ·(φ − B_nφ) the determinacy step needs. L2sumN_f_eq: finite sum of tests evaluates termwise.
+#print axioms Square.L2sumN_f_eq
+#print axioms Square.innerI_L2sumN_zero
+#print axioms Square.bernCoef_bound
+#print axioms Square.innerI_bernOpCTest_zero
+#print axioms Square.bernOpCTest_eq_on_unit
