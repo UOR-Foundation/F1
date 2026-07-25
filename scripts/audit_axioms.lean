@@ -5683,3 +5683,9 @@ open UOR.Bridge.F1Square
 -- floor the transform is floor-free — the structural fact underpinning the a→0 limit.
 #print axioms Square.compactPow_ofQ
 #print axioms Square.compactPow_floor_indep
+
+-- THE PRE-HILBERT LAYER, brick 98 (Square/ContinuousMomentMono.lean) — THE COMPACT POWER IS ANTITONE IN
+-- THE EXPONENT: s ≤ s' ⟹ compactPow a s' t ≤ compactPow a s t. compactPow a σ t = exp(−σ·L_t) with
+-- L_t = compactBaseLog ≥ 0, so a larger σ scales −σ·L_t down and exp is monotone (RexpReal_le_of_le).
+-- The monotone companion to brick 96's continuity; holds for all t, all s ≤ s' (no sign hypothesis).
+#print axioms Square.compactPow_antitone_exp

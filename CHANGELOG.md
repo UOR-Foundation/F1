@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 98 — THE COMPACT POWER IS ANTITONE IN THE EXPONENT** (new
+  `Square/ContinuousMomentMono.lean`): `s ≤ s' ⟹ compactPow a s' t ≤ compactPow a s t`
+  (`compactPow_antitone_exp`) — the monotone companion to brick 96's continuity; together they
+  characterize how the continuous Mellin integrand (brick 93) depends on `s` (continuously and
+  monotonically). At a fixed `t` the compact power is `exp(−s·L_t)` with `L_t = compactBaseLog a t ≥ 0`,
+  so a larger exponent scales `−s·L_t` down and `exp` is monotone (`RexpReal_le_of_le`) — the familiar
+  fact that a base in `(0,1]` decreases under a larger exponent, here on the totalized power, for ALL
+  `t` (no sign hypothesis on `s`). **Honest scope**: pointwise antitonicity of the integrand; the
+  moment-level `compactMoment φ a s' ≤ compactMoment φ a s` would need a GLOBALLY non-negative test and
+  is not asserted. No transform pair, no inversion, no positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **The pre-Hilbert layer, brick 97 — THE TRANSFORM'S INTEGRAND IS FLOOR-INDEPENDENT AT RATIONAL SAMPLE
   POINTS** (new `Square/ContinuousMomentFloor.lean`): `compactPow a s (q) ≈ (1/q)^{−s}` for every
   rational `q ≥ a` (`compactPow_ofQ`) — at `q ≥ a` the clamp is inert (`clampedInv a q = 1/q`), so the
