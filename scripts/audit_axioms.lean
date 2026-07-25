@@ -5648,3 +5648,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.compactPow_lipschitz
 #print axioms Square.compactPowTest
 #print axioms Square.compactMoment
+
+-- THE PRE-HILBERT LAYER, brick 94 (Square/ContinuousMomentLinear.lean) — THE CONTINUOUS MELLIN
+-- TRANSFORM IS LINEAR IN THE TEST AND L²-BOUNDED: compactMoment φ a s = innerI φ against a fixed
+-- power, so additivity/negation/subtraction in φ are the first-slot laws of innerI, and the
+-- Cauchy–Schwarz bound (compactMoment φ a s)² ≤ ⟨φ,φ⟩·⟨t^s,t^s⟩ is the continuous-exponent analog of
+-- mellinMoment_cs — compactMoment · a s is an L²-bounded linear functional at every exponent s ≥ 0.
+#print axioms Square.compactMoment_add
+#print axioms Square.compactMoment_neg
+#print axioms Square.compactMoment_sub
+#print axioms Square.compactMoment_cs

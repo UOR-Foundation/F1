@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 94 — THE CONTINUOUS MELLIN TRANSFORM IS LINEAR IN THE TEST AND
+  `L²`-BOUNDED** (new `Square/ContinuousMomentLinear.lean`): the compact-side continuous moment
+  `compactMoment φ a s = ∫₀¹ φ·t^s` (brick 93) pairs `φ` against a *fixed* power test, so every
+  first-slot law of the certified `L²` pairing `innerI` transfers: additivity (`compactMoment_add`),
+  negation (`compactMoment_neg`), subtraction (`compactMoment_sub`), and the Cauchy–Schwarz bound
+  `(compactMoment φ a s)² ≤ ⟨φ,φ⟩·⟨t^s,t^s⟩` (`compactMoment_cs`) — the continuous-exponent analog of
+  the integer-moment `mellinMoment_cs`. So `compactMoment · a s` is a genuine `L²`-bounded linear
+  functional on the bounded-Lipschitz test class at every exponent `s ≥ 0`. **Honest scope**:
+  linearity and the CS bound at a fixed floor `a` — no continuity in `s`, no transform pair, no
+  inversion, no positivity beyond `innerI`'s. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 93 — THE COMPACT-SIDE CONTINUOUS MELLIN PARAMETER** (new
   `Square/ContinuousMoment.lean`): the transform `∫₀¹ φ(t)·t^s dt` at a *continuous* real exponent
   `s ≥ 0` (`compactMoment φ a s = innerI φ (compactPowTest …)`), generalizing the integer moments
