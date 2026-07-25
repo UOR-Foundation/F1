@@ -5743,3 +5743,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.step_bound
 #print axioms Square.band_approx_close
 #print axioms Square.compactPow_one_general
+
+-- THE PRE-HILBERT LAYER, brick 105 (Square/ContinuousMomentGenTwo.lean) — THE COMPACT POWER AT EXPONENT 2
+-- IS THE SQUARE FOR GENERAL REAL t: compactPow a 2 t ≈ t² for every real t ∈ [a,1], composing the
+-- general-real s=1 identity (brick 104) with the power law (brick 99). The integer t^n identification
+-- now holds for all real t ∈ [a,1] by iterating, not only rationals.
+#print axioms Square.compactPow_two_general

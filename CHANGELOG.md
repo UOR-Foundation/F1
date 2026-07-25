@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 105 — THE COMPACT POWER AT EXPONENT `2` IS THE SQUARE FOR GENERAL REAL
+  `t`** (new `Square/ContinuousMomentGenTwo.lean`): `compactPow a 2 t ≈ t²` for every real `t ∈ [a,1]`
+  (`compactPow_two_general`), composing the general-real `s = 1` identity (brick 104) with the power law
+  (brick 99, valid for all real `t`): `compactPow a (1+1) t ≈ compactPow a 1 t · compactPow a 1 t ≈ t·t`.
+  The integer `t^n` identification now holds for all real `t ∈ [a,1]` by iterating the power law, not
+  only rationals. **Honest scope**: the general-real `s = 2` value on `[a,1]`; general integer `n`
+  iterates this, the `a → 0` limit is still separate. No transform pair, no inversion, no positivity.
+  Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 104 — THE COMPACT POWER AT EXPONENT `1` IS THE IDENTITY FOR GENERAL
   REAL `t`** (new `Square/ContinuousMomentGeneral.lean`): `compactPow a 1 t ≈ t` for every real
   `t ∈ [a,1]` (`compactPow_one_general`), lifting the rational-point value (brick 102) to all reals by
