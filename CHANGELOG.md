@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 89 — A TEST VANISHING ON `[0,1]` PAIRS TO ZERO WITH EVERYTHING**
+  (new `Square/PairingUnitZero.lean`): `⟨φ, ψ⟩ = ∫₀¹ φ·ψ ≈ 0` for every `ψ` when `φ` vanishes on
+  `[0,1]` (`innerI_zero_of_left_unit_zero` — the integrand vanishes at every rational partition point,
+  so `riemannIntegral_zero_of_partition_zero` from brick 81 applies), and the nullity survives `L²`
+  completion (`pairingIU_zero_of_left_unit_zero`, via `Rlim_zero`). This generalizes brick 81's
+  `⟨φ,φ⟩` version to an arbitrary second argument; with brick 79 the pairing's left null space is
+  *exactly* the tests vanishing on `[0,1]`, consistently across the pairing and its completion.
+  **Honest scope**: left-nullity from `[0,1]`-vanishing and its stability under `L²` completion of the
+  first argument — NOT the `L²`-function-space limit member (still open; only pairing *values* here),
+  not the moment problem. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 88 — THE MELLIN TRANSFORM SEPARATES POLYNOMIAL TESTS** (new
   `Square/MellinInjectivePair.lean`): the two-test form of injectivity — two compactly supported
   polynomial tests whose transforms (= moments) agree below `max d d'` are the same function on

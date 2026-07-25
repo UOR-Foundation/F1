@@ -400,6 +400,7 @@ import F1Square.Square.CoSupportPairwise
 import F1Square.Square.MellinLinearNeg
 import F1Square.Square.MellinInjective
 import F1Square.Square.MellinInjectivePair
+import F1Square.Square.PairingUnitZero
 
 open UOR.Primitives
 

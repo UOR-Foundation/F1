@@ -5605,3 +5605,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_polyPN_diff_zero
 #print axioms Square.innerI_polyPN_diff_self_zero
 #print axioms Square.polyPN_moment_eq_imp_function_eq
+
+-- THE PRE-HILBERT LAYER, brick 89 (Square/PairingUnitZero.lean) — A TEST VANISHING ON [0,1] PAIRS TO
+-- ZERO WITH EVERYTHING (innerI_zero_of_left_unit_zero: ∫₀¹ φ·ψ ≈ 0 when φ vanishes on [0,1], via the
+-- partition-restricted argument brick 81), and the nullity survives L² completion
+-- (pairingIU_zero_of_left_unit_zero via Rlim_zero). With brick 79 the pairing's left null space is
+-- EXACTLY the [0,1]-vanishing tests.
+#print axioms Square.innerI_zero_of_left_unit_zero
+#print axioms Square.pairingIU_zero_of_left_unit_zero
