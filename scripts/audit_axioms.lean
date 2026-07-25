@@ -5946,3 +5946,12 @@ open UOR.Bridge.F1Square
 -- then collapse the (nx)² terms. Minted RofNat_sub (ℕ→ℝ respects truncated subtraction).
 #print axioms Square.RofNat_sub
 #print axioms Square.bernR_variance
+
+-- THE BERNSTEIN ARC, sub-brick F (Square/BernsteinConverge.lean) — THE FIRST ABSOLUTE CENTRAL MOMENT
+-- 2δ·Σ_{k=0}^n |k-nx|·b_{n,k}(x) ≤ δ² + nx(1-x) (bernR_abs_moment), the sqrt-free/split-free heart of
+-- Bernstein convergence: the pointwise AM-GM 2δ|t| ≤ δ²+t² (amgm_2delta, from (δ-|t|)²≥0) summed against
+-- the nonneg basis (bernR_nonneg, RsumN_le) and closed by the variance + partition. Dodges both the sqrt
+-- (Cauchy-Schwarz) and the undecidable near/far split a real x would force.
+#print axioms Square.bernR_nonneg
+#print axioms Square.amgm_2delta
+#print axioms Square.bernR_abs_moment

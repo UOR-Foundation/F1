@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick F — THE FIRST ABSOLUTE CENTRAL MOMENT (convergence core)** (new
+  `Square/BernsteinConverge.lean`): `2δ·Σ_{k=0}^n |k − nx|·b_{n,k}(x) ≤ δ² + nx(1−x)` for `x ∈ [0,1]` and
+  any `δ > 0` (`bernR_abs_moment`) — the sqrt-free, split-free heart of Bernstein convergence. Bernstein's
+  theorem bounds `|B_n(φ)(x) − φ(x)| ≤ L·Σ|k/n − x|·b`, so convergence rests on this moment; classically
+  it's `√(variance)` with a near/far index split by `|k/n − x| ≷ δ`, but over the constructive reals BOTH
+  are unavailable (no `sqrt`; `|k/n − x| ≤ δ` is undecidable for real `x`). The constructive substitute is
+  the pointwise AM-GM `2δ|t| ≤ δ² + t²` (`amgm_2delta`, from `(δ − |t|)² ≥ 0`), which needs neither: summed
+  against the nonnegative basis (`bernR_nonneg`, `RsumN_le`) and closed by the variance (`bernR_variance`)
+  and partition (`bernR_partition`). Choosing `δ` small then `n` large drives the right side to `0`.
+  **Honest scope**: the first absolute central moment over `Real`; NOT yet the Bernstein operator on a
+  test, NOT the moment-integral, NOT determinacy, NOT inversion, NOT positivity. Step 4 is RH; crux fields
+  stay `none`.
 - **The Bernstein arc, sub-brick E — THE BERNSTEIN VARIANCE IDENTITY** (new
   `Square/BernsteinVariance.lean`): `Σ_{k=0}^n (k−nx)²·b_{n,k}(x) = nx(1−x)` (`bernR_variance`) — THE
   estimate the Bernstein operator's ε-δ convergence divides by (Chebyshev: `Σ_{|k/n−x|>δ} b ≤
