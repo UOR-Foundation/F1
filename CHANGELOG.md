@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₂ — THE CLAMPED BASIS MATCHES THE HONEST ONE ON `[0,1]`** (new
+  `Square/BernsteinClampMatch.lean`): `bernR x n k ≈ C(n,k)·(clampProdTest k (n−k)).f x` for `0 ≤ x ≤ 1`
+  (`bernR_eq_scaled_clampProd`) — the weld between the clamped building blocks (genuine
+  bounded-Lipschitz tests that pair through the certified integral) and the honest basis `bernR` (built
+  from `Rpow`, unbounded off `[0,1]`) over which Bernstein's pointwise deviation bound (sub-brick G) is
+  stated. The correspondences `(powTest k).f x = clamp01(x)ᵏ` (`powTest_f_eq`) and
+  `(powMinusTest m).f x = (1 − clamp01 x)ᵐ` (`powMinusTest_f_eq`) are clean inductions, and `clamp01 x = x`
+  on `[0,1]` (`clamp01_eq_self`, `qBandQ_eq_of_band`) collapses both to the honest monomials. The `C(n,k)`
+  factor is carried outside as the real `RofNat (choose n k)`, so the deviation arc can absorb it into
+  the operator's real coefficient without touching the sealed `natScale`. Since the certified integral
+  only ever samples `[0,1]`, this is exactly the bridge the operator/deviation integrals need. **Honest
+  scope**: the clamped-vs-honest identity on `[0,1]`; NOT yet the operator integral, NOT the deviation
+  integral, NOT determinacy. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₁ — THE BERNSTEIN BASIS PAIRS TO ZERO** (new
   `Square/BernsteinBasisZero.lean`): for a test `φ` whose *every* integer moment vanishes,
   `⟨φ, C(n,k)·xᵏ·(1−x)ⁿ⁻ᵏ⟩ = ∫₀¹ φ(x)·b_{n,k}(x) dx ≈ 0` (`innerI_bernBasis_zero`) — the FIRST

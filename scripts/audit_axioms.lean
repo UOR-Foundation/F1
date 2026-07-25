@@ -5973,3 +5973,15 @@ open UOR.Bridge.F1Square
 -- unit-restriction congruence, reduces every basis pairing to the base moment ⟨φ,xᵏ⟩ (innerI_clampProd_zero).
 #print axioms Square.innerI_clampProd_zero
 #print axioms Square.innerI_bernBasis_zero
+
+-- THE BERNSTEIN ARC, sub-brick H₂ (Square/BernsteinClampMatch.lean) — THE CLAMPED BERNSTEIN BASIS
+-- MATCHES THE HONEST ONE ON [0,1]: bernR x n k ≈ C(n,k)·(clampProdTest k (n-k)).f x for 0≤x≤1
+-- (bernR_eq_scaled_clampProd). Welds the clamped tests (which pair through the certified integral) to
+-- the honest bernR (built from Rpow, unbounded off [0,1]) that Bernstein's deviation bound is stated
+-- over. Clean inductions (powTest_f_eq: (powTest k).f x = clamp01(x)ᵏ; powMinusTest_f_eq) + clamp01
+-- inertness on [0,1] (clamp01_eq_self, qBandQ_eq_of_band) collapse both to the honest monomials.
+#print axioms Square.clamp01_eq_self
+#print axioms Square.powTest_f_eq
+#print axioms Square.powMinusTest_f_eq
+#print axioms Square.clampProdTest_eq_on_unit
+#print axioms Square.bernR_eq_scaled_clampProd
