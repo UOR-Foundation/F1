@@ -408,6 +408,7 @@ import F1Square.Square.ContinuousMoment
 import F1Square.Square.ContinuousMomentLinear
 import F1Square.Square.ContinuousMomentZero
 import F1Square.Square.ContinuousMomentExp
+import F1Square.Square.ContinuousMomentFloor
 
 open UOR.Primitives
 

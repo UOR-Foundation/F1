@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 97 — THE TRANSFORM'S INTEGRAND IS FLOOR-INDEPENDENT AT RATIONAL SAMPLE
+  POINTS** (new `Square/ContinuousMomentFloor.lean`): `compactPow a s (q) ≈ (1/q)^{−s}` for every
+  rational `q ≥ a` (`compactPow_ofQ`) — at `q ≥ a` the clamp is inert (`clampedInv a q = 1/q`), so the
+  value drops the floor `a` — hence two floors `a, a' ≤ q` give the *same* integrand value at `q`
+  (`compactPow_floor_indep`). The certified Riemann integral samples its integrand only at the RATIONAL
+  partition points `i/(N+1) ∈ [0,1)`, so above the floor those samples are floor-free: the only
+  floor-dependence of `compactMoment φ a s` is through the sub-`a` points — the `O(M·a^{s+1})` tail of
+  brick 93 — the structural fact the `a → 0` limit rests on. **Honest scope**: floor-independence of the
+  integrand VALUES at rational points `≥ a`; the `a → 0` limit of `compactMoment` itself (a Cauchy
+  estimate on the sub-`a` tail) is not assembled, and `(1/q)^{−s}` is still the reciprocal power, not
+  `q^s` (which needs `log(1/q) = −log q`). No transform pair, no inversion, no positivity. Step 4 is RH;
+  crux fields stay `none`.
 - **The pre-Hilbert layer, brick 96 — THE COMPACT POWER IS LIPSCHITZ IN THE EXPONENT** (new
   `Square/ContinuousMomentExp.lean`): `|compactPow a s x − compactPow a s' x| ≤ 4·|s − s'|·L_x`
   (`compactPow_exp_lipschitz`) — the pointwise continuity in `s` that makes the continuous Mellin

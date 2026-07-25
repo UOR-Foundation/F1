@@ -5675,3 +5675,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.compactBaseLog
 #print axioms Square.compactBaseLog_nonneg
 #print axioms Square.compactPow_exp_lipschitz
+
+-- THE PRE-HILBERT LAYER, brick 97 (Square/ContinuousMomentFloor.lean) — THE TRANSFORM'S INTEGRAND IS
+-- FLOOR-INDEPENDENT AT RATIONAL SAMPLE POINTS: at q ≥ a the clamp is inert (clampedInv a q = 1/q), so
+-- compactPow a s q ≈ (1/q)^{−s} drops the floor (compactPow_ofQ), and two floors a,a' ≤ q give the same
+-- value (compactPow_floor_indep). The certified integral samples only rationals i/(N+1), so above the
+-- floor the transform is floor-free — the structural fact underpinning the a→0 limit.
+#print axioms Square.compactPow_ofQ
+#print axioms Square.compactPow_floor_indep
