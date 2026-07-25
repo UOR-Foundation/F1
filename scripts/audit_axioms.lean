@@ -5658,3 +5658,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.compactMoment_neg
 #print axioms Square.compactMoment_sub
 #print axioms Square.compactMoment_cs
+
+-- THE PRE-HILBERT LAYER, brick 95 (Square/ContinuousMomentZero.lean) — THE CONTINUOUS TRANSFORM
+-- SPECIALIZES TO THE INTEGER SKELETON AT s=0: compactPow a 0 t ≈ 1 everywhere (t^0 = exp 0 = 1), so
+-- the compact power test agrees with oneTest = powTest 0 on [0,1] and innerI (which only sees [0,1])
+-- cannot distinguish them — compactMoment φ a 0 ≈ mellinMoment φ 0 = ∫₀¹ φ. First evaluation of the
+-- continuous transform; anchors it as a genuine extension of the integer moments.
+#print axioms Square.compactPow_zero
+#print axioms Square.compactMoment_zero

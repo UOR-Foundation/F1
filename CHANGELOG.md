@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 95 — THE CONTINUOUS TRANSFORM SPECIALIZES TO THE INTEGER SKELETON AT
+  `s = 0`** (new `Square/ContinuousMomentZero.lean`): `compactMoment φ a 0 ≈ mellinMoment φ 0 = ∫₀¹ φ`
+  — the consistency check that the continuous parameter (brick 93) agrees with the integer moment map
+  where they overlap. At `s = 0` the compact power is the constant `1` everywhere (`compactPow_zero`:
+  `t^0 = exp(0·log t) = exp 0 = 1`, uniformly in the floor `a` — the exponent kills the log before the
+  base/clamp matter), so the compact power test and `oneTest = powTest 0` agree on `[0,1]`, and the
+  certified `L²` pairing — which only integrates over `[0,1]` — cannot distinguish them
+  (`innerI_right_congr_on_unit`). This is the first EVALUATION of the continuous transform (bricks
+  93–94 built and pinned its algebra; this reads off a value) and the anchor that the continuous
+  exponent genuinely extends the integer moments. **Honest scope**: the single specialization `s = 0`;
+  the general `compactMoment φ a n ≈ mellinMoment φ n` (`n ≥ 1`) needs the `t^s ≈ tⁿ` identification on
+  `[a,1]` (which needs `log(1/t) = −log t`) and is not established here. No transform pair, no
+  inversion, no positivity. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 94 — THE CONTINUOUS MELLIN TRANSFORM IS LINEAR IN THE TEST AND
   `L²`-BOUNDED** (new `Square/ContinuousMomentLinear.lean`): the compact-side continuous moment
   `compactMoment φ a s = ∫₀¹ φ·t^s` (brick 93) pairs `φ` against a *fixed* power test, so every
