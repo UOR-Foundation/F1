@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 118 — THE CONTINUOUS TRANSFORM IS ADDITIVE** (new
+  `Square/ContinuousMomentGenLinear.lean`): `compactMomentGenLim (φ + ψ) s ≈ compactMomentGenLim φ s +
+  compactMomentGenLim ψ s` (`compactMomentGenLim_add`) — the first structural law of the transform pair.
+  Now that the transform is the schedule-independent `a → 0` limit at every floor (brick 117), it can be
+  treated as a map and its algebra proven: at each floor the compact moment is additive
+  (`innerI_add_left`), and passing to the limit — controlled by the brick-117 rate on all three of
+  `φ+ψ`, `φ`, `ψ` — gives additivity. The passage uses a reusable Archimedean collapse
+  `Req_of_geom_rate` (two reals within `E·(1/2^m)` for every `m` are equal, the constant `E` absorbed by
+  the `n < 2^n` reindex). **Honest scope**: additivity of the continuous transform in the test slot; NOT
+  the full pairing/inversion. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 117 — THE CONTINUOUS TRANSFORM IS THE `a → 0` LIMIT AT EVERY FLOOR**
   (new `Square/ContinuousMomentGenRate.lean`): `|compactMoment φ (1/2^m) s − compactMomentGenLim φ s| ≤
   2·M_φ·(1/2^m)` (`compactMomentF_dist_lim`) — the transform value is **schedule-independent**. Brick 112

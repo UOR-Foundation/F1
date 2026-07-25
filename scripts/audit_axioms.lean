@@ -5857,3 +5857,12 @@ open UOR.Bridge.F1Square
 -- through the reindexed sequence at depth j=m+k (brick 111 + Rabs_dist_Rlim), Archimedean collapse
 -- removes the residual. abs_sub_tri'/le_momRate private.
 #print axioms Square.compactMomentF_dist_lim
+
+-- THE PRE-HILBERT LAYER, brick 118 (Square/ContinuousMomentGenLinear.lean) — THE CONTINUOUS TRANSFORM
+-- IS ADDITIVE: compactMomentGenLim (φ+ψ) s ≈ compactMomentGenLim φ s + compactMomentGenLim ψ s
+-- (compactMomentGenLim_add), the first structural law of the transform pair. At each floor the compact
+-- moment is additive (innerI_add_left); the brick-117 schedule-independent rate on φ+ψ, φ, ψ controls
+-- the limit, and the reusable Archimedean collapse Req_of_geom_rate (|a−b| ≤ E/2^m ∀m ⟹ a≈b, constant
+-- E absorbed by n<2^n) closes it. geom_reindex_Qle/abs_sub_swap'/abs_sub_tri'' private.
+#print axioms Square.Req_of_geom_rate
+#print axioms Square.compactMomentGenLim_add
