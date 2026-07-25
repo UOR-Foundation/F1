@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Certified integration, brick 107 — THE DYADIC TAIL BOUND** (new `Square/IntegralTailBound.lean`): a
+  globally-bounded (`|f| ≤ B`), Lipschitz integrand that vanishes on the dyadic tail `[1/2^m, 1]` has
+  `|∫₀¹ f| ≤ B·(1/2^m)` (`riemannIntegral_dyadic_tail_bound`). Induction on the depth `m` via the
+  midpoint split (brick 68): at `m+1` the `[1/2, 1]` half vanishes by hypothesis (window bound with
+  `B = 0`) and the `[0, 1/2]` half rescales to depth `m` under the affine pullback, the width factor
+  `1/2` supplying the geometric decay; at `m = 0` the global `|∫₀¹ f| ≤ B` (comparison against the
+  constants `±B`, a private base case). The genuine subdivision identity `∫₀¹ = ∫₀^a + ∫_a^1` at an
+  arbitrary rational `a` is **not** in the repo and is **not needed** — the floor sequence is ours to
+  choose, so the dyadic floors `1/2^m`, reachable by the midpoint split alone, suffice. **Honest scope**:
+  a quantitative decay bound for the certified `[0,1]` integral; integration substrate, nothing here
+  touches the Weil form. Crux fields stay `none`.
 - **The pre-Hilbert layer, brick 106 — THE COMPACT POWER AT `s = 1` AGREES WITH THE CLAMPED-IDENTITY TEST
   ON `[a,1]`** (new `Square/ContinuousMomentClamp.lean`): `compactPow a 1 t ≈ clampTest.f t` for every
   real `t ∈ [a,1]` (`compactPow_one_eq_clamp`), the integrand-agreement form of brick 104. `clampTest.f =

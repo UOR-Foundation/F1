@@ -5756,3 +5756,13 @@ open UOR.Bridge.F1Square
 -- sub-a region, pinning the floor-dependence of compactMoment φ a 1 vs mellinMoment φ 1 to [0,a) — the
 -- O(M·a) tail whose a→0 limit is the last Mellin step.
 #print axioms Square.compactPow_one_eq_clamp
+
+-- CERTIFIED INTEGRATION, brick 107 (Square/IntegralTailBound.lean) — THE DYADIC TAIL BOUND: a
+-- globally-bounded (|f| ≤ B) Lipschitz integrand that vanishes on the dyadic tail [1/2^m,1] has
+-- |∫₀¹ f| ≤ B·(1/2^m). Induction on the depth m via the midpoint split (brick 68): the [1/2,1] half
+-- vanishes by hypothesis, the [0,1/2] half rescales to depth m under the affine pullback and the width
+-- factor 1/2 supplies the geometric decay. The arbitrary-a subdivision ∫₀¹ = ∫₀^a + ∫_a^1 is NOT in
+-- the repo and NOT needed — the floor is ours to choose, so dyadic floors suffice. The private base
+-- case (riemannIntegral_abs_le, the global |∫| ≤ B) and affine helper (affine_upper) carry no audit
+-- line (private). This is the locality tool for the a→0 Mellin limit.
+#print axioms Square.riemannIntegral_dyadic_tail_bound
