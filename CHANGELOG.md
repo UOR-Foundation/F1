@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 92 — THE EXTENDED PAIRING IS WELL-DEFINED ON `[0,1]`-CLASSES AT THE
+  COMPLETION LEVEL** (new `Square/PairingIUCongr.lean`): two `L²`-Cauchy sequences whose members agree
+  on `[0,1]` have equal extended pairing against every `ψ` (`pairingIU_congr_on_unit`) — brick 90's
+  left congruence carried through the Bishop limit by `Rlim_congr`. So the `[0,1]`-quotient structure
+  of bricks 89–91 (the pairing and metric factor through `[0,1]`) is stable under `L²` completion,
+  closing the `[0,1]`-restriction thread. **Honest scope**: well-definedness of the extended pairing
+  *values* on `[0,1]`-classes — NOT the `L²`-function-space limit member (still open), not the moment
+  problem. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 91 — THE `L²` METRIC FACTORS THROUGH `[0,1]`-RESTRICTION** (new
   `Square/PairingUnitDist.lean`): `dist2I` depends only on the `[0,1]`-restrictions of both tests —
   `φ ≈ φ'`, `ψ ≈ ψ'` on `[0,1]` ⟹ `dist2I φ ψ ≈ dist2I φ' ψ'` (`dist2I_congr_on_unit`), via brick 90's

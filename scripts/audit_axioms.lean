@@ -5626,3 +5626,9 @@ open UOR.Bridge.F1Square
 -- (dist2I_congr_on_unit, via brick 90's two-argument congruence on φ−ψ). With bricks 82/89/90 the L²
 -- inner product and its metric are a well-defined, definite structure on the [0,1]-equivalence classes.
 #print axioms Square.dist2I_congr_on_unit
+
+-- THE PRE-HILBERT LAYER, brick 92 (Square/PairingIUCongr.lean) — THE EXTENDED PAIRING IS WELL-DEFINED
+-- ON [0,1]-CLASSES AT THE COMPLETION LEVEL: two L²-Cauchy sequences whose members agree on [0,1] have
+-- equal extended pairing (pairingIU_congr_on_unit, via brick 90's left congruence through Rlim_congr).
+-- Closes the [0,1]-restriction thread (89-92): the pairing/metric structure is stable under completion.
+#print axioms Square.pairingIU_congr_on_unit
