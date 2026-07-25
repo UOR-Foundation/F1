@@ -5613,3 +5613,10 @@ open UOR.Bridge.F1Square
 -- EXACTLY the [0,1]-vanishing tests.
 #print axioms Square.innerI_zero_of_left_unit_zero
 #print axioms Square.pairingIU_zero_of_left_unit_zero
+
+-- THE PRE-HILBERT LAYER, brick 90 (Square/PairingUnitCongr.lean) — THE L² PAIRING FACTORS THROUGH
+-- [0,1]-RESTRICTION: tests agreeing on [0,1] pair identically with everything
+-- (innerI_left_congr_on_unit, via brick 89 on the difference + innerI_sub_left; right argument by
+-- innerI_symm). So ⟨·,·⟩ is a genuine bilinear form on the [0,1]-equivalence classes of tests.
+#print axioms Square.innerI_left_congr_on_unit
+#print axioms Square.innerI_right_congr_on_unit

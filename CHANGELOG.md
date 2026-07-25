@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 90 — THE `L²` PAIRING FACTORS THROUGH `[0,1]`-RESTRICTION** (new
+  `Square/PairingUnitCongr.lean`): tests agreeing on `[0,1]` pair identically with everything —
+  `∀ x ∈ [0,1], φ(x) ≈ φ'(x)` ⟹ `⟨φ,ψ⟩ ≈ ⟨φ',ψ⟩` for every `ψ` (`innerI_left_congr_on_unit`), and by
+  symmetry in the right argument (`innerI_right_congr_on_unit`). Immediate from brick 89 on the
+  difference `φ − φ'` (which vanishes on `[0,1]`) through `innerI_sub_left`. With brick 81's
+  definiteness, the `L²` pairing is thus a genuine bilinear form on the `[0,1]`-equivalence classes of
+  tests — it depends only on the restriction to `[0,1]`, both arguments. **Honest scope**:
+  well-definedness on the `[0,1]`-restriction, not the `L²`-function-space limit member (open), not
+  the moment problem. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 89 — A TEST VANISHING ON `[0,1]` PAIRS TO ZERO WITH EVERYTHING**
   (new `Square/PairingUnitZero.lean`): `⟨φ, ψ⟩ = ∫₀¹ φ·ψ ≈ 0` for every `ψ` when `φ` vanishes on
   `[0,1]` (`innerI_zero_of_left_unit_zero` — the integrand vanishes at every rational partition point,

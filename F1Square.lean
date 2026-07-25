@@ -401,6 +401,7 @@ import F1Square.Square.MellinLinearNeg
 import F1Square.Square.MellinInjective
 import F1Square.Square.MellinInjectivePair
 import F1Square.Square.PairingUnitZero
+import F1Square.Square.PairingUnitCongr
 
 open UOR.Primitives
 
