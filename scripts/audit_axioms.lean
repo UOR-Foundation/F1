@@ -5749,3 +5749,10 @@ open UOR.Bridge.F1Square
 -- general-real s=1 identity (brick 104) with the power law (brick 99). The integer t^n identification
 -- now holds for all real t ∈ [a,1] by iterating, not only rationals.
 #print axioms Square.compactPow_two_general
+
+-- THE PRE-HILBERT LAYER, brick 106 (Square/ContinuousMomentClamp.lean) — THE COMPACT POWER AT s=1 AGREES
+-- WITH THE CLAMPED-IDENTITY TEST ON [a,1]: compactPow a 1 t ≈ clampTest.f t for every real t ∈ [a,1]
+-- (brick 104 + clamp01 inertness). The integrands compactPow a 1 and (powTest 1).f coincide off the
+-- sub-a region, pinning the floor-dependence of compactMoment φ a 1 vs mellinMoment φ 1 to [0,a) — the
+-- O(M·a) tail whose a→0 limit is the last Mellin step.
+#print axioms Square.compactPow_one_eq_clamp

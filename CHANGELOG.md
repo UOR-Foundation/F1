@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 106 — THE COMPACT POWER AT `s = 1` AGREES WITH THE CLAMPED-IDENTITY TEST
+  ON `[a,1]`** (new `Square/ContinuousMomentClamp.lean`): `compactPow a 1 t ≈ clampTest.f t` for every
+  real `t ∈ [a,1]` (`compactPow_one_eq_clamp`), the integrand-agreement form of brick 104. `clampTest.f =
+  clamp01` is inert on `[0,1]` (`clamp01 t ≈ t`) and `compactPow a 1 t ≈ t` on `[a,1]` (brick 104), so
+  the two integrands `compactPow a 1` and `(powTest 1).f` coincide off the sub-`a` region `[0,a)`. Since
+  `innerI φ ·` integrates over `[0,1]`, this pins the entire floor-dependence of `compactMoment φ a 1`
+  (versus `mellinMoment φ 1`) to `[0,a)` — the `O(M·a)` tail whose `a → 0` limit is the last Mellin step.
+  **Honest scope**: integrand agreement on `[a,1]` at `s = 1`; the `a → 0` limit converting it to
+  `compactMoment φ a 1 ≈ mellinMoment φ 1` remains. No transform pair, no inversion, no positivity. Step
+  4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 105 — THE COMPACT POWER AT EXPONENT `2` IS THE SQUARE FOR GENERAL REAL
   `t`** (new `Square/ContinuousMomentGenTwo.lean`): `compactPow a 2 t ≈ t²` for every real `t ∈ [a,1]`
   (`compactPow_two_general`), composing the general-real `s = 1` identity (brick 104) with the power law
