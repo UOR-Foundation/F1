@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 99 — THE POWER LAW IN THE EXPONENT** (new
+  `Square/ContinuousMomentAdd.lean`): `compactPow a (s + s') t ≈ compactPow a s t · compactPow a s' t`
+  (`compactPow_exp_add`), i.e. `t^{s+s'} = t^s·t^{s'}` on the totalized compact power (brick 93) — the
+  third and last exponent-structure law after continuity (brick 96) and monotonicity (brick 98). At a
+  fixed `t` the compact power is `exp(−s·L_t)`, and `exp` turns the additive exponent into a product:
+  `exp(−(s+s')·L_t) = exp((−s·L_t)+(−s'·L_t)) = exp(−s·L_t)·exp(−s'·L_t)` via `Rneg_Radd`,
+  right-distributivity, and `RexpReal_add`. So the totalized power is a homomorphism `(ℝ,+) → (ℝ,·)` in
+  the exponent — the defining functional equation of a power. **Honest scope**: the pointwise power law
+  (`s, s'` any reals — purely `exp`'s additivity); still the totalized power, not identified with `t^s`
+  off the clamp (needs `log(1/t) = −log t`). No transform pair, no inversion, no positivity. Step 4 is
+  RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 98 — THE COMPACT POWER IS ANTITONE IN THE EXPONENT** (new
   `Square/ContinuousMomentMono.lean`): `s ≤ s' ⟹ compactPow a s' t ≤ compactPow a s t`
   (`compactPow_antitone_exp`) — the monotone companion to brick 96's continuity; together they

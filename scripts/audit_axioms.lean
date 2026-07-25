@@ -5689,3 +5689,10 @@ open UOR.Bridge.F1Square
 -- L_t = compactBaseLog ≥ 0, so a larger σ scales −σ·L_t down and exp is monotone (RexpReal_le_of_le).
 -- The monotone companion to brick 96's continuity; holds for all t, all s ≤ s' (no sign hypothesis).
 #print axioms Square.compactPow_antitone_exp
+
+-- THE PRE-HILBERT LAYER, brick 99 (Square/ContinuousMomentAdd.lean) — THE POWER LAW IN THE EXPONENT:
+-- compactPow a (s+s') t ≈ compactPow a s t · compactPow a s' t (t^{s+s'} = t^s·t^{s'}). Via
+-- −(s+s') = −s + −s' (Rneg_Radd) + right-distributivity + RexpReal_add: exp(−(s+s')·L) =
+-- exp(−s·L)·exp(−s'·L). The totalized power is a homomorphism (ℝ,+)→(ℝ,·) in the exponent — the third
+-- exponent-structure law after continuity (96) and monotonicity (98). Holds for all s,s',t.
+#print axioms Square.compactPow_exp_add
