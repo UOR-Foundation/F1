@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 102 — THE COMPACT POWER AT EXPONENT `1` IS THE IDENTITY AT RATIONAL
+  POINTS** (new `Square/ContinuousMomentOne.lean`): `compactPow a 1 (q) ≈ q` for every rational
+  `q ∈ (a,1]` (`compactPow_ofQ_one`), the `t^1 = t` specialization completing the endpoint picture
+  alongside brick 95's `t^0 = 1`. The engine is `Rexp_logN_sub`: `exp(logN A − logN D) ≈ A/D` for all
+  `A, D ≥ 1` (via `RexpReal_add`, `Rexp_logN`, and `RexpReal_neg_eq_recip` for `exp(−logN D) = 1/D`) —
+  the rational-value reader for brick 101's closed form; at `s = 1` the exponent `−(log q_den − log
+  q_num)` collapses to `log q`, read off as `q`. **Honest scope**: the `s = 1` value at rationals;
+  `Rexp_logN_sub` is the reusable exp-of-log-ratio reader the integer-`n` agreement and moment
+  identification will consume. No transform pair, no inversion, no positivity, no `a → 0` limit. Step 4
+  is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 101 — THE `t^s` IDENTIFICATION AT ALL RATIONAL POINTS OF `(a,1]`** (new
   `Square/ContinuousMomentValueAll.lean`): `compactPow a s (q) ≈ q^s` for every rational `q ∈ (a,1]`,
   with NO lower cutoff (`compactPow_ofQ_pow_all`). Brick 100 was capped at `q ≥ 1/4` by the `[1,4]`

@@ -5719,3 +5719,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.rrpowPos_ofQ_eq_all
 #print axioms Square.gPowClamp_ofQ_eq_all
 #print axioms Square.compactPow_ofQ_pow_all
+
+-- THE PRE-HILBERT LAYER, brick 102 (Square/ContinuousMomentOne.lean) — THE COMPACT POWER AT EXPONENT 1
+-- IS THE IDENTITY AT RATIONAL POINTS: compactPow a 1 (q) ≈ q for every rational q ∈ (a,1] (t^1=t). The
+-- engine Rexp_logN_sub reads exp(logN A − logN D) ≈ A/D for all A,D ≥ 1 (RexpReal_add + Rexp_logN +
+-- RexpReal_neg_eq_recip); at s=1 the brick-101 closed form collapses to log q_num − log q_den = log q.
+#print axioms Square.Rexp_logN_sub
+#print axioms Square.compactPow_ofQ_one
