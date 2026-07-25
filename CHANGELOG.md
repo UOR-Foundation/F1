@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 104 — THE COMPACT POWER AT EXPONENT `1` IS THE IDENTITY FOR GENERAL
+  REAL `t`** (new `Square/ContinuousMomentGeneral.lean`): `compactPow a 1 t ≈ t` for every real
+  `t ∈ [a,1]` (`compactPow_one_general`), lifting the rational-point value (brick 102) to all reals by
+  density — the doc's flagged "not for general real `t`", closed at `s = 1`. `compactPow a 1` is
+  Lipschitz (brick 93) and equals `q` at every rational `q ∈ [a,1]` (brick 102), so for any real
+  `t ∈ [a,1]` the clamped rational sample `qN = clamp(t.seq N, [a,1])` is within `1/(N+1)` of `t`
+  (`band_approx_close`, via the `1`-Lipschitz band projection `qBandQ`) and carries the value:
+  `|compactPow a 1 t − t| ≤ (L+1)/(N+1) → 0` (`step_bound` + Archimedean collapse `Rle_of_Rsub_le_eps`).
+  No `exp∘log` inverse is used — the density route goes entirely through the rational values (the
+  per-sample estimate is factored through `step_bound` with an ABSTRACT rational to keep `whnf` off the
+  nested clamp term). **Honest scope**: the general-real identification at `s = 1` on `[a,1]`; general
+  `s` iterates the power law (bricks 99/103), the `a → 0` limit is still separate. No transform pair, no
+  inversion, no positivity. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 103 — THE COMPACT POWER AT EXPONENT `2` IS THE SQUARE AT RATIONAL
   POINTS** (new `Square/ContinuousMomentTwo.lean`): `compactPow a 2 (q) ≈ q²` for every rational
   `q ∈ (a,1]` (`compactPow_ofQ_two`), the `t² = t·t` value obtained by composing the power law (brick

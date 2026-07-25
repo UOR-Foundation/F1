@@ -5732,3 +5732,14 @@ open UOR.Bridge.F1Square
 -- law (brick 99, compactPow a (1+1) = compactPow a 1 · compactPow a 1) and the s=1 value (brick 102).
 -- A worked instance of the integer-power reader the moment identification iterates.
 #print axioms Square.compactPow_ofQ_two
+
+-- THE PRE-HILBERT LAYER, brick 104 (Square/ContinuousMomentGeneral.lean) — THE COMPACT POWER AT EXPONENT
+-- 1 IS THE IDENTITY FOR GENERAL REAL t: compactPow a 1 t ≈ t for every real t ∈ [a,1], lifting the
+-- rational value (brick 102) to all reals by density. For any t ∈ [a,1] the clamped rational sample
+-- qN = clamp(t.seq N,[a,1]) is within 1/(N+1) of t (band_approx_close, via the 1-Lipschitz band
+-- projection qBandQ) and carries the value; step_bound + Archimedean collapse (Rle_of_Rsub_le_eps) close
+-- it. No exp∘log inverse — the density route goes through the rational values. Closes the doc's flagged
+-- "not for general real t" at s=1.
+#print axioms Square.step_bound
+#print axioms Square.band_approx_close
+#print axioms Square.compactPow_one_general
