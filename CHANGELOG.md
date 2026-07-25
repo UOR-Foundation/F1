@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 116 — THE CONTINUOUS TRANSFORM COMPUTES** (new
+  `Square/ContinuousMomentClampValue.lean`): `compactMomentGenLim clampTest n ≈ 1/(n+2)`
+  (`compactMomentGenLim_clamp_eq`) — a concrete closed-form evaluation of the abstract `a → 0` continuous
+  Mellin transform on the clamped identity, verifying end to end that the machinery produces the correct
+  number. At the integer exponent `n` the continuous transform is the integer moment (brick 115), and the
+  integer moment of `clampTest` obeys the Hausdorff law `mellinMoment clampTest n = 1/(n+2)`
+  (`mellinMoment_clamp_general`, brick 33) — so the two compose to `1/(n+2)`. **Honest scope**: a concrete
+  evaluation at integer exponents; NOT the transform pair, NOT inversion. Step 4 is RH; crux fields stay
+  `none`.
 - **The pre-Hilbert layer, brick 115 — THE CONTINUOUS TRANSFORM AT THE INTEGER EXPONENT IS THE INTEGER
   MELLIN MOMENT** (new `Square/ContinuousMomentNatLimit.lean`): `compactMomentGenLim φ n ≈ mellinMoment
   φ n` for every `n` (`compactMomentGenLim_natExpR_eq_mellin`) — closing the doc's "identification with

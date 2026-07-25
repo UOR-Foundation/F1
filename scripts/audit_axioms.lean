@@ -5840,3 +5840,11 @@ open UOR.Bridge.F1Square
 -- Rlim_eval_real_rate identifies the a→0 limit with mellinMoment φ n. Closes integer-moment
 -- identification beyond s=1: the continuous transform and the discrete moment sequence agree on integers.
 #print axioms Square.compactMomentGenLim_natExpR_eq_mellin
+
+-- THE PRE-HILBERT LAYER, brick 116 (Square/ContinuousMomentClampValue.lean) — THE CONTINUOUS TRANSFORM
+-- COMPUTES: compactMomentGenLim clampTest n ≈ 1/(n+2) (compactMomentGenLim_clamp_eq). A concrete
+-- closed-form evaluation of the abstract a→0 continuous Mellin transform on the clamped identity: at
+-- integer exponent n the continuous transform is the integer moment (brick 115), and the integer moment
+-- of clampTest obeys the Hausdorff law mellinMoment clampTest n = 1/(n+2) (brick 33). End-to-end
+-- verification that the continuous-transform stack produces the correct number.
+#print axioms Square.compactMomentGenLim_clamp_eq
