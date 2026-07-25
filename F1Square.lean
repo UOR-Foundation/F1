@@ -431,6 +431,7 @@ import F1Square.Square.ContinuousMomentClampValue
 import F1Square.Square.ContinuousMomentGenRate
 import F1Square.Square.ContinuousMomentGenLinear
 import F1Square.Square.ContinuousMomentGenNeg
+import F1Square.Square.ContinuousMomentGenSub
 
 open UOR.Primitives
 

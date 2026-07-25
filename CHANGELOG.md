@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 120 — THE CONTINUOUS TRANSFORM RESPECTS SUBTRACTION** (new
+  `Square/ContinuousMomentGenSub.lean`): `compactMomentGenLim (φ − ψ) s ≈ compactMomentGenLim φ s −
+  compactMomentGenLim ψ s` (`compactMomentGenLim_sub`), completing the continuous transform as a **linear
+  map** on the test class. Immediate composite of additivity (brick 118) and negation (brick 119), since
+  `L2Test.sub φ ψ = L2Test.add φ (−ψ)`: `transform(φ − ψ) ≈ transform φ + transform(−ψ) ≈ transform φ −
+  transform ψ`. With add/neg/sub the transform's linearity is complete — the algebraic half of the
+  transform pair. **Honest scope**: subtraction-compatibility; NOT the pairing/inversion. Step 4 is RH;
+  crux fields stay `none`.
 - **The pre-Hilbert layer, brick 119 — THE CONTINUOUS TRANSFORM IS NEGATION-COMPATIBLE** (new
   `Square/ContinuousMomentGenNeg.lean`): `compactMomentGenLim (−φ) s ≈ −compactMomentGenLim φ s`
   (`compactMomentGenLim_neg`), the second structural law of the transform pair — with additivity

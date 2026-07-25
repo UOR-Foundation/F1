@@ -5873,3 +5873,9 @@ open UOR.Bridge.F1Square
 -- flips the sign ((−φ).M = φ.M so brick 117 gives the same rate), Req_of_geom_rate passes to the limit.
 -- abs_sub_swap2/abs_sub_tri2/abs_sub_neg2 private.
 #print axioms Square.compactMomentGenLim_neg
+
+-- THE PRE-HILBERT LAYER, brick 120 (Square/ContinuousMomentGenSub.lean) — THE CONTINUOUS TRANSFORM
+-- RESPECTS SUBTRACTION: compactMomentGenLim (φ−ψ) s ≈ compactMomentGenLim φ s − compactMomentGenLim ψ s
+-- (compactMomentGenLim_sub), completing the continuous transform as a LINEAR MAP. Immediate composite of
+-- additivity (brick 118) and negation (brick 119), since L2Test.sub φ ψ = L2Test.add φ (−ψ).
+#print axioms Square.compactMomentGenLim_sub
