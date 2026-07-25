@@ -5955,3 +5955,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.bernR_nonneg
 #print axioms Square.amgm_2delta
 #print axioms Square.bernR_abs_moment
+
+-- THE BERNSTEIN ARC, sub-brick G (Square/BernsteinDeviation.lean) — THE BERNSTEIN OPERATOR + POINTWISE
+-- DEVIATION: |B_n(φ)(x) - φ(x)| ≤ L·Σ_{k=0}^n |k/n - x|·b_{n,k}(x) (bernOp_deviation) — Bernstein's
+-- theorem itself. φ(x)=φ(x)·Σb (partition), so B_n(φ)(x)-φ(x)=Σ(φ(k/n)-φ(x))·b; triangle on the sum
+-- (RsumN_Rabs_le, basis ≥ 0) + the Lipschitz modulus (L2Test.hlip). bernOp_unfold seals the operator so
+-- the free-variable sample point k/n never whnf-blows-up.
+#print axioms Square.bernOp_unfold
+#print axioms Square.bernOp_deviation

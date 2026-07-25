@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick G — THE BERNSTEIN OPERATOR + POINTWISE DEVIATION** (new
+  `Square/BernsteinDeviation.lean`): the Bernstein operator `B_n(φ)(x) = Σ_{k=0}^n φ(k/n)·b_{n,k}(x)`
+  (`bernOp`, `n ≥ 1`) and its pointwise distance to `φ`, `|B_n(φ)(x) − φ(x)| ≤ L·Σ|k/n − x|·b_{n,k}(x)`
+  on `[0,1]` (`bernOp_deviation`) — Bernstein's theorem itself. Since `φ(x) = φ(x)·Σb` (partition of
+  unity), `B_n(φ)(x) − φ(x) = Σ(φ(k/n) − φ(x))·b`; the triangle inequality on the finite sum
+  (`RsumN_Rabs_le`, basis `≥ 0`) and the Lipschitz modulus `|φ(k/n) − φ(x)| ≤ L|k/n − x|` (the `L2Test`
+  field `hlip`) give the bound. With `bernR_abs_moment` (sub-brick F) the right side is
+  `≤ (L/2δ)(δ² + nx(1−x)) → 0`. **Mechanization note**: the sample point `k/n` is kept `irreducible`
+  (`ratPt`) and the operator sealed behind an unfolding lemma (`bernOp_unfold`), so the free-variable
+  denominator never triggers a `whnf` blow-up, and every intermediate is a pinned `have`. **Honest
+  scope**: the operator + pointwise deviation over `Real`; NOT yet the moment-integral, NOT determinacy,
+  NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick F — THE FIRST ABSOLUTE CENTRAL MOMENT (convergence core)** (new
   `Square/BernsteinConverge.lean`): `2δ·Σ_{k=0}^n |k − nx|·b_{n,k}(x) ≤ δ² + nx(1−x)` for `x ∈ [0,1]` and
   any `δ > 0` (`bernR_abs_moment`) — the sqrt-free, split-free heart of Bernstein convergence. Bernstein's

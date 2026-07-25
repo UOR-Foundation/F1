@@ -317,6 +317,7 @@ import F1Square.Square.ConeSlot
 import F1Square.Square.PreHilbert
 import F1Square.Square.BernsteinVariance
 import F1Square.Square.BernsteinConverge
+import F1Square.Square.BernsteinDeviation
 import F1Square.Square.SelfAdjoint
 import F1Square.Square.Projection
 import F1Square.Square.StableInner
