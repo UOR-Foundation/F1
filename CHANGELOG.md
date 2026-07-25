@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick A — THE REAL BINOMIAL THEOREM** (new `Analysis/RealBinomial.lean`):
+  `(a+b)ⁿ ≈ Σ_{i=0}^{n} C(n,i)·aⁱ·bⁿ⁻ⁱ` (`Rbinomial`, over `RsumN`/`Rpow`) — the foundation of the
+  Bernstein-approximation arc that the two remaining Mellin-front items (general bounded-Lipschitz moment
+  *determinacy* and *inversion*) both reduce to. The repo's `Binomial.lean` carries the theorem only over
+  `ℚ`, but the Bernstein polynomials are evaluated at a *real* argument `x ∈ [0,1]`, so it is reproved
+  over the constructive reals: the real Bernstein term `binTermR a b n i = C(n,i)·aⁱ·bⁿ⁻ⁱ`, its Pascal
+  per-term step `binTermR_succ`, boundary laws, and the theorem by induction (multiply the `n`-case by
+  `(a+b)`, front-peel, recombine by Pascal, collapse to `a·S + b·S = (a+b)·S`) — mirroring the `ℚ` proof
+  with manual real-algebra chains (no `ring` tactic over abstract reals). Reusable plumbing minted:
+  `RsumN_front` (finite-sum front-peel), `RofNat_add` (`ℕ→ℝ` additive), `Rpow_add` (`xᵐ⁺ⁿ = xᵐ·xⁿ`).
+  **Honest scope**: the binomial theorem over `Real` + the real Bernstein term/transfer laws —
+  infrastructure for the determinacy/inversion arc; NOT itself a Mellin-front result, NOT inversion, NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 123 — THE CONTINUOUS TRANSFORM SEPARATES POLYNOMIAL TESTS** (new
   `Square/ContinuousMomentGenInjective.lean`): two compactly-supported polynomial tests whose
   *continuous* transforms agree at every integer exponent below `max d d'` are the same function on

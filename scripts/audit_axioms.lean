@@ -5901,3 +5901,17 @@ open UOR.Bridge.F1Square
 -- continuous object — brick 115's integer-exponent bridge turns transform equality into moment
 -- equality, then brick 88's moment separation closes it. Polynomial class only; NOT general determinacy.
 #print axioms Square.compactMomentGenLim_poly_eq_imp_function_eq
+
+-- THE BERNSTEIN ARC, sub-brick A (Analysis/RealBinomial.lean) — THE REAL BINOMIAL THEOREM
+-- (a+b)ⁿ ≈ Σ_{i=0}^{n} C(n,i)·aⁱ·bⁿ⁻ⁱ (Rbinomial, over RsumN/Rpow), the foundation of the Bernstein
+-- approximation arc for general (bounded-Lipschitz) moment determinacy + Mellin inversion. Reproves
+-- Binomial.lean's ℚ theorem over the constructive reals (Bernstein needs a real argument x ∈ [0,1]);
+-- the real Bernstein term binTermR + its Pascal step binTermR_succ + boundary laws. Reusable plumbing:
+-- RsumN_front (finite-sum front-peel), RofNat_add (ℕ→ℝ additive), Rpow_add (xᵐ⁺ⁿ = xᵐ·xⁿ).
+#print axioms Analysis.RsumN_front
+#print axioms Analysis.RofNat_add
+#print axioms Analysis.Rpow_add
+#print axioms Analysis.binTermR_top_zero
+#print axioms Analysis.binTermR_zero_bot
+#print axioms Analysis.binTermR_succ
+#print axioms Analysis.Rbinomial
