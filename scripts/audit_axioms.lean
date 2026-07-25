@@ -5915,3 +5915,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.binTermR_zero_bot
 #print axioms Analysis.binTermR_succ
 #print axioms Analysis.Rbinomial
+
+-- THE BERNSTEIN ARC, sub-brick B (Analysis/Bernstein.lean) — THE BERNSTEIN BASIS + PARTITION OF UNITY
+-- bernR x n k = C(n,k)·xᵏ·(1−x)ⁿ⁻ᵏ; Σ_{k=0}^n bernR x n k ≈ 1 (bernR_partition), read off the real
+-- binomial theorem at (x, 1−x) since x+(1−x)=1 and 1ⁿ=1. The normalization the Bernstein operator's
+-- convergence estimates divide by; mean/variance identities follow.
+#print axioms Analysis.bernR_partition

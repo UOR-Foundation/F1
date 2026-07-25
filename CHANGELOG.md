@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick B — THE BERNSTEIN BASIS + PARTITION OF UNITY** (new
+  `Analysis/Bernstein.lean`): the real Bernstein basis `bernR x n k = C(n,k)·xᵏ·(1−x)ⁿ⁻ᵏ` and its
+  **partition of unity** `Σ_{k=0}^n b_{n,k}(x) = 1` (`bernR_partition`), read off the real binomial
+  theorem at `(a,b) = (x, 1−x)` since `x + (1−x) = 1` and `1ⁿ = 1`. This is the first of the three
+  Bernstein moment identities and the normalization every later convergence estimate divides by; the
+  mean and variance identities follow. **Honest scope**: the Bernstein basis and the partition of unity
+  over `Real` — infrastructure for the determinacy/inversion arc; NOT the mean/variance identities yet,
+  NOT convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick A — THE REAL BINOMIAL THEOREM** (new `Analysis/RealBinomial.lean`):
   `(a+b)ⁿ ≈ Σ_{i=0}^{n} C(n,i)·aⁱ·bⁿ⁻ⁱ` (`Rbinomial`, over `RsumN`/`Rpow`) — the foundation of the
   Bernstein-approximation arc that the two remaining Mellin-front items (general bounded-Lipschitz moment

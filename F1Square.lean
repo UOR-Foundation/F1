@@ -160,6 +160,7 @@ import F1Square.Analysis.GammaUpper
 import F1Square.Analysis.LambdaOne
 import F1Square.Analysis.Binomial
 import F1Square.Analysis.RealBinomial
+import F1Square.Analysis.Bernstein
 import F1Square.Analysis.Bernoulli
 import F1Square.Analysis.BernoulliPoly
 import F1Square.Analysis.ExpAdd
