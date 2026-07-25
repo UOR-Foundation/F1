@@ -5696,3 +5696,14 @@ open UOR.Bridge.F1Square
 -- exp(−s·L)·exp(−s'·L). The totalized power is a homomorphism (ℝ,+)→(ℝ,·) in the exponent — the third
 -- exponent-structure law after continuity (96) and monotonicity (98). Holds for all s,s',t.
 #print axioms Square.compactPow_exp_add
+
+-- THE PRE-HILBERT LAYER, brick 100 (Square/ContinuousMomentValue.lean) — THE t^s IDENTIFICATION AT
+-- RATIONAL POINTS: compactPow a s (q) ≈ exp(−s·(log q_den − log q_num)) = q^s for q ∈ [max(a,1/4),1].
+-- The general-real log machinery is blocked (no per-index band bounds), but ofQ constants have constant
+-- sequences → trivial bounds; so at the rational partition points the integral samples, gPowClamp_ofQ_eq
+-- (RlogPos_congr_gen at B=4) drops the clamp and rrpowPos_ofQ_eq (RlogPos_ofQ_eq_logN) evaluates the log.
+-- Also rlogPos_one (log 1 = 0). The first genuine t^s identification on the totalized compact power.
+#print axioms Square.rlogPos_one
+#print axioms Square.rrpowPos_ofQ_eq
+#print axioms Square.gPowClamp_ofQ_eq
+#print axioms Square.compactPow_ofQ_pow

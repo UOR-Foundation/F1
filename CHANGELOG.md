@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 100 — THE `t^s` IDENTIFICATION AT RATIONAL POINTS** (new
+  `Square/ContinuousMomentValue.lean`): `compactPow a s (q) ≈ exp(−s·(log q_den − log q_num)) = q^s`
+  (`compactPow_ofQ_pow`) for every rational `q ∈ [max(a, 1/4), 1]` — the genuine `t^s` identification the
+  doc flagged as needing `log(1/t) = −log t`, delivered at the rational points the certified integral
+  actually samples, WITHOUT that lemma. The block on the general-real identification is that reals lack
+  per-index band bounds; an `ofQ` constant has a *constant* sequence, so its bounds are trivial. At
+  `q ≥ a` the compact power drops to `gPowClamp(−s)(1/q)` (brick 97), on the clean base `1/q ∈ [1,4]`
+  (i.e. `q ∈ [1/4,1]`) the reciprocal-clamp is inert (`gPowClamp_ofQ_eq`, via `RlogPos_congr_gen` at
+  `B = 4`), and `RlogPos(1/q)` evaluates to `logN q_den − logN q_num` (`rrpowPos_ofQ_eq`, off
+  `RlogPos_ofQ_eq_logN` — which also gives `rlogPos_one`, `log 1 = 0`). So the totalized power IS the
+  honest power at the partition points `i/(N+1)`. **Honest scope**: the identification holds at RATIONAL
+  points `q ∈ [max(a,1/4),1]` (the `[1,4]`-radius of `RlogPos_ofQ_eq_logN` forces `q ≥ 1/4`); the
+  general real-`t` identification, and `compactMoment φ a n ≈ mellinMoment φ n` (which needs it at all
+  samples plus the `a→0` limit), stay open. No transform pair, no inversion, no positivity. Step 4 is RH;
+  crux fields stay `none`.
 - **The pre-Hilbert layer, brick 99 — THE POWER LAW IN THE EXPONENT** (new
   `Square/ContinuousMomentAdd.lean`): `compactPow a (s + s') t ≈ compactPow a s t · compactPow a s' t`
   (`compactPow_exp_add`), i.e. `t^{s+s'} = t^s·t^{s'}` on the totalized compact power (brick 93) — the
