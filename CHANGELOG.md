@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 115 — THE CONTINUOUS TRANSFORM AT THE INTEGER EXPONENT IS THE INTEGER
+  MELLIN MOMENT** (new `Square/ContinuousMomentNatLimit.lean`): `compactMomentGenLim φ n ≈ mellinMoment
+  φ n` for every `n` (`compactMomentGenLim_natExpR_eq_mellin`) — closing the doc's "identification with
+  the integer moments beyond `s = 1`" (brick 109 was `n = 1` only). Brick 112 built the continuous
+  Mellin moment at general real `s` as the `a → 0` limit; this pins that limit, at every integer exponent
+  `s = n`, to the pre-existing integer moment `mellinMoment φ n = ∫₀¹ φ·xⁿ`. The floor defect at exponent
+  `n` (brick 114) is within `1/(j+1)` of the integer moment after the same constant-absorbing reindex as
+  brick 109, so `Rlim_eval_real_rate` identifies the Bishop limit with the integer moment. The continuous
+  transform and the discrete moment sequence now agree on the integers. **Honest scope**: identification
+  at integer exponents; NOT the transform pair, NOT inversion. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 114 — THE FLOOR DEFECT AT THE INTEGER EXPONENT DECAYS LIKE `1/2^m`**
   (new `Square/ContinuousMomentNatTail.lean`): `|compactMoment φ (1/2^m) n − mellinMoment φ n| ≤
   2·M_φ·(1/2^m)` (`compactMomentF_natExpR_sub_mellin_bound`). Brick 113 makes the compact integrand

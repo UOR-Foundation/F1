@@ -5832,3 +5832,11 @@ open UOR.Bridge.F1Square
 -- vanishes on the dyadic tail and is bounded by 2·M_φ; the dyadic tail bound (brick 107) gives the
 -- geometric decay. Brick 108 at general integer exponent. powTest_M ((powTest n).M=⟨1,1⟩) private.
 #print axioms Square.compactMomentF_natExpR_sub_mellin_bound
+
+-- THE PRE-HILBERT LAYER, brick 115 (Square/ContinuousMomentNatLimit.lean) — THE CONTINUOUS TRANSFORM AT
+-- THE INTEGER EXPONENT IS THE INTEGER MELLIN MOMENT: compactMomentGenLim φ n ≈ mellinMoment φ n for
+-- every n (compactMomentGenLim_natExpR_eq_mellin). The floor defect at exponent n (brick 114) is within
+-- 1/(j+1) of the integer moment after the same reindex as brick 109 (nat_reindex_Qle private), so
+-- Rlim_eval_real_rate identifies the a→0 limit with mellinMoment φ n. Closes integer-moment
+-- identification beyond s=1: the continuous transform and the discrete moment sequence agree on integers.
+#print axioms Square.compactMomentGenLim_natExpR_eq_mellin
