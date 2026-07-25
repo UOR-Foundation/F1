@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 113 — THE COMPACT POWER AT THE INTEGER EXPONENT IS THE CLAMPED
+  MONOMIAL** (new `Square/ContinuousMomentNatExp.lean`): `compactPow a (natExpR n) t ≈ (powTest n).f t
+  = clamp01(t)ⁿ` for every real `t ∈ [a,1]` and every `n` (`compactPow_natExpR_eq_powTest`),
+  generalizing brick 106 (`s = 1`) to all integer exponents. The exponent `natExpR n = 1 + ⋯ + 1` (`n`
+  ones); the identity is a clean induction — base `compactPow_zero`, step the power law
+  `compactPow_exp_add` (brick 99) + the inductive hypothesis + brick 106 (`compactPow a 1 t ≈ clamp01
+  t`), whose product is `(powTest (n+1)).f t` by the `L2Test.mul` definition of `powTest`. Packaged with
+  `natExpR_nonneg` and `natExpR_eq_ofQ` (`≈ ofQ⟨n,1⟩`, the `σ = ⟨n,1⟩` bound). **Honest scope**: the
+  integrand identity at the integer exponent on `[a,1]`; NOT the limit identification (brick 115). Step 4
+  is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 112 — THE CONTINUOUS MELLIN MOMENT AT GENERAL REAL `s` EXISTS** (new
   `Square/ContinuousMomentGenLimit.lean`): the compact moment at exponent `s` converges, as the floor
   `→ 0`, to a constructed real `compactMomentGenLim φ s`, defined as the Bishop limit of the regular

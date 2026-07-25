@@ -5815,3 +5815,12 @@ open UOR.Bridge.F1Square
 -- compactMomentGenSeq/compactMomentGenLim are defs; gen_reindex_Qle/momRate_mono private (no audit).
 #print axioms Square.compactMomentGenSeq_RReg
 #print axioms Square.compactMomentGenSeq_tendsto
+
+-- THE PRE-HILBERT LAYER, brick 113 (Square/ContinuousMomentNatExp.lean) — THE COMPACT POWER AT THE
+-- INTEGER EXPONENT n IS THE CLAMPED MONOMIAL: compactPow a (natExpR n) t ≈ (powTest n).f t = clamp01ⁿ
+-- for real t∈[a,1] (compactPow_natExpR_eq_powTest), generalizing brick 106 (s=1) to all integer
+-- exponents. Induction on n: base compactPow_zero, step power law (brick 99) + IH + brick 106.
+-- natExpR n = n ones; natExpR_nonneg + natExpR_eq_ofQ (≈ ofQ⟨n,1⟩) are the σ-data. natExpR is a def.
+#print axioms Square.natExpR_nonneg
+#print axioms Square.natExpR_eq_ofQ
+#print axioms Square.compactPow_natExpR_eq_powTest

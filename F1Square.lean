@@ -424,6 +424,7 @@ import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail
 import F1Square.Square.ContinuousMomentGenLimit
+import F1Square.Square.ContinuousMomentNatExp
 
 open UOR.Primitives
 
