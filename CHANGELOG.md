@@ -16,6 +16,13 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 119 — THE CONTINUOUS TRANSFORM IS NEGATION-COMPATIBLE** (new
+  `Square/ContinuousMomentGenNeg.lean`): `compactMomentGenLim (−φ) s ≈ −compactMomentGenLim φ s`
+  (`compactMomentGenLim_neg`), the second structural law of the transform pair — with additivity
+  (brick 118) this makes the continuous transform a genuine linear map on the test class. The proof
+  mirrors additivity: at each floor `innerI_neg_left` flips the sign (`(−φ).M = φ.M`, so brick 117 gives
+  the same rate), and `Req_of_geom_rate` passes the two-floor bound to the limit. **Honest scope**:
+  negation-compatibility; NOT the full pairing/inversion. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 118 — THE CONTINUOUS TRANSFORM IS ADDITIVE** (new
   `Square/ContinuousMomentGenLinear.lean`): `compactMomentGenLim (φ + ψ) s ≈ compactMomentGenLim φ s +
   compactMomentGenLim ψ s` (`compactMomentGenLim_add`) — the first structural law of the transform pair.

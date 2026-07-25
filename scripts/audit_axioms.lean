@@ -5866,3 +5866,10 @@ open UOR.Bridge.F1Square
 -- E absorbed by n<2^n) closes it. geom_reindex_Qle/abs_sub_swap'/abs_sub_tri'' private.
 #print axioms Square.Req_of_geom_rate
 #print axioms Square.compactMomentGenLim_add
+
+-- THE PRE-HILBERT LAYER, brick 119 (Square/ContinuousMomentGenNeg.lean) — THE CONTINUOUS TRANSFORM IS
+-- NEGATION-COMPATIBLE: compactMomentGenLim (−φ) s ≈ −compactMomentGenLim φ s (compactMomentGenLim_neg),
+-- the second structural law of the transform pair. Mirrors additivity: at each floor innerI_neg_left
+-- flips the sign ((−φ).M = φ.M so brick 117 gives the same rate), Req_of_geom_rate passes to the limit.
+-- abs_sub_swap2/abs_sub_tri2/abs_sub_neg2 private.
+#print axioms Square.compactMomentGenLim_neg
