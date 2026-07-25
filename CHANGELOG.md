@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 103 — THE COMPACT POWER AT EXPONENT `2` IS THE SQUARE AT RATIONAL
+  POINTS** (new `Square/ContinuousMomentTwo.lean`): `compactPow a 2 (q) ≈ q²` for every rational
+  `q ∈ (a,1]` (`compactPow_ofQ_two`), the `t² = t·t` value obtained by composing the power law (brick
+  99, `compactPow a (1+1) = compactPow a 1 · compactPow a 1`) with the `s = 1` value (brick 102). The
+  integer-power evaluation drops out of the exponent-structure laws with no new analysis — the same
+  route lifts to every integer exponent by iterating the power law. **Honest scope**: the `s = 2` value
+  at rationals, a worked instance of the integer-power reader the moment identification iterates. No
+  transform pair, no inversion, no positivity, no `a → 0` limit, no general real `t`. Step 4 is RH; crux
+  fields stay `none`.
 - **The pre-Hilbert layer, brick 102 — THE COMPACT POWER AT EXPONENT `1` IS THE IDENTITY AT RATIONAL
   POINTS** (new `Square/ContinuousMomentOne.lean`): `compactPow a 1 (q) ≈ q` for every rational
   `q ∈ (a,1]` (`compactPow_ofQ_one`), the `t^1 = t` specialization completing the endpoint picture

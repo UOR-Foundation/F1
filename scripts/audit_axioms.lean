@@ -5726,3 +5726,9 @@ open UOR.Bridge.F1Square
 -- RexpReal_neg_eq_recip); at s=1 the brick-101 closed form collapses to log q_num − log q_den = log q.
 #print axioms Square.Rexp_logN_sub
 #print axioms Square.compactPow_ofQ_one
+
+-- THE PRE-HILBERT LAYER, brick 103 (Square/ContinuousMomentTwo.lean) — THE COMPACT POWER AT EXPONENT 2
+-- IS THE SQUARE AT RATIONAL POINTS: compactPow a 2 (q) ≈ q² for every rational q ∈ (a,1], via the power
+-- law (brick 99, compactPow a (1+1) = compactPow a 1 · compactPow a 1) and the s=1 value (brick 102).
+-- A worked instance of the integer-power reader the moment identification iterates.
+#print axioms Square.compactPow_ofQ_two
