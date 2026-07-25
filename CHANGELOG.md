@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 96 — THE COMPACT POWER IS LIPSCHITZ IN THE EXPONENT** (new
+  `Square/ContinuousMomentExp.lean`): `|compactPow a s x − compactPow a s' x| ≤ 4·|s − s'|·L_x`
+  (`compactPow_exp_lipschitz`) — the pointwise continuity in `s` that makes the continuous Mellin
+  parameter (brick 93) a genuinely *continuous* one. At a fixed `x` the compact power is `exp(−s·L_x)`
+  with `L_x = log(max(1/max(x,a),1)) ≥ 0` (`compactBaseLog`, the clamped-reciprocal base-log), so the
+  `s`-difference is `|exp(−s·L_x) − exp(−s'·L_x)| ≤ 4·|(−s·L_x)−(−s'·L_x)| = 4·|s−s'|·L_x`, via the
+  symmetric exp-Lipschitz `RexpReal_abs_lipschitz` (bound `1`, each exponent `−s·L_x ≤ 0`) and
+  distributivity. **Honest scope**: pointwise continuity with the `x`-dependent constant `4·L_x`; the
+  UNIFORM constant (needed to carry continuity to `compactMoment φ a s` by integration) requires
+  `L_x ≤ log(1/a)` for all `x`, i.e. the per-index `[1,1/a]`-band presentation of the clamped
+  reciprocal, and is not established here. No transform pair, no inversion, no positivity. Step 4 is
+  RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 95 — THE CONTINUOUS TRANSFORM SPECIALIZES TO THE INTEGER SKELETON AT
   `s = 0`** (new `Square/ContinuousMomentZero.lean`): `compactMoment φ a 0 ≈ mellinMoment φ 0 = ∫₀¹ φ`
   — the consistency check that the continuous parameter (brick 93) agrees with the integer moment map

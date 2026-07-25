@@ -5666,3 +5666,12 @@ open UOR.Bridge.F1Square
 -- continuous transform; anchors it as a genuine extension of the integer moments.
 #print axioms Square.compactPow_zero
 #print axioms Square.compactMoment_zero
+
+-- THE PRE-HILBERT LAYER, brick 96 (Square/ContinuousMomentExp.lean) — THE COMPACT POWER IS LIPSCHITZ IN
+-- THE EXPONENT: |compactPow a s x − compactPow a s' x| ≤ 4·|s−s'|·L_x, where L_x = log of the clamped
+-- reciprocal base (compactBaseLog, ≥ 0). Via the symmetric exp-Lipschitz RexpReal_abs_lipschitz (bound
+-- 1, each exponent −s·L_x ≤ 0) + the distributive collapse (−s·L)−(−s'·L) = (s'−s)·L. Pointwise
+-- continuity in s — the constant is x-dependent; the uniform (moment-level) version needs L_x ≤ log(1/a).
+#print axioms Square.compactBaseLog
+#print axioms Square.compactBaseLog_nonneg
+#print axioms Square.compactPow_exp_lipschitz
