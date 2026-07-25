@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 93 — THE COMPACT-SIDE CONTINUOUS MELLIN PARAMETER** (new
+  `Square/ContinuousMoment.lean`): the transform `∫₀¹ φ(t)·t^s dt` at a *continuous* real exponent
+  `s ≥ 0` (`compactMoment φ a s = innerI φ (compactPowTest …)`), generalizing the integer moments
+  `mellinMoment φ n = ∫₀¹ φ·tⁿ` to a continuum of exponents on the unit interval. The power `t ↦ t^s`
+  — which vanishes at `t = 0`, where the naive `RrpowPos` needs `t > 0` — is totalized by the
+  RECIPROCAL clamp `compactPow a s t = gPowClamp (−s) (clampedInv a t) = max(1/max(t,a),1)^{−s}`,
+  composing two already-certified integrands: on `[a,1]` this is exactly `t^s`, on `[0,a)` the floor
+  pins it at the constant `a^s`, so it is a genuine total, bounded (`≤ 1`, `compactPow_abs_le_one`),
+  `4·σ·(1/a)²`-Lipschitz (`compactPow_lipschitz`, composing `gPowClamp (−s)`'s `4·|s|`-Lipschitz bound
+  with `clampedInv a`'s `(1/a)²`-Lipschitz bound) `L2Test` (`compactPowTest`). This is the compact
+  analog of the theta half-line `thetaMellinPow` (`ThetaMellinPow.lean`), which already carries the
+  `σ ≤ 1` exponents — together the two ends of the Mellin front. **Honest scope**: continuous exponent
+  on `[0,1]` at a fixed rational floor `a`; the transform is totalized near `0`, so it matches the true
+  `∫₀¹ φ·t^s` only up to the sub-`a` tail, and the exact identification `compactPow a s ≈ t^s` on
+  `[a,1]` (needs `log(1/t) = −log t`) and the `a → 0` limit are NOT established here — no transform
+  pair, no inversion, no positivity. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 92 — THE EXTENDED PAIRING IS WELL-DEFINED ON `[0,1]`-CLASSES AT THE
   COMPLETION LEVEL** (new `Square/PairingIUCongr.lean`): two `L²`-Cauchy sequences whose members agree
   on `[0,1]` have equal extended pairing against every `ψ` (`pairingIU_congr_on_unit`) — brick 90's

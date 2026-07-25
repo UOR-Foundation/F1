@@ -404,6 +404,7 @@ import F1Square.Square.PairingUnitZero
 import F1Square.Square.PairingUnitCongr
 import F1Square.Square.PairingUnitDist
 import F1Square.Square.PairingIUCongr
+import F1Square.Square.ContinuousMoment
 
 open UOR.Primitives
 
