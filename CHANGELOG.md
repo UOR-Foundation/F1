@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 123 — THE CONTINUOUS TRANSFORM SEPARATES POLYNOMIAL TESTS** (new
+  `Square/ContinuousMomentGenInjective.lean`): two compactly-supported polynomial tests whose
+  *continuous* transforms agree at every integer exponent below `max d d'` are the same function on
+  `[0,1]` (`compactMomentGenLim_poly_eq_imp_function_eq`) — the injectivity/uniqueness half of the
+  transform pair, now realized for the continuous transform object itself. Injectivity/separation was
+  proven for the integer moment sequence (bricks 87/88, via `L²`-definiteness); the a→0 continuous
+  transform agrees with the integer Mellin moment at every integer exponent (brick 115), so equal
+  continuous transforms ⇒ equal moments ⇒ (brick 88) equal functions on `[0,1]`. This lifts the pair's
+  uniqueness direction from the moment sequence to the genuine continuous transform of bricks 112–122.
+  **Honest scope**: injectivity/separation on the **polynomial** class at integer exponents, over
+  `[0,1]`; NOT general (bounded-Lipschitz) determinacy — that still needs Bernstein — NOT inversion, NOT
+  any positivity. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 122 — THE ℤ-LINEAR TRANSFORM COMPUTES ON A ℤ⁺-FAMILY** (new
   `Square/ContinuousMomentGenFamily.lean`): `compactMomentGenLim (k·clampTest) n ≈ k/(n+2)`
   (`compactMomentGenLim_natScale_clamp`), for every integer scale `k` and integer exponent `n`. The

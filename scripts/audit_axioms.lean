@@ -5893,3 +5893,11 @@ open UOR.Bridge.F1Square
 -- (compactMomentGenLim_natScale_clamp), the concrete payoff of the linearity arc — homogeneity
 -- (brick 121) carries the single-test closed form 1/(n+2) (brick 116) across the whole ℤ⁺-orbit.
 #print axioms Square.compactMomentGenLim_natScale_clamp
+
+-- THE PRE-HILBERT LAYER, brick 123 (Square/ContinuousMomentGenInjective.lean) — THE CONTINUOUS
+-- TRANSFORM SEPARATES POLYNOMIAL TESTS: two compactly-supported polynomial tests whose continuous
+-- transforms agree at every integer exponent below their degree are equal on [0,1]
+-- (compactMomentGenLim_poly_eq_imp_function_eq). The injectivity half of the transform pair for the
+-- continuous object — brick 115's integer-exponent bridge turns transform equality into moment
+-- equality, then brick 88's moment separation closes it. Polynomial class only; NOT general determinacy.
+#print axioms Square.compactMomentGenLim_poly_eq_imp_function_eq

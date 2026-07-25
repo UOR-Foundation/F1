@@ -434,6 +434,7 @@ import F1Square.Square.ContinuousMomentGenNeg
 import F1Square.Square.ContinuousMomentGenSub
 import F1Square.Square.ContinuousMomentGenScale
 import F1Square.Square.ContinuousMomentGenFamily
+import F1Square.Square.ContinuousMomentGenInjective
 
 open UOR.Primitives
 
