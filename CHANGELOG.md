@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 121 — THE CONTINUOUS TRANSFORM IS ℤ⁺-HOMOGENEOUS** (new
+  `Square/ContinuousMomentGenScale.lean`): `compactMomentGenLim (k·φ) s ≈ k·compactMomentGenLim φ s`
+  (`compactMomentGenLim_natScale`), where `k·φ = natScale k φ` is the `k`-fold sum of a test and the
+  value side scales by `natScaleR`, the `k`-fold real sum. With additivity/negation/subtraction
+  (bricks 118–120) this completes the continuous transform as a genuinely **ℤ-linear map** on the test
+  class — it commutes with `+`, `−`, and integer scaling. Proof by induction on `k` from additivity:
+  `natScale (k+1) φ = φ + natScale k φ`, so `transform(k+1)·φ ≈ transform φ + k·transform φ` (brick 118
+  + IH); the base `transform(0·φ) = transform 0 = 0` is `Rlim_zero` against `innerI_zeroL2`
+  (`compactMomentGenLim_zeroL2`). The one obstacle was mechanical: `natScale` is sealed
+  (`@[irreducible]`, keeping its `k`-fold structure from whnf-exploding when a moment reads `.M`), which
+  also blocks unfolding it inside `compactMomentGenLim` — resolved by unfolding it as a *propositional*
+  equation first (`natScale_succ`/`natScale_zero`, `rfl` under a local `unseal`), rewriting, and only
+  then applying the additivity law, so the seal is never forced through `momRate`. **Honest scope**:
+  integer homogeneity; the transform's linearity is now complete; NOT the pairing/inversion. Step 4 is
+  RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 120 — THE CONTINUOUS TRANSFORM RESPECTS SUBTRACTION** (new
   `Square/ContinuousMomentGenSub.lean`): `compactMomentGenLim (φ − ψ) s ≈ compactMomentGenLim φ s −
   compactMomentGenLim ψ s` (`compactMomentGenLim_sub`), completing the continuous transform as a **linear

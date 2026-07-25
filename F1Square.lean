@@ -432,6 +432,7 @@ import F1Square.Square.ContinuousMomentGenRate
 import F1Square.Square.ContinuousMomentGenLinear
 import F1Square.Square.ContinuousMomentGenNeg
 import F1Square.Square.ContinuousMomentGenSub
+import F1Square.Square.ContinuousMomentGenScale
 
 open UOR.Primitives
 

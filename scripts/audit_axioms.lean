@@ -5879,3 +5879,11 @@ open UOR.Bridge.F1Square
 -- (compactMomentGenLim_sub), completing the continuous transform as a LINEAR MAP. Immediate composite of
 -- additivity (brick 118) and negation (brick 119), since L2Test.sub φ ψ = L2Test.add φ (−ψ).
 #print axioms Square.compactMomentGenLim_sub
+
+-- THE PRE-HILBERT LAYER, brick 121 (Square/ContinuousMomentGenScale.lean) — THE CONTINUOUS TRANSFORM
+-- IS ℤ⁺-HOMOGENEOUS: compactMomentGenLim (k·φ) s ≈ k·compactMomentGenLim φ s (compactMomentGenLim_natScale),
+-- completing the transform as a ℤ-LINEAR map. Induction on k from additivity (brick 118); the seal on
+-- natScale is passed as a propositional equation (natScale_succ), never forced through momRate/.M.
+-- compactMomentGenLim_zeroL2 (transform of the zero test = 0) is the induction base, via Rlim_zero.
+#print axioms Square.compactMomentGenLim_zeroL2
+#print axioms Square.compactMomentGenLim_natScale
