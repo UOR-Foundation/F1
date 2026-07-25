@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 112 — THE CONTINUOUS MELLIN MOMENT AT GENERAL REAL `s` EXISTS** (new
+  `Square/ContinuousMomentGenLimit.lean`): the compact moment at exponent `s` converges, as the floor
+  `→ 0`, to a constructed real `compactMomentGenLim φ s`, defined as the Bishop limit of the regular
+  reindexed floor sequence — **the Mellin transform of `φ` at the continuous exponent `s ∈ [0, σ]`**,
+  the object the Mellin front was missing at general `s`. At general `s` there is no integer target, so
+  the content is that the floor sequence is CAUCHY (`compactMomentGenSeq_RReg`): brick 111's
+  floor-difference bound at the two reindexed depths, weakened through the same constant-absorbing
+  reindex `r(j)` as brick 109 (via `n < 2^n`), feeding `RReg_of_real_bound` (the two orderings by
+  `Nat.le_total`); `compactMomentGenSeq_tendsto` records the `a → 0` convergence (`Rlim_tendsTo`). This
+  is "the continuous parameter proper" — the transform defined pointwise in real `s`. **Honest scope**:
+  the limit's existence (via regularity) at general real `s`; this DEFINES the transform pointwise but
+  is NOT the transform PAIR, NOT inversion, NOT any positivity. Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 111 — THE COMPACT MELLIN MOMENT AT GENERAL `s` IS CAUCHY IN THE
   FLOOR** (new `Square/ContinuousMomentGenTail.lean`): `|compactMoment φ (1/2^p) s − compactMoment φ
   (1/2^q) s| ≤ 2·M_φ·(1/2^p)` for `p ≤ q` (`compactMoment_floor_diff_bound`). At general real `s` there

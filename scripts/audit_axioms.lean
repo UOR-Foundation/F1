@@ -5804,3 +5804,14 @@ open UOR.Bridge.F1Square
 -- bounded by 2·M_φ; the dyadic tail bound (brick 107) gives the geometric decay. compactPowTestF/
 -- compactMomentF are defs (no audit line). Structurally identical to brick 108.
 #print axioms Square.compactMoment_floor_diff_bound
+
+-- THE PRE-HILBERT LAYER, brick 112 (Square/ContinuousMomentGenLimit.lean) — THE CONTINUOUS MELLIN
+-- MOMENT AT GENERAL REAL s EXISTS: the compact moment at exponent s converges as the floor → 0 to a
+-- constructed real (compactMomentGenLim), defined as the Bishop limit of the regular reindexed floor
+-- sequence. At general s there is no integer target — the content is that the sequence is CAUCHY
+-- (compactMomentGenSeq_RReg): brick 111's floor-difference bound at the two reindexed depths, weakened
+-- through the same constant-absorbing reindex as brick 109 (via n<2^n), feeding RReg_of_real_bound; the
+-- two orderings by Nat.le_total. compactMomentGenSeq_tendsto = the a→0 convergence (Rlim_tendsTo).
+-- compactMomentGenSeq/compactMomentGenLim are defs; gen_reindex_Qle/momRate_mono private (no audit).
+#print axioms Square.compactMomentGenSeq_RReg
+#print axioms Square.compactMomentGenSeq_tendsto
