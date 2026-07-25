@@ -5824,3 +5824,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.natExpR_nonneg
 #print axioms Square.natExpR_eq_ofQ
 #print axioms Square.compactPow_natExpR_eq_powTest
+
+-- THE PRE-HILBERT LAYER, brick 114 (Square/ContinuousMomentNatTail.lean) — THE FLOOR DEFECT AT THE
+-- INTEGER EXPONENT n DECAYS LIKE 1/2^m: |compactMoment φ (1/2^m) n − mellinMoment φ n| ≤ 2·M_φ·(1/2^m)
+-- (compactMomentF_natExpR_sub_mellin_bound). Brick 113 makes the compact integrand agree with
+-- (powTest n).f on [1/2^m,1], so the difference (innerI φ of the difference test, via innerI_sub_right)
+-- vanishes on the dyadic tail and is bounded by 2·M_φ; the dyadic tail bound (brick 107) gives the
+-- geometric decay. Brick 108 at general integer exponent. powTest_M ((powTest n).M=⟨1,1⟩) private.
+#print axioms Square.compactMomentF_natExpR_sub_mellin_bound

@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The pre-Hilbert layer, brick 114 — THE FLOOR DEFECT AT THE INTEGER EXPONENT DECAYS LIKE `1/2^m`**
+  (new `Square/ContinuousMomentNatTail.lean`): `|compactMoment φ (1/2^m) n − mellinMoment φ n| ≤
+  2·M_φ·(1/2^m)` (`compactMomentF_natExpR_sub_mellin_bound`). Brick 113 makes the compact integrand
+  agree with `(powTest n).f` on `[1/2^m, 1]`, so their difference — realized as `innerI φ
+  (compactPowTest_n −ₜ powTest n)` through `innerI_sub_right` — vanishes on the dyadic tail and is
+  bounded by `2·M_φ`, and the dyadic tail bound (brick 107) gives the geometric decay. This is brick 108
+  (the `s = 1` floor defect) at general integer exponent — the Cauchy estimate that pins the `a → 0`
+  limit to the integer Mellin moment. **Honest scope**: a quantitative floor-defect bound at the integer
+  exponent; NOT the limit identification (brick 115). Step 4 is RH; crux fields stay `none`.
 - **The pre-Hilbert layer, brick 113 — THE COMPACT POWER AT THE INTEGER EXPONENT IS THE CLAMPED
   MONOMIAL** (new `Square/ContinuousMomentNatExp.lean`): `compactPow a (natExpR n) t ≈ (powTest n).f t
   = clamp01(t)ⁿ` for every real `t ∈ [a,1]` and every `n` (`compactPow_natExpR_eq_powTest`),
