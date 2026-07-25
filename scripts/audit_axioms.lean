@@ -5930,3 +5930,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RofNat_mul
 #print axioms Analysis.bernR_mean_term
 #print axioms Analysis.bernR_mean
+
+-- THE BERNSTEIN ARC, sub-brick D (Analysis/BernsteinMoments.lean) — THE BERNSTEIN SECOND FACTORIAL
+-- MOMENT Σ_{k=0}^n k(k-1)·b_{n,k}(x) = n(n-1)·x² (bernR_sq). The k=0,1 terms drop; each k=j+2 term
+-- reindexes by dfact_choose ((j+2)(j+1)C(m+2,j+2)=(m+2)(m+1)C(m,j), two succ_mul_choose) to
+-- (n(n-1)x²)·b_{n-2,j}(x), so the sum is n(n-1)x²·(partition for n-2). Second moment for the variance.
+#print axioms Analysis.dfact_choose
+#print axioms Analysis.bernR_sq_term
+#print axioms Analysis.bernR_sq

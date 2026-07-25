@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick D — THE BERNSTEIN SECOND FACTORIAL MOMENT** (extends
+  `Analysis/BernsteinMoments.lean`): `Σ_{k=0}^n k(k−1)·b_{n,k}(x) = n(n−1)·x²` (`bernR_sq`) — the second
+  moment the variance needs (`Σ k²·b = Σ k(k−1)·b + Σ k·b`). The `k = 0, 1` terms drop; each `k = j+2`
+  term reindexes by the double identity `(j+2)(j+1)·C(m+2,j+2) = (m+2)(m+1)·C(m,j)` (`dfact_choose`, two
+  applications of `succ_mul_choose`) into `(n(n−1)x²)·b_{n−2,j}(x)`, so the whole sum is
+  `n(n−1)x²·(partition for n−2)`. **Honest scope**: the second factorial moment over `Real`; NOT the
+  variance assembly yet (`Σ(k−nx)²b = nx(1−x)`), NOT convergence, NOT inversion, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick C — THE BERNSTEIN MEAN IDENTITY** (new
   `Analysis/BernsteinMoments.lean`): `Σ_{k=0}^n k·b_{n,k}(x) = n·x` (`bernR_mean`), the first Bernstein
   moment beyond the partition of unity. Classic reindex: the `k = 0` term drops, and each `k = j+1` term
