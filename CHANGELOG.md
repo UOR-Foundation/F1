@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick C — THE BERNSTEIN MEAN IDENTITY** (new
+  `Analysis/BernsteinMoments.lean`): `Σ_{k=0}^n k·b_{n,k}(x) = n·x` (`bernR_mean`), the first Bernstein
+  moment beyond the partition of unity. Classic reindex: the `k = 0` term drops, and each `k = j+1` term
+  collapses by the combinatorial identity `(k+1)·C(n+1,k+1) = (n+1)·C(n,k)` (`succ_mul_choose`, proved
+  from the factorial identity `choose_mul_fct_mul_fct` by `ℕ`-cancellation) into `(n·x)·b_{n−1,j}(x)`, so
+  the whole sum is `n·x·(partition for n−1) = n·x`. Minted: `RofNat_mul` (the `ℕ→ℝ` embedding is
+  multiplicative), `bernR_mean_term` (the per-term reindex). **Honest scope**: the mean identity over
+  `Real`; NOT the variance yet (`Σ(k−nx)²b = nx(1−x)`, the estimate convergence divides by), NOT
+  convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick B — THE BERNSTEIN BASIS + PARTITION OF UNITY** (new
   `Analysis/Bernstein.lean`): the real Bernstein basis `bernR x n k = C(n,k)·xᵏ·(1−x)ⁿ⁻ᵏ` and its
   **partition of unity** `Σ_{k=0}^n b_{n,k}(x) = 1` (`bernR_partition`), read off the real binomial

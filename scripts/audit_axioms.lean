@@ -5921,3 +5921,12 @@ open UOR.Bridge.F1Square
 -- binomial theorem at (x, 1−x) since x+(1−x)=1 and 1ⁿ=1. The normalization the Bernstein operator's
 -- convergence estimates divide by; mean/variance identities follow.
 #print axioms Analysis.bernR_partition
+
+-- THE BERNSTEIN ARC, sub-brick C (Analysis/BernsteinMoments.lean) — THE BERNSTEIN MEAN IDENTITY
+-- Σ_{k=0}^n k·b_{n,k}(x) = n·x (bernR_mean). The k=0 term drops; each k=j+1 term reindexes by
+-- succ_mul_choose ((k+1)C(n+1,k+1)=(n+1)C(n,k), from choose_mul_fct_mul_fct + ℕ-cancellation) to
+-- (n·x)·b_{n-1,j}(x), so the sum is n·x·(partition for n-1) = n·x. Minted RofNat_mul (ℕ→ℝ multiplicative).
+#print axioms Analysis.succ_mul_choose
+#print axioms Analysis.RofNat_mul
+#print axioms Analysis.bernR_mean_term
+#print axioms Analysis.bernR_mean
