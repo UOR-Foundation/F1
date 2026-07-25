@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₃ — THE CONSTANT TEST + REAL-SCALAR PAIRING LAW** (new
+  `Square/ConstScale.lean`): `⟨φ, (constTest c)·ψ⟩ ≈ c·⟨φ, ψ⟩` (`innerI_constMul`), hence
+  `⟨φ, (constTest c)·ψ⟩ ≈ 0` when `⟨φ, ψ⟩ ≈ 0` (`innerI_constMul_zero`). The Bernstein operator
+  `B_n(φ) = Σ_k φ(k/n)·b_{n,k}` has real coefficients `φ(k/n)`; a real scalar cannot scale an `L2Test`
+  (whose bound must be rational), so the coefficient is carried as a **constant test** `constTest c`
+  (`f ≡ c`, bound `|c| ≤ mB`) and multiplied into the basis by the test algebra. The pairing law then
+  reduces `⟨φ, c·b_{n,k}⟩ = c·⟨φ, b_{n,k}⟩ = c·0 = 0` once the single-basis integral vanishes
+  (`innerI_bernBasis_zero`). Proof is the real-scalar mirror of `innerI_add_left`: certificate weakening
+  to a common modulus, `riemannIntegral_congr` to move `φ·(c·ψ)` to `c·(φ·ψ)`, then
+  `riemannIntegral_Rsmul` to pull `c` out. **Honest scope**: the constant test and the real-scalar case
+  of pairing linearity; NOT yet the operator, NOT the deviation integral, NOT determinacy. Step 4 is RH;
+  crux fields stay `none`.
 - **Real-scalar linearity of the certified integral** (new `Analysis/IntegralRsmul.lean`):
   `∫₀¹ (c·f) = c·∫₀¹ f` for **any** `c : Real` (`riemannIntegral_Rsmul`) — the real-coefficient case the
   linear-algebra API was missing beyond the rational `riemannIntegral_smul`. The one new analytic

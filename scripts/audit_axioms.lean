@@ -5996,3 +5996,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rabs_le_ofQ_xBound
 #print axioms Analysis.Rmul_Rlim_of_approx
 #print axioms Analysis.riemannIntegral_Rsmul
+
+-- THE BERNSTEIN ARC, sub-brick H₃ (Square/ConstScale.lean) — THE CONSTANT TEST + REAL-SCALAR PAIRING
+-- LAW: ⟨φ, (constTest c)·ψ⟩ ≈ c·⟨φ, ψ⟩ (innerI_constMul), so ⟨φ, (constTest c)·ψ⟩ ≈ 0 when ⟨φ,ψ⟩ ≈ 0
+-- (innerI_constMul_zero). A real scalar cannot scale an L2Test (rational bound), so B_n(φ)=Σ φ(k/n)·b's
+-- real coefficient is carried as a constant test (f≡c, bound |c|≤mB) and multiplied in by the algebra.
+-- Mirror of innerI_add_left: common-modulus weakening, riemannIntegral_congr moves φ·(c·ψ) to c·(φ·ψ),
+-- riemannIntegral_Rsmul pulls c out.
+#print axioms Square.innerI_constMul
+#print axioms Square.innerI_constMul_zero
