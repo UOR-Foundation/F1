@@ -6027,3 +6027,13 @@ open UOR.Bridge.F1Square
 -- these turn the moment-integral into a bound on ⟨φ,φ⟩ (next: the vanishing rational bound).
 #print axioms Square.innerI_self_eq_sub
 #print axioms Square.bernOpCTest_pointwise_dev
+
+-- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
+-- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
+-- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales
+-- (n·devsum = central-moment sum), bernR_abs_moment applies, and x(1−x)≤1/4 (quarter_bound, from
+-- (x−½)²≥0 via Rsub_sq_expand + a structural additive rearrangement — ring_uor blows on the multi-fraction
+-- Qeq) clamps. Kept in multiplied form so the reciprocal 1/(2δn) is only formed at the concrete squeeze schedule.
+#print axioms Square.quarter_bound
+#print axioms Square.devsum_rescale
+#print axioms Square.bernOp_devsum_bound

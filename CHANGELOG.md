@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₆ — THE MULTIPLIED-FORM DEVIATION BOUND** (new
+  `Square/BernsteinDevBound.lean`): `2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4` on `[0,1]`, any `δ > 0`
+  (`bernOp_devsum_bound`) — the rational bound on the deviation sum. Bernstein's central-moment bound
+  (sub-brick F) is stated with `|k − nx|`, the operator deviation (sub-brick G) with `|k/n − x|`; they
+  differ by `n`. `devsum_rescale` rescales (`n·devsum` = the central-moment sum), `bernR_abs_moment`
+  applies, and the unconditional `x(1 − x) ≤ 1/4` (`quarter_bound`, from `(x − 1/2)² ≥ 0` via
+  `Rsub_sq_expand` and a **structural** additive rearrangement — `ring_uor` blows on the multi-fraction
+  `Qeq` cross-multiplication) clamps `nx(1−x) ≤ n/4`. Kept in multiplied form (`2δn·(…) ≤ …`) so the
+  reciprocal `1/(2δn)` is only formed later at a concrete schedule, where it is a fixed power of two.
+  **Honest scope**: the multiplied-form deviation-sum bound and `x(1−x) ≤ 1/4`; NOT yet the energy bound,
+  NOT `⟨φ,φ⟩ ≈ 0`, NOT determinacy. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₅ — THE DETERMINACY REDUCTION + DEVIATION TRANSFER** (new
   `Square/BernsteinDeviationTransfer.lean`): two facts that turn the operator moment-integral (H₄) into a
   bound on the L² energy of a moment-null test. **Reduction**: since `⟨φ, B_n(φ)⟩ ≈ 0`,
