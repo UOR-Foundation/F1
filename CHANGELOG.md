@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Co-support depth-existence, sub-brick N₅ — THE FACTOR-THEOREM APARTNESS** (new
+  `Square/QPolyApart.lean`): upgrades N₄ from a nonzero coefficient VECTOR to a nonzero FUNCTION. For every
+  `K` the depth-`K` co-support member is apart from `0` at a point of `[0,1]`
+  (`coSupport_member_apart`: `∃ member ∈ HatVanishes·K, ∃ x∈[0,1], member.f x ≉ 0`) — so the co-support object
+  is genuinely **inhabited beyond zero at every depth**, matching the `K = 1..7` realized levels. Route
+  (large-`M` evaluation, no synthetic division): the member's value at a rational `r∈[0,1]` is
+  `ofQ (qPolyEval c r d)` (`qPolyTest_eval_ofQ`, via the `powTest i .f (ofQ r) = ofQ(rⁱ)` recursion +
+  `clamp01_ofQ` + `RsumN_ofQ_qsumL_range`); a nonzero coefficient vector yields an explicit `M ≥ 1` with
+  `qPolyEval c (1/M) d ≉ 0` (`poly_nonzero_evalP`: a bottom-Horner `evalP`, the majorant `|evalP| ≤ Σ|cᵢ|`, and
+  `c₀`-domination at `M = |B|.num.toNat·(c 0).den + 1`); evaluating at `1/M ∈ [0,1]` gives the witness
+  (`Qeq_of_ofQ_eq_zero` via `Qarch_gen` bridges `ofQ q ≈ 0 ⟹ Qeq q ⟨0,1⟩`). Choice-free `{propext, Quot.sound}`.
+  **Honest scope**: the member is nonzero as a function; NOT positivity beyond the skeleton. Step 4 is RH; crux
+  fields stay `none`.
 - **Co-support depth-existence, sub-brick N₄ — CO-SUPPORT MEMBERS EXIST AT EVERY DEPTH** (new
   `Square/QCoSupportExists.lean`): the capstone welding N₂ and N₃ on the Hilbert system. For every `K` the
   homogeneous system — the support row `Σᵢcᵢ` and the moment rows `Σᵢcᵢ/(i+n+1)` (`n<K`) — has `K+1` equations

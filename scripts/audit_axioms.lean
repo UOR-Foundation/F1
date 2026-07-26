@@ -6324,3 +6324,29 @@ open UOR.Bridge.F1Square
 #print axioms Square.nodup_map_succ
 #print axioms Square.nodup_range_cf
 #print axioms Square.coSupport_member_exists
+
+-- CO-SUPPORT DEPTH-EXISTENCE, sub-brick N₅ (Square/QPolyApart.lean) — THE FACTOR-THEOREM APARTNESS: the
+-- depth-K co-support member is nonzero as a FUNCTION on [0,1], not just as a coefficient vector
+-- (coSupport_member_apart: ∀K, ∃ member ∈ HatVanishes·K with ∃ x∈[0,1], member.f x ≉ 0). Route (large-M
+-- evaluation, no synthetic division): the member's value at a rational r∈[0,1] is ofQ(qPolyEval c r d)
+-- (qPolyTest_eval_ofQ, via powTest_f_ofQ recursion powTest i .f (ofQ r)=ofQ(rⁱ) + clamp01_ofQ + RsumN_ofQ_
+-- qsumL_range); a nonzero coefficient vector gives an explicit M≥1 with qPolyEval c (1/M) d ≉ 0
+-- (poly_nonzero_evalP: bottom-Horner evalP, |evalP|≤Σ|cᵢ| majorant, c₀-domination at M=|B|.num.toNat·(c 0).den+1);
+-- evaluating the member at 1/M∈[0,1] gives the apartness witness (Qeq_of_ofQ_eq_zero via Qarch_gen bridges
+-- ofQ q≈0 ⟹ Qeq q ⟨0,1⟩). UPGRADES coSupport_member_exists from a nonzero VECTOR to a nonzero FUNCTION — the
+-- co-support object is now inhabited beyond zero at EVERY depth. NOT positivity; step 4 = RH; crux fields none.
+#print axioms Square.Qpow_den
+#print axioms Square.qPolyEval_den
+#print axioms Square.powTest_f_ofQ
+#print axioms Square.qMonoTest_f_ofQ
+#print axioms Square.qPolyTest_eval_ofQ
+#print axioms Square.evalP_den
+#print axioms Square.sumAbs_den
+#print axioms Square.qsumL_map_succ
+#print axioms Square.qPolyEval_eq_evalP
+#print axioms Square.evalP_abs_le_sumAbs
+#print axioms Square.sumAbs_num_nonneg
+#print axioms Square.evalP_abs_c0_le
+#print axioms Square.poly_nonzero_evalP
+#print axioms Square.Qeq_of_ofQ_eq_zero
+#print axioms Square.coSupport_member_apart
