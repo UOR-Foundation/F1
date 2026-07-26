@@ -5971,6 +5971,7 @@ open UOR.Bridge.F1Square
 -- once each single-basis integral vanishes. No monomial bookkeeping — the Pascal recursion
 -- xᵏ(1-x)ᵐ⁺¹ = xᵏ(1-x)ᵐ - xᵏ⁺¹(1-x)ᵐ (clampProd_step_pt), by induction on m via innerI_sub_right +
 -- unit-restriction congruence, reduces every basis pairing to the base moment ⟨φ,xᵏ⟩ (innerI_clampProd_zero).
+#print axioms Square.clampProd_step_pt
 #print axioms Square.innerI_clampProd_zero
 #print axioms Square.innerI_bernBasis_zero
 
@@ -6047,6 +6048,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.moment_determinacy
 #print axioms Square.moment_determinacy_unit
 #print axioms Square.moment_injective_unit
+
+-- THE MELLIN-INVERSION ARC, sub-brick I₁ (Square/MomentFiniteDiff.lean) — THE RECONSTRUCTION COEFFICIENTS
+-- ARE FINITE DIFFERENCES OF THE MOMENTS: ⟨φ, xᵏ(1-x)ᵐ⟩ = (Δᵐμ)_k (clampProd_integral_eq_momDiff), where
+-- (Δᵐμ)_k is the m-th forward difference of the moment sequence (momDiff). The Hausdorff/Bernstein
+-- inversion's coefficients are the clampProd integrals; this shows they are computable from the moments
+-- alone. Same Pascal recursion as determinacy (clampProd_step_pt = the finite-difference recursion), by
+-- induction on m, base ⟨φ,xᵏ⟩=μ_k. No signed binomial coefficients formed.
+#print axioms Square.clampProd_integral_eq_momDiff
 
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound

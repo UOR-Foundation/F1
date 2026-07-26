@@ -60,7 +60,7 @@ def bernBasisTest (n k : Nat) : L2Test := natScale (choose n k) (clampProdTest k
 /-- **The Pascal recursion of the basis factor**, pointwise (globally, hence on `[0,1]`):
     `clamp01ᵏ·(1−clamp01)ᵐ⁺¹ = clamp01ᵏ·(1−clamp01)ᵐ − clamp01ᵏ⁺¹·(1−clamp01)ᵐ`. Pure
     `Rmul`/`Rsub` algebra: distribute `(1−clamp01)` and reassociate `clamp01ᵏ·clamp01 = clamp01ᵏ⁺¹`. -/
-private theorem clampProd_step_pt (k m : Nat) (x : Real) :
+theorem clampProd_step_pt (k m : Nat) (x : Real) :
     Req ((clampProdTest k (m + 1)).f x)
         ((L2Test.sub (clampProdTest k m) (clampProdTest (k + 1) m)).f x) := by
   show Req (Rmul ((powTest k).f x) (Rmul (Rsub one (clamp01 x)) ((powMinusTest m).f x)))

@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick I₁ — THE RECONSTRUCTION COEFFICIENTS ARE FINITE DIFFERENCES OF
+  THE MOMENTS** (new `Square/MomentFiniteDiff.lean`): `⟨φ, xᵏ(1−x)ᵐ⟩ = (Δᵐμ)_k`
+  (`clampProd_integral_eq_momDiff`), where `(Δᵐμ)_k` is the `m`-th forward difference of the moment
+  sequence `μ_n = ⟨φ, xⁿ⟩` (`momDiff`: `Δ⁰_k = μ_k`, `Δ^{m+1}_k = Δᵐ_k − Δᵐ_{k+1}`). With determinacy (the
+  transform pair's injectivity, now general) saying the moments *determine* `φ`, inversion is the
+  constructive recovery; its coefficients are the integrals of `φ` against the Bernstein basis factors,
+  and this shows they are **computable from the moments alone**. The proof reuses the determinacy arc's
+  Pascal recursion `xᵏ(1−x)ᵐ⁺¹ = xᵏ(1−x)ᵐ − xᵏ⁺¹(1−x)ᵐ` (`clampProd_step_pt`, now public) — which *is*
+  the finite-difference recursion — so the two sides agree by induction on `m`, base `⟨φ, xᵏ⟩ = μ_k`.
+  No signed binomial coefficients are ever formed. **Honest scope**: the finite-difference identity for
+  the reconstruction coefficients; NOT the reconstruction operator, NOT its convergence, NOT inversion,
+  NOT the transform pair's surjectivity. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₈ — GENERAL MOMENT DETERMINACY (the capstone)** (new
   `Square/MomentDeterminacy.lean`): a bounded-Lipschitz test whose **every** integer moment vanishes is
   the zero function on `[0,1]` — `(∀ n, ⟨φ, xⁿ⟩ ≈ 0) ⟹ ⟨φ,φ⟩ ≈ 0` (`moment_determinacy`) `⟹ ∀ x ∈ [0,1],
