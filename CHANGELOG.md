@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick L₃ — THE L² DENSITY LIMIT, PACKAGED** (new
+  `Square/BernsteinL2Limit.lean`): the explicit-rate L₂ bound packaged as a first-class `RTendsTo` limit —
+  `RTendsTo (fun m => ⟨φ − bernOpCTest φ ((Kₘ+1)²) …, φ − …⟩) 0` with `Kₘ = (φ.L.num.toNat+1)(m+1)`
+  (`bernOp_L2_tendsTo`): the Bernstein polynomials converge to `φ` **in the `L²[0,1]` norm** in the
+  codebase's canonical limit predicate (Bishop `2/(m+1)+2/(n+1)` modulus). The reindex `Kₘ` turns the L₂
+  rate `(5φ.L/(8(Kₘ+1)))²` into `≤ 1/(m+1)` (`energy_reindex_le` — the squared denominator has one factor of
+  `Kₘ+1` to spare over the linear numerator `25·φ.L.num²`; the nonlinear `Int` chain is explicit
+  `Int.mul_le_mul`, `omega` can't); the energy is `≥ 0`, so `|energy − 0| = energy` and the one-sided rate
+  suffices, and `rate_to_seq` (the `L = 0` instance of K1's rate⟹`RTendsTo` packaging) closes. The L₂ density
+  result delivered as a genuine limit object — the **packaged-limit companion of the durrOp strong-inversion
+  limit (K1)**. **Honest scope**: one polynomial scheme's convergence to a bounded-Lipschitz test in the
+  `L²[0,1]` norm, as an `RTendsTo` limit; NOT a completed L² space of *functions* (no limit member, no
+  inversion of an arbitrary L² element), NOT surjectivity onto function space, NOT positivity. Step 4 is RH;
+  crux fields stay `none`.
 - **The Bernstein arc, sub-brick L₂ — L² DENSITY OF THE BERNSTEIN POLYNOMIALS** (new
   `Square/BernsteinL2Density.lean`): the uniform (sup-norm) convergence of L₁ upgrades to convergence in the
   L² norm — the energy of the Bernstein residual of `φ` vanishes at a rational rate,

@@ -6238,3 +6238,16 @@ open UOR.Bridge.F1Square
 -- crux fields stay none.
 #print axioms Square.innerI_self_le_of_bound
 #print axioms Square.bernOp_L2_converges
+
+-- THE BERNSTEIN ARC, sub-brick L₃ (Square/BernsteinL2Limit.lean) — THE L² DENSITY LIMIT, PACKAGED:
+-- RTendsTo (fun m => ⟨φ − bernOpCTest φ ((Kₘ+1)²) …, φ − …⟩) 0 with Kₘ=(φ.L.num.toNat+1)(m+1)
+-- (bernOp_L2_tendsTo) — the Bernstein polynomials converge to φ in the L²[0,1] norm as a first-class
+-- RTendsTo limit (Bishop 2/(m+1)+2/(n+1) modulus). The reindex Kₘ turns the L₂ rate (5φ.L/(8(Kₘ+1)))²
+-- into ≤ 1/(m+1) (energy_reindex_le — the squared denominator has one factor of Kₘ+1 to spare over the
+-- linear numerator 25·φ.L.num²; the nonlinear Int chain is explicit Int.mul_le_mul, omega can't); the
+-- energy is ≥ 0 so |energy−0| = energy and the one-sided rate suffices; rate_to_seq (the L=0 instance of
+-- K1's rate⟹RTendsTo packaging) closes. The L₂ density result delivered as a genuine limit object — the
+-- packaged-limit companion of the durrOp strong-inversion limit (K1). NOT a completed L² space of
+-- functions, NOT surjectivity onto function space, NOT positivity; step 4 (band-coupling positivity) = RH;
+-- crux fields stay none.
+#print axioms Square.bernOp_L2_tendsTo
