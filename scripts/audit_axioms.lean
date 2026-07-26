@@ -6224,3 +6224,17 @@ open UOR.Bridge.F1Square
 -- class; the approximation companion of moment determinacy. NOT L² density (next sub-brick), NOT surjectivity
 -- onto function space, NOT positivity; step 4 (band-coupling positivity) = RH; crux fields stay none.
 #print axioms Square.bernOp_uniform_converges
+
+-- THE BERNSTEIN ARC, sub-brick L₂ (Square/BernsteinL2Density.lean) — L² DENSITY OF THE BERNSTEIN
+-- POLYNOMIALS: the energy of the Bernstein residual vanishes at a rational rate,
+-- ‖φ − bernOpCTest φ ((k+1)²) …‖²_{L²[0,1]} = ⟨φ−B_nφ, φ−B_nφ⟩ ≤ (5·φ.L/(8(k+1)))² (bernOp_L2_converges),
+-- so the polynomials are dense in L²[0,1] (residual → 0 in energy). The reusable innerI_self_le_of_bound
+-- turns a pointwise sup bound |g(x)| ≤ B on [0,1] into ⟨g,g⟩ = ∫₀¹ g² ≤ B² (unit-local monotonicity of the
+-- certified integral against the constant B²), applied to the residual g = φ − bernOpCTest with the uniform
+-- bound from L₁. The approximation half of the completed function space — complementary to L2Complete (which
+-- extends the pairing along L²-Cauchy sequences but builds no approximating family) and to moment determinacy
+-- (the injectivity half). NOT a completed L² space of functions (no limit member, no inversion of an arbitrary
+-- L² element), NOT surjectivity onto function space, NOT positivity; step 4 (band-coupling positivity) = RH;
+-- crux fields stay none.
+#print axioms Square.innerI_self_le_of_bound
+#print axioms Square.bernOp_L2_converges

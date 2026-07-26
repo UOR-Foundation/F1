@@ -450,6 +450,7 @@ import F1Square.Square.DurrmeyerCentral
 import F1Square.Square.DurrmeyerConverge
 import F1Square.Square.DurrmeyerTendsTo
 import F1Square.Square.BernsteinUniform
+import F1Square.Square.BernsteinL2Density
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail

@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick L₂ — L² DENSITY OF THE BERNSTEIN POLYNOMIALS** (new
+  `Square/BernsteinL2Density.lean`): the uniform (sup-norm) convergence of L₁ upgrades to convergence in the
+  L² norm — the energy of the Bernstein residual of `φ` vanishes at a rational rate,
+  `‖φ − bernOpCTest φ ((k+1)²) …‖²_{L²[0,1]} = ⟨φ−B_nφ, φ−B_nφ⟩ ≤ (5·φ.L/(8(k+1)))²`
+  (`bernOp_L2_converges`), so the polynomials `bernOpCTest φ n` are **dense in `L²[0,1]`** (the residual → 0
+  in energy). The reusable `innerI_self_le_of_bound` turns a pointwise sup bound `|g(x)| ≤ B` on `[0,1]` into
+  `⟨g,g⟩ = ∫₀¹ g² ≤ B²` (`Rsq_le_of_abs_le` pointwise, then unit-local monotonicity of the certified integral
+  against the constant `B²`), applied to the residual `g = φ − bernOpCTest` with the uniform bound from L₁.
+  This is the **approximation half of the completed function space** the Mellin front left open —
+  complementary to `L2Complete.lean` (which extends the pairing along L²-Cauchy sequences but constructs no
+  approximating family) and to moment determinacy (the injectivity half): the moment map is injective, and its
+  image polynomials are L²-dense. **Honest scope**: convergence of one polynomial scheme to a bounded-Lipschitz
+  test in the `L²[0,1]` norm at an explicit rational rate; NOT a completed L² space of *functions* (no limit
+  member, no inversion of an arbitrary L² element), NOT surjectivity onto function space, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick L₁ — UNIFORM (WEIERSTRASS) CONVERGENCE OF THE OPERATOR-AS-TEST** (new
   `Square/BernsteinUniform.lean`): on `[0,1]` the Bernstein operator test `bernOpCTest φ n` (H₄ — an honest
   `L2Test` agreeing with `B_n(φ)` there, hence a polynomial on `[0,1]`) converges to `φ` with an
