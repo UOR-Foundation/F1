@@ -6261,3 +6261,18 @@ open UOR.Bridge.F1Square
 -- Bernstein arc) closes. A determinacy corollary about the co-support filtration; NOT a completed L² space,
 -- NOT surjectivity, NOT positivity; step 4 (band-coupling positivity) = RH; crux fields stay none.
 #print axioms Square.hatVanishes_all_imp_zero
+
+-- CO-SUPPORT DEPTH-EXISTENCE, sub-brick N₁ (Square/QSumList.lean) — RATIONAL SUMS OVER A VARIABLE LIST:
+-- qsumL f vars = Σ_{i ∈ vars} f i (a List-indexed rational sum) with the linear-algebra laws qsumL_add /
+-- qsumL_neg / qsumL_smul / qsumL_congr / qsumL_zero and the pivot split qsumL_erase (Σ_vars f ≈ f p +
+-- Σ_{vars.erase p} f for p ∈ vars — the row operation Gaussian elimination performs). List indexing (not a
+-- Nat range) makes "eliminate variable p" reindexing-free. Substrate for the over-determined-homogeneous-
+-- system-has-a-nonzero-solution lemma that gives co-support members at every depth. Pure finite rational
+-- arithmetic; no members/co-support/positivity yet. Step 4 (band-coupling positivity) = RH; crux fields none.
+#print axioms Square.qsumL_den
+#print axioms Square.qsumL_congr
+#print axioms Square.qsumL_zero
+#print axioms Square.qsumL_add
+#print axioms Square.qsumL_neg
+#print axioms Square.qsumL_smul
+#print axioms Square.qsumL_erase

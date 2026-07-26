@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Co-support depth-existence, sub-brick N₁ — RATIONAL SUMS OVER A VARIABLE LIST** (new
+  `Square/QSumList.lean`): the substrate for the missing existence theorem. The member generator (`polyPN`,
+  brick 66) reduced "a co-support member exists at depth `K`" to "the homogeneous `ℚ`-linear system
+  `Σᵢcᵢ = 0`, `Σᵢcᵢ/(i+n+1) = 0` (`n<K`) has a nonzero solution" — the Gaussian-elimination fact the layer
+  never had (the doc's "hypergeometric identity the layer cannot reach"). This brick lays its foundation:
+  `qsumL f vars = Σ_{i∈vars} f i`, a `List`-indexed rational sum, with the linear-algebra laws (`qsumL_add`,
+  `qsumL_neg`, `qsumL_smul`, `qsumL_congr`, `qsumL_zero`) and the **pivot split** `qsumL_erase`
+  (`Σ_vars f ≈ f p + Σ_{vars.erase p} f` for `p∈vars` — the row operation elimination performs). Indexing by a
+  `List` rather than a `Nat` range is what makes "eliminate variable `p`" reindexing-free (`vars.erase p`
+  drops exactly that variable). **Honest scope**: pure finite rational arithmetic; no members, no co-support,
+  no positivity yet. Step 4 is RH; crux fields stay `none`.
 - **The co-support object, sub-brick M₁ — THE FILTRATION INTERSECTION IS TRIVIAL** (new
   `Square/CoSupportTrivial.lean`): `(∀ K, φ ∈ HatVanishes·K) ⟹ φ ≈ 0 on [0,1]`
   (`hatVanishes_all_imp_zero`), i.e. `⋂_K HatVanishes·K = {0}` — a unit-supported test orthogonal to *every*
