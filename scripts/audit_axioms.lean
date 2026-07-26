@@ -6037,6 +6037,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegral_abs_le_unit
 #print axioms Square.bernOp_energy_bound
 
+-- THE BERNSTEIN ARC, sub-brick H₈ (Square/MomentDeterminacy.lean) — GENERAL MOMENT DETERMINACY, the
+-- capstone. A bounded-Lipschitz test whose every integer moment vanishes is the zero function on [0,1]:
+-- (∀n, ⟨φ,xⁿ⟩≈0) ⟹ ⟨φ,φ⟩≈0 (moment_determinacy) ⟹ ∀x∈[0,1], φ(x)≈0 (moment_determinacy_unit). Closes
+-- the general-determinacy question the polynomial class (brick 64) left open. ⟨φ,φ⟩=⟨φ,φ−B_nφ⟩ (H₅),
+-- bounded by 2δn·⟨φ,φ⟩ ≤ M_φL(δ²+n/4) (H₇); the schedule δ=k+1, n=(k+1)² divides down to ⟨φ,φ⟩ ≤
+-- 5M_φL/(8(k+1)) ≤ (5·M.num·L.num)/(k+1) → Req_of_Rle_ofQ_all forces ⟨φ,φ⟩≈0 (≥0 by innerI_self_nonneg),
+-- and brick 79 lifts to the pointwise statement. A genuine constructive Weierstrass/Bernstein theorem.
+#print axioms Square.moment_determinacy
+#print axioms Square.moment_determinacy_unit
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

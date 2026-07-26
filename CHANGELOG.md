@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₈ — GENERAL MOMENT DETERMINACY (the capstone)** (new
+  `Square/MomentDeterminacy.lean`): a bounded-Lipschitz test whose **every** integer moment vanishes is
+  the zero function on `[0,1]` — `(∀ n, ⟨φ, xⁿ⟩ ≈ 0) ⟹ ⟨φ,φ⟩ ≈ 0` (`moment_determinacy`) `⟹ ∀ x ∈ [0,1],
+  φ(x) ≈ 0` (`moment_determinacy_unit`). This **closes the general-determinacy question** the
+  polynomial-class result (brick 64) left open. The energy `⟨φ,φ⟩` equals the pairing with the Bernstein
+  residual (H₅), which the multiplied-form energy bound (H₇) controls: `2δn·⟨φ,φ⟩ ≤ M_φ·L·(δ²+n/4)` for
+  every `δ ≥ 0`. Under the schedule `δ = k+1`, `n = (k+1)²`, dividing by `2δn = 2(k+1)³` gives
+  `⟨φ,φ⟩ ≤ 5·M_φ·L/(8(k+1)) ≤ (5·M_φ.num·L.num)/(k+1)`; the real squeeze (`Req_of_Rle_ofQ_all`) forces
+  `⟨φ,φ⟩ ≈ 0` (it is `≥ 0` by `innerI_self_nonneg`), and brick 79 (`innerI_self_zero_imp_zero`) lifts that
+  to the pointwise statement. **A genuine constructive Weierstrass/Bernstein theorem: no `sqrt`, no case
+  split, choice-free.** **Honest scope**: general moment determinacy on `[0,1]`; NOT Mellin inversion, NOT
+  the transform pair's surjectivity, NOT positivity. Step 4 (the band-coupling positivity) is RH; crux
+  fields stay `none`.
 - **The Bernstein arc, sub-brick H₇ — THE MULTIPLIED-FORM ENERGY BOUND** (new
   `Square/BernsteinEnergyBound.lean`): `2δn·|⟨φ, φ − B_n(φ)⟩| ≤ M_φ·L·(δ² + n/4)`, any `δ ≥ 0`
   (`bernOp_energy_bound`) — the `2δn`-weighted bound on the L² energy of the Bernstein residual. The
