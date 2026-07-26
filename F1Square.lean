@@ -439,6 +439,7 @@ import F1Square.Square.MomentFiniteDiff
 import F1Square.Square.MomentReconSum
 import F1Square.Square.MomentReconEnergy
 import F1Square.Square.MomentReconConverge
+import F1Square.Square.MomentDurrmeyer
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail

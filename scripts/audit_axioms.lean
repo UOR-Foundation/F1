@@ -6095,6 +6095,17 @@ open UOR.Bridge.F1Square
 -- function space, NOT positivity.
 #print axioms Square.bernReconSum_converges
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₁ (Square/MomentDurrmeyer.lean) — THE BERNSTEIN–DURRMEYER OPERATOR
+-- IS COMPUTABLE FROM THE MOMENTS: durrOp φ n x = (n+1)·Σ_k b_{n,k}(x)·⟨φ,b_{n,k}⟩ (the positive summability
+-- operator built from the integrals ⟨φ,b_{n,k}⟩, vs. B_n's point values), and each Durrmeyer coefficient
+-- is a scaled finite difference of moments ⟨φ,b_{n,k}⟩ = C(n,k)·(Δⁿ⁻ᵏμ)_k (innerI_bernBasis_eq_momDiff, via
+-- innerI_natScale_right — the general 2nd-slot ℕ-scaling of the pairing — + I₁), so durrOp reads φ only
+-- through its moments (durrOp_eq_momData). The candidate for POINTWISE inversion (durrOp φ n x is a function
+-- of x, moment-computable, → φ(x)). NOT the normalization, NOT the second-moment estimate, NOT convergence.
+#print axioms Square.innerI_natScale_right
+#print axioms Square.innerI_bernBasis_eq_momDiff
+#print axioms Square.durrOp_eq_momData
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

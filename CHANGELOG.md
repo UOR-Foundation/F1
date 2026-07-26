@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₁ — THE BERNSTEIN–DURRMEYER OPERATOR IS COMPUTABLE FROM THE
+  MOMENTS** (new `Square/MomentDurrmeyer.lean`): the first step toward *pointwise* reconstruction. The
+  Durrmeyer operator `durrOp φ n x = (n+1)·Σ_k b_{n,k}(x)·⟨φ, b_{n,k}⟩` is the positive summability operator
+  built from the *integrals* `⟨φ, b_{n,k}⟩ = ∫₀¹ φ·b_{n,k}` (vs. the Bernstein operator `B_n`, which uses the
+  point values `φ(k/n)`). Each Durrmeyer coefficient is moment data — a scaled finite difference
+  `⟨φ, b_{n,k}⟩ = C(n,k)·(Δⁿ⁻ᵏμ)_k` (`innerI_bernBasis_eq_momDiff`, via the new general second-slot
+  ℕ-scaling `innerI_natScale_right` and I₁) — so `durrOp` reads `φ` only through its moment sequence
+  (`durrOp_eq_momData`). This makes `durrOp` the candidate for pointwise inversion: it is a function of `x`,
+  computed from moments, and (as a standard positive kernel `(n+1)Σ_k b_{n,k}(x)b_{n,k}(t)` with `∫₀¹=1`, no
+  boundary or free-`x` pathology) `→ φ(x)`. **Honest scope**: the identity `durrOp = (moment-data sum)` and
+  the single-basis moment value; NOT the normalization, NOT the second-moment estimate, NOT the convergence
+  `durrOp φ n x → φ(x)`, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick I₃b — THE RECONSTRUCTION SUMS CONVERGE TO THE PAIRING (weak
   inversion capstone)** (new `Square/MomentReconConverge.lean`): along the explicit schedule `n = (k+1)²`,
   `δ = k+1`, the moment-data reconstruction sum converges to the pairing with an explicit modulus,
