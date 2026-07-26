@@ -16,6 +16,24 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₅d-final — STRONG POINTWISE MELLIN INVERSION (the Durrmeyer
+  convergence capstone)** (new `Square/DurrmeyerConverge.lean`): the Bernstein–Durrmeyer operator converges
+  to the test pointwise on `[0,1]`. The multiplied-form deviation bound
+  `2δ·|durrOp φ n x − φ(x)| ≤ φ.L·(δ² + T_n(x))` for any rational `δ > 0` (`durrOp_dev_bound`), folding in the
+  T_n bound (J₅a) to `2δ·|durrOp φ (p+3) x − φ(x)| ≤ φ.L·(δ² + 1/(p+5))` (`durrOp_dev_bound_le`), and the
+  **limit** along the schedule `n = (k+3)²−2`, `δ = 1/(k+3)`:
+  `|durrOp φ ((k+3)²−2) x − φ(x)| ≤ φ.L/(k+3) → 0` (`durrOp_converges`). The assembly:
+  `durrOp φ − φ(x) = durrOp(residual ψ = φ − φ(x)·1)` (J₅c `durrOp_dev_eq`); the rational multiple `2δ·ψ` is
+  dominated on `[0,1]` by `G = φ.L·(δ² + (·−x)²)` via `amgm_2delta` + `φ.hlip`; `durrOp_abs_le_dom` transports
+  the domination through `innerI_abs_le_mono` (J₅d-crux) + `bernBasisTest_f_nonneg` + `bernR_nonneg`;
+  `durrOp_scalar` (`durrOp((constTest s)·h) = s·durrOp(h)`) + `durrOp_add`/`durrOp_constTest` compute
+  `durrOp G = φ.L·(δ² + T_n)` with the squared deviation matched to the operator monomials pointwise; the
+  squeeze divides by `2δ` (`Rle_of_Rmul_ofQ_le`). Together with weak inversion (I₃b, `⟨φ,ψ⟩` recovered from
+  the moments) this **closes the constructive reconstruction of a bounded-Lipschitz test from its moments** —
+  the moment/Mellin transform is now invertible both weakly (pairing) and strongly (pointwise). **Honest
+  scope**: pointwise convergence `durrOp φ n x → φ(x)` with the explicit rate; NOT the transform pair's
+  surjectivity onto function space, NOT positivity. Step 4 (band-coupling positivity) is RH; crux fields stay
+  `none`.
 - **The Mellin-inversion arc, sub-brick J₅a — THE DURRMEYER SECOND CENTRAL MOMENT BOUND** (new
   `Square/DurrmeyerCentral.lean`): `T_n(x) = durrOp(x²) − 2x·durrOp(x) + x² ≤ 1/(n+2)` on `[0,1]`
   (`durrOp_central2_le`, stated for `n = p+3` so the `n−1`, `n+2`, `n+3` are subtraction-free defeq). The

@@ -6174,6 +6174,26 @@ open UOR.Bridge.F1Square
 -- variance ∫(t−x)²K_n(x,t)dt → 0 that drives the Durrmeyer pointwise convergence durrOp φ n x → φ(x).
 #print axioms Square.durrOp_central2_le
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₅d-final (Square/DurrmeyerConverge.lean) — STRONG POINTWISE MELLIN
+-- INVERSION: the Bernstein–Durrmeyer operator converges to the test pointwise on [0,1]. The multiplied-form
+-- deviation bound 2δ·|durrOp φ n x − φ(x)| ≤ φ.L·(δ² + T_n(x)) (durrOp_dev_bound), folding in the T_n bound
+-- (J₅a) → 2δ·|durrOp φ (p+3) x − φ(x)| ≤ φ.L·(δ²+1/(p+5)) (durrOp_dev_bound_le), and the LIMIT along the
+-- schedule n=(k+3)²−2, δ=1/(k+3): |durrOp φ ((k+3)²−2) x − φ(x)| ≤ φ.L/(k+3) → 0 (durrOp_converges).
+-- Assembly: durrOp φ − φ(x) = durrOp(residual ψ=φ−φ(x)·1) (J₅c durrOp_dev_eq); the rational multiple 2δ·ψ is
+-- dominated on [0,1] by G=φ.L·(δ²+(·−x)²) via amgm_2delta + φ.hlip; durrOp_abs_le_dom transports domination
+-- through innerI_abs_le_mono (J₅d-crux) + bernBasisTest_f_nonneg + bernR_nonneg; durrOp_scalar
+-- (durrOp((constTest s)·h)=s·durrOp(h)) + durrOp_add/durrOp_constTest compute durrOp G = φ.L·(δ²+T_n) with
+-- the squared deviation matched to the operator monomials pointwise (sqdev_eq_mono); the squeeze divides by
+-- 2δ (Rle_of_Rmul_ofQ_le). Weak inversion (I₃b) + this strong inversion close the transform-pair
+-- reconstruction question on the general bounded-Lipschitz class. NOT the transform pair's surjectivity onto
+-- function space; step 4 (band-coupling positivity) = RH; crux fields stay none.
+#print axioms Square.durrOp_scalar
+#print axioms Square.bernBasisTest_f_nonneg
+#print axioms Square.durrOp_abs_le_dom
+#print axioms Square.durrOp_dev_bound
+#print axioms Square.durrOp_dev_bound_le
+#print axioms Square.durrOp_converges
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales
