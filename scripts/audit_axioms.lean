@@ -6158,6 +6158,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.durrOp_constTest
 #print axioms Square.durrOp_dev_eq
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₅d-crux (Square/IntegralMono.lean) — POINTWISE-DOMINATION
+-- MONOTONICITY OF THE L² PAIRING: |⟨ψ,χ⟩| ≤ ⟨g,χ⟩ when |ψ|≤g and χ≥0 on [0,1] (innerI_abs_le_mono).
+-- Both integrands weakened to the common modulus L=l2L ψ χ + l2L g χ (lip_weaken + certif_irrel, the
+-- energy_from_pointwise pattern), then riemannIntegral_le_unit on the pointwise dominations ψ·χ≤|ψ|·χ≤g·χ
+-- (positive) and −g·χ≤−|ψ|·χ≤ψ·χ (negative, via innerI_neg_left), combined by Rabs_le_of_both. The
+-- integral-monotonicity engine the Durrmeyer pointwise-convergence estimate runs the residual bound through.
+#print axioms Square.innerI_abs_le_mono
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₅d-crux — POINTWISE-DOMINATION MONOTONICITY OF THE L² PAIRING**
+  (new `Square/IntegralMono.lean`): `|⟨ψ,χ⟩| ≤ ⟨g,χ⟩` whenever `|ψ| ≤ g` and `χ ≥ 0` on `[0,1]`
+  (`innerI_abs_le_mono`). Both integrands are weakened to the common modulus `L = l2L ψ χ + l2L g χ`
+  (`lip_weaken` + `riemannIntegral_certif_irrel`, the `energy_from_pointwise` pattern), then
+  `riemannIntegral_le_unit` closes the two pointwise dominations `ψ·χ ≤ |ψ|·χ ≤ g·χ` (positive branch) and
+  `−g·χ ≤ −|ψ|·χ ≤ ψ·χ` (negative branch, landed through `innerI_neg_left`), combined by `Rabs_le_of_both`.
+  This is the integral-monotonicity engine the Durrmeyer pointwise-convergence estimate runs its residual
+  bound through — a general L² fact, useful beyond Durrmeyer. **Honest scope**: the domination bound; NOT
+  convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick J₅c — THE DURRMEYER OPERATOR REPRODUCES CONSTANTS, AND THE
   DEVIATION AS AN OPERATOR IMAGE** (new `Square/DurrmeyerConst.lean`): `durrOp (constTest c) n x = c`
   (`durrOp_constTest`, the `M_n⁽⁰⁾`-scaling — the constant rides through `⟨constTest c, b_{n,k}⟩ = c·⟨1,

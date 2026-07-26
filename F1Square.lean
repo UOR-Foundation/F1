@@ -445,6 +445,7 @@ import F1Square.Square.DurrmeyerWeights
 import F1Square.Square.DurrmeyerMomentSum
 import F1Square.Square.DurrmeyerLinear
 import F1Square.Square.DurrmeyerConst
+import F1Square.Square.IntegralMono
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail
