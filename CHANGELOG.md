@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₇ — THE MULTIPLIED-FORM ENERGY BOUND** (new
+  `Square/BernsteinEnergyBound.lean`): `2δn·|⟨φ, φ − B_n(φ)⟩| ≤ M_φ·L·(δ² + n/4)`, any `δ ≥ 0`
+  (`bernOp_energy_bound`) — the `2δn`-weighted bound on the L² energy of the Bernstein residual. The
+  residual integrand is bounded pointwise on `[0,1]` by `M_φ·(deviation)` (H₅ + `φ.hbd`), and
+  `2δn·(deviation sum) ≤ δ² + n/4` (H₆); the scalar `2δn` is pulled out at the **raw integral** level via
+  the rational `riemannIntegral_Rsmul` (weakened to the common modulus `l2L + 2δn·l2L`), certificate
+  independence realigns to `⟨φ,ψ⟩`, and the unit-local absolute integral bound
+  (`riemannIntegral_abs_le_unit`) closes. **Mechanization note**: the residual test `φ − B_n(φ)` is kept
+  *abstract* in the helper and the scaling is done directly on `ofQ (2δn)` (no `constTest`), so the
+  deeply-nested operator test is never `whnf`-forced — the earlier `constTest`-based route blew up
+  `isDefEq` on reducing `(L2Test.mul (constTest 2δn) ψ).f x`; the final `ofQ`-product association also
+  needs `ofQ_congr` (Nat multiplication is not definitionally associative). With `⟨φ,φ⟩ = ⟨φ, φ − B_nφ⟩`
+  (H₅), the schedule `δ = 2ᵐ, n = 4ᵐ` sends the right side `→ 0` geometrically. **Honest scope**: the
+  multiplied-form energy bound and the unit-local absolute integral bound; NOT yet `⟨φ,φ⟩ ≈ 0`, NOT
+  determinacy. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₆ — THE MULTIPLIED-FORM DEVIATION BOUND** (new
   `Square/BernsteinDevBound.lean`): `2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4` on `[0,1]`, any `δ > 0`
   (`bernOp_devsum_bound`) — the rational bound on the deviation sum. Bernstein's central-moment bound

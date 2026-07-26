@@ -6028,6 +6028,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_self_eq_sub
 #print axioms Square.bernOpCTest_pointwise_dev
 
+-- THE BERNSTEIN ARC, sub-brick H₇ (Square/BernsteinEnergyBound.lean) — THE MULTIPLIED-FORM ENERGY BOUND
+-- 2δn·|⟨φ, φ − B_nφ⟩| ≤ M_φ·L·(δ²+n/4), any δ≥0 (bernOp_energy_bound). The residual integrand is bounded
+-- pointwise by M_φ·(deviation) (H₅ + φ.hbd), and 2δn·(deviation sum) ≤ δ²+n/4 (H₆); the scalar 2δn is
+-- pulled out at the RAW integral level via riemannIntegral_Rsmul (weakened to a common modulus), and the
+-- unit-local absolute integral bound (riemannIntegral_abs_le_unit) closes — NO constTest, so the deeply
+-- nested operator test is never whnf-forced. Kept multiplied so the reciprocal is deferred to the squeeze.
+#print axioms Square.riemannIntegral_abs_le_unit
+#print axioms Square.bernOp_energy_bound
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales
