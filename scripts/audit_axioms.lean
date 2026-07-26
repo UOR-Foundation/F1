@@ -6126,6 +6126,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.durrInt_one
 #print axioms Square.durrInt_two
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₄ (Square/DurrmeyerMomentSum.lean) — THE DURRMEYER OPERATOR
+-- PRESERVES THE CONSTANT 1 (M_n⁽⁰⁾ = 1): durrOp 1 n x = 1 (durrOp_powTest_zero). Each weight is the
+-- constant ⟨1,b_{n,k}⟩ = n!/(n+1)! (J₃); pull it out of the sum (RsumN_mul_const), collapse Σ_k b_{n,k}(x)=1
+-- (bernR_partition, partition of unity), and (n+1)·n!/(n+1)!=1. This is the normalization ∫₀¹ K_n(x,t)dt=1 of
+-- the Durrmeyer kernel (a genuine averaging operator) — the M_n⁽⁰⁾ input to the second central moment
+-- T_n = M_n⁽²⁾ − 2x·M_n⁽¹⁾ + x² that drives durrOp φ n x → φ(x). NOT M_n⁽¹⁾/M_n⁽²⁾, NOT convergence.
+#print axioms Square.durrOp_powTest_zero
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales
