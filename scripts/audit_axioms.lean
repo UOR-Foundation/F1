@@ -6115,6 +6115,17 @@ open UOR.Bridge.F1Square
 -- ∫₀¹ b_{n,k}·tʲ = C(n,k)·momDiff (powTest j) k (n−k)).
 #print axioms Square.momDiff_powTest
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₃ (Square/DurrmeyerWeights.lean) — THE DURRMEYER INTEGRALS OF THE
+-- MONOMIALS: ⟨xʲ,b_{n,k}⟩ = C(n,k)·(n−k)!·(k+j)!/(n+j+1)! (durrInt_raw, from J₁+J₂), which the factorial
+-- identity C(n,k)·k!·(n−k)!=n! collapses to ⟨1,b_{n,k}⟩=n!/(n+1)! (durrInt_zero), ⟨x,b_{n,k}⟩=(k+1)n!/(n+2)!
+-- (durrInt_one), ⟨x²,b_{n,k}⟩=(k+1)(k+2)n!/(n+3)! (durrInt_two). The per-k weights the Durrmeyer moment sums
+-- (M_n⁽ʲ⁾ and the second central moment T_n) consume. Factorial denominators ride as opaque atoms; the
+-- fct(k+j) numerators expand by fct_succ and the choose_mul_fct identity closes via ring_uor on ℤ atoms.
+#print axioms Square.durrInt_raw
+#print axioms Square.durrInt_zero
+#print axioms Square.durrInt_one
+#print axioms Square.durrInt_two
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

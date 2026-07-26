@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₃ — THE DURRMEYER INTEGRALS OF THE MONOMIALS** (new
+  `Square/DurrmeyerWeights.lean`): the per-`k` weights `⟨xʲ, b_{n,k}⟩ = ∫₀¹ tʲ·b_{n,k}(t) dt` for
+  `j = 0,1,2`. From J₁+J₂ the raw value is `C(n,k)·(n−k)!·(k+j)!/(n+j+1)!` (`durrInt_raw`), which the
+  factorial identity `C(n,k)·k!·(n−k)! = n!` collapses to `⟨1, b_{n,k}⟩ = n!/(n+1)!` (`durrInt_zero`),
+  `⟨x, b_{n,k}⟩ = (k+1)·n!/(n+2)!` (`durrInt_one`), `⟨x², b_{n,k}⟩ = (k+1)(k+2)·n!/(n+3)!` (`durrInt_two`).
+  These are the weights the Durrmeyer moment sums `M_n⁽ʲ⁾(x)` — and hence the second central moment `T_n(x)`
+  that drives `durrOp φ n x → φ(x)` — consume. The factorial denominators ride as opaque atoms (sidestepping
+  cast normalization); the `fct(k+j)` numerators expand by `fct_succ` and `choose_mul_fct` closes via
+  `ring_uor` on ℤ atoms. **Honest scope**: the closed-form monomial Durrmeyer integrals; NOT the summed
+  moments, NOT the second-moment estimate, NOT convergence, NOT inversion, NOT positivity. Step 4 is RH;
+  crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick J₂ — THE FINITE DIFFERENCES OF THE HILBERT MOMENT SEQUENCE IN
   CLOSED FORM** (new `Square/DurrmeyerMoments.lean`): `momDiff (powTest j) k m = m!·(k+j)!/(k+j+m+1)!`
   (`momDiff_powTest`). The moment sequence of the monomial test `xʲ` is the Hilbert-matrix row
