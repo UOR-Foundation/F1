@@ -16,6 +16,15 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₅b — LINEARITY OF THE DURRMEYER OPERATOR** (new
+  `Square/DurrmeyerLinear.lean`): `durrOp (φ ± ψ) n x = durrOp φ n x ± durrOp ψ n x` (`durrOp_add`,
+  `durrOp_sub`). The L² pairing `⟨·, b_{n,k}⟩` is additive/subtractive in its first slot
+  (`innerI_add_left`, `innerI_sub_left`), the Bernstein weight `b_{n,k}(x)` distributes
+  (`Rmul_distrib`, `Rmul_sub_distrib`), the finite sum splits (`RsumN_Radd`, `RsumN_Rsub`), and the
+  `(n+1)` scalar pulls back through. This is the algebraic housekeeping the pointwise-convergence capstone
+  needs: it lets the deviation `durrOp φ n x − φ(x)` be split test-by-test and re-assembled. **Honest
+  scope**: linearity of `durrOp` in `φ`; NOT the second-moment estimate, NOT convergence, NOT inversion,
+  NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick J₄ — THE DURRMEYER MOMENTS OF THE LOW MONOMIALS** (new
   `Square/DurrmeyerMomentSum.lean`): the Durrmeyer operator's action on `1, x, x²`,
   `durrOp 1 n x = 1` (`durrOp_powTest_zero`, `M_n⁽⁰⁾ = 1`, the normalization `∫₀¹ K_n = 1` — a genuine

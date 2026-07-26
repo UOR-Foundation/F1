@@ -6141,6 +6141,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.durrOp_powTest_one
 #print axioms Square.durrOp_powTest_two
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₅b (Square/DurrmeyerLinear.lean) — LINEARITY OF THE DURRMEYER
+-- OPERATOR: durrOp(φ±ψ) n x = durrOp φ n x ± durrOp ψ n x (durrOp_add, durrOp_sub). Termwise first-slot
+-- pairing linearity (innerI_add_left/innerI_sub_left) + weight distribution (Rmul_distrib/Rmul_sub_distrib),
+-- the finite sum splits (RsumN_Radd/RsumN_Rsub), the (n+1) scalar pulls back through. The algebraic
+-- housekeeping the pointwise-convergence capstone needs to split durrOp φ n x − φ(x) test-by-test.
+#print axioms Square.durrOp_add
+#print axioms Square.durrOp_sub
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales
