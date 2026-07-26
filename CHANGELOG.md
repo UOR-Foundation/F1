@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick I₃b — THE RECONSTRUCTION SUMS CONVERGE TO THE PAIRING (weak
+  inversion capstone)** (new `Square/MomentReconConverge.lean`): along the explicit schedule `n = (k+1)²`,
+  `δ = k+1`, the moment-data reconstruction sum converges to the pairing with an explicit modulus,
+  `|⟨φ,ψ⟩ − bernReconSum φ ψ ((k+1)²)| ≤ (5·M_φ.num·L_ψ.num)/(k+1)` (`bernReconSum_converges`) — so
+  `⟨φ,ψ⟩ = lim_k bernReconSum φ ψ ((k+1)²)`, and the right side is computed entirely from `φ`'s moment
+  sequence (I₂). **The moment transform of `φ` is invertible on its pairing action**: the whole functional
+  `ψ ↦ ⟨φ,ψ⟩` is recovered from `φ`'s moments alone, for every bounded-Lipschitz `ψ`. Together with general
+  determinacy (H₈, the injectivity half) this closes the **weak** form of the moment/Mellin transform pair
+  on the general class. The proof divides the multiplied-form reconstruction energy bound (I₃a) by
+  `2δn = 2(k+1)³` (the determinacy schedule and its exposed division helper `Rle_of_Rmul_ofQ_le`); the
+  residual rational inequality factors exactly as the determinacy capstone
+  (`i − h = 5·M_φ.num·L_ψ.num·(k+1)³·(8·M_φ.den·L_ψ.den − 1) ≥ 0`, with `φ.L` replaced by `ψ.L`).
+  **Honest scope**: the weak (pairing) inversion with the explicit rate; NOT pointwise reconstruction of
+  `φ` from its moments (the strong/uniform inversion), NOT the full transform-pair surjectivity onto
+  function space, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick I₃a — THE TWO-FUNCTION RECONSTRUCTION ENERGY BOUND** (new
   `Square/MomentReconEnergy.lean`): `2δn · |⟨φ,ψ⟩ − bernReconSum φ ψ n| ≤ M_φ·L_ψ·(δ²+n/4)` for any `δ ≥ 0`
   (`bernOp_recon_energy_bound`), the multiplied-form bound on the **reconstruction error**. Since

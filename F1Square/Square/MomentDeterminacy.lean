@@ -42,8 +42,9 @@ private theorem Req_of_Rsub_zero {a b : Real} (h : Req (Rsub a b) zero) : Req a 
   exact Req_trans h1 (Req_trans (Radd_congr h (Req_refl b)) (Req_trans (Radd_comm zero b) (Radd_zero b)))
 
 /-- **Divide a weighted bound by the (positive) weight**: from `c·x ≤ B` with `c.num = R > 0`,
-    `x ≤ (1/c)·B`. Multiply by the reciprocal `⟨c.den, R⟩`, whose product with `c` is `1`. -/
-private theorem Rle_of_Rmul_ofQ_le (R : Nat) (hR : 0 < R) {c : Q} (hcd : 0 < c.den)
+    `x ≤ (1/c)·B`. Multiply by the reciprocal `⟨c.den, R⟩`, whose product with `c` is `1`. General
+    division lemma — reused by the reconstruction convergence of the Mellin-inversion arc (I₃b). -/
+theorem Rle_of_Rmul_ofQ_le (R : Nat) (hR : 0 < R) {c : Q} (hcd : 0 < c.den)
     (hcnum : c.num = (R : Int)) {x : Real} {B : Q} (hBd : 0 < B.den)
     (h : Rle (Rmul (ofQ c hcd) x) (ofQ B hBd)) :
     Rle x (ofQ (mul (⟨(c.den : Int), R⟩ : Q) B) (Qmul_den_pos hR hBd)) := by

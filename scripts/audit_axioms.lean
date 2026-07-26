@@ -6051,6 +6051,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.moment_determinacy
 #print axioms Square.moment_determinacy_unit
 #print axioms Square.moment_injective_unit
+-- (Rle_of_Rmul_ofQ_le is the general "divide a weighted bound by the positive weight" lemma,
+-- exposed for the reconstruction convergence of the Mellin-inversion arc, I₃b.)
+#print axioms Square.Rle_of_Rmul_ofQ_le
 
 -- THE MELLIN-INVERSION ARC, sub-brick I₁ (Square/MomentFiniteDiff.lean) — THE RECONSTRUCTION COEFFICIENTS
 -- ARE FINITE DIFFERENCES OF THE MOMENTS: ⟨φ, xᵏ(1-x)ᵐ⟩ = (Δᵐμ)_k (clampProd_integral_eq_momDiff), where
@@ -6080,6 +6083,17 @@ open UOR.Bridge.F1Square
 -- bernOp_energy_bound (the φ=ψ, moment-null determinacy case). The limit is the next step (I₃b).
 #print axioms Square.innerI_resid_eq
 #print axioms Square.bernOp_recon_energy_bound
+
+-- THE MELLIN-INVERSION ARC, sub-brick I₃b (Square/MomentReconConverge.lean) — THE RECONSTRUCTION SUMS
+-- CONVERGE TO THE PAIRING (weak inversion capstone): along the schedule n=(k+1)², δ=k+1,
+-- |⟨φ,ψ⟩ − bernReconSum φ ψ ((k+1)²)| ≤ (5·M_φ.num·L_ψ.num)/(k+1) (bernReconSum_converges), so
+-- ⟨φ,ψ⟩ = lim_k bernReconSum φ ψ ((k+1)²), the right side computed entirely from φ's moment sequence (I₂):
+-- the moment transform's pairing action is invertible — the whole functional ψ ↦ ⟨φ,ψ⟩ is recovered from
+-- φ's moments alone. Divide the reconstruction energy bound (I₃a) by 2δn=2(k+1)³ (the determinacy schedule
+-- and division helper Rle_of_Rmul_ofQ_le); the residual rational inequality factors as in the determinacy
+-- capstone (φ.L→ψ.L). Weak (pairing) inversion; NOT pointwise reconstruction, NOT surjectivity onto
+-- function space, NOT positivity.
+#print axioms Square.bernReconSum_converges
 
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
