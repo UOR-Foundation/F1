@@ -6106,6 +6106,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_bernBasis_eq_momDiff
 #print axioms Square.durrOp_eq_momData
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₂ (Square/DurrmeyerMoments.lean) — THE FINITE DIFFERENCES OF THE
+-- HILBERT MOMENT SEQUENCE IN CLOSED FORM: momDiff (powTest j) k m = m!·(k+j)!/(k+j+m+1)! (momDiff_powTest).
+-- The moment sequence of xʲ is the Hilbert-matrix row 1/(i+j+1) (mellinMoment_powTest), and its forward
+-- finite differences telescope to the factorial value (Δᵐ[1/(k+c)] = m!/((k+c)···(k+c+m))). Induction on m,
+-- base the moment 1/(k+j+1); the step is a factorial identity ((k+j+m+2)−(k+j+1)=m+1) via ring_uor on
+-- explicit integer atoms. The exact-value input to the Durrmeyer pointwise-inversion estimate (with J₁:
+-- ∫₀¹ b_{n,k}·tʲ = C(n,k)·momDiff (powTest j) k (n−k)).
+#print axioms Square.momDiff_powTest
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

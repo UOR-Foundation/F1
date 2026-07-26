@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₂ — THE FINITE DIFFERENCES OF THE HILBERT MOMENT SEQUENCE IN
+  CLOSED FORM** (new `Square/DurrmeyerMoments.lean`): `momDiff (powTest j) k m = m!·(k+j)!/(k+j+m+1)!`
+  (`momDiff_powTest`). The moment sequence of the monomial test `xʲ` is the Hilbert-matrix row
+  `mellinMoment (powTest j) i = 1/(i+j+1)`, and its forward finite differences telescope to the factorial
+  value (`Δᵐ[1/(k+c)] = m!/((k+c)(k+c+1)···(k+c+m))`). Induction on `m`, base the moment `1/(k+j+1)`; the
+  step is a factorial identity (`(k+j+m+2)−(k+j+1) = m+1` factors the telescoping) discharged by `ring_uor`
+  on explicit integer atoms. This is the exact-value input to the Durrmeyer pointwise-inversion estimate:
+  with J₁, `∫₀¹ b_{n,k}(t)·tʲ dt = C(n,k)·momDiff (powTest j) k (n−k)`, so the Durrmeyer moments (and hence
+  the second-moment/convergence bound) become computable. **Honest scope**: the closed form of
+  `momDiff (powTest j)`; NOT the Durrmeyer moments, NOT the second-moment estimate, NOT convergence, NOT
+  inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick J₁ — THE BERNSTEIN–DURRMEYER OPERATOR IS COMPUTABLE FROM THE
   MOMENTS** (new `Square/MomentDurrmeyer.lean`): the first step toward *pointwise* reconstruction. The
   Durrmeyer operator `durrOp φ n x = (n+1)·Σ_k b_{n,k}(x)·⟨φ, b_{n,k}⟩` is the positive summability operator
