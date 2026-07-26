@@ -31,6 +31,16 @@ namespace UOR.Bridge.F1Square.Square
 
 open UOR.Bridge.F1Square.Analysis
 
+/-- `Req (Rsub a b) zero → Req a b` (local copy of `ZeroGeometry`'s additive helper). -/
+private theorem Req_of_Rsub_zero {a b : Real} (h : Req (Rsub a b) zero) : Req a b := by
+  have h1 : Req a (Radd (Rsub a b) b) := by
+    show Req a (Radd (Radd a (Rneg b)) b)
+    refine Req_trans (Req_symm (Radd_zero a)) ?_
+    have hz : Req zero (Radd (Rneg b) b) :=
+      Req_symm (Req_trans (Radd_comm (Rneg b) b) (Radd_neg b))
+    exact Req_trans (Radd_congr (Req_refl a) hz) (Req_symm (Radd_assoc a (Rneg b) b))
+  exact Req_trans h1 (Req_trans (Radd_congr h (Req_refl b)) (Req_trans (Radd_comm zero b) (Radd_zero b)))
+
 /-- **Divide a weighted bound by the (positive) weight**: from `c·x ≤ B` with `c.num = R > 0`,
     `x ≤ (1/c)·B`. Multiply by the reciprocal `⟨c.den, R⟩`, whose product with `c` is `1`. -/
 private theorem Rle_of_Rmul_ofQ_le (R : Nat) (hR : 0 < R) {c : Q} (hcd : 0 < c.den)
@@ -118,5 +128,17 @@ theorem moment_determinacy_unit (φ : L2Test) (hmom : ∀ i, Req (mellinMoment �
     (x : Real) (h0 : Rle zero x) (h1 : Rle x one) :
     Req (φ.f x) zero :=
   innerI_self_zero_imp_zero φ (moment_determinacy φ hmom) x h0 h1
+
+/-- **★ THE MOMENT MAP IS INJECTIVE ON THE GENERAL CLASS**: two bounded-Lipschitz tests with the same
+    integer moment sequence agree at every point of `[0,1]` — the transform pair's injectivity half on
+    the *general* class, `moment_determinacy_unit` applied to `φ − ψ` (whose moments are the differences,
+    all zero by `innerI_sub_left`). -/
+theorem moment_injective_unit (φ ψ : L2Test)
+    (hmom : ∀ n, Req (mellinMoment φ n) (mellinMoment ψ n))
+    (x : Real) (h0 : Rle zero x) (h1 : Rle x one) :
+    Req (φ.f x) (ψ.f x) :=
+  Req_of_Rsub_zero (moment_determinacy_unit (L2Test.sub φ ψ)
+    (fun n => Req_trans (innerI_sub_left φ ψ (powTest n))
+      (Req_trans (Rsub_congr (hmom n) (Req_refl _)) (Radd_neg (mellinMoment ψ n)))) x h0 h1)
 
 end UOR.Bridge.F1Square.Square

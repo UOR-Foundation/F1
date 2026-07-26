@@ -6046,6 +6046,7 @@ open UOR.Bridge.F1Square
 -- and brick 79 lifts to the pointwise statement. A genuine constructive Weierstrass/Bernstein theorem.
 #print axioms Square.moment_determinacy
 #print axioms Square.moment_determinacy_unit
+#print axioms Square.moment_injective_unit
 
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound

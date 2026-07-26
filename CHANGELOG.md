@@ -26,9 +26,12 @@ audit-visible hypothesis, never an axiom).
   `⟨φ,φ⟩ ≤ 5·M_φ·L/(8(k+1)) ≤ (5·M_φ.num·L.num)/(k+1)`; the real squeeze (`Req_of_Rle_ofQ_all`) forces
   `⟨φ,φ⟩ ≈ 0` (it is `≥ 0` by `innerI_self_nonneg`), and brick 79 (`innerI_self_zero_imp_zero`) lifts that
   to the pointwise statement. **A genuine constructive Weierstrass/Bernstein theorem: no `sqrt`, no case
-  split, choice-free.** **Honest scope**: general moment determinacy on `[0,1]`; NOT Mellin inversion, NOT
-  the transform pair's surjectivity, NOT positivity. Step 4 (the band-coupling positivity) is RH; crux
-  fields stay `none`.
+  split, choice-free.** The immediate corollary `moment_injective_unit` — **the moment map is injective on
+  the general class** (two bounded-Lipschitz tests with the same integer moment sequence agree on `[0,1]`,
+  via `moment_determinacy_unit` on `φ − ψ`) — completes the transform pair's injectivity half for *all*
+  bounded-Lipschitz tests, not just polynomials. **Honest scope**: general moment determinacy/injectivity
+  on `[0,1]`; NOT Mellin inversion, NOT the transform pair's surjectivity, NOT positivity. Step 4 (the
+  band-coupling positivity) is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₇ — THE MULTIPLIED-FORM ENERGY BOUND** (new
   `Square/BernsteinEnergyBound.lean`): `2δn·|⟨φ, φ − B_n(φ)⟩| ≤ M_φ·L·(δ² + n/4)`, any `δ ≥ 0`
   (`bernOp_energy_bound`) — the `2δn`-weighted bound on the L² energy of the Bernstein residual. The
