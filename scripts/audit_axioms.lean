@@ -6057,6 +6057,16 @@ open UOR.Bridge.F1Square
 -- induction on m, base ⟨φ,xᵏ⟩=μ_k. No signed binomial coefficients formed.
 #print axioms Square.clampProd_integral_eq_momDiff
 
+-- THE MELLIN-INVERSION ARC, sub-brick I₂ (Square/MomentReconSum.lean) — THE OPERATOR PAIRING IS THE
+-- RECONSTRUCTION SUM: ⟨φ, B_n(ψ)⟩ = Σ_{k=0}^n ψ(k/n)·C(n,k)·(Δⁿ⁻ᵏμ)_k (innerI_bernOpCTest_eq_reconSum),
+-- the reconstruction sum (bernReconSum), whose RHS reads φ only through the finite differences of its
+-- moments. Distribute the pairing over the operator's finite sum (innerI_L2sumN, the general companion of
+-- innerI_L2sumN_zero), pull each real coefficient out (innerI_constMul, H₃), and rewrite each single-basis
+-- integral as a finite difference of moments (clampProd_integral_eq_momDiff, I₁). Algebraic backbone of the
+-- weak (pairing) inversion; the convergence ⟨φ, B_n(ψ)⟩ → ⟨φ,ψ⟩ is the next step.
+#print axioms Square.innerI_L2sumN
+#print axioms Square.innerI_bernOpCTest_eq_reconSum
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

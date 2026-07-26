@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick I₂ — THE OPERATOR PAIRING IS THE RECONSTRUCTION SUM** (new
+  `Square/MomentReconSum.lean`): `⟨φ, B_n(ψ)⟩ = Σ_{k=0}^n ψ(k/n)·C(n,k)·(Δⁿ⁻ᵏμ)_k`
+  (`innerI_bernOpCTest_eq_reconSum`), the **reconstruction sum** (`bernReconSum`). Pairing `φ` against the
+  Bernstein operator of a test `ψ` and distributing over its finite sum (`innerI_L2sumN`, the general
+  companion of `innerI_L2sumN_zero`), pulling each real coefficient `ψ(k/n)·C(n,k)` through
+  (`innerI_constMul`, H₃), and rewriting each single-basis integral as a finite difference of moments
+  (`clampProd_integral_eq_momDiff`, I₁) evaluates the pairing as an explicit sum whose right-hand side
+  reads `φ` **only through the finite differences `(Δⁿ⁻ᵏμ)_k = momDiff φ k (n−k)` of its moment sequence**
+  — so the pairing of `φ` with any Bernstein-operated test is computed from `φ`'s moment data alone. This
+  is the algebraic backbone of the weak (pairing) inversion of the moment map: since `B_n(ψ) → ψ`
+  (Bernstein's theorem), one expects `⟨φ,ψ⟩ = lim_n ⟨φ, B_n(ψ)⟩`, recovering the whole pairing functional
+  from the transform data. No signed binomial coefficients and no operator `.f x` reduction appear — the
+  identity lives entirely at the pairing level. **Honest scope**: the exact identity
+  `⟨φ, B_n(ψ)⟩ = bernReconSum φ ψ n`; NOT the convergence `⟨φ, B_n(ψ)⟩ → ⟨φ,ψ⟩`, NOT inversion, NOT the
+  transform pair's surjectivity, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick I₁ — THE RECONSTRUCTION COEFFICIENTS ARE FINITE DIFFERENCES OF
   THE MOMENTS** (new `Square/MomentFiniteDiff.lean`): `⟨φ, xᵏ(1−x)ᵐ⟩ = (Δᵐμ)_k`
   (`clampProd_integral_eq_momDiff`), where `(Δᵐμ)_k` is the `m`-th forward difference of the moment

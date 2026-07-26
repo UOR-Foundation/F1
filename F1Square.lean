@@ -436,6 +436,7 @@ import F1Square.Square.BernsteinDeviationTransfer
 import F1Square.Square.BernsteinEnergyBound
 import F1Square.Square.MomentDeterminacy
 import F1Square.Square.MomentFiniteDiff
+import F1Square.Square.MomentReconSum
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail
