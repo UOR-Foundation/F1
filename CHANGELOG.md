@@ -16,6 +16,20 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick L₁ — UNIFORM (WEIERSTRASS) CONVERGENCE OF THE OPERATOR-AS-TEST** (new
+  `Square/BernsteinUniform.lean`): on `[0,1]` the Bernstein operator test `bernOpCTest φ n` (H₄ — an honest
+  `L2Test` agreeing with `B_n(φ)` there, hence a polynomial on `[0,1]`) converges to `φ` with an
+  `x`-INDEPENDENT rational rate, `|φ(x) − (bernOpCTest φ ((k+1)²) …).f x| ≤ 5·φ.L/(8(k+1))`
+  (`bernOp_uniform_converges`). Assembly from bricks in hand: the pointwise deviation transfer
+  (H₅, `bernOpCTest_pointwise_dev`, `|φ(x) − B_n(x)| ≤ φ.L·Σ_k |k/n−x|·b_{n,k}(x)`) meets the AM-GM
+  deviation-sum bound (H₆, `bernOp_devsum_bound`, `2δn·Σ_k |k/n−x|·b_{n,k}(x) ≤ δ²+n/4`) at the schedule
+  `δ = k+1`, `n = (k+1)²`, where the deviation sum is `≤ (5/4)(k+1)²/(2(k+1)³) = 5/(8(k+1))` (divided out by
+  `Rle_of_Rmul_ofQ_le`); scaling by `φ.L` gives the uniform rate. This is the **constructive Weierstrass
+  approximation theorem** for the bounded-Lipschitz class — the *approximation* companion of moment
+  determinacy (the injectivity half), and the first handle on the completed function space the Mellin front
+  left open. **Honest scope**: uniform (sup-norm) convergence of one polynomial scheme with an explicit
+  rational rate; NOT L² density (next sub-brick), NOT surjectivity onto function space, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick K1 — THE DURRMEYER LIMIT AS A PACKAGED `RTendsTo` OBJECT** (new
   `Square/DurrmeyerTendsTo.lean`): `RTendsTo (fun m => durrOp φ (Kₘ²−2) x) (φ.f x)` with
   `Kₘ = (φ.L.num.toNat+1)(m+1)+3` (`durrOp_tendsTo`) — the reindexed Durrmeyer sequence converges to `φ(x)`

@@ -6214,3 +6214,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.quarter_bound
 #print axioms Square.devsum_rescale
 #print axioms Square.bernOp_devsum_bound
+
+-- THE BERNSTEIN ARC, sub-brick L₁ (Square/BernsteinUniform.lean) — UNIFORM (WEIERSTRASS) CONVERGENCE OF
+-- THE OPERATOR-AS-TEST: on [0,1], |φ(x) − (bernOpCTest φ ((k+1)²) …).f x| ≤ 5·φ.L/(8(k+1)), a rate
+-- INDEPENDENT of x (bernOp_uniform_converges). Combine the pointwise deviation transfer (H₅,
+-- bernOpCTest_pointwise_dev) with the AM-GM deviation-sum bound (H₆, bernOp_devsum_bound) at δ=k+1,
+-- n=(k+1)²: the deviation sum is ≤ (5/4)(k+1)²/(2(k+1)³) = 5/(8(k+1)) (divided out by Rle_of_Rmul_ofQ_le),
+-- and scaling by φ.L gives the uniform rate. The constructive Weierstrass theorem for the bounded-Lipschitz
+-- class; the approximation companion of moment determinacy. NOT L² density (next sub-brick), NOT surjectivity
+-- onto function space, NOT positivity; step 4 (band-coupling positivity) = RH; crux fields stay none.
+#print axioms Square.bernOp_uniform_converges
