@@ -6018,3 +6018,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.bernCoef_bound
 #print axioms Square.innerI_bernOpCTest_zero
 #print axioms Square.bernOpCTest_eq_on_unit
+
+-- THE BERNSTEIN ARC, sub-brick H₅ (Square/BernsteinDeviationTransfer.lean) — THE DETERMINACY REDUCTION
+-- + DEVIATION TRANSFER. reduction: ⟨φ,φ⟩ ≈ ⟨φ, φ − B_nφ⟩ (innerI_self_eq_sub, since ⟨φ,B_nφ⟩≈0 by H₄),
+-- the energy equals the pairing with the Bernstein residual. transfer: on [0,1] the residual is bounded
+-- by Bernstein's pointwise deviation |φ(x) − bernOpCTest.f x| ≤ L·Σ|k/n−x|·b (bernOpCTest_pointwise_dev),
+-- since the operator test agrees with honest bernOp there (H₄) and bernOp obeys the bound (G). Together
+-- these turn the moment-integral into a bound on ⟨φ,φ⟩ (next: the vanishing rational bound).
+#print axioms Square.innerI_self_eq_sub
+#print axioms Square.bernOpCTest_pointwise_dev

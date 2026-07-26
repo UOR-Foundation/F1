@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein arc, sub-brick H₅ — THE DETERMINACY REDUCTION + DEVIATION TRANSFER** (new
+  `Square/BernsteinDeviationTransfer.lean`): two facts that turn the operator moment-integral (H₄) into a
+  bound on the L² energy of a moment-null test. **Reduction**: since `⟨φ, B_n(φ)⟩ ≈ 0`,
+  `⟨φ,φ⟩ ≈ ⟨φ, φ − B_n(φ)⟩` (`innerI_self_eq_sub`) — the energy equals the pairing of `φ` with its
+  Bernstein *residual*. **Deviation transfer**: on `[0,1]` the residual is bounded by Bernstein's
+  pointwise deviation `|φ(x) − (bernOpCTest φ n hn).f x| ≤ L·Σ_k |k/n − x|·b_{n,k}(x)`
+  (`bernOpCTest_pointwise_dev`), because the operator test agrees with the honest `bernOp` there (H₄) and
+  `bernOp` obeys the bound (sub-brick G; the sign flip inside the absolute value is inert). Together:
+  `⟨φ,φ⟩ = ⟨φ, φ − B_nφ⟩` with the residual → 0 uniformly forces `⟨φ,φ⟩ ≈ 0`. **Honest scope**: the
+  reduction and the pointwise deviation bound for the residual; NOT yet the energy bound, NOT `⟨φ,φ⟩ ≈ 0`,
+  NOT determinacy. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick H₄ — THE BERNSTEIN OPERATOR AS A TEST + ITS MOMENT-INTEGRAL** (new
   `Square/BernsteinOperatorTest.lean`): the clamped operator `B_n(φ) = Σ_k φ(k/n)·C(n,k)·clamp01ᵏ(1−clamp01)ⁿ⁻ᵏ`
   is realized as a genuine `L2Test` (`bernOpCTest`) that (a) **pairs to zero** against a moment-null `φ`,
