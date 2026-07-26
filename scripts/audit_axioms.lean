@@ -6166,6 +6166,14 @@ open UOR.Bridge.F1Square
 -- integral-monotonicity engine the Durrmeyer pointwise-convergence estimate runs the residual bound through.
 #print axioms Square.innerI_abs_le_mono
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₅a (Square/DurrmeyerCentral.lean) — THE DURRMEYER SECOND CENTRAL
+-- MOMENT BOUND: T_n(x) = durrOp(x²) − 2x·durrOp(x) + x² ≤ 1/(n+2) on [0,1] (durrOp_central2_le, written for
+-- n=p+3 to kill Nat subtraction: ≤ 1/(p+5)). The exact identity T_n·(n+2)(n+3) = 2(n−3)x(1−x)+2 (cleared
+-- from the moment closed forms M⁽¹⁾,M⁽²⁾ via distribute+regroup+ring_uor), then quarter_bound (x(1−x)≤1/4)
+-- gives 2p·x(1−x)+2 ≤ p+6, and Rle_of_Rmul_ofQ_le divides by the positive weight. The vanishing kernel
+-- variance ∫(t−x)²K_n(x,t)dt → 0 that drives the Durrmeyer pointwise convergence durrOp φ n x → φ(x).
+#print axioms Square.durrOp_central2_le
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

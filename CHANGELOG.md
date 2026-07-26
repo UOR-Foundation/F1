@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₅a — THE DURRMEYER SECOND CENTRAL MOMENT BOUND** (new
+  `Square/DurrmeyerCentral.lean`): `T_n(x) = durrOp(x²) − 2x·durrOp(x) + x² ≤ 1/(n+2)` on `[0,1]`
+  (`durrOp_central2_le`, stated for `n = p+3` so the `n−1`, `n+2`, `n+3` are subtraction-free defeq). The
+  exact identity `T_n·(n+2)(n+3) = 2(n−3)x(1−x) + 2` is cleared from the moment closed forms `M⁽¹⁾`, `M⁽²⁾`
+  (J₄) by distributing the weight, clearing both denominators, and a signed-monomial normal-form collapse
+  (`ring_uor`); then `quarter_bound` (`x(1−x) ≤ ¼`) gives `2p·x(1−x) + 2 ≤ p+6`, and `Rle_of_Rmul_ofQ_le`
+  divides by the positive weight `(p+5)(p+6)` to land `≤ 1/(p+5)`. This is the vanishing Durrmeyer kernel
+  variance `∫₀¹ (t−x)²·K_n(x,t) dt → 0` that drives the pointwise convergence `durrOp φ n x → φ(x)`.
+  **Honest scope**: the second-central-moment bound; NOT convergence, NOT inversion, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick J₅d-crux — POINTWISE-DOMINATION MONOTONICITY OF THE L² PAIRING**
   (new `Square/IntegralMono.lean`): `|⟨ψ,χ⟩| ≤ ⟨g,χ⟩` whenever `|ψ| ≤ g` and `χ ≥ 0` on `[0,1]`
   (`innerI_abs_le_mono`). Both integrands are weakened to the common modulus `L = l2L ψ χ + l2L g χ`
