@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick K1 — THE DURRMEYER LIMIT AS A PACKAGED `RTendsTo` OBJECT** (new
+  `Square/DurrmeyerTendsTo.lean`): `RTendsTo (fun m => durrOp φ (Kₘ²−2) x) (φ.f x)` with
+  `Kₘ = (φ.L.num.toNat+1)(m+1)+3` (`durrOp_tendsTo`) — the reindexed Durrmeyer sequence converges to `φ(x)`
+  in the codebase's canonical limit predicate `RTendsTo` (Bishop `2/(k+1)+2/(n+1)` modulus). The reindex
+  absorbs the constant `φ.L`: the explicit rate `φ.L/(k+3)` at `k = Kₘ−3` becomes `≤ 1/(m+1) ≤ 2/(m+1)`
+  (`durrRate`, a pure-ℤ `Int.mul_le_mul` chain — `omega` can't, the bound is nonlinear); the single real
+  bound is pushed to the `.seq` level in both directions via `seq_diff_le` + `Qabs_le_of_both`
+  (`tendsTo_of_rate`, a reusable rate⟹`RTendsTo` helper). This **upgrades the explicit-rate `durrOp_converges`
+  (J₅d-final) to a first-class limit object** — the strong pointwise Mellin inversion delivered as a genuine
+  `RTendsTo` limit, closing the "packaged limit object" gap. **Honest scope**: the packaged pointwise limit;
+  NOT the transform pair's surjectivity onto function space, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **The Mellin-inversion arc, sub-brick J₅d-final — STRONG POINTWISE MELLIN INVERSION (the Durrmeyer
   convergence capstone)** (new `Square/DurrmeyerConverge.lean`): the Bernstein–Durrmeyer operator converges
   to the test pointwise on `[0,1]`. The multiplied-form deviation bound

@@ -6194,6 +6194,17 @@ open UOR.Bridge.F1Square
 #print axioms Square.durrOp_dev_bound_le
 #print axioms Square.durrOp_converges
 
+-- THE MELLIN-INVERSION ARC, sub-brick K1 (Square/DurrmeyerTendsTo.lean) — THE DURRMEYER LIMIT AS A
+-- PACKAGED RTendsTo OBJECT: RTendsTo (fun m => durrOp φ (Kₘ²−2) x) (φ.f x) with Kₘ=(φ.L.num.toNat+1)(m+1)+3
+-- (durrOp_tendsTo), the reindexed Durrmeyer sequence converging to φ(x) in the codebase's canonical limit
+-- predicate (Bishop 2/(k+1)+2/(n+1) modulus). Reindex absorbs φ.L: the explicit rate φ.L/(k+3) at k=Kₘ−3
+-- becomes ≤ 1/(m+1) ≤ 2/(m+1) (durrRate, pure-ℤ Int.mul_le_mul chain — omega can't, the bound is nonlinear);
+-- push the single real bound to the .seq level both directions via seq_diff_le + Qabs_le_of_both
+-- (tendsTo_of_rate, reusable). Upgrades the explicit-rate durrOp_converges (J₅d-final) to a first-class limit
+-- object — the strong pointwise Mellin inversion delivered as a genuine RTendsTo limit. NOT surjectivity onto
+-- function space; step 4 (band-coupling positivity) = RH; crux fields stay none.
+#print axioms Square.durrOp_tendsTo
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales
