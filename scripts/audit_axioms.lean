@@ -6130,9 +6130,16 @@ open UOR.Bridge.F1Square
 -- PRESERVES THE CONSTANT 1 (M_n⁽⁰⁾ = 1): durrOp 1 n x = 1 (durrOp_powTest_zero). Each weight is the
 -- constant ⟨1,b_{n,k}⟩ = n!/(n+1)! (J₃); pull it out of the sum (RsumN_mul_const), collapse Σ_k b_{n,k}(x)=1
 -- (bernR_partition, partition of unity), and (n+1)·n!/(n+1)!=1. This is the normalization ∫₀¹ K_n(x,t)dt=1 of
--- the Durrmeyer kernel (a genuine averaging operator) — the M_n⁽⁰⁾ input to the second central moment
--- T_n = M_n⁽²⁾ − 2x·M_n⁽¹⁾ + x² that drives durrOp φ n x → φ(x). NOT M_n⁽¹⁾/M_n⁽²⁾, NOT convergence.
+-- the Durrmeyer kernel (a genuine averaging operator). Companions M_n⁽¹⁾ = (nx+1)/(n+2)
+-- (durrOp_powTest_one) and M_n⁽²⁾ = (n(n−1)x²+4nx+2)/((n+2)(n+3)) (durrOp_powTest_two) collapse the k-sums
+-- against the raw Bernstein moments Σ b_{n,k}(k+1)=nx+1 (bernR_shift1) and Σ b_{n,k}(k+1)(k+2)=n(n−1)x²+4nx+2
+-- (bernR_shift2, via the Nat identity (k+1)(k+2)=k(k−1)+4k+2 feeding bernR_sq). The three moments give the
+-- second central moment T_n = M_n⁽²⁾ − 2x·M_n⁽¹⁾ + x² that drives durrOp φ n x → φ(x). NOT T_n, NOT convergence.
+#print axioms Square.bernR_shift1
+#print axioms Square.bernR_shift2
 #print axioms Square.durrOp_powTest_zero
+#print axioms Square.durrOp_powTest_one
+#print axioms Square.durrOp_powTest_two
 
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound

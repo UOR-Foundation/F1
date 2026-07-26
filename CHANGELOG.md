@@ -16,15 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
-- **The Mellin-inversion arc, sub-brick J₄ — THE DURRMEYER OPERATOR PRESERVES THE CONSTANT `1`** (new
-  `Square/DurrmeyerMomentSum.lean`): `durrOp 1 n x = 1` (`durrOp_powTest_zero`), the Durrmeyer moment
-  `M_n⁽⁰⁾ = 1`. Each weight is the constant `⟨1, b_{n,k}⟩ = n!/(n+1)!` (J₃); pull it out of the sum
-  (`RsumN_mul_const`), collapse `Σ_k b_{n,k}(x) = 1` (partition of unity), and `(n+1)·n!/(n+1)! = 1`. This is
-  the normalization `∫₀¹ K_n(x,t) dt = 1` of the Durrmeyer kernel — the operator is a genuine
-  averaging/probabilistic operator — and the `M_n⁽⁰⁾` input to the second central moment
-  `T_n(x) = M_n⁽²⁾ − 2x·M_n⁽¹⁾ + x²` that drives `durrOp φ n x → φ(x)`. **Honest scope**: the Durrmeyer
-  moment `M_n⁽⁰⁾ = 1`; NOT `M_n⁽¹⁾`/`M_n⁽²⁾`, NOT the second-moment estimate, NOT convergence, NOT inversion,
-  NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick J₄ — THE DURRMEYER MOMENTS OF THE LOW MONOMIALS** (new
+  `Square/DurrmeyerMomentSum.lean`): the Durrmeyer operator's action on `1, x, x²`,
+  `durrOp 1 n x = 1` (`durrOp_powTest_zero`, `M_n⁽⁰⁾ = 1`, the normalization `∫₀¹ K_n = 1` — a genuine
+  averaging operator), `durrOp x n x = (nx+1)/(n+2)` (`durrOp_powTest_one`, `M_n⁽¹⁾`), and
+  `durrOp x² n x = (n(n−1)x² + 4nx + 2)/((n+2)(n+3))` (`durrOp_powTest_two`, `M_n⁽²⁾`). Each weight (J₃) is
+  reindexed and its constant pulled out of the sum (`RsumN_mul_const`); the `k`-sums collapse against the raw
+  Bernstein moments `Σ_k b_{n,k}(x)·(k+1) = nx+1` (`bernR_shift1`) and `Σ_k b_{n,k}(x)·(k+1)(k+2) =
+  n(n−1)x²+4nx+2` (`bernR_shift2`, via the Nat identity `(k+1)(k+2) = k(k−1)+4k+2` feeding `bernR_sq`), and
+  the factorial ratios reduce (`(n+1)·n!/(n+2)! = 1/(n+2)`, etc.). These are the three moments the second
+  central moment `T_n(x) = M_n⁽²⁾ − 2x·M_n⁽¹⁾ + x²` — the vanishing quantity driving `durrOp φ n x → φ(x)` —
+  is assembled from. **Honest scope**: the exact closed forms `M_n⁽⁰⁾`, `M_n⁽¹⁾`, `M_n⁽²⁾`; NOT `T_n`
+  assembled/bounded, NOT convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick J₃ — THE DURRMEYER INTEGRALS OF THE MONOMIALS** (new
   `Square/DurrmeyerWeights.lean`): the per-`k` weights `⟨xʲ, b_{n,k}⟩ = ∫₀¹ tʲ·b_{n,k}(t) dt` for
   `j = 0,1,2`. From J₁+J₂ the raw value is `C(n,k)·(n−k)!·(k+j)!/(n+j+1)!` (`durrInt_raw`), which the
