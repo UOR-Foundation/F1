@@ -6149,6 +6149,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.durrOp_add
 #print axioms Square.durrOp_sub
 
+-- THE MELLIN-INVERSION ARC, sub-brick J₅c (Square/DurrmeyerConst.lean) — THE DURRMEYER OPERATOR REPRODUCES
+-- CONSTANTS + THE DEVIATION-AS-IMAGE: durrOp(constTest c) n x = c (durrOp_constTest, the M_n⁽⁰⁾-scaling: the
+-- constant rides through ⟨constTest c,b⟩=c·⟨1,b⟩ via innerI_symm/innerI_right_congr_on_unit/innerI_constMul,
+-- then c·durrOp(powTest 0)=c·1); hence durrOp φ n x − φ(x) = durrOp(φ − φ(x)·1) n x (durrOp_dev_eq, via
+-- durrOp_sub J₅b), so the pointwise deviation is the Durrmeyer image of the residual ψ=φ−φ(x)·1 (Lipschitz-L,
+-- ψ(x)=0, |ψ(t)|≤L|t−x|) — the object the convergence estimate consumes.
+#print axioms Square.durrOp_constTest
+#print axioms Square.durrOp_dev_eq
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

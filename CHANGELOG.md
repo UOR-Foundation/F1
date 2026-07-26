@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick J₅c — THE DURRMEYER OPERATOR REPRODUCES CONSTANTS, AND THE
+  DEVIATION AS AN OPERATOR IMAGE** (new `Square/DurrmeyerConst.lean`): `durrOp (constTest c) n x = c`
+  (`durrOp_constTest`, the `M_n⁽⁰⁾`-scaling — the constant rides through `⟨constTest c, b_{n,k}⟩ = c·⟨1,
+  b_{n,k}⟩` via `innerI_symm`/`innerI_right_congr_on_unit`/`innerI_constMul`, then `c·durrOp(powTest 0) =
+  c·1 = c`), hence `durrOp φ n x − φ(x) = durrOp (φ − φ(x)·1) n x` (`durrOp_dev_eq`, via `durrOp_sub`, J₅b).
+  So the pointwise deviation is the Durrmeyer image of the **residual** `ψ = φ − φ(x)·1`, which is
+  Lipschitz-`L` and vanishes at `x` (`|ψ(t)| = |φ(t)−φ(x)| ≤ L|t−x|`) — exactly the object the convergence
+  estimate consumes. **Honest scope**: constant reproduction and the deviation reformulation; NOT the
+  second-moment estimate, NOT convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **The Mellin-inversion arc, sub-brick J₅b — LINEARITY OF THE DURRMEYER OPERATOR** (new
   `Square/DurrmeyerLinear.lean`): `durrOp (φ ± ψ) n x = durrOp φ n x ± durrOp ψ n x` (`durrOp_add`,
   `durrOp_sub`). The L² pairing `⟨·, b_{n,k}⟩` is additive/subtractive in its first slot
