@@ -6276,3 +6276,51 @@ open UOR.Bridge.F1Square
 #print axioms Square.qsumL_neg
 #print axioms Square.qsumL_smul
 #print axioms Square.qsumL_erase
+
+-- CO-SUPPORT DEPTH-EXISTENCE, sub-brick N₂ (Square/QLinearKernel.lean) — AN OVER-DETERMINED HOMOGENEOUS
+-- ℚ-SYSTEM HAS A NONZERO SOLUTION: #equations < #variables ⟹ ∃ nonzero c with every Σ_{i∈vars}(row i)·(c i)≈0
+-- (qkernel_exists), by division-free Gaussian elimination (recursion on the equation list; scale row e to
+-- e' = (e₀ p)·e − (e p)·e₀ to kill the pivot column, recurse on vars.erase p, lift by scaling off-pivot). This
+-- is the "hypergeometric identity the layer cannot reach", reached by row reduction. Helpers: ball_or_exists_not
+-- (decidable pivot search), redEqRow (the scaled row op), and the CHOICE-FREE erase_len_succ / not_mem_erase_nodup
+-- (List.length_erase_of_mem and List.Nodup.not_mem_erase both pull Classical.choice in core → reproved by
+-- induction), plus qsumL_congr_mem/qsumL_zero_mem and the Q helpers Qeq_zero_iff/Qmul_ne_zero/Qmul_zero_left/
+-- Qneg_congr/Qeq_of_Qsub_zero. Pure finite rational linear algebra; no members/positivity. Step 4 = RH; crux none.
+#print axioms Square.qsumL_congr_mem
+#print axioms Square.qsumL_zero_mem
+#print axioms Square.Qeq_zero_iff
+#print axioms Square.Qmul_ne_zero
+#print axioms Square.Qmul_zero_left
+#print axioms Square.ball_or_exists_not
+#print axioms Square.qkernel_exists
+
+-- CO-SUPPORT DEPTH-EXISTENCE, sub-brick N₃ (Square/QPolyMember.lean) — THE ℚ-COEFFICIENT POLYNOMIAL MEMBER:
+-- qPolyTest c hc d = Σ_{i<d} (constTest (ofQ c_i))·(powTest i), a bounded-Lipschitz test whose Mellin moment
+-- is the rational Hilbert contraction of c: mellinMoment (qPolyTest c hc d) n = ofQ (Σ_{i∈range d} c_i/(i+n+1))
+-- (mellinMoment_qPolyTest, via innerI_symm + innerI_L2sumN + innerI_constMul + innerI_powTest_hilbert), and its
+-- unit-support is Σc_i = 0 (qPolyTest_supp). So a rational kernel vector drops straight into hatVanishes_of_moments
+-- (qPolyTest_hatVanishes) with NO denominator clearing to Nat coefficients. Bridges: qsumL_append and
+-- RsumN_ofQ_qsumL_range (real RsumN over 0..d ↔ rational qsumL over List.range d), innerI_powTest_qMono (the
+-- rational-scaled monomial's pairing). Member constructor for the co-support existence theorem; the nonzero
+-- coefficient vector comes from the kernel lemma (N₂). Step 4 (band-coupling positivity) = RH; crux fields none.
+#print axioms Square.qsumL_append
+#print axioms Square.RsumN_ofQ_qsumL_range
+#print axioms Square.innerI_powTest_qMono
+#print axioms Square.mellinMoment_qPolyTest
+#print axioms Square.qPolyTest_supp
+#print axioms Square.qPolyTest_hatVanishes
+
+-- CO-SUPPORT DEPTH-EXISTENCE, sub-brick N₄ (Square/QCoSupportExists.lean) — CO-SUPPORT MEMBERS EXIST AT EVERY
+-- DEPTH: for every K there is a rational coefficient vector c with a nonzero coordinate whose ℚ-coefficient
+-- polynomial test qPolyTest c hc (K+2) is unit-supported and lies in HatVanishes·K (coSupport_member_exists).
+-- The Hilbert system (support row Σcᵢ + moment rows Σcᵢ/(i+n+1), n<K) has K+1 equations in K+2 unknowns, so
+-- qkernel_exists (N₂) supplies the vector and qPolyTest_hatVanishes (N₃) certifies the member — the general-K
+-- inhabitation the layer had only for K=1..7. CHOICE-FREE nodup_range_cf / nodup_map_succ replace the classical
+-- List.nodup_range (core pulls Classical.choice). HONEST: the member is nonzero as a VECTOR (∃v, cᵥ≉0); that it
+-- is nonzero as a FUNCTION on [0,1] (monomials linearly independent there) is the factor-theorem apartness, a
+-- separate brick NOT proved here. NOT positivity. Step 4 (band-coupling positivity) = RH; crux fields stay none.
+#print axioms Square.hilbertEqns_den
+#print axioms Square.hilbertEqns_length
+#print axioms Square.nodup_map_succ
+#print axioms Square.nodup_range_cf
+#print axioms Square.coSupport_member_exists

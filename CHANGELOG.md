@@ -16,6 +16,40 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Co-support depth-existence, sub-brick N₄ — CO-SUPPORT MEMBERS EXIST AT EVERY DEPTH** (new
+  `Square/QCoSupportExists.lean`): the capstone welding N₂ and N₃ on the Hilbert system. For every `K` the
+  homogeneous system — the support row `Σᵢcᵢ` and the moment rows `Σᵢcᵢ/(i+n+1)` (`n<K`) — has `K+1` equations
+  in `K+2` unknowns, so `qkernel_exists` (N₂) supplies a coefficient vector `c` with a nonzero coordinate and
+  `qPolyTest_hatVanishes` (N₃) turns it into a certified co-support member `qPolyTest c hc (K+2)` in
+  `HatVanishes·K` (`coSupport_member_exists`). This is the **general-`K` inhabitation** the layer previously had
+  only for `K = 1..7` (each `deepK` found by an off-kernel `ℚ`-linear solve and certified) — the "hypergeometric
+  identity the layer cannot reach", reached by row reduction. Choice-free `nodup_range_cf`/`nodup_map_succ`
+  replace the classical `List.nodup_range` (core pulls `Classical.choice`). **Honest scope**: the member is
+  nonzero as a VECTOR (`∃v, cᵥ ≉ 0`); that it is nonzero as a FUNCTION on `[0,1]` — the monomials being linearly
+  independent there — is the factor-theorem apartness, a separate brick NOT proved here. NOT positivity. Step 4
+  is RH; crux fields stay `none`.
+- **Co-support depth-existence, sub-brick N₃ — THE ℚ-COEFFICIENT POLYNOMIAL MEMBER** (new
+  `Square/QPolyMember.lean`): the member constructor that turns a rational coefficient vector directly into a
+  co-support member, with NO denominator-clearing into `polyPN`'s Nat coefficients. `qPolyTest c hc d =
+  Σ_{i<d} (constTest (ofQ cᵢ))·(powTest i)` is a bounded-Lipschitz test whose Mellin moment is the rational
+  Hilbert contraction of `c`, `mellinMoment (qPolyTest c hc d) n = ofQ (Σ_{i<d} cᵢ/(i+n+1))`
+  (`mellinMoment_qPolyTest`, via `innerI_symm` + `innerI_L2sumN` + `innerI_constMul` + `innerI_powTest_hilbert`),
+  and whose unit-support is `Σcᵢ = 0` (`qPolyTest_supp`). So a rational kernel vector drops straight into
+  `hatVanishes_of_moments` (`qPolyTest_hatVanishes`). Bridges `qsumL_append` and `RsumN_ofQ_qsumL_range` weld the
+  real `RsumN` (over `0..d`) to the rational `qsumL` (over `List.range d`); `innerI_powTest_qMono` pairs the
+  rational-scaled monomial. **Honest scope**: a member *constructor* — the nonzero coefficient vector it consumes
+  comes from the kernel lemma (N₂); no positivity. Step 4 is RH; crux fields stay `none`.
+- **Co-support depth-existence, sub-brick N₂ — AN OVER-DETERMINED HOMOGENEOUS ℚ-SYSTEM HAS A NONZERO
+  SOLUTION** (new `Square/QLinearKernel.lean`): the Gaussian-elimination fact the layer never had —
+  `#equations < #variables ⟹ ∃ nonzero c` with every `Σ_{i∈vars} (row i)·(cᵢ) ≈ 0` (`qkernel_exists`). The proof
+  is a **division-free** row reduction, recursion on the equation list: with a pivot variable `p`
+  (`e₀ p ≉ 0`), the remaining rows are *scaled* — `e' = (e₀ p)·e − (e p)·e₀`, so `e'(p) = 0` and no division is
+  needed — the reduced system lives on `vars.erase p`, the IH supplies a nonzero `c'`, and it lifts to a nonzero
+  `c` on `vars` by `cᵢ := (e₀ p)·c'ᵢ` off the pivot and `c p := −Σ (e₀ i)·c'ᵢ`. Helpers: `ball_or_exists_not`
+  (decidable pivot search), `redEqRow` (the scaled row op), and the **choice-free** `erase_len_succ` /
+  `not_mem_erase_nodup` (core's `List.length_erase_of_mem` and `List.Nodup.not_mem_erase` both pull
+  `Classical.choice`, so they are reproved by induction). **Honest scope**: pure finite rational linear algebra;
+  no members, no positivity yet. Step 4 is RH; crux fields stay `none`.
 - **Co-support depth-existence, sub-brick N₁ — RATIONAL SUMS OVER A VARIABLE LIST** (new
   `Square/QSumList.lean`): the substrate for the missing existence theorem. The member generator (`polyPN`,
   brick 66) reduced "a co-support member exists at depth `K`" to "the homogeneous `ℚ`-linear system
