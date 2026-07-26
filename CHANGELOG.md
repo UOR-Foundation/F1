@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The co-support object, sub-brick M₁ — THE FILTRATION INTERSECTION IS TRIVIAL** (new
+  `Square/CoSupportTrivial.lean`): `(∀ K, φ ∈ HatVanishes·K) ⟹ φ ≈ 0 on [0,1]`
+  (`hatVanishes_all_imp_zero`), i.e. `⋂_K HatVanishes·K = {0}` — a unit-supported test orthogonal to *every*
+  monomial `xⁿ` is zero on `[0,1]`. The **monomial system is total**: the dual of L² density
+  (`bernOp_L2_converges` — polynomials dense ⟺ nothing nonzero is orthogonal to all of them). Each level
+  unfolds via `hatVanishes_iff_orthogonal` to `⟨φ,xⁿ⟩ ≈ 0` for `n < K`; at `K = i+1` every moment
+  `mellinMoment φ i = innerI φ (powTest i)` (definitionally) vanishes, and `moment_determinacy_unit` (the
+  completed Bernstein arc) closes. Density (approximation) and totality (determinacy) are now the two proven
+  halves of the monomial system's L² completeness. **Honest scope**: a determinacy corollary about the
+  co-support filtration of one unit-supported test; NOT a completed L² space of functions, NOT surjectivity
+  onto function space, NOT positivity beyond the complement. Step 4 is RH; crux fields stay `none`.
 - **The Bernstein arc, sub-brick L₃ — THE L² DENSITY LIMIT, PACKAGED** (new
   `Square/BernsteinL2Limit.lean`): the explicit-rate L₂ bound packaged as a first-class `RTendsTo` limit —
   `RTendsTo (fun m => ⟨φ − bernOpCTest φ ((Kₘ+1)²) …, φ − …⟩) 0` with `Kₘ = (φ.L.num.toNat+1)(m+1)`

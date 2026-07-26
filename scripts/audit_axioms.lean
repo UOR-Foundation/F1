@@ -6251,3 +6251,13 @@ open UOR.Bridge.F1Square
 -- functions, NOT surjectivity onto function space, NOT positivity; step 4 (band-coupling positivity) = RH;
 -- crux fields stay none.
 #print axioms Square.bernOp_L2_tendsTo
+
+-- THE CO-SUPPORT OBJECT, sub-brick M₁ (Square/CoSupportTrivial.lean) — THE FILTRATION INTERSECTION IS
+-- TRIVIAL: (∀ K, φ ∈ HatVanishes·K) ⟹ φ ≈ 0 on [0,1] (hatVanishes_all_imp_zero), i.e. ⋂_K HatVanishes·K
+-- = {0} — a unit-supported test orthogonal to EVERY monomial xⁿ is zero on [0,1]. The monomial system is
+-- total (the dual of L² density bernOp_L2_converges: polynomials dense ⟺ nothing nonzero orthogonal to all
+-- of them). Weld: each level unfolds via hatVanishes_iff_orthogonal to ⟨φ,xⁿ⟩≈0 for n<K; at K=i+1 every
+-- moment mellinMoment φ i = innerI φ (powTest i) (defeq) vanishes, and moment_determinacy_unit (the completed
+-- Bernstein arc) closes. A determinacy corollary about the co-support filtration; NOT a completed L² space,
+-- NOT surjectivity, NOT positivity; step 4 (band-coupling positivity) = RH; crux fields stay none.
+#print axioms Square.hatVanishes_all_imp_zero
