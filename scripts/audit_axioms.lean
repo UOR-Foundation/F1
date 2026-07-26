@@ -6037,6 +6037,9 @@ open UOR.Bridge.F1Square
 -- nested operator test is never whnf-forced. Kept multiplied so the reciprocal is deferred to the squeeze.
 #print axioms Square.riemannIntegral_abs_le_unit
 #print axioms Square.bernOp_energy_bound
+-- (energy_from_pointwise is the general two-slot scalar-pairing bound |c·(φ·ψ)|≤B ⟹ c·|⟨φ,ψ⟩|≤B,
+-- exposed for the two-function reconstruction energy bound of the Mellin-inversion arc, I₃.)
+#print axioms Square.energy_from_pointwise
 
 -- THE BERNSTEIN ARC, sub-brick H₈ (Square/MomentDeterminacy.lean) — GENERAL MOMENT DETERMINACY, the
 -- capstone. A bounded-Lipschitz test whose every integer moment vanishes is the zero function on [0,1]:
@@ -6066,6 +6069,17 @@ open UOR.Bridge.F1Square
 -- weak (pairing) inversion; the convergence ⟨φ, B_n(ψ)⟩ → ⟨φ,ψ⟩ is the next step.
 #print axioms Square.innerI_L2sumN
 #print axioms Square.innerI_bernOpCTest_eq_reconSum
+
+-- THE MELLIN-INVERSION ARC, sub-brick I₃a (Square/MomentReconEnergy.lean) — THE TWO-FUNCTION
+-- RECONSTRUCTION ENERGY BOUND: 2δn·|⟨φ,ψ⟩ − bernReconSum φ ψ n| ≤ M_φ·L_ψ·(δ²+n/4), any δ≥0
+-- (bernOp_recon_energy_bound), the multiplied-form bound on the reconstruction error. The error is the
+-- residual pairing ⟨φ, ψ − B_n(ψ)⟩ (innerI_resid_eq, via innerI_sub_right + I₂); its integrand is bounded
+-- pointwise by M_φ·L_ψ·(deviation) (energy_pt_gen, the general-L pointwise bound, deviation via
+-- bernOpCTest_pointwise_dev for ψ), and 2δn·(deviation sum) ≤ δ²+n/4 (H₆); the exposed general
+-- energy_from_pointwise (H₇) pulls 2δn out at the raw-integral level. Two-function generalization of
+-- bernOp_energy_bound (the φ=ψ, moment-null determinacy case). The limit is the next step (I₃b).
+#print axioms Square.innerI_resid_eq
+#print axioms Square.bernOp_recon_energy_bound
 
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound

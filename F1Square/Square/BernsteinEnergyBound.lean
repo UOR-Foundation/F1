@@ -74,8 +74,9 @@ private theorem Rmul_left_comm (a b c : Real) : Req (Rmul a (Rmul b c)) (Rmul b 
     `c ≥ 0`, if `|c·(φ·ψ)| ≤ B` on `[0,1]` then `c·|⟨φ,ψ⟩| ≤ B`. The scalar is pulled out with
     `riemannIntegral_Rsmul` at the common weakened modulus `l2L + c·l2L`; certificate independence
     realigns the integral to `⟨φ,ψ⟩`, and `riemannIntegral_abs_le_unit` closes. `ψ` stays abstract,
-    so no operator test is ever unfolded. -/
-private theorem energy_from_pointwise (φ ψ : L2Test) (c : Q) (hcd : 0 < c.den) (hcn : 0 ≤ c.num)
+    so no operator test is ever unfolded. General in both slots — reused by the two-function
+    reconstruction energy bound (Mellin-inversion arc, I₃). -/
+theorem energy_from_pointwise (φ ψ : L2Test) (c : Q) (hcd : 0 < c.den) (hcn : 0 ≤ c.num)
     (B : Q) (hBd : 0 < B.den)
     (hpt : ∀ x, Rle zero x → Rle x one →
       Rle (Rabs (Rmul (ofQ c hcd) (Rmul (φ.f x) (ψ.f x)))) (ofQ B hBd)) :

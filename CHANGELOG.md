@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Mellin-inversion arc, sub-brick I₃a — THE TWO-FUNCTION RECONSTRUCTION ENERGY BOUND** (new
+  `Square/MomentReconEnergy.lean`): `2δn · |⟨φ,ψ⟩ − bernReconSum φ ψ n| ≤ M_φ·L_ψ·(δ²+n/4)` for any `δ ≥ 0`
+  (`bernOp_recon_energy_bound`), the multiplied-form bound on the **reconstruction error**. Since
+  `⟨φ,ψ⟩ − bernReconSum φ ψ n = ⟨φ, ψ − B_n(ψ)⟩` (`innerI_resid_eq`, via `innerI_sub_right` and I₂), the
+  residual integrand `φ·(ψ − B_nψ)` is bounded pointwise on `[0,1]` by `M_φ·L_ψ·(deviation)` — the general
+  pointwise bound `energy_pt_gen` with `ψ`'s own Lipschitz constant, deviation via
+  `bernOpCTest_pointwise_dev` for `ψ` — and `2δn·(deviation sum) ≤ δ²+n/4` (H₆, φ-independent). The scalar
+  `2δn` is pulled out at the raw-integral level by the now-exposed general `energy_from_pointwise` (H₇,
+  made public — it was already abstract in both slots), with `ψ − B_nψ` kept abstract so the operator test
+  is never `whnf`-forced. This is the **two-function generalization** of the determinacy energy bound
+  `bernOp_energy_bound` (which is the `φ = ψ`, moment-null case): determinacy squeezes a fixed real
+  `⟨φ,φ⟩` to zero with `n → ∞`; inversion squeezes the `n`-indexed reconstruction error to zero, so a
+  schedule `δ, n` making the right side `o(2δn)` yields `bernReconSum φ ψ n → ⟨φ,ψ⟩`. **Honest scope**: the
+  multiplied-form reconstruction-error bound and the residual identity; NOT yet the limit
+  `bernReconSum φ ψ n → ⟨φ,ψ⟩`, NOT inversion, NOT the transform pair's surjectivity, NOT positivity. Step
+  4 is RH; crux fields stay `none`.
 - **The Mellin-inversion arc, sub-brick I₂ — THE OPERATOR PAIRING IS THE RECONSTRUCTION SUM** (new
   `Square/MomentReconSum.lean`): `⟨φ, B_n(ψ)⟩ = Σ_{k=0}^n ψ(k/n)·C(n,k)·(Δⁿ⁻ᵏμ)_k`
   (`innerI_bernOpCTest_eq_reconSum`), the **reconstruction sum** (`bernReconSum`). Pairing `φ` against the
