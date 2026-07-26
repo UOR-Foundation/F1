@@ -6205,6 +6205,39 @@ open UOR.Bridge.F1Square
 -- function space; step 4 (band-coupling positivity) = RH; crux fields stay none.
 #print axioms Square.durrOp_tendsTo
 
+-- THE MELLIN-INVERSION FRONT (Square/MomentInversionRaw.lean) — RECONSTRUCTION FROM MOMENT DATA ALONE:
+-- durrOpMom μ n x = (n+1)Σ_k b_{n,k}(x)·C(n,k)·(Δⁿ⁻ᵏμ)_k, the Bernstein–Durrmeyer reconstruction as an
+-- operator on a RAW moment sequence μ:Nat→Real (momDiffRaw = the Pascal recursion on μ directly). It reads
+-- only the moments (durrOpMom_eq_durrOp: durrOpMom (mellinMoment φ) = durrOp φ, via durrOp_eq_momData +
+-- momDiff_eq_raw) and reconstructs the test from its moment sequence at the certified rate
+-- |durrOpMom (mellinMoment φ) ((k+3)²−2) x − φ(x)| ≤ φ.L/(k+3) on [0,1] (durrOpMom_converges, transporting
+-- durrOp_converges). So a bounded-Lipschitz test is recovered FROM ITS MOMENTS ALONE — the transform pair's
+-- inversion stated purely on the moment data. NOT the Hausdorff characterization of which raw sequences are
+-- moment sequences, NOT a completed L² space; step 4 (band-coupling positivity) = RH; crux fields stay none.
+#print axioms Square.momDiff_eq_raw
+#print axioms Square.momDiffRaw_congr
+#print axioms Square.durrOpMom_congr
+#print axioms Square.durrOpMom_eq_durrOp
+#print axioms Square.durrOpMom_converges
+
+-- THE COMPLETION AXIS (Square/L2ElementSpace.lean) — THE COMPLETED L² SPACE, WITH LIMIT MEMBERS: the
+-- L²-Cauchy sequence of tests, packaged as a first-class limit member `L2Elt {seq, cauchy}` (L2Complete gave
+-- pairing VALUES but "no limit member"). The extended pairing is a method (L2Elt.pairing = pairingIU), the
+-- limit moment sequence is L2Elt.moment, every test embeds faithfully (L2Elt.of, constant sequence;
+-- L2Elt_of_pairing = innerI φ ψ), the sequence converges weakly to its limit member (L2Elt_converges, rate
+-- 2/(j+1)), and members are equal iff they pair identically (L2Elt.eq, a genuine equivalence — refl/symm/trans).
+-- For an embedded test the loop closes: durrOpMom (L2Elt.of φ).moment recovers φ (L2Elt_of_reconstruct). A
+-- Bishop-style setoid completion, NOT a Quotient (the Real pairing is only Req-well-defined, so Quotient.liftOn
+-- cannot carry it). NOT a norm-limit function (L² conv ≠ pointwise), NOT reconstruction of an arbitrary
+-- (non-Lipschitz) L² element, NOT positivity. Step 4 (band-coupling positivity) = RH; crux fields stay none.
+#print axioms Square.L2Elt_of_pairing
+#print axioms Square.L2Elt_of_moment
+#print axioms Square.L2Elt_converges
+#print axioms Square.L2Elt_of_reconstruct
+#print axioms Square.L2Elt_eq_refl
+#print axioms Square.L2Elt_eq_symm
+#print axioms Square.L2Elt_eq_trans
+
 -- THE BERNSTEIN ARC, sub-brick H₆ (Square/BernsteinDevBound.lean) — THE MULTIPLIED-FORM DEVIATION BOUND
 -- 2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4 on [0,1] (bernOp_devsum_bound). Bernstein's central-moment bound
 -- (F) uses |k−nx|, the operator deviation (G) uses |k/n−x|; they differ by n. devsum_rescale rescales

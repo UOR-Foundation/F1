@@ -458,6 +458,8 @@ import F1Square.Square.QLinearKernel
 import F1Square.Square.QPolyMember
 import F1Square.Square.QCoSupportExists
 import F1Square.Square.QPolyApart
+import F1Square.Square.MomentInversionRaw
+import F1Square.Square.L2ElementSpace
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail

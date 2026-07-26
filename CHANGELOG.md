@@ -16,6 +16,31 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The completion axis — THE COMPLETED L² SPACE, WITH LIMIT MEMBERS** (new `Square/L2ElementSpace.lean`):
+  `L2Complete.lean` extended the pairing along an L²-Cauchy sequence but produced only pairing *values* ("no
+  limit member"). This packages the Cauchy sequence itself as a first-class **limit member** object,
+  `structure L2Elt where seq : Nat → L2Test; cauchy : L2CauchyU seq`, with: the extended pairing as a method
+  (`L2Elt.pairing`), the limit **moment sequence** (`L2Elt.moment`), a faithful embedding of every test
+  (`L2Elt.of` the constant sequence; `L2Elt_of_pairing = ⟨φ,ψ⟩`), the **weak convergence** of the sequence to its
+  limit member (`L2Elt_converges`, rate `2/(j+1)`), and the equivalence of members (`L2Elt.eq` = same pairing
+  against every test, proved refl/symm/trans). For an embedded test the reconstruction closes the loop —
+  `durrOpMom (L2Elt.of φ).moment` recovers `φ` (`L2Elt_of_reconstruct`). A **Bishop-style setoid completion, NOT a
+  `Quotient`**: the `Real` pairing is only `Req`-well-defined (not `Eq`), so `Quotient.liftOn` cannot carry it —
+  the equivalence lives alongside the carrier and every operation respects it. **Honest scope**: the limit member
+  as an object with its pairing/moment/embedding/convergence; NOT a norm-limit *function* (L² convergence is not
+  pointwise), NOT reconstruction of an arbitrary (non-Lipschitz) L² element — only of embedded tests. NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion front — RECONSTRUCTION FROM MOMENT DATA ALONE** (new
+  `Square/MomentInversionRaw.lean`): the Bernstein–Durrmeyer operator, already moment-computable, made an
+  operator on a *raw* moment sequence `μ : Nat → Real` — `durrOpMom μ n x = (n+1)·Σ_k b_{n,k}(x)·C(n,k)·(Δⁿ⁻ᵏμ)_k`
+  (`momDiffRaw` = the Pascal recursion on `μ` directly). It reads only the moments (`durrOpMom_eq_durrOp`:
+  `durrOpMom (mellinMoment φ) = durrOp φ`) and reconstructs the test from its moment sequence at the certified
+  rate `|durrOpMom (mellinMoment φ) ((k+3)²−2) x − φ(x)| ≤ φ.L/(k+3)` on `[0,1]` (`durrOpMom_converges`). So a
+  bounded-Lipschitz test is recovered **from its moment sequence alone** — the transform pair's inversion stated
+  purely on the moment data, the direction the surjectivity question asks about. **Honest scope**: reconstruction
+  on the moment sequences that arise from the bounded-Lipschitz class; NOT the Hausdorff characterization of which
+  raw sequences are moment sequences, NOT a completed L² space, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **Co-support depth-existence, sub-brick N₅ — THE FACTOR-THEOREM APARTNESS** (new
   `Square/QPolyApart.lean`): upgrades N₄ from a nonzero coefficient VECTOR to a nonzero FUNCTION. For every
   `K` the depth-`K` co-support member is apart from `0` at a point of `[0,1]`
