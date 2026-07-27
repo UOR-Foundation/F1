@@ -5447,6 +5447,11 @@ open UOR.Bridge.F1Square
 -- Rabs_Rlim_le. NOT the full Hausdorff characterization (sufficiency needs the Riesz/Hilbert-system build);
 -- NOT positivity. Step 4 = RH; crux fields stay none.
 #print axioms Square.L2Elt_moment_decay
+-- L2Elt_pairing_bounded: the extended pairing is an L²-BOUNDED functional, |E.pairing ψ| ≤ √(energy·selfBnd ψ)
+-- — the CHARACTERIZING necessary condition (by Riesz an L²-bounded moment functional ⟺ representable by an L²
+-- element), confining the transform's range to bounded functionals. Same read-level CS + uniform energy +
+-- ⟨ψ,ψ⟩≤selfBnd ψ + Rsqrt(rational) + Rabs_Rlim_le.
+#print axioms Square.L2Elt_pairing_bounded
 
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have

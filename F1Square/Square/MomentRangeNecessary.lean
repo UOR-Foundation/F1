@@ -87,4 +87,35 @@ theorem L2Elt_moment_decay (E : L2Elt) (n : Nat) :
     (Rle_of_Req (Req_symm (Rsqrt_sq _ hrqd hrqn)))
   simp only [Qeq, mul]; push_cast; ring_uor
 
+/-- **★ THE MOMENT FUNCTIONAL IS L²-BOUNDED**: `|E.pairing ψ| ≤ √(energy·selfBnd ψ)` with
+    `energy = 2·selfBnd(E.seq 0)+8`, for **every** test `ψ`. The extended pairing is a bounded linear
+    functional — the *characterizing* necessary condition (by Riesz, an L²-bounded moment functional is
+    exactly one representable by an L² element), so the moment transform's range is confined to
+    L²-bounded functionals, not arbitrary sequences. Same read-level integral Cauchy–Schwarz + uniform
+    self-energy + `⟨ψ,ψ⟩ ≤ selfBnd ψ`, `Rsqrt` on the rational radicand, inherited through the limit. -/
+theorem L2Elt_pairing_bounded (E : L2Elt) (ψ : L2Test) :
+    Rle (Rabs (E.pairing ψ))
+        (Rsqrt (⟨(2 * ((selfBnd (E.seq 0) : Nat) : Int) + 8) * ((selfBnd ψ : Nat) : Int), 1⟩ : Q)
+          Nat.one_pos
+          (by have h : (0 : Int) ≤ (2 * ((selfBnd (E.seq 0) : Nat) : Int) + 8)
+                  * ((selfBnd ψ : Nat) : Int) := Int.mul_nonneg (by omega) (Int.ofNat_nonneg _)
+              simp only [Qle]; push_cast; omega)) := by
+  have hrqd : 0 < (⟨(2 * ((selfBnd (E.seq 0) : Nat) : Int) + 8) * ((selfBnd ψ : Nat) : Int), 1⟩ : Q).den :=
+    Nat.one_pos
+  have hrqn : Qle (⟨0, 1⟩ : Q)
+      (⟨(2 * ((selfBnd (E.seq 0) : Nat) : Int) + 8) * ((selfBnd ψ : Nat) : Int), 1⟩ : Q) := by
+    have h : (0 : Int) ≤ (2 * ((selfBnd (E.seq 0) : Nat) : Int) + 8) * ((selfBnd ψ : Nat) : Int) :=
+      Int.mul_nonneg (by omega) (Int.ofNat_nonneg _)
+    simp only [Qle]; push_cast; omega
+  refine Rabs_Rlim_le (pairingIU_RReg E.cauchy ψ) (fun m => ?_)
+  refine Rle_of_Rsq_le (Rnonneg_Rabs _) (Rsqrt_nonneg _ hrqd hrqn) ?_
+  refine Rle_trans (Rle_of_Req (abs_sq_loc _)) ?_
+  refine Rle_trans (innerI_cauchy_schwarz (E.seq (selfBnd ψ * (m + 1))) ψ) ?_
+  refine Rle_trans (Rmul_le_Rmul_both (innerI_self_nonneg _)
+    (Rnonneg_ofQ Nat.one_pos (Int.ofNat_nonneg _))
+    (innerI_self_le_uniform E.seq E.cauchy (selfBnd ψ * (m + 1)))
+    (innerI_self_le_selfBnd ψ)) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ Nat.one_pos Nat.one_pos)) ?_
+  exact Rle_of_Req (Req_symm (Rsqrt_sq _ hrqd hrqn))
+
 end UOR.Bridge.F1Square.Square

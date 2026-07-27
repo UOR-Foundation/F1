@@ -26,6 +26,9 @@ audit-visible hypothesis, never an axiom).
   limit by `Rabs_Rlim_le`. **Honest scope**: one NECESSARY condition on the range (an obstruction to
   surjectivity); NOT the full Hausdorff characterization (the sufficient direction — which sequences *are*
   moments — needs the Riesz/Hilbert-system construction), NOT positivity. Step 4 is RH; crux fields stay `none`.
+  Also `L2Elt_pairing_bounded`: the extended pairing is an **L²-bounded functional**, `|E.pairing ψ| ≤ √(energy·selfBnd ψ)`
+  for every `ψ` — the *characterizing* necessary condition (by Riesz, an L²-bounded moment functional is exactly one
+  representable by an L² element), confining the range to bounded functionals.
 - **★ RECONSTRUCTION OF AN ARBITRARY L² ELEMENT — the completion transform's last open** (new
   `Square/DurrmeyerReconstruct.lean`): every completed L² member `E : L2Elt` is the **L²-limit of the
   Bernstein–Durrmeyer polynomials of its own approximants**, packaged as a member `L2Elt.recon E` equal to
