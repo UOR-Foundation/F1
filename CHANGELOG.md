@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Completion-level determinacy foundations, part 2** (new `Square/PairingIULinear2.lean`,
+  `Square/PairingIUEnergy.lean`): building on the reschedule/linearity brick, two more foundation facts the
+  moment-determinacy-at-the-completion argument consumes. **(a)** `pairingIU_natScale`: scalar (ℕ)
+  homogeneity of the extended pairing, `pairingIU Φ (natScale c ψ) h = c·pairingIU Φ ψ h`, by induction from
+  right-additivity with base `pairingIU Φ zeroL2 = 0`. **(b)** `pairingIU_unit_congr`: the extended pairing
+  sees the test only through its values on `[0,1]` — reschedule to a common `B = selfBnd ψ + selfBnd ψ'`, where
+  the two `B`-scheduled reads agree by `innerI_right_congr_on_unit`. Together (a)+(b) lift the H₁ Bernstein-basis
+  reduction (`innerI_clampProd_zero`) from a fixed test to a limit member. **(c)** `innerI_self_le_uniform`: a
+  uniform self-energy bound `⟨Φ_j,Φ_j⟩ ≤ 2·selfBnd(Φ 0)+8` for **every** `j` — a Cauchy sequence has uniformly
+  bounded energies — via the sqrt-free parallelogram doubling `⟨x,x⟩ ≤ 2·d²(x,y)+2·⟨y,y⟩` (from
+  `⟨x−2y,x−2y⟩ ≥ 0`) at `y = Φ 0` with `d²(Φ_j,Φ 0) ≤ 4`. This feeds the pairing-level Cauchy–Schwarz bound in
+  the determinacy tail. **Honest scope**: reusable substrate for the completion-level determinacy argument; NOT
+  positivity, NOT surjectivity. Step 4 is RH; crux fields stay `none`.
 - **Schedule-independence + right-linearity of the extended pairing** (new `Square/PairingIUReschedule.lean`):
   `pairingIU Φ ψ h` reads the L²-Cauchy sequence `Φ` along the *ψ-dependent* schedule `j ↦ selfBnd ψ·(j+1)`,
   which blocked reasoning about `pairingIU` of a *combination* of tests. This brick proves that any coarser

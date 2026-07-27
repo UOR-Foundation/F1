@@ -5353,6 +5353,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.pairingIU_neg_right
 #print axioms Square.pairingIU_sub_right
 
+-- SCALAR HOMOGENEITY + [0,1]-CONGRUENCE OF THE EXTENDED PAIRING (Square/PairingIULinear2.lean):
+-- pairingIU_natScale (pairingIU Φ (natScale c ψ) h = c·pairingIU Φ ψ h, by induction from
+-- pairingIU_add_right with base pairingIU zeroL2 = 0) and pairingIU_unit_congr (the extended pairing
+-- sees the test only on [0,1]: reschedule to a common B = selfBnd ψ + selfBnd ψ', where the two reads
+-- agree by innerI_right_congr_on_unit). These lift the H₁ Bernstein-basis reduction to a limit member.
+#print axioms Square.pairingIU_natScale
+#print axioms Square.pairingIU_unit_congr
+
+-- UNIFORM SELF-ENERGY OF AN L²-CAUCHY SEQUENCE (Square/PairingIUEnergy.lean): innerI_self_le_uniform
+-- (⟨Φ_j,Φ_j⟩ ≤ 2·selfBnd(Φ 0)+8 for EVERY j) — a Cauchy sequence has uniformly bounded energies, via
+-- the parallelogram doubling ⟨x,x⟩ ≤ 2·d²(x,y)+2·⟨y,y⟩ (from ⟨x−2y,x−2y⟩≥0) at y=Φ 0, with
+-- d²(Φ_j,Φ 0)≤4. Feeds the pairing-level Cauchy–Schwarz bound in the moment-determinacy tail.
+#print axioms Square.innerI_self_le_uniform
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
