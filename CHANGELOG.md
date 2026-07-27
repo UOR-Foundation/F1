@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The moment map's range is confined — moments decay** (new `Square/MomentRangeNecessary.lean`): the
+  Hausdorff / *surjectivity onto function space* front, NECESSARY side. `L2Elt_moment_decay`:
+  `|E.moment n| ≤ √(energy/(2n+1))` with `energy = 2·selfBnd(E.seq 0)+8` — a completed L² member's moments
+  **decay like `1/√n`**, so a sequence that does not decay this fast is *not* a moment sequence: the moment
+  transform is **not surjective onto arbitrary sequences**. Proof is sqrt-free at the read level (integral
+  Cauchy–Schwarz `⟨E.seqⱼ,xⁿ⟩² ≤ ⟨E.seqⱼ,E.seqⱼ⟩·⟨xⁿ,xⁿ⟩ ≤ energy·(1/(2n+1))`, the uniform self-energy bound,
+  and the Hilbert value `⟨xⁿ,xⁿ⟩ = 1/(2n+1)`), then `Rsqrt` on the rational radicand, inherited through the
+  limit by `Rabs_Rlim_le`. **Honest scope**: one NECESSARY condition on the range (an obstruction to
+  surjectivity); NOT the full Hausdorff characterization (the sufficient direction — which sequences *are*
+  moments — needs the Riesz/Hilbert-system construction), NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **★ RECONSTRUCTION OF AN ARBITRARY L² ELEMENT — the completion transform's last open** (new
   `Square/DurrmeyerReconstruct.lean`): every completed L² member `E : L2Elt` is the **L²-limit of the
   Bernstein–Durrmeyer polynomials of its own approximants**, packaged as a member `L2Elt.recon E` equal to

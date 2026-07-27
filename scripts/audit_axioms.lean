@@ -5439,6 +5439,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.L2Elt_recon_moment
 #print axioms Square.L2Elt_recon_eq
 
+-- THE MOMENT MAP'S RANGE IS CONFINED — MOMENTS DECAY (Square/MomentRangeNecessary.lean): the Hausdorff /
+-- surjectivity front, NECESSARY side. L2Elt_moment_decay: |E.moment n| ≤ √(energy/(2n+1)) with
+-- energy=2·selfBnd(E.seq 0)+8 — a completed member's moments decay like 1/√n, so a non-decaying sequence
+-- is NOT a moment sequence and the transform is NOT surjective onto arbitrary sequences. Read-level
+-- integral CS + uniform self-energy + ⟨xⁿ,xⁿ⟩=1/(2n+1), Rsqrt on the rational radicand, inherited via
+-- Rabs_Rlim_le. NOT the full Hausdorff characterization (sufficiency needs the Riesz/Hilbert-system build);
+-- NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.L2Elt_moment_decay
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
