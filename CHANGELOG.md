@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **★ RECONSTRUCTION OF AN ARBITRARY L² ELEMENT — the completion transform's last open** (new
+  `Square/DurrmeyerReconstruct.lean`): every completed L² member `E : L2Elt` is the **L²-limit of the
+  Bernstein–Durrmeyer polynomials of its own approximants**, packaged as a member `L2Elt.recon E` equal to
+  `E` — `L2Elt_recon_eq : (L2Elt.recon E).eq E`. This reconstructs the *arbitrary* (non-embedded) element,
+  which `durrOpMom` alone could not (it converges only on embedded tests), via a diagonal over approximants:
+  `reconSeq E m = durrTest (E.seq (3(m+1))) ((recKₘ+3)²−2)` with `recKₘ = 3(m+1)·((E.seq(3(m+1))).L.num.toNat+1)`
+  absorbing each approximant's Lipschitz constant, so the sequence is L²-Cauchy (`reconSeq_cauchy`, via the
+  sqrt-free `dist2I_triangle2`), its moments equal `E`'s (`L2Elt_recon_moment`, sqrt-free CS `innerI_sub_sq_le`
+  + `Rle_of_Rsq_le` + the generalized reschedule `pairingIU_reschedule_rate_gen`), and `L2Elt_recon_eq` follows
+  from the **free** completion-level injectivity `L2Elt_moment_eq_imp_eq`. Also mints
+  `pairingIU_reschedule_rate_gen` (any read schedule `≥ selfBnd ψ·(m+1)` converges to `pairingIU` at rate
+  `4/(m+1)`, generalizing the `B·(m+1)` form). **Honest scope**: the arbitrary element reconstructed as the
+  L²-norm limit of an explicit Durrmeyer-polynomial sequence (reading the approximants' moment data, which
+  converges to `E`'s); NOT a single closed form from `E.moment` directly, NOT surjectivity onto function space
+  (Hausdorff), NOT positivity. Step 4 (band-coupling positivity) is RH; crux fields stay `none`.
 - **The Bernstein–Durrmeyer image as a test + its L² convergence** (new `Square/DurrmeyerTest.lean`): the
   foundation for the remaining open — reconstructing an *arbitrary* L² element from its moments. On `[0,1]`,
   `durrOp φ n x = (n+1)·Σ_k bernR(x,n,k)·⟨φ,b_{n,k}⟩` with `bernR(x,n,k) = (bernBasisTest n k).f x`, so the

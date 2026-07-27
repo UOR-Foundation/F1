@@ -5422,6 +5422,23 @@ open UOR.Bridge.F1Square
 #print axioms Square.durrTest_eq_on_unit
 #print axioms Square.durrTest_L2_converges
 
+-- ★ RECONSTRUCTION OF AN ARBITRARY L² ELEMENT (Square/DurrmeyerReconstruct.lean): the completion-bullet's
+-- last open. Every completed L² member E is the L²-limit of the Bernstein–Durrmeyer polynomials of its OWN
+-- approximants — reconSeq E m = durrTest (E.seq (3(m+1))) (deg m), an L2Elt L2Elt.recon E equal to E
+-- (L2Elt_recon_eq: (L2Elt.recon E).eq E). This reconstructs the arbitrary (non-embedded) element, which
+-- durrOpMom alone could not (converges only on embedded tests), via a diagonal over approximants. Pieces:
+-- pairingIU_reschedule_rate_gen (arbitrary schedule ≥ selfBnd ψ·(m+1) → pairingIU at rate 4/(m+1));
+-- dist2I_triangle2/dist2I_symm (sqrt-free L² triangle); reconSeq_cauchy (the schedule 3(m+1),
+-- 3(m+1)(L.num.toNat+1) makes reconSeq L²-Cauchy); L2Elt_recon_moment (moments preserved, sqrt-free CS +
+-- reschedule_gen); L2Elt_recon_eq (via the FREE completion-level injectivity L2Elt_moment_eq_imp_eq). NOT
+-- surjectivity (Hausdorff), NOT positivity; step 4 = RH; crux fields stay none.
+#print axioms Square.pairingIU_reschedule_rate_gen
+#print axioms Square.dist2I_triangle2
+#print axioms Square.dist2I_symm
+#print axioms Square.reconSeq_cauchy
+#print axioms Square.L2Elt_recon_moment
+#print axioms Square.L2Elt_recon_eq
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
