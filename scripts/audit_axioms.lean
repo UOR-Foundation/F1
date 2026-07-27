@@ -5462,6 +5462,17 @@ open UOR.Bridge.F1Square
 #print axioms Square.qHil_den_pos
 #print axioms Square.innerI_qPolyTest_qPolyTest
 
+-- THE RATIONAL HILBERT FORM IS POSITIVE-DEFINITE (Square/QHilbertPos.lean): the SECOND brick of the
+-- Hausdorff-SUFFICIENCY arc — the norm-positivity the Gram–Schmidt orthogonalization of the moment
+-- construction consumes. innerI_self_pos_of_ratpoint: φ(ofQ r)² > 0 ⟹ ∫₀¹ φ² > 0 for a RATIONAL
+-- r ∈ [0,1] (the density strengthening of innerI_self_pos_of_dyadic, via sq_ge_on_piece_near at the
+-- ℕ-computed enclosing dyadic index). qHil_self_pos: a nonzero ℚ-coeff vector c gives qHil c c d > 0
+-- (apart at 1/M by poly_nonzero_evalP → nonzero rational value → Pos square → ratpoint definiteness →
+-- the bridge). NOT the sufficiency result (orthogonalization + Riesz + Parseval remain); NOT positivity
+-- beyond the finite form. Step 4 = RH; crux fields stay none.
+#print axioms Square.innerI_self_pos_of_ratpoint
+#print axioms Square.qHil_self_pos
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

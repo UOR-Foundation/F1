@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The rational Hilbert form is positive-definite — norm-positivity for the Hausdorff *sufficiency* arc** (new
+  `Square/QHilbertPos.lean`): the second brick of the sufficient direction, supplying the strict norm-positivity
+  the Gram–Schmidt orthogonalization of the moment construction consumes. `qHil_self_pos`: a coefficient vector
+  with some nonzero entry gives `qHil c c d > 0`. The bridge is a reusable **definiteness of the L² inner
+  product at a rational point**, `innerI_self_pos_of_ratpoint`: `φ(ofQ r)² > 0 ⟹ ∫₀¹ φ² > 0` for a *rational*
+  `r ∈ [0,1]` — the density strengthening of `innerI_self_pos_of_dyadic` that dissolves its dyadic restriction
+  (the enclosing dyadic index `j = ⌊r·2^m⌋`, clamped `< 2^m`, is computed in `ℕ` since `r` is rational, and
+  `sq_ge_on_piece_near` carries the positive value across the piece even though `r` is not the endpoint).
+  Assembly of `qHil_self_pos`: a nonzero `c` is apart from `0` at some `x = 1/M` (`poly_nonzero_evalP`), where
+  its value is a nonzero *rational* `v` so `v² > 0` decidably, hence `Pos(φ(1/M)²)`, hence `Pos(∫₀¹ φ²)` by
+  ratpoint definiteness, hence `qHil c c d > 0` through the `innerI_qPolyTest_qPolyTest` bridge. **Honest
+  scope**: positive-*definiteness* of the finite rational Hilbert form and the reusable rational-point L²
+  definiteness behind it — a foundation for the orthogonal-polynomial / Riesz construction, NOT that
+  construction, NOT the moment-range surjectivity result, NOT positivity beyond the finite form. Step 4 is RH;
+  crux fields stay `none`.
 - **The rational Hilbert form ↔ inner-product bridge — foundation of the Hausdorff *sufficiency* arc** (new
   `Square/QHilbertForm.lean`): the first brick toward *constructing* an L² element from a valid moment sequence
   (the sufficient/"surjectivity" direction). `qHil c c' d = Σ_{i,j<d} c_i·c'_j/(i+j+1)` is the rational Hilbert
