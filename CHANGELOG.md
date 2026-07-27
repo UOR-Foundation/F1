@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **★ FULL (two-member) injectivity of the moment map on the completion** (new
+  `Square/PairingMomentInjective.lean`): the definitive injectivity statement, generalizing the zero-version
+  from "kernel trivial" to genuine injectivity. **`pairingIU_moment_eq_imp_eq`**: two L²-Cauchy limit members
+  `Φ, Ψ` whose extended moment sequences are **equal** pair **equally** against **every** test `ψ`
+  (`L2Elt_moment_eq_imp_eq`: `E.eq F`) — so a limit member is *uniquely determined* (as a pairing functional)
+  by its moment sequence. The proof mirrors the zero-arc at the relative (`≈`) level: `pairingIU_clampProd_eq`
+  / `pairingIU_bernBasis_eq` (the Pascal induction with base = moment equality) and `pairingIU_L2sumN_eq` /
+  `pairingIU_bernOpCTest_eq` give `pairingIU Φ B_N(ψ) ≈ pairingIU Ψ B_N(ψ)`; the two residuals are each bounded
+  by `pairingIU_bernResidual_bound` (the determinacy brick's per-read Cauchy–Schwarz + uniform-energy +
+  `bernOp_L2` bound, extracted as a public, moment-independent helper serving both members), so
+  `|pairingIU Φ ψ − pairingIU Ψ ψ| → 0`. **Honest scope**: full injectivity of the moment map on the
+  completion; NOT positivity, NOT surjectivity onto function space. Step 4 (band-coupling positivity) is RH;
+  crux fields stay `none`.
 - **★ COMPLETION-LEVEL MOMENT DETERMINACY — the moment map is injective on the completion** (new
   `Square/PairingBernBasisZero.lean`, `Square/PairingBernOpZero.lean`, `Square/PairingMomentDeterminacy.lean`):
   the culmination of the extended-pairing arc, closing the reachable core of the doc's open "reconstruction of

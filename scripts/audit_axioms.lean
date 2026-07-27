@@ -5396,6 +5396,22 @@ open UOR.Bridge.F1Square
 #print axioms Square.pairingIU_moment_zero_imp_zero
 #print axioms Square.L2Elt_moment_zero_imp_eq_zero
 
+-- ★ FULL (TWO-MEMBER) INJECTIVITY OF THE MOMENT MAP ON THE COMPLETION (Square/PairingMomentInjective.lean):
+-- pairingIU_moment_eq_imp_eq — two L²-Cauchy limit members Φ,Ψ with EQUAL extended moment sequences pair
+-- EQUALLY against every test (L2Elt_moment_eq_imp_eq: E.eq F). The definitive injectivity statement, the
+-- relative (equality) form of pairingIU_moment_zero_imp_zero. Supporting relative bricks mirror ④/⑤ with
+-- equality: pairingIU_clampProd_eq / pairingIU_bernBasis_eq (Pascal induction, base = moment equality) and
+-- pairingIU_L2sumN_eq / pairingIU_bernOpCTest_eq; pairingIU_bernResidual_bound extracts the determinacy
+-- brick's per-read CS + uniform-energy + bernOp_L2 bound as a public, moment-independent helper serving both
+-- members. NOT positivity, NOT surjectivity onto function space; step 4 = RH; crux fields stay none.
+#print axioms Square.pairingIU_clampProd_eq
+#print axioms Square.pairingIU_bernBasis_eq
+#print axioms Square.pairingIU_L2sumN_eq
+#print axioms Square.pairingIU_bernOpCTest_eq
+#print axioms Square.pairingIU_bernResidual_bound
+#print axioms Square.pairingIU_moment_eq_imp_eq
+#print axioms Square.L2Elt_moment_eq_imp_eq
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
