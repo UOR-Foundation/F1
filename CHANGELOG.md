@@ -37,10 +37,13 @@ audit-visible hypothesis, never an axiom).
   `durrOpMom (mellinMoment φ) = durrOp φ`) and reconstructs the test from its moment sequence at the certified
   rate `|durrOpMom (mellinMoment φ) ((k+3)²−2) x − φ(x)| ≤ φ.L/(k+3)` on `[0,1]` (`durrOpMom_converges`). So a
   bounded-Lipschitz test is recovered **from its moment sequence alone** — the transform pair's inversion stated
-  purely on the moment data, the direction the surjectivity question asks about. **Honest scope**: reconstruction
-  on the moment sequences that arise from the bounded-Lipschitz class; NOT the Hausdorff characterization of which
-  raw sequences are moment sequences, NOT a completed L² space, NOT positivity. Step 4 is RH; crux fields stay
-  `none`.
+  purely on the moment data, the direction the surjectivity question asks about. The convergence is now delivered
+  as a **first-class limit object** (`durrOpMom_tendsTo`: `RTendsTo (fun m => durrOpMom (mellinMoment φ) (Kₘ·Kₘ−2) x) (φ.f x)`
+  on `[0,1]`, `Kₘ = (φ.L.num.toNat+1)·(m+1)+3`), the moment-side companion of `durrOp_tendsTo` — the reindex
+  `k := (φ.L.num.toNat+1)·(m+1)` swallows the Lipschitz constant, turning `φ.L/(k+3)` into `≤ 1/(m+1)`. **Honest
+  scope**: reconstruction on the moment sequences that arise from the bounded-Lipschitz class; NOT the Hausdorff
+  characterization of which raw sequences are moment sequences, NOT a completed L² space, NOT positivity. Step 4 is
+  RH; crux fields stay `none`.
 - **Co-support depth-existence, sub-brick N₅ — THE FACTOR-THEOREM APARTNESS** (new
   `Square/QPolyApart.lean`): upgrades N₄ from a nonzero coefficient VECTOR to a nonzero FUNCTION. For every
   `K` the depth-`K` co-support member is apart from `0` at a point of `[0,1]`

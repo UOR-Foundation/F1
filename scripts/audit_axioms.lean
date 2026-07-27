@@ -6214,11 +6214,14 @@ open UOR.Bridge.F1Square
 -- durrOp_converges). So a bounded-Lipschitz test is recovered FROM ITS MOMENTS ALONE — the transform pair's
 -- inversion stated purely on the moment data. NOT the Hausdorff characterization of which raw sequences are
 -- moment sequences, NOT a completed L² space; step 4 (band-coupling positivity) = RH; crux fields stay none.
+-- durrOpMom_tendsTo packages that convergence as a first-class RTendsTo limit object (the moment-side
+-- companion of durrOp_tendsTo): the reindex k:=(φ.L.num.toNat+1)(m+1) turns φ.L/(k+3) into ≤1/(m+1).
 #print axioms Square.momDiff_eq_raw
 #print axioms Square.momDiffRaw_congr
 #print axioms Square.durrOpMom_congr
 #print axioms Square.durrOpMom_eq_durrOp
 #print axioms Square.durrOpMom_converges
+#print axioms Square.durrOpMom_tendsTo
 
 -- THE COMPLETION AXIS (Square/L2ElementSpace.lean) — THE COMPLETED L² SPACE, WITH LIMIT MEMBERS: the
 -- L²-Cauchy sequence of tests, packaged as a first-class limit member `L2Elt {seq, cauchy}` (L2Complete gave
