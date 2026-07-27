@@ -5340,6 +5340,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.pairingIU_zero_of_moments
 #print axioms Square.pairingIU_cosupport_closed
 
+-- SCHEDULE-INDEPENDENCE + RIGHT-LINEARITY OF THE EXTENDED PAIRING (Square/PairingIUReschedule.lean):
+-- pairingIU reads Φ along the ψ-dependent schedule j↦selfBnd ψ·(j+1). This brick shows ANY coarser
+-- schedule j↦B·(j+1) with B≥selfBnd ψ converges to the SAME limit at rate 4/(k+1)
+-- (pairingIU_reschedule_rate — a direct dist2I + sqrt-free-CS estimate: the cross-schedule gap squares
+-- to ≤(2/(k+1))² via innerI_sub_sq_le + Rle_of_Rsq_le, since B≥S relaxes (1/B)·selfBnd ψ≤1). Linearity
+-- (add/neg/sub in the test argument) then follows by picking a common B and summing three reschedule
+-- rates through the Archimedean collapse. The linearity the completion-level moment-determinacy
+-- argument consumes; NOT positivity, NOT surjectivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.pairingIU_reschedule_rate
+#print axioms Square.pairingIU_add_right
+#print axioms Square.pairingIU_neg_right
+#print axioms Square.pairingIU_sub_right
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

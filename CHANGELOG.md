@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Schedule-independence + right-linearity of the extended pairing** (new `Square/PairingIUReschedule.lean`):
+  `pairingIU Φ ψ h` reads the L²-Cauchy sequence `Φ` along the *ψ-dependent* schedule `j ↦ selfBnd ψ·(j+1)`,
+  which blocked reasoning about `pairingIU` of a *combination* of tests. This brick proves that any coarser
+  schedule `j ↦ B·(j+1)` with `B ≥ selfBnd ψ` converges to the **same** limit at rate `4/(k+1)`
+  (`pairingIU_reschedule_rate`) — a direct `dist2I` + sqrt-free Cauchy–Schwarz estimate: the cross-schedule gap
+  `⟨Φ_{B(k+1)},ψ⟩ − ⟨Φ_{S(k+1)},ψ⟩` squares to `≤ (2/(k+1))²` via `innerI_sub_sq_le` + `Rle_of_Rsq_le` (the
+  sqrt wall is dodged because `B ≥ S` relaxes `(1/B)·selfBnd ψ ≤ 1`, an exact perfect-square bound). Picking a
+  common `B` and summing three reschedule rates through the Archimedean collapse then gives **right-linearity of
+  the extended pairing** in the test argument: `pairingIU_add_right`, `pairingIU_neg_right`, `pairingIU_sub_right`
+  (`⟨E, ψ+χ⟩ = ⟨E,ψ⟩+⟨E,χ⟩`, etc.). This is the linearity the completion-level moment-determinacy argument
+  consumes. **Honest scope**: schedule-independence and right-linearity of the extended pairing; NOT positivity,
+  NOT surjectivity. Step 4 is RH; crux fields stay `none`.
 - **The completion axis — THE COMPLETED L² SPACE, WITH LIMIT MEMBERS** (new `Square/L2ElementSpace.lean`):
   `L2Complete.lean` extended the pairing along an L²-Cauchy sequence but produced only pairing *values* ("no
   limit member"). This packages the Cauchy sequence itself as a first-class **limit member** object,
