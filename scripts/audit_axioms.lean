@@ -5412,6 +5412,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.pairingIU_moment_eq_imp_eq
 #print axioms Square.L2Elt_moment_eq_imp_eq
 
+-- THE BERNSTEIN–DURRMEYER IMAGE AS A TEST + ITS L² CONVERGENCE (Square/DurrmeyerTest.lean): the foundation
+-- for reconstructing an ARBITRARY L² element from its moments. durrTest φ n hn = L2sumN of
+-- constTest((n+1)·⟨φ,b_{n,k}⟩)·bernBasisTest — the Durrmeyer image durrOp φ n packaged as an L2Test
+-- (durrTest_eq_on_unit: agrees with durrOp φ n on [0,1]), so the L² machinery applies to it.
+-- durrTest_L2_converges: ‖φ − durrTest φ ((k+3)²−2)‖²_{L²[0,1]} ≤ (φ.L/(k+3))² (mirror of
+-- bernOp_L2_converges: durrOp_converges uniform pointwise bound + innerI_self_le_of_bound). NOT positivity,
+-- NOT surjectivity; step 4 = RH; crux fields stay none.
+#print axioms Square.durrTest_eq_on_unit
+#print axioms Square.durrTest_L2_converges
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

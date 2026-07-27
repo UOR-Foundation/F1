@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bernstein–Durrmeyer image as a test + its L² convergence** (new `Square/DurrmeyerTest.lean`): the
+  foundation for the remaining open — reconstructing an *arbitrary* L² element from its moments. On `[0,1]`,
+  `durrOp φ n x = (n+1)·Σ_k bernR(x,n,k)·⟨φ,b_{n,k}⟩` with `bernR(x,n,k) = (bernBasisTest n k).f x`, so the
+  Durrmeyer image packages as a finite `L2sumN` of `constTest·bernBasisTest` — an `L2Test` for free (no manual
+  Lipschitz estimate): `durrTest φ n hn` with `durrTest_eq_on_unit` (agrees with `durrOp φ n` on `[0,1]`). Then
+  `durrTest_L2_converges`: `‖φ − durrTest φ ((k+3)²−2)‖²_{L²[0,1]} ≤ (φ.L/(k+3))²` — the L²-norm companion of
+  the pointwise `durrOp_converges`, mirroring `bernOp_L2_converges`. This makes the Durrmeyer reconstruction an
+  object the L² machinery can act on. **Honest scope**: the Durrmeyer image as a test and its L² convergence
+  *on an embedded test*; NOT yet the reconstruction of a non-embedded limit member (that needs Durrmeyer
+  L²-stability + a diagonal argument). NOT positivity, NOT surjectivity. Step 4 is RH; crux fields stay `none`.
 - **★ FULL (two-member) injectivity of the moment map on the completion** (new
   `Square/PairingMomentInjective.lean`): the definitive injectivity statement, generalizing the zero-version
   from "kernel trivial" to genuine injectivity. **`pairingIU_moment_eq_imp_eq`**: two L²-Cauchy limit members
