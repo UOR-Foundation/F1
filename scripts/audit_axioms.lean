@@ -5453,6 +5453,15 @@ open UOR.Bridge.F1Square
 -- ⟨ψ,ψ⟩≤selfBnd ψ + Rsqrt(rational) + Rabs_Rlim_le.
 #print axioms Square.L2Elt_pairing_bounded
 
+-- THE RATIONAL HILBERT FORM ↔ innerI BRIDGE (Square/QHilbertForm.lean): the FOUNDATION of the constructive
+-- Hausdorff-SUFFICIENCY arc (building an L² element from a valid moment sequence via orthogonal polynomials).
+-- qHil c c' d = Σ_{i,j<d} c_i c'_j/(i+j+1) (the rational Hilbert form of two ℚ-coeff-vectors); the bridge
+-- innerI_qPolyTest_qPolyTest: ⟨qPolyTest c, qPolyTest c'⟩ = ofQ(qHil c c') (via innerI_L2sumN + innerI_constMul
+-- + mellinMoment_qPolyTest). NOT the sufficiency result itself (orthogonalization + Riesz projection +
+-- Parseval + convergence remain); NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.qHil_den_pos
+#print axioms Square.innerI_qPolyTest_qPolyTest
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

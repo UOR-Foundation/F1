@@ -470,6 +470,7 @@ import F1Square.Square.PairingMomentInjective
 import F1Square.Square.DurrmeyerTest
 import F1Square.Square.DurrmeyerReconstruct
 import F1Square.Square.MomentRangeNecessary
+import F1Square.Square.QHilbertForm
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail

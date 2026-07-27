@@ -16,6 +16,16 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The rational Hilbert form ↔ inner-product bridge — foundation of the Hausdorff *sufficiency* arc** (new
+  `Square/QHilbertForm.lean`): the first brick toward *constructing* an L² element from a valid moment sequence
+  (the sufficient/"surjectivity" direction). `qHil c c' d = Σ_{i,j<d} c_i·c'_j/(i+j+1)` is the rational Hilbert
+  form of two ℚ-coefficient vectors, and `innerI_qPolyTest_qPolyTest` proves the identity
+  `⟨qPolyTest c, qPolyTest c'⟩ = ofQ(qHil c c')` (via `innerI_L2sumN` + `innerI_constMul` +
+  `mellinMoment_qPolyTest`) — so the L² inner product of rational polynomials *is* the rational Hilbert form,
+  the bridge every downstream step (orthogonalization, norm-positivity, Riesz projection, Parseval) rests on.
+  **Honest scope**: the foundational bridge only; NOT the moment-problem sufficiency result itself (the
+  orthogonal-polynomial construction + convergence remain — a large arc), NOT positivity. Step 4 is RH; crux
+  fields stay `none`.
 - **The moment map's range is confined — moments decay** (new `Square/MomentRangeNecessary.lean`): the
   Hausdorff / *surjectivity onto function space* front, NECESSARY side. `L2Elt_moment_decay`:
   `|E.moment n| ≤ √(energy/(2n+1))` with `energy = 2·selfBnd(E.seq 0)+8` — a completed L² member's moments
