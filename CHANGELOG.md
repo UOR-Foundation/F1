@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **★ COMPLETION-LEVEL MOMENT DETERMINACY — the moment map is injective on the completion** (new
+  `Square/PairingBernBasisZero.lean`, `Square/PairingBernOpZero.lean`, `Square/PairingMomentDeterminacy.lean`):
+  the culmination of the extended-pairing arc, closing the reachable core of the doc's open "reconstruction of
+  an *arbitrary* L² element". **`pairingIU_moment_zero_imp_zero`**: an L²-Cauchy *limit member* `Φ` whose
+  extended moments `pairingIU Φ (xⁱ) h` **all** vanish pairs to **zero** against **every** test `ψ` — so a
+  limit member is determined, as a pairing functional, by its moment sequence (`L2Elt_moment_zero_imp_eq_zero`
+  reads this as `E.eq (L2Elt.of zeroL2)`). The proof is sqrt-free: for the Bernstein residual
+  `χ = ψ − B_N(ψ)` (`N=(k+1)²`), `pairingIU Φ ψ h ≈ pairingIU Φ χ h` because the operator test pairs to zero
+  (`pairingIU_bernOpCTest_zero`, the H₄ reduction lifted to a limit member via `pairingIU_L2sumN_zero` +
+  `pairingIU_constMul`); every honest read is bounded by integral Cauchy–Schwarz + the uniform self-energy
+  `⟨Φₘ,Φₘ⟩ ≤ E` + the L²-density bound `⟨χ,χ⟩ ≤ (5·L_ψ/(8(k+1)))²` (key `Qle`: `E ≤ E²`), a bound the limit
+  inherits (`Rabs_Rlim_le`) and which forces `pairingIU Φ ψ h ≈ 0` at the `1/(k+1)` rate. Supporting bricks:
+  `pairingIU_bernBasis_zero`/`pairingIU_clampProd_zero` (the H₁ Pascal reduction lifted to a limit member). This
+  is the injectivity half at the completion level — the analog of `moment_determinacy` for a limit member
+  rather than a single test. **Honest scope**: injectivity of the moment map on the completion; NOT positivity,
+  NOT surjectivity onto function space. Step 4 (band-coupling positivity) is RH; crux fields stay `none`.
 - **Completion-level determinacy foundations, part 2** (new `Square/PairingIULinear2.lean`,
   `Square/PairingIUEnergy.lean`): building on the reschedule/linearity brick, two more foundation facts the
   moment-determinacy-at-the-completion argument consumes. **(a)** `pairingIU_natScale`: scalar (ℕ)

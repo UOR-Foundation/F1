@@ -463,6 +463,9 @@ import F1Square.Square.L2ElementSpace
 import F1Square.Square.PairingIUReschedule
 import F1Square.Square.PairingIULinear2
 import F1Square.Square.PairingIUEnergy
+import F1Square.Square.PairingBernBasisZero
+import F1Square.Square.PairingBernOpZero
+import F1Square.Square.PairingMomentDeterminacy
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail

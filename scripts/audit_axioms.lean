@@ -5367,6 +5367,35 @@ open UOR.Bridge.F1Square
 -- d²(Φ_j,Φ 0)≤4. Feeds the pairing-level Cauchy–Schwarz bound in the moment-determinacy tail.
 #print axioms Square.innerI_self_le_uniform
 
+-- THE BERNSTEIN BASIS PAIRS TO ZERO AT THE COMPLETION LEVEL (Square/PairingBernBasisZero.lean): the H₁
+-- reduction (innerI_clampProd_zero) lifted from a fixed test to a LIMIT MEMBER. pairingIU_clampProd_zero
+-- (extended pairing against xᵏ(1−x)ᵐ vanishes when all extended moments do — the identical Pascal
+-- recursion with pairingIU_unit_congr carrying the unit step + pairingIU_sub_right the split) and
+-- pairingIU_bernBasis_zero (the normalized basis, through pairingIU_natScale).
+#print axioms Square.pairingIU_clampProd_zero
+#print axioms Square.pairingIU_bernBasis_zero
+
+-- THE BERNSTEIN OPERATOR PAIRS TO ZERO AT THE COMPLETION LEVEL (Square/PairingBernOpZero.lean): mirror of
+-- innerI_bernOpCTest_zero at the limit-member level. pairingIU_L2sumN_zero (a finite sum pairs to 0 if
+-- each summand does), pairingIU_constMul (real-coeff homogeneity of the extended pairing, via the
+-- reschedule rate + innerI_constMul + |c|≤mB), pairingIU_constMul_zero, and pairingIU_bernOpCTest_zero
+-- (the operator B_N(χ) pairs to 0 when all extended moments of Φ vanish, for ANY approximated χ).
+#print axioms Square.pairingIU_L2sumN_zero
+#print axioms Square.pairingIU_constMul
+#print axioms Square.pairingIU_constMul_zero
+#print axioms Square.pairingIU_bernOpCTest_zero
+
+-- ★ COMPLETION-LEVEL MOMENT DETERMINACY (Square/PairingMomentDeterminacy.lean): the culmination of the
+-- extended-pairing arc. pairingIU_moment_zero_imp_zero — an L²-Cauchy limit member Φ whose extended
+-- moments pairingIU Φ (xⁱ) h ALL vanish pairs to zero against EVERY test ψ (the moment map is injective
+-- on the completion). Proof (sqrt-free): ψ ≈ B_N(ψ)+χ with χ the Bernstein residual; pairingIU Φ B_N(ψ)=0
+-- (bernOpCTest_zero), and |pairingIU Φ χ| bounded per-read by integral CS + uniform self-energy (E) +
+-- L²-density energy bound, key Qle E≤E², inherited through Rlim, forced to 0 by the 1/(k+1) rate.
+-- L2Elt_moment_zero_imp_eq_zero reads it on the L2Elt structure (E.eq (L2Elt.of zeroL2)). NOT positivity,
+-- NOT surjectivity onto function space; step 4 = RH; crux fields stay none.
+#print axioms Square.pairingIU_moment_zero_imp_zero
+#print axioms Square.L2Elt_moment_zero_imp_eq_zero
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
