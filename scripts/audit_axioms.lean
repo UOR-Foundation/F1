@@ -5615,6 +5615,23 @@ open UOR.Bridge.F1Square
 #print axioms Square.qHil_trunc_eq_of_ge
 #print axioms Square.qHil_trunc_eq
 
+-- THE DIMENSION-INDEPENDENT GRAM–SCHMIDT FAMILY (Square/GramSchmidtConcrete.lean): brick 3.5b. The
+-- committed gramSchmidt_exists is a d-dependent existential; the L²-limit needs one FIXED family whose
+-- vectors are stable as degree grows and whose orthogonality holds at EVERY dimension. gsBuild m is the
+-- concrete family of the first m Gram–Schmidt vectors (structural recursion, extend at index m by
+-- nextVec), gsFam k = gsBuild (k+1) k the k-th fixed orthogonal polynomial. gsBuild_lt: k < m ⟹
+-- gsBuild m k = gsFam k (stability). gsBuild_props: the four invariants at every depth (den/support/monic
+-- + DIMENSION-UNIFORM orthogonality ∀ d>i,j — nextVec_ortho at m+1 carried to all d by qHil_trunc_eq,
+-- brick 3.5a). gsFam_den/gsFam_support/gsFam_monic/gsFam_ortho: the fixed family's d-free interface. NOT
+-- the Riesz convergence / L²-limit (needs a supplied Bessel modulus — later brick), NOT surjectivity,
+-- NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.gsBuild_lt
+#print axioms Square.gsBuild_props
+#print axioms Square.gsFam_den
+#print axioms Square.gsFam_support
+#print axioms Square.gsFam_monic
+#print axioms Square.gsFam_ortho
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

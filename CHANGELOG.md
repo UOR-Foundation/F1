@@ -16,6 +16,22 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The dimension-independent Gram–Schmidt family — brick 3.5b** (new `Square/GramSchmidtConcrete.lean`):
+  the committed `gramSchmidt_exists d` (brick 3) is a *`d`-dependent existential* — for each truncation
+  dimension it asserts *some* orthogonal family exists. The `L²`-limit needs one *fixed* family, stable
+  as the degree grows, orthogonal at *every* dimension. `gsBuild m` is the concrete family of the first
+  `m` Gram–Schmidt vectors (structural recursion, extending at index `m` by `nextVec (m+1) m (gsBuild m)`),
+  and `gsFam k = gsBuild (k+1) k` the `k`-th fixed orthogonal polynomial. `gsBuild_lt` (`k < m ⟹
+  gsBuild m k = gsFam k`) is the stability lemma; `gsBuild_props` proves the four invariants at every
+  depth by induction — positive denominators, support on `[0,k]`, monic, and **dimension-uniform**
+  orthogonality `⟨gsBuild m i, gsBuild m j⟩_d = 0` for `i ≠ j` at *every* `d > i, j`. The
+  dimension-uniform orthogonality is the new ingredient: the step gives it at the single dimension `m+1`
+  (`nextVec_ortho`), and truncation-stability (`qHil_trunc_eq`, brick 3.5a) carries it to every larger
+  `d` since each vector is finitely supported. `gsFam_den`/`gsFam_support`/`gsFam_monic`/`gsFam_ortho`
+  are the fixed family's `d`-free public interface. **Honest scope**: the existence-free
+  dimension-independent orthogonal family and its `d`-uniform invariants, finite ℚ linear algebra; NOT
+  the Riesz convergence / L²-limit (needs a supplied Bessel convergence modulus — later brick), NOT
+  moment-range surjectivity, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **Truncation-stability of the rational Hilbert form — brick 3.5a** (new `Square/QHilbertTrunc.lean`):
   `qHil_trunc_eq_of_ge` proves that if two coefficient vectors `c, c'` both vanish at every index `≥ D`,
   then the finite Hilbert form is independent of the truncation dimension past `D` —

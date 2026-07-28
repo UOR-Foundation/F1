@@ -479,6 +479,7 @@ import F1Square.Square.QHilbertComb
 import F1Square.Square.GramSchmidt
 import F1Square.Square.GramSchmidtOrtho
 import F1Square.Square.GramSchmidtFamily
+import F1Square.Square.GramSchmidtConcrete
 import F1Square.Square.MomentFunctional
 import F1Square.Square.QHilEVec
 import F1Square.Square.RieszCoeff
