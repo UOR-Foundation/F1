@@ -42,6 +42,21 @@ audit-visible hypothesis, never an axiom).
   form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
   convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
   Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The constructive Bessel modulus: making the Riesz–Fischer input rational — moment-realization coda**
+  (new `Square/BesselCauchyModulus.lean`): `besselSeq_L2Elt_moment` realizes `μ` *under* the opaque
+  hypothesis `L2CauchyU (besselSeq μ)`; this coda discharges that hypothesis to a **checkable rational
+  condition** on the projections. `besselDiffNorm μ j k = qHil (p_j − p_k)(p_j − p_k) (j+k+1)` is the
+  *rational* squared `L²`-distance of the `j`-th and `k`-th Riesz projections (the `ℚ`-value
+  `besselSeq_dist2I` embeds). `besselSeq_L2CauchyU` proves a rational modulus `besselDiffNorm μ j k ≤
+  (1/(j+1)+1/(k+1))²` produces the real `L2CauchyU (besselSeq μ)` — `Rle_ofQ_ofQ` turns the `ℚ`-bound
+  directly into the real Cauchy bound via `besselSeq_dist2I`. `besselSeq_realizes_of_modulus` composes it
+  end-to-end: a `μ` with such a rational modulus is realized by a completed `L²` element,
+  `⟨E, xⁿ⟩ = ofQ(μ n)` for every `n`. This is the honest constructive Riesz–Fischer input — not the
+  opaque `L2CauchyU`, but the statement that the Bessel/Gram data of the projections is `ℚ`-Cauchy at the
+  framework rate, a condition one can *exhibit* for a given `μ`. **Honest scope**: still **conditional** —
+  the modulus is a supplied, audit-visible hypothesis (never an axiom, never asserted for a particular
+  `μ`); this brick only makes its shape rational and checkable. NOT surjectivity onto arbitrary sequences,
+  NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The moment realization: the L²-limit of the Riesz projections — final moment-realization brick** (new
   `Square/MomentRealize.lean`): given a moment sequence `μ` whose Riesz projections are `L²`-Cauchy (the
   constructive Riesz–Fischer / Bessel condition), the completed `L²` element they define realizes `μ`.

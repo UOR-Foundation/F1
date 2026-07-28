@@ -5688,6 +5688,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.besselSeq_moment
 #print axioms Square.besselSeq_L2Elt_moment
 
+-- THE CONSTRUCTIVE BESSEL MODULUS (Square/BesselCauchyModulus.lean): coda of the moment-realization
+-- sub-arc — makes the Riesz–Fischer input rational/checkable. besselDiffNorm μ j k = qHil (p_j−p_k)²
+-- (j+k+1), the rational squared L²-distance of the j,k-th Riesz projections (the ℚ-value besselSeq_dist2I
+-- embeds); besselDiffNorm_den its positive denominator. besselSeq_L2CauchyU: a rational modulus
+-- besselDiffNorm μ j k ≤ (1/(j+1)+1/(k+1))² produces the real L2CauchyU (besselSeq μ) (Rle_ofQ_ofQ turns
+-- the ℚ-bound into the real Cauchy bound via besselSeq_dist2I). besselSeq_realizes_of_modulus: the
+-- end-to-end composed statement — a μ with such a rational modulus is realized by a completed L² element,
+-- ⟨E,xⁿ⟩=ofQ(μ n) ∀n. Still CONDITIONAL (the modulus is a supplied audit-visible hypothesis, never an
+-- axiom, never asserted for a particular μ) — this only makes its shape rational and exhibitable. NOT
+-- surjectivity onto arbitrary sequences, NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.besselDiffNorm_den
+#print axioms Square.besselSeq_L2CauchyU
+#print axioms Square.besselSeq_realizes_of_modulus
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step
