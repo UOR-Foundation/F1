@@ -5538,6 +5538,15 @@ open UOR.Bridge.F1Square
 -- existential induction that assembles the full family (next brick); NOT positivity. Step 4 = RH.
 #print axioms Square.nextVec_ortho
 
+-- THE GRAM–SCHMIDT FAMILY EXISTS (Square/GramSchmidtFamily.lean): brick 3 of the sufficiency arc
+-- COMPLETE. gramSchmidt_exists d: for every m ≤ d there is a coefficient family that is den-valid,
+-- supported/monic on [0,m), and MUTUALLY ORTHOGONAL ⟨q_i,q_j⟩_d = 0 (i≠j) in the rational Hilbert
+-- form. Induction on m extending by nextVec; orthogonality from nextVec_ortho (+ qHil_comm for the
+-- mirror), self-norm positivity from qHil_self_pos on the monic q_i. This is the orthogonal basis
+-- the moment-problem construction (bricks 4-6: Riesz projection, Parseval, convergence) runs on. NOT
+-- those bricks; NOT the moment-range surjectivity; NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.gramSchmidt_exists
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

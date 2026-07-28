@@ -16,6 +16,18 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Gram–Schmidt family exists — brick 3 of the sufficiency arc complete** (new
+  `Square/GramSchmidtFamily.lean`): the orthogonality *step* (`nextVec_ortho`) is assembled by induction into
+  the full orthogonal family. `gramSchmidt_exists d`: for every `m ≤ d` there is a coefficient family that is
+  denominator-valid, each `q_k` (`k<m`) supported on `[0,k]` and monic (leading coefficient `1`), and
+  **mutually orthogonal `⟨q_i, q_j⟩_d = 0` for `i ≠ j`** in the rational Hilbert form. Induction on `m`
+  extending the family by `q_m = nextVec` and discharging the four invariants — den/support/monic from the
+  `nextVec_*` foundations, orthogonality from `nextVec_ortho` (with `qHil_comm` for the mirrored ordering), the
+  self-norm positivity coming from `qHil_self_pos` on the monic `q_i`. This is the orthogonal basis the
+  moment-problem construction runs on. **Honest scope**: the *existence* of the finite orthogonal family for
+  the rational Hilbert form; NOT the Riesz projection / Parseval / convergence that build the L² element from a
+  valid moment sequence (bricks 4–6), NOT the moment-range surjectivity, NOT positivity. Step 4 is RH; crux
+  fields stay `none`.
 - **The Gram–Schmidt orthogonality step** (new `Square/GramSchmidtOrtho.lean`): the mathematical heart of the
   orthogonal-polynomial construction. `nextVec_ortho` proves that, given `q_0,…,q_{m-1}` mutually orthogonal
   with positive self-norms, the next vector `q_m = e_m − Σ_{i<m} cf_i q_i` is orthogonal to every earlier `q_j`
