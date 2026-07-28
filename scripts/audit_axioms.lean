@@ -5529,6 +5529,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.nextVec_support
 #print axioms Square.nextVec_monic
 
+-- THE GRAM–SCHMIDT ORTHOGONALITY STEP (Square/GramSchmidtOrtho.lean): the mathematical heart of the
+-- orthogonal-polynomial construction. nextVec_ortho: given q_0..q_{m-1} mutually orthogonal with
+-- positive self-norms, the next vector q_m = e_m − Σ cf_i q_i is orthogonal to each earlier q_j
+-- (⟨q_j, nextVec⟩_d = 0). Expand the projection in the 2nd argument (qHil_add_right/neg_right/
+-- combVec_right), collapse the sum to its diagonal term (choice-free single-term collapse over
+-- range m), cancel with projCoef_cancel, flip with qHil_comm so ⟨q_j,e_m⟩−⟨e_m,q_j⟩=0. NOT yet the
+-- existential induction that assembles the full family (next brick); NOT positivity. Step 4 = RH.
+#print axioms Square.nextVec_ortho
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Gram–Schmidt orthogonality step** (new `Square/GramSchmidtOrtho.lean`): the mathematical heart of the
+  orthogonal-polynomial construction. `nextVec_ortho` proves that, given `q_0,…,q_{m-1}` mutually orthogonal
+  with positive self-norms, the next vector `q_m = e_m − Σ_{i<m} cf_i q_i` is orthogonal to every earlier `q_j`
+  (`⟨q_j, nextVec⟩_d = 0`). The classical computation, now in the certified symmetric-bilinear `qHil`: expand
+  the projection in the second argument (`qHil_add_right` + `qHil_neg_right` + `qHil_combVec_right`), collapse
+  the resulting sum to its diagonal term (a choice-free single-term collapse over `range m`, peeling the top
+  index via `List.range_succ` to avoid the choice-tainted `List.nodup_range`), cancel with `projCoef_cancel`
+  (`cf_j·⟨q_j,q_j⟩ = ⟨e_m,q_j⟩`), and flip the survivor with symmetry (`qHil_comm`) so `⟨q_j,e_m⟩ − ⟨e_m,q_j⟩ = 0`.
+  **Honest scope**: the single orthogonality *step* only (one new vector against the earlier ones), under the
+  induction hypotheses supplied as arguments; NOT yet the existential induction that assembles the full family
+  (the next brick), NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Gram–Schmidt construction, foundations** (new `Square/GramSchmidt.lean`): the reusable core of the
   orthogonal-polynomial construction (brick 3 of the sufficiency arc), so the orthogonality induction (next
   brick) is a clean wiring. `eVec k` is the monomial `x^k` (`1` at index `k`, `0` elsewhere); `projCoef d m q i`
