@@ -5473,6 +5473,24 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerI_self_pos_of_ratpoint
 #print axioms Square.qHil_self_pos
 
+-- BILINEARITY OF THE RATIONAL HILBERT FORM (Square/QHilbertBilinear.lean): the ALGEBRA of the
+-- Gram–Schmidt orthogonalization (brick 3 of the sufficiency arc). qHil is linear in each
+-- coefficient-vector argument (add/smul/neg, both sides), pushed through the double qsumL via
+-- qsumL_add/qsumL_smul/qsumL_neg + the scalar distributive laws, factored through the inner-sum
+-- abbreviation innerHil. NOT symmetry (needs a qsumL Fubini — a separate brick); NOT the
+-- orthogonalization itself; NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.innerHil_den
+#print axioms Square.qHil_eq_innerHil
+#print axioms Square.innerHil_add
+#print axioms Square.innerHil_smul
+#print axioms Square.innerHil_neg
+#print axioms Square.qHil_add_left
+#print axioms Square.qHil_smul_left
+#print axioms Square.qHil_neg_left
+#print axioms Square.qHil_add_right
+#print axioms Square.qHil_smul_right
+#print axioms Square.qHil_neg_right
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

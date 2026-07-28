@@ -16,6 +16,17 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Bilinearity of the rational Hilbert form — the Gram–Schmidt algebra** (new `Square/QHilbertBilinear.lean`):
+  the algebraic foundation of the third brick of the Hausdorff *sufficiency* arc (the orthogonalization of the
+  moment construction). `qHil` is proven linear in each `Nat → Q` coefficient-vector argument — `qHil_add_left`,
+  `qHil_smul_left`, `qHil_neg_left` and their `_right` counterparts (`qHil (a+b) c' = qHil a c' + qHil b c'`,
+  `qHil (λ·a) c' = λ·qHil a c'`, `qHil (−a) c' = −qHil a c'`, and symmetrically in the second argument) — the
+  laws the orthogonality proof uses to expand `⟨q_k, q_j⟩`. Each is a `Qeq` identity pushed through the double
+  `qsumL` (`qsumL_add`/`qsumL_smul`/`qsumL_neg`) plus the scalar distributive/associative laws, factored through
+  the inner-sum abbreviation `innerHil c d j = Σ_{i<d} c_i/(i+j+1)`. **Honest scope**: the bilinearity laws of
+  the *finite rational* form only; NOT symmetry (`qHil c c' = qHil c' c`, which needs a `qsumL` Fubini — a
+  separate brick), NOT the orthogonal-polynomial construction, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **The rational Hilbert form is positive-definite — norm-positivity for the Hausdorff *sufficiency* arc** (new
   `Square/QHilbertPos.lean`): the second brick of the sufficient direction, supplying the strict norm-positivity
   the Gram–Schmidt orthogonalization of the moment construction consumes. `qHil_self_pos`: a coefficient vector
