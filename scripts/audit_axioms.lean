@@ -5604,6 +5604,18 @@ open UOR.Bridge.F1Square
 -- Bessel tail. NOT the L²-limit/convergence; NOT positivity. Step 4 = RH; crux fields stay none.
 #print axioms Square.parseval_norm
 
+-- THE BESSEL-TAIL IDENTITY FOR THE RIESZ PROJECTION (Square/RieszBessel.lean): brick 5.5. pVec_cross:
+-- ⟨p_P, p_M⟩_d = Σ_{k≤M} aCoef_k·Λ_μ(q_k) for M ≤ P — expand the low projection (qHil_combVec_right) and
+-- read each pairing off the basis (realize_basis); in particular ⟨p_N,p_M⟩ = ‖p_M‖² (increment
+-- orthogonal to p_M). pVec_diff_normSq: ‖p_N − p_M‖²_d = ‖p_N‖²_d − ‖p_M‖²_d for M ≤ N — expand the
+-- squared increment into the four Gram entries by bilinearity (qHil over pointwise Qsub), substitute the
+-- two cross-terms (qHil_comm for the mirror), middle terms cancel. This is the exact quantity the
+-- convergence brick bounds (the squared increments are a Bessel tail Σ_{M<k≤N} aCoef_k²‖q_k‖²).
+-- Unconditional, finite, fixed dimension d. NOT the L²-limit / convergence (needs the dim-independent
+-- family + a supplied Bessel modulus — next brick), NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.pVec_cross
+#print axioms Square.pVec_diff_normSq
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step

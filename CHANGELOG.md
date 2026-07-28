@@ -16,6 +16,21 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Bessel-tail identity for the Riesz projection — brick 5.5** (new `Square/RieszBessel.lean`):
+  the squared `L²`-distance between two Riesz projections telescopes to the *difference* of their
+  squared norms. `pVec_cross` proves `⟨p_P, p_M⟩_d = Σ_{k≤M} aCoef_k·Λ_μ(q_k)` for `M ≤ P` (the
+  projection reads the same low sum regardless of the higher degree `P`) — expanding the low projection
+  (`qHil_combVec_right`) and reading each pairing off the basis (`realize_basis`); in particular
+  `⟨p_N, p_M⟩ = ‖p_M‖²`, i.e. the increment `p_N − p_M` is orthogonal to `p_M`. `pVec_diff_normSq` then
+  proves `‖p_N − p_M‖²_d = ‖p_N‖²_d − ‖p_M‖²_d` for `M ≤ N` by pure bilinearity: expand the squared
+  increment into the four Gram entries (`qHil` over the pointwise `Qsub`), substitute the two
+  cross-terms (`qHil_comm` for the mirror), and the middle terms cancel. This is the exact quantity the
+  convergence brick bounds — read along a truncation schedule the squared increments are a *Bessel
+  tail* `Σ_{M<k≤N} aCoef_k²‖q_k‖²`, and a supplied rational modulus on that tail is the constructive
+  Riesz–Fischer hypothesis. **Honest scope**: the finite Bessel-tail *identity* at a *fixed* dimension,
+  unconditional, pure ℚ arithmetic; NOT the L²-limit / convergence (needs the dimension-independent
+  family and a supplied Bessel convergence modulus — next brick), NOT positivity. Step 4 is RH; crux
+  fields stay `none`.
 - **The dimension-independent Gram–Schmidt family — brick 3.5b** (new `Square/GramSchmidtConcrete.lean`):
   the committed `gramSchmidt_exists d` (brick 3) is a *`d`-dependent existential* — for each truncation
   dimension it asserts *some* orthogonal family exists. The `L²`-limit needs one *fixed* family, stable
