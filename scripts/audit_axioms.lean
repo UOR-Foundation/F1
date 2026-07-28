@@ -5674,6 +5674,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.dist2I_congr
 #print axioms Square.besselSeq_dist2I
 
+-- THE MOMENT REALIZATION: THE L²-LIMIT OF THE RIESZ PROJECTIONS (Square/MomentRealize.lean): the final
+-- brick of the moment-realization sub-arc (Hausdorff sufficiency). besselSeq_moment: n ≤ m ⟹ ⟨besselSeq
+-- μ m, xⁿ⟩ = ofQ(μ n) — the finite realize_moment read through mellinMoment_qPolyTest + qHil_eVec_right,
+-- so the projection reproduces μ up to its degree exactly. besselSeq_L2Elt_moment: CONDITIONAL on
+-- L2CauchyU (besselSeq μ) (the constructive Riesz–Fischer / Bessel-Cauchy input, an explicit
+-- audit-visible hypothesis, never asserted for a particular μ), the completed element E = ⟨besselSeq μ,·⟩
+-- realizes μ on the moment map — ⟨E, xⁿ⟩ = ofQ(μ n) for every n; the reads are eventually exactly ofQ(μ
+-- n) and the completion's 2/(j+1) rate (L2Elt_converges) pins the limit (Req_of_Rle_ofQ_all, reindex
+-- j=k+n). The matching SUFFICIENT direction to MomentRangeNecessary, for sequences carrying the
+-- convergence certificate. NOT surjectivity onto arbitrary sequences, NOT positivity. Step 4 = RH; crux
+-- fields stay none.
+#print axioms Square.besselSeq_moment
+#print axioms Square.besselSeq_L2Elt_moment
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step

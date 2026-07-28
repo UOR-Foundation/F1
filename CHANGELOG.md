@@ -42,6 +42,23 @@ audit-visible hypothesis, never an axiom).
   form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
   convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
   Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment realization: the L²-limit of the Riesz projections — final moment-realization brick** (new
+  `Square/MomentRealize.lean`): given a moment sequence `μ` whose Riesz projections are `L²`-Cauchy (the
+  constructive Riesz–Fischer / Bessel condition), the completed `L²` element they define realizes `μ`.
+  `besselSeq_moment` proves `n ≤ m ⟹ ⟨besselSeq μ m, xⁿ⟩ = ofQ(μ n)` — the finite realization identity
+  `realize_moment` read through the moment bridge (`mellinMoment_qPolyTest` + `qHil_eVec_right`), so the
+  degree-`m` projection reproduces `μ` up to degree `m` exactly. `besselSeq_L2Elt_moment` proves —
+  **conditional on** `L2CauchyU (besselSeq μ)` — that the completed element `E = ⟨besselSeq μ, ·⟩`
+  realizes `μ` on the moment map, `⟨E, xⁿ⟩ = ofQ(μ n)` for every `n`: along the completion the reads are
+  *eventually exactly* `ofQ(μ n)`, and the completion's own `2/(j+1)` convergence rate
+  (`L2Elt_converges`) pins the limit member's `n`-th moment (`Req_of_Rle_ofQ_all`, reindexing `j = k+n`).
+  This is the matching **sufficient** direction to the necessary-side confinement
+  (`MomentRangeNecessary`), for sequences carrying the convergence certificate. **Honest scope**:
+  **conditional** — the `L2CauchyU (besselSeq μ)` hypothesis is the constructive Riesz–Fischer input (the
+  Bessel partial-norm sequence `‖p_N‖²` is Cauchy at the completion's rate), an explicit, audit-visible
+  hypothesis, never an axiom and never asserted for a particular `μ`. This is the constructive Hausdorff
+  sufficiency, NOT surjectivity onto arbitrary sequences, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **The Riesz-projection sequence and its L²-distance — penultimate moment-realization brick** (new
   `Square/BesselSeqDist.lean`): the `L²`-limit of a valid moment sequence is realised by the sequence of
   its Riesz projections read as polynomial tests at growing dimension. `besselSeq μ m = qPolyTest (p_m)
