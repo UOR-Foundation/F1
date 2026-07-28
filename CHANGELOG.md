@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Gram–Schmidt construction, foundations** (new `Square/GramSchmidt.lean`): the reusable core of the
+  orthogonal-polynomial construction (brick 3 of the sufficiency arc), so the orthogonality induction (next
+  brick) is a clean wiring. `eVec k` is the monomial `x^k` (`1` at index `k`, `0` elsewhere); `projCoef d m q i`
+  is the projection coefficient `⟨e_m,q_i⟩_d / ⟨q_i,q_i⟩_d` with its inverse-cancellation `projCoef_cancel`
+  (`cf_i·⟨q_i,q_i⟩ = ⟨e_m,q_i⟩`, via `Qmul_Qinv`); `nextVec d m q = e_m − Σ_{i<m} cf_i q_i` with its three
+  structural properties — positive denominators (`nextVec_den`), vanishing strictly above index `m`
+  (`nextVec_support`, given each `q_i` supported on `[0,i]`), and leading coefficient `1` at index `m`
+  (`nextVec_monic`). `projCoef` is *guarded* (the real quotient where `⟨q_i,q_i⟩>0`, else `0`) so it is total
+  with a positive denominator at every index — inert on the constructed range `i<m` yet discharging every
+  downstream `∀ i` denominator hypothesis the bilinearity laws impose. **Honest scope**: the construction's
+  *foundations* only — NOT yet the orthogonality
+  (`⟨q_i,q_j⟩ = 0` for `i≠j`, the induction that is the next brick), NOT positivity. Step 4 is RH; crux fields
+  stay `none`.
 - **`qHil` distributes over a linear combination of vectors — the projection algebra** (new
   `Square/QHilbertComb.lean`): the last algebraic tool before the Gram–Schmidt recursion. `combVec ls cf v` is
   the coefficient vector of `Σ_{i∈ls} cf_i·v_i`, and `qHil_combVec_left`/`_right` prove

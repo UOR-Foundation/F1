@@ -5512,6 +5512,23 @@ open UOR.Bridge.F1Square
 #print axioms Square.qHil_combVec_left
 #print axioms Square.qHil_combVec_right
 
+-- THE GRAM–SCHMIDT CONSTRUCTION, FOUNDATIONS (Square/GramSchmidt.lean): the reusable core of the
+-- orthogonal-polynomial construction (brick 3 of the sufficiency arc). eVec k = the monomial x^k
+-- (1 at k, 0 else); projCoef d m q i = ⟨e_m,q_i⟩/⟨q_i,q_i⟩ with the Qinv-cancellation projCoef_cancel
+-- (cf_i·⟨q_i,q_i⟩ = ⟨e_m,q_i⟩); nextVec d m q = e_m − Σ_{i<m} cf_i q_i with its den (nextVec_den),
+-- support strictly above m (nextVec_support, given q_i supported on [0,i]) and monic-at-m
+-- (nextVec_monic, leading coeff 1). NOT yet the orthogonality induction (next brick); NOT positivity.
+-- Step 4 = RH; crux fields stay none.
+#print axioms Square.eVec_den
+#print axioms Square.eVec_self
+#print axioms Square.eVec_ne
+#print axioms Square.eVec_self_ne_zero
+#print axioms Square.projCoef_den
+#print axioms Square.projCoef_cancel
+#print axioms Square.nextVec_den
+#print axioms Square.nextVec_support
+#print axioms Square.nextVec_monic
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
