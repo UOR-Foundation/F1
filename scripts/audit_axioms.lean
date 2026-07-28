@@ -5637,6 +5637,19 @@ open UOR.Bridge.F1Square
 -- positivity. Step 4 = RH; crux fields stay none.
 #print axioms Square.qPolyTest_dist2I
 
+-- DIMENSION-INDEPENDENCE OF THE RIESZ COEFFICIENT ON THE FIXED FAMILY (Square/RieszDimInv.lean): brick
+-- 6a. The L²-limit reads Riesz projections of GROWING degree, each naturally at its own dimension; the
+-- Bessel-tail identity (pVec_diff_normSq) only applies when two share the SAME dimension/coefficients.
+-- Lam_trunc: Λ_μ(c) is independent of the dimension past the support of c (a qsumL truncation).
+-- aCoef_dim_inv: on gsFam, aCoef μ d gsFam k is independent of d > k — the guarded Λ_μ(q_k)/⟨q_k,q_k⟩ is
+-- a ratio of two truncation-stable rationals (Lam_trunc + qHil_trunc_eq, brick 3.5a) with the
+-- positive-numerator denominator preserved by Qinv. pVec_dim_inv: the degree-N projection is independent
+-- of the dimension past N (combination congruence). Unconditional ℚ arithmetic. NOT the convergence /
+-- L²-limit (needs a supplied Bessel modulus — next brick), NOT positivity. Step 4 = RH; crux fields none.
+#print axioms Square.Lam_trunc
+#print axioms Square.aCoef_dim_inv
+#print axioms Square.pVec_dim_inv
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step

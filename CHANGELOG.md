@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Dimension-independence of the Riesz coefficient on the fixed family — brick 6a** (new
+  `Square/RieszDimInv.lean`): the `L²`-limit reads Riesz projections of *growing* degree, each naturally
+  computed at its own dimension, but the Bessel-tail identity (`pVec_diff_normSq`, brick 5.5) only
+  applies when two projections share the *same* dimension and hence the *same* coefficients. On the fixed
+  family `gsFam` the Riesz coefficient does not depend on the truncation dimension past the minimal one.
+  `Lam_trunc` proves the moment functional `Λ_μ(c)` is independent of the dimension past the support of
+  `c` (a `qsumL` truncation); `aCoef_dim_inv` proves `aCoef μ d gsFam k` is independent of `d > k` — the
+  guarded `Λ_μ(q_k)/⟨q_k,q_k⟩` is a ratio of two truncation-stable rationals (`Lam_trunc` and
+  `qHil_trunc_eq`, brick 3.5a) with the positive-numerator denominator preserved by `Qinv`; `pVec_dim_inv`
+  lifts this to the degree-`N` projection by combination congruence. **Honest scope**:
+  dimension-independence of the *finite* Riesz coefficient/projection on the fixed family, unconditional
+  ℚ arithmetic; NOT the Riesz convergence / L²-limit (needs a supplied Bessel convergence modulus — next
+  brick), NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The L²-distance of two polynomial tests is the rational Hilbert form of their difference — brick-6
   substrate** (new `Square/QPolyDistBridge.lean`): `qPolyTest_dist2I` proves that at a common truncation
   dimension `D`, `d²(qPolyTest cN D, qPolyTest cM D) = ofQ(qHil (cN − cM) (cN − cM) D)`. Expand
