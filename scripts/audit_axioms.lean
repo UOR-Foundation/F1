@@ -5616,6 +5616,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.pVec_cross
 #print axioms Square.pVec_diff_normSq
 
+-- DIMENSION-INVARIANCE OF THE RATIONAL POLYNOMIAL TEST (Square/QPolyDimInv.lean): brick-6 substrate.
+-- innerI_qPolyTest_dim_inv: if the coefficient vector c vanishes at every index ≥ D, the polynomial test
+-- qPolyTest c d pairs to the SAME value at any dimension d ≥ D. Distribute over the finite sum
+-- (innerI_L2sumN); the extra monomials c_i·xⁱ (i ≥ D) pair to zero (innerI_constMul scales by ofQ c_i ≈
+-- 0), so the RsumN past D is inert (induction on d−D). The test-level companion of qHil_trunc_eq (brick
+-- 3.5a): a fixed support-[0,N] vector (Riesz projection p_N) reads as an L² test at any d ≥ N+1 with the
+-- same value — brings two projections of different degree to a common dimension. NOT the convergence /
+-- L²-limit (needs a supplied Bessel modulus), NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.innerI_qPolyTest_dim_inv
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step

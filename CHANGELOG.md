@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Dimension-invariance of the rational polynomial test — brick-6 substrate** (new
+  `Square/QPolyDimInv.lean`): the polynomial test `qPolyTest c d = Σ_{i<d} c_i·xⁱ` carries a truncation
+  dimension `d` but, as an `L²` object, only sees `c_0,…,c_{d-1}`. `innerI_qPolyTest_dim_inv` proves
+  that if `c` vanishes at every index `≥ D`, the test pairs to the *same* value against any test `ψ` at
+  every dimension `d ≥ D`: distribute over the finite sum (`innerI_L2sumN`), and the extra monomials
+  `c_i·xⁱ` for `i ≥ D` pair to zero (`innerI_constMul` scales the monomial pairing by `ofQ c_i ≈ 0`), so
+  the `RsumN` past `D` is inert (induction on the gap `d − D`). This is the test-level companion of
+  `qHil_trunc_eq` (brick 3.5a): a fixed support-`[0,N]` vector (the Riesz projection `p_N`) reads as an
+  `L²` test at any `d ≥ N+1` with the same value — the tool that brings two Riesz projections of
+  different degree to a common dimension in the convergence brick. **Honest scope**: dimension-stability
+  of the *finite* polynomial test's pairing under support, pure `L²`-linearity over ℚ-coefficient
+  monomials; NOT the Riesz convergence / L²-limit (needs a supplied Bessel convergence modulus — next
+  brick), NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Bessel-tail identity for the Riesz projection — brick 5.5** (new `Square/RieszBessel.lean`):
   the squared `L²`-distance between two Riesz projections telescopes to the *difference* of their
   squared norms. `pVec_cross` proves `⟨p_P, p_M⟩_d = Σ_{k≤M} aCoef_k·Λ_μ(q_k)` for `M ≤ P` (the

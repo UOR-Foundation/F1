@@ -487,6 +487,7 @@ import F1Square.Square.RieszRealize
 import F1Square.Square.RieszMoment
 import F1Square.Square.RieszParseval
 import F1Square.Square.RieszBessel
+import F1Square.Square.QPolyDimInv
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail
