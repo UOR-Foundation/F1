@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Symmetry of the rational Hilbert form — completes the Gram–Schmidt algebra** (new `Square/QHilbertSymm.lean`):
+  `qHil_comm` proves `qHil c c' d = qHil c' c d` (the Hilbert matrix `1/(i+j+1)` is symmetric). Together with the
+  bilinearity laws this makes `qHil` a *symmetric bilinear form* — exactly what Parseval
+  `‖Σ aₖ qₖ‖² = Σ aₖ²·⟨qₖ,qₖ⟩` and the two-sided orthogonality `⟨qᵢ,qⱼ⟩ = 0 (i≠j)` consume. The proof pulls the
+  outer coefficient into the inner sum, exchanges the double `qsumL` via a reusable **Fubini** built here
+  (`qsumL_qsumL_swap`: `Σ_{i∈A}Σ_{j∈B} = Σ_{j∈B}Σ_{i∈A}`, by induction on the outer list), then refactors and
+  reindexes `i+j+1 = j+i+1`. **Honest scope**: symmetry of the *finite rational* form plus the `qsumL` Fubini;
+  NOT the orthogonal-polynomial construction, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **Bilinearity of the rational Hilbert form — the Gram–Schmidt algebra** (new `Square/QHilbertBilinear.lean`):
   the algebraic foundation of the third brick of the Hausdorff *sufficiency* arc (the orthogonalization of the
   moment construction). `qHil` is proven linear in each `Nat → Q` coefficient-vector argument — `qHil_add_left`,

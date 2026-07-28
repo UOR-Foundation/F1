@@ -5491,6 +5491,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.qHil_smul_right
 #print axioms Square.qHil_neg_right
 
+-- SYMMETRY OF THE RATIONAL HILBERT FORM (Square/QHilbertSymm.lean): completes the algebraic
+-- foundation of brick 3. qHil_comm: qHil c c' d = qHil c' c d (the Hilbert matrix 1/(i+j+1) is
+-- symmetric) — with bilinearity, qHil is a symmetric bilinear form, what Parseval + two-sided
+-- orthogonality need. Proof: pull the outer coefficient in, exchange the double qsumL via the
+-- reusable Fubini qsumL_qsumL_swap, refactor + reindex i+j+1 = j+i+1. NOT the orthogonalization
+-- itself; NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.qsumL_qsumL_swap
+#print axioms Square.qHil_comm
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
