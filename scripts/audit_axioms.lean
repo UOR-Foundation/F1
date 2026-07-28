@@ -5547,6 +5547,47 @@ open UOR.Bridge.F1Square
 -- those bricks; NOT the moment-range surjectivity; NOT positivity. Step 4 = RH; crux fields stay none.
 #print axioms Square.gramSchmidt_exists
 
+-- THE MOMENT FUNCTIONAL AND ITS LINEARITY (Square/MomentFunctional.lean): first brick of the moment-
+-- REALIZATION sub-arc (bricks 4-6 of the sufficiency direction). Lam μ c d = Σ_{i<d} c_i·μ_i pairs a
+-- polynomial's coeff vector against the external moment sequence μ; Lam_add/_smul/_neg/_combVec give
+-- ℚ-linearity in the coeff argument (line-for-line clones of the qHil bilinearity with 1/(i+j+1)
+-- replaced by μ_i). The Riesz projection reads its coefficients off Lam μ (q_k)/‖q_k‖². NOT the Riesz
+-- projection / realization / convergence (later bricks); a finite-form object, NOT positivity. Step
+-- 4 = RH; crux fields stay none.
+#print axioms Square.Lam_den
+#print axioms Square.Lam_add
+#print axioms Square.Lam_smul
+#print axioms Square.Lam_neg
+#print axioms Square.Lam_combVec
+
+-- PAIRING AGAINST A MONOMIAL (Square/QHilEVec.lean): the delta-collapse the realization identity runs
+-- on. qsumL_range_single (public, choice-free single-term collapse over range m via List.range_succ);
+-- qHil_eVec_right (j<d → ⟨c,x^j⟩_d = innerHil c d j, the j-th Hilbert moment) and Lam_eVec (j<d →
+-- Λ_μ(x^j)=μ_j) both by the eVec delta-collapse (off-j vanishes by eVec_ne, at j identity by
+-- eVec_self). NOT the realization/Parseval/convergence; NOT positivity. Step 4 = RH; crux stay none.
+#print axioms Square.qsumL_range_single
+#print axioms Square.qHil_eVec_right
+#print axioms Square.Lam_eVec
+
+-- THE RIESZ PROJECTION COEFFICIENT AND VECTOR (Square/RieszCoeff.lean): reading μ off the orthogonal
+-- basis. aCoef μ d q k = Λ_μ(q_k)/⟨q_k,q_k⟩_d (GUARDED total, verbatim projCoef structure with ⟨e_m,q_k⟩
+-- replaced by Λ_μ(q_k)); aCoef_cancel (aCoef_k·⟨q_k,q_k⟩=Λ_μ(q_k) on the range); qHil_self_num_pos
+-- (monic q_k, k<d → ⟨q_k,q_k⟩_d>0 for the guard); pVec μ d q N = Σ_{k≤N} aCoef_k·q_k the degree-N
+-- Riesz projection. NOT the realization identity / Parseval / convergence; NOT positivity. Step 4 = RH.
+#print axioms Square.aCoef_den
+#print axioms Square.aCoef_cancel
+#print axioms Square.qHil_self_num_pos
+#print axioms Square.pVec_den
+
+-- THE RIESZ REALIZATION IDENTITY (Square/RieszRealize.lean): the mathematical core of brick 4.
+-- realize_basis (l≤N → ⟨p_N,q_l⟩_d = Λ_μ(q_l)): expand p_N=Σ aCoef_k q_k (qHil_combVec_left), kill
+-- off-diagonal by orthogonality (qsumL_range_single), cancel diagonal (aCoef_cancel). vec_self_expand
+-- (a vector supported on [0,j] equals Σ_{i≤j} c_i·x^i, its own coeff expansion over the monomial
+-- basis) — the change-of-basis the moment identity dissolves. NOT yet realize_moment (⟨p_N,x^j⟩=μ_j,
+-- the strong induction) / Parseval / convergence; NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.realize_basis
+#print axioms Square.vec_self_expand
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

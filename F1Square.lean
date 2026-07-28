@@ -478,6 +478,10 @@ import F1Square.Square.QHilbertComb
 import F1Square.Square.GramSchmidt
 import F1Square.Square.GramSchmidtOrtho
 import F1Square.Square.GramSchmidtFamily
+import F1Square.Square.MomentFunctional
+import F1Square.Square.QHilEVec
+import F1Square.Square.RieszCoeff
+import F1Square.Square.RieszRealize
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail

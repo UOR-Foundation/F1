@@ -16,6 +16,40 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The Riesz realization identity (foundations)** (new `Square/RieszRealize.lean`): the mathematical core of
+  brick 4. `realize_basis` proves the degree-`N` Riesz projection realizes the moment functional against the
+  orthogonal basis — `l ≤ N ⟹ ⟨p_N, q_l⟩_d = Λ_μ(q_l)` — by expanding `p_N = Σ_k aCoef_k q_k`
+  (`qHil_combVec_left`), killing the off-diagonal by orthogonality (`qsumL_range_single`), and cancelling the
+  diagonal (`aCoef_cancel`). `vec_self_expand` proves a vector supported on `[0,j]` equals `Σ_{i≤j} c_i·x^i` —
+  its own coefficient expansion over the monomial basis — the change-of-basis that the full moment identity
+  dissolves (no Hilbert-matrix inverse). **Honest scope**: the realization against the basis + the
+  self-expansion only; NOT yet `⟨p_N, x^j⟩ = μ_j` (the strong induction), NOT Parseval / convergence, NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
+- **The Riesz projection coefficient and vector** (new `Square/RieszCoeff.lean`): the third brick of the
+  moment-realization sub-arc, reading `μ` off the orthogonal basis. `aCoef μ d q k = Λ_μ(q_k)/⟨q_k,q_k⟩_d`
+  (guarded so total, the verbatim `projCoef` structure with `⟨e_m,q_k⟩` replaced by `Λ_μ(q_k)`), its
+  cancellation `aCoef_cancel` (`aCoef_k·⟨q_k,q_k⟩ = Λ_μ(q_k)`), the self-norm positivity `qHil_self_num_pos`
+  (monic `q_k`, `k<d` ⟹ `⟨q_k,q_k⟩_d > 0` for the guard), and the degree-`N` Riesz projection
+  `pVec μ d q N = Σ_{k≤N} aCoef_k·q_k`. **Honest scope**: the coefficient/vector and its cancellation only —
+  finite ℚ linear algebra; NOT the realization identity / Parseval / convergence, NOT positivity. Step 4 is
+  RH; crux fields stay `none`.
+- **Pairing against a monomial — the delta-collapse** (new `Square/QHilEVec.lean`): the second brick of the
+  moment-realization sub-arc. Pairing a coefficient vector against the monomial basis vector `e_j = x^j` picks
+  out a single component — `qHil_eVec_right` (`j<d ⟹ ⟨c, x^j⟩_d = innerHil c d j`, the `j`-th Hilbert moment)
+  and `Lam_eVec` (`j<d ⟹ Λ_μ(x^j) = μ_j`), both from the single-term collapse `qsumL_range_single`
+  (re-exported here as a public, choice-free lemma via `List.range_succ`) applied to the `eVec` delta (off `j`
+  the summand vanishes by `eVec_ne`, at `j` it is the identity by `eVec_self`). **Honest scope**: the
+  monomial-pairing collapses only — finite ℚ linear algebra; NOT the realization / Parseval / convergence
+  bricks, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment functional and its linearity — first brick of the moment-realization sub-arc** (new
+  `Square/MomentFunctional.lean`): opens bricks 4–6 of the Hausdorff *sufficiency* direction (constructing an
+  L² element from a valid moment sequence). `Lam μ c d = Σ_{i<d} c_i·μ_i` pairs a polynomial's coefficient
+  vector against the external rational moment sequence `μ`, and `Lam_add`/`Lam_smul`/`Lam_neg`/`Lam_combVec`
+  give it ℚ-linearity in the coefficient argument — line-for-line clones of the `qHil` bilinearity with the
+  Hilbert weight `1/(i+j+1)` replaced by `μ_i`. The Riesz projection that realizes `μ` reads its coefficients
+  off `Lam μ (q_k) / ‖q_k‖²`. **Honest scope**: the functional and its linearity only — finite-dimensional
+  linear algebra, no new mathematics; NOT the Riesz projection / realization / convergence (later bricks), NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
 - **The Gram–Schmidt family exists — brick 3 of the sufficiency arc complete** (new
   `Square/GramSchmidtFamily.lean`): the orthogonality *step* (`nextVec_ortho`) is assembled by induction into
   the full orthogonal family. `gramSchmidt_exists d`: for every `m ≤ d` there is a coefficient family that is
