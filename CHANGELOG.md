@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Truncation-stability of the rational Hilbert form — brick 3.5a** (new `Square/QHilbertTrunc.lean`):
+  `qHil_trunc_eq_of_ge` proves that if two coefficient vectors `c, c'` both vanish at every index `≥ D`,
+  then the finite Hilbert form is independent of the truncation dimension past `D` —
+  `qHil c c' d = qHil c c' D` for `d ≥ D` — and `qHil_trunc_eq` gives agreement at any two dimensions
+  `≥ D`. Two single-step extensions do the work: `innerHil_trunc_step` (the extra inner term
+  `c_d/(d+j+1)` vanishes) and `qHil_trunc_step` (that plus the extra outer term `c'_d·innerHil`
+  vanishing), chained by induction on the gap `d − D`, each peeling the top of the range via
+  `List.range_succ` (avoiding the choice-tainted `List.nodup_range`). This is the tool that lets a
+  *fixed* support-`[0,N]` vector (the Riesz projection `p_N`) be paired at *any* dimension `d ≥ N` and
+  get the same rational value — the prerequisite for a dimension-independent orthogonal family and hence
+  the `L²`-limit. **Honest scope**: dimension-stability of the *finite* rational form under support,
+  pure ℚ arithmetic; NOT the dimension-independent Gram–Schmidt family (next brick), NOT the Riesz
+  convergence / L²-limit, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **Parseval for the Riesz projection — brick 5** (new `Square/RieszParseval.lean`): `parseval_norm` proves the
   squared norm of the degree-`N` Riesz projection is the sum of its squared Fourier coefficients times the
   basis self-norms — `⟨p_N, p_N⟩_d = Σ_{k≤N} aCoef_k·(aCoef_k·⟨q_k,q_k⟩_d)`. Expanding the outer

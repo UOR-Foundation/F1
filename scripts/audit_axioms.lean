@@ -5604,6 +5604,17 @@ open UOR.Bridge.F1Square
 -- Bessel tail. NOT the L²-limit/convergence; NOT positivity. Step 4 = RH; crux fields stay none.
 #print axioms Square.parseval_norm
 
+-- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
+-- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
+-- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step
+-- (extra inner term c_d/(d+j+1) ≈ 0) and qHil_trunc_step (that + extra outer term c'_d·… ≈ 0) — chained
+-- by induction on the gap d−D, each peeling the top of the range via List.range_succ (choice-free). The
+-- tool that pairs a fixed support-[0,N] vector (Riesz projection) at ANY dimension d ≥ N and gets the
+-- same rational — prerequisite for the dimension-independent family and the L²-limit. NOT that family,
+-- NOT convergence, NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.qHil_trunc_eq_of_ge
+#print axioms Square.qHil_trunc_eq
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

@@ -473,6 +473,7 @@ import F1Square.Square.MomentRangeNecessary
 import F1Square.Square.QHilbertForm
 import F1Square.Square.QHilbertPos
 import F1Square.Square.QHilbertBilinear
+import F1Square.Square.QHilbertTrunc
 import F1Square.Square.QHilbertSymm
 import F1Square.Square.QHilbertComb
 import F1Square.Square.GramSchmidt
