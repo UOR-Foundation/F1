@@ -42,6 +42,22 @@ audit-visible hypothesis, never an axiom).
   form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
   convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
   Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Riesz-projection sequence and its L²-distance — penultimate moment-realization brick** (new
+  `Square/BesselSeqDist.lean`): the `L²`-limit of a valid moment sequence is realised by the sequence of
+  its Riesz projections read as polynomial tests at growing dimension. `besselSeq μ m = qPolyTest (p_m)
+  (m+1)` is the degree-`m` Riesz projection as an `L²` test. `besselSeq_innerI_bridge` shows `besselSeq μ
+  m` pairs like the projection recomputed at any common dimension `D > m` (dimension-invariance
+  `innerI_qPolyTest_dim_inv` past the projection's support, then coefficient-congruence
+  `innerI_qPolyTest_coef_congr` under `pVec_dim_inv`, brick 6a). `dist2I_congr` proves the squared
+  distance depends only on the `innerI`-functional of its two arguments (four-term expansion +
+  `innerI_swap`). `besselSeq_dist2I` then proves `d²(besselSeq μ j, besselSeq μ k) = ofQ(qHil (p_j − p_k)
+  (p_j − p_k) D)` at any common dimension `D > j, k` — transport to the common dimension via
+  `dist2I_congr` and the per-index bridge, then the distance bridge `qPolyTest_dist2I`. Composed with the
+  Bessel-tail identity (`pVec_diff_normSq`, brick 5.5) this is exactly `ofQ(‖p_k‖² − ‖p_j‖²)` for `j ≤ k`
+  — the squared increment the convergence brick bounds by a supplied rational modulus. **Honest scope**:
+  the realising sequence and the *identity* for its squared `L²`-distance, unconditional; NOT the
+  convergence itself (`L2CauchyU`, which needs a supplied Bessel modulus) and NOT the limit element / its
+  moments — the final brick; NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **Coefficient-congruence of the rational polynomial test — brick-6 substrate** (new
   `Square/QPolyCoefCongr.lean`): the polynomial test's pairing depends on its ℚ-coefficients only up to
   `Qeq`. `innerI_qPolyTest_coef_congr` proves `(∀ i, c_i ≈ c'_i) ⟹ ⟨ψ, qPolyTest c d⟩ = ⟨ψ, qPolyTest c'

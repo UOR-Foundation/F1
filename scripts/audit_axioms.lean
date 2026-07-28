@@ -5660,6 +5660,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.aCoef_dim_inv
 #print axioms Square.pVec_dim_inv
 
+-- THE RIESZ-PROJECTION SEQUENCE AND ITS L²-DISTANCE (Square/BesselSeqDist.lean): brick before the final
+-- convergence brick. besselSeq μ m = qPolyTest (p_m)(m+1), the degree-m Riesz projection as an L² test.
+-- besselSeq_innerI_bridge: besselSeq μ m pairs like the projection recomputed at any common dimension
+-- D > m (dim-invariance past the support, then coefficient-congruence under pVec_dim_inv). dist2I_congr:
+-- the squared distance depends only on the innerI-functional of its two arguments (four-term expansion +
+-- innerI_swap). besselSeq_dist2I: d²(besselSeq μ j, besselSeq μ k) = ofQ(qHil (p_j − p_k)(p_j − p_k) D)
+-- at any common D > j,k — transport to common dimension (dist2I_congr + bridge) then the distance bridge
+-- (qPolyTest_dist2I). Composed with pVec_diff_normSq (brick 5.5) this is ofQ(‖p_k‖²−‖p_j‖²), the squared
+-- increment the convergence brick bounds. Unconditional. NOT the convergence itself (L2CauchyU needs a
+-- supplied Bessel modulus), NOT the limit element / its moments, NOT positivity. Step 4 = RH; crux none.
+#print axioms Square.besselSeq_innerI_bridge
+#print axioms Square.dist2I_congr
+#print axioms Square.besselSeq_dist2I
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step
