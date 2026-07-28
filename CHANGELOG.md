@@ -16,6 +16,19 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **The L²-distance of two polynomial tests is the rational Hilbert form of their difference — brick-6
+  substrate** (new `Square/QPolyDistBridge.lean`): `qPolyTest_dist2I` proves that at a common truncation
+  dimension `D`, `d²(qPolyTest cN D, qPolyTest cM D) = ofQ(qHil (cN − cM) (cN − cM) D)`. Expand
+  `d² = ⟨φ−ψ, φ−ψ⟩` into the four Gram pairings by `L²`-bilinearity (`innerI_sub_left`,
+  `innerI_sub_right`), read each off the bridge (`innerI_qPolyTest_qPolyTest`), combine the four embedded
+  rationals (`Rsub_ofQ_ofQ`), and recognise the resulting four-term as `qHil` of the pointwise difference
+  by `qHil`-bilinearity — unconditional, no orthogonality, no `M ≤ N`. Composed with the Bessel-tail
+  identity (`pVec_diff_normSq`, brick 5.5) this reads the squared increment of the Riesz projections as
+  `ofQ(‖p_N‖² − ‖p_M‖²)`, which is what the convergence brick bounds by a supplied rational modulus.
+  **Honest scope**: identification of the *finite* test's squared `L²`-distance with the rational Hilbert
+  form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
+  convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
+  Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **Dimension-invariance of the rational polynomial test — brick-6 substrate** (new
   `Square/QPolyDimInv.lean`): the polynomial test `qPolyTest c d = Σ_{i<d} c_i·xⁱ` carries a truncation
   dimension `d` but, as an `L²` object, only sees `c_0,…,c_{d-1}`. `innerI_qPolyTest_dim_inv` proves

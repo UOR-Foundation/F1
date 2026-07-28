@@ -5626,6 +5626,17 @@ open UOR.Bridge.F1Square
 -- L²-limit (needs a supplied Bessel modulus), NOT positivity. Step 4 = RH; crux fields stay none.
 #print axioms Square.innerI_qPolyTest_dim_inv
 
+-- THE L²-DISTANCE ↔ RATIONAL HILBERT FORM OF THE DIFFERENCE (Square/QPolyDistBridge.lean): brick-6
+-- substrate. qPolyTest_dist2I: at a common dimension D, d²(qPolyTest cN D, qPolyTest cM D) = ofQ(qHil
+-- (cN−cM)(cN−cM) D). Expand d² into the four Gram pairings by L²-bilinearity (innerI_sub_left/right),
+-- read each off the bridge (innerI_qPolyTest_qPolyTest), combine the embedded rationals (Rsub_ofQ_ofQ),
+-- recognise the four-term as qHil of the pointwise difference by qHil-bilinearity. Unconditional (no
+-- orthogonality, no M ≤ N). Composed with pVec_diff_normSq (brick 5.5) it reads the squared increment of
+-- the Riesz projections as ofQ(‖p_N‖² − ‖p_M‖²) — the quantity the convergence brick bounds. NOT the
+-- L²-limit (needs the dim-independent family + dim-invariance + a supplied Bessel modulus), NOT
+-- positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.qPolyTest_dist2I
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step
