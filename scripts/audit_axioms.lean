@@ -5500,6 +5500,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.qsumL_qsumL_swap
 #print axioms Square.qHil_comm
 
+-- qHil DISTRIBUTES OVER A LINEAR COMBINATION OF VECTORS (Square/QHilbertComb.lean): the last algebra
+-- before the Gram–Schmidt recursion. combVec ls cf v = Σ_{i∈ls} cf_i·v_i (pointwise); qHil_combVec_left/
+-- _right expand qHil(Σ cf_i v_i, w) = Σ cf_i·qHil(v_i,w) (both arguments), by induction on ls from the
+-- atomic add/smul laws with the zero base qHil 0 w = 0 (qHil_zero_left/_right). This is what the
+-- orthogonality proof uses to expand the projection Σ cf_i q_i. NOT the recursion itself; NOT
+-- positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.qHil_zero_left
+#print axioms Square.qHil_zero_right
+#print axioms Square.combVec_den
+#print axioms Square.qHil_combVec_left
+#print axioms Square.qHil_combVec_right
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse

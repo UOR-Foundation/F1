@@ -16,6 +16,14 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **`qHil` distributes over a linear combination of vectors — the projection algebra** (new
+  `Square/QHilbertComb.lean`): the last algebraic tool before the Gram–Schmidt recursion. `combVec ls cf v` is
+  the coefficient vector of `Σ_{i∈ls} cf_i·v_i`, and `qHil_combVec_left`/`_right` prove
+  `qHil (Σ cf_i v_i) w d = Σ cf_i·qHil (v_i) w d` in each argument — by induction on `ls` from the atomic
+  add/smul laws, with the zero base `qHil 0 w = 0` (`qHil_zero_left`/`_right`). This is exactly what the
+  orthogonality proof needs to expand the projection `Σ_{i<k} cf_i q_i` that the recursion subtracts from a
+  monomial. **Honest scope**: the combination-linearity of the *finite rational* form only; NOT the
+  orthogonal-polynomial construction, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **Symmetry of the rational Hilbert form — completes the Gram–Schmidt algebra** (new `Square/QHilbertSymm.lean`):
   `qHil_comm` proves `qHil c c' d = qHil c' c d` (the Hilbert matrix `1/(i+j+1)` is symmetric). Together with the
   bilinearity laws this makes `qHil` a *symmetric bilinear form* — exactly what Parseval
