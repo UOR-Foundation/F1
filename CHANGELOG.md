@@ -42,6 +42,19 @@ audit-visible hypothesis, never an axiom).
   form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
   convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
   Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **Coefficient-congruence of the rational polynomial test — brick-6 substrate** (new
+  `Square/QPolyCoefCongr.lean`): the polynomial test's pairing depends on its ℚ-coefficients only up to
+  `Qeq`. `innerI_qPolyTest_coef_congr` proves `(∀ i, c_i ≈ c'_i) ⟹ ⟨ψ, qPolyTest c d⟩ = ⟨ψ, qPolyTest c'
+  d⟩`: distribute over the finite sum (`innerI_L2sumN`), each monomial pairing `⟨ψ, c_i·xⁱ⟩` is the real
+  scalar `ofQ c_i` times `⟨ψ, xⁱ⟩` (`innerI_constMul`), and `ofQ` respects `Qeq`, so the two sums agree
+  termwise (`RsumN_congr`). Together with `innerI_qPolyTest_dim_inv` this is the full bridge the
+  convergence brick needs: the Riesz projection `p_N`, whose dimension-independence (`pVec_dim_inv`, brick
+  6a) is a *pointwise* `Qeq`, reads as the *same* `L²` functional at any dimension and under any
+  `Qeq`-equal presentation, so two projections of different degree can be compared at a common dimension.
+  **Honest scope**: `Qeq`-invariance of the *finite* polynomial test's pairing in its coefficient vector,
+  pure `L²`-linearity over ℚ-coefficient monomials; NOT the Riesz convergence / L²-limit (needs a
+  supplied Bessel convergence modulus — next brick), NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
 - **Dimension-invariance of the rational polynomial test — brick-6 substrate** (new
   `Square/QPolyDimInv.lean`): the polynomial test `qPolyTest c d = Σ_{i<d} c_i·xⁱ` carries a truncation
   dimension `d` but, as an `L²` object, only sees `c_0,…,c_{d-1}`. `innerI_qPolyTest_dim_inv` proves

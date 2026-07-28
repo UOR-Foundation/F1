@@ -5626,6 +5626,16 @@ open UOR.Bridge.F1Square
 -- L²-limit (needs a supplied Bessel modulus), NOT positivity. Step 4 = RH; crux fields stay none.
 #print axioms Square.innerI_qPolyTest_dim_inv
 
+-- COEFFICIENT-CONGRUENCE OF THE RATIONAL POLYNOMIAL TEST (Square/QPolyCoefCongr.lean): brick-6 substrate.
+-- innerI_qPolyTest_coef_congr: coefficient vectors agreeing rationally give the same pairing —
+-- (∀ i, c_i ≈ c'_i) ⟹ ⟨ψ, qPolyTest c d⟩ = ⟨ψ, qPolyTest c' d⟩. Distribute over the finite sum
+-- (innerI_L2sumN); each monomial pairing is ofQ c_i · ⟨ψ, xⁱ⟩ (innerI_constMul), ofQ respects Qeq, sums
+-- agree termwise (RsumN_congr). With innerI_qPolyTest_dim_inv this is the full bridge: p_N (whose
+-- dimension-independence pVec_dim_inv is a POINTWISE Qeq) reads as the same L² functional at any
+-- dimension and any Qeq-equal presentation. NOT the convergence / L²-limit (needs a supplied Bessel
+-- modulus), NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.innerI_qPolyTest_coef_congr
+
 -- THE L²-DISTANCE ↔ RATIONAL HILBERT FORM OF THE DIFFERENCE (Square/QPolyDistBridge.lean): brick-6
 -- substrate. qPolyTest_dist2I: at a common dimension D, d²(qPolyTest cN D, qPolyTest cM D) = ofQ(qHil
 -- (cN−cM)(cN−cM) D). Expand d² into the four Gram pairings by L²-bilinearity (innerI_sub_left/right),
