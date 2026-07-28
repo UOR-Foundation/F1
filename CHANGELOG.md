@@ -16,6 +16,25 @@ axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; 
 passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
 audit-visible hypothesis, never an axiom).
 
+- **Parseval for the Riesz projection — brick 5** (new `Square/RieszParseval.lean`): `parseval_norm` proves the
+  squared norm of the degree-`N` Riesz projection is the sum of its squared Fourier coefficients times the
+  basis self-norms — `⟨p_N, p_N⟩_d = Σ_{k≤N} aCoef_k·(aCoef_k·⟨q_k,q_k⟩_d)`. Expanding the outer
+  `p_N = Σ_k aCoef_k q_k` (`qHil_combVec_left`) and using `⟨q_k, p_N⟩ = ⟨p_N, q_k⟩` (`qHil_comm`)
+  `= Λ_μ(q_k)` (`realize_basis`) `= aCoef_k·⟨q_k,q_k⟩` (`aCoef_cancel`) collapses each term — the same
+  orthogonality telescoping as the Gram–Schmidt step, now on the projection; this is the identity the
+  convergence brick differences into a Bessel tail. **Honest scope**: Parseval for the *finite* projection at a
+  *fixed* dimension; NOT the L²-limit / convergence, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment realization — brick 4 complete** (new `Square/RieszMoment.lean`): `realize_moment` proves the
+  degree-`N` Riesz projection realizes `μ` against every monomial up to degree `N` — `j ≤ N ⟹ ⟨p_N, x^j⟩_d = μ_j`.
+  The proof is a strong induction on `j` that **dissolves the change of basis** (no Hilbert-matrix inverse is
+  ever built): the defect `D_i = ⟨p_N,x^i⟩ − μ_i` vanishes for `i < j` by the induction hypothesis, so the
+  combination `Σ_{i≤j} (q_j)_i·D_i` collapses to its single leading term `(q_j)_j·D_j`; but that same
+  combination equals `⟨p_N,q_j⟩ − Λ_μ(q_j)` (expand `q_j = Σ_i (q_j)_i x^i` via `vec_self_expand`,
+  `qHil_combVec_right`, `Lam_combVec`, `Lam_eVec`), which vanishes by `realize_basis`; so `(q_j)_j·D_j = 0`,
+  and since the leading coefficient is `≉ 0`, no-zero-divisors force `D_j = 0`. **Honest scope**: the
+  realization identity for the *finite* Riesz projection at a *fixed* dimension — NOT Parseval, NOT the
+  L²-limit / convergence (which additionally needs a dimension-independent family and a supplied Bessel
+  convergence modulus — later bricks), NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The Riesz realization identity (foundations)** (new `Square/RieszRealize.lean`): the mathematical core of
   brick 4. `realize_basis` proves the degree-`N` Riesz projection realizes the moment functional against the
   orthogonal basis — `l ≤ N ⟹ ⟨p_N, q_l⟩_d = Λ_μ(q_l)` — by expanding `p_N = Σ_k aCoef_k q_k`

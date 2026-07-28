@@ -5588,6 +5588,22 @@ open UOR.Bridge.F1Square
 #print axioms Square.realize_basis
 #print axioms Square.vec_self_expand
 
+-- THE MOMENT REALIZATION (Square/RieszMoment.lean): brick 4 COMPLETE. realize_moment (j≤N →
+-- ⟨p_N,x^j⟩_d = μ_j): a strong induction on j that DISSOLVES the change of basis (no Hilbert-matrix
+-- inverse). Defect D_i=⟨p_N,x^i⟩−μ_i vanishes for i<j (IH), so Σ_{i≤j}(q_j)_i·D_i collapses to its
+-- leading term (q_j)_j·D_j (qsumL_range_single); that same combination = ⟨p_N,q_j⟩−Λ_μ(q_j)
+-- (vec_self_expand+qHil_combVec_right+Lam_combVec+Lam_eVec), which vanishes by realize_basis; so
+-- (q_j)_j·D_j=0, leading coeff ≉0, no-zero-divisors force D_j=0. NOT Parseval / convergence; NOT
+-- positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.realize_moment
+
+-- PARSEVAL FOR THE RIESZ PROJECTION (Square/RieszParseval.lean): brick 5. parseval_norm
+-- (⟨p_N,p_N⟩_d = Σ_{k≤N} aCoef_k·(aCoef_k·⟨q_k,q_k⟩_d)): expand outer p_N (qHil_combVec_left), use
+-- ⟨q_k,p_N⟩=⟨p_N,q_k⟩ (qHil_comm) = Λ_μ(q_k) (realize_basis) = aCoef_k·⟨q_k,q_k⟩ (aCoef_cancel) — the
+-- orthogonality telescoping on the projection. This is what the convergence brick differences into a
+-- Bessel tail. NOT the L²-limit/convergence; NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.parseval_norm
+
 -- THE PRE-HILBERT LAYER, brick 63 (Square/L2MomentBridge.lean) — THE MOMENT GEOMETRY IS AN L²
 -- INVARIANT: ⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0, and tests at L² distance zero have
 -- the same moments, the same ℓ² energy and the same co-support depth. One-way only: the converse
