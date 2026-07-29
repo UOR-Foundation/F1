@@ -47,6 +47,7 @@ import F1Square.Square.WeilLattice
 import F1Square.Square.Forced
 import F1Square.Square.WeilPSD
 import F1Square.Square.AngleEmbeddingBound
+import F1Square.Square.SineSquareSOS
 import F1Square.Square.FrobForm
 import F1Square.Square.AtlasRule
 import F1Square.Square.KillTest

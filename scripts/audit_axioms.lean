@@ -2723,6 +2723,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.trigEmb_sq_le
 #print axioms Square.trigGram_uniform_bound
 
+-- THE ON-OBJECT SINE-SQUARE BLOCK (Square/SineSquareSOS.lean): the kernel-checked heart of the
+-- finite-rank fence. sineSquarePair: (1−cos φ)² + sin²φ = 2 − 2cos φ, for a FREE angle φ (zero-free —
+-- no zeros, no λ). On the critical line this is 2·(1−cos nθ), twice the per-zero Li term = the
+-- RH-correct sum-of-two-squares block, so the on-object certificate for 2λₙ on the line is gramOf of
+-- entries (1−cos nθ_ρ, sin nθ_ρ) ∈ [−2,2]; composed with the fence this pins it as infinite-rank. Pure
+-- trig/algebra (Rmul_sub_distrib + Rcos_sq_add_sin_sq); makes NO claim about the sign or growth of 2λₙ.
+-- Sharpens the localization; does NOT close the crux. Step 4 = RH; crux fields stay none.
+#print axioms Square.sineSquarePair
+
 -- v0.21.0 stage G, brick G0b (the full primitive form): the symmetric form on the Frobenius
 -- carrier, the genuine-diagonal forcing, the negative-PSD → Hodge bridge, and the inhabitants.
 #print axioms Square.orbit_distinct

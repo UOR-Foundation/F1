@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The on-object sine-square block — kernel-checked SOS structure of the fence** (new
+  `Square/SineSquareSOS.lean`): `sineSquarePair` proves `(1 − cos φ)² + sin²φ = 2 − 2cos φ` for a **free**
+  angle `φ` (zero-free — no zeros, no `λ`). On the critical line the Li term is `1 − Re((1−1/ρ)ⁿ) = 1 −
+  cos(nθ)`, so this is exactly `2·(1 − cos nθ)`, twice the per-zero Li term — the RH-correct sum-of-two-
+  squares decomposition. The on-object certificate for `2λₙ` on the line is therefore `gramOf` of the
+  entries `(1 − cos nθ_ρ, sin nθ_ρ) ∈ [−2,2]`, one pair per zero; composed with the finite-rank fence
+  (`gramDiag_uniform_bound`) this pins the on-object certificate as **infinite-rank** — the `Σ_ρ` over
+  zeros cannot be truncated. Pure trig/algebra (`Rmul_sub_distrib` + `Rcos_sq_add_sin_sq`). **Honest
+  scope**: the *structure* of the on-object SOS made kernel-checked; makes NO claim about the sign or
+  growth of `2λₙ`; sharpens the localization and does NOT close or approach the crux. Step 4 is RH; crux
+  fields stay `none`.
 - **The finite-rank impossibility fence for the genuine diagonal — crux localization** (new
   `Square/AngleEmbeddingBound.lean`): converts *"no fixed-dimension bounded-entry Euclidean embedding can
   realize `2λₙ`"* from folklore into a kernel-checked theorem, explaining non-smugglingly WHY every finite
