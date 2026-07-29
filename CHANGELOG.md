@@ -42,6 +42,19 @@ audit-visible hypothesis, never an axiom).
   form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
   convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
   Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment problem is well-posed — moment-realization capstone** (new
+  `Square/MomentProblemWellPosed.lean`): packages the sub-arc's two halves — conditional *existence* and
+  completion-level *uniqueness* — into the single statement they were aiming at. `besselSeq_realizes_unique`
+  proves any `L²` element with the same moments as the realized one equals it (`L2Elt_moment_eq_imp_eq`
+  applied to `besselSeq_realizes_of_modulus`); `moment_problem_wellposed` is the headline conjunction —
+  a rational sequence `μ` carrying a Bessel modulus is realized by a completed `L²` element `E`
+  (`⟨E, xⁿ⟩ = ofQ(μ n)` for all `n`), and every completed element with those moments is `E`, so the moment
+  map is a **bijection** on this class (the constructive Hausdorff moment theorem for the class). Existence
+  is conditional on the supplied rational Bessel modulus (audit-visible, never asserted for a particular
+  `μ`); uniqueness is unconditional; the composition is a two-line splice of existing results, no new
+  analysis. **Honest scope**: classical measure-theoretic well-posedness of the *moment map*, NOT
+  surjectivity onto arbitrary sequences, NOT positivity of any crux form. Step 4 is RH; crux fields stay
+  `none`.
 - **The Bessel partial norm and the tail identity — closing moment-realization brick** (new
   `Square/BesselPartialNorm.lean`): exhibits the coda's rational modulus in its classical
   Bessel/Riesz–Fischer shape. `qHil_congr` proves pointwise `Qeq` in each coefficient vector gives `Qeq`

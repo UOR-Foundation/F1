@@ -5717,6 +5717,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.pNorm_dim_inv
 #print axioms Square.besselDiffNorm_eq_pNorm_sub
 
+-- THE MOMENT PROBLEM IS WELL-POSED (Square/MomentProblemWellPosed.lean): capstone of the
+-- moment-realization sub-arc — packages conditional existence + completion-level uniqueness.
+-- besselSeq_realizes_unique: any L² element with the same moments as the realized one equals it
+-- (L2Elt_moment_eq_imp_eq applied to besselSeq_realizes_of_modulus). moment_problem_wellposed: existence
+-- ∧ uniqueness — μ (with a rational Bessel modulus) is realized by the completed element E, and every
+-- completed element with those moments is E (the moment map is a bijection on this class = the
+-- constructive Hausdorff moment theorem for the class). Existence is CONDITIONAL on the supplied rational
+-- Bessel modulus (audit-visible, never asserted for a particular μ); uniqueness is unconditional. This is
+-- classical measure-theoretic well-posedness of the MOMENT MAP, NOT surjectivity onto arbitrary
+-- sequences, NOT positivity of any crux form. Step 4 = RH; crux fields stay none.
+#print axioms Square.besselSeq_realizes_unique
+#print axioms Square.moment_problem_wellposed
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step

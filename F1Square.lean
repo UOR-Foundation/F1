@@ -495,6 +495,7 @@ import F1Square.Square.BesselSeqDist
 import F1Square.Square.MomentRealize
 import F1Square.Square.BesselCauchyModulus
 import F1Square.Square.BesselPartialNorm
+import F1Square.Square.MomentProblemWellPosed
 import F1Square.Square.ContinuousMomentLimit
 import F1Square.Square.ContinuousMomentFloorReal
 import F1Square.Square.ContinuousMomentGenTail
