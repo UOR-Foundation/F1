@@ -2707,6 +2707,22 @@ open UOR.Bridge.F1Square
 #print axioms Square.embeds_to_liNonneg
 #print axioms Square.realizesDiag_genuine_iff
 
+-- THE FINITE-RANK IMPOSSIBILITY FENCE (Square/AngleEmbeddingBound.lean): a crux-directed LOCALIZATION —
+-- converts "no fixed-dimension bounded-entry embedding realizes 2λₙ" into a kernel-checked theorem,
+-- explaining WHY every finite atlas Gram is off-object. gramDiag_uniform_bound: entry-squares ≤ ofQ c
+-- (uniform in n) ⟹ gramOf ι D n n ≤ RsumN(const c) D (an n-independent bound). realized_seq_uniformly
+-- _bounded: hence any sequence such an embedding realizes is bounded uniformly in n — contrapositive: an
+-- n-unbounded sequence (2λₙ ~ n log n, Voros) is not the diagonal of any fixed-D bounded-entry embedding.
+-- trigEmb (free angle family θ, zero-free by TYPE per §6): the on-object sine-square shape; trigEmb_sq_le
+-- (cos²≤1, sin²≤1) + trigGram_uniform_bound instantiate the fence. So the on-object certificate for the
+-- unbounded 2λₙ must be INFINITE-rank (the Σ_ρ over zeros cannot be truncated). NON-SMUGGLING: uses only
+-- cos,sin ∈ [−1,1]; makes NO claim about the sign of 2λₙ; sharpens the localization, does NOT close or
+-- approach the crux. Step 4 = RH; crux fields stay none.
+#print axioms Square.gramDiag_uniform_bound
+#print axioms Square.realized_seq_uniformly_bounded
+#print axioms Square.trigEmb_sq_le
+#print axioms Square.trigGram_uniform_bound
+
 -- v0.21.0 stage G, brick G0b (the full primitive form): the symmetric form on the Frobenius
 -- carrier, the genuine-diagonal forcing, the negative-PSD → Hodge bridge, and the inhabitants.
 #print axioms Square.orbit_distinct

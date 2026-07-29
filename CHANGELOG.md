@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The finite-rank impossibility fence for the genuine diagonal — crux localization** (new
+  `Square/AngleEmbeddingBound.lean`): converts *"no fixed-dimension bounded-entry Euclidean embedding can
+  realize `2λₙ`"* from folklore into a kernel-checked theorem, explaining non-smugglingly WHY every finite
+  atlas Gram (`e8Roots`, `atlasM (10,14)`, the Hurwitz companion) is *off-object*. On the critical line the
+  on-object certificate is the sine-square block `2(1−cos nθ) = (1−cos nθ)² + sin² nθ`, so
+  `2λₙ = Σ_ρ 2(1−cos nθ_ρ)` would be `gramOf` of entries `(1−cos nθ_ρ, sin nθ_ρ) ∈ [−2,2]` — *uniformly
+  bounded in `n`*. `gramDiag_uniform_bound` proves entry-squares `≤ ofQ c` (uniform in `n`) ⟹
+  `gramOf ι D n n ≤ RsumN(const c) D`, an `n`-independent bound; `realized_seq_uniformly_bounded` is the
+  contrapositive — a sequence unbounded in `n` (`2λₙ ~ n log n`, Voros/Lagarias) is not the diagonal of any
+  fixed-dimension, uniformly-bounded-entry embedding. `trigEmb` (a free angle family `θ`, **zero-free by
+  type** per §6) with `trigEmb_sq_le` (`cos²≤1`, `sin²≤1`) and `trigGram_uniform_bound` is the concrete
+  on-object-shaped instance. So the on-object certificate for the unbounded `2λₙ` must be **infinite-rank**
+  (the `Σ_ρ` over zeros cannot be truncated) — a genuine sharpening of the localization. **Honest scope**: a
+  kernel-checked negative/structural result using only `cos, sin ∈ [−1,1]` and a free angle family; it makes
+  NO claim about the sign of `2λₙ` and does NOT close or approach the crux. Step 4 is RH; crux fields stay
+  `none`.
+
 Post-v0.21.0 research thread — the constructive **RH witness**, the **ξ-zero symmetry group**, the
 **Bombieri–Lagarias pipeline** wiring the witness to the genuine `λ` (Li's criterion, both
 directions), the **arithmetic Hodge index ⟺ RH** equivalence stated about the *constructed* ζ, the
