@@ -5702,6 +5702,21 @@ open UOR.Bridge.F1Square
 #print axioms Square.besselSeq_L2CauchyU
 #print axioms Square.besselSeq_realizes_of_modulus
 
+-- THE BESSEL PARTIAL NORM AND THE TAIL IDENTITY (Square/BesselPartialNorm.lean): closing brick of the
+-- moment-realization sub-arc — exhibits the coda's rational modulus in its classical Bessel/Riesz–Fischer
+-- shape. qHil_congr: pointwise Qeq in each coeff vector ⟹ Qeq of the Hilbert forms (double-qsumL congr).
+-- pNorm μ N = qHil p_N p_N (N+1) = ‖p_N‖² (rational); pNorm_parseval: ‖p_N‖² = Σ_{k≤N} aCoef_k·(aCoef_k·
+-- ⟨q_k,q_k⟩) (the Bessel sum, from parseval_norm on gsFam). pNorm_dim_inv: qHil p_N p_N d = ‖p_N‖² for
+-- d>N (qHil_congr via pVec_dim_inv + qHil_trunc_eq). besselDiffNorm_eq_pNorm_sub: j≤k ⟹ besselDiffNorm μ
+-- j k = ‖p_k‖² − ‖p_j‖² (orientation via qHil squared-diff symmetry, then pVec_diff_normSq, then pin each
+-- norm to its minimal dimension). So the coda's modulus IS the classical statement that the Bessel sums
+-- ‖p_N‖²=Σ aCoef_k²‖q_k‖² are ℚ-Cauchy at the framework rate. Unconditional ℚ arithmetic; does NOT remove
+-- the realization's conditionality, NOT surjectivity, NOT positivity. Step 4 = RH; crux fields stay none.
+#print axioms Square.qHil_congr
+#print axioms Square.pNorm_parseval
+#print axioms Square.pNorm_dim_inv
+#print axioms Square.besselDiffNorm_eq_pNorm_sub
+
 -- TRUNCATION-STABILITY OF THE RATIONAL HILBERT FORM (Square/QHilbertTrunc.lean): brick 3.5a. If c,c'
 -- both vanish at every index ≥ D then qHil c c' d = qHil c c' D for d ≥ D (qHil_trunc_eq_of_ge), and
 -- so agrees at any two dimensions ≥ D (qHil_trunc_eq). Two single-step extensions — innerHil_trunc_step

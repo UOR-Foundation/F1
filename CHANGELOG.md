@@ -42,6 +42,22 @@ audit-visible hypothesis, never an axiom).
   form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
   convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
   Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Bessel partial norm and the tail identity — closing moment-realization brick** (new
+  `Square/BesselPartialNorm.lean`): exhibits the coda's rational modulus in its classical
+  Bessel/Riesz–Fischer shape. `qHil_congr` proves pointwise `Qeq` in each coefficient vector gives `Qeq`
+  of the Hilbert forms (double-`qsumL` congruence). `pNorm μ N = qHil p_N p_N (N+1)` is the rational
+  squared norm `‖p_N‖²`; `pNorm_parseval` proves `‖p_N‖² = Σ_{k≤N} aCoef_k·(aCoef_k·⟨q_k,q_k⟩)` — the
+  Bessel sum (from `parseval_norm` on `gsFam`); `pNorm_dim_inv` proves `qHil p_N p_N d = ‖p_N‖²` for `d >
+  N` (`qHil_congr` via `pVec_dim_inv` + `qHil_trunc_eq`). `besselDiffNorm_eq_pNorm_sub` then proves — for
+  `j ≤ k` — that the coda's rational squared distance is the *tail* of the Bessel sum, `besselDiffNorm μ j
+  k = ‖p_k‖² − ‖p_j‖²` (orientation via `qHil` squared-difference symmetry, then `pVec_diff_normSq`, then
+  pinning each norm to its minimal dimension). So the coda's modulus condition `besselDiffNorm μ j k ≤
+  (1/(j+1)+1/(k+1))²` is precisely the classical statement that the Bessel partial sums `‖p_N‖² = Σ
+  aCoef_k²‖q_k‖²` form a `ℚ`-Cauchy (convergent) sequence at the framework rate — the Hausdorff/Riesz–
+  Fischer validity condition, now exact and rational. **Honest scope**: the recognizable rational shape of
+  the constructive Riesz–Fischer input, unconditional finite ℚ arithmetic; does NOT remove the
+  realization's conditionality (the modulus is still a supplied, audit-visible hypothesis), NOT
+  surjectivity onto arbitrary sequences, NOT positivity. Step 4 is RH; crux fields stay `none`.
 - **The constructive Bessel modulus: making the Riesz–Fischer input rational — moment-realization coda**
   (new `Square/BesselCauchyModulus.lean`): `besselSeq_L2Elt_moment` realizes `μ` *under* the opaque
   hypothesis `L2CauchyU (besselSeq μ)`; this coda discharges that hypothesis to a **checkable rational
