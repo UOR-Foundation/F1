@@ -2822,6 +2822,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.WeilPSD_weilPrimeGram
 #print axioms Square.weilQuad_coupledWeil_split
 #print axioms Square.coupledWeil_psd_iff_dominates
+-- Wiring the coupled kernel into the crux faces (Square/CoupledWeilCrux.lean): PSD/dominance ⟹
+-- LiNonneg (sufficient half of the crux), and STRICT diagonal dominance ⟺ SpectralCrux.
+#print axioms Square.coupledWeil_diag_eq
+#print axioms Square.coupledWeil_psd_imp_hodgeNeg
+#print axioms Square.coupledWeil_psd_imp_liNonneg
+#print axioms Square.archDominatesPrime_imp_liNonneg
+#print axioms Square.coupledWeil_diag_strict_iff_crux
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.

@@ -6,6 +6,22 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The coupled Weil kernel meets the crux faces — dominance is sufficient for the crux** (new
+  `Square/CoupledWeilCrux.lean`): wires the off-diagonal `coupledWeil` kernel into the four built
+  pairing/spectral faces. `coupledWeil_diag_eq` reads the diagonal as the scalar Weil shape
+  `arch n − primeGram(n,n)` (the pairing family feeding `weilSpectralSquare`);
+  `coupledWeil_psd_imp_hodgeNeg`/`coupledWeil_psd_imp_liNonneg` carry `WeilPSD (coupledWeil …)` through
+  the diagonal (`WeilPSD_diag`, Gate B free) to Hodge-index negativity and then `LiNonneg`
+  (`spectral_bridge_nonneg`); `archDominatesPrime_imp_liNonneg` is the **composed sufficiency** —
+  `ArchDominatesPrime ⟹ LiNonneg`, so proving the archimedean form dominates the prime Gram yields
+  (non-strict) Li-positivity; and `coupledWeil_diag_strict_iff_crux` is the **exact face** — STRICT
+  diagonal dominance `arch n > primeGram(n,n) ∀n>0` ⟺ `SpectralCrux` of the induced square
+  (`weil_strict_iff_crux`). **Honest scope**: every statement is an implication with the
+  positivity/dominance as an explicit hypothesis, or an equivalence to the still-open crux — NOTHING
+  asserts `WeilPSD`, `ArchDominatesPrime`, or the strict dominance holds; `WeilPSD` gives only the
+  non-strict diagonal, reaching `LiNonneg` (as `embeds_to_liNonneg` does), not the strict crux. This
+  makes precise that assembling the coupled kernel AND proving its dominance closes the crux, and that
+  the dominance IS RH (Weil 1952; Bombieri–Lagarias 1999). Crux fields stay `none`.
 - **The coupled Weil kernel: the off-diagonal assembly — closes the step 3→4 "diagonal-only" gap at the
   OBJECT level** (new `Square/CoupledWeilKernel.lean`): until now the only Weil kernel ever instantiated
   was the strictly-diagonal `multForm α` (its off-diagonal killed by sifting), and the prime side
