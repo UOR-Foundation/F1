@@ -2732,6 +2732,15 @@ open UOR.Bridge.F1Square
 -- Sharpens the localization; does NOT close the crux. Step 4 = RH; crux fields stay none.
 #print axioms Square.sineSquarePair
 
+-- THE ON-OBJECT ANGLE EMBEDDING DIAGONAL (Square/AngleGramDiagonal.lean): completes the on-object SOS
+-- structure. angleEmb θ sends coordinate pairs to the sine-square block (1−cos nθ_k, sin nθ_k);
+-- angleGram_diag: gramOf (angleEmb θ)(2m) n n = Σ_{k<m}(2 − 2cos nθ_k) exactly (RsumN pair-fold +
+-- sineSquarePair). On the line (θ_k=arg(1−1/ρ_k)) this is 2λₙ = Σ_ρ 2(1−cos nθ_ρ), the on-object SOS
+-- certificate; composed with the fence (gramDiag_uniform_bound) it is infinite-rank. FREE angle family
+-- (zero-free by type §6); NO claim about the sign or growth of 2λₙ. Sharpens the localization; does NOT
+-- close the crux. Step 4 = RH; crux fields stay none.
+#print axioms Square.angleGram_diag
+
 -- v0.21.0 stage G, brick G0b (the full primitive form): the symmetric form on the Frobenius
 -- carrier, the genuine-diagonal forcing, the negative-PSD → Hodge bridge, and the inhabitants.
 #print axioms Square.orbit_distinct

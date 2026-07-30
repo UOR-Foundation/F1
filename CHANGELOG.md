@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The on-object angle embedding and its exact diagonal — completes the on-object SOS structure** (new
+  `Square/AngleGramDiagonal.lean`): the **on-object angle embedding** `angleEmb θ` sends each pair of
+  coordinates to the sine-square block `(1 − cos(nθ_k), sin(nθ_k))`, and `angleGram_diag` proves its Gram
+  diagonal is *exactly* the sum of the per-zero blocks — `gramOf (angleEmb θ) (2m) n n = Σ_{k<m}(2 −
+  2cos(nθ_k))` (the finite `RsumN` pair-fold, each pair collapsed by `sineSquarePair`). On the critical
+  line (`θ_k = arg(1 − 1/ρ_k)`) each block is `2·(1 − cos nθ_k)`, twice the per-zero Li term, so the
+  diagonal is `Σ_ρ 2(1 − cos nθ_ρ) = 2λₙ`: the on-object SOS certificate for `2λₙ` on the line, one
+  two-square block per zero. Composed with the fence (`gramDiag_uniform_bound`, entries in `[−2,2]`) this
+  pins that certificate as **infinite-rank** — the `Σ_ρ` over zeros cannot be truncated. **Honest scope**:
+  pure trig/algebra on a **free** angle family (zero-free by type — §6); no zeros, no `λ`, no claim about
+  the sign or growth of `2λₙ`; makes the on-object certificate’s *structure* kernel-checked and sharpens
+  the localization, and does NOT close or approach the crux. Step 4 is RH; crux fields stay `none`.
 - **The on-object sine-square block — kernel-checked SOS structure of the fence** (new
   `Square/SineSquareSOS.lean`): `sineSquarePair` proves `(1 − cos φ)² + sin²φ = 2 − 2cos φ` for a **free**
   angle `φ` (zero-free — no zeros, no `λ`). On the critical line the Li term is `1 − Re((1−1/ρ)ⁿ) = 1 −
