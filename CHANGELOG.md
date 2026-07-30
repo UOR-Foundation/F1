@@ -6,6 +6,33 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The coupled Weil kernel: the off-diagonal assembly — closes the step 3→4 "diagonal-only" gap at the
+  OBJECT level** (new `Square/CoupledWeilKernel.lean`): until now the only Weil kernel ever instantiated
+  was the strictly-diagonal `multForm α` (its off-diagonal killed by sifting), and the prime side
+  `weilPrimePart` was a **scalar per single test**; the program doc's own gap was *"the whole of step 3
+  fires at the diagonal-multiplier level … not the Weil functional on the test space."* This file
+  assembles the genuinely **off-diagonal** coupled kernel `coupledWeil arch w v M (i,j) =
+  (multForm arch)(i,j) − primeGram w v M (i,j)` — the archimedean diagonal multiplier MINUS the **prime
+  Gram** `primeGram w v M (i,j) = Σ_{m<M} w(m)·v(m,i)·v(m,j)`. This is the faithful bilinear extension of
+  the built prime side: `weilPrimePart T = Σ_{n<X} Λ(n+1)·(…)` has von Mangoldt weights `Λ ≥ 0` on
+  per-place test values, so the cross-correlation `g_i ⋆ g_j^τ` has prime side `Σ_n Λ(n+1)·v_i(n)·v_j(n)`
+  = `primeGram (Λ∘succ) v X`; `v m i` is the interface transform value `ĝ_i` at place `m`, exactly as
+  `WeilTest.f` is interface data. Structural laws, all kernel-checked: `primeGram_sym` (symmetric);
+  `weilQuad_primeGram_split` — the prime form is a **weighted sum of squares over prime-powers**,
+  `weilQuad (primeGram w v M) c N = Σ_{m<M} w(m)·(Σ_i c_i·v(m,i))²` (via a finite-Fubini interchange
+  `weilQuad_sumKernel` + the weighted rank-one `weilQuad_wRankOne`); `WeilPSD_primeGram` (PSD for `w ≥ 0`,
+  **no sqrt** — each weighted square is nonneg) and `WeilPSD_weilPrimeGram` (**UNCONDITIONAL** on the
+  genuine von Mangoldt weight, `vonMangoldt_nonneg`); `weilQuad_coupledWeil_split` — **the coupled form is
+  the arch spectral square minus the prime square-sum**, `weilQuad (coupledWeil …) c N =
+  (Σ_i c_i²·arch_i) − (Σ_m w(m)·(Σ_i c_i v(m,i))²)`; and the honest capstone `coupledWeil_psd_iff_dominates`
+  — `WeilPSD (coupledWeil arch w v M) ⟺ ArchDominatesPrime` (the arch form dominates the prime Gram on
+  every test). **Honest scope**: the coupled kernel is a genuinely off-diagonal Weil form abstract over the
+  interface data `arch, w, v` (no `λ`, no zeros); its full positivity is `ArchDominatesPrime` = the
+  archimedean trend dominating the prime oscillation = Weil positivity on the test span, which **IS RH**
+  (the `Dominance.Dominated` face at the quadratic level) and is **never asserted**. A difference of PSD
+  forms is not PSD in general (which is why `WeilPSD_add` has no subtraction analog) — that failure is
+  exactly the crux. This delivers step 4's missing OBJECT and its exact split; step 4's positivity stays
+  RH; crux fields stay `none`.
 - **The on-object angle embedding and its exact diagonal — completes the on-object SOS structure** (new
   `Square/AngleGramDiagonal.lean`): the **on-object angle embedding** `angleEmb θ` sends each pair of
   coordinates to the sine-square block `(1 − cos(nθ_k), sin(nθ_k))`, and `angleGram_diag` proves its Gram

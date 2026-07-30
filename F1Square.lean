@@ -324,6 +324,7 @@ import F1Square.Square.BernsteinDeviation
 import F1Square.Square.BernsteinBasisZero
 import F1Square.Square.BernsteinClampMatch
 import F1Square.Square.SelfAdjoint
+import F1Square.Square.CoupledWeilKernel
 import F1Square.Square.Projection
 import F1Square.Square.StableInner
 import F1Square.Analysis.IntegralInner

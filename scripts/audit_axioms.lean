@@ -2807,6 +2807,21 @@ open UOR.Bridge.F1Square
 #print axioms Square.multForm_psd_via_correction
 #print axioms Square.burnol_corrected_nonneg
 #print axioms Square.burnol_pairing_psd_via_correction
+-- The coupled Weil kernel (Square/CoupledWeilKernel.lean): the OFF-DIAGONAL assembly closing the
+-- step 3→4 diagonal-only gap — arch spectral square MINUS the prime Gram (von Mangoldt weights),
+-- the quadratic SPLIT, unconditional prime-Gram PSD, and the honest capstone WeilPSD ⟺ dominance = RH.
+#print axioms Square.weilQuad_sub
+#print axioms Square.Rmul_pull2
+#print axioms Square.weilQuad_scale
+#print axioms Square.weilQuad_rankOne_eq
+#print axioms Square.weilQuad_wRankOne
+#print axioms Square.primeGram_sym
+#print axioms Square.weilQuad_sumKernel
+#print axioms Square.weilQuad_primeGram_split
+#print axioms Square.WeilPSD_primeGram
+#print axioms Square.WeilPSD_weilPrimeGram
+#print axioms Square.weilQuad_coupledWeil_split
+#print axioms Square.coupledWeil_psd_iff_dominates
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.
