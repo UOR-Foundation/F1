@@ -91,4 +91,17 @@ theorem logPull_dilate_shift (n : Nat) (hn : 1 ≤ n) (φ : L2Test) (u : Real) :
   φ.hfc _ _ (Req_symm (Req_trans (RexpReal_add (logN n hn) u)
     (Rmul_congr (Rexp_logN n hn) (Req_refl (RexpReal u)))))
 
+
+/-- **The bridge is a homomorphism**: composing two dilations = summing two shifts — `logPull (dilateTest
+    m (dilateTest n φ)) u ≈ logPull φ ((log n + log m) + u)` (two applications of `logPull_dilate_shift`
+    + associativity). The multiplicative group of dilations maps to the additive group of shifts. -/
+theorem logPull_dilate_shift_comp (m n : Nat) (hm : 1 ≤ m) (hn : 1 ≤ n) (φ : L2Test) (u : Real) :
+    Req (logPull (dilateTest (⟨(m : Int), 1⟩ : Q) (by show (0:Int) < (m:Int); omega) Nat.one_pos
+          (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0:Int) < (n:Int); omega) Nat.one_pos φ)) u)
+        (logPull φ (Radd (Radd (logN n hn) (logN m hm)) u)) := by
+  refine Req_trans (logPull_dilate_shift m hm
+    (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0:Int) < (n:Int); omega) Nat.one_pos φ) u) ?_
+  refine Req_trans (logPull_dilate_shift n hn φ (Radd (logN m hm) u)) ?_
+  exact φ.hfc _ _ (RexpReal_congr (Req_symm (Radd_assoc (logN n hn) (logN m hm) u)))
+
 end UOR.Bridge.F1Square.Square

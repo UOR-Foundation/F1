@@ -24,7 +24,9 @@ All notable changes to this project are documented here. The format is based on
   covariance: on the log line the dilation by `n` becomes the additive shift by `log n`
   (`logPull (dilateTest n φ) u ≈ logPull φ (log n + u)`, from `Rexp_logN` and `RexpReal_add`) — the
   defining identity of the multiplicative↔additive (Wall 1) bridge, tying the group action to the
-  additive shift. Crux stays `none`.
+  additive shift. `logPull_dilate_shift_comp` completes it to a HOMOMORPHISM: composing two dilations =
+  summing two shifts (`logPull (dilateTest m (dilateTest n φ)) u ≈ logPull φ ((log n + log m) + u)`) — the
+  multiplicative group of dilations maps to the additive group of shifts. Crux stays `none`.
 - **The coupled Weil dichotomy** (new `Square/CoupledWeilDichotomy.lean`): the coupled-kernel analog of
   the built `burnol_sonine_dichotomy`, packaging the honest step-4 structure. For a coupled kernel with
   an indefinite archimedean multiplier (some `arch(k) < 0`, as the genuine Burnol `α(2) < 0`),
