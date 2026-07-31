@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The indefinite-arch obstruction, kernel-checked** (new `Square/CoupledWeilIndefinite.lean`): turns
+  the coupled kernel's standing honesty caveat into a theorem. If the archimedean multiplier has ANY
+  negative entry (`¬ Rnonneg (arch k)`), `ArchDominatesPrime` over ALL tests is FALSE
+  (`archDominatesPrime_false_of_neg_arch`) — the coordinate indicator `δ_k` gives arch energy
+  `arch(k) < 0` below the nonnegative prime energy `Σ_m w(m)v(m,k)²` — hence the coupled kernel is NOT
+  `WeilPSD` (`coupledWeil_not_psd_of_neg_arch`, via `coupledWeil_psd_iff_dominates`). So for the genuine
+  indefinite arch (`α(2) < 0`, `burnol_pairing_indefinite`) the capstone's "= RH" reading holds ONLY
+  under the (unbuilt) Sonine-space test restriction that cancels the arch-negative band — over the whole
+  space it is simply false. **Honest scope**: a NEGATIVE structural result — it does not close the crux;
+  it proves closing cannot proceed by raw whole-space dominance and must use the co-support restriction.
+  Axiom-clean {propext, Quot.sound}. Crux stays `none`.
 - **The diagonal-dominance lever for the coupled kernel** (new `Square/CoupledWeilDiagDominant.lean`):
   applies the Gershgorin certificate to `coupledWeil`, giving a CONCRETE per-`n` sufficient condition
   for the coupled positivity. Since the coupled kernel's off-diagonal entries are `−primeGram(i,j)`

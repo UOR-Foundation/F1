@@ -2869,6 +2869,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupledWeil_diagDominant_of_primeRowSum
 #print axioms Square.coupledWeil_psd_of_diagDominant
 #print axioms Square.coupledWeil_liNonneg_of_primeRowSum
+-- The indefinite-arch obstruction (Square/CoupledWeilIndefinite.lean): a negative arch entry ⟹
+-- ArchDominatesPrime false over all tests ⟹ coupled kernel not WeilPSD; the '=RH' needs the Sonine restriction.
+#print axioms Square.archDominatesPrime_false_of_neg_arch
+#print axioms Square.coupledWeil_not_psd_of_neg_arch
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal

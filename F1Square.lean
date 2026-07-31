@@ -333,6 +333,7 @@ import F1Square.Square.CoupledWeilGenuine
 import F1Square.Square.CoupledWeilPlaceValue
 import F1Square.Square.DiagDominant
 import F1Square.Square.CoupledWeilDiagDominant
+import F1Square.Square.CoupledWeilIndefinite
 import F1Square.Square.Projection
 import F1Square.Square.StableInner
 import F1Square.Analysis.IntegralInner
