@@ -2849,6 +2849,13 @@ open UOR.Bridge.F1Square
 -- explicit-formula diagonal match, strict diagonal dominance ⟺ genuine SpectralCrux ⟺ coupling.
 #print axioms Square.coupledWeil_diag_pos_iff_genuine_crux
 #print axioms Square.coupledWeil_diag_pos_iff_genuine_coupling
+-- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
+-- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
+#print axioms Square.weilPrimeTerm_eq_placeVal
+#print axioms Square.weilPrimePart_eq_placeVal_sum
+#print axioms Square.primeGram_vFrom_apply
+#print axioms Square.weilPrimeGram_vFrom_psd
+#print axioms Square.primeGram_vFrom_sym
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.
