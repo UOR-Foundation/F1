@@ -4984,6 +4984,12 @@ open UOR.Bridge.F1Square
 -- mellinMoment oneTest 0 ≈ 1 and mellinMoment clampTest 0 ≈ 1/2 — the moment functionals
 -- provably separate tests.
 #print axioms Analysis.riemannIntegral_congr_unit
+
+-- The linear change of variables for the interval integral (new Analysis/DilateIntegral.lean).
+#print axioms Analysis.dilate_fc
+#print axioms Analysis.dilate_lip
+#print axioms Analysis.riemannIntegralI_dilate
+
 #print axioms Square.clamp01_inert
 #print axioms Square.mellinMoment_one_zero
 #print axioms Square.mellinMoment_clamp_zero

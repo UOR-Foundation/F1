@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The linear change of variables for the certified interval integral** (new
+  `Analysis/DilateIntegral.lean`): the multiplicative-substitution engine of transform-bridge Wall 1
+  (Haar measure). `riemannIntegralI_dilate` proves `∫_{s·lo}^{s·(lo+w)} f(y) dy ≈ s·∫_lo^{lo+w} f(s·x) dx`
+  — the affine substitution `y = s·x` at the value level, for any bounded-Lipschitz `f` and rational
+  scale `s > 0`. Proof by GLOBAL affine distributivity: both sides pull back to `[0,1]` with integrands
+  pointwise-equal everywhere (`s·(lo + w·t) = (s·lo) + (s·w)·t`), so no window restriction is needed;
+  the two natural Lipschitz moduli (`L·(s·w)` vs `(L·s)·w`) are reconciled through
+  `riemannIntegral_certif_irrel` (certificate-independence of the integral value). `dilate_lip` /
+  `dilate_fc` supply the slope-`s` chain rule (`x ↦ f(s·x)` is `(L·s)`-Lipschitz and `≈`-congruent).
+  **Honest scope**: this is the LINEAR (Lebesgue) substitution, the covariance of the *unweighted*
+  interval integral — the engine of, but NOT yet, Haar invariance `∫ φ dx/x = ∫ φ(ax) dx/x` (which
+  needs this carried through the `1/x` weight, the next brick). Not the convolution, not the Mellin
+  theorem; the whole-space positivity those would carry is step 4 = RH. Crux stays `none`.
 - **The multiplicative Haar-measure integral over a bounded interval** (new
   `Analysis/HaarInterval.lean`): the first certified integral against the invariant measure `dx/x` of
   the multiplicative group — the measure the Mellin transform and the multiplicative convolution
