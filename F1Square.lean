@@ -340,6 +340,7 @@ import F1Square.Square.MultShift
 import F1Square.Square.Projection
 import F1Square.Square.StableInner
 import F1Square.Analysis.IntegralInner
+import F1Square.Analysis.HaarInterval
 import F1Square.Analysis.IntegralCertIrrel
 import F1Square.Analysis.IntegralRsmul
 import F1Square.Analysis.IntegralBilinear

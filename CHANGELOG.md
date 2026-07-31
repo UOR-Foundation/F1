@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The multiplicative Haar-measure integral over a bounded interval** (new
+  `Analysis/HaarInterval.lean`): the first certified integral against the invariant measure `dx/x` of
+  the multiplicative group — the measure the Mellin transform and the multiplicative convolution
+  theorem integrate against, and the second transform-bridge wall (Wall 1, the Haar measure). Reuses
+  the step-3 L² product machinery (`IntegralInner`'s `l2lip`/`l2fc`) with one new integrand: the
+  clamped reciprocal (`ClampedInv`) packaged as an `L2Test` (`recipTest a`, modulus `(1/a)²`, bound
+  `1/a`, both rational; inert `= 1/x` on `[a,∞)`, exactly `1/q` at every rational `q ≥ a` by
+  `haarDensity_at_rational`). `innerIonI φ ψ lo w = ∫_lo^{lo+w} φ·ψ` lifts the `[0,1]`-fixed `innerI`
+  to a general rational interval through the affine gateway (`innerIonI_self_nonneg`: the interval L²
+  norm is `≥ 0`); `haarIntegral φ a lo w = ∫_lo^{lo+w} φ(x)·(1/max(x,a)) dx` is the Haar integral, the
+  genuine `∫ φ dx/x` when `a ≤ lo`, and `≥ 0` for a non-negative test (`haarIntegral_nonneg`).
+  **Honest scope — fenced hard**: this constructs the `dx/x` integral over an interval bounded away
+  from `0`, as a certified real. It is NOT **Haar invariance** (`∫ φ(x) dx/x = ∫ φ(ax) dx/x`, the
+  measure's defining property — needs the affine change of variables carried through the `1/x`
+  weight), NOT the exp/log change of variables tying it to the additive line, NOT the convolution
+  `⋆`, NOT the Mellin convolution theorem. Those are the transform-bridge walls that would make
+  `weilPrimeGram (vFrom g)` the genuine autocorrelation Gram — step 4 = RH. Crux stays `none`.
 - **The multiplicative group action on tests — first structural prerequisite of the transform bridge**
   (new `Square/MultShift.lean`): the dilation `x ↦ a·x` that the `{n, 1/n}` point representation
   (`WeilTest`) provably cannot carry (`a·(1/n) = a/n` leaves the lattice), now built on the function-

@@ -4200,6 +4200,11 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.clampedInv_ofQ
 #print axioms Analysis.lip_mono
 
+-- The multiplicative Haar-measure integral over a bounded interval (new Analysis/HaarInterval.lean).
+#print axioms Analysis.innerIonI_self_nonneg
+#print axioms Analysis.haarDensity_at_rational
+#print axioms Analysis.haarIntegral_nonneg
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add
