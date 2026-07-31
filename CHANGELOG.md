@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The coupled Weil form is antitone in the prime band — no finite prime cutoff certifies the
+  dominance** (new `Square/CoupledWeilMono.lean`): the coupled kernel subtracts the prime Gram, and
+  (for nonnegative weights) each added prime-power is a weighted square, so enlarging the band `M`
+  only increases the subtracted prime energy and decreases the coupled form. `coupledWeil_quad_split`
+  gives the form-level split `weilQuad(coupledWeil) = weilQuad(multForm arch) − weilQuad(primeGram)`;
+  `coupledWeil_quad_nonneg_iff` is the per-test dominance atom (`Rnonneg ⟺ prime energy ≤ arch
+  energy`, the `∀`-form being the capstone); `weilQuad_primeGram_mono` proves the prime energy is
+  monotone in `M` (`RsumN_le_prefix`); and `coupledWeil_quad_antitone_M` concludes the coupled form is
+  antitone in `M` — more prime-powers, smaller form. This is the prime-side analogue of the
+  infinite-rank fence: the `Σ_m` over prime-powers cannot be truncated, the dominance must hold
+  against the full prime side. **Honest scope**: pure monotonicity algebra abstract over `arch, w, v`
+  (`w ≥ 0`; the von Mangoldt case is unconditional); NOTHING asserts the dominance holds at any `M`.
+  Crux fields stay `none`.
 - **The coupled Weil kernel meets the crux faces — dominance is sufficient for the crux** (new
   `Square/CoupledWeilCrux.lean`): wires the off-diagonal `coupledWeil` kernel into the four built
   pairing/spectral faces. `coupledWeil_diag_eq` reads the diagonal as the scalar Weil shape

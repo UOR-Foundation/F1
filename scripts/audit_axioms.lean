@@ -2829,6 +2829,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupledWeil_psd_imp_liNonneg
 #print axioms Square.archDominatesPrime_imp_liNonneg
 #print axioms Square.coupledWeil_diag_strict_iff_crux
+-- The coupled form is antitone in the prime band (Square/CoupledWeilMono.lean): per-test dominance
+-- atom + prime-energy monotone in M ⟹ coupled form antitone; no finite prime cutoff certifies it.
+#print axioms Square.coupledWeil_quad_split
+#print axioms Square.coupledWeil_quad_nonneg_iff
+#print axioms Square.weilQuad_primeGram_mono
+#print axioms Square.coupledWeil_quad_antitone_M
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.
