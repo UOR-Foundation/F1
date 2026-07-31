@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The Sonine co-support recovers coupled positivity** (new `Square/CoupledWeilSonine.lean`): the
+  POSITIVE companion of the indefinite-arch obstruction. On the discrete `f, f̂` co-support subspace —
+  the transform-side `PrimeNull` (`Σ_i c_i·v(m,i) = 0` at every prime place, so the prime energy is
+  exactly zero, `weilQuad_primeGram_prime_null`) intersected with the archimedean complement (arch form
+  `≥ 0`, `multForm_psd_on_complement`) — the coupled Weil form is `arch − 0 = arch ≥ 0`
+  (`coupledWeil_psd_on_sonine_restriction`). This realizes, at the coupled-kernel level, the doc's
+  central mechanism: the co-support coupling cancels the arch-negative band. **Honest scope**: positivity
+  on a STRICT subspace — it does NOT force full Weil positivity (the doc's second dichotomy branch: it
+  sharpens the localization, it does not close the crux). Extending it from the co-support subspace to
+  the whole space via the genuine transform coupling (unbuilt) is step 4 = RH. Crux stays `none`.
 - **The indefinite-arch obstruction, kernel-checked** (new `Square/CoupledWeilIndefinite.lean`): turns
   the coupled kernel's standing honesty caveat into a theorem. If the archimedean multiplier has ANY
   negative entry (`¬ Rnonneg (arch k)`), `ArchDominatesPrime` over ALL tests is FALSE

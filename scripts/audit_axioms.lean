@@ -2873,6 +2873,10 @@ open UOR.Bridge.F1Square
 -- ArchDominatesPrime false over all tests ⟹ coupled kernel not WeilPSD; the '=RH' needs the Sonine restriction.
 #print axioms Square.archDominatesPrime_false_of_neg_arch
 #print axioms Square.coupledWeil_not_psd_of_neg_arch
+-- The Sonine co-support recovers coupled positivity (Square/CoupledWeilSonine.lean): on the co-support
+-- subspace (prime energy = 0) intersect the arch complement, the coupled form is arch >= 0.
+#print axioms Square.weilQuad_primeGram_prime_null
+#print axioms Square.coupledWeil_psd_on_sonine_restriction
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal
