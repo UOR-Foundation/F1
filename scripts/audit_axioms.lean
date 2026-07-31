@@ -2885,6 +2885,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.not_Rnonneg_burnolAlphaTwo
 #print axioms Square.coupledWeilBurnol_not_psd
 #print axioms Square.coupledWeilBurnol_sonine_dichotomy
+-- The multiplicative group action on tests (Square/MultShift.lean): dilateTest x↦a·x on L2Test, the
+-- first structural prerequisite of the transform bridge the {n,1/n} point-model could not carry.
+#print axioms Square.dilateTest_comp
+#print axioms Square.dilateTest_one
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal

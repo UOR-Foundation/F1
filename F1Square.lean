@@ -336,6 +336,7 @@ import F1Square.Square.CoupledWeilDiagDominant
 import F1Square.Square.CoupledWeilIndefinite
 import F1Square.Square.CoupledWeilSonine
 import F1Square.Square.CoupledWeilDichotomy
+import F1Square.Square.MultShift
 import F1Square.Square.Projection
 import F1Square.Square.StableInner
 import F1Square.Analysis.IntegralInner

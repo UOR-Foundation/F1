@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The multiplicative group action on tests — first structural prerequisite of the transform bridge**
+  (new `Square/MultShift.lean`): the dilation `x ↦ a·x` that the `{n, 1/n}` point representation
+  (`WeilTest`) provably cannot carry (`a·(1/n) = a/n` leaves the lattice), now built on the function-
+  space `L2Test`. `dilateTest a φ` is a genuine `L2Test` (`(dilateTest a φ).f x = φ.f (a·x)`, Lipschitz
+  modulus `L·a`, bound `M`); `dilateTest_comp` is the GROUP LAW (`dilateTest a (dilateTest b φ) ≈
+  dilateTest (a·b) φ`), `dilateTest_one` the identity. This supplies the multiplicative group action
+  underlying the Weil `f ⋆ g^τ` co-support coupling — the exact capability whose absence forced the
+  coupled kernel's `v` to stay at the point-value level. **Honest scope — fenced hard**: this is ONLY
+  the group ACTION and its algebraic law on the ADDITIVE-measure `L2Test`; it is NOT Haar-invariant
+  (`innerI = ∫₀¹·dt` is not dilation-invariant; the multiplicative Haar `dx/x` is unbuilt), NOT the
+  convolution `⋆`, NOT the Mellin convolution theorem. One structural notch of the deep transform
+  bridge; the walls (Haar measure, convolution) remain, and the whole-space positivity they would carry
+  is step 4 = RH. Surfaced by an adversarial transform-bridge scoping workflow (the multiplicative-shift
+  angle, judged BUILD/forward/not-padding). Crux stays `none`.
 - **The coupled Weil dichotomy** (new `Square/CoupledWeilDichotomy.lean`): the coupled-kernel analog of
   the built `burnol_sonine_dichotomy`, packaging the honest step-4 structure. For a coupled kernel with
   an indefinite archimedean multiplier (some `arch(k) < 0`, as the genuine Burnol `α(2) < 0`),
