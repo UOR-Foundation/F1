@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The diagonal-dominance lever for the coupled kernel** (new `Square/CoupledWeilDiagDominant.lean`):
+  applies the Gershgorin certificate to `coupledWeil`, giving a CONCRETE per-`n` sufficient condition
+  for the coupled positivity. Since the coupled kernel's off-diagonal entries are `−primeGram(i,j)`
+  (`coupledWeil_offAbs_eq`: `|·| = |primeGram(i,j)|`) and its diagonal is `arch(n) − primeGram(n,n)`,
+  diagonal dominance reads `Σ_{j≠n}|primeGram(n,j)| ≤ arch(n) − primeGram(n,n)`
+  (`coupledWeil_diagDominant_of_primeRowSum`); under it the coupled kernel is `WeilPSD`
+  (`coupledWeil_psd_of_diagDominant`, via `coupledWeil_sym`), hence `LiNonneg`
+  (`coupledWeil_liNonneg_of_primeRowSum`). **Honest scope**: a SUFFICIENT condition on the prime
+  off-diagonal mass, never asserted; STRICTLY STRONGER than the exact dominance (= RH) — PSD does not
+  imply diagonal dominance, so the genuine kernel may be PSD (RH) without being diagonally dominant. A
+  concrete, per-`n`, bracket-checkable lever, NOT a discharge. Crux stays `none`.
 - **The Gershgorin PSD certificate: diagonal dominance ⟹ WeilPSD** (new `Square/DiagDominant.lean`):
   a general, UNCONDITIONAL, sqrt-free positive-semidefiniteness certificate the repo lacked — beyond
   the rank-one / Euclidean-Gram certificates, an entire new PSD class. `WeilPSD_of_diagDominant`: a

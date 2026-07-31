@@ -2862,6 +2862,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.offKernel_absRow
 #print axioms Square.weilQuad_nonneg_of_diagDominant
 #print axioms Square.WeilPSD_of_diagDominant
+-- The diagonal-dominance lever for the coupled kernel (Square/CoupledWeilDiagDominant.lean): concrete
+-- prime-row-sum domination ⟹ DiagDominant ⟹ WeilPSD ⟹ LiNonneg (a bracket-checkable sufficient lever).
+#print axioms Square.coupledWeil_offAbs_eq
+#print axioms Square.coupledWeil_diagDominant_of_primeRowSum
+#print axioms Square.coupledWeil_psd_of_diagDominant
+#print axioms Square.coupledWeil_liNonneg_of_primeRowSum
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal
