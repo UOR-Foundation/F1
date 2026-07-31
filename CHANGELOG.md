@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The Gershgorin PSD certificate: diagonal dominance ⟹ WeilPSD** (new `Square/DiagDominant.lean`):
+  a general, UNCONDITIONAL, sqrt-free positive-semidefiniteness certificate the repo lacked — beyond
+  the rank-one / Euclidean-Gram certificates, an entire new PSD class. `WeilPSD_of_diagDominant`: a
+  symmetric kernel whose off-diagonal absolute row sum is dominated by its diagonal (`DiagDominant`:
+  `Σ_{j≠i}|B(i,j)| ≤ B(i,i)` ∀i) is `WeilPSD`. Constructivized via the pointwise AM-GM
+  `2·x·(y·k) ≥ −(x²+y²)·|k|` (`cross_term_lower`, from `(|x|−|y|)² ≥ 0`), symmetrized across the double
+  sum (`weilQuad_offdiag_lower`: `weilQuad D c N ≥ −Σ_i c_i²Σ_j|D(i,j)|` for symmetric `D`), split
+  diagonal + off-diagonal (`weilQuad_congr`, `offKernel`), and closed with `Rnonneg_of_Radd_self`.
+  **Honest scope**: `DiagDominant` is a SUFFICIENT CONDITION, never asserted to hold; for the coupled
+  Weil kernel it is a concrete per-`n` sufficient condition for the coupled positivity, STRICTLY
+  STRONGER than the exact dominance (= RH), so whether it holds at the genuine data is unproven — a
+  fence/lever, not a discharge. Adversarially no-smuggling-checked (independent judge: BUILD, non-
+  smuggling, not RH-hard). Axiom-clean {propext, Quot.sound}; no sqrt, no choice. Crux stays `none`.
 - **The explicit-formula decomposition `2λₙ = arch n − primeGram(n,n)`, kernel-explicit** (added to
   `Square/CoupledWeilGenuine.lean`): `genuineLam_eq_arch_sub_prime` shows, under the diagonal match
   `hmatch`, that the Li coefficient is exactly the archimedean multiplier MINUS the prime Gram

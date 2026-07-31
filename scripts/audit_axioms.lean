@@ -2850,6 +2850,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupledWeil_diag_pos_iff_genuine_crux
 #print axioms Square.coupledWeil_diag_pos_iff_genuine_coupling
 #print axioms Square.genuineLam_eq_arch_sub_prime
+-- The Gershgorin PSD certificate (Square/DiagDominant.lean): symmetric + diagonally dominant ⟹
+-- WeilPSD, a new unconditional sqrt-free PSD class (AM-GM symmetrized); a sufficient-condition lever.
+#print axioms Square.Rabs_mul_self
+#print axioms Square.two_Rabs_mul_le
+#print axioms Square.cross_term_lower
+#print axioms Square.crossMass_eq_offMass
+#print axioms Square.weilQuad_offdiag_lower
+#print axioms Square.weilQuad_congr
+#print axioms Square.offKernel_sym
+#print axioms Square.offKernel_absRow
+#print axioms Square.weilQuad_nonneg_of_diagDominant
+#print axioms Square.WeilPSD_of_diagDominant
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal
