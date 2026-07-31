@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The explicit-formula decomposition `2λₙ = arch n − primeGram(n,n)`, kernel-explicit** (added to
+  `Square/CoupledWeilGenuine.lean`): `genuineLam_eq_arch_sub_prime` shows, under the diagonal match
+  `hmatch`, that the Li coefficient is exactly the archimedean multiplier MINUS the prime Gram
+  diagonal. This is the arithmetic heart of why `2λₙ` is not manifestly a sum of squares — its
+  intrinsic expression is a DIFFERENCE of the two PSD-form diagonals (arch spectral, prime Gram), so a
+  `RealizesDiag` Euclidean embedding (`gramOf ι D n n = 2λₙ`, a pure SOS) exists only when the arch
+  diagonal dominates the prime — which is RH. Ties the coupled kernel (step 4) to the discharge form.
+  **Honest scope**: `hmatch` (the explicit-formula identity) is never discharged; the decomposition is
+  a conditional restatement, asserting no positivity. Crux fields stay `none`.
 - **Grounding the coupled kernel's `v` in genuine test place-values** (new
   `Square/CoupledWeilPlaceValue.lean`): closes the faithfulness gap the no-smuggling judges flagged
   (`v` abstract, faithfulness narrative not mechanized) at the weight+shape level, DEFINITIONALLY. The

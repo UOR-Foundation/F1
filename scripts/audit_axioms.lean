@@ -2849,6 +2849,7 @@ open UOR.Bridge.F1Square
 -- explicit-formula diagonal match, strict diagonal dominance ⟺ genuine SpectralCrux ⟺ coupling.
 #print axioms Square.coupledWeil_diag_pos_iff_genuine_crux
 #print axioms Square.coupledWeil_diag_pos_iff_genuine_coupling
+#print axioms Square.genuineLam_eq_arch_sub_prime
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal
