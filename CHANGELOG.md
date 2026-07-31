@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The coupled Weil kernel as a self-adjoint operator** (new `Square/CoupledWeilOperator.lean`):
+  places the off-diagonal `coupledWeil arch w v M` into the step-3 operator/Hilbert layer, the next
+  self-adjoint operator after the diagonal `multForm α`. `coupledWeil_sym` (symmetric kernel, from
+  `multForm_sym` and `primeGram_sym`); `coupledWeil_self_adjoint` (`⟨(coupledWeil)·c, d⟩ ≈
+  ⟨c, (coupledWeil)·d⟩`, via `applyN_self_adjoint`); `coupledWeil_quad_eq_inner` (its Weil quadratic
+  form IS the inner product against its operator action, so the `WeilPSD` form-language and the
+  operator language coincide on it). **Honest scope**: pure operator algebra abstract over `arch, w,
+  v`; self-adjointness is structural (holds for every symmetric kernel, definite or not) and does NOT
+  bear on positivity — the coupled kernel's `WeilPSD` (= dominance = RH) stays exactly as open. This
+  makes it a first-class self-adjoint operator, the setting a step-4 spectral argument runs in. Crux
+  fields stay `none`.
 - **The coupled Weil form is antitone in the prime band — no finite prime cutoff certifies the
   dominance** (new `Square/CoupledWeilMono.lean`): the coupled kernel subtracts the prime Gram, and
   (for nonnegative weights) each added prime-power is a weighted square, so enlarging the band `M`

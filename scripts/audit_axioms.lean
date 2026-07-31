@@ -2835,6 +2835,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupledWeil_quad_nonneg_iff
 #print axioms Square.weilQuad_primeGram_mono
 #print axioms Square.coupledWeil_quad_antitone_M
+-- The coupled kernel as a self-adjoint operator (Square/CoupledWeilOperator.lean): symmetric,
+-- self-adjoint, quadratic form = inner product against its action — the step-4 operator language.
+#print axioms Square.coupledWeil_sym
+#print axioms Square.coupledWeil_self_adjoint
+#print axioms Square.coupledWeil_quad_eq_inner
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.
