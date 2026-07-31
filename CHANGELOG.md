@@ -14,7 +14,10 @@ All notable changes to this project are documented here. The format is based on
   complement). Exactly the doc's step-4 dichotomy at the coupled level: indefinite over all tests,
   positive on a strict subspace; carrying that positivity to the whole space via the genuine transform
   coupling is step 4 = RH. **Honest scope**: a packaging of two already-honest results, asserting no
-  whole-space positivity. Crux stays `none`.
+  whole-space positivity. Instantiated at the GENUINE Burnol multiplier `burnolMult` (whose index-1
+  sample is the proven `α(2) < 0`, `not_Rnonneg_burnolAlphaTwo`): `coupledWeilBurnol_not_psd` and
+  `coupledWeilBurnol_sonine_dichotomy` — the obstruction and dichotomy at real archimedean data. Crux
+  stays `none`.
 - **The Sonine co-support recovers coupled positivity** (new `Square/CoupledWeilSonine.lean`): the
   POSITIVE companion of the indefinite-arch obstruction. On the discrete `f, f̂` co-support subspace —
   the transform-side `PrimeNull` (`Σ_i c_i·v(m,i) = 0` at every prime place, so the prime energy is
