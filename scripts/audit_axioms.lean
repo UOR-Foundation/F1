@@ -2840,6 +2840,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupledWeil_sym
 #print axioms Square.coupledWeil_self_adjoint
 #print axioms Square.coupledWeil_quad_eq_inner
+-- The complement projection does not rescue the coupled kernel (Square/CoupledWeilComplement.lean):
+-- on the Sonine complement the coupled form is (arch ≥0) − (prime ≥0), sign undetermined.
+#print axioms Square.coupledWeil_complement_signed
+#print axioms Square.coupledWeil_complement_lower
+#print axioms Square.coupledWeil_complement_psd_iff
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.

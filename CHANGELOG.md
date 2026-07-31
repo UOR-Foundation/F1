@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The complement projection does not rescue the coupled kernel** (new
+  `Square/CoupledWeilComplement.lean`): the kernel-checked answer, for the off-diagonal coupled
+  kernel, to whether the DIAGONAL multiplier's unconditional complement-positivity
+  (`multForm_psd_on_complement`) extends — it does NOT. The coupled kernel subtracts the prime Gram
+  (itself PSD for `w ≥ 0`), so on the Sonine complement (test vanishing on the archimedean negative
+  band) the coupled form is `(arch energy ≥ 0) − (prime energy ≥ 0)`, sign UNDETERMINED.
+  `coupledWeil_complement_signed` exhibits both nonnegative pieces and the split;
+  `coupledWeil_complement_lower` gives the genuine negative gap (`≥ −(prime energy)`, not `≥ 0`);
+  `coupledWeil_complement_psd_iff` isolates the residual (positivity ⟺ prime dominated by the now-
+  nonnegative arch energy). The complement kills the archimedean negative band but leaves the
+  subtracted prime untouched — the skeleton's unconditional positivity does not carry to the whole
+  coupled form; that carrying is step 4 = RH (the doc's second dichotomy branch). **Honest scope**:
+  pure sign/algebra abstract over `arch, w, v` (`w ≥ 0`); NOTHING asserts the coupled form is
+  positive or indefinite at genuine data. Crux fields stay `none`.
 - **The coupled Weil kernel as a self-adjoint operator** (new `Square/CoupledWeilOperator.lean`):
   places the off-diagonal `coupledWeil arch w v M` into the step-3 operator/Hilbert layer, the next
   self-adjoint operator after the diagonal `multForm α`. `coupledWeil_sym` (symmetric kernel, from
