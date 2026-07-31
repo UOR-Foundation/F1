@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The coupled Weil dichotomy** (new `Square/CoupledWeilDichotomy.lean`): the coupled-kernel analog of
+  the built `burnol_sonine_dichotomy`, packaging the honest step-4 structure. For a coupled kernel with
+  an indefinite archimedean multiplier (some `arch(k) < 0`, as the genuine Burnol `α(2) < 0`),
+  `coupledWeil_sonine_dichotomy` states it is NOT `WeilPSD` over the whole space (the indicator `δ_k`
+  breaks dominance) AND is `≥ 0` on the Sonine co-support subspace (`PrimeNull` ∩ archimedean
+  complement). Exactly the doc's step-4 dichotomy at the coupled level: indefinite over all tests,
+  positive on a strict subspace; carrying that positivity to the whole space via the genuine transform
+  coupling is step 4 = RH. **Honest scope**: a packaging of two already-honest results, asserting no
+  whole-space positivity. Crux stays `none`.
 - **The Sonine co-support recovers coupled positivity** (new `Square/CoupledWeilSonine.lean`): the
   POSITIVE companion of the indefinite-arch obstruction. On the discrete `f, f̂` co-support subspace —
   the transform-side `PrimeNull` (`Σ_i c_i·v(m,i) = 0` at every prime place, so the prime energy is

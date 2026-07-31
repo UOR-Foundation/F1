@@ -2879,6 +2879,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupledWeil_psd_on_sonine_restriction
 #print axioms Square.coupledWeilCorrected_psd_on_primeNull
 #print axioms Square.coupledWeilBurnol_psd_on_primeNull
+-- The coupled Weil dichotomy (Square/CoupledWeilDichotomy.lean): indefinite arch ⟹ not WeilPSD over
+-- all tests, but ≥0 on the Sonine co-support subspace (the honest step-4 structure).
+#print axioms Square.coupledWeil_sonine_dichotomy
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal
