@@ -204,4 +204,16 @@ theorem WeilPSD_of_diagDominant (B : Nat → Nat → Real) (hsym : SymKernel B)
     (hdd : ∀ N, DiagDominant B N) : WeilPSD B :=
   fun N c => weilQuad_nonneg_of_diagDominant B hsym c N (hdd N)
 
+
+/-- **Diagonal dominance forces a nonnegative diagonal**: the diagonal dominates a sum of absolute
+    values, hence `B(i,i) ≥ 0` — so `DiagDominant` is only ever satisfiable where the diagonal is `≥ 0`
+    (for the coupled kernel: `arch(n) − primeGram(n,n) ≥ 0`, a genuine constraint on the arch excess). -/
+theorem diagDominant_imp_nonneg_diag (B : Nat → Nat → Real) (N : Nat) (hdd : DiagDominant B N)
+    {i : Nat} (hi : i < N) : Rnonneg (B i i) := by
+  refine Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg ?_) (hdd i hi))
+  refine Rnonneg_RsumN N (fun j _ => ?_)
+  by_cases h : i = j
+  · rw [if_pos h]; exact Rnonneg_zero
+  · rw [if_neg h]; exact Rnonneg_Rabs (B i j)
+
 end UOR.Bridge.F1Square.Square
