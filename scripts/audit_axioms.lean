@@ -2845,6 +2845,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupledWeil_complement_signed
 #print axioms Square.coupledWeil_complement_lower
 #print axioms Square.coupledWeil_complement_psd_iff
+-- The coupled kernel welded to the genuine crux (Square/CoupledWeilGenuine.lean): under the
+-- explicit-formula diagonal match, strict diagonal dominance ⟺ genuine SpectralCrux ⟺ coupling.
+#print axioms Square.coupledWeil_diag_pos_iff_genuine_crux
+#print axioms Square.coupledWeil_diag_pos_iff_genuine_coupling
 
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.

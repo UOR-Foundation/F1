@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The coupled kernel welded to the genuine crux** (new `Square/CoupledWeilGenuine.lean`): connects
+  the off-diagonal coupled Weil kernel to the program's central `atlas_crux_localization`, so its
+  strict diagonal dominance is tied to the GENUINE prime–archimedean coupling, not a generic induced
+  square. Under the explicit-formula diagonal match `hmatch` (the coupled Weil diagonal equals `2λₙ =
+  −⟨Cₙ,Cₙ⟩`, an EXPLICIT hypothesis, the `realizesDiag_genuine_iff` discipline),
+  `coupledWeil_diag_pos_iff_genuine_crux` gives `(∀n>0, Pos (coupledWeil arch w v M n n)) ⟺
+  SpectralCrux (genuineSpectralSquare E)` (a `Pos_congr` on the match), and
+  `coupledWeil_diag_pos_iff_genuine_coupling` chains through `atlas_crux_localization` to
+  `∀n>0, Pos (genuineArithSeq E.eta n + genuineArchSeq n)` — THE crux. **Honest scope**: `hmatch` (the
+  explicit-formula identity) is never discharged; there is no instantiation at genuine `ζ` data, and
+  even with it the strict dominance is `SpectralCrux` = RH, never asserted. The weld routes the
+  coupled kernel's face into the central crux equivalence; it discharges nothing. Crux fields stay
+  `none`.
 - **The complement projection does not rescue the coupled kernel** (new
   `Square/CoupledWeilComplement.lean`): the kernel-checked answer, for the off-diagonal coupled
   kernel, to whether the DIAGONAL multiplier's unconditional complement-positivity

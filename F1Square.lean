@@ -329,6 +329,7 @@ import F1Square.Square.CoupledWeilCrux
 import F1Square.Square.CoupledWeilMono
 import F1Square.Square.CoupledWeilOperator
 import F1Square.Square.CoupledWeilComplement
+import F1Square.Square.CoupledWeilGenuine
 import F1Square.Square.Projection
 import F1Square.Square.StableInner
 import F1Square.Analysis.IntegralInner
