@@ -2877,6 +2877,8 @@ open UOR.Bridge.F1Square
 -- subspace (prime energy = 0) intersect the arch complement, the coupled form is arch >= 0.
 #print axioms Square.weilQuad_primeGram_prime_null
 #print axioms Square.coupledWeil_psd_on_sonine_restriction
+#print axioms Square.coupledWeilCorrected_psd_on_primeNull
+#print axioms Square.coupledWeilBurnol_psd_on_primeNull
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal

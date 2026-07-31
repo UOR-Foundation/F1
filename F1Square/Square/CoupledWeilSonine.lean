@@ -60,4 +60,34 @@ theorem coupledWeil_psd_on_sonine_restriction (arch w : Nat → Real) (v : Nat �
   refine Req_trans (Rsub_congr (Req_refl _) (weilQuad_primeGram_prime_null w v M c N hnull)) ?_
   exact Req_trans (Radd_congr (Req_refl _) Rneg_zero) (Radd_zero _)
 
+
+/-- **★ THE BURNOL-CORRECTED COUPLED KERNEL IS POSITIVE ON THE CO-SUPPORT** (no complement needed): if a
+    correction lifts the arch multiplier nonnegative everywhere (`arch(i) + corr(i) ≥ 0 ∀i` — Burnol's
+    `burnol_corrected_nonneg`, the bounded negative band lifted), then the corrected coupled kernel
+    `coupledWeil (arch + corr) w v M` is `≥ 0` on the whole `PrimeNull` co-support subspace. This is the
+    coupled-kernel analog of Burnol's sharpest unconditional positivity — the correction removes the arch
+    indefiniteness, the co-support kills the prime, leaving a manifestly PSD diagonal form. The corrected
+    kernel differs from the genuine one by the window-supported defect `multForm corr`; it is NOT the
+    genuine coupled kernel, and this does not close the crux. -/
+theorem coupledWeilCorrected_psd_on_primeNull (arch corr w : Nat → Real) (v : Nat → Nat → Real)
+    (M : Nat) (c : Nat → Real) (N : Nat) (hcorr : ∀ i, Rnonneg (Radd (arch i) (corr i)))
+    (hnull : PrimeNull v M c N) :
+    Rnonneg (weilQuad (coupledWeil (fun k => Radd (arch k) (corr k)) w v M) c N) := by
+  have harch : Rnonneg (weilQuad (multForm (fun k => Radd (arch k) (corr k))) c N) :=
+    (multForm_psd_iff (fun k => Radd (arch k) (corr k))).mpr hcorr N c
+  refine Rnonneg_congr (Req_symm ?_) harch
+  refine Req_trans (weilQuad_sub (multForm (fun k => Radd (arch k) (corr k))) (primeGram w v M) c N) ?_
+  refine Req_trans (Rsub_congr (Req_refl _) (weilQuad_primeGram_prime_null w v M c N hnull)) ?_
+  exact Req_trans (Radd_congr (Req_refl _) Rneg_zero) (Radd_zero _)
+
+
+/-- **The genuine Burnol instance**: the Burnol-corrected coupled kernel (`burnolMult + burnolCorr`, the
+    2-sample Burnol multiplier with its bounded-band correction) is positive on the `PrimeNull` co-support
+    subspace, UNCONDITIONALLY — `burnol_corrected_nonneg` discharges the correction hypothesis. The
+    sharpest unconditional coupled positivity in the repo, on genuine archimedean data. -/
+theorem coupledWeilBurnol_psd_on_primeNull (w : Nat → Real) (v : Nat → Nat → Real) (M : Nat)
+    (c : Nat → Real) (N : Nat) (hnull : PrimeNull v M c N) :
+    Rnonneg (weilQuad (coupledWeil (fun k => Radd (burnolMult k) (burnolCorr k)) w v M) c N) :=
+  coupledWeilCorrected_psd_on_primeNull burnolMult burnolCorr w v M c N burnol_corrected_nonneg hnull
+
 end UOR.Bridge.F1Square.Square

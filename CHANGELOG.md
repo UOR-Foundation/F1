@@ -15,7 +15,12 @@ All notable changes to this project are documented here. The format is based on
   central mechanism: the co-support coupling cancels the arch-negative band. **Honest scope**: positivity
   on a STRICT subspace — it does NOT force full Weil positivity (the doc's second dichotomy branch: it
   sharpens the localization, it does not close the crux). Extending it from the co-support subspace to
-  the whole space via the genuine transform coupling (unbuilt) is step 4 = RH. Crux stays `none`.
+  the whole space via the genuine transform coupling (unbuilt) is step 4 = RH. Also
+  `coupledWeilCorrected_psd_on_primeNull` (using Burnol's correction `arch + corr ≥ 0` the coupled form
+  is `≥ 0` on the co-support ALONE, no complement) and its genuine instance
+  `coupledWeilBurnol_psd_on_primeNull` (`burnol_corrected_nonneg` discharged) — the coupled-kernel analog
+  of Burnol's sharpest unconditional positivity; the corrected kernel differs from the genuine one by a
+  window-supported defect and does not close the crux. Crux stays `none`.
 - **The indefinite-arch obstruction, kernel-checked** (new `Square/CoupledWeilIndefinite.lean`): turns
   the coupled kernel's standing honesty caveat into a theorem. If the archimedean multiplier has ANY
   negative entry (`¬ Rnonneg (arch k)`), `ArchDominatesPrime` over ALL tests is FALSE
