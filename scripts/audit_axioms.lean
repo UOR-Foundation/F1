@@ -2889,6 +2889,7 @@ open UOR.Bridge.F1Square
 -- first structural prerequisite of the transform bridge the {n,1/n} point-model could not carry.
 #print axioms Square.dilateTest_comp
 #print axioms Square.dilateTest_one
+#print axioms Square.logPull_dilate_shift
 -- Grounding the coupled kernel's v in genuine test place-values (Square/CoupledWeilPlaceValue.lean):
 -- placeVal IS the factor of the built weilPrimeTerm (definitional); vFrom feeds real place-values.
 #print axioms Square.weilPrimeTerm_eq_placeVal

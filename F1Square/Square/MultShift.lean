@@ -27,6 +27,8 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 -/
 import F1Square.Analysis.IntegralInner
 import F1Square.Analysis.RabsLemmas
+import F1Square.Analysis.RealPow
+import F1Square.Analysis.ExpRealAdd
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -71,5 +73,22 @@ theorem dilateTest_comp (a b : Q) (han : 0 < a.num) (had : 0 < a.den)
 theorem dilateTest_one (φ : L2Test) (x : Real) :
     Req ((dilateTest (⟨1, 1⟩ : Q) (by decide) (by decide) φ).f x) (φ.f x) :=
   φ.hfc _ _ (Req_trans (Rmul_comm (ofQ (⟨1, 1⟩ : Q) (by decide)) x) (Rmul_one x))
+
+
+/-- **The log-line pullback** `φ̃(u) = φ(eᵘ)`: sends the multiplicative half-line `(0,∞)` to the additive
+    line, where the group action `x ↦ a·x` becomes the shift `u ↦ u + log a`. A plain `Real → Real`
+    (NOT an `L2Test`: `RexpReal` is not globally Lipschitz), the additive-side view of a test. -/
+def logPull (φ : L2Test) : Real → Real := fun u => φ.f (RexpReal u)
+
+/-- **★ DILATION ↔ SHIFT** (integer scale): on the log line the multiplicative dilation by `n` becomes
+    the additive shift by `log n` — `logPull (dilateTest n φ) u ≈ logPull φ (log n + u)`. The defining
+    covariance of the multiplicative↔additive (Wall 1) bridge, tying the built group action `dilateTest`
+    to the additive shift; proved from `Rexp_logN` (`eˡᵒᵍ ⁿ = n`) and `RexpReal_add` (`eˣ⁺ʸ = eˣ·eʸ`). -/
+theorem logPull_dilate_shift (n : Nat) (hn : 1 ≤ n) (φ : L2Test) (u : Real) :
+    Req (logPull (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0:Int) < (n:Int); omega)
+          Nat.one_pos φ) u)
+        (logPull φ (Radd (logN n hn) u)) :=
+  φ.hfc _ _ (Req_symm (Req_trans (RexpReal_add (logN n hn) u)
+    (Rmul_congr (Rexp_logN n hn) (Req_refl (RexpReal u)))))
 
 end UOR.Bridge.F1Square.Square
