@@ -4211,6 +4211,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.haarDensity_at_rational
 #print axioms Analysis.haarIntegral_nonneg
 
+-- The multiplicative inversion of a test (new Analysis/ReflectTest.lean).
+#print axioms Analysis.reflectTest_eq_of_ge
+#print axioms Analysis.reflectTest_ofQ
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add

@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The multiplicative inversion of a test (`g^τ(x) = g(1/x)`)** (new `Analysis/ReflectTest.lean`): the
+  second multiplicative symmetry (after `dilateTest`), the reflection the autocorrelation `g ⋆ g^τ` of
+  the Weil prime side is built from — a first prerequisite of transform-bridge Wall 2. `reflectTest a g`
+  sends `x ↦ g(1/max(x,a))` (the clamped reciprocal `ClampedInv` precomposed with `g`), a genuine
+  `L2Test` (modulus `L_g·(1/a)²`, bound `M_g`); inert on the window (`reflectTest_eq_of_ge`:
+  `= g(1/x)` for `x ≥ a`; `reflectTest_ofQ`: `= g(1/q)` at rational `q ≥ a`). **Honest scope**: the
+  inversion group action only — NOT the convolution `⋆`, NOT the Mellin theorem; because of the floor
+  clamp it is not a strict involution. The whole-space positivity Walls 2–3 would carry is step 4 = RH.
+  Crux stays `none`.
 - **Haar invariance of the multiplicative-measure integral — transform-bridge Wall 1 CLOSED** (new
   `Square/HaarInvariant.lean`): `haarIntegral_dilate` proves the defining property of the
   multiplicative Haar measure `dx/x` — `∫_{s·lo}^{s·(lo+w)} φ(y) dy/y ≈ ∫_lo^{lo+w} φ(s·x) dx/x`, i.e.
