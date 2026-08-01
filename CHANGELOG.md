@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Real-scale dilation of a test — Wall 3 foundation** (new `Analysis/DilateTestR.lean`): the dilation
+  `x ↦ φ(s·x)` by a REAL scale `s` (with `|s| ≤ S` rational), generalizing the rational-scale
+  `dilateTest`. The Mellin transform of a convolution `M[f⋆g](σ) = ∫ (f⋆g)(x) x^{σ-1} dx` integrates
+  over the REAL output variable `x`, so the dilation-by-`x` inside `mulConv` must accept a real scale.
+  `dilateTestR s S φ` is a genuine `L2Test` (modulus `φ.L·S` via the slope-`s` chain rule
+  `|s·(x−y)| = |s|·|x−y| ≤ S·|x−y|`, bound `φ.M`), with `dilateTestR_f` (value) and `dilateTestR_ofQ_f`
+  (agreement with the rational `dilateTest` at a rational scale — the real action extends the rational
+  one). **Honest scope**: the real-scale group action only — the foundation for a real-parametrized
+  convolution and the Mellin integral over the real output variable. NOT the Mellin transform, NOT the
+  Mellin convolution theorem (Wall 3); those would identify `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **The autocorrelation `g ⋆ g^τ`, constructed** (new `Square/Autocorr.lean`): the cone object the doc's
   steps 2/4 center on ("Weil positivity ... lives on the cone `g ⋆ g^τ`") is now built. `autocorr g x =
   (g ⋆ g^τ)(x) = ∫ g(x/t)·g(1/t) dt/t = mulConv g (reflectTest a g) x` — the convolution of `g` with its
