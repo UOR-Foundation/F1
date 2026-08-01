@@ -119,6 +119,7 @@ import F1Square.Analysis.RiemannConv
 import F1Square.Analysis.DyadicIntegral
 import F1Square.Analysis.IntervalIntegral
 import F1Square.Analysis.IntegralLocal
+import F1Square.Analysis.IntervalCert
 import F1Square.Analysis.ImproperIntegral
 import F1Square.Analysis.GenSumGeom
 import F1Square.Analysis.ThetaDecay
@@ -158,6 +159,7 @@ import F1Square.Analysis.ArctanODE
 import F1Square.Analysis.ArctanTan
 import F1Square.Analysis.ComplexArgAdd
 import F1Square.Analysis.Pi
+import F1Square.Analysis.HaarDensity
 import F1Square.Analysis.Euler
 import F1Square.Analysis.GammaAccel
 import F1Square.Analysis.GammaUpper

@@ -2017,6 +2017,9 @@ open UOR.Bridge.F1Square
 -- The pointwise dilation-covariance of the reciprocal (new Analysis/RinvDilate.lean).
 #print axioms Analysis.Rmul_ofQ_Rinv_Rmul
 
+-- The Haar density's dilation-covariance on the window (new Analysis/HaarDensity.lean).
+#print axioms Analysis.clampedInv_dilate_on
+
 -- ComplexInv (the complex reciprocal 1/z = z̄/|z|²; prereq for 1/(s−1) and the Γ place).
 #print axioms Analysis.Cmul_Cinv
 #print axioms Analysis.emCorrSum_zero
@@ -4992,6 +4995,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.dilate_fc
 #print axioms Analysis.dilate_lip
 #print axioms Analysis.riemannIntegralI_dilate
+
+-- Window-congruence for the interval integral (new Analysis/IntervalCert.lean).
+#print axioms Analysis.riemannIntegralI_congr_unit
 
 #print axioms Square.clamp01_inert
 #print axioms Square.mellinMoment_one_zero

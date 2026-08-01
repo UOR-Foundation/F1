@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Haar-invariance substrate: interval window-congruence and the window density identity** (new
+  `Analysis/IntervalCert.lean`, `Analysis/HaarDensity.lean`): the reusable pieces the Haar-invariance
+  assembly consumes. `riemannIntegralI_congr_unit` — `∫_a^{a+w} f ≈ ∫_a^{a+w} g` from agreement of
+  `f, g` on `[a, a+w]` alone (the interval mirror of `riemannIntegral_congr_unit`, through the affine
+  gateway; interval certificate-independence is already provided by `riemannIntegralI_certif_irrel`
+  in `MellinLinear`). `clampedInv_dilate_on` — the Haar density's pointwise
+  dilation-covariance on the window: where `y ≥ a` and `s·y ≥ a'`, `s·clampedInv_{a'}(s·y) ≈
+  clampedInv_a(y)` (both clamps inert `= 1/·`, closed by the `s·(1/(s·y)) = 1/y` cancellation, with
+  the inverse witnesses read off the rational lower bounds via `Pos_of_Rle_ofQ`). **Honest scope**:
+  the ingredients only; the integral-level Haar invariance `∫ φ dx/x = ∫ φ(a·x) dx/x` assembling them
+  through the change of variables is the next brick. Not the convolution, not the Mellin theorem. Crux
+  stays `none`.
 - **The pointwise dilation-covariance of the reciprocal** (new `Analysis/RinvDilate.lean`): the
   algebraic heart of Haar invariance. `Rmul_ofQ_Rinv_Rmul` proves `s·(1/(s·y)) ≈ 1/y` — under the
   substitution `y = s·x`, the Jacobian factor `s` from `dy = s·dx` exactly cancels the `1/s` from
