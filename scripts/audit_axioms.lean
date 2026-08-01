@@ -4232,6 +4232,9 @@ open UOR.Bridge.F1Square
 -- The real-parameter convolution is uniformly bounded in x (new Analysis/MulConvRBound.lean).
 #print axioms Analysis.mulConvR_abs_le
 
+-- The pointwise x-difference bound of the convolution integrand (new Analysis/MulConvRDiff.lean).
+#print axioms Analysis.mulConvR_integrand_diff
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add

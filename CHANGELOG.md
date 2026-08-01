@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The pointwise `x`-difference bound of the convolution integrand** (new `Analysis/MulConvRDiff.lean`):
+  `mulConvR_integrand_diff` — `|P_x(y) − P_{x'}(y)| ≤ ofQ(f.L·M_g·(1/a)²)·|x − x'|` uniformly in `y`, the
+  Lipschitz-in-`x` estimate at the integrand level. The convolution integrand `f(x/t)·g(t)·(1/max(t,a))`
+  has its `x`-difference factored — `c = 1/max(t,a)` out twice, `g` once — leaving `|f(x·c) − f(x'·c)| ≤
+  f.L·|c|·|x−x'|` with each `|c| ≤ 1/a`. **Honest scope**: a pointwise bounded-Lipschitz fact; it feeds the
+  Lipschitz-in-`x` continuity of `mulConvR` → the `x`-test → the Mellin transform → the theorem
+  `M[f⋆g]=M[f]·M[g]` (Wall 3, unbuilt), which would identify `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **The real-bound window estimate** (new `Analysis/WindowBoundReal.lean`):
   `riemannIntegralI_abs_le_window_real` — `|∫_a^{a+w} f| ≤ w·K` for a REAL bound `K ≥ 0` (the variant
   of `riemannIntegralI_abs_le_window` whose window bound is real, not rational). A PARAMETRIC estimate
