@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The real-parameter convolution is uniformly bounded in `x`** (new `Analysis/MulConvRBound.lean`):
+  the first half of "`x ↦ mulConvR f g x` is a test the Mellin integral can consume". `mulConvR`
+  unfolds to a certified interval integral whose integrand `f(x/t)·g(t)·(1/max(t,a))` is bounded on the
+  window by `M_f·M_g·(1/a)` — a rational INDEPENDENT of `x` — so the window bound
+  `riemannIntegralI_abs_le_window` gives `mulConvR_abs_le`: `|mulConvR f g x| ≤ w·(M_f·M_g·(1/a))` for
+  every real `x`. This is the uniform boundedness needed to bundle `x ↦ mulConvR f g x` as an `L2Test`.
+  **Honest scope**: the uniform bound only. The Lipschitz-in-`x` half (continuity under the integral
+  sign), the resulting `x`-test, the Mellin transform, and the convolution theorem `M[f⋆g]=M[f]·M[g]`
+  (Wall 3) are all still unbuilt — the last is what would identify `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **The real-parameter multiplicative convolution** (new `Analysis/MulConvR.lean`): `(f ⋆ g)(x)` at a
   REAL output point `x` — the object the Mellin transform `M[f⋆g](σ) = ∫ (f⋆g)(x) x^{σ-1} dx` ranges
   over. Identical in shape to `mulConv` but with the dilation-by-`x` taken at a real scale via
