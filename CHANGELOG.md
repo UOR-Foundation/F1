@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The parametric interval integral as a test** (new `Square/ParamIntegral.lean`): for a jointly
+  bounded-Lipschitz two-variable integrand `F x y`, `paramIntegralTest F …` bundles the map
+  `x ↦ ∫_{lo}^{lo+w} F(x, y) dy` as a genuine `L2Test` in the parameter `x` — Lipschitz modulus `w·Lx`,
+  bound `w·B`. The three parameter-continuity fields are the general tools: Lipschitz-in-`x` via
+  `riemannIntegralI_dist_le_window`, bound via `riemannIntegralI_abs_le_window`, congruence via
+  `riemannIntegralI_congr`; the hypotheses are symmetric in the roles of the two variables, so the
+  object serves as `∫_x` of either iterated order. `paramIntegralTest_nonneg`: non-negative on
+  non-negative data. This is the general shape the real-parameter convolution `mulConvRTest` is one
+  instance of (`F(x, t) = f(x/t)·g(t)·(1/max(t,a))`), and the object a Fubini/iterated-integral swap
+  `∫_x ∫_y F = ∫_y ∫_x F` — the deep two-variable step the convolution theorem `M[f⋆g]=M[f]·M[g]`
+  (Wall 3) needs — would be stated *about*. **Honest scope**: only the inner integral as a valid
+  parametric test; NO swap, no product identity, no positivity beyond the integrand's sign. Crux stays
+  `none`.
 - **The integer-exponent Mellin transform of the convolution** (new `Square/MellinConvInt.lean`):
   `mellinConvInt f g m n = ∫_{m+1}^{m+2} (f⋆g)(x)·xⁿ dx` — the Mellin transform of the convolution at
   integer exponent `n` on the half-line window `[m+1, m+2]`, realized as the Mellin pairing against the

@@ -4248,6 +4248,9 @@ open UOR.Bridge.F1Square
 -- The Mellin pairing of the convolution (new Square/MellinConv.lean).
 #print axioms Square.mellinConv_nonneg
 
+-- The parametric interval integral as a test (new Square/ParamIntegral.lean).
+#print axioms Square.paramIntegralTest_nonneg
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg
