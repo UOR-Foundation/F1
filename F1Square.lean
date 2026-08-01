@@ -368,6 +368,7 @@ import F1Square.Square.WindowPower
 import F1Square.Square.MellinHat
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
+import F1Square.Square.MulConv
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare

@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The multiplicative convolution, constructed** (new `Square/MulConv.lean`): the convolution
+  `(f ⋆ g)(x) = ∫₀^∞ f(x/t) g(t) dt/t` of the multiplicative group, assembled from the Wall-1/2
+  operators. `f(x/t) = f(x·(1/t))` is exactly `reflectTest a (dilateTest x f)` (dilation-by-`x` of the
+  reflection), so the integrand `t ↦ f(x/t)·g(t)` is `productTest (reflectTest a (dilateTest x f)) g`
+  and the convolution against `dt/t` is `haarIntegral` of it: `mulConv f g x a [lo, w] =
+  ∫_lo^{lo+w} f(x/t) g(t) dt/t` (floor `a ≤ lo` keeps every clamped reciprocal inert). `mulConv_nonneg`:
+  the convolution of two non-negative tests is non-negative — the sign the autocorrelation `g ⋆ g^τ`
+  (Weil prime side) inhabits. **Honest scope**: the multiplicative convolution CONSTRUCTED on a bounded
+  window away from `0`, the object side of Wall 2. What is NOT here: the Mellin convolution theorem
+  `M[f⋆g] = M[f]·M[g]` (Wall 3), which is what would turn `mulConv` values at prime powers into
+  `weilPrimeGram (vFrom g)`, the genuine autocorrelation Gram — i.e. step 4 = RH. This file proves no
+  transform identity. Crux stays `none`.
 - **The pointwise product of two tests as an `L2Test`** (new `Analysis/ProductTest.lean`): the
   bounded-Lipschitz class is closed under multiplication — `productTest φ ψ` bundles `(φ·ψ)(x) =
   φ(x)·ψ(x)` (modulus `l2L φ ψ`, bound `M_φ·M_ψ`, reusing the product certificates `l2lip`/`l2fc`), with

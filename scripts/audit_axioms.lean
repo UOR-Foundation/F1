@@ -5010,6 +5010,9 @@ open UOR.Bridge.F1Square
 -- Haar invariance of the multiplicative-measure integral (new Square/HaarInvariant.lean).
 #print axioms Square.haarIntegral_dilate
 
+-- The multiplicative convolution, constructed (new Square/MulConv.lean).
+#print axioms Square.mulConv_nonneg
+
 #print axioms Square.clamp01_inert
 #print axioms Square.mellinMoment_one_zero
 #print axioms Square.mellinMoment_clamp_zero
