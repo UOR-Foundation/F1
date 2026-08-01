@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The pointwise dilation-covariance of the reciprocal** (new `Analysis/RinvDilate.lean`): the
+  algebraic heart of Haar invariance. `Rmul_ofQ_Rinv_Rmul` proves `s·(1/(s·y)) ≈ 1/y` — under the
+  substitution `y = s·x`, the Jacobian factor `s` from `dy = s·dx` exactly cancels the `1/s` from
+  `1/(s·x)`, leaving the density `1/x` unchanged. Proved from the inverse law `x·(1/x) = 1`
+  (`Rmul_Rinv_self`) by uniqueness of the multiplicative inverse (both `s·(1/(s·y))` and `1/y` are the
+  inverse of `y`); the inverse witnesses carry the positivity, and a witness for `s·y` can exist only
+  when `s > 0`. **Honest scope**: the pointwise density identity only. The integral-level Haar
+  invariance `∫ φ dx/x = ∫ φ(a·x) dx/x` that assembles this — the change of variables
+  `riemannIntegralI_dilate` carried across the clamped reciprocal — is the next brick. Not the
+  convolution, not the Mellin theorem. Crux stays `none`.
 - **The linear change of variables for the certified interval integral** (new
   `Analysis/DilateIntegral.lean`): the multiplicative-substitution engine of transform-bridge Wall 1
   (Haar measure). `riemannIntegralI_dilate` proves `∫_{s·lo}^{s·(lo+w)} f(y) dy ≈ s·∫_lo^{lo+w} f(s·x) dx`

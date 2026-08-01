@@ -140,6 +140,7 @@ import F1Square.Analysis.RealCompare
 import F1Square.Analysis.Pow
 import F1Square.Analysis.Inv
 import F1Square.Analysis.RealDiv
+import F1Square.Analysis.RinvDilate
 import F1Square.Analysis.RdivBounds
 import F1Square.Analysis.ExpReal
 import F1Square.Analysis.ExpRealAdd
