@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The autocorrelation `g ⋆ g^τ`, constructed** (new `Square/Autocorr.lean`): the cone object the doc's
+  steps 2/4 center on ("Weil positivity ... lives on the cone `g ⋆ g^τ`") is now built. `autocorr g x =
+  (g ⋆ g^τ)(x) = ∫ g(x/t)·g(1/t) dt/t = mulConv g (reflectTest a g) x` — the convolution of `g` with its
+  multiplicative reflection. `autocorr_nonneg`: for `g ≥ 0` the autocorrelation is `≥ 0` (its Haar
+  integrand is a product of non-negatives). **Honest scope — the load-bearing bright line**: this
+  constructs the cone object and the sign of its DENSITY. It is emphatically NOT the positivity of the
+  **Weil functional** on the cone — that uniform statement (over the band-indexed cone family, against
+  the live prime side) is exactly step 4 = RH, asserted nowhere here — and NOT the Mellin convolution
+  theorem identifying these values with `weilPrimeGram (vFrom g)`. Crux stays `none`.
 - **The multiplicative convolution, constructed** (new `Square/MulConv.lean`): the convolution
   `(f ⋆ g)(x) = ∫₀^∞ f(x/t) g(t) dt/t` of the multiplicative group, assembled from the Wall-1/2
   operators. `f(x/t) = f(x·(1/t))` is exactly `reflectTest a (dilateTest x f)` (dilation-by-`x` of the

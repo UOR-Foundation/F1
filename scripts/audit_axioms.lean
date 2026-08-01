@@ -5013,6 +5013,9 @@ open UOR.Bridge.F1Square
 -- The multiplicative convolution, constructed (new Square/MulConv.lean).
 #print axioms Square.mulConv_nonneg
 
+-- The autocorrelation g * g^tau, constructed (new Square/Autocorr.lean).
+#print axioms Square.autocorr_nonneg
+
 #print axioms Square.clamp01_inert
 #print axioms Square.mellinMoment_one_zero
 #print axioms Square.mellinMoment_clamp_zero
