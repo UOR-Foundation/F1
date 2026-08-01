@@ -93,4 +93,38 @@ theorem finrank_fubini (l : List (L2Test × L2Test)) (xlo xw ylo yw : Q)
       (sumProdTest rest ylo yw hylo hyw hywn) xlo xw hxlo hxw hxwn) ?_
     exact Radd_congr (separable_fubini p.1 p.2 xlo xw ylo yw hxlo hxw hxwn hylo hyw hywn) ih
 
+/-- The two product-sums of `finrank_fubini` in swapped order agree term by term (`Rmul` commutes on
+    each `(∫φₖ)(∫ψₖ)`). The list of pairs is swapped by `Prod.swap`, matching the swapped-order
+    `finrank_fubini`. -/
+private theorem finrankProd_comm (l : List (L2Test × L2Test)) (xlo xw ylo yw : Q)
+    (hxlo : 0 < xlo.den) (hxw : 0 < xw.den) (hxwn : 0 ≤ xw.num)
+    (hylo : 0 < ylo.den) (hyw : 0 < yw.den) (hywn : 0 ≤ yw.num) :
+    Req (l.foldr (fun p acc => Radd
+          (Rmul (riemannIntegralI p.1.hLd p.1.hLn p.1.hlip p.1.hfc xlo xw hxlo hxw hxwn)
+                (riemannIntegralI p.2.hLd p.2.hLn p.2.hlip p.2.hfc ylo yw hylo hyw hywn)) acc) zero)
+        ((l.map Prod.swap).foldr (fun p acc => Radd
+          (Rmul (riemannIntegralI p.1.hLd p.1.hLn p.1.hlip p.1.hfc ylo yw hylo hyw hywn)
+                (riemannIntegralI p.2.hLd p.2.hLn p.2.hlip p.2.hfc xlo xw hxlo hxw hxwn)) acc) zero) := by
+  induction l with
+  | nil => exact Req_refl zero
+  | cons p rest ih => exact Radd_congr (Rmul_comm _ _) ih
+
+/-- **The finite-rank Fubini swap**: `∫_x ∫_y (Σₖ φₖ(x)·ψₖ(y)) dy dx ≈ ∫_y ∫_x (Σₖ ψₖ(y)·φₖ(x)) dx dy`
+    — the order of integration may be swapped for a finite sum of separable products (the list of pairs
+    swapped by `Prod.swap`). `finrank_fubini` in each order, reconciled by `finrankProd_comm`. This is
+    the swap the 2D Bernstein approximant `B_n(F)` (a finite-rank integrand) satisfies. -/
+theorem finrank_fubini_swap (l : List (L2Test × L2Test)) (xlo xw ylo yw : Q)
+    (hxlo : 0 < xlo.den) (hxw : 0 < xw.den) (hxwn : 0 ≤ xw.num)
+    (hylo : 0 < ylo.den) (hyw : 0 < yw.den) (hywn : 0 ≤ yw.num) :
+    Req (riemannIntegralI (sumProdTest l ylo yw hylo hyw hywn).hLd
+          (sumProdTest l ylo yw hylo hyw hywn).hLn (sumProdTest l ylo yw hylo hyw hywn).hlip
+          (sumProdTest l ylo yw hylo hyw hywn).hfc xlo xw hxlo hxw hxwn)
+        (riemannIntegralI (sumProdTest (l.map Prod.swap) xlo xw hxlo hxw hxwn).hLd
+          (sumProdTest (l.map Prod.swap) xlo xw hxlo hxw hxwn).hLn
+          (sumProdTest (l.map Prod.swap) xlo xw hxlo hxw hxwn).hlip
+          (sumProdTest (l.map Prod.swap) xlo xw hxlo hxw hxwn).hfc ylo yw hylo hyw hywn) :=
+  Req_trans (finrank_fubini l xlo xw ylo yw hxlo hxw hxwn hylo hyw hywn)
+    (Req_trans (finrankProd_comm l xlo xw ylo yw hxlo hxw hxwn hylo hyw hywn)
+      (Req_symm (finrank_fubini (l.map Prod.swap) ylo yw xlo xw hylo hyw hywn hxlo hxw hxwn)))
+
 end UOR.Bridge.F1Square.Square

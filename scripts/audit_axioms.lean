@@ -4270,6 +4270,8 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegralI_L2add
 #print axioms Square.zeroTest_int
 #print axioms Square.finrank_fubini
+-- The finite-rank Fubini SWAP: ∫_x∫_y Σ φ_k(x)ψ_k(y) ≈ ∫_y∫_x Σ ψ_k(y)φ_k(x) (the swap B_n(F) obeys).
+#print axioms Square.finrank_fubini_swap
 
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg

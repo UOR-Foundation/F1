@@ -18,7 +18,10 @@ All notable changes to this project are documented here. The format is based on
   polynomials `Σ_{i,j} F(i/n,j/n)·bᵢ(x)·bⱼ(y)` (finite-rank), for which the swap holds by this theorem;
   the general swap follows by passing the uniform limit through the integral. **Honest scope**:
   finite-rank (separable-sum) integrands only; the 2D Bernstein approximation and the uniform-limit
-  interchange are unbuilt, so no swap for a genuinely-coupled `F` is claimed. Crux `none`.
+  interchange are unbuilt, so no swap for a genuinely-coupled `F` is claimed. Crux `none`. Also adds
+  `finrank_fubini_swap`: the order SWAP `∫_x∫_y (Σₖ φₖ(x)ψₖ(y)) ≈ ∫_y∫_x (Σₖ ψₖ(y)φₖ(x))` for a
+  finite-rank integrand (pairs swapped by `Prod.swap`; `finrank_fubini` each order + per-term
+  `Rmul` commutativity) — the swap the 2D Bernstein approximant `B_n(F)` satisfies.
 - **Separable Fubini: the product of two interval integrals** (new `Square/SeparableFubini.lean`):
   `separable_fubini` — `∫_{xlo}^{xlo+xw} ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy dx ≈ (∫_x φ)·(∫_y ψ)`, the
   iterated integral of a SEPARABLE (product) integrand factors. The outer integrand is `prodParamTest`;
