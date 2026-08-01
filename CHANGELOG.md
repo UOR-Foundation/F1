@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The Mellin pairing of the convolution** (new `Square/MellinConv.lean`): `mellinConv f g ψ =
+  ∫_{xlo}^{xlo+xw} (f⋆g)(x)·ψ(x) dx`, the pairing of the (now test-valued) convolution `mulConvRTest`
+  against a weight `ψ` — the object the Mellin transform `M[f⋆g](s) = ∫ (f⋆g)(x)·x^{s-1} dx` and the
+  convolution theorem are about (the transform is `ψ = x^{s-1}`). Since `x ↦ (f⋆g)(x)` is now an
+  `L2Test`, the pairing is just the interval `L²` pairing `innerIonI`. `mellinConv_nonneg`: for
+  non-negative `f, g, ψ` the pairing is `≥ 0` (the sign the autocorrelation's transform inhabits).
+  **Honest scope**: the pairing OBJECT and its density-level positivity. NOT the transform evaluated
+  against a specific power weight `x^{s-1}` (needs a power-weight test, unbuilt), and NOT the
+  convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3, the deep two-variable/Fubini step) — which identifies
+  `mulConv` values at prime powers with `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **The multiplicative convolution as a bounded-Lipschitz test in `x`** (new `Square/MulConvRTest.lean`):
   `mulConvRTest f g S a [lo,w]` bundles `x ↦ mulConvR f g (clamp x)` as a genuine `L2Test` (Lipschitz
   modulus `w·f.L·M_g·(1/a)²`, bound `w·M_f·M_g·(1/a)`) — the integrand the Mellin transform of `⋆` ranges

@@ -4245,6 +4245,9 @@ open UOR.Bridge.F1Square
 -- The convolution as a bounded-Lipschitz test in x (new Square/MulConvRTest.lean).
 #print axioms Square.clampS_absle
 
+-- The Mellin pairing of the convolution (new Square/MellinConv.lean).
+#print axioms Square.mellinConv_nonneg
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add
