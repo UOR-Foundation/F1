@@ -4215,6 +4215,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.reflectTest_eq_of_ge
 #print axioms Analysis.reflectTest_ofQ
 
+-- The pointwise product of two tests as an L2Test (new Analysis/ProductTest.lean).
+#print axioms Analysis.productTest_f
+#print axioms Analysis.productTest_comm
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add

@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The pointwise product of two tests as an `L2Test`** (new `Analysis/ProductTest.lean`): the
+  bounded-Lipschitz class is closed under multiplication — `productTest φ ψ` bundles `(φ·ψ)(x) =
+  φ(x)·ψ(x)` (modulus `l2L φ ψ`, bound `M_φ·M_ψ`, reusing the product certificates `l2lip`/`l2fc`), with
+  `productTest_f` (value) and `productTest_comm` (integrand-level commutativity). This makes a
+  convolution integrand `t ↦ f(x/t)·g(t)` — a product of two tests in `t` — itself a test that
+  `haarIntegral` can integrate: the structural prerequisite of the multiplicative convolution `⋆`
+  (transform-bridge Wall 2). **Honest scope**: the product operation only. It is NOT the convolution
+  `⋆` (= `haarIntegral` of a product) and NOT the Mellin theorem; those (Wall 2/3) are what would make
+  `weilPrimeGram (vFrom g)` the genuine autocorrelation Gram, i.e. step 4 = RH. Crux stays `none`.
 - **The multiplicative inversion of a test (`g^τ(x) = g(1/x)`)** (new `Analysis/ReflectTest.lean`): the
   second multiplicative symmetry (after `dilateTest`), the reflection the autocorrelation `g ⋆ g^τ` of
   the Weil prime side is built from — a first prerequisite of transform-bridge Wall 2. `reflectTest a g`
