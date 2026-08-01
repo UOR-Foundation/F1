@@ -4239,6 +4239,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegralI_dist_le_window
 #print axioms Square.mulConvR_lipschitz
 
+-- Congruence-in-x of the real-parameter convolution (new Analysis/MulConvRCongr.lean).
+#print axioms Analysis.mulConvR_congr
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add

@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Congruence-in-`x` of the real-parameter convolution** (new `Analysis/MulConvRCongr.lean`):
+  `mulConvR_congr` — `x ≈ x' ⟹ mulConvR f g x ≈ mulConvR f g x'`, the third continuity datum. With the
+  uniform bound (`mulConvR_abs_le`) and the Lipschitz estimate (`mulConvR_lipschitz`), the data for
+  `x ↦ mulConvR f g x` to be a bounded-Lipschitz test is now complete. The integrands agree pointwise
+  (`f`'s congruence through the scale) and share the `x`-independent modulus, so `riemannIntegralI_congr`
+  closes it. **Honest scope**: the congruence datum only. The Mellin transform of `⋆` and the theorem
+  `M[f⋆g]=M[f]·M[g]` (Wall 3) are still unbuilt; that theorem identifies `mulConv` values at prime powers
+  with `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **Lipschitz-in-`x` continuity of the real-parameter convolution** (new `Square/MulConvRLip.lean`):
   `mulConvR_lipschitz` — `|mulConvR f g x − mulConvR f g x'| ≤ ofQ(w·f.L·M_g·(1/a)²)·|x − x'|`, continuity
   under the integral sign. With the uniform bound `mulConvR_abs_le`, this makes `x ↦ mulConvR f g x` a
