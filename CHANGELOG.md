@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Haar invariance of the multiplicative-measure integral — transform-bridge Wall 1 CLOSED** (new
+  `Square/HaarInvariant.lean`): `haarIntegral_dilate` proves the defining property of the
+  multiplicative Haar measure `dx/x` — `∫_{s·lo}^{s·(lo+w)} φ(y) dy/y ≈ ∫_lo^{lo+w} φ(s·x) dx/x`, i.e.
+  `haarIntegral φ [s·lo, s·w] ≈ haarIntegral (dilateTest s φ) [lo, w]`: dilating the test equals
+  scaling the window, with the integral VALUE preserved (floors `a ≤ lo`, `a' ≤ s·lo` keep both
+  clamped reciprocals inert). The proof composes the Wall-1 substrate: the linear change of variables
+  `riemannIntegralI_dilate` (`y = s·x`, Jacobian `s`), value-linearity `riemannIntegralI_smul`, the
+  window-congruence `riemannIntegralI_congr_unit`, and the density cancellation `clampedInv_dilate_on`
+  (`s·(1/(s·x)) = 1/x`, absorbing the Jacobian); the differing Lipschitz moduli are reconciled at a
+  common weakened modulus via `lip_mono` + `riemannIntegralI_certif_irrel`. **Honest scope**: Haar
+  invariance on bounded windows bounded away from `0` — Wall 1 of the transform bridge, the invariance
+  of the `dx/x` measure. It is NOT the multiplicative convolution `⋆` and NOT the Mellin convolution
+  theorem (Walls 2–3); those are what would make `weilPrimeGram (vFrom g)` the genuine autocorrelation
+  Gram, i.e. step 4 = RH. Crux stays `none`.
 - **Haar-invariance substrate: interval window-congruence and the window density identity** (new
   `Analysis/IntervalCert.lean`, `Analysis/HaarDensity.lean`): the reusable pieces the Haar-invariance
   assembly consumes. `riemannIntegralI_congr_unit` — `∫_a^{a+w} f ≈ ∫_a^{a+w} g` from agreement of

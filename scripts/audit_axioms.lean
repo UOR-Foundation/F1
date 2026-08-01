@@ -4999,6 +4999,9 @@ open UOR.Bridge.F1Square
 -- Window-congruence for the interval integral (new Analysis/IntervalCert.lean).
 #print axioms Analysis.riemannIntegralI_congr_unit
 
+-- Haar invariance of the multiplicative-measure integral (new Square/HaarInvariant.lean).
+#print axioms Square.haarIntegral_dilate
+
 #print axioms Square.clamp01_inert
 #print axioms Square.mellinMoment_one_zero
 #print axioms Square.mellinMoment_clamp_zero
