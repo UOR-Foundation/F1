@@ -4242,6 +4242,9 @@ open UOR.Bridge.F1Square
 -- Congruence-in-x of the real-parameter convolution (new Analysis/MulConvRCongr.lean).
 #print axioms Analysis.mulConvR_congr
 
+-- The convolution as a bounded-Lipschitz test in x (new Square/MulConvRTest.lean).
+#print axioms Square.clampS_absle
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add

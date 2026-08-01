@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The multiplicative convolution as a bounded-Lipschitz test in `x`** (new `Square/MulConvRTest.lean`):
+  `mulConvRTest f g S a [lo,w]` bundles `x ↦ mulConvR f g (clamp x)` as a genuine `L2Test` (Lipschitz
+  modulus `w·f.L·M_g·(1/a)²`, bound `w·M_f·M_g·(1/a)`) — the integrand the Mellin transform of `⋆` ranges
+  over on the `x`-window `[0, S]`. `mulConvR f g x` is defined only for `|x| ≤ S`; the `[0,S]`-clamp
+  `qBandQ 0 S` (inert on `[0,S]`, `1`-Lipschitz) totalizes it (`clampS_absle`: `|clamp x| ≤ S`), and the
+  three continuity facts assemble through the clamp (`hlip = mulConvR_lipschitz ∘ qBandQ_lipschitz`,
+  `hbd = mulConvR_abs_le`, `hfc = mulConvR_congr ∘ qBandQ_congr`; the `mulConvR` value is independent of
+  the `|x| ≤ S` proof). **Honest scope**: the convolution packaged as a test in its output variable —
+  the last of the `x`-continuity data, now concrete. The Mellin transform `∫ (f⋆g)(x)·x^{σ-1} dx` (needs
+  a power-weight test) and the convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3, the deep two-variable/
+  Fubini step) are still unbuilt; that theorem identifies `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **Congruence-in-`x` of the real-parameter convolution** (new `Analysis/MulConvRCongr.lean`):
   `mulConvR_congr` — `x ≈ x' ⟹ mulConvR f g x ≈ mulConvR f g x'`, the third continuity datum. With the
   uniform bound (`mulConvR_abs_le`) and the Lipschitz estimate (`mulConvR_lipschitz`), the data for
