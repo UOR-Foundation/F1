@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The separable product integrand as a parametric test** (new `Square/ProdParamTest.lean`):
+  `prodParamTest φ ψ [ylo,yw]` is `paramIntegralTest` at `F(x,y) = φ(x)·ψ(y)`, so its
+  `.f x = ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy`; the three joint-continuity facts are the one-sided
+  `constMul_*` helpers (`|c·χ(y) − c·χ(y')| ≤ (M·Lχ)·|y−y'|` for `|c| ≤ M`, plus its bound companion),
+  fed to `paramIntegralTest` at moduli `Ly = ψ.L + φ.M·ψ.L`, `Lx = ψ.M·φ.L`, `B = φ.M·ψ.M`.
+  `prodParamTest_f_factor`: the **inner factorization** `∫_y φ(x)·ψ(y) dy ≈ φ(x)·(∫_y ψ)` — the
+  parameter-constant `φ(x)` (a REAL) pulls out of the `y`-integral by `riemannIntegralI_Rsmul` (common
+  modulus `ψ.L + φ.M·ψ.L`, the `ψ`-side reconciled by `riemannIntegralI_certif_irrel`). This is the
+  inner half of the separable factorization `∫_x ∫_y φ(x)ψ(y) = (∫φ)·(∫ψ)` the Mellin convolution
+  theorem `M[f⋆g]=M[f]·M[g]` reduces to once the change of variables has decoupled the integrand.
+  **Honest scope**: the product integrand as a valid test + its inner factorization; NO swap, no
+  non-separable Fubini, no product identity, no positivity. Crux `none`.
 - **Real-scalar linearity of the interval integral** (new `Analysis/IntervalRsmul.lean`):
   `riemannIntegralI_Rsmul` — `∫_a^{a+w} (c·f) = c·∫_a^{a+w} f` for any `c : Real`, the interval
   counterpart of `riemannIntegral_Rsmul` (over `[0,1]`) and the real-scalar mirror of the rational

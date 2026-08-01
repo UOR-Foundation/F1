@@ -374,6 +374,7 @@ import F1Square.Square.MulConvRLip
 import F1Square.Analysis.MulConvRCongr
 import F1Square.Square.MulConvRTest
 import F1Square.Square.ParamIntegral
+import F1Square.Square.ProdParamTest
 import F1Square.Square.MellinConv
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower

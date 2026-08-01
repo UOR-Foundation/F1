@@ -4251,6 +4251,10 @@ open UOR.Bridge.F1Square
 -- The parametric interval integral as a test (new Square/ParamIntegral.lean).
 #print axioms Square.paramIntegralTest_nonneg
 
+-- The separable product integrand φ(x)·ψ(y) as a parametric test + its inner factorization
+-- ∫_y φ(x)ψ(y) ≈ φ(x)·∫ψ (new Square/ProdParamTest.lean).
+#print axioms Square.prodParamTest_f_factor
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg
