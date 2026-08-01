@@ -4264,6 +4264,13 @@ open UOR.Bridge.F1Square
 -- separable case only, via factorization in each order + Rmul commutativity).
 #print axioms Square.separable_fubini_swap
 
+-- Finite-rank Fubini: ∫_x∫_y (Σ φ_k(x)ψ_k(y)) = Σ (∫φ_k)(∫ψ_k) — the iterated integral of a finite
+-- sum of separable products factors term by term (new Square/FiniteRankFubini.lean). The finite-rank
+-- rung of the Bernstein route to the general (coupled) Fubini swap.
+#print axioms Square.riemannIntegralI_L2add
+#print axioms Square.zeroTest_int
+#print axioms Square.finrank_fubini
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

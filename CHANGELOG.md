@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Finite-rank Fubini** (new `Square/FiniteRankFubini.lean`): `finrank_fubini` —
+  `∫_x ∫_y (Σₖ φₖ(x)·ψₖ(y)) dy dx ≈ Σₖ (∫_x φₖ)·(∫_y ψₖ)`, the iterated integral of a finite sum of
+  separable products factors term by term. A `List (L2Test × L2Test)` carries the pairs; `sumProdTest`
+  folds their `prodParamTest` inner-integral tests under `L2Test.add`; the proof inducts, peeling each
+  `L2Test.add` with the new interval-additivity lemma `riemannIntegralI_L2add`
+  (`∫(A+B) = ∫A + ∫B`, the interval counterpart of `innerI_add_left`) and factoring each term with
+  `separable_fubini`; the empty case is the zero test integrating to `0` (`zeroTest`, `zeroTest_int`).
+  **Why**: this is the linearity extension of the separable factorization to the class the general
+  Fubini swap is reached THROUGH — a jointly-continuous `F` is approximated uniformly by 2D Bernstein
+  polynomials `Σ_{i,j} F(i/n,j/n)·bᵢ(x)·bⱼ(y)` (finite-rank), for which the swap holds by this theorem;
+  the general swap follows by passing the uniform limit through the integral. **Honest scope**:
+  finite-rank (separable-sum) integrands only; the 2D Bernstein approximation and the uniform-limit
+  interchange are unbuilt, so no swap for a genuinely-coupled `F` is claimed. Crux `none`.
 - **Separable Fubini: the product of two interval integrals** (new `Square/SeparableFubini.lean`):
   `separable_fubini` — `∫_{xlo}^{xlo+xw} ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy dx ≈ (∫_x φ)·(∫_y ψ)`, the
   iterated integral of a SEPARABLE (product) integrand factors. The outer integrand is `prodParamTest`;
