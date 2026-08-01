@@ -369,6 +369,7 @@ import F1Square.Analysis.MellinDecay
 import F1Square.Analysis.WindowBoundReal
 import F1Square.Analysis.MulConvRBound
 import F1Square.Analysis.MulConvRDiff
+import F1Square.Square.MulConvRLip
 import F1Square.Square.WindowPower
 import F1Square.Square.MellinHat
 import F1Square.Square.MellinLinear

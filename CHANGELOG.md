@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Lipschitz-in-`x` continuity of the real-parameter convolution** (new `Square/MulConvRLip.lean`):
+  `mulConvR_lipschitz` — `|mulConvR f g x − mulConvR f g x'| ≤ ofQ(w·f.L·M_g·(1/a)²)·|x − x'|`, continuity
+  under the integral sign. With the uniform bound `mulConvR_abs_le`, this makes `x ↦ mulConvR f g x` a
+  bounded-Lipschitz test — the integrand the Mellin transform of `⋆` consumes. The engine is a reusable
+  estimate `riemannIntegralI_dist_le_window` (two integrands at a shared modulus differing by `≤ K` on
+  the window have `|∫f − ∫h| ≤ w·K`, via `∫f ≤ ∫(h+K) = ∫h + w·K` both ways); `mulConvR_lipschitz` weakens
+  the two convolution integrands to a common modulus (`certif_irrel`, valid because `Q_x`'s Lipschitz
+  modulus is `x`-independent) and feeds `mulConvR_integrand_diff`. **Honest scope**: the continuity data
+  only. The Mellin transform of `⋆` and the convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3) are still
+  unbuilt; that theorem is what would identify `mulConv` values at prime powers with `weilPrimeGram
+  (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **The pointwise `x`-difference bound of the convolution integrand** (new `Analysis/MulConvRDiff.lean`):
   `mulConvR_integrand_diff` — `|P_x(y) − P_{x'}(y)| ≤ ofQ(f.L·M_g·(1/a)²)·|x − x'|` uniformly in `y`, the
   Lipschitz-in-`x` estimate at the integrand level. The convolution integrand `f(x/t)·g(t)·(1/max(t,a))`

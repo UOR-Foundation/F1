@@ -4235,6 +4235,10 @@ open UOR.Bridge.F1Square
 -- The pointwise x-difference bound of the convolution integrand (new Analysis/MulConvRDiff.lean).
 #print axioms Analysis.mulConvR_integrand_diff
 
+-- Lipschitz-in-x continuity of the real-parameter convolution (new Square/MulConvRLip.lean).
+#print axioms Square.riemannIntegralI_dist_le_window
+#print axioms Square.mulConvR_lipschitz
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add
