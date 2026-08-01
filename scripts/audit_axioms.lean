@@ -4226,6 +4226,9 @@ open UOR.Bridge.F1Square
 -- The real-parameter multiplicative convolution (new Analysis/MulConvR.lean).
 #print axioms Analysis.mulConvR_nonneg
 
+-- The real-bound window estimate (new Analysis/WindowBoundReal.lean).
+#print axioms Analysis.riemannIntegralI_abs_le_window_real
+
 -- The real-parameter convolution is uniformly bounded in x (new Analysis/MulConvRBound.lean).
 #print axioms Analysis.mulConvR_abs_le
 

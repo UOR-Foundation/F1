@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The real-bound window estimate** (new `Analysis/WindowBoundReal.lean`):
+  `riemannIntegralI_abs_le_window_real` — `|∫_a^{a+w} f| ≤ w·K` for a REAL bound `K ≥ 0` (the variant
+  of `riemannIntegralI_abs_le_window` whose window bound is real, not rational). A PARAMETRIC estimate
+  — bounding the integral of a difference `f_x − f_{x'}` by `(rational)·|x−x'|`, where `|x−x'|` is a
+  fixed real — needs the window bound at a real `K = (rational)·|x−x'|`; this is the tool the
+  Lipschitz-in-`x` continuity of the real-parameter convolution runs through. Same window-local
+  comparison against the constants `±K` as the rational original. **Honest scope**: a general integral
+  estimate; no positivity, no crux claim. Crux stays `none`.
 - **The real-parameter convolution is uniformly bounded in `x`** (new `Analysis/MulConvRBound.lean`):
   the first half of "`x ↦ mulConvR f g x` is a test the Mellin integral can consume". `mulConvR`
   unfolds to a certified interval integral whose integrand `f(x/t)·g(t)·(1/max(t,a))` is bounded on the
