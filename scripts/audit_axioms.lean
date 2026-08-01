@@ -6615,6 +6615,12 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rmul_Rlim_of_approx
 #print axioms Analysis.riemannIntegral_Rsmul
 
+-- The interval-integral counterpart: ∫_a^{a+w} (c·f) = c·∫_a^{a+w} f for c : Real
+-- (new Analysis/IntervalRsmul.lean), the real-scalar mirror of the rational riemannIntegralI_smul —
+-- riemannIntegral_Rsmul on the affine-rescaled integrand, then commute c past the width factor. The
+-- tool a separable Fubini step (pull φ(x) out of ∫_y, then ∫ψ out of ∫_x) runs through.
+#print axioms Analysis.riemannIntegralI_Rsmul
+
 -- THE BERNSTEIN ARC, sub-brick H₃ (Square/ConstScale.lean) — THE CONSTANT TEST + REAL-SCALAR PAIRING
 -- LAW: ⟨φ, (constTest c)·ψ⟩ ≈ c·⟨φ, ψ⟩ (innerI_constMul), so ⟨φ, (constTest c)·ψ⟩ ≈ 0 when ⟨φ,ψ⟩ ≈ 0
 -- (innerI_constMul_zero). A real scalar cannot scale an L2Test (rational bound), so B_n(φ)=Σ φ(k/n)·b's

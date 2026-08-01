@@ -351,6 +351,7 @@ import F1Square.Analysis.MulConvR
 import F1Square.Analysis.IntegralCertIrrel
 import F1Square.Analysis.DilateIntegral
 import F1Square.Analysis.IntegralRsmul
+import F1Square.Analysis.IntervalRsmul
 import F1Square.Analysis.IntegralBilinear
 import F1Square.Square.IntegralCS
 import F1Square.Square.IntegralCSFull

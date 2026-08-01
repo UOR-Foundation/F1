@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Real-scalar linearity of the interval integral** (new `Analysis/IntervalRsmul.lean`):
+  `riemannIntegralI_Rsmul` — `∫_a^{a+w} (c·f) = c·∫_a^{a+w} f` for any `c : Real`, the interval
+  counterpart of `riemannIntegral_Rsmul` (over `[0,1]`) and the real-scalar mirror of the rational
+  `riemannIntegralI_smul`. Proof: pull `c` through the affine-rescaled `[0,1]` integral
+  (`riemannIntegral_Rsmul`), then commute `c` past the width factor `w`. This is the tool a *separable*
+  Fubini step runs through — the inner integral of a product integrand `φ(x)·ψ(y)` factors as
+  `φ(x)·∫_y ψ` (pulling the parameter-constant `φ(x)`, a REAL, out of the `y`-integral), and the outer
+  integral then factors `∫ψ` out — the final `(∫φ)·(∫ψ)` factorization the Mellin convolution theorem
+  `M[f⋆g]=M[f]·M[g]` reduces to once the change of variables has decoupled the integrand. **Honest
+  scope**: general integral infrastructure; no swap, no product identity, no positivity. Crux `none`.
 - **The parametric interval integral as a test** (new `Square/ParamIntegral.lean`): for a jointly
   bounded-Lipschitz two-variable integrand `F x y`, `paramIntegralTest F …` bundles the map
   `x ↦ ∫_{lo}^{lo+w} F(x, y) dy` as a genuine `L2Test` in the parameter `x` — Lipschitz modulus `w·Lx`,
