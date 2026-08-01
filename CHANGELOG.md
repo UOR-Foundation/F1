@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The 2D Bernstein operator as a finite-rank list + its Fubini swap** (new
+  `Square/Bern2DOperator.lean`): the bivariate Bernstein approximant
+  `B_n(F)(x,y) = Σ_{i,j=0}^n F(i/n,j/n)·b_{n,i}(x)·b_{n,j}(y)` is a finite sum of SEPARABLE products,
+  hence a `List (L2Test × L2Test)` (`bern2DList`): the `(i,j)` grid over `0..n × 0..n`, the real
+  coefficient `F(i/n,j/n)` carried on the `x`-factor as a `constTest` and multiplied into the `x`-basis
+  `bernBasisTest n i` by `L2Test.mul`, the `y`-factor the bare basis `bernBasisTest n j`. Being
+  finite-rank separable, its iterated integral swaps: `bern2D_fubini_swap` instantiates
+  `finrank_fubini_swap` at this concrete list. **Why**: a jointly-continuous `F` is approximated
+  uniformly on the square by these `B_n(F)`, and the 1D uniform Bernstein convergence is already built
+  (`bernOp_uniform_converges`, `|φ(x)−B_{(k+1)²}(φ)(x)| ≤ φ.L·5/(8(k+1))`); the general swap
+  `∫_x∫_y F = ∫_y∫_x F` would follow by passing the uniform limit through the integral. **Honest
+  scope**: the finite-rank rung's list representation + its already-proven swap only; NO Bernstein
+  convergence for `F`, NO uniform-limit interchange, NO coupled (non-separable) swap, no positivity.
+  Crux `none`.
 - **Finite-rank Fubini** (new `Square/FiniteRankFubini.lean`): `finrank_fubini` —
   `∫_x ∫_y (Σₖ φₖ(x)·ψₖ(y)) dy dx ≈ Σₖ (∫_x φₖ)·(∫_y ψₖ)`, the iterated integral of a finite sum of
   separable products factors term by term. A `List (L2Test × L2Test)` carries the pairs; `sumProdTest`

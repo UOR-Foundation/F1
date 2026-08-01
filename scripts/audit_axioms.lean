@@ -4273,6 +4273,11 @@ open UOR.Bridge.F1Square
 -- The finite-rank Fubini SWAP: ∫_x∫_y Σ φ_k(x)ψ_k(y) ≈ ∫_y∫_x Σ ψ_k(y)φ_k(x) (the swap B_n(F) obeys).
 #print axioms Square.finrank_fubini_swap
 
+-- The 2D Bernstein operator as a finite-rank (i,j)-grid list + its Fubini swap (new
+-- Square/Bern2DOperator.lean) — B_n(F) = Σ_{i,j} F(i/n,j/n)·b_i(x)·b_j(y), a separable-sum instance
+-- of finrank_fubini_swap. The finite-rank object the 2D-Bernstein route to the general swap builds on.
+#print axioms Square.bern2D_fubini_swap
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

@@ -377,6 +377,7 @@ import F1Square.Square.ParamIntegral
 import F1Square.Square.ProdParamTest
 import F1Square.Square.SeparableFubini
 import F1Square.Square.FiniteRankFubini
+import F1Square.Square.Bern2DOperator
 import F1Square.Square.MellinConv
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower
