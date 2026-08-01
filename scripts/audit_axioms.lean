@@ -4248,6 +4248,11 @@ open UOR.Bridge.F1Square
 -- The Mellin pairing of the convolution (new Square/MellinConv.lean).
 #print axioms Square.mellinConv_nonneg
 
+-- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
+#print axioms Square.bandTest_nonneg
+#print axioms Square.powWinTest_nonneg
+#print axioms Square.mellinConvInt_nonneg
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add

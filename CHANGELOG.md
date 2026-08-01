@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The integer-exponent Mellin transform of the convolution** (new `Square/MellinConvInt.lean`):
+  `mellinConvInt f g m n = ∫_{m+1}^{m+2} (f⋆g)(x)·xⁿ dx` — the Mellin transform of the convolution at
+  integer exponent `n` on the half-line window `[m+1, m+2]`, realized as the Mellin pairing against the
+  window power weight `powWinTest m n` (= `tⁿ` clamped to the window). `mellinConvInt_nonneg`: for
+  non-negative `f, g` (e.g. the autocorrelation `g ⋆ g^τ`) the transform is `≥ 0` at every integer
+  exponent (`mulConvR_nonneg` × `powWinTest_nonneg`, the latter a new product-of-non-negatives
+  induction with `bandTest_nonneg`). **Honest scope**: the transform EVALUATED at integer exponents,
+  non-negative on non-negative data. NOT the convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3, the deep
+  two-variable/Fubini step) — the identity that turns `mulConv` values at prime powers into
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. This file proves no product identity. Crux stays `none`.
 - **The Mellin pairing of the convolution** (new `Square/MellinConv.lean`): `mellinConv f g ψ =
   ∫_{xlo}^{xlo+xw} (f⋆g)(x)·ψ(x) dx`, the pairing of the (now test-valued) convolution `mulConvRTest`
   against a weight `ψ` — the object the Mellin transform `M[f⋆g](s) = ∫ (f⋆g)(x)·x^{s-1} dx` and the
