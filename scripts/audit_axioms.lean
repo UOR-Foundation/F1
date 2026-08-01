@@ -4260,6 +4260,9 @@ open UOR.Bridge.F1Square
 -- integrand factors (new Square/SeparableFubini.lean). The final factorization the Mellin convolution
 -- theorem reduces to once the change of variables has decoupled the integrand.
 #print axioms Square.separable_fubini
+-- The Fubini SWAP for a separable integrand: ∫_x∫_y φ(x)ψ(y) ≈ ∫_y∫_x ψ(y)φ(x) (order swappable;
+-- separable case only, via factorization in each order + Rmul commutativity).
+#print axioms Square.separable_fubini_swap
 
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg

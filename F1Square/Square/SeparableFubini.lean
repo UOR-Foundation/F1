@@ -105,4 +105,24 @@ theorem separable_fubini (φ ψ : L2Test) (xlo xw ylo yw : Q)
       xlo xw hxlo hxw hxwn)) ?_
   exact Rmul_comm _ _
 
+/-- **The Fubini swap for a separable integrand**: `∫_x ∫_y φ(x)·ψ(y) dy dx ≈ ∫_y ∫_x ψ(y)·φ(x) dx dy`
+    — the order of integration may be swapped. Both iterated integrals factor to the same product of
+    single-variable integrals (`separable_fubini` in each order), reconciled by `Rmul` commutativity;
+    because the integrand is separable, NO genuine two-variable interchange is invoked. The general
+    (non-separable) swap is the unbuilt wall. -/
+theorem separable_fubini_swap (φ ψ : L2Test) (xlo xw ylo yw : Q)
+    (hxlo : 0 < xlo.den) (hxw : 0 < xw.den) (hxwn : 0 ≤ xw.num)
+    (hylo : 0 < ylo.den) (hyw : 0 < yw.den) (hywn : 0 ≤ yw.num) :
+    Req (riemannIntegralI (prodParamTest φ ψ ylo yw hylo hyw hywn).hLd
+          (prodParamTest φ ψ ylo yw hylo hyw hywn).hLn
+          (prodParamTest φ ψ ylo yw hylo hyw hywn).hlip
+          (prodParamTest φ ψ ylo yw hylo hyw hywn).hfc xlo xw hxlo hxw hxwn)
+        (riemannIntegralI (prodParamTest ψ φ xlo xw hxlo hxw hxwn).hLd
+          (prodParamTest ψ φ xlo xw hxlo hxw hxwn).hLn
+          (prodParamTest ψ φ xlo xw hxlo hxw hxwn).hlip
+          (prodParamTest ψ φ xlo xw hxlo hxw hxwn).hfc ylo yw hylo hyw hywn) :=
+  Req_trans (separable_fubini φ ψ xlo xw ylo yw hxlo hxw hxwn hylo hyw hywn)
+    (Req_trans (Rmul_comm _ _)
+      (Req_symm (separable_fubini ψ φ ylo yw xlo xw hylo hyw hywn hxlo hxw hxwn)))
+
 end UOR.Bridge.F1Square.Square

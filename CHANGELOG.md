@@ -19,7 +19,9 @@ All notable changes to this project are documented here. The format is based on
   variables has decoupled the integrand (`∫_t ∫_u f(u)u^{s-1}·g(t)t^{s-1} = M[f]·M[g]`). **Honest
   scope**: separable integrands only; the NON-separable middle — the change of variables / genuine
   Fubini on the coupled integrand `f(x/t)g(t)x^{s-1}` — is unbuilt, and this file provides NO swap for
-  a non-separable integrand. Crux `none`.
+  a non-separable integrand. Crux `none`. Also adds `separable_fubini_swap`: the actual order SWAP
+  `∫_x ∫_y φ(x)ψ(y) ≈ ∫_y ∫_x ψ(y)φ(x)` (both orders factor to the same product, reconciled by `Rmul`
+  commutativity) — the separable case of the Fubini swap; the general (non-separable) swap is the wall.
 - **The separable product integrand as a parametric test** (new `Square/ProdParamTest.lean`):
   `prodParamTest φ ψ [ylo,yw]` is `paramIntegralTest` at `F(x,y) = φ(x)·ψ(y)`, so its
   `.f x = ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy`; the three joint-continuity facts are the one-sided
