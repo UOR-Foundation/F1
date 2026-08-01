@@ -4252,8 +4252,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.paramIntegralTest_nonneg
 
 -- The separable product integrand φ(x)·ψ(y) as a parametric test + its inner factorization
--- ∫_y φ(x)ψ(y) ≈ φ(x)·∫ψ (new Square/ProdParamTest.lean).
+-- ∫_y φ(x)ψ(y) ≈ φ(x)·∫ψ (new Square/ProdParamTest.lean). constMul_lip: one-sided product Lipschitz.
+#print axioms Square.constMul_lip
 #print axioms Square.prodParamTest_f_factor
+
+-- Separable Fubini: ∫_x ∫_y φ(x)·ψ(y) = (∫φ)·(∫ψ) — the iterated integral of a separable (product)
+-- integrand factors (new Square/SeparableFubini.lean). The final factorization the Mellin convolution
+-- theorem reduces to once the change of variables has decoupled the integrand.
+#print axioms Square.separable_fubini
 
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg

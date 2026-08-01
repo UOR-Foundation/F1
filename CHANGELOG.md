@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Separable Fubini: the product of two interval integrals** (new `Square/SeparableFubini.lean`):
+  `separable_fubini` — `∫_{xlo}^{xlo+xw} ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy dx ≈ (∫_x φ)·(∫_y ψ)`, the
+  iterated integral of a SEPARABLE (product) integrand factors. The outer integrand is `prodParamTest`;
+  its inner factorization (`prodParamTest_f_factor`) rewrites the value as `φ(x)·(∫_y ψ)`, and a second
+  `riemannIntegralI_Rsmul` pulls the now-constant `∫_y ψ` out of the `x`-integral, leaving
+  `(∫_x φ)·(∫_y ψ)`; moduli reconciled by `riemannIntegralI_certif_irrel` (twice) and one
+  `Q`-multiplication-associativity bridge (`yw·(ψ.M·φ.L) = (yw·ψ.M)·φ.L`). This is Fubini for the
+  EASY, separable case — because the integrand factors, no genuine two-variable interchange is needed;
+  the swap reduces to commutativity of `Rmul` on the two constant integrals. It is the final
+  factorization the Mellin convolution theorem `M[f⋆g]=M[f]·M[g]` reduces to once the change of
+  variables has decoupled the integrand (`∫_t ∫_u f(u)u^{s-1}·g(t)t^{s-1} = M[f]·M[g]`). **Honest
+  scope**: separable integrands only; the NON-separable middle — the change of variables / genuine
+  Fubini on the coupled integrand `f(x/t)g(t)x^{s-1}` — is unbuilt, and this file provides NO swap for
+  a non-separable integrand. Crux `none`.
 - **The separable product integrand as a parametric test** (new `Square/ProdParamTest.lean`):
   `prodParamTest φ ψ [ylo,yw]` is `paramIntegralTest` at `F(x,y) = φ(x)·ψ(y)`, so its
   `.f x = ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy`; the three joint-continuity facts are the one-sided

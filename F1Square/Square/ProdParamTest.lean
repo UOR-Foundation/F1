@@ -37,7 +37,7 @@ open UOR.Bridge.F1Square.Analysis
 
 /-- **One-sided product Lipschitz**: with a constant `c`, `|c·χ(y) − c·χ(y')| ≤ (M·Lχ)·|y−y'|` when
     `|c| ≤ M` (`M` a rational bound on `c`). -/
-private theorem constMul_lip (c : Real) {M : Q} (hMd : 0 < M.den) (hcM : Rle (Rabs c) (ofQ M hMd))
+theorem constMul_lip (c : Real) {M : Q} (hMd : 0 < M.den) (hcM : Rle (Rabs c) (ofQ M hMd))
     (χ : L2Test) (y y' : Real) :
     Rle (Rabs (Rsub (Rmul c (χ.f y)) (Rmul c (χ.f y'))))
         (Rmul (ofQ (mul M χ.L) (Qmul_den_pos hMd χ.hLd)) (Rabs (Rsub y y'))) := by
