@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The real-parameter multiplicative convolution** (new `Analysis/MulConvR.lean`): `(f ⋆ g)(x)` at a
+  REAL output point `x` — the object the Mellin transform `M[f⋆g](σ) = ∫ (f⋆g)(x) x^{σ-1} dx` ranges
+  over. Identical in shape to `mulConv` but with the dilation-by-`x` taken at a real scale via
+  `dilateTestR` (`|x| ≤ S`): `mulConvR f g x a [lo,w] = haarIntegral (productTest (reflectTest a
+  (dilateTestR x S f)) g)`. Because every operator it composes is now `Analysis`-level (the real-scale
+  `dilateTestR` replaces the rational `dilateTest`), the whole real-parameter convolution is an
+  `Analysis` object. `mulConvR_nonneg`: non-negative for non-negative `f, g`. **Honest scope**: the
+  integrand of the (unbuilt) Mellin transform of `⋆`. NOT that transform, NOT the Mellin convolution
+  theorem (Wall 3); the immediate next step it enables — that `x ↦ mulConvR f g x` is itself
+  Lipschitz/bounded in `x` (continuity under the integral sign), a test the Mellin integral can
+  consume — is also unbuilt. Those lead to `M[f⋆g]=M[f]·M[g]`, which would identify `mulConv` values
+  at prime powers with `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
 - **Real-scale dilation of a test — Wall 3 foundation** (new `Analysis/DilateTestR.lean`): the dilation
   `x ↦ φ(s·x)` by a REAL scale `s` (with `|s| ≤ S` rational), generalizing the rational-scale
   `dilateTest`. The Mellin transform of a convolution `M[f⋆g](σ) = ∫ (f⋆g)(x) x^{σ-1} dx` integrates

@@ -4223,6 +4223,9 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.dilateTestR_f
 #print axioms Analysis.dilateTestR_ofQ_f
 
+-- The real-parameter multiplicative convolution (new Analysis/MulConvR.lean).
+#print axioms Analysis.mulConvR_nonneg
+
 -- The exp bounds + per-step logarithm bracket (new Analysis/ExpBounds.lean).
 #print axioms Analysis.RexpReal_R_ge_one
 #print axioms Analysis.RexpReal_ofQ_ge_one_add
