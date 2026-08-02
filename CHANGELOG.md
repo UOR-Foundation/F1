@@ -6,6 +6,22 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The finite-rank symmetry** (new `Square/Bern2DFinrankSymm.lean`): Move 2 of the general Fubini
+  swap — a DISCRETE Fubini on the `(n+1)×(n+1)` Bernstein grid. The outer `x`-integral of the
+  finite-rank 2D Bernstein inner test for `F` equals that for the transpose `Fᵀ a b := F b a` —
+  `∫_x sumProdTest (bern2DList F …) = ∫_x sumProdTest (bern2DList Fᵀ …)` (`bern2D_finrank_symm`).
+  `finrank_fubini` reduces each side to the explicit double sum `Σᵢⱼ F(i/n,j/n)·(∫bᵢ)·(∫bⱼ)` (the
+  fold routed through `RsumL` to an iterated `RsumN`, mirroring `bern2DList_eval_eq`, with
+  `riemannIntegralI_constTestMul` factoring the constant coefficient `F(i/n,j/n)` out of the inner
+  integral); the two grids are reconciled by the discrete grid-index swap `RsumN_swap` (reused from
+  `Square/SelfAdjoint.lean`, the `Real` analogue of the rational `Fsum_swap`) plus `Rmul`
+  commutativity on each `(∫bᵢ)·(∫bⱼ)` pair. **Honest scope**: a finite-sum combinatorial identity.
+  Only ONE integration order (`x`-outer) appears on each side — this is NOT a continuous Fubini order
+  interchange (`∫_x∫_y` vs `∫_y∫_x`), which is Move 3; it is the grid symmetry `Sₙ(F)=Sₙ(Fᵀ)` that
+  Move 3 consumes to bound both integration orders against the same finite-rank quantity. NO
+  continuous swap, NO limit, NO convergence, NO positivity, NO determinacy, NO crux. Step 4 is RH;
+  crux `none`. (Three independent worktree drafters compiled + audited it; adversarial verify
+  confirmed correct, non-vacuous, non-smuggling — only a discrete grid reindex — `[propext, Quot.sound]`.)
 - **The outer-integration deviation** (new `Square/Bern2DOuterClose.lean`): Move 1 of the general
   Fubini swap. Integrating the already-proven per-`x` inner deviation (`bern2D_inner_close`) over the
   outer parameter `x ∈ [0,1]`, the genuine iterated double integral `∫_x ∫_y F` and the finite-rank

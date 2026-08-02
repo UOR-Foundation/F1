@@ -4317,6 +4317,13 @@ open UOR.Bridge.F1Square
 -- per-x bound bern2D_inner_close fed as the pointwise hdiff to riemannIntegralI_dist_le_window. NO swap.
 #print axioms Square.bern2D_outer_close
 
+-- The finite-rank symmetry (new Square/Bern2DFinrankSymm.lean): Move 2 of the general Fubini swap, a
+-- DISCRETE Fubini. The x-outer integral of the finite-rank 2D Bernstein inner test for F equals that
+-- for the transpose (fun a b => F b a): finrank_fubini reduces each side to Σᵢⱼ F(i/n,j/n)(∫bᵢ)(∫bⱼ),
+-- equal under the discrete grid-index swap RsumN_swap + Rmul commutativity. One integration order only
+-- on each side — NOT a continuous Fubini order interchange. No positivity, no limit, no crux.
+#print axioms Square.bern2D_finrank_symm
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

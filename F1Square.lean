@@ -383,6 +383,7 @@ import F1Square.Square.Bern2DUniform
 import F1Square.Square.Bern2DValue
 import F1Square.Square.Bern2DInnerClose
 import F1Square.Square.Bern2DOuterClose
+import F1Square.Square.Bern2DFinrankSymm
 import F1Square.Square.MellinConv
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower
