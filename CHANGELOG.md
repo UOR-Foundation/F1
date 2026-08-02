@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The Fubini swap of the convolution-Mellin pairing** (new `Square/MellinConvFubini.lean`):
+  applying the windowed 2D-Bernstein swap `bern2D_general_swap_window` to `mellinConv`. Two parts.
+  (A) `mellinConv_eq_paramInt` — the STRUCTURAL IDENTITY that `mellinConv f g psi` is the `x`-outer
+  double integral of the coupled integrand: `mellinConv = int_x [int_t coupIntegrand(x,t) dt]`. Per
+  `x` this is a scalar-linearity identity — the inner integrand is `P_{clamp x}(t)*psi(x)` with
+  `psi(x)` constant in `t`, so `riemannIntegralI_Rsmul` pulls it out to
+  `psi(x)*int_t P_{clamp x}(t) dt = psi(x)*(f convolved g)(x) = mulConvRTest.f x * psi(x)`
+  (`int_t (couTest x).f t = mulConvRTest.f x` is a genuine same-integrand `certif_irrel`, since
+  `haarIntegral = innerIonI . recipTest` and `productTest`s `.hLd/.hlip/.hfc` fields ARE
+  `l2L_den/l2lip/l2fc`), and the outer integral matches the `innerIonI` product integrand of
+  `mellinConv` pointwise. (B) `mellinConv_fubini` — the SWAP: feeding the committed coupled-integrand
+  witnesses (`coup_lipY/coup_fcY/coup_lipX/coup_fcX/coup_lip/coup_bd`) to `bern2D_general_swap_window`
+  at outer `x`-window `(xlo,xw)` and inner `t`-window `(lo,w)` turns the `x`-outer form into the
+  `t`-outer / `x`-inner double integral `int_t [int_x coupIntegrand(x,t) dx]`. **Honest scope**: the
+  Fubini swap of `mellinConv` at the finite-window level, inheriting from the windowed swap and the
+  coupled-integrand regularity — NO new limit, NO factorization, NO positivity, NO determinacy, NO
+  crux; the inner `int_x` is left unevaluated (the later dilation-covariance step). Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all delivered both
+  theorems; adversarial verify confirmed the identity is the genuine nested pairing, the
+  `certif_irrel`/`Rsmul` steps are honest, and the actual committed witnesses drive the swap.)
 - **The convolution-Mellin coupled integrand** (new `Square/ConvMellinIntegrand.lean`): the joint
   `(x,t)`-Lipschitz and bound of `coupIntegrand F(x,t) = f(x*clampedInv(a,t))*g(t)*clampedInv(a,t)*psi(x)`
   — the inner two-variable integrand of `mellinConv f g psi` (the convolution integrand `P_x(t)` in `t`

@@ -4366,6 +4366,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.coup_fcY
 #print axioms Square.coup_fcX
 
+-- The Fubini swap of the convolution-Mellin pairing (new Square/MellinConvFubini.lean): applying the
+-- windowed 2D-Bernstein swap to mellinConv. mellinConv_eq_paramInt is the structural identity that
+-- mellinConv is the x-outer double integral of coupIntegrand (per-x: pull the t-constant psi(x) out by
+-- riemannIntegralI_Rsmul, and int_t (couTest x).f = mulConvRTest.f x by certif_irrel same-integrand);
+-- mellinConv_fubini feeds the committed coup_* witnesses to bern2D_general_swap_window for the t-outer
+-- form. Inner int_x left unevaluated (the later dilation-covariance step). No new estimate, no crux.
+#print axioms Square.mellinConv_eq_paramInt
+#print axioms Square.mellinConv_fubini
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg
