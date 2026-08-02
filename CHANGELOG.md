@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The per-window rational-scale Mellin dilation** (new `Square/MellinWindowDilate.lean`): the
+  first sub-brick of the eventual dilation covariance. For a bounded-Lipschitz base test `f`, a
+  degree-`n` window weight `P`, a rational scale `s > 0`, and a window `[lo,lo+w]`, the twisted
+  integral over the `s`-SCALED window equals `s^(n+1)` times the integral over the base window of
+  the `s`-DILATED integrand:
+  `int_{[s*lo, s*(lo+w)]} (f*P) = s^(n+1) * int_{[lo,lo+w]} (dilateTest s f * P)`
+  (`mellinWindowDilate`). One linear change of variables `y = s*x` (`riemannIntegralI_dilate`,
+  producing the Jacobian factor `s`) composed with the degree-`n` homogeneity of the weight on the
+  window (`P(s*x) = s^n*P(x)`, the `s^n` pulled out by `riemannIntegralI_smul`), integrands
+  reconciled at a common Lipschitz modulus and equated on the window. The homogeneity is an
+  EXPLICIT hypothesis `hHom`; `powTest_dilate_on` discharges it for the genuine clamped Mellin
+  weight `powTest n` on any sub-`[0,1]` window (clamp-inert at both `y` and `s*y`, plus the `Rpow`
+  homogeneity `Rpow_dilate_ofQ`: `(s*x)^n = s^n*x^n`). **Honest scope**: one window rational-scale
+  change of variables — it builds NO half-line limit, NO exhaustion-independence, NO real-scale
+  dilation, NO factorization, NO convolution theorem, NO positivity, NO determinacy, NO crux. This
+  is the first of three sub-bricks toward the dilation covariance (the others — exhaustion-
+  independence of the improper integral, and the rational->real scale limit — are the hard
+  remaining parts). Step 4 (band-coupling positivity) is RH; crux `none`. (Three worktree drafters
+  all reached the full identity three independent ways; adversarial verify confirmed the genuine
+  change of variables, the explicit-not-smuggled homogeneity, and the honest clamp handling.)
 - **The g-pullout of the swapped convolution-Mellin inner integral** (new
   `Square/MellinConvGPull.lean`): the Fubini-swapped object `coupOuterTestSwap.f t = int_x
   coupIntegrand(x,t) dx` has an `x`-constant weight buried in its integrand; this factors it out. At

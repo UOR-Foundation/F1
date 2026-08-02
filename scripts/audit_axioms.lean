@@ -4389,6 +4389,17 @@ open UOR.Bridge.F1Square
 #print axioms Square.coupOuterTestSwap_gpull
 #print axioms Square.mellinConv_gpull
 
+-- The per-window rational-scale Mellin dilation (new Square/MellinWindowDilate.lean): the FIRST
+-- sub-brick of the eventual dilation covariance. For rational s>0 and a window [lo,lo+w],
+-- int over [s*lo, s*(lo+w)] of (f*P) = s^(n+1) * int over [lo,lo+w] of (dilateTest s f * P) — ONE
+-- linear change of variables (riemannIntegralI_dilate, Jacobian s) plus degree-n homogeneity of the
+-- weight (P(s*x)=s^n*P(x), Rpow_dilate_ofQ; s^n pulled out). The homogeneity is an EXPLICIT hHom
+-- hypothesis, discharged for the genuine clamped weight powTest n by powTest_dilate_on (clamp-inert on
+-- the window). NO half-line, NO exhaustion-independence, NO real-scale dilation, NO factorization, NO crux.
+#print axioms Square.Rpow_dilate_ofQ
+#print axioms Square.powTest_dilate_on
+#print axioms Square.mellinWindowDilate
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg
