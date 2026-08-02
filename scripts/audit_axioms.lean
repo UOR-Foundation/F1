@@ -4333,6 +4333,20 @@ open UOR.Bridge.F1Square
 -- HONESTLY via uniform Bernstein approximation — no closeness/limit/swap hypothesis assumed. No crux.
 #print axioms Square.bern2D_general_swap
 
+-- The windowed general Fubini swap (new Square/Bern2DWindowSwap.lean): generalizes bern2D_general_swap
+-- from the unit square to ARBITRARY rational windows [a,a+w] x [c,c+v] by affine reparametrization —
+-- the double integral of F over the box equals the transposed double integral. The pulled-back
+-- integrand G p q = F(a+w*p, c+v*q) is jointly-Lipschitz on the unit square (moduli w*Lx, v*Ly);
+-- riemannIntegralI_reparam collapses each windowed integral to a width-scaled unit integral;
+-- bern2D_general_swap at G supplies the unit-square equality; the shared w*v factor is stripped.
+-- Reusable: affineMap_comp, riemannIntegralI_reparam, smul_lip_ofQ, paramIntegralTest_reparam. No crux.
+#print axioms Square.affineMap_comp
+#print axioms Square.riemannIntegralI_reparam
+#print axioms Square.smul_lip_ofQ
+#print axioms Square.paramIntegralTest_reparam
+#print axioms Square.windowed_reparam_collapse
+#print axioms Square.bern2D_general_swap_window
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

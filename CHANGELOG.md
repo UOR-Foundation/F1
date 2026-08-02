@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The windowed general Fubini swap** (new `Square/Bern2DWindowSwap.lean`): generalizes
+  `bern2D_general_swap` from the unit square to ARBITRARY rational windows `[a,a+w]x[c,c+v]` — the
+  double integral of a jointly-Lipschitz `F` over the box equals the transposed double integral
+  (`bern2D_general_swap_window`), by a pure affine reparametrization reducing to the committed
+  `[0,1]^2` swap. The pulled-back integrand `G p q := F(a+w*p, c+v*q)` is jointly-Lipschitz on the
+  unit square with moduli `w*Lx, v*Ly` (derived from the directional facts via `affine_lip`, not
+  assumed); `riemannIntegralI_reparam` collapses each windowed interval integral to a width-scaled
+  unit-window integral, the outer/inner scalings collect into the shared factor `w*v` on both sides,
+  `bern2D_general_swap` at `G` supplies the unit-square equality, and `w*v` is stripped. Ships four
+  **reusable analysis bricks** made public: `affineMap_comp` (composition of affine pullbacks),
+  `riemannIntegralI_reparam` (windowed integral = width times unit integral of the pullback),
+  `smul_lip_ofQ` (a nonnegative rational scalar preserves Lipschitz), and `paramIntegralTest_reparam`
+  (the parametric window integral at a reparametrized point). **Honest scope**: a change-of-variables
+  generalization inheriting everything from `bern2D_general_swap` — no new limit, no positivity, no
+  determinacy, no crux. This is the window geometry the Mellin convolution theorem needs (its windows
+  are `[m+1,m+2] x [t-window]`, not `[0,1]^2`). Step 4 (band-coupling positivity) is RH; crux `none`.
+  (Three worktree drafters, two reached the full goal; adversarial verify confirmed the genuine
+  windowed equality, the derived-not-assumed joint Lipschitz, and the correct `w*v` cancellation.)
 - **The general Fubini swap** (new `Square/Bern2DGeneralSwap.lean`): Move 3, the CAPSTONE of the
   2D-Bernstein route — the passage the roadmap named as "not yet made." For a jointly-Lipschitz `F`
   on the unit square, the two GENUINE iterated double integrals are equal:
