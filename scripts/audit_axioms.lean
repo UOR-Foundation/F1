@@ -4289,6 +4289,14 @@ open UOR.Bridge.F1Square
 -- ‖F−B_n(F)‖∞ → 0 at the schedule δ=k+1, n=(k+1)². The analytic input the general Fubini swap consumes.
 #print axioms Square.bern2DVal_devsum_bound
 
+-- The 2D Bernstein list-fold ↔ pointwise-value agreement (new Square/Bern2DValue.lean): the flatMap↔
+-- double-RsumN correspondence (via RsumL) + bern2DList_eval_eq (the fold of Σ (φ.f x)(ψ.f y) over
+-- bern2DList = bern2DVal(x,y) on [0,1]²), connecting the swap object to the deviation object.
+#print axioms Square.RsumL_map_range
+#print axioms Square.RsumL_flatMap_range
+#print axioms Square.bernBasisTest_f_eq_bernR
+#print axioms Square.bern2DList_eval_eq
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

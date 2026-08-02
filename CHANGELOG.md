@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The 2D Bernstein list-fold ↔ pointwise-value agreement** (new `Square/Bern2DValue.lean`): connects
+  the finite-rank LIST representation `bern2DList` (the swap object, via `bern2D_fubini_swap`) to the
+  pointwise double-sum value `bern2DVal` (the deviation object) on `[0,1]²`. Two pieces: (i) a general
+  `flatMap`-of-`range`s fold ↔ iterated-`RsumN` correspondence routed through `RsumL` (`foldr_to_RsumL`
+  → `RsumL_map_range` → `RsumL_flatMap_range`) — clean because `List.range (N+1) = List.range N ++ [N]`
+  makes the last-element append match the `RsumN` recursion exactly (no reassociation); (ii)
+  `bern2DList_eval_eq` — the fold of `Σ (φ.f x)·(ψ.f y)` over `bern2DList` equals `bern2DVal(x,y)` on
+  `[0,1]²`, since each clamped `bernBasisTest` agrees with the honest `bernR` there
+  (`bernBasisTest_f_eq_bernR`, via a `natScale` value law + `bernR_eq_scaled_clampProd`) and the
+  `constTest` coefficient factors out. This is the value-agreement the general Fubini swap passes
+  through — it lets `finrank_fubini_swap` (list side) and `bern2DVal_deviation` (value side) be one
+  object. **Honest scope**: pure combinatorial/approximation infrastructure; NO integral, NO swap, NO
+  convergence, NO positivity, NO crux. Step 4 is RH; crux `none`. (Workflow-drafted, worktree-compiled,
+  adversarially verified.)
 - **The 2D uniform Bernstein convergence bound** (new `Square/Bern2DUniform.lean`):
   `bern2DVal_devsum_bound` — `2δn·|B_n(F)(x,y) − F(x,y)| ≤ (Lx+Ly)·(δ²+n/4)` on `[0,1]²` for a
   jointly-Lipschitz `F` and any `δ > 0` (multiplied form, uniform in `x,y`). The 2D pointwise deviation
