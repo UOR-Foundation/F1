@@ -4297,6 +4297,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.bernBasisTest_f_eq_bernR
 #print axioms Square.bern2DList_eval_eq
 
+-- The per-x inner-integral deviation (new Square/Bern2DInnerClose.lean): at fixed x∈[0,1],
+-- 2δn·|∫₀¹F(x,y)dy − (sumProdTest (bern2DList …) 0 1).f x| ≤ (Lx+Ly)(δ²+n/4). The key identity
+-- sumProdTest_f_eq_gxInt rewrites the finite-rank value as the genuine interval integral ∫₀¹ gxSumTest
+-- (whose [0,1] value is bern2DVal), then the 2δn-scaled riemannIntegralI_dist_le_window is fed by the
+-- uniform pointwise bern2DVal_devsum_bound. Multiplied form (no reciprocal). No swap, no positivity.
+#print axioms Square.gxSumTest_f
+#print axioms Square.riemannIntegralI_constTestMul
+#print axioms Square.sumProdTest_f_eq_gxInt
+#print axioms Square.scaled_lip
+#print axioms Square.scaled_fc
+#print axioms Square.riemannIntegralI_ofQscale
+#print axioms Square.bern2D_inner_close
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

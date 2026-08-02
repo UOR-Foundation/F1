@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The per-`x` inner-integral deviation** (new `Square/Bern2DInnerClose.lean`): the limit-passage core
+  of the general Fubini swap. At a fixed parameter `x ∈ [0,1]`, the inner `y`-integral of a
+  jointly-Lipschitz `F` and the finite-rank 2D Bernstein inner test value are uniformly close —
+  `2δn·|∫₀¹ F(x,y) dy − (sumProdTest (bern2DList F … n hn) 0 1).f x| ≤ (Lx+Ly)·(δ²+n/4)`
+  (`bern2D_inner_close`, multiplied form; the reciprocal `1/(2δn)` is never formed). The comparison
+  object is the value at `x` of the finite-rank inner-integral test; the KEY IDENTITY
+  `sumProdTest_f_eq_gxInt` rewrites it as the genuine interval integral `∫₀¹ gxSumTest` of a single
+  `y`-test `gxSumTest` (each coefficient `φₖ(x)` carried on a `constTest`, pulled out of the integral by
+  `riemannIntegralI_constTestMul`; the finite sum reassembled by `riemannIntegralI_L2add`), whose value
+  on `[0,1]` is the pointwise `bern2DVal(x,·)` (`bern2DList_eval_eq`). Both objects being interval
+  integrals, the `2δn`-scaled window comparison `riemannIntegralI_dist_le_window` (integrands scaled by
+  the rational `2δn` via `riemannIntegralI_ofQscale`/`scaled_lip`/`scaled_fc`) turns the uniform
+  pointwise `bern2DVal_devsum_bound` into the integral deviation. **Honest scope**: a per-`x`
+  analysis/approximation estimate — NO Fubini swap (the pull-outs are scalar-linearity of a single 1D
+  `y`-integral, not interchange of integration order), NO outer integral, NO limit interchange, NO
+  positivity (only `Rnonneg` of a nonneg rational constant), NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three independent worktree drafters compiled + audited
+  it; adversarial verify confirmed correct, non-vacuous, non-smuggling, `[propext, Quot.sound]`.)
 - **The 2D Bernstein list-fold ↔ pointwise-value agreement** (new `Square/Bern2DValue.lean`): connects
   the finite-rank LIST representation `bern2DList` (the swap object, via `bern2D_fubini_swap`) to the
   pointwise double-sum value `bern2DVal` (the deviation object) on `[0,1]²`. Two pieces: (i) a general
