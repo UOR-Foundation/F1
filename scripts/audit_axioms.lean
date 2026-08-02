@@ -4284,6 +4284,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.bern2DVal_unfold
 #print axioms Square.bern2DVal_deviation
 
+-- The 2D uniform Bernstein convergence bound (new Square/Bern2DUniform.lean): 2δn·|B_n(F)(x,y)−F(x,y)|
+-- ≤ (Lx+Ly)·(δ²+n/4) on [0,1]² — the 2D deviation scaled + bernOp_devsum_bound in each variable, giving
+-- ‖F−B_n(F)‖∞ → 0 at the schedule δ=k+1, n=(k+1)². The analytic input the general Fubini swap consumes.
+#print axioms Square.bern2DVal_devsum_bound
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

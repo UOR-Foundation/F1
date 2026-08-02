@@ -379,6 +379,7 @@ import F1Square.Square.SeparableFubini
 import F1Square.Square.FiniteRankFubini
 import F1Square.Square.Bern2DOperator
 import F1Square.Square.Bern2DDeviation
+import F1Square.Square.Bern2DUniform
 import F1Square.Square.MellinConv
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower

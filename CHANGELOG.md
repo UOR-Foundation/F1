@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The 2D uniform Bernstein convergence bound** (new `Square/Bern2DUniform.lean`):
+  `bern2DVal_devsum_bound` — `2δn·|B_n(F)(x,y) − F(x,y)| ≤ (Lx+Ly)·(δ²+n/4)` on `[0,1]²` for a
+  jointly-Lipschitz `F` and any `δ > 0` (multiplied form, uniform in `x,y`). The 2D pointwise deviation
+  `bern2DVal_deviation` bounds it by `Lx·(x-central-moment) + Ly·(y-central-moment)`; scaling by
+  `2δn ≥ 0` and applying `bernOp_devsum_bound` in each variable bounds each moment sum by `δ²+n/4`, and
+  the `Lx, Ly` coefficients factor out (a generic `A·(u·P+v·Q) = u·(A·P)+v·(A·Q)` reassociation, since
+  `set` is a Mathlib tactic unavailable here). At the schedule `δ=k+1, n=(k+1)²` this is
+  `|B_n(F)−F| ≤ (Lx+Ly)·5/(8(k+1)) → 0` uniformly — the 2D Weierstrass rate, the analytic input the
+  general Fubini swap consumes (`‖F−B_n(F)‖∞ → 0`). **Honest scope**: a uniform rational bound on the 2D
+  Bernstein deviation; general approximation theory, no positivity, no integral, no crux. Step 4 is RH;
+  crux `none`.
 - **The 2D pointwise Bernstein deviation bound** (new `Square/Bern2DDeviation.lean`): for a
   jointly-Lipschitz `F : Real → Real → Real` (moduli `Lx, Ly`), the pointwise 2D Bernstein approximant
   `bern2DVal F n = Σ_{i,j} F(i/n,j/n)·b_{n,i}(x)·b_{n,j}(y)` satisfies
