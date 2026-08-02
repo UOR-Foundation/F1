@@ -6,6 +6,29 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The general Fubini swap** (new `Square/Bern2DGeneralSwap.lean`): Move 3, the CAPSTONE of the
+  2D-Bernstein route — the passage the roadmap named as "not yet made." For a jointly-Lipschitz `F`
+  on the unit square, the two GENUINE iterated double integrals are equal:
+  `∫_x ∫_y F(x,y) = ∫_y ∫_x F(x,y)` (`bern2D_general_swap`). The left side is
+  `∫_x (paramIntegralTest F …).f` (value at `x` is `∫₀¹ F(x,·) dy`); the right side is
+  `∫_y (paramIntegralTest Fᵀ …).f` for the genuine transpose `Fᵀ a b := F b a` (value at `y` is
+  `∫₀¹ F(·,y) dx`), its moduli swapped and its Lipschitz/continuity/bound witnesses *derived* from
+  `F`'s (`fun x y y' => hlipX y y' x`, …, `hFbd_G = fun a b => hFbd b a`) — not assumed. The
+  statement has NO `δ` and NO `n`; the Bernstein schedule (`δ=k+1, n=(k+1)²`) lives only inside the
+  proof. Per schedule `k`: `bern2D_outer_close` at `F` and at `Fᵀ` bound `2δn·|∫∫F − ∫Sₙ|` and
+  `2δn·|∫∫Fᵀ − ∫Sₙ(Fᵀ)|` by `(Lx+Ly)(δ²+n/4)`; `bern2D_finrank_symm` (`Sₙ(F)=Sₙ(Fᵀ)`) identifies
+  the two Bernstein anchors; an anchored triangle scaled by `2δn≥0`, divided out by
+  `Rle_of_Rmul_ofQ_le` (the `R=2(k+1)³` schedule weight), yields `|∫∫F−∫∫Fᵀ| ≤ (5/4)(Lx+Ly)/(k+1)`,
+  and the real Archimedean squeeze `Req_of_Rle_ofQ_all` closes the exact equality. The Bernstein
+  value is only the vanishing intermediate anchor; the schedule kills the gap. **Honest scope**: the
+  general Fubini swap for a jointly-Lipschitz `F`, proved via uniform 2D Bernstein approximation and
+  the schedule limit — an analysis theorem. The equality is between the two genuine iterated
+  integrals of `F`, NOT Bernstein values; NO closeness/limit/swap hypothesis is assumed (only `F`
+  joint-continuity + joint-Lipschitz + bound). NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three independent worktree drafters compiled +
+  audited it; adversarial verify confirmed the two sides are the genuine transposed iterated
+  integrals, the transpose instantiation and `Sₙ(F)=Sₙ(Fᵀ)` are discharged not assumed, and the
+  schedule limit is genuine — `[propext, Quot.sound]`.)
 - **The finite-rank symmetry** (new `Square/Bern2DFinrankSymm.lean`): Move 2 of the general Fubini
   swap — a DISCRETE Fubini on the `(n+1)×(n+1)` Bernstein grid. The outer `x`-integral of the
   finite-rank 2D Bernstein inner test for `F` equals that for the transpose `Fᵀ a b := F b a` —

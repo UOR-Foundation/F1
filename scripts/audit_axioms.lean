@@ -4324,6 +4324,15 @@ open UOR.Bridge.F1Square
 -- on each side — NOT a continuous Fubini order interchange. No positivity, no limit, no crux.
 #print axioms Square.bern2D_finrank_symm
 
+-- The general Fubini swap (new Square/Bern2DGeneralSwap.lean): Move 3 CAPSTONE of the 2D-Bernstein
+-- route. For jointly-Lipschitz F on the unit square, the two GENUINE iterated integrals are equal:
+-- ∫_x∫_y F = ∫_y∫_x F (LHS = ∫ paramIntegralTest F, RHS = ∫ paramIntegralTest (fun a b => F b a)).
+-- Per schedule δ=k+1,n=(k+1)²: bern2D_outer_close at F and at the transpose + bern2D_finrank_symm
+-- (Sₙ(F)=Sₙ(Fᵀ)) identify the two Bernstein anchors; anchored triangle scaled by 2δn, divided out by
+-- Rle_of_Rmul_ofQ_le, closed by the Archimedean squeeze Req_of_Rle_ofQ_all. The swap is performed
+-- HONESTLY via uniform Bernstein approximation — no closeness/limit/swap hypothesis assumed. No crux.
+#print axioms Square.bern2D_general_swap
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg
