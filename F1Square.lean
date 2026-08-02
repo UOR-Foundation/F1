@@ -389,6 +389,7 @@ import F1Square.Square.Bern2DWindowSwap
 import F1Square.Square.ConvMellinIntegrand
 import F1Square.Square.MellinConv
 import F1Square.Square.MellinConvFubini
+import F1Square.Square.MellinConvGPull
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower
 import F1Square.Square.MellinHat

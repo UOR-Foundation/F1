@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The g-pullout of the swapped convolution-Mellin inner integral** (new
+  `Square/MellinConvGPull.lean`): the Fubini-swapped object `coupOuterTestSwap.f t = int_x
+  coupIntegrand(x,t) dx` has an `x`-constant weight buried in its integrand; this factors it out. At
+  fixed `t`, `coupIntegrand(x,t) = f(clamp x*clampedInv(a,t))*g(t)*clampedInv(a,t)*psi(x) = W(t)*D(x,t)`
+  with `W(t) = g(t)*clampedInv(a,t)` (constant in `x`) and `D(x,t) = f(clamp x*clampedInv(a,t))*psi(x)`
+  (the dilated-Mellin-of-`f` integrand). `coupOuterTestSwap_gpull` regroups by scalar `Rmul`
+  assoc/comm (`gpull_regroup`), then pulls the real constant `W(t)` out of the `x`-window integral by
+  `riemannIntegralI_Rsmul` (moduli reconciled by `lip_weaken`/`certif_irrel`), leaving the isolated
+  inner integral as `dilMellinF`, the dilated Mellin of `f` at scale `clampedInv(a,t)` (its
+  `x`-Lipschitz `dilIntegrand_lipX` is the product bound of the `1`-Lipschitz band clamp against
+  `psi`). `mellinConv_gpull` composes this with `mellinConv_fubini` to rewrite the whole double
+  integral in pulled-out form `mellinConv = int_t W(t)*dilMellinF(t) dt`. **Honest scope**: a
+  scalar-linearity regrouping inheriting from `mellinConv_fubini` — it evaluates NO integral, proves
+  NO dilation covariance (the inner `int_x` is left as `dilMellinF`, whose evaluation as a multiple of
+  `M[f]` is the later half-line step), builds NO limit, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all reached both capstones;
+  adversarial verify confirmed the genuine regroup, the honest `Rsmul` pull-out, and that `dilMellinF`
+  is left unevaluated — no dilation covariance smuggled.)
 - **The Fubini swap of the convolution-Mellin pairing** (new `Square/MellinConvFubini.lean`):
   applying the windowed 2D-Bernstein swap `bern2D_general_swap_window` to `mellinConv`. Two parts.
   (A) `mellinConv_eq_paramInt` — the STRUCTURAL IDENTITY that `mellinConv f g psi` is the `x`-outer

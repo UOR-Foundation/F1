@@ -4375,6 +4375,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.mellinConv_eq_paramInt
 #print axioms Square.mellinConv_fubini
 
+-- The g-pullout of the swapped convolution-Mellin inner integral (new Square/MellinConvGPull.lean):
+-- coupOuterTestSwap.f t = int_x coupIntegrand(x,t) dx has an x-constant weight W(t)=g(t)*clampedInv(a,t)
+-- buried in the integrand; coupOuterTestSwap_gpull regroups coupIntegrand = W(t)*D(x,t) (gpull_regroup)
+-- then pulls W(t) out by riemannIntegralI_Rsmul, isolating dilMellinF = int_x D(x,t) dx (D = the
+-- dilated-Mellin-of-f integrand f(clamp x*clampedInv(a,t))*psi(x), dilIntegrand_lipX its x-Lipschitz).
+-- mellinConv_gpull composes with mellinConv_fubini. dilMellinF LEFT UNEVALUATED (the later half-line
+-- dilation-covariance step). Scalar-linearity regrouping only. No dilation covariance, no crux.
+#print axioms Square.dilLx_den
+#print axioms Square.dilLx_num
+#print axioms Square.dilIntegrand_lipX
+#print axioms Square.dilIntegrand_fcX
+#print axioms Square.coupOuterTestSwap_gpull
+#print axioms Square.mellinConv_gpull
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg
