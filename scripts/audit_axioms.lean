@@ -4310,6 +4310,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegralI_ofQscale
 #print axioms Square.bern2D_inner_close
 
+-- The outer-integration deviation (new Square/Bern2DOuterClose.lean): Move 1 of the general Fubini
+-- swap. Integrating the per-x deviation over x, 2δn·|∫_x∫_y F − ∫_x (sumProdTest (bern2DList …) 0 1)|
+-- ≤ (Lx+Ly)(δ²+n/4). A structural mirror of bern2D_inner_close one integration level up: paramIntegralTest
+-- and sumProdTest(bern2DList) are the two x-integrands, scaled by 2δn (riemannIntegralI_ofQscale), the
+-- per-x bound bern2D_inner_close fed as the pointwise hdiff to riemannIntegralI_dist_le_window. NO swap.
+#print axioms Square.bern2D_outer_close
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

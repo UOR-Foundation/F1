@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The outer-integration deviation** (new `Square/Bern2DOuterClose.lean`): Move 1 of the general
+  Fubini swap. Integrating the already-proven per-`x` inner deviation (`bern2D_inner_close`) over the
+  outer parameter `x ∈ [0,1]`, the genuine iterated double integral `∫_x ∫_y F` and the finite-rank
+  `∫_x` of the 2D Bernstein inner test are uniformly close —
+  `2δn·|∫_x ∫_y F − ∫_x (sumProdTest (bern2DList F …) 0 1)| ≤ (Lx+Ly)·(δ²+n/4)` (`bern2D_outer_close`,
+  multiplied form; the reciprocal `1/(2δn)` is never formed). Both outer integrands are genuine
+  `L2Test`s in `x`: the parametric inner integral `paramIntegralTest F …` (value at `x` is
+  `∫₀¹ F(x,·) dy`) and the finite-rank inner-value test `sumProdTest (bern2DList F …) 0 1`; `∫_x∫_y F`
+  and the finite-rank `∫_x` are their interval integrals over the unit `x`-window. A structural mirror
+  of `bern2D_inner_close` lifted one integration level (x instead of y), and *simpler* — no key
+  identity is needed since the finite-rank object is literally the interval integral of `sumProdTest`.
+  Both `x`-integrands are scaled by the rational `2δn` (`riemannIntegralI_ofQscale`, reused public from
+  `Bern2DInnerClose`), the `2δn`-scaled outer window comparison `riemannIntegralI_dist_le_window` is fed
+  the per-`x` bound `bern2D_inner_close` itself as its pointwise `hdiff` (the affine pullback on the
+  unit `x`-window is the identity, `affineMap01_outer`). **Honest scope**: the outer integration of the
+  per-`x` deviation for a jointly-Lipschitz `F` — an analysis/approximation estimate. NO Fubini swap
+  (`∫_x∫_y F` is only *bounded against* the finite-rank object, never equated to `∫_y∫_x F`), NO limit
+  interchange, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux
+  `none`. (Three independent worktree drafters compiled + audited it; adversarial verify confirmed
+  correct, non-vacuous, non-smuggling, `[propext, Quot.sound]`.)
 - **The per-`x` inner-integral deviation** (new `Square/Bern2DInnerClose.lean`): the limit-passage core
   of the general Fubini swap. At a fixed parameter `x ∈ [0,1]`, the inner `y`-integral of a
   jointly-Lipschitz `F` and the finite-rank 2D Bernstein inner test value are uniformly close —
