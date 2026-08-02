@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The 2D pointwise Bernstein deviation bound** (new `Square/Bern2DDeviation.lean`): for a
+  jointly-Lipschitz `F : Real → Real → Real` (moduli `Lx, Ly`), the pointwise 2D Bernstein approximant
+  `bern2DVal F n = Σ_{i,j} F(i/n,j/n)·b_{n,i}(x)·b_{n,j}(y)` satisfies
+  `|B_n(F)(x,y) − F(x,y)| ≤ Lx·Σ_i|i/n−x|·b_{n,i}(x) + Ly·Σ_j|j/n−y|·b_{n,j}(y)` on `[0,1]²`
+  (`bern2DVal_deviation`). Pure double-sum bookkeeping mirroring the 1D `bernOp_deviation`: `F(x,y)`
+  as the constant double sum via the double partition of unity (`bernR_partition` twice), so the
+  difference is `Σ_{i,j}(F(i/n,j/n)−F(x,y))·b_i(x)·b_j(y)`; nested finite triangle inequality
+  (`RsumN_Rabs_le`, basis `≥ 0`) + the joint-Lipschitz modulus, then the transverse partition factors
+  each slot. Combined with the already-built `bernOp_devsum_bound` (`2δn·Σ|k/n−x|b ≤ δ²+n/4`), each
+  central-moment sum → 0, so `‖F − B_n(F)‖∞ → 0` — the analytic core of the general Fubini swap. **Why**:
+  the general swap `∫_x∫_y F = ∫_y∫_x F` follows from `|∫∫F − ∫∫B_n(F)| ≤ area·‖F−B_n(F)‖∞` (via
+  `riemannIntegralI_dist_le_window`), `∫∫B_n(F)` swaps (`bern2D_fubini_swap`), and this → 0 rate. **Honest
+  scope**: the pure pointwise 2D deviation for a jointly-Lipschitz `F` — general approximation theory;
+  NO positivity, NO moment-integral, NO crux. Step 4 is RH; crux `none`.
 - **The 2D Bernstein operator as a finite-rank list + its Fubini swap** (new
   `Square/Bern2DOperator.lean`): the bivariate Bernstein approximant
   `B_n(F)(x,y) = Σ_{i,j=0}^n F(i/n,j/n)·b_{n,i}(x)·b_{n,j}(y)` is a finite sum of SEPARABLE products,

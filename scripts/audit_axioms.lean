@@ -4278,6 +4278,12 @@ open UOR.Bridge.F1Square
 -- of finrank_fubini_swap. The finite-rank object the 2D-Bernstein route to the general swap builds on.
 #print axioms Square.bern2D_fubini_swap
 
+-- The 2D pointwise Bernstein deviation (new Square/Bern2DDeviation.lean): for jointly-Lipschitz F,
+-- |Σ_{i,j}F(i/n,j/n)b_i(x)b_j(y) − F(x,y)| ≤ Lx·Σ|i/n−x|b_i(x) + Ly·Σ|j/n−y|b_j(y) on [0,1]² — the
+-- analytic core of the general Fubini swap (double partition-of-unity + joint Lipschitz). Crux none.
+#print axioms Square.bern2DVal_unfold
+#print axioms Square.bern2DVal_deviation
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg
