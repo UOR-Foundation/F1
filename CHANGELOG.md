@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The convolution-Mellin coupled integrand** (new `Square/ConvMellinIntegrand.lean`): the joint
+  `(x,t)`-Lipschitz and bound of `coupIntegrand F(x,t) = f(x*clampedInv(a,t))*g(t)*clampedInv(a,t)*psi(x)`
+  — the inner two-variable integrand of `mellinConv f g psi` (the convolution integrand `P_x(t)` in `t`
+  at the `[0,S]`-clamped output `x`, weighted by the Mellin test `psi(x)`), presented as a jointly
+  bounded-Lipschitz `Real -> Real -> Real` carrying the six `paramIntegralTest` witnesses. This is the
+  regularity precondition for applying the windowed Fubini swap to `mellinConv`. Key insight: the
+  `t`-factor is a genuine product `L2Test` `couTest x = productTest (productTest (reflectTest a
+  (dilateTestR (clamp x) f)) g) (recipTest a)`, so the `t`-direction bound `coup_lipY` is just `l2lip`
+  of that product times the weight bound `|psi(x)| <= M_psi` — the linchpin being that `couTest`
+  moduli are definitionally `x`-independent (`dilateTestR` sets `L := phi.L*S` with no scale
+  reference), so a single rational modulus bounds all `x`. The `x`-direction `coup_lipX` reuses
+  `mulConvR_integrand_diff` (the `t`-uniform `x`-difference) folded through the band clamp and
+  `Rmul_lipschitz` against `psi`; the joint `coup_lip` is the triangle. **Honest scope**: a pointwise
+  product-of-bounded-Lipschitz regularity fact — NO integral swap, NO integral identity, NO
+  positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three
+  worktree drafters all reached the full witness set; adversarial verify confirmed the genuine
+  moduli, the derived-not-assumed `t`-Lipschitz, and the `x`-independence linchpin, `[propext,
+  Quot.sound]`.)
 - **The windowed general Fubini swap** (new `Square/Bern2DWindowSwap.lean`): generalizes
   `bern2D_general_swap` from the unit square to ARBITRARY rational windows `[a,a+w]x[c,c+v]` — the
   double integral of a jointly-Lipschitz `F` over the box equals the transposed double integral

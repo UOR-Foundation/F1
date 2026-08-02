@@ -4347,6 +4347,25 @@ open UOR.Bridge.F1Square
 #print axioms Square.windowed_reparam_collapse
 #print axioms Square.bern2D_general_swap_window
 
+-- The convolution-Mellin coupled integrand (new Square/ConvMellinIntegrand.lean): the joint (x,t)
+-- Lipschitz + bound of coupIntegrand F(x,t) = f(x*clampedInv(a,t))*g(t)*clampedInv(a,t)*psi(x), the
+-- inner two-variable integrand of mellinConv (P_x(t) times the Mellin weight psi(x)). The t-factor is
+-- a genuine product L2Test couTest x, so the t-direction coup_lipY is l2lip of that product times the
+-- psi bound (linchpin: couTest .L/.M are x-independent); coup_lipX reuses mulConvR_integrand_diff; the
+-- joint coup_lip is the triangle. Regularity precondition for a later Fubini swap. No swap, no crux.
+#print axioms Square.couLy_den
+#print axioms Square.couLy_num
+#print axioms Square.couLx_den
+#print axioms Square.couLx_num
+#print axioms Square.couB_den
+#print axioms Square.couB_num
+#print axioms Square.coup_lipY
+#print axioms Square.coup_lipX
+#print axioms Square.coup_lip
+#print axioms Square.coup_bd
+#print axioms Square.coup_fcY
+#print axioms Square.coup_fcX
+
 -- The integer-exponent Mellin transform of the convolution (new Square/MellinConvInt.lean).
 #print axioms Square.bandTest_nonneg
 #print axioms Square.powWinTest_nonneg

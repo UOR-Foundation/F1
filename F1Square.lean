@@ -386,6 +386,7 @@ import F1Square.Square.Bern2DOuterClose
 import F1Square.Square.Bern2DFinrankSymm
 import F1Square.Square.Bern2DGeneralSwap
 import F1Square.Square.Bern2DWindowSwap
+import F1Square.Square.ConvMellinIntegrand
 import F1Square.Square.MellinConv
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower
