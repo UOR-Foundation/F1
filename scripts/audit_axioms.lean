@@ -5178,6 +5178,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.powWinTest_eq_Rpow_on
 #print axioms Square.twTerm_eq_window_powBandGen
 
+-- THE PRE-HILBERT LAYER (Square/TwTermDilateWindow.lean) — the per-window twisted dilation
+-- covariance, composing window_dilate_powBandGen (per-window dilation at the wide-band weight) with
+-- twTerm_eq_window_powBandGen (weight-swap to powWinTest), instantiated at the dilated test:
+-- ∫_{[s(m+1),s(m+2)]}(φ·powBandGen) = s^(n+1)·twTerm (dilate_s φ) n m. No half-line assembly, no
+-- reschedule (the sum over windows), no positivity, no crux.
+#print axioms Square.twTerm_dilate_window
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

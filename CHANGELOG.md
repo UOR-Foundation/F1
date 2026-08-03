@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The per-window twisted dilation covariance** (new `Square/TwTermDilateWindow.lean`): composes
+  the two committed halves into a single per-window identity. `window_dilate_powBandGen` gives the
+  per-window rational-scale Mellin dilation at the wide-band twist weight, and
+  `twTerm_eq_window_powBandGen` swaps that weight for the integer-window `powWinTest` of `twTerm`;
+  instantiated at the dilated test `dilate_s φ` and composed by `Req_trans` + `Rmul_congr`, they give
+
+      `int_{s(m+1)}^{s(m+2)} (φ · powBandGen) = s^(n+1) · twTerm (dilate_s φ) n m`
+
+  (`twTerm_dilate_window`). The `m`-th window integral of the ORIGINAL `φ` against the genuine power,
+  over the `s`-scaled window `[s(m+1), s(m+2)]`, equals `s^(n+1)` times the `m`-th `mellinHat` tail
+  term of the dilated test. **Honest scope**: the per-window twisted dilation covariance — it builds
+  NO half-line assembly, NO reschedule (the sum over windows), NO factorization, NO positivity, NO
+  determinacy, NO crux (summing over `m` and lifting to the half-line are later bricks). Step 4
+  (band-coupling positivity) is RH; crux `none`.
 - **The weight-swap to the mellinHat tail term** (new `Square/TwTermPowBand.lean`): connects the
   committed per-window dilation identity `window_dilate_powBandGen` (which carries the WIDE-BAND
   twist weight `powBandGen`) to the `mellinHat` tail term `twTerm` (which carries the
