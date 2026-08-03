@@ -6,6 +6,30 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Exhaustion-independence of the improper half-line integral** (new
+  `Square/ImproperScheduleIndep.lean`): exhaustion rung 4b. The certified improper Mellin integral
+  `int_1^inf f = improperIntegral1` is defined as the Bishop limit of the reindexed partial sums
+  `genSum (integralTerm ..) (digammaMidx K j)` — the `digammaMidx K` schedule is one particular
+  cofinal integer exhaustion of the half-line. This file proves the value is INDEPENDENT of that
+  choice: ANY integer schedule `R : Nat -> Nat` growing at least as fast as `digammaMidx K`
+  (`digammaMidx K j <= R j`) yields the SAME `Rlim` (`improper_schedule_eq`). The engine is the
+  committed telescoping tail bound `genTail_two_sided`: for `A >= B >= 1` the real gap
+  `genSum T A - genSum T B` is the range sum `Sum_{i<A-B} T(B+i)`, bounded by
+  `+/- ofQ(digammaTailQ K B (A-B))` and hence (by `digammaTailQ_Midx_le`) by `ofQ <1,j+1>` when
+  `B = digammaMidx K j` (`genSum_close`) — so the two schedules agree within `1/(j+1)` at every
+  index `j`. A diagonal Archimedean argument over the `Rlim` diagonal `4n+3`, packaged once as
+  `Rlim_approx_eq`, equates the limits via `Req_of_lin_bound`; the seq-level extraction of a real
+  gap is the reusable `seq_gap_bound` (`|P.seq N - V.seq N| <= (C+2)/(N+1)` from `|P-V| <= C/(N+1)`,
+  via `Qarch_gen` through the read-index `2m+1`). The growth hypothesis `hgrow` is load-bearing and
+  honest: `RTendsTo` carries a FIXED canonical modulus `2/(k+1)`, which the raw partial sums (tail
+  rate `K/N`) meet only once the schedule is accelerated to grow at least as fast as `digammaMidx K`;
+  without `hgrow` the acceleration fails for general `K`. **Honest scope**: schedule-independence of
+  the improper integral (the RHS is the pre-existing `improperIntegral1` def, unfolded definitionally
+  — not a re-invented limit) — it builds NO dilation covariance, NO factorization, NO new limit, NO
+  positivity, NO determinacy, NO crux (the per-window dilation assembly is a later rung). Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all reached the full
+  bridge, all `[propext, Quot.sound]`; adversarial verify confirmed the `Req` is genuine against the
+  pre-existing def, `hgrow` load-bearing and used, the tail bound proved not assumed, non-smuggling.)
 - **The exhaustion characterization of the half-line integral** (new
   `Square/HalfLineExhaustion.lean`): exhaustion rung 4. The window-`genSum`-defined improper
   integral `int_0^inf f` is re-expressed as the Bishop limit of a sequence of INTERVAL integrals

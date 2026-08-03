@@ -7193,3 +7193,17 @@ open UOR.Bridge.F1Square
 -- (genSum integralTerm = int_1^{N+1}), STEP B split_at at width 1 (join the [0,1] gateway), STEP C
 -- Rlim_add_const + Rlim_congr (same digammaMidx sampling, no new limit minted). No dilation, no crux.
 #print axioms Square.halfLineIntegral_eq_Rlim
+
+-- Exhaustion-independence of the improper half-line integral (new Square/ImproperScheduleIndep.lean):
+-- exhaustion rung 4b. ANY integer schedule R growing at least as fast as digammaMidx K yields the SAME
+-- Rlim as improperIntegral1, so the improper Mellin integral is schedule-independent. seq_gap_bound:
+-- a real gap |P-V| <= C/(N+1) gives the raw-approximant gap |P.seq N - V.seq N| <= (C+2)/(N+1)
+-- (Qarch_gen via the read-index 2m+1). Rlim_approx_eq: per-index closeness of two regular sequences
+-- implies equal Rlim (diagonal 4n+3 -> Req_of_lin_bound). genSum_close: the two schedules agree within
+-- 1/(j+1) (genSum_diff_eq + genTail_two_sided + digammaTailQ_Midx_le). improper_schedule_eq: the capstone.
+-- hgrow is load-bearing (the canonical RTendsTo modulus needs the accelerated schedule). No dilation,
+-- no factorization, no positivity, no determinacy, no crux.
+#print axioms Square.seq_gap_bound
+#print axioms Square.Rlim_approx_eq
+#print axioms Square.genSum_close
+#print axioms Square.improper_schedule_eq
