@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The per-window rational-scale Mellin dilation at the twist weight** (new
+  `Square/WindowDilatePow.lean`): the committed per-window rational-scale Mellin dilation
+  `mellinWindowDilate` INSTANTIATED at the twist weight `powBandGen`, on the integer window
+  `[m+1, m+2]`, with the weight over a band `[lo, hi]` covering both the window and its `s`-scaling
+  `[s·(m+1), s·(m+2)]` — `∫_{[s(m+1),s(m+2)]}(φ·powBandGen) = s^(n+1)·∫_{[m+1,m+2]}(dilate_s φ·powBandGen)`
+  (`window_dilate_powBandGen`). The only new content is discharging `mellinWindowDilate`'s `hHom`
+  hypothesis via the committed `powBandGen_dilate_on`: with `y = affineMap (m+1) 1 x` for
+  `0 <= x <= 1`, the four membership facts (`y` and `s·y` both in `[lo, hi]`) are chained from the
+  band-containment hypotheses `hc1`–`hc4` through `Rle_ofQ_ofQ`, `Rmul_ofQ_ofQ`, the `Rmul`/`Radd`
+  monotonicities, and `Rle_self_Radd_right`. Each containment hypothesis is used exactly once and is
+  load-bearing. **Honest scope**: the per-window dilation identity at the twist weight over a
+  covering band — it builds NO weight-swap to `twTerm`, NO half-line assembly, NO factorization, NO
+  positivity, NO determinacy, NO crux (the weight-swap and reschedule are later bricks). Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all delivered the full
+  identity, all `[propext, Quot.sound]`; adversarial verify confirmed the conclusion is exactly
+  `mellinWindowDilate` instantiated, `hHom` genuinely discharged, all four containment hypotheses
+  load-bearing, non-smuggling.)
 - **The homogeneity of the rational-window power** (new
   `Square/RationalWindowDilate.lean`): the `hHom` discharge that `mellinWindowDilate` needs, for the
   rational-window power `powBandGen`. On a band `[lo, hi]` containing BOTH a point and its

@@ -5158,6 +5158,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.powBandGen_eq_Rpow_on
 #print axioms Square.powBandGen_dilate_on
 
+-- THE PRE-HILBERT LAYER (Square/WindowDilatePow.lean) — the committed per-window rational-scale
+-- Mellin dilation (mellinWindowDilate) INSTANTIATED at the twist weight powBandGen, on the integer
+-- window [m+1,m+2], with the weight over a band [lo,hi] covering both the window and its s-scaling
+-- [s(m+1),s(m+2)]. The hHom hypothesis is discharged by powBandGen_dilate_on; the four membership
+-- facts come from the affine/scaling algebra under the band-containment hyps. Gives
+-- ∫_{[s(m+1),s(m+2)]}(φ·powBandGen) = s^(n+1)·∫_{[m+1,m+2]}(dilate_s φ·powBandGen). No weight-swap,
+-- no half-line assembly, no positivity, no crux.
+#print axioms Square.window_dilate_powBandGen
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
