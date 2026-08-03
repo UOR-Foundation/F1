@@ -7170,3 +7170,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannSum_multiple_refine
 #print axioms Square.riemannSum_conv_dist
 #print axioms Square.riemannSum_split_at_gen
+
+-- The interval-level general split-point additivity (new Square/IntervalSplitAtCap.lean): the capstone.
+-- int over [a,a+w] f = int over [a,a+w1] f + int over [a+w1,a+w] f for arbitrary rational 0<w1<=w.
+-- Assembled as the Archimedean limit of the committed riemannSum_split_at_gen closed by
+-- riemannSum_conv_dist: the UNIT split (riemannIntegral_split_at_unit) is the Rlim over resolution
+-- (k+1)*q of the exact finite split at node t0=p/q (block sizes A=(k+1)p-1, B=(k+1)(q-p)-1), then the
+-- interval law follows by affineMap_comp. Foundation for exhaustion-independence. No dilation, no crux.
+#print axioms Square.riemannIntegral_split_at_unit
+#print axioms Square.riemannIntegralI_split_at

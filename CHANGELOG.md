@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The interval-level general split-point additivity** (new `Square/IntervalSplitAtCap.lean`): the
+  capstone the `IntervalSplitAt.lean` substrate was built for —
+  `int_a^{a+w} f = int_a^{a+w1} f + int_{a+w1}^{a+w} f` (`riemannIntegralI_split_at`) for an arbitrary
+  rational split width `0 < w1 <= w` (the midpoint law `riemannIntegralI_split_half` handled only
+  `w1 = w/2`). The engine is the UNIT SPLIT (`riemannIntegral_split_at_unit`): for a
+  globally-Lipschitz `g` and rational node `t0 = p/q in (0,1)`,
+  `int_0^1 g = t0*int_0^1 g(t0*x) + (1-t0)*int_0^1 g(t0+(1-t0)*x)`. At resolution `(k+1)*q` the fine
+  Riemann sum splits EXACTLY at the node `p/q` (block sizes `A=(k+1)p-1`, `B=(k+1)(q-p)-1`, so
+  `(A+1)/(A+B+2)=p/q` and `A+B+2=(k+1)q -> inf`); as `k -> inf` the fine sum converges to `int_0^1 g`
+  and each block sum to its block integral (both by the committed `riemannSum_conv_dist`), and the
+  committed exact finite identity `riemannSum_split_at_gen` passes to the limit (weights dropped by
+  `t0,(1-t0) <= 1`, each error term `O(1/(k+1))`, closed by the two-sided vanishing bound). The
+  interval law then follows by the affine composition `affineMap_comp`. **Honest scope**: assembled
+  from the committed Riemann-sum substrate + the Archimedean limit — it builds NO improper integral,
+  NO dilation covariance, NO factorization, NO positivity, NO determinacy, NO crux. This is the
+  general-split tool that unlocks exhaustion-independence of the improper integral (the half-line
+  dilation covariance). Step 4 (band-coupling positivity) is RH; crux `none`. (Two of three worktree
+  drafters reached the full interval split independently; adversarial verify confirmed it is fully
+  general not midpoint-only, the unit split is genuinely the `Rlim` of the finite split invoking the
+  committed substrate, no circularity, `[propext, Quot.sound]`.)
 - **The analytic foundation for general split-point additivity** (new
   `Square/IntervalSplitAt.lean`): the Riemann-sum machinery an arbitrary-rational interval split
   needs, which the dyadic-only substrate did not provide. `riemannSum_multiple_refine` — the block
