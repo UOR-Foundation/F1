@@ -6,6 +6,25 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The exhaustion characterization of the half-line integral** (new
+  `Square/HalfLineExhaustion.lean`): exhaustion rung 4. The window-`genSum`-defined improper
+  integral `int_0^inf f` is re-expressed as the Bishop limit of a sequence of INTERVAL integrals
+  over the caps `[0, 1 + digammaMidx K j]` — `int_0^inf f = Rlim_j int_0^{1+digammaMidx K j} f`
+  (`halfLineIntegral_eq_Rlim`). A pure reindexing/telescoping identity: STEP A collapses the
+  `genSum` of unit-window tail increments into a single interval integral `int_1^{N+1} f` via the
+  committed finite telescoping `riemannIntegralI_telescope` on `c k = k+1` (`genSum` matched to
+  `RsumN`); STEP B joins the `[0,1]` gateway via `riemannIntegralI_split_at` at width 1 (the `[0,1]`
+  piece by `riemannIntegralI_unit`); STEP C pulls the gateway constant inside the committed limit
+  (`Rlim_add_const`) and closes by `Rlim_congr`. The sampling schedule `digammaMidx K j` is
+  IDENTICAL to the one inside `improperIntegral1`, so no new limit is minted (the cap-sequence
+  regularity is carried as the explicit hypothesis `hReg`). **Honest scope**: the bridge from the
+  improper integral to interval integrals, via the committed telescope + `split_at` + unit identity
+  + `Rlim` congruences — it builds NO dilation covariance, NO new limit, NO factorization, NO
+  positivity, NO determinacy, NO crux (the `s`-scaled exhaustion-independence and dilation assembly
+  are later rungs). Step 4 (band-coupling positivity) is RH; crux `none`. (Three worktree drafters
+  all reached the full characterization; adversarial verify confirmed the identity is genuine with
+  the same sampling schedule, the telescope/split-at/Rlim steps proved not assumed, non-smuggling,
+  `[propext, Quot.sound]`.)
 - **The finite telescoping of adjacent-window interval integrals** (new
   `Square/IntervalTelescope.lean`): exhaustion rung 3. For an increasing rational endpoint sequence
   `c`, the sum of the adjacent-window interval integrals collapses to the whole-interval integral —

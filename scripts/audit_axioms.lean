@@ -7186,3 +7186,10 @@ open UOR.Bridge.F1Square
 -- the whole window at the last node c N). The finite exhaustion-independence both the integer and the
 -- s-scaled tilings satisfy. No improper integral, no limit, no dilation, no positivity, no crux.
 #print axioms Square.riemannIntegralI_telescope
+
+-- The exhaustion characterization of the half-line integral (new Square/HalfLineExhaustion.lean):
+-- exhaustion rung 4. halfLineIntegral f = Rlim_j of the INTERVAL integral over the cap [0, 1+digammaMidx K j],
+-- re-expressing the window-genSum improper integral as a limit of interval integrals: STEP A telescope
+-- (genSum integralTerm = int_1^{N+1}), STEP B split_at at width 1 (join the [0,1] gateway), STEP C
+-- Rlim_add_const + Rlim_congr (same digammaMidx sampling, no new limit minted). No dilation, no crux.
+#print axioms Square.halfLineIntegral_eq_Rlim
