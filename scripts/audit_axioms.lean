@@ -5194,6 +5194,18 @@ open UOR.Bridge.F1Square
 -- (capNode, capDiff_num are private — no audit line.)
 #print axioms Square.reschedule_finite
 
+-- THE PRE-HILBERT LAYER (Square/ScaledTwistedTail.lean) — the s-scaled-window twisted tail, the
+-- per-window-band analog of the mellinHat twTail (each window carries its OWN band [0,(s+1)(m+2)]
+-- covering both [m+1,m+2] and [s(m+1),s(m+2)], so it is a genuine improper Rlim, not a finite
+-- reschedule). scaledTwTerm_eq = twTerm_dilate_window at the concrete band (per-window bridge);
+-- genSum_scaled_eq = the partial-sum proportionality (genSum_congr + genSum_Rmul_const);
+-- scaledTwTail_eq_dilate = the Rlim capstone: Rlim of the scaled sums = s^(n+1)·twTail(dilate_s φ)
+-- (Rlim_ofQ_mul_of_approx; hReg/hdec carried explicitly). No boundary, no compact piece, no full
+-- covariance, no positivity, no crux. (scaledTwTerm is a def, sbHi/sbHi_* private — no audit line.)
+#print axioms Square.scaledTwTerm_eq
+#print axioms Square.genSum_scaled_eq
+#print axioms Square.scaledTwTail_eq_dilate
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

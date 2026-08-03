@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The s-scaled-window twisted tail** (new `Square/ScaledTwistedTail.lean`): the per-window-band
+  analog of the `mellinHat` twisted tail `twTail`, carried on the `s`-scaled windows
+  `[s(m+1), s(m+2)]`, and its proportionality to the dilated tail. Unlike the finite `reschedule`
+  (whose covering band depends on the truncation `N`), each window here carries its OWN band
+  `[0, (s+1)(m+2)]` — covering both the integer window `[m+1, m+2]` and the scaled window
+  `[s(m+1), s(m+2)]` — so the object is a genuine improper half-line integral (an `Rlim` of window
+  sums). `scaledTwTerm_eq` — the per-window bridge `scaledTwTerm ≈ s^(n+1)·twTerm (dilate_s φ) n m`,
+  exactly `twTerm_dilate_window` at that concrete band (its four containments discharged);
+  `genSum_scaled_eq` — the partial-sum proportionality (`genSum_congr` on the bridge + the constant
+  left-pull `genSum_Rmul_const`); and the capstone `scaledTwTail_eq_dilate` — the `Rlim` of the
+  scaled-window twisted sums equals `s^(n+1)·twTail (dilate_s φ)` (`Rlim_ofQ_mul_of_approx` on the
+  partial-sum proportionality), with the regular-witness `hReg` for the scaled sums and the
+  dilated-test decay `hdec` carried as explicit hypotheses (mirroring `MellinHat`/`HalfLineExhaustion`).
+  **Honest scope**: the scaled twisted tail and its proportionality to the dilated tail — it builds
+  NO boundary reconciliation (`[s,∞)` vs `[1,∞)`), NO compact `mellinMoment` piece, NO full
+  `mellinHat` covariance, NO factorization, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all delivered the full
+  chain including the `Rlim` capstone, all `[propext, Quot.sound]`; adversarial verify confirmed the
+  band genuinely covers both windows, the containments discharged (not fudged), the `Rlim` step real,
+  the carried hypotheses honest, non-smuggling.)
 - **The finite reschedule of the twisted dilation covariance** (new
   `Square/RescheduleFinite.lean`): sums the committed per-window covariance `twTerm_dilate_window`
   over `m < N` and telescopes the `s`-scaled window tiling into a single cap integral. Pulling the
