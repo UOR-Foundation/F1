@@ -5215,6 +5215,15 @@ open UOR.Bridge.F1Square
 -- positivity, no crux. (band01_le, aff01_base, aff01_top private — no audit line.)
 #print axioms Square.mellinMoment_dilate
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatDilateScaled.lean) — assembling the compact and tail
+-- dilation halves: s^(n+1)·mellinHat(dilate_s φ) n = int_0^s(φ·powBandGen) + Rlim(scaled twisted
+-- sums), by Rmul_distrib over mellinHat = mellinMoment + twTail and the committed mellinMoment_dilate
+-- (compact) + scaledTwTail_eq_dilate (tail). The RHS is the improper Mellin integral of φ against
+-- tⁿ over the s-uniform tiling; identifying it with mellinHat φ (integer tiling) is the later
+-- split-point/tiling-independence step. No split independence, no factorization, no positivity, no
+-- crux. (band01_le' private — no audit line.)
+#print axioms Square.mellinHat_dilate_scaled
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

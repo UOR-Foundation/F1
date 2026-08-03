@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The scaled Mellin transform of a dilated test** (new `Square/MellinHatDilateScaled.lean`):
+  assembles the committed compact and tail dilation halves into a single identity. `mellinHat`
+  splits as `mellinMoment + twTail`; distributing `s^(n+1)` over that split (`Rmul_distrib`) and
+  rewriting each summand by its committed half (`mellinMoment_dilate` for the compact `[0,s]` piece,
+  `scaledTwTail_eq_dilate` for the twisted tail) gives
+
+      `s^(n+1) · mellinHat (dilate_s φ) n = int_0^s (φ · powBandGen) + Rlim (scaled twisted sums)`
+
+  (`mellinHat_dilate_scaled`). The right-hand side is the improper Mellin integral of the ORIGINAL
+  `φ` against `tⁿ`, exhausted by the `s`-uniform tiling `{[0,s], [s,2s], [2s,3s], …}`. Identifying
+  that `s`-tiling improper integral with `mellinHat φ` (the standard integer-tiling one) is the
+  split-point/tiling-independence step, a later brick; this brick only assembles the two committed
+  halves (a `Rmul_distrib` + `Radd_congr` composition, compiled first try). **Honest scope**: the
+  scaled Mellin transform of a dilated test as the sum of the scaled compact integral and the scaled
+  twisted tail — it builds NO split-point/tiling independence, NO identification with `mellinHat φ`,
+  NO factorization, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH;
+  crux `none`.
 - **The compact [0,1]-window Mellin dilation covariance** (new `Square/CompactMomentDilate.lean`):
   the compact companion of the tail dilation bricks. For a test `φ`, degree-`n` twist, and rational
   scale `s > 0`, the scaled compact integral over `[0, s]` of `φ` against the wide-band twist
