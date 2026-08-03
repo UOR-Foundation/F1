@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The s-uniform-tiling partial sum as a single cap integral** (new `Square/UniformPartialCap.lean`):
+  the first concrete step of the width comparison that discharges the tiling-independence hypothesis
+  `htile`. The `s`-uniform improper Mellin integral is `int_0^s(φ·powBandGen) + Rlim(genSum
+  scaledTwTerm)`; its `N`-th partial sum — the compact moment integral (`mellinMoment_dilate`'s LHS)
+  plus the finite scaled tail `genSum scaledTwTerm … N` — equals a SINGLE cap integral over
+  `[0, s(N+1)]`:
+
+      `int_0^s(φ·powBandGen_{[0,s+1]}) + Sum_{m<N} scaledTwTerm φ s m = int_0^{s(N+1)}(φ·powBandGen_{[0,s(N+1)+1]})`
+
+  (`uniform_partial_eq_cap`). The tail: `genSum scaledTwTerm N = s^(n+1)·genSum(twTerm(dilate_s φ)) N`
+  (`genSum_scaled_eq`) `= int_s^{s(N+1)}(φ·powBandGen_{[0,(s+1)(N+2)]})` (`reschedule_finite`, the
+  covering band making `hhiN`/`hhisN` hold), reconciled to the cap band by the different-`L` window
+  congruence `riemannIntegralI_congr_unit_mod` (both weights `uⁿ` on `[s,s(N+1)]`) and to the
+  split-window endpoints by `riemannIntegralI_congr_Q`. The join: `riemannIntegralI_split_at` splits
+  the cap `[0,s(N+1)]` at `s`, and the compact piece reconciles to `mellinMoment_dilate`'s band via
+  the same window congruence. **Honest scope**: the partial sum as a cap integral — it builds NO
+  Cauchy-at-infinity, NO schedule comparison, NO width-comparison completion, NO factorization, NO
+  positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three
+  worktree drafters all delivered the full cap characterization; adversarial verify confirmed the
+  equality genuine, the four covering hyps real, the `split_at` join and three-band reconciliation
+  not fudged, non-smuggling.)
 - **mellinHat as the 1-uniform-tiling improper integral** (new `Square/MellinHatUniform1.lean`):
   reduces the committed dilation-covariance hypothesis `htile` to a pure WIDTH comparison.
   Instantiating `mellinHat_dilate_scaled` at the trivial scale `s = 1` and collapsing the scale

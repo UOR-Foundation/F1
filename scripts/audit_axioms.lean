@@ -5244,6 +5244,15 @@ open UOR.Bridge.F1Square
 -- private — no audit line.)
 #print axioms Square.mellinHat_eq_uniform1
 
+-- THE PRE-HILBERT LAYER (Square/UniformPartialCap.lean) — the s-uniform-tiling PARTIAL SUM as a
+-- single cap integral: the compact [0,s] moment + the finite genSum(scaledTwTerm φ s) up to N equals
+-- one interval integral over the scaled cap [0, s(N+1)]. Route: genSum_scaled_eq + reschedule_finite
+-- (covering band [0,(s+1)(N+2)]) for the tail, reconciled to the cap band by riemannIntegralI_congr_
+-- unit_mod (both uⁿ on the shared window) + riemannIntegralI_congr_Q; then riemannIntegralI_split_at
+-- joins [0,s]+[s,s(N+1)]=[0,s(N+1)]. First step of the WIDTH COMPARISON discharging htile; builds NO
+-- Cauchy-at-infinity, NO schedule comparison, no positivity, no crux. (all helpers private.)
+#print axioms Square.uniform_partial_eq_cap
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
