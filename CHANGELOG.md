@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The homogeneity of the rational-window power** (new
+  `Square/RationalWindowDilate.lean`): the `hHom` discharge that `mellinWindowDilate` needs, for the
+  rational-window power `powBandGen`. On a band `[lo, hi]` containing BOTH a point and its
+  `s`-scaling the weight is un-clamped (`= tⁿ`), so degree-`n` homogeneity holds —
+  `powBandGen(s·y) = sⁿ·powBandGen(y)` (`powBandGen_dilate_on`) — unlike the narrow integer-window
+  `powWinTest` whose clamp breaks homogeneity on a rescaled window. The bridge is
+  `powBandGen_eq_Rpow_on` (on `[lo, hi]`, `powBandGen … n .f x ≈ Rpow x n`, by induction from
+  `powBandGen_succ_inert` + `Rpow_succ`), and `Rpow_dilate_ofQ` supplies the `sⁿ` factor. All four
+  band-membership hypotheses are load-bearing (both `y` and `s·y` must be un-clamped). The proof
+  mirrors the existing `[0,1]`-clamped `powTest_dilate_on` with band-inertness in the role of
+  clamp-inertness. **Honest scope**: the degree-`n` homogeneity of `powBandGen` on its band, the
+  `hHom` discharge `mellinWindowDilate` consumes, generalized from `powTest_dilate_on` — it builds
+  NO integral, NO dilation covariance, NO factorization, NO positivity, NO determinacy, NO crux (the
+  per-window twisted dilation that applies it is the next brick). Step 4 (band-coupling positivity)
+  is RH; crux `none`. (Three worktree drafters all delivered both lemmas, all `[propext,
+  Quot.sound]`; adversarial verify confirmed the induction genuine, all four band hypotheses
+  load-bearing, non-smuggling, a faithful generalization of `powTest_dilate_on`.)
 - **The windowed power on an arbitrary rational window** (new
   `Square/RationalWindowPower.lean`): the weight substrate the per-window Mellin dilation
   covariance needs. `WindowPower.lean` builds the window power `tⁿ` clamped to the INTEGER window

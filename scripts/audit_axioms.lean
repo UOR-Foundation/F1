@@ -5149,6 +5149,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.powBandGen_succ_inert
 #print axioms Square.powBandGen_M_le
 
+-- THE PRE-HILBERT LAYER (Square/RationalWindowDilate.lean) — the degree-n HOMOGENEITY of the
+-- rational-window power powBandGen on its band: on a band containing both a point and its s-scaling,
+-- powBandGen(s·y) = sⁿ·powBandGen(y) (powBandGen_dilate_on), via the band-inertness
+-- powBandGen_eq_Rpow_on (= tⁿ on the band) + Rpow_dilate_ofQ. The hHom discharge mellinWindowDilate
+-- consumes, generalized from the [0,1]-clamped powTest_dilate_on to the wide band. No integral,
+-- no dilation covariance, no positivity, no crux.
+#print axioms Square.powBandGen_eq_Rpow_on
+#print axioms Square.powBandGen_dilate_on
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

@@ -394,6 +394,7 @@ import F1Square.Square.MellinWindowDilate
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower
 import F1Square.Square.RationalWindowPower
+import F1Square.Square.RationalWindowDilate
 import F1Square.Square.MellinHat
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
