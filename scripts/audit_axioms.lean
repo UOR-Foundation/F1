@@ -7179,3 +7179,10 @@ open UOR.Bridge.F1Square
 -- interval law follows by affineMap_comp. Foundation for exhaustion-independence. No dilation, no crux.
 #print axioms Square.riemannIntegral_split_at_unit
 #print axioms Square.riemannIntegralI_split_at
+
+-- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
+-- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
+-- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
+-- the whole window at the last node c N). The finite exhaustion-independence both the integer and the
+-- s-scaled tilings satisfy. No improper integral, no limit, no dilation, no positivity, no crux.
+#print axioms Square.riemannIntegralI_telescope

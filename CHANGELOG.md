@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The finite telescoping of adjacent-window interval integrals** (new
+  `Square/IntervalTelescope.lean`): exhaustion rung 3. For an increasing rational endpoint sequence
+  `c`, the sum of the adjacent-window interval integrals collapses to the whole-interval integral —
+  `Σ_{m<N} int_{c m}^{c (m+1)} f = int_{c 0}^{c N} f` (`riemannIntegralI_telescope`). A pure
+  finite-additivity induction on `N` driven by the committed interval-level general split-point
+  additivity `riemannIntegralI_split_at`: at level `N+1` the whole window `[c 0, c (N+1)]` is split at
+  the node `c N` (split width `c N - c 0`), whose left piece is the inductive whole `[c 0, c N]` and
+  whose right piece is the new window `[c N, c (N+1)]` (reconciled by the endpoint/width `Qeq`
+  congruence `riemannIntegralI_congr_Q`). The degenerate base rungs (`N=0` width-zero whole; `N=1`
+  single window vs empty prefix) are handled directly since the split needs a strictly positive
+  width. **Honest scope**: this is the finite exhaustion-independence that both the integer-window and
+  the `s`-scaled-window tilings satisfy — it builds NO improper integral, NO limit, NO dilation
+  covariance, NO factorization, NO positivity, NO determinacy, NO crux (the improper-level `Rlim`
+  exhaustion-independence is a later rung). Step 4 (band-coupling positivity) is RH; crux `none`.
+  (Three worktree drafters all reached the full telescoping; adversarial verify confirmed the genuine
+  split-driven induction with the Qeq reconciliations proved not assumed, non-smuggling,
+  `[propext, Quot.sound]`.)
 - **The interval-level general split-point additivity** (new `Square/IntervalSplitAtCap.lean`): the
   capstone the `IntervalSplitAt.lean` substrate was built for —
   `int_a^{a+w} f = int_a^{a+w1} f + int_{a+w1}^{a+w} f` (`riemannIntegralI_split_at`) for an arbitrary
