@@ -5185,6 +5185,15 @@ open UOR.Bridge.F1Square
 -- reschedule (the sum over windows), no positivity, no crux.
 #print axioms Square.twTerm_dilate_window
 
+-- THE PRE-HILBERT LAYER (Square/RescheduleFinite.lean) — the finite reschedule: summing the
+-- per-window twisted dilation covariance twTerm_dilate_window over m<N (constant-pull
+-- Rmul_RsumN_left + RsumN_congr with per-m band containment from the N-covering hyps) and
+-- telescoping the s-scaled window tiling (riemannIntegralI_telescope, node c m = s(m+1)) into a
+-- single cap integral: s^(n+1)·Σ_{m<N} twTerm (dilate_s φ) n m = ∫_{[s, s(N+1)]}(φ·powBandGen).
+-- Band depends on N (tⁿ unbounded). No half-line limit, no boundary, no positivity, no crux.
+-- (capNode, capDiff_num are private — no audit line.)
+#print axioms Square.reschedule_finite
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

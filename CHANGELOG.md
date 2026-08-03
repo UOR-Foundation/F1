@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The finite reschedule of the twisted dilation covariance** (new
+  `Square/RescheduleFinite.lean`): sums the committed per-window covariance `twTerm_dilate_window`
+  over `m < N` and telescopes the `s`-scaled window tiling into a single cap integral. Pulling the
+  constant `s^(n+1)` through the finite sum (`Rmul_RsumN_left`), rewriting each summand by the
+  per-window covariance (`RsumN_congr`, with the per-`m` band containment `hc1`–`hc4` DERIVED from
+  the global `N`-covering hypotheses via `qmul_le_left_mono`/`Qle_trans` and `m < N` monotonicity),
+  and telescoping the adjacent scaled windows `[s(m+1), s(m+2)]` (`riemannIntegralI_telescope` with
+  node sequence `c m = s(m+1)`, its six endpoint hypotheses discharged from `s > 0` via the private
+  `capDiff_num` numerator-collapse) collapses the tail partial-sum into the single integral over the
+  scaled cap `[s·1, s·(N+1)]`:
+
+      `s^(n+1) · Sum_{m<N} twTerm (dilate_s φ) n m = int_{s·1}^{s·(N+1)} (φ · powBandGen)`
+
+  (`reschedule_finite`). The band `[lo, hi]` depends on `N` (it covers up to the `N`-th window),
+  which is honest: `tⁿ` is unbounded, so no single weight spans the whole half-line — the improper
+  limit is a later brick. **Honest scope**: the finite reschedule — it builds NO half-line limit, NO
+  boundary reconciliation, NO factorization, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all delivered the full
+  chain, all `[propext, Quot.sound]`; adversarial verify confirmed the equality genuine and
+  non-vacuous, the per-`m` band containment genuinely derived (not assumed), the telescope
+  hypotheses discharged, non-smuggling.)
 - **The per-window twisted dilation covariance** (new `Square/TwTermDilateWindow.lean`): composes
   the two committed halves into a single per-window identity. `window_dilate_powBandGen` gives the
   per-window rational-scale Mellin dilation at the wide-band twist weight, and

@@ -399,6 +399,7 @@ import F1Square.Square.WindowDilatePow
 import F1Square.Square.MellinHat
 import F1Square.Square.TwTermPowBand
 import F1Square.Square.TwTermDilateWindow
+import F1Square.Square.RescheduleFinite
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv
