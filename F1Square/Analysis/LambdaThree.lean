@@ -18,11 +18,27 @@ construction — no new work.
 WHAT THIS DOES AND DOES NOT DO. This completes the `λ₃` OBJECT (the closed-form constructive real)
 and its consistency with the ladder. The `γ₂` numeric bracket that gates the `η₂` term (coefficient
 `3/2`) is now CLOSED — `Rgamma2_ge_neg002 : γ₂ ≥ −0.02` (`GammaTwoBracket.lean`, the discrete
-Euler–Maclaurin bracket). It still does NOT prove `Pos λ₃`: `λ₃ ≈ 0.0173` is a small difference of
-`Θ(1)` terms (`λ₃^{arith} ≈ +1.22`, `λ₃^{∞} ≈ −1.20`), so a positivity certificate needs TIGHT
-two-sided brackets on all of `γ, γ₁, γ₂, γ³, γγ₁` AND the archimedean `λ₃^{∞}` (via `ζ(2), ζ(3)`) —
-the full `λ₃`-formula numeric assembly, not the single `γ₂` input. That assembly is the remaining
-open work; the crux fields stay `none`.
+Euler–Maclaurin bracket). It does not YET prove `Pos λ₃`, but the difficulty was OVERSTATED here
+once: the true value (computed from this very closed form) is `λ₃ ≈ 0.2076389` — the standard Li
+coefficient — with `λ₃^{arith} ≈ +1.221` and `λ₃^{∞} ≈ −1.013`, an absolute MARGIN ≈ 0.208, not a
+razor-thin `0.017`. The explicit closed form is
+`λ₃ = 1 + (3/2)γ − 3γ² − 6γ₁ + γ³ + 3γγ₁ + (3/2)γ₂ − (3/2)log 4π + (9/4)ζ(2) − (7/8)ζ(3)`.
+
+PRECISION ANALYSIS (term-by-term loss vs. the 0.208 margin — corrects an earlier note that named `γ`
+as the sole binding constraint; it is NOT). The closed form has HEAVY CANCELLATION: the archimedean
+block `−(3/2)log 4π + (9/4)ζ(2) − (7/8)ζ(3) ≈ −3.797 + 3.701 − 1.052` is three `Θ(3.8)` constants
+collapsing to `Θ(1)`. So although the margin is `Θ(0.2)` in absolute terms, a positivity certificate
+needs ALL SIX constants `γ, γ₁, γ₂, ζ(2), ζ(3), log 4π` sharpened to ~0.1–0.3% RELATIVE precision at
+once. The DOMINANT loss is `γ₁`, not `γ`: the `−6γ₁` term is `+0.437` truly, but the only existing
+bracket `γ₁ ≤ −0.0445` (`Rgamma1_le_neg445`, ±0.03-loose vs. the true `−0.0728`) yields only `+0.267`
+— burning `0.17` of the `0.21` margin by itself. The remaining numeric work is therefore a SUBSTANTIAL
+multi-constant bracketing project (a tight two-sided `γ₁` via deeper Euler–Maclaurin is the bottleneck;
+`γ` to `~[0.577,0.578]`, `γ₂` to `~±0.005`, and `ζ(2),ζ(3),log 4π` to ~4 figures all needed too), NOT
+a quick re-`decide`. CONNECTION TO THE CRUX: this is positive evidence that the per-`n` numeric route
+is not merely finite (`UniformClosure`) but practically wall-bounded by cancellation that worsens with
+`n` — reinforcing that the crux closes only as ONE uniform coherent fact (the prime–archimedean
+coupling sign for all `n`, `genuine_crux_arch_coupling`), never by enumerating rungs. The crux fields
+stay `none`.
 
 Pure Lean 4 core, no Mathlib, no `sorry`, choice-free; audited by `scripts/honesty_audit.sh`.
 -/

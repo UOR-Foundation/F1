@@ -74,11 +74,17 @@ CI runs `lake build` on every push and pull request.
 
 This project uses [Semantic Versioning](https://semver.org), starting at **v0.0.1**. See
 [`CHANGELOG.md`](CHANGELOG.md) for the release history and [`ROADMAP.md`](ROADMAP.md) for the remaining
-construction of the F1 square, scoped into releases v0.15.0–v0.20.0 (the crux stays `none` until RH is
+construction of the F1 square, scoped into releases v0.15.0–v0.22.0 (the crux stays `none` until RH is
 genuinely proven — v0.20.0 derives the Hodge-index dictionary `⟨Cₙ,Cₙ⟩ = −2λₙ` as a theorem and the
 gate locates the frontier: the forced signature is exactly `λₙ > 0 ∀n` = RH, still open; v0.20.0 also
 constructs the second Stieltjes constant `γ₂` and closes its numeric bracket `γ₂ ≥ −0.02`
-(`Rgamma2_ge_neg002`, discrete Euler–Maclaurin) — a certified constant bound, not a positivity-of-all-`λₙ` claim).
+(`Rgamma2_ge_neg002`, discrete Euler–Maclaurin) — a certified constant bound, not a positivity-of-all-`λₙ` claim;
+v0.21.0 ships stage G — the missing-object embedding route and the UOR Atlas formalized as facets of one `{T,O}`-object —
+which **localizes** the crux to the prime–archimedean coupling sign, the fields still `none`, RH still open).
+v0.22.0 is the **final** planned release: it carries both Track 1 (discharging the Bombieri–Lagarias /
+Voros classical interfaces) and Track 2 (the `α`-band / Sonine-projection crux frontier; the post-v0.21.0
+thread already proves `α(2) < 0` — the archimedean multiplier is pointwise *indefinite*, the obstruction
+to single-place positivity), pursued to exhaustion until the crux closes or the work is published.
 
 ## Publishing (Zenodo)
 
@@ -88,15 +94,15 @@ and a tagged GitHub release triggers a DOI. The remaining, account-gated steps f
 
 1. Confirm the `repository-code` URL in `CITATION.cff` matches the published GitHub repo.
 2. Enable the repository in the Zenodo ↔ GitHub integration.
-3. Tag and publish the current release: `git tag -a v0.9.0 -m "v0.9.0" && git push --tags`, then
-   create the GitHub release for that tag (substitute the version being released).
+3. Tag and publish the current release: `git tag -a vX.Y.Z -m "vX.Y.Z" && git push --tags` (with the
+   version being released), then create the GitHub release for that tag.
 4. After Zenodo mints the DOI, add a `doi:` field (the concept DOI) to `CITATION.cff` in a follow-up
    commit — exactly the pattern UOR-Framework follows.
 
 ## Citation
 
 See [`CITATION.cff`](CITATION.cff). Until the first Zenodo deposit assigns a DOI, cite the repository
-and the current release tag (e.g. `v0.9.0`).
+and the current release tag (e.g. `v0.21.0`).
 
 ## License
 

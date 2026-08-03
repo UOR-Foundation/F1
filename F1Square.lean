@@ -46,6 +46,9 @@ import F1Square.Square.Cohomology
 import F1Square.Square.WeilLattice
 import F1Square.Square.Forced
 import F1Square.Square.WeilPSD
+import F1Square.Square.AngleEmbeddingBound
+import F1Square.Square.SineSquareSOS
+import F1Square.Square.AngleGramDiagonal
 import F1Square.Square.FrobForm
 import F1Square.Square.AtlasRule
 import F1Square.Square.KillTest
@@ -53,6 +56,36 @@ import F1Square.Square.GateA
 import F1Square.Square.E8Seed
 import F1Square.Square.GaugeTower
 import F1Square.Square.StageG
+import F1Square.Square.SonineProjection
+import F1Square.Square.AtlasSpectrum
+import F1Square.Square.GateSanity
+import F1Square.Square.AtlasCharacteristics
+import F1Square.Square.AtlasAddressing
+import F1Square.Square.AtlasClasses
+import F1Square.Square.AtlasConservation
+import F1Square.Square.AtlasForcing
+import F1Square.Square.AtlasRHConnection
+import F1Square.Square.LefschetzCoupling
+import F1Square.Square.ArchimedeanPlace
+import F1Square.Square.AtlasModular
+import F1Square.Square.AtlasExceptional
+import F1Square.Square.AtlasCoxeter
+import F1Square.Square.AtlasSynthesis
+import F1Square.Square.AtlasCruxSynthesis
+import F1Square.Square.CruxFrontierN3
+import F1Square.Square.CruxFrontierN4
+import F1Square.Square.CruxFrontierN5
+import F1Square.Square.UniformClosure
+import F1Square.Square.CoxeterCandidate
+import F1Square.Square.SinglePrime
+import F1Square.Square.AtlasGenerator
+import F1Square.Square.AtlasCoherence
+import F1Square.Square.AtlasComposition
+import F1Square.Square.AtlasTopology
+import F1Square.Square.AtlasCalculus
+import F1Square.Square.AtlasComplete
+import F1Square.Square.BLPipeline
+import F1Square.Square.AtlasAnalyticFace
 import F1Square.Tropical.Closure
 import F1Square.Tropical.Signature
 import F1Square.Tropical.Spectrum
@@ -63,26 +96,78 @@ import F1Square.Analysis.RingTac
 import F1Square.Analysis.QOrder
 import F1Square.Analysis.Real
 import F1Square.Analysis.Complex
+import F1Square.Analysis.ComplexLimit
+import F1Square.Analysis.ComplexSeries
+import F1Square.Analysis.ComplexLogConj
+import F1Square.Analysis.ComplexConjAlgebra
+import F1Square.Analysis.ComplexZetaConj
+import F1Square.Analysis.ComplexGammaConj
+import F1Square.Analysis.ComplexXiConjFull
+import F1Square.Analysis.ComplexXiFE
+import F1Square.Analysis.ComplexXiHadamard
+import F1Square.Analysis.ComplexBinomial
+import F1Square.Analysis.MomentEta
+import F1Square.Analysis.MomentCayley
+import F1Square.Analysis.RArctanExt
+import F1Square.Analysis.ExpRealMono
+import F1Square.Analysis.ThetaFunction
+import F1Square.Analysis.ThetaFunctionPos
+import F1Square.Analysis.RiemannSum
+import F1Square.Analysis.RabsLemmas
+import F1Square.Analysis.ClampOne
+import F1Square.Analysis.RiemannConv
+import F1Square.Analysis.DyadicIntegral
+import F1Square.Analysis.IntervalIntegral
+import F1Square.Analysis.IntegralLocal
+import F1Square.Analysis.IntervalCert
+import F1Square.Analysis.ImproperIntegral
+import F1Square.Analysis.GenSumGeom
+import F1Square.Analysis.ThetaDecay
+import F1Square.Analysis.ThetaValueDecay
+import F1Square.Analysis.ComplexIntegral
+import F1Square.Analysis.SqrtRat
+import F1Square.Analysis.SqrtReal
+import F1Square.Analysis.SqrtRealSq
+import F1Square.Analysis.SqrtRealCmp
+import F1Square.Analysis.SqrtRealOf
+import F1Square.Analysis.ThetaModular
 import F1Square.Analysis.Complete
 import F1Square.Analysis.Exp
 import F1Square.Analysis.ExpGen
 import F1Square.Analysis.ExactBounded
 import F1Square.Analysis.Zeta
 import F1Square.Analysis.ROrder
+import F1Square.Analysis.RealCompare
 import F1Square.Analysis.Pow
 import F1Square.Analysis.Inv
 import F1Square.Analysis.RealDiv
+import F1Square.Analysis.RinvDilate
+import F1Square.Analysis.RdivBounds
 import F1Square.Analysis.ExpReal
 import F1Square.Analysis.ExpRealAdd
 import F1Square.Analysis.CosSin
 import F1Square.Analysis.Log
 import F1Square.Analysis.Arctan
+import F1Square.Analysis.RArctan
+import F1Square.Analysis.RexpLogRat
+import F1Square.Analysis.ComplexArg
+import F1Square.Analysis.ComplexLog
+import F1Square.Analysis.RArctanCongr
+import F1Square.Analysis.ArtanhAdd
+import F1Square.Analysis.RlogMulPos
+import F1Square.Analysis.ArctanODE
+import F1Square.Analysis.ArctanTan
+import F1Square.Analysis.ComplexArgAdd
 import F1Square.Analysis.Pi
+import F1Square.Analysis.HaarDensity
 import F1Square.Analysis.Euler
 import F1Square.Analysis.GammaAccel
 import F1Square.Analysis.GammaUpper
 import F1Square.Analysis.LambdaOne
 import F1Square.Analysis.Binomial
+import F1Square.Analysis.RealBinomial
+import F1Square.Analysis.Bernstein
+import F1Square.Analysis.BernsteinMoments
 import F1Square.Analysis.Bernoulli
 import F1Square.Analysis.BernoulliPoly
 import F1Square.Analysis.ExpAdd
@@ -95,6 +180,19 @@ import F1Square.Analysis.ComplexMod
 import F1Square.Analysis.ComplexPow
 import F1Square.Analysis.ExpLog
 import F1Square.Analysis.RealPow
+import F1Square.Analysis.RartanhBounds
+import F1Square.Analysis.RrpowBounds
+import F1Square.Analysis.LogDiffBound
+import F1Square.Analysis.RlogAbsLip
+import F1Square.Analysis.RexpAbsLip
+import F1Square.Analysis.RpowClamp
+import F1Square.Analysis.RrpowAbsLip
+import F1Square.Analysis.LogDiffBoundGen
+import F1Square.Analysis.RrpowAbsLipNat
+import F1Square.Analysis.RQmaxClamp
+import F1Square.Analysis.RpowClampLip
+import F1Square.Analysis.ThetaMellinPow
+import F1Square.Analysis.CompletedZetaMellin
 import F1Square.Analysis.RAddNF
 import F1Square.Analysis.ComplexZeta
 import F1Square.Analysis.Mangoldt
@@ -102,30 +200,374 @@ import F1Square.Li
 import F1Square.Analysis.LiOne
 import F1Square.Analysis.ZetaTwo
 import F1Square.Analysis.GammaOne
+import F1Square.Analysis.RmulLipschitz
 import F1Square.Analysis.LambdaTwo
 import F1Square.Analysis.LiTwo
 import F1Square.Analysis.ComplexInv
 import F1Square.Analysis.EulerMaclaurin
 import F1Square.Analysis.EtaFunction
 import F1Square.Analysis.EtaVariation
+import F1Square.Analysis.ExpVarGlobal
+import F1Square.Analysis.ThetaLipschitz
+import F1Square.Analysis.ThetaLipschitzFn
+import F1Square.Analysis.ThetaMellin
 import F1Square.Analysis.CriticalZeta
 import F1Square.Analysis.Gamma
 import F1Square.Analysis.LiComplete
 import F1Square.Analysis.ArchTrend
 import F1Square.Analysis.GenuineLi
 import F1Square.Analysis.PsiQuarter
+import F1Square.Analysis.LogPiLower
 import F1Square.Analysis.BurnolAlpha
+import F1Square.Analysis.BurnolAlphaTwo
 import F1Square.Analysis.DigammaWindow
 import F1Square.Analysis.RMax
 import F1Square.Analysis.RSum
 import F1Square.Analysis.Weil
 import F1Square.Analysis.Voros
 import F1Square.Analysis.GammaTwo
+import F1Square.Analysis.GammaThree
+import F1Square.Analysis.GammaFour
+import F1Square.Analysis.GammaFourBracket
 import F1Square.Analysis.ZeroGeometry
 import F1Square.Analysis.LambdaThree
+import F1Square.Analysis.LambdaThreePos
+import F1Square.Analysis.LambdaFour
+import F1Square.Analysis.LambdaFive
 import F1Square.Analysis.RMulNF
 import F1Square.Analysis.LiGrowth
+import F1Square.Analysis.ClogAddBounded
+import F1Square.Analysis.RlogMulSigned
+import F1Square.Analysis.RadiusGen
+import F1Square.Analysis.TanPiQuarter
+import F1Square.Analysis.ComplexArgUpper
+import F1Square.Analysis.RArctanValue
+import F1Square.Analysis.ComplexLogUpper
+import F1Square.Analysis.ComplexArgUpperAdd
+import F1Square.Analysis.ComplexLogUpperAdd
+import F1Square.Analysis.ComplexLogLower
+import F1Square.Analysis.ComplexLogLowerAdd
+import F1Square.Analysis.ComplexLogLeft
+import F1Square.Analysis.ComplexLogLeftAdd
+import F1Square.Analysis.ComplexArgLower
+import F1Square.Analysis.ComplexPowGen
+import F1Square.Analysis.ComplexArgLeft
+import F1Square.Analysis.ComplexArgLeftAdd
+import F1Square.Analysis.RlimProps
+import F1Square.Analysis.ComplexDigamma
+import F1Square.Analysis.ComplexDigammaConj
+import F1Square.Analysis.ComplexDigammaValue
+import F1Square.Analysis.ComplexXi
+import F1Square.Analysis.ComplexXiConj
+import F1Square.Analysis.RHWitness
+import F1Square.Analysis.CayleyMap
+import F1Square.Analysis.LiLinearize
+import F1Square.Analysis.Reflection
+import F1Square.Analysis.OffLineGrowth
+import F1Square.Analysis.RiemannZero
+import F1Square.Analysis.RiemannSiegel
+import F1Square.Analysis.PsiLine
 import F1Square.Analysis.GammaTwoBracket
+import F1Square.Analysis.GammaThreeBracket
+import F1Square.Analysis.GammaTwoUpper
+import F1Square.Analysis.GammaThreeLower
+import F1Square.Analysis.GammaFourLower
+import F1Square.Analysis.LambdaFourPos
+import F1Square.Analysis.LambdaFivePrecision
+import F1Square.Analysis.LambdaFivePos
+import F1Square.Square.CruxN5Closed
+import F1Square.Analysis.GammaOneBracket
+import F1Square.Analysis.GammaZeroBracket
+import F1Square.Analysis.LambdaGap
+import F1Square.Square.GateAFiniteList
+import F1Square.Analysis.LogFourPiLower
+import F1Square.Analysis.LambdaFourUpper
+import F1Square.Analysis.IntegralEval
+import F1Square.Analysis.AffineIntegral
+import F1Square.Analysis.ClampedInv
+import F1Square.Analysis.ExpBounds
+import F1Square.Analysis.HarmonicLog
+import F1Square.Analysis.TentLogPiece
+import F1Square.Analysis.HarmonicLog32
+import F1Square.Analysis.TentArchPiece
+import F1Square.Analysis.HarmonicLogC
+import F1Square.Analysis.TentArchTail
+import F1Square.Square.TentSlot
+import F1Square.Square.BumpSlot
+import F1Square.Square.ConeTent
+import F1Square.Analysis.LogStep
+import F1Square.Analysis.BandClamp
+import F1Square.Analysis.LogIntegrand
+import F1Square.Analysis.LogRatCert
+import F1Square.Analysis.LogRatBridge
+import F1Square.Analysis.LogPointVal
+import F1Square.Analysis.LogRiemann
+import F1Square.Analysis.LogIntegralEval
+import F1Square.Analysis.T4PoleAPieces
+import F1Square.Analysis.T4PoleAAssembly
+import F1Square.Analysis.LogSqStep
+import F1Square.Analysis.LogOverX
+import F1Square.Analysis.LogOverXSum
+import F1Square.Analysis.LogOverXRate
+import F1Square.Analysis.LogOverXEval
+import F1Square.Analysis.RecipSmulEval
+import F1Square.Analysis.T4PoleBPieces
+import F1Square.Analysis.T4ArchPieces
+import F1Square.Analysis.T4TailImproper
+import F1Square.Analysis.MonotoneIntegral
+import F1Square.Analysis.DilogPhi
+import F1Square.Analysis.DilogPhiVal
+import F1Square.Analysis.DilogPieces
+import F1Square.Analysis.DilogValue
+import F1Square.Square.ConeSlot
+import F1Square.Square.PreHilbert
+import F1Square.Square.BernsteinVariance
+import F1Square.Square.BernsteinConverge
+import F1Square.Square.BernsteinDeviation
+import F1Square.Square.BernsteinBasisZero
+import F1Square.Square.BernsteinClampMatch
+import F1Square.Square.SelfAdjoint
+import F1Square.Square.CoupledWeilKernel
+import F1Square.Square.CoupledWeilCrux
+import F1Square.Square.CoupledWeilMono
+import F1Square.Square.CoupledWeilOperator
+import F1Square.Square.CoupledWeilComplement
+import F1Square.Square.CoupledWeilGenuine
+import F1Square.Square.CoupledWeilPlaceValue
+import F1Square.Square.DiagDominant
+import F1Square.Square.CoupledWeilDiagDominant
+import F1Square.Square.CoupledWeilIndefinite
+import F1Square.Square.CoupledWeilSonine
+import F1Square.Square.CoupledWeilDichotomy
+import F1Square.Square.MultShift
+import F1Square.Square.Projection
+import F1Square.Square.StableInner
+import F1Square.Analysis.IntegralInner
+import F1Square.Analysis.HaarInterval
+import F1Square.Analysis.ReflectTest
+import F1Square.Analysis.ProductTest
+import F1Square.Analysis.DilateTestR
+import F1Square.Analysis.MulConvR
+import F1Square.Analysis.IntegralCertIrrel
+import F1Square.Analysis.DilateIntegral
+import F1Square.Analysis.IntegralRsmul
+import F1Square.Analysis.IntervalRsmul
+import F1Square.Analysis.IntegralBilinear
+import F1Square.Square.IntegralCS
+import F1Square.Square.IntegralCSFull
+import F1Square.Square.TestAlgebra
+import F1Square.Square.ConstScale
+import F1Square.Square.BernsteinOperatorTest
+import F1Square.Square.BernsteinDevBound
+import F1Square.Square.Parseval
+import F1Square.Square.Parallelogram
+import F1Square.Square.PairingLimit
+import F1Square.Square.PairingLimitI
+import F1Square.Square.Completion
+import F1Square.Square.CompleteComplement
+import F1Square.Square.UniformCompletion
+import F1Square.Analysis.MellinDecay
+import F1Square.Analysis.WindowBoundReal
+import F1Square.Analysis.MulConvRBound
+import F1Square.Analysis.MulConvRDiff
+import F1Square.Square.MulConvRLip
+import F1Square.Analysis.MulConvRCongr
+import F1Square.Square.MulConvRTest
+import F1Square.Square.ParamIntegral
+import F1Square.Square.ProdParamTest
+import F1Square.Square.SeparableFubini
+import F1Square.Square.FiniteRankFubini
+import F1Square.Square.Bern2DOperator
+import F1Square.Square.Bern2DDeviation
+import F1Square.Square.Bern2DUniform
+import F1Square.Square.Bern2DValue
+import F1Square.Square.Bern2DInnerClose
+import F1Square.Square.Bern2DOuterClose
+import F1Square.Square.Bern2DFinrankSymm
+import F1Square.Square.Bern2DGeneralSwap
+import F1Square.Square.Bern2DWindowSwap
+import F1Square.Square.ConvMellinIntegrand
+import F1Square.Square.MellinConv
+import F1Square.Square.MellinConvFubini
+import F1Square.Square.MellinConvGPull
+import F1Square.Square.MellinWindowDilate
+import F1Square.Square.MellinConvInt
+import F1Square.Square.WindowPower
+import F1Square.Square.MellinHat
+import F1Square.Square.MellinLinear
+import F1Square.Square.HaarInvariant
+import F1Square.Square.MulConv
+import F1Square.Square.Autocorr
+import F1Square.Square.HatVanishes
+import F1Square.Square.MomentValue
+import F1Square.Square.MomentSquare
+import F1Square.Square.CoSupportMember
+import F1Square.Square.MomentCube
+import F1Square.Square.CubicMember
+import F1Square.Square.CoSupportWeld
+import F1Square.Square.BandBridge
+import F1Square.Square.MomentQuartic
+import F1Square.Square.MomentQuintic
+import F1Square.Square.DeepMember
+import F1Square.Square.MomentLaw
+import F1Square.Square.HilbertGram
+import F1Square.Square.DeepMemberThree
+import F1Square.Square.CoSupportStrict
+import F1Square.Square.CoSupportChain
+import F1Square.Square.MomentDecay
+import F1Square.Square.MomentSummable
+import F1Square.Square.MomentNorm
+import F1Square.Square.DeepMemberFour
+import F1Square.Square.CoSupportEnergy
+import F1Square.Square.MomentCompletion
+import F1Square.Square.MomentMember
+import F1Square.Square.MomentEnergyDetect
+import F1Square.Square.MomentGram
+import F1Square.Square.MomentInvariant
+import F1Square.Square.CoSupportCompletion
+import F1Square.Square.MomentPairing
+import F1Square.Square.MomentPairingLaws
+import F1Square.Square.MomentPairingCS
+import F1Square.Square.MomentPairingBilinear
+import F1Square.Square.CoSupportPairing
+import F1Square.Square.DeepMemberFive
+import F1Square.Square.CoSupportDimension
+import F1Square.Square.MomentPairingNeg
+import F1Square.Square.CoSupportSubspace
+import F1Square.Square.CoSupportFamily
+import F1Square.Square.MomentQuadratic
+import F1Square.Square.DeepMemberSix
+import F1Square.Square.MomentDefinite
+import F1Square.Square.L2Complete
+import F1Square.Square.L2MomentBridge
+import F1Square.Square.PolyDeterminacy
+import F1Square.Square.PolyMoment
+import F1Square.Square.PolyMember
+import F1Square.Square.CoSupportDimThree
+import F1Square.Square.IntegralSplit
+import F1Square.Square.IntegralPiece
+import F1Square.Square.IntervalSplit
+import F1Square.Square.IntervalSplitAt
+import F1Square.Square.IntervalSplitAtCap
+import F1Square.Square.IntervalTelescope
+import F1Square.Square.IntervalPiece
+import F1Square.Square.DyadicDescent
+import F1Square.Square.IntegralTailBound
+import F1Square.Square.IntervalMinorant
+import F1Square.Square.L2Definite
+import F1Square.Square.DyadicApprox
+import F1Square.Square.L2DefiniteDensity
+import F1Square.Analysis.RSeqApprox
+import F1Square.Square.DyadicClamp
+import F1Square.Square.DyadicDense
+import F1Square.Square.DyadicDenseReal
+import F1Square.Square.L2Separation
+import F1Square.Square.L2DefiniteIff
+import F1Square.Square.L2MetricIff
+import F1Square.Square.CoSupportFunction
+import F1Square.Square.CoSupportDistinct
+import F1Square.Square.CoSupportPairwise
+import F1Square.Square.MellinLinearNeg
+import F1Square.Square.MellinInjective
+import F1Square.Square.MellinInjectivePair
+import F1Square.Square.PairingUnitZero
+import F1Square.Square.PairingUnitCongr
+import F1Square.Square.PairingUnitDist
+import F1Square.Square.PairingIUCongr
+import F1Square.Square.ContinuousMoment
+import F1Square.Square.ContinuousMomentLinear
+import F1Square.Square.ContinuousMomentZero
+import F1Square.Square.ContinuousMomentExp
+import F1Square.Square.ContinuousMomentFloor
+import F1Square.Square.ContinuousMomentMono
+import F1Square.Square.ContinuousMomentAdd
+import F1Square.Square.ContinuousMomentValue
+import F1Square.Square.ContinuousMomentValueAll
+import F1Square.Square.ContinuousMomentOne
+import F1Square.Square.ContinuousMomentTwo
+import F1Square.Square.ContinuousMomentGeneral
+import F1Square.Square.ContinuousMomentGenTwo
+import F1Square.Square.ContinuousMomentClamp
+import F1Square.Square.ContinuousMomentTailBound
+import F1Square.Square.BernsteinDeviationTransfer
+import F1Square.Square.BernsteinEnergyBound
+import F1Square.Square.MomentDeterminacy
+import F1Square.Square.MomentFiniteDiff
+import F1Square.Square.MomentReconSum
+import F1Square.Square.MomentReconEnergy
+import F1Square.Square.MomentReconConverge
+import F1Square.Square.MomentDurrmeyer
+import F1Square.Square.DurrmeyerMoments
+import F1Square.Square.DurrmeyerWeights
+import F1Square.Square.DurrmeyerMomentSum
+import F1Square.Square.DurrmeyerLinear
+import F1Square.Square.DurrmeyerConst
+import F1Square.Square.IntegralMono
+import F1Square.Square.DurrmeyerCentral
+import F1Square.Square.DurrmeyerConverge
+import F1Square.Square.DurrmeyerTendsTo
+import F1Square.Square.BernsteinUniform
+import F1Square.Square.BernsteinL2Density
+import F1Square.Square.BernsteinL2Limit
+import F1Square.Square.CoSupportTrivial
+import F1Square.Square.QSumList
+import F1Square.Square.QLinearKernel
+import F1Square.Square.QPolyMember
+import F1Square.Square.QCoSupportExists
+import F1Square.Square.QPolyApart
+import F1Square.Square.MomentInversionRaw
+import F1Square.Square.L2ElementSpace
+import F1Square.Square.PairingIUReschedule
+import F1Square.Square.PairingIULinear2
+import F1Square.Square.PairingIUEnergy
+import F1Square.Square.PairingBernBasisZero
+import F1Square.Square.PairingBernOpZero
+import F1Square.Square.PairingMomentDeterminacy
+import F1Square.Square.PairingMomentInjective
+import F1Square.Square.DurrmeyerTest
+import F1Square.Square.DurrmeyerReconstruct
+import F1Square.Square.MomentRangeNecessary
+import F1Square.Square.QHilbertForm
+import F1Square.Square.QHilbertPos
+import F1Square.Square.QHilbertBilinear
+import F1Square.Square.QHilbertTrunc
+import F1Square.Square.QHilbertSymm
+import F1Square.Square.QHilbertComb
+import F1Square.Square.GramSchmidt
+import F1Square.Square.GramSchmidtOrtho
+import F1Square.Square.GramSchmidtFamily
+import F1Square.Square.GramSchmidtConcrete
+import F1Square.Square.MomentFunctional
+import F1Square.Square.QHilEVec
+import F1Square.Square.RieszCoeff
+import F1Square.Square.RieszRealize
+import F1Square.Square.RieszMoment
+import F1Square.Square.RieszParseval
+import F1Square.Square.RieszBessel
+import F1Square.Square.QPolyDimInv
+import F1Square.Square.QPolyDistBridge
+import F1Square.Square.QPolyCoefCongr
+import F1Square.Square.RieszDimInv
+import F1Square.Square.BesselSeqDist
+import F1Square.Square.MomentRealize
+import F1Square.Square.BesselCauchyModulus
+import F1Square.Square.BesselPartialNorm
+import F1Square.Square.MomentProblemWellPosed
+import F1Square.Square.ContinuousMomentLimit
+import F1Square.Square.ContinuousMomentFloorReal
+import F1Square.Square.ContinuousMomentGenTail
+import F1Square.Square.ContinuousMomentGenLimit
+import F1Square.Square.ContinuousMomentNatExp
+import F1Square.Square.ContinuousMomentNatTail
+import F1Square.Square.ContinuousMomentNatLimit
+import F1Square.Square.ContinuousMomentClampValue
+import F1Square.Square.ContinuousMomentGenRate
+import F1Square.Square.ContinuousMomentGenLinear
+import F1Square.Square.ContinuousMomentGenNeg
+import F1Square.Square.ContinuousMomentGenSub
+import F1Square.Square.ContinuousMomentGenScale
+import F1Square.Square.ContinuousMomentGenFamily
+import F1Square.Square.ContinuousMomentGenInjective
 
 open UOR.Primitives
 
@@ -1289,5 +1731,160 @@ example :
     ∧ f1SquareStatus.liPositivityHolds = none :=
   ⟨Square.stageG_frontier_located.1, Square.stageG_frontier_located.2.1,
    Square.sigmaMetric_not_psd, rfl, rfl⟩
+
+/-- Elaboration-checked witness binding **the Gate-A finite-list template and its first prune**
+    (`Analysis/LambdaGap.lean`, `Square/GateAFiniteList.lean`): Gate A specified as a finite exact
+    hypothesis list around a generating recurrence (`GateAList`: K base identities + one recurrence
+    on each side), with the reduction theorem — the list implies Gate A, hence
+    `LiNonneg (genuineLamSeq)` (first conjunct; the reduction is real, its satisfiability for the
+    genuine square is RH and is NEVER asserted). The certified gap `λ₁ ≉ λ₂` (second conjunct,
+    from `2λ₂ − 2λ₁ ≥ 0.113` — the `log 4π` atoms cancel, every survivor has a stock bracket)
+    prunes the entire order-1 constant candidate class, for every anchored η-data, every atlas
+    rule, and every dimension at once (third conjunct). Positivity is not output: the crux fields
+    stay `none` — RH OPEN. -/
+example :
+    (∀ (E : Analysis.StieltjesEta) (ι : Square.AtlasRule) (D K : Nat) (a : Nat → Analysis.Real),
+        Square.GateAList E ι D K a → Li.LiNonneg (Analysis.genuineLamSeq E.eta))
+    ∧ (¬ Analysis.Req Analysis.Rlambda1 Analysis.Rlambda2)
+    ∧ (∀ (E : Analysis.StieltjesEta) (ι : Square.AtlasRule) (D : Nat),
+        ¬ Square.GateAList E ι D 1 (fun _ => Analysis.one))
+    ∧ (∀ (E : Analysis.StieltjesEta) (ι : Square.AtlasRule) (D : Nat) (c : Analysis.Real),
+        Analysis.Rle c Analysis.one → ¬ Square.GateAList E ι D 1 (fun _ => c))
+    ∧ (∀ (E : Analysis.StieltjesEta3) (ι : Square.AtlasRule) (D : Nat) (c : Analysis.Real),
+        ¬ Square.GateAList E.toStieltjesEta ι D 1 (fun _ => c))
+    ∧ (∀ (E : Analysis.StieltjesEta3) (ι : Square.AtlasRule) (D : Nat) (a : Nat → Analysis.Real),
+        Analysis.Rle (a 0) Analysis.one → Analysis.Rle (a 1) Analysis.one →
+        ¬ Square.GateAList E.toStieltjesEta ι D 2 a)
+    ∧ Analysis.Rle (Analysis.ofQ (⟨253038, 100000⟩ : Analysis.Q) (by decide)) Analysis.Rlog4pic
+    ∧ Analysis.Rle Analysis.Rlambda1 (Analysis.ofQ (⟨2381, 100000⟩ : Analysis.Q) (by decide))
+    ∧ Analysis.Rle Analysis.Rlambda3 (Analysis.ofQ (⟨2554, 10000⟩ : Analysis.Q) (by decide))
+    ∧ Analysis.Rle Analysis.Rlambda2 (Analysis.ofQ (⟨1016, 10000⟩ : Analysis.Q) (by decide))
+    ∧ Analysis.Rle (Analysis.ofQ (⟨1436, 10000⟩ : Analysis.Q) (by decide)) Analysis.Rlambda3
+    ∧ Analysis.Rle Analysis.Rlambda4 (Analysis.ofQ (⟨563, 1000⟩ : Analysis.Q) (by decide))
+    ∧ (∀ (E : Analysis.StieltjesEta5) (ι : Square.AtlasRule) (D K : Nat) (a : Nat → Analysis.Real),
+        0 < K → K ≤ 4 → (∀ i, i < K → Analysis.Rle (a i) Analysis.zero) →
+        ¬ Square.GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a)
+    ∧ (Analysis.Pos (Analysis.Rsub Analysis.Rlambda2 Analysis.Rlambda1)
+        ∧ Analysis.Pos (Analysis.Rsub Analysis.Rlambda3 Analysis.Rlambda2))
+    ∧ Analysis.Pos (Analysis.Rsub Analysis.Rlambda4 Analysis.Rlambda3)
+    ∧ (∀ (E : Analysis.StieltjesEta5) (ι : Square.AtlasRule) (D K : Nat) (a : Nat → Analysis.Real),
+        0 < K → K ≤ 3 → (∀ i, i < K → Analysis.Rnonneg (a i)) →
+        Analysis.Rle (Analysis.RsumN a K) Analysis.one →
+        ¬ Square.GateAList E.toStieltjesEta4.toStieltjesEta3.toStieltjesEta ι D K a)
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := fun x => x) (L := (⟨1, 1⟩ : Analysis.Q))
+        (by decide) (by decide) Analysis.lip_id Analysis.congr_id) Analysis.half
+    ∧ Analysis.Req Analysis.tentPoleA (Analysis.ofQ (⟨3, 4⟩ : Analysis.Q) (by decide))
+    ∧ (∀ x y : Analysis.Real, Analysis.Rle
+        (Analysis.Rabs (Analysis.Rsub
+          (Analysis.clampedInv (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide) x)
+          (Analysis.clampedInv (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide) y)))
+        (Analysis.Rmul (Analysis.ofQ
+          (Analysis.mul (Analysis.Qinv (⟨1, 2⟩ : Analysis.Q)) (Analysis.Qinv (⟨1, 2⟩ : Analysis.Q)))
+          (Analysis.Qmul_den_pos (Analysis.Qinv_den_pos (by decide))
+            (Analysis.Qinv_den_pos (by decide))))
+          (Analysis.Rabs (Analysis.Rsub x y))))
+    ∧ Analysis.Req
+        (Analysis.clampedInv (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide)
+          (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide)))
+        (Analysis.ofQ (Analysis.Qinv (⟨2, 1⟩ : Analysis.Q)) (Analysis.Qinv_den_pos (by decide)))
+    ∧ Analysis.Req
+        (Analysis.riemannIntegral (f := Analysis.gRecip) (L := (⟨1, 1⟩ : Analysis.Q))
+          Nat.one_pos (by decide) Analysis.gRecip_lip Analysis.gRecip_congr)
+        (Analysis.logN 2 (by omega))
+    ∧ Analysis.Req Analysis.tentPoleB (Analysis.logN 2 (by omega))
+    ∧ Analysis.Req
+        (Analysis.riemannIntegral (f := Analysis.gRecip32) (L := (⟨1, 1⟩ : Analysis.Q))
+          Nat.one_pos (by decide) Analysis.gRecip32_lip Analysis.gRecip32_congr)
+        (Analysis.Rsub (Analysis.logN 3 (by omega)) (Analysis.logN 2 (by omega)))
+    ∧ (∀ (c : Nat) (hc : 1 ≤ c),
+        Analysis.Req
+          (Analysis.riemannIntegral (f := Analysis.gRecipC c) (L := (⟨1, 1⟩ : Analysis.Q))
+            Nat.one_pos (by decide) (Analysis.gRecipC_lip c) (Analysis.gRecipC_congr c))
+          (Analysis.Rsub (Analysis.logN (c + 1) (by omega)) (Analysis.logN c hc)))
+    ∧ Analysis.Req Analysis.improperTail (Analysis.logN 3 (by omega))
+    ∧ Analysis.Req Analysis.tentArchTail
+        (Analysis.Rsub (Analysis.Rneg (Analysis.Radd Analysis.one
+          (Analysis.Rsub
+            (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
+              (Analysis.logN 2 (by omega)))
+            (Analysis.Rmul (Analysis.ofQ (⟨4, 1⟩ : Analysis.Q) (by decide))
+              (Analysis.Rsub (Analysis.logN 3 (by omega)) (Analysis.logN 2 (by omega)))))))
+          (Analysis.logN 3 (by omega)))
+    ∧ Analysis.Req (Analysis.weilPrimePart Square.tentTest) Analysis.zero
+    ∧ Analysis.Pos (Square.weilValue Square.tentSlot)
+    ∧ Analysis.Req (Analysis.weilPrimePart Square.bumpTest) (Analysis.logN 2 (by omega))
+    ∧ Analysis.Pos (Analysis.Rneg (Square.weilValue Square.bumpSlot))
+    ∧ Analysis.Req (Square.t4F ⟨1, 1⟩)
+        (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
+          (Analysis.logN 2 (by omega)))
+    ∧ Analysis.Req (Analysis.weilPrimePart Square.t4Test)
+        (Analysis.Radd
+          (Analysis.Rmul (Analysis.logN 2 (by omega))
+            (Analysis.Radd (Analysis.logN 2 (by omega))
+              (Analysis.Rmul (Analysis.ofQ (⟨1, 2⟩ : Analysis.Q) (by decide))
+                (Analysis.logN 2 (by omega)))))
+          (Analysis.Rmul (Analysis.logN 3 (by omega))
+            (Analysis.Radd
+              (Analysis.Rsub (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
+                  (Analysis.logN 2 (by omega))) (Analysis.logN 3 (by omega)))
+              (Analysis.Rmul (Analysis.ofQ (⟨1, 3⟩ : Analysis.Q) (by decide))
+                (Analysis.Rsub (Analysis.Rmul (Analysis.ofQ (⟨2, 1⟩ : Analysis.Q) (by decide))
+                    (Analysis.logN 2 (by omega))) (Analysis.logN 3 (by omega)))))))
+    ∧ (∀ (i : Nat) (hi : 1 ≤ i),
+        Analysis.Rle (Analysis.Radd (Analysis.Gn i hi) (Analysis.logN i hi))
+          (Analysis.Gn (i + 1) (by omega))
+        ∧ Analysis.Rle (Analysis.Gn (i + 1) (by omega))
+          (Analysis.Radd (Analysis.Gn i hi) (Analysis.logN (i + 1) (by omega))))
+    -- the ∫log point values: gLog c (j/(N+1)) ≈ logN(c(N+1)+j) − logN(N+1), general
+    -- in the dyadic sample (the 2c(ii) exp-injectivity bridge + the 2c(iii) collapse)
+    ∧ (∀ (c : Nat) (hc1 : 1 ≤ c) (hc3 : c ≤ 3) (j N : Nat) (hj : j ≤ N + 1)
+        (ha1 : 1 ≤ c * (N + 1) + j),
+        Analysis.Req
+          (Analysis.gLog c (Analysis.ofQ (⟨(j : Int), N + 1⟩ : Analysis.Q) (Nat.succ_pos N)))
+          (Analysis.Rsub (Analysis.logN (c * (N + 1) + j) ha1)
+            (Analysis.logN (N + 1) (Nat.succ_pos N))))
+    -- the certified log integrals: ∫₀¹ log(c+t) dt = Gn(c+1) − Gn(c), c = 1, 2, 3
+    -- (the ∫log layer complete — the values the t4 pole pieces consume)
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := Analysis.gLog 1)
+          (L := (⟨1, 1⟩ : Analysis.Q)) Nat.one_pos (by decide)
+          Analysis.gLog1_lip Analysis.gLog1_congr)
+        (Analysis.Rsub (Analysis.Gn 2 (by omega)) (Analysis.Gn 1 (by omega)))
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := Analysis.gLog 2)
+          (L := (⟨1, 1⟩ : Analysis.Q)) Nat.one_pos (by decide)
+          Analysis.gLog2_lip Analysis.gLog2_congr)
+        (Analysis.Rsub (Analysis.Gn 3 (by omega)) (Analysis.Gn 2 (by omega)))
+    ∧ Analysis.Req (Analysis.riemannIntegral (f := Analysis.gLog 3)
+          (L := (⟨1, 1⟩ : Analysis.Q)) Nat.one_pos (by decide)
+          Analysis.gLog3_lip Analysis.gLog3_congr)
+        (Analysis.Rsub (Analysis.Gn 4 (by omega)) (Analysis.Gn 3 (by omega)))
+    ∧ f1SquareStatus.hodgeIndexHolds = none
+    ∧ f1SquareStatus.liPositivityHolds = none :=
+  ⟨fun _ _ _ _ _ h => Square.finiteList_is_liNonneg h,
+   Analysis.Rlambda1_ne_Rlambda2,
+   Square.constantClass_pruned,
+   fun E ι D c hc => Square.contractionClass_pruned E ι D (c := c) hc,
+   Square.order1Class_pruned,
+   fun E ι D a h0 h1 => Square.contractionClass2_pruned E ι D (a := a) h0 h1,
+   Analysis.Rlog4pic_ge, Analysis.Rlambda1_le, Analysis.Rlambda3_le,
+   Analysis.Rlambda2_le, Analysis.Rlambda3_ge, Analysis.Rlambda4_le,
+   fun E ι D K a hK hK4 ha => Square.nonPositiveClass_pruned E ι D hK hK4 ha,
+   Analysis.Rlambda_head_increasing, Analysis.Rlambda3_lt_Rlambda4,
+   fun E ι D K a hK hK3 ha hsum => Square.convexClass123_pruned E ι D hK hK3 ha hsum,
+   Analysis.riemannIntegral_id, Analysis.tentPoleA_eq,
+   fun x y => Analysis.clampedInv_lipschitz (⟨1, 2⟩ : Analysis.Q) (by decide) (by decide) x y,
+   Analysis.clampedInv_ofQ (a := (⟨1, 2⟩ : Analysis.Q)) (q := (⟨2, 1⟩ : Analysis.Q))
+     (by decide) (by decide) (by decide) (by decide) (by decide),
+   Analysis.riemannIntegral_recip, Analysis.tentPoleB_eq,
+   Analysis.riemannIntegral_recip32,
+   fun c hc => Analysis.riemannIntegral_recipC c hc,
+   Analysis.improperTail_eq, Analysis.tentArchTail_eq,
+   Square.tentPrimePart_eq, Square.tentWeilValue_pos,
+   Square.bumpPrimePart_eq, Square.bumpWeilValue_neg,
+   Square.t4F_one, Square.t4PrimePart_eq,
+   fun i hi => ⟨Analysis.Gn_step_lower i hi, Analysis.Gn_step_upper i hi⟩,
+   fun c hc1 hc3 j N hj ha1 => Analysis.gLog_point c hc1 hc3 j N hj ha1,
+   Analysis.riemannIntegral_logC1, Analysis.riemannIntegral_logC2,
+   Analysis.riemannIntegral_logC3,
+   rfl, rfl⟩
 
 end UOR.Bridge.F1Square

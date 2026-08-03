@@ -4,6 +4,5255 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html), starting at `v0.0.1`.
 
+## [Unreleased]
+
+- **The finite telescoping of adjacent-window interval integrals** (new
+  `Square/IntervalTelescope.lean`): exhaustion rung 3. For an increasing rational endpoint sequence
+  `c`, the sum of the adjacent-window interval integrals collapses to the whole-interval integral —
+  `Σ_{m<N} int_{c m}^{c (m+1)} f = int_{c 0}^{c N} f` (`riemannIntegralI_telescope`). A pure
+  finite-additivity induction on `N` driven by the committed interval-level general split-point
+  additivity `riemannIntegralI_split_at`: at level `N+1` the whole window `[c 0, c (N+1)]` is split at
+  the node `c N` (split width `c N - c 0`), whose left piece is the inductive whole `[c 0, c N]` and
+  whose right piece is the new window `[c N, c (N+1)]` (reconciled by the endpoint/width `Qeq`
+  congruence `riemannIntegralI_congr_Q`). The degenerate base rungs (`N=0` width-zero whole; `N=1`
+  single window vs empty prefix) are handled directly since the split needs a strictly positive
+  width. **Honest scope**: this is the finite exhaustion-independence that both the integer-window and
+  the `s`-scaled-window tilings satisfy — it builds NO improper integral, NO limit, NO dilation
+  covariance, NO factorization, NO positivity, NO determinacy, NO crux (the improper-level `Rlim`
+  exhaustion-independence is a later rung). Step 4 (band-coupling positivity) is RH; crux `none`.
+  (Three worktree drafters all reached the full telescoping; adversarial verify confirmed the genuine
+  split-driven induction with the Qeq reconciliations proved not assumed, non-smuggling,
+  `[propext, Quot.sound]`.)
+- **The interval-level general split-point additivity** (new `Square/IntervalSplitAtCap.lean`): the
+  capstone the `IntervalSplitAt.lean` substrate was built for —
+  `int_a^{a+w} f = int_a^{a+w1} f + int_{a+w1}^{a+w} f` (`riemannIntegralI_split_at`) for an arbitrary
+  rational split width `0 < w1 <= w` (the midpoint law `riemannIntegralI_split_half` handled only
+  `w1 = w/2`). The engine is the UNIT SPLIT (`riemannIntegral_split_at_unit`): for a
+  globally-Lipschitz `g` and rational node `t0 = p/q in (0,1)`,
+  `int_0^1 g = t0*int_0^1 g(t0*x) + (1-t0)*int_0^1 g(t0+(1-t0)*x)`. At resolution `(k+1)*q` the fine
+  Riemann sum splits EXACTLY at the node `p/q` (block sizes `A=(k+1)p-1`, `B=(k+1)(q-p)-1`, so
+  `(A+1)/(A+B+2)=p/q` and `A+B+2=(k+1)q -> inf`); as `k -> inf` the fine sum converges to `int_0^1 g`
+  and each block sum to its block integral (both by the committed `riemannSum_conv_dist`), and the
+  committed exact finite identity `riemannSum_split_at_gen` passes to the limit (weights dropped by
+  `t0,(1-t0) <= 1`, each error term `O(1/(k+1))`, closed by the two-sided vanishing bound). The
+  interval law then follows by the affine composition `affineMap_comp`. **Honest scope**: assembled
+  from the committed Riemann-sum substrate + the Archimedean limit — it builds NO improper integral,
+  NO dilation covariance, NO factorization, NO positivity, NO determinacy, NO crux. This is the
+  general-split tool that unlocks exhaustion-independence of the improper integral (the half-line
+  dilation covariance). Step 4 (band-coupling positivity) is RH; crux `none`. (Two of three worktree
+  drafters reached the full interval split independently; adversarial verify confirmed it is fully
+  general not midpoint-only, the unit split is genuinely the `Rlim` of the finite split invoking the
+  committed substrate, no circularity, `[propext, Quot.sound]`.)
+- **The analytic foundation for general split-point additivity** (new
+  `Square/IntervalSplitAt.lean`): the Riemann-sum machinery an arbitrary-rational interval split
+  needs, which the dyadic-only substrate did not provide. `riemannSum_multiple_refine` — the block
+  refinement bound `|R_{cP-1}(g) - R_{P-1}(g)| <= L/P` (subdividing each of `P` equal subintervals
+  into `c` pieces), generalizing the dyadic doubling to an arbitrary integer factor (via
+  `RsumN_flatten`). `riemannSum_conv_dist` — the general Riemann-sum convergence rate
+  `|int_0^1 g - R_N(g)| <= L/(N+1)` for EVERY `N`, not only the dyadic `2^m` (coarse and integral
+  compared through a common refinement, the tails killed by the Archimedean collapse); this is the
+  piece exhaustion-independence rests on. `riemannSum_split_at_gen` — the exact finite split at a
+  general node `t0 = (a+1)/(a+b+2)` (dense in `(0,1)`), the `(a+b+2)`-point sum as the
+  `t0/(1-t0)`-weighted sum of the two affine block sums, generalizing `riemannSum_halves` (`a=b=0`).
+  **Honest scope**: the substrate for the coming `riemannIntegralI_split_at`
+  (`int_a^{a+w} = int_a^{a+w1} + int_{a+w1}^{a+w}`), whose remaining assembly is the Archimedean
+  limit of `riemannSum_split_at_gen` closed by `riemannSum_conv_dist` plus the affine block
+  composition; that capstone is NOT in this file. Foundation for exhaustion-independence of the
+  improper integral (the half-line dilation covariance). It builds NO improper integral, NO limit
+  beyond the Riemann integral, NO dilation covariance, NO factorization, NO positivity, NO
+  determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three worktree
+  drafters delivered different foundational pieces; adversarial verify confirmed the general split
+  is genuinely proved not midpoint-only, the convergence rate is a genuine common-refinement
+  triangle, non-smuggling, `[propext, Quot.sound]`.)
+- **The per-window rational-scale Mellin dilation** (new `Square/MellinWindowDilate.lean`): the
+  first sub-brick of the eventual dilation covariance. For a bounded-Lipschitz base test `f`, a
+  degree-`n` window weight `P`, a rational scale `s > 0`, and a window `[lo,lo+w]`, the twisted
+  integral over the `s`-SCALED window equals `s^(n+1)` times the integral over the base window of
+  the `s`-DILATED integrand:
+  `int_{[s*lo, s*(lo+w)]} (f*P) = s^(n+1) * int_{[lo,lo+w]} (dilateTest s f * P)`
+  (`mellinWindowDilate`). One linear change of variables `y = s*x` (`riemannIntegralI_dilate`,
+  producing the Jacobian factor `s`) composed with the degree-`n` homogeneity of the weight on the
+  window (`P(s*x) = s^n*P(x)`, the `s^n` pulled out by `riemannIntegralI_smul`), integrands
+  reconciled at a common Lipschitz modulus and equated on the window. The homogeneity is an
+  EXPLICIT hypothesis `hHom`; `powTest_dilate_on` discharges it for the genuine clamped Mellin
+  weight `powTest n` on any sub-`[0,1]` window (clamp-inert at both `y` and `s*y`, plus the `Rpow`
+  homogeneity `Rpow_dilate_ofQ`: `(s*x)^n = s^n*x^n`). **Honest scope**: one window rational-scale
+  change of variables — it builds NO half-line limit, NO exhaustion-independence, NO real-scale
+  dilation, NO factorization, NO convolution theorem, NO positivity, NO determinacy, NO crux. This
+  is the first of three sub-bricks toward the dilation covariance (the others — exhaustion-
+  independence of the improper integral, and the rational->real scale limit — are the hard
+  remaining parts). Step 4 (band-coupling positivity) is RH; crux `none`. (Three worktree drafters
+  all reached the full identity three independent ways; adversarial verify confirmed the genuine
+  change of variables, the explicit-not-smuggled homogeneity, and the honest clamp handling.)
+- **The g-pullout of the swapped convolution-Mellin inner integral** (new
+  `Square/MellinConvGPull.lean`): the Fubini-swapped object `coupOuterTestSwap.f t = int_x
+  coupIntegrand(x,t) dx` has an `x`-constant weight buried in its integrand; this factors it out. At
+  fixed `t`, `coupIntegrand(x,t) = f(clamp x*clampedInv(a,t))*g(t)*clampedInv(a,t)*psi(x) = W(t)*D(x,t)`
+  with `W(t) = g(t)*clampedInv(a,t)` (constant in `x`) and `D(x,t) = f(clamp x*clampedInv(a,t))*psi(x)`
+  (the dilated-Mellin-of-`f` integrand). `coupOuterTestSwap_gpull` regroups by scalar `Rmul`
+  assoc/comm (`gpull_regroup`), then pulls the real constant `W(t)` out of the `x`-window integral by
+  `riemannIntegralI_Rsmul` (moduli reconciled by `lip_weaken`/`certif_irrel`), leaving the isolated
+  inner integral as `dilMellinF`, the dilated Mellin of `f` at scale `clampedInv(a,t)` (its
+  `x`-Lipschitz `dilIntegrand_lipX` is the product bound of the `1`-Lipschitz band clamp against
+  `psi`). `mellinConv_gpull` composes this with `mellinConv_fubini` to rewrite the whole double
+  integral in pulled-out form `mellinConv = int_t W(t)*dilMellinF(t) dt`. **Honest scope**: a
+  scalar-linearity regrouping inheriting from `mellinConv_fubini` — it evaluates NO integral, proves
+  NO dilation covariance (the inner `int_x` is left as `dilMellinF`, whose evaluation as a multiple of
+  `M[f]` is the later half-line step), builds NO limit, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all reached both capstones;
+  adversarial verify confirmed the genuine regroup, the honest `Rsmul` pull-out, and that `dilMellinF`
+  is left unevaluated — no dilation covariance smuggled.)
+- **The Fubini swap of the convolution-Mellin pairing** (new `Square/MellinConvFubini.lean`):
+  applying the windowed 2D-Bernstein swap `bern2D_general_swap_window` to `mellinConv`. Two parts.
+  (A) `mellinConv_eq_paramInt` — the STRUCTURAL IDENTITY that `mellinConv f g psi` is the `x`-outer
+  double integral of the coupled integrand: `mellinConv = int_x [int_t coupIntegrand(x,t) dt]`. Per
+  `x` this is a scalar-linearity identity — the inner integrand is `P_{clamp x}(t)*psi(x)` with
+  `psi(x)` constant in `t`, so `riemannIntegralI_Rsmul` pulls it out to
+  `psi(x)*int_t P_{clamp x}(t) dt = psi(x)*(f convolved g)(x) = mulConvRTest.f x * psi(x)`
+  (`int_t (couTest x).f t = mulConvRTest.f x` is a genuine same-integrand `certif_irrel`, since
+  `haarIntegral = innerIonI . recipTest` and `productTest`s `.hLd/.hlip/.hfc` fields ARE
+  `l2L_den/l2lip/l2fc`), and the outer integral matches the `innerIonI` product integrand of
+  `mellinConv` pointwise. (B) `mellinConv_fubini` — the SWAP: feeding the committed coupled-integrand
+  witnesses (`coup_lipY/coup_fcY/coup_lipX/coup_fcX/coup_lip/coup_bd`) to `bern2D_general_swap_window`
+  at outer `x`-window `(xlo,xw)` and inner `t`-window `(lo,w)` turns the `x`-outer form into the
+  `t`-outer / `x`-inner double integral `int_t [int_x coupIntegrand(x,t) dx]`. **Honest scope**: the
+  Fubini swap of `mellinConv` at the finite-window level, inheriting from the windowed swap and the
+  coupled-integrand regularity — NO new limit, NO factorization, NO positivity, NO determinacy, NO
+  crux; the inner `int_x` is left unevaluated (the later dilation-covariance step). Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all delivered both
+  theorems; adversarial verify confirmed the identity is the genuine nested pairing, the
+  `certif_irrel`/`Rsmul` steps are honest, and the actual committed witnesses drive the swap.)
+- **The convolution-Mellin coupled integrand** (new `Square/ConvMellinIntegrand.lean`): the joint
+  `(x,t)`-Lipschitz and bound of `coupIntegrand F(x,t) = f(x*clampedInv(a,t))*g(t)*clampedInv(a,t)*psi(x)`
+  — the inner two-variable integrand of `mellinConv f g psi` (the convolution integrand `P_x(t)` in `t`
+  at the `[0,S]`-clamped output `x`, weighted by the Mellin test `psi(x)`), presented as a jointly
+  bounded-Lipschitz `Real -> Real -> Real` carrying the six `paramIntegralTest` witnesses. This is the
+  regularity precondition for applying the windowed Fubini swap to `mellinConv`. Key insight: the
+  `t`-factor is a genuine product `L2Test` `couTest x = productTest (productTest (reflectTest a
+  (dilateTestR (clamp x) f)) g) (recipTest a)`, so the `t`-direction bound `coup_lipY` is just `l2lip`
+  of that product times the weight bound `|psi(x)| <= M_psi` — the linchpin being that `couTest`
+  moduli are definitionally `x`-independent (`dilateTestR` sets `L := phi.L*S` with no scale
+  reference), so a single rational modulus bounds all `x`. The `x`-direction `coup_lipX` reuses
+  `mulConvR_integrand_diff` (the `t`-uniform `x`-difference) folded through the band clamp and
+  `Rmul_lipschitz` against `psi`; the joint `coup_lip` is the triangle. **Honest scope**: a pointwise
+  product-of-bounded-Lipschitz regularity fact — NO integral swap, NO integral identity, NO
+  positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three
+  worktree drafters all reached the full witness set; adversarial verify confirmed the genuine
+  moduli, the derived-not-assumed `t`-Lipschitz, and the `x`-independence linchpin, `[propext,
+  Quot.sound]`.)
+- **The windowed general Fubini swap** (new `Square/Bern2DWindowSwap.lean`): generalizes
+  `bern2D_general_swap` from the unit square to ARBITRARY rational windows `[a,a+w]x[c,c+v]` — the
+  double integral of a jointly-Lipschitz `F` over the box equals the transposed double integral
+  (`bern2D_general_swap_window`), by a pure affine reparametrization reducing to the committed
+  `[0,1]^2` swap. The pulled-back integrand `G p q := F(a+w*p, c+v*q)` is jointly-Lipschitz on the
+  unit square with moduli `w*Lx, v*Ly` (derived from the directional facts via `affine_lip`, not
+  assumed); `riemannIntegralI_reparam` collapses each windowed interval integral to a width-scaled
+  unit-window integral, the outer/inner scalings collect into the shared factor `w*v` on both sides,
+  `bern2D_general_swap` at `G` supplies the unit-square equality, and `w*v` is stripped. Ships four
+  **reusable analysis bricks** made public: `affineMap_comp` (composition of affine pullbacks),
+  `riemannIntegralI_reparam` (windowed integral = width times unit integral of the pullback),
+  `smul_lip_ofQ` (a nonnegative rational scalar preserves Lipschitz), and `paramIntegralTest_reparam`
+  (the parametric window integral at a reparametrized point). **Honest scope**: a change-of-variables
+  generalization inheriting everything from `bern2D_general_swap` — no new limit, no positivity, no
+  determinacy, no crux. This is the window geometry the Mellin convolution theorem needs (its windows
+  are `[m+1,m+2] x [t-window]`, not `[0,1]^2`). Step 4 (band-coupling positivity) is RH; crux `none`.
+  (Three worktree drafters, two reached the full goal; adversarial verify confirmed the genuine
+  windowed equality, the derived-not-assumed joint Lipschitz, and the correct `w*v` cancellation.)
+- **The general Fubini swap** (new `Square/Bern2DGeneralSwap.lean`): Move 3, the CAPSTONE of the
+  2D-Bernstein route — the passage the roadmap named as "not yet made." For a jointly-Lipschitz `F`
+  on the unit square, the two GENUINE iterated double integrals are equal:
+  `∫_x ∫_y F(x,y) = ∫_y ∫_x F(x,y)` (`bern2D_general_swap`). The left side is
+  `∫_x (paramIntegralTest F …).f` (value at `x` is `∫₀¹ F(x,·) dy`); the right side is
+  `∫_y (paramIntegralTest Fᵀ …).f` for the genuine transpose `Fᵀ a b := F b a` (value at `y` is
+  `∫₀¹ F(·,y) dx`), its moduli swapped and its Lipschitz/continuity/bound witnesses *derived* from
+  `F`'s (`fun x y y' => hlipX y y' x`, …, `hFbd_G = fun a b => hFbd b a`) — not assumed. The
+  statement has NO `δ` and NO `n`; the Bernstein schedule (`δ=k+1, n=(k+1)²`) lives only inside the
+  proof. Per schedule `k`: `bern2D_outer_close` at `F` and at `Fᵀ` bound `2δn·|∫∫F − ∫Sₙ|` and
+  `2δn·|∫∫Fᵀ − ∫Sₙ(Fᵀ)|` by `(Lx+Ly)(δ²+n/4)`; `bern2D_finrank_symm` (`Sₙ(F)=Sₙ(Fᵀ)`) identifies
+  the two Bernstein anchors; an anchored triangle scaled by `2δn≥0`, divided out by
+  `Rle_of_Rmul_ofQ_le` (the `R=2(k+1)³` schedule weight), yields `|∫∫F−∫∫Fᵀ| ≤ (5/4)(Lx+Ly)/(k+1)`,
+  and the real Archimedean squeeze `Req_of_Rle_ofQ_all` closes the exact equality. The Bernstein
+  value is only the vanishing intermediate anchor; the schedule kills the gap. **Honest scope**: the
+  general Fubini swap for a jointly-Lipschitz `F`, proved via uniform 2D Bernstein approximation and
+  the schedule limit — an analysis theorem. The equality is between the two genuine iterated
+  integrals of `F`, NOT Bernstein values; NO closeness/limit/swap hypothesis is assumed (only `F`
+  joint-continuity + joint-Lipschitz + bound). NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three independent worktree drafters compiled +
+  audited it; adversarial verify confirmed the two sides are the genuine transposed iterated
+  integrals, the transpose instantiation and `Sₙ(F)=Sₙ(Fᵀ)` are discharged not assumed, and the
+  schedule limit is genuine — `[propext, Quot.sound]`.)
+- **The finite-rank symmetry** (new `Square/Bern2DFinrankSymm.lean`): Move 2 of the general Fubini
+  swap — a DISCRETE Fubini on the `(n+1)×(n+1)` Bernstein grid. The outer `x`-integral of the
+  finite-rank 2D Bernstein inner test for `F` equals that for the transpose `Fᵀ a b := F b a` —
+  `∫_x sumProdTest (bern2DList F …) = ∫_x sumProdTest (bern2DList Fᵀ …)` (`bern2D_finrank_symm`).
+  `finrank_fubini` reduces each side to the explicit double sum `Σᵢⱼ F(i/n,j/n)·(∫bᵢ)·(∫bⱼ)` (the
+  fold routed through `RsumL` to an iterated `RsumN`, mirroring `bern2DList_eval_eq`, with
+  `riemannIntegralI_constTestMul` factoring the constant coefficient `F(i/n,j/n)` out of the inner
+  integral); the two grids are reconciled by the discrete grid-index swap `RsumN_swap` (reused from
+  `Square/SelfAdjoint.lean`, the `Real` analogue of the rational `Fsum_swap`) plus `Rmul`
+  commutativity on each `(∫bᵢ)·(∫bⱼ)` pair. **Honest scope**: a finite-sum combinatorial identity.
+  Only ONE integration order (`x`-outer) appears on each side — this is NOT a continuous Fubini order
+  interchange (`∫_x∫_y` vs `∫_y∫_x`), which is Move 3; it is the grid symmetry `Sₙ(F)=Sₙ(Fᵀ)` that
+  Move 3 consumes to bound both integration orders against the same finite-rank quantity. NO
+  continuous swap, NO limit, NO convergence, NO positivity, NO determinacy, NO crux. Step 4 is RH;
+  crux `none`. (Three independent worktree drafters compiled + audited it; adversarial verify
+  confirmed correct, non-vacuous, non-smuggling — only a discrete grid reindex — `[propext, Quot.sound]`.)
+- **The outer-integration deviation** (new `Square/Bern2DOuterClose.lean`): Move 1 of the general
+  Fubini swap. Integrating the already-proven per-`x` inner deviation (`bern2D_inner_close`) over the
+  outer parameter `x ∈ [0,1]`, the genuine iterated double integral `∫_x ∫_y F` and the finite-rank
+  `∫_x` of the 2D Bernstein inner test are uniformly close —
+  `2δn·|∫_x ∫_y F − ∫_x (sumProdTest (bern2DList F …) 0 1)| ≤ (Lx+Ly)·(δ²+n/4)` (`bern2D_outer_close`,
+  multiplied form; the reciprocal `1/(2δn)` is never formed). Both outer integrands are genuine
+  `L2Test`s in `x`: the parametric inner integral `paramIntegralTest F …` (value at `x` is
+  `∫₀¹ F(x,·) dy`) and the finite-rank inner-value test `sumProdTest (bern2DList F …) 0 1`; `∫_x∫_y F`
+  and the finite-rank `∫_x` are their interval integrals over the unit `x`-window. A structural mirror
+  of `bern2D_inner_close` lifted one integration level (x instead of y), and *simpler* — no key
+  identity is needed since the finite-rank object is literally the interval integral of `sumProdTest`.
+  Both `x`-integrands are scaled by the rational `2δn` (`riemannIntegralI_ofQscale`, reused public from
+  `Bern2DInnerClose`), the `2δn`-scaled outer window comparison `riemannIntegralI_dist_le_window` is fed
+  the per-`x` bound `bern2D_inner_close` itself as its pointwise `hdiff` (the affine pullback on the
+  unit `x`-window is the identity, `affineMap01_outer`). **Honest scope**: the outer integration of the
+  per-`x` deviation for a jointly-Lipschitz `F` — an analysis/approximation estimate. NO Fubini swap
+  (`∫_x∫_y F` is only *bounded against* the finite-rank object, never equated to `∫_y∫_x F`), NO limit
+  interchange, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux
+  `none`. (Three independent worktree drafters compiled + audited it; adversarial verify confirmed
+  correct, non-vacuous, non-smuggling, `[propext, Quot.sound]`.)
+- **The per-`x` inner-integral deviation** (new `Square/Bern2DInnerClose.lean`): the limit-passage core
+  of the general Fubini swap. At a fixed parameter `x ∈ [0,1]`, the inner `y`-integral of a
+  jointly-Lipschitz `F` and the finite-rank 2D Bernstein inner test value are uniformly close —
+  `2δn·|∫₀¹ F(x,y) dy − (sumProdTest (bern2DList F … n hn) 0 1).f x| ≤ (Lx+Ly)·(δ²+n/4)`
+  (`bern2D_inner_close`, multiplied form; the reciprocal `1/(2δn)` is never formed). The comparison
+  object is the value at `x` of the finite-rank inner-integral test; the KEY IDENTITY
+  `sumProdTest_f_eq_gxInt` rewrites it as the genuine interval integral `∫₀¹ gxSumTest` of a single
+  `y`-test `gxSumTest` (each coefficient `φₖ(x)` carried on a `constTest`, pulled out of the integral by
+  `riemannIntegralI_constTestMul`; the finite sum reassembled by `riemannIntegralI_L2add`), whose value
+  on `[0,1]` is the pointwise `bern2DVal(x,·)` (`bern2DList_eval_eq`). Both objects being interval
+  integrals, the `2δn`-scaled window comparison `riemannIntegralI_dist_le_window` (integrands scaled by
+  the rational `2δn` via `riemannIntegralI_ofQscale`/`scaled_lip`/`scaled_fc`) turns the uniform
+  pointwise `bern2DVal_devsum_bound` into the integral deviation. **Honest scope**: a per-`x`
+  analysis/approximation estimate — NO Fubini swap (the pull-outs are scalar-linearity of a single 1D
+  `y`-integral, not interchange of integration order), NO outer integral, NO limit interchange, NO
+  positivity (only `Rnonneg` of a nonneg rational constant), NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three independent worktree drafters compiled + audited
+  it; adversarial verify confirmed correct, non-vacuous, non-smuggling, `[propext, Quot.sound]`.)
+- **The 2D Bernstein list-fold ↔ pointwise-value agreement** (new `Square/Bern2DValue.lean`): connects
+  the finite-rank LIST representation `bern2DList` (the swap object, via `bern2D_fubini_swap`) to the
+  pointwise double-sum value `bern2DVal` (the deviation object) on `[0,1]²`. Two pieces: (i) a general
+  `flatMap`-of-`range`s fold ↔ iterated-`RsumN` correspondence routed through `RsumL` (`foldr_to_RsumL`
+  → `RsumL_map_range` → `RsumL_flatMap_range`) — clean because `List.range (N+1) = List.range N ++ [N]`
+  makes the last-element append match the `RsumN` recursion exactly (no reassociation); (ii)
+  `bern2DList_eval_eq` — the fold of `Σ (φ.f x)·(ψ.f y)` over `bern2DList` equals `bern2DVal(x,y)` on
+  `[0,1]²`, since each clamped `bernBasisTest` agrees with the honest `bernR` there
+  (`bernBasisTest_f_eq_bernR`, via a `natScale` value law + `bernR_eq_scaled_clampProd`) and the
+  `constTest` coefficient factors out. This is the value-agreement the general Fubini swap passes
+  through — it lets `finrank_fubini_swap` (list side) and `bern2DVal_deviation` (value side) be one
+  object. **Honest scope**: pure combinatorial/approximation infrastructure; NO integral, NO swap, NO
+  convergence, NO positivity, NO crux. Step 4 is RH; crux `none`. (Workflow-drafted, worktree-compiled,
+  adversarially verified.)
+- **The 2D uniform Bernstein convergence bound** (new `Square/Bern2DUniform.lean`):
+  `bern2DVal_devsum_bound` — `2δn·|B_n(F)(x,y) − F(x,y)| ≤ (Lx+Ly)·(δ²+n/4)` on `[0,1]²` for a
+  jointly-Lipschitz `F` and any `δ > 0` (multiplied form, uniform in `x,y`). The 2D pointwise deviation
+  `bern2DVal_deviation` bounds it by `Lx·(x-central-moment) + Ly·(y-central-moment)`; scaling by
+  `2δn ≥ 0` and applying `bernOp_devsum_bound` in each variable bounds each moment sum by `δ²+n/4`, and
+  the `Lx, Ly` coefficients factor out (a generic `A·(u·P+v·Q) = u·(A·P)+v·(A·Q)` reassociation, since
+  `set` is a Mathlib tactic unavailable here). At the schedule `δ=k+1, n=(k+1)²` this is
+  `|B_n(F)−F| ≤ (Lx+Ly)·5/(8(k+1)) → 0` uniformly — the 2D Weierstrass rate, the analytic input the
+  general Fubini swap consumes (`‖F−B_n(F)‖∞ → 0`). **Honest scope**: a uniform rational bound on the 2D
+  Bernstein deviation; general approximation theory, no positivity, no integral, no crux. Step 4 is RH;
+  crux `none`.
+- **The 2D pointwise Bernstein deviation bound** (new `Square/Bern2DDeviation.lean`): for a
+  jointly-Lipschitz `F : Real → Real → Real` (moduli `Lx, Ly`), the pointwise 2D Bernstein approximant
+  `bern2DVal F n = Σ_{i,j} F(i/n,j/n)·b_{n,i}(x)·b_{n,j}(y)` satisfies
+  `|B_n(F)(x,y) − F(x,y)| ≤ Lx·Σ_i|i/n−x|·b_{n,i}(x) + Ly·Σ_j|j/n−y|·b_{n,j}(y)` on `[0,1]²`
+  (`bern2DVal_deviation`). Pure double-sum bookkeeping mirroring the 1D `bernOp_deviation`: `F(x,y)`
+  as the constant double sum via the double partition of unity (`bernR_partition` twice), so the
+  difference is `Σ_{i,j}(F(i/n,j/n)−F(x,y))·b_i(x)·b_j(y)`; nested finite triangle inequality
+  (`RsumN_Rabs_le`, basis `≥ 0`) + the joint-Lipschitz modulus, then the transverse partition factors
+  each slot. Combined with the already-built `bernOp_devsum_bound` (`2δn·Σ|k/n−x|b ≤ δ²+n/4`), each
+  central-moment sum → 0, so `‖F − B_n(F)‖∞ → 0` — the analytic core of the general Fubini swap. **Why**:
+  the general swap `∫_x∫_y F = ∫_y∫_x F` follows from `|∫∫F − ∫∫B_n(F)| ≤ area·‖F−B_n(F)‖∞` (via
+  `riemannIntegralI_dist_le_window`), `∫∫B_n(F)` swaps (`bern2D_fubini_swap`), and this → 0 rate. **Honest
+  scope**: the pure pointwise 2D deviation for a jointly-Lipschitz `F` — general approximation theory;
+  NO positivity, NO moment-integral, NO crux. Step 4 is RH; crux `none`.
+- **The 2D Bernstein operator as a finite-rank list + its Fubini swap** (new
+  `Square/Bern2DOperator.lean`): the bivariate Bernstein approximant
+  `B_n(F)(x,y) = Σ_{i,j=0}^n F(i/n,j/n)·b_{n,i}(x)·b_{n,j}(y)` is a finite sum of SEPARABLE products,
+  hence a `List (L2Test × L2Test)` (`bern2DList`): the `(i,j)` grid over `0..n × 0..n`, the real
+  coefficient `F(i/n,j/n)` carried on the `x`-factor as a `constTest` and multiplied into the `x`-basis
+  `bernBasisTest n i` by `L2Test.mul`, the `y`-factor the bare basis `bernBasisTest n j`. Being
+  finite-rank separable, its iterated integral swaps: `bern2D_fubini_swap` instantiates
+  `finrank_fubini_swap` at this concrete list. **Why**: a jointly-continuous `F` is approximated
+  uniformly on the square by these `B_n(F)`, and the 1D uniform Bernstein convergence is already built
+  (`bernOp_uniform_converges`, `|φ(x)−B_{(k+1)²}(φ)(x)| ≤ φ.L·5/(8(k+1))`); the general swap
+  `∫_x∫_y F = ∫_y∫_x F` would follow by passing the uniform limit through the integral. **Honest
+  scope**: the finite-rank rung's list representation + its already-proven swap only; NO Bernstein
+  convergence for `F`, NO uniform-limit interchange, NO coupled (non-separable) swap, no positivity.
+  Crux `none`.
+- **Finite-rank Fubini** (new `Square/FiniteRankFubini.lean`): `finrank_fubini` —
+  `∫_x ∫_y (Σₖ φₖ(x)·ψₖ(y)) dy dx ≈ Σₖ (∫_x φₖ)·(∫_y ψₖ)`, the iterated integral of a finite sum of
+  separable products factors term by term. A `List (L2Test × L2Test)` carries the pairs; `sumProdTest`
+  folds their `prodParamTest` inner-integral tests under `L2Test.add`; the proof inducts, peeling each
+  `L2Test.add` with the new interval-additivity lemma `riemannIntegralI_L2add`
+  (`∫(A+B) = ∫A + ∫B`, the interval counterpart of `innerI_add_left`) and factoring each term with
+  `separable_fubini`; the empty case is the zero test integrating to `0` (`zeroTest`, `zeroTest_int`).
+  **Why**: this is the linearity extension of the separable factorization to the class the general
+  Fubini swap is reached THROUGH — a jointly-continuous `F` is approximated uniformly by 2D Bernstein
+  polynomials `Σ_{i,j} F(i/n,j/n)·bᵢ(x)·bⱼ(y)` (finite-rank), for which the swap holds by this theorem;
+  the general swap follows by passing the uniform limit through the integral. **Honest scope**:
+  finite-rank (separable-sum) integrands only; the 2D Bernstein approximation and the uniform-limit
+  interchange are unbuilt, so no swap for a genuinely-coupled `F` is claimed. Crux `none`. Also adds
+  `finrank_fubini_swap`: the order SWAP `∫_x∫_y (Σₖ φₖ(x)ψₖ(y)) ≈ ∫_y∫_x (Σₖ ψₖ(y)φₖ(x))` for a
+  finite-rank integrand (pairs swapped by `Prod.swap`; `finrank_fubini` each order + per-term
+  `Rmul` commutativity) — the swap the 2D Bernstein approximant `B_n(F)` satisfies.
+- **Separable Fubini: the product of two interval integrals** (new `Square/SeparableFubini.lean`):
+  `separable_fubini` — `∫_{xlo}^{xlo+xw} ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy dx ≈ (∫_x φ)·(∫_y ψ)`, the
+  iterated integral of a SEPARABLE (product) integrand factors. The outer integrand is `prodParamTest`;
+  its inner factorization (`prodParamTest_f_factor`) rewrites the value as `φ(x)·(∫_y ψ)`, and a second
+  `riemannIntegralI_Rsmul` pulls the now-constant `∫_y ψ` out of the `x`-integral, leaving
+  `(∫_x φ)·(∫_y ψ)`; moduli reconciled by `riemannIntegralI_certif_irrel` (twice) and one
+  `Q`-multiplication-associativity bridge (`yw·(ψ.M·φ.L) = (yw·ψ.M)·φ.L`). This is Fubini for the
+  EASY, separable case — because the integrand factors, no genuine two-variable interchange is needed;
+  the swap reduces to commutativity of `Rmul` on the two constant integrals. It is the final
+  factorization the Mellin convolution theorem `M[f⋆g]=M[f]·M[g]` reduces to once the change of
+  variables has decoupled the integrand (`∫_t ∫_u f(u)u^{s-1}·g(t)t^{s-1} = M[f]·M[g]`). **Honest
+  scope**: separable integrands only; the NON-separable middle — the change of variables / genuine
+  Fubini on the coupled integrand `f(x/t)g(t)x^{s-1}` — is unbuilt, and this file provides NO swap for
+  a non-separable integrand. Crux `none`. Also adds `separable_fubini_swap`: the actual order SWAP
+  `∫_x ∫_y φ(x)ψ(y) ≈ ∫_y ∫_x ψ(y)φ(x)` (both orders factor to the same product, reconciled by `Rmul`
+  commutativity) — the separable case of the Fubini swap; the general (non-separable) swap is the wall.
+- **The separable product integrand as a parametric test** (new `Square/ProdParamTest.lean`):
+  `prodParamTest φ ψ [ylo,yw]` is `paramIntegralTest` at `F(x,y) = φ(x)·ψ(y)`, so its
+  `.f x = ∫_{ylo}^{ylo+yw} φ(x)·ψ(y) dy`; the three joint-continuity facts are the one-sided
+  `constMul_*` helpers (`|c·χ(y) − c·χ(y')| ≤ (M·Lχ)·|y−y'|` for `|c| ≤ M`, plus its bound companion),
+  fed to `paramIntegralTest` at moduli `Ly = ψ.L + φ.M·ψ.L`, `Lx = ψ.M·φ.L`, `B = φ.M·ψ.M`.
+  `prodParamTest_f_factor`: the **inner factorization** `∫_y φ(x)·ψ(y) dy ≈ φ(x)·(∫_y ψ)` — the
+  parameter-constant `φ(x)` (a REAL) pulls out of the `y`-integral by `riemannIntegralI_Rsmul` (common
+  modulus `ψ.L + φ.M·ψ.L`, the `ψ`-side reconciled by `riemannIntegralI_certif_irrel`). This is the
+  inner half of the separable factorization `∫_x ∫_y φ(x)ψ(y) = (∫φ)·(∫ψ)` the Mellin convolution
+  theorem `M[f⋆g]=M[f]·M[g]` reduces to once the change of variables has decoupled the integrand.
+  **Honest scope**: the product integrand as a valid test + its inner factorization; NO swap, no
+  non-separable Fubini, no product identity, no positivity. Crux `none`.
+- **Real-scalar linearity of the interval integral** (new `Analysis/IntervalRsmul.lean`):
+  `riemannIntegralI_Rsmul` — `∫_a^{a+w} (c·f) = c·∫_a^{a+w} f` for any `c : Real`, the interval
+  counterpart of `riemannIntegral_Rsmul` (over `[0,1]`) and the real-scalar mirror of the rational
+  `riemannIntegralI_smul`. Proof: pull `c` through the affine-rescaled `[0,1]` integral
+  (`riemannIntegral_Rsmul`), then commute `c` past the width factor `w`. This is the tool a *separable*
+  Fubini step runs through — the inner integral of a product integrand `φ(x)·ψ(y)` factors as
+  `φ(x)·∫_y ψ` (pulling the parameter-constant `φ(x)`, a REAL, out of the `y`-integral), and the outer
+  integral then factors `∫ψ` out — the final `(∫φ)·(∫ψ)` factorization the Mellin convolution theorem
+  `M[f⋆g]=M[f]·M[g]` reduces to once the change of variables has decoupled the integrand. **Honest
+  scope**: general integral infrastructure; no swap, no product identity, no positivity. Crux `none`.
+- **The parametric interval integral as a test** (new `Square/ParamIntegral.lean`): for a jointly
+  bounded-Lipschitz two-variable integrand `F x y`, `paramIntegralTest F …` bundles the map
+  `x ↦ ∫_{lo}^{lo+w} F(x, y) dy` as a genuine `L2Test` in the parameter `x` — Lipschitz modulus `w·Lx`,
+  bound `w·B`. The three parameter-continuity fields are the general tools: Lipschitz-in-`x` via
+  `riemannIntegralI_dist_le_window`, bound via `riemannIntegralI_abs_le_window`, congruence via
+  `riemannIntegralI_congr`; the hypotheses are symmetric in the roles of the two variables, so the
+  object serves as `∫_x` of either iterated order. `paramIntegralTest_nonneg`: non-negative on
+  non-negative data. This is the general shape the real-parameter convolution `mulConvRTest` is one
+  instance of (`F(x, t) = f(x/t)·g(t)·(1/max(t,a))`), and the object a Fubini/iterated-integral swap
+  `∫_x ∫_y F = ∫_y ∫_x F` — the deep two-variable step the convolution theorem `M[f⋆g]=M[f]·M[g]`
+  (Wall 3) needs — would be stated *about*. **Honest scope**: only the inner integral as a valid
+  parametric test; NO swap, no product identity, no positivity beyond the integrand's sign. Crux stays
+  `none`.
+- **The integer-exponent Mellin transform of the convolution** (new `Square/MellinConvInt.lean`):
+  `mellinConvInt f g m n = ∫_{m+1}^{m+2} (f⋆g)(x)·xⁿ dx` — the Mellin transform of the convolution at
+  integer exponent `n` on the half-line window `[m+1, m+2]`, realized as the Mellin pairing against the
+  window power weight `powWinTest m n` (= `tⁿ` clamped to the window). `mellinConvInt_nonneg`: for
+  non-negative `f, g` (e.g. the autocorrelation `g ⋆ g^τ`) the transform is `≥ 0` at every integer
+  exponent (`mulConvR_nonneg` × `powWinTest_nonneg`, the latter a new product-of-non-negatives
+  induction with `bandTest_nonneg`). **Honest scope**: the transform EVALUATED at integer exponents,
+  non-negative on non-negative data. NOT the convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3, the deep
+  two-variable/Fubini step) — the identity that turns `mulConv` values at prime powers into
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. This file proves no product identity. Crux stays `none`.
+- **The Mellin pairing of the convolution** (new `Square/MellinConv.lean`): `mellinConv f g ψ =
+  ∫_{xlo}^{xlo+xw} (f⋆g)(x)·ψ(x) dx`, the pairing of the (now test-valued) convolution `mulConvRTest`
+  against a weight `ψ` — the object the Mellin transform `M[f⋆g](s) = ∫ (f⋆g)(x)·x^{s-1} dx` and the
+  convolution theorem are about (the transform is `ψ = x^{s-1}`). Since `x ↦ (f⋆g)(x)` is now an
+  `L2Test`, the pairing is just the interval `L²` pairing `innerIonI`. `mellinConv_nonneg`: for
+  non-negative `f, g, ψ` the pairing is `≥ 0` (the sign the autocorrelation's transform inhabits).
+  **Honest scope**: the pairing OBJECT and its density-level positivity. NOT the transform evaluated
+  against a specific power weight `x^{s-1}` (needs a power-weight test, unbuilt), and NOT the
+  convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3, the deep two-variable/Fubini step) — which identifies
+  `mulConv` values at prime powers with `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **The multiplicative convolution as a bounded-Lipschitz test in `x`** (new `Square/MulConvRTest.lean`):
+  `mulConvRTest f g S a [lo,w]` bundles `x ↦ mulConvR f g (clamp x)` as a genuine `L2Test` (Lipschitz
+  modulus `w·f.L·M_g·(1/a)²`, bound `w·M_f·M_g·(1/a)`) — the integrand the Mellin transform of `⋆` ranges
+  over on the `x`-window `[0, S]`. `mulConvR f g x` is defined only for `|x| ≤ S`; the `[0,S]`-clamp
+  `qBandQ 0 S` (inert on `[0,S]`, `1`-Lipschitz) totalizes it (`clampS_absle`: `|clamp x| ≤ S`), and the
+  three continuity facts assemble through the clamp (`hlip = mulConvR_lipschitz ∘ qBandQ_lipschitz`,
+  `hbd = mulConvR_abs_le`, `hfc = mulConvR_congr ∘ qBandQ_congr`; the `mulConvR` value is independent of
+  the `|x| ≤ S` proof). **Honest scope**: the convolution packaged as a test in its output variable —
+  the last of the `x`-continuity data, now concrete. The Mellin transform `∫ (f⋆g)(x)·x^{σ-1} dx` (needs
+  a power-weight test) and the convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3, the deep two-variable/
+  Fubini step) are still unbuilt; that theorem identifies `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **Congruence-in-`x` of the real-parameter convolution** (new `Analysis/MulConvRCongr.lean`):
+  `mulConvR_congr` — `x ≈ x' ⟹ mulConvR f g x ≈ mulConvR f g x'`, the third continuity datum. With the
+  uniform bound (`mulConvR_abs_le`) and the Lipschitz estimate (`mulConvR_lipschitz`), the data for
+  `x ↦ mulConvR f g x` to be a bounded-Lipschitz test is now complete. The integrands agree pointwise
+  (`f`'s congruence through the scale) and share the `x`-independent modulus, so `riemannIntegralI_congr`
+  closes it. **Honest scope**: the congruence datum only. The Mellin transform of `⋆` and the theorem
+  `M[f⋆g]=M[f]·M[g]` (Wall 3) are still unbuilt; that theorem identifies `mulConv` values at prime powers
+  with `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **Lipschitz-in-`x` continuity of the real-parameter convolution** (new `Square/MulConvRLip.lean`):
+  `mulConvR_lipschitz` — `|mulConvR f g x − mulConvR f g x'| ≤ ofQ(w·f.L·M_g·(1/a)²)·|x − x'|`, continuity
+  under the integral sign. With the uniform bound `mulConvR_abs_le`, this makes `x ↦ mulConvR f g x` a
+  bounded-Lipschitz test — the integrand the Mellin transform of `⋆` consumes. The engine is a reusable
+  estimate `riemannIntegralI_dist_le_window` (two integrands at a shared modulus differing by `≤ K` on
+  the window have `|∫f − ∫h| ≤ w·K`, via `∫f ≤ ∫(h+K) = ∫h + w·K` both ways); `mulConvR_lipschitz` weakens
+  the two convolution integrands to a common modulus (`certif_irrel`, valid because `Q_x`'s Lipschitz
+  modulus is `x`-independent) and feeds `mulConvR_integrand_diff`. **Honest scope**: the continuity data
+  only. The Mellin transform of `⋆` and the convolution theorem `M[f⋆g]=M[f]·M[g]` (Wall 3) are still
+  unbuilt; that theorem is what would identify `mulConv` values at prime powers with `weilPrimeGram
+  (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **The pointwise `x`-difference bound of the convolution integrand** (new `Analysis/MulConvRDiff.lean`):
+  `mulConvR_integrand_diff` — `|P_x(y) − P_{x'}(y)| ≤ ofQ(f.L·M_g·(1/a)²)·|x − x'|` uniformly in `y`, the
+  Lipschitz-in-`x` estimate at the integrand level. The convolution integrand `f(x/t)·g(t)·(1/max(t,a))`
+  has its `x`-difference factored — `c = 1/max(t,a)` out twice, `g` once — leaving `|f(x·c) − f(x'·c)| ≤
+  f.L·|c|·|x−x'|` with each `|c| ≤ 1/a`. **Honest scope**: a pointwise bounded-Lipschitz fact; it feeds the
+  Lipschitz-in-`x` continuity of `mulConvR` → the `x`-test → the Mellin transform → the theorem
+  `M[f⋆g]=M[f]·M[g]` (Wall 3, unbuilt), which would identify `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **The real-bound window estimate** (new `Analysis/WindowBoundReal.lean`):
+  `riemannIntegralI_abs_le_window_real` — `|∫_a^{a+w} f| ≤ w·K` for a REAL bound `K ≥ 0` (the variant
+  of `riemannIntegralI_abs_le_window` whose window bound is real, not rational). A PARAMETRIC estimate
+  — bounding the integral of a difference `f_x − f_{x'}` by `(rational)·|x−x'|`, where `|x−x'|` is a
+  fixed real — needs the window bound at a real `K = (rational)·|x−x'|`; this is the tool the
+  Lipschitz-in-`x` continuity of the real-parameter convolution runs through. Same window-local
+  comparison against the constants `±K` as the rational original. **Honest scope**: a general integral
+  estimate; no positivity, no crux claim. Crux stays `none`.
+- **The real-parameter convolution is uniformly bounded in `x`** (new `Analysis/MulConvRBound.lean`):
+  the first half of "`x ↦ mulConvR f g x` is a test the Mellin integral can consume". `mulConvR`
+  unfolds to a certified interval integral whose integrand `f(x/t)·g(t)·(1/max(t,a))` is bounded on the
+  window by `M_f·M_g·(1/a)` — a rational INDEPENDENT of `x` — so the window bound
+  `riemannIntegralI_abs_le_window` gives `mulConvR_abs_le`: `|mulConvR f g x| ≤ w·(M_f·M_g·(1/a))` for
+  every real `x`. This is the uniform boundedness needed to bundle `x ↦ mulConvR f g x` as an `L2Test`.
+  **Honest scope**: the uniform bound only. The Lipschitz-in-`x` half (continuity under the integral
+  sign), the resulting `x`-test, the Mellin transform, and the convolution theorem `M[f⋆g]=M[f]·M[g]`
+  (Wall 3) are all still unbuilt — the last is what would identify `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **The real-parameter multiplicative convolution** (new `Analysis/MulConvR.lean`): `(f ⋆ g)(x)` at a
+  REAL output point `x` — the object the Mellin transform `M[f⋆g](σ) = ∫ (f⋆g)(x) x^{σ-1} dx` ranges
+  over. Identical in shape to `mulConv` but with the dilation-by-`x` taken at a real scale via
+  `dilateTestR` (`|x| ≤ S`): `mulConvR f g x a [lo,w] = haarIntegral (productTest (reflectTest a
+  (dilateTestR x S f)) g)`. Because every operator it composes is now `Analysis`-level (the real-scale
+  `dilateTestR` replaces the rational `dilateTest`), the whole real-parameter convolution is an
+  `Analysis` object. `mulConvR_nonneg`: non-negative for non-negative `f, g`. **Honest scope**: the
+  integrand of the (unbuilt) Mellin transform of `⋆`. NOT that transform, NOT the Mellin convolution
+  theorem (Wall 3); the immediate next step it enables — that `x ↦ mulConvR f g x` is itself
+  Lipschitz/bounded in `x` (continuity under the integral sign), a test the Mellin integral can
+  consume — is also unbuilt. Those lead to `M[f⋆g]=M[f]·M[g]`, which would identify `mulConv` values
+  at prime powers with `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **Real-scale dilation of a test — Wall 3 foundation** (new `Analysis/DilateTestR.lean`): the dilation
+  `x ↦ φ(s·x)` by a REAL scale `s` (with `|s| ≤ S` rational), generalizing the rational-scale
+  `dilateTest`. The Mellin transform of a convolution `M[f⋆g](σ) = ∫ (f⋆g)(x) x^{σ-1} dx` integrates
+  over the REAL output variable `x`, so the dilation-by-`x` inside `mulConv` must accept a real scale.
+  `dilateTestR s S φ` is a genuine `L2Test` (modulus `φ.L·S` via the slope-`s` chain rule
+  `|s·(x−y)| = |s|·|x−y| ≤ S·|x−y|`, bound `φ.M`), with `dilateTestR_f` (value) and `dilateTestR_ofQ_f`
+  (agreement with the rational `dilateTest` at a rational scale — the real action extends the rational
+  one). **Honest scope**: the real-scale group action only — the foundation for a real-parametrized
+  convolution and the Mellin integral over the real output variable. NOT the Mellin transform, NOT the
+  Mellin convolution theorem (Wall 3); those would identify `mulConv` values at prime powers with
+  `weilPrimeGram (vFrom g)`, i.e. step 4 = RH. Crux stays `none`.
+- **The autocorrelation `g ⋆ g^τ`, constructed** (new `Square/Autocorr.lean`): the cone object the doc's
+  steps 2/4 center on ("Weil positivity ... lives on the cone `g ⋆ g^τ`") is now built. `autocorr g x =
+  (g ⋆ g^τ)(x) = ∫ g(x/t)·g(1/t) dt/t = mulConv g (reflectTest a g) x` — the convolution of `g` with its
+  multiplicative reflection. `autocorr_nonneg`: for `g ≥ 0` the autocorrelation is `≥ 0` (its Haar
+  integrand is a product of non-negatives). **Honest scope — the load-bearing bright line**: this
+  constructs the cone object and the sign of its DENSITY. It is emphatically NOT the positivity of the
+  **Weil functional** on the cone — that uniform statement (over the band-indexed cone family, against
+  the live prime side) is exactly step 4 = RH, asserted nowhere here — and NOT the Mellin convolution
+  theorem identifying these values with `weilPrimeGram (vFrom g)`. Crux stays `none`.
+- **The multiplicative convolution, constructed** (new `Square/MulConv.lean`): the convolution
+  `(f ⋆ g)(x) = ∫₀^∞ f(x/t) g(t) dt/t` of the multiplicative group, assembled from the Wall-1/2
+  operators. `f(x/t) = f(x·(1/t))` is exactly `reflectTest a (dilateTest x f)` (dilation-by-`x` of the
+  reflection), so the integrand `t ↦ f(x/t)·g(t)` is `productTest (reflectTest a (dilateTest x f)) g`
+  and the convolution against `dt/t` is `haarIntegral` of it: `mulConv f g x a [lo, w] =
+  ∫_lo^{lo+w} f(x/t) g(t) dt/t` (floor `a ≤ lo` keeps every clamped reciprocal inert). `mulConv_nonneg`:
+  the convolution of two non-negative tests is non-negative — the sign the autocorrelation `g ⋆ g^τ`
+  (Weil prime side) inhabits. **Honest scope**: the multiplicative convolution CONSTRUCTED on a bounded
+  window away from `0`, the object side of Wall 2. What is NOT here: the Mellin convolution theorem
+  `M[f⋆g] = M[f]·M[g]` (Wall 3), which is what would turn `mulConv` values at prime powers into
+  `weilPrimeGram (vFrom g)`, the genuine autocorrelation Gram — i.e. step 4 = RH. This file proves no
+  transform identity. Crux stays `none`.
+- **The pointwise product of two tests as an `L2Test`** (new `Analysis/ProductTest.lean`): the
+  bounded-Lipschitz class is closed under multiplication — `productTest φ ψ` bundles `(φ·ψ)(x) =
+  φ(x)·ψ(x)` (modulus `l2L φ ψ`, bound `M_φ·M_ψ`, reusing the product certificates `l2lip`/`l2fc`), with
+  `productTest_f` (value) and `productTest_comm` (integrand-level commutativity). This makes a
+  convolution integrand `t ↦ f(x/t)·g(t)` — a product of two tests in `t` — itself a test that
+  `haarIntegral` can integrate: the structural prerequisite of the multiplicative convolution `⋆`
+  (transform-bridge Wall 2). **Honest scope**: the product operation only. It is NOT the convolution
+  `⋆` (= `haarIntegral` of a product) and NOT the Mellin theorem; those (Wall 2/3) are what would make
+  `weilPrimeGram (vFrom g)` the genuine autocorrelation Gram, i.e. step 4 = RH. Crux stays `none`.
+- **The multiplicative inversion of a test (`g^τ(x) = g(1/x)`)** (new `Analysis/ReflectTest.lean`): the
+  second multiplicative symmetry (after `dilateTest`), the reflection the autocorrelation `g ⋆ g^τ` of
+  the Weil prime side is built from — a first prerequisite of transform-bridge Wall 2. `reflectTest a g`
+  sends `x ↦ g(1/max(x,a))` (the clamped reciprocal `ClampedInv` precomposed with `g`), a genuine
+  `L2Test` (modulus `L_g·(1/a)²`, bound `M_g`); inert on the window (`reflectTest_eq_of_ge`:
+  `= g(1/x)` for `x ≥ a`; `reflectTest_ofQ`: `= g(1/q)` at rational `q ≥ a`). **Honest scope**: the
+  inversion group action only — NOT the convolution `⋆`, NOT the Mellin theorem; because of the floor
+  clamp it is not a strict involution. The whole-space positivity Walls 2–3 would carry is step 4 = RH.
+  Crux stays `none`.
+- **Haar invariance of the multiplicative-measure integral — transform-bridge Wall 1 CLOSED** (new
+  `Square/HaarInvariant.lean`): `haarIntegral_dilate` proves the defining property of the
+  multiplicative Haar measure `dx/x` — `∫_{s·lo}^{s·(lo+w)} φ(y) dy/y ≈ ∫_lo^{lo+w} φ(s·x) dx/x`, i.e.
+  `haarIntegral φ [s·lo, s·w] ≈ haarIntegral (dilateTest s φ) [lo, w]`: dilating the test equals
+  scaling the window, with the integral VALUE preserved (floors `a ≤ lo`, `a' ≤ s·lo` keep both
+  clamped reciprocals inert). The proof composes the Wall-1 substrate: the linear change of variables
+  `riemannIntegralI_dilate` (`y = s·x`, Jacobian `s`), value-linearity `riemannIntegralI_smul`, the
+  window-congruence `riemannIntegralI_congr_unit`, and the density cancellation `clampedInv_dilate_on`
+  (`s·(1/(s·x)) = 1/x`, absorbing the Jacobian); the differing Lipschitz moduli are reconciled at a
+  common weakened modulus via `lip_mono` + `riemannIntegralI_certif_irrel`. **Honest scope**: Haar
+  invariance on bounded windows bounded away from `0` — Wall 1 of the transform bridge, the invariance
+  of the `dx/x` measure. It is NOT the multiplicative convolution `⋆` and NOT the Mellin convolution
+  theorem (Walls 2–3); those are what would make `weilPrimeGram (vFrom g)` the genuine autocorrelation
+  Gram, i.e. step 4 = RH. Crux stays `none`.
+- **Haar-invariance substrate: interval window-congruence and the window density identity** (new
+  `Analysis/IntervalCert.lean`, `Analysis/HaarDensity.lean`): the reusable pieces the Haar-invariance
+  assembly consumes. `riemannIntegralI_congr_unit` — `∫_a^{a+w} f ≈ ∫_a^{a+w} g` from agreement of
+  `f, g` on `[a, a+w]` alone (the interval mirror of `riemannIntegral_congr_unit`, through the affine
+  gateway; interval certificate-independence is already provided by `riemannIntegralI_certif_irrel`
+  in `MellinLinear`). `clampedInv_dilate_on` — the Haar density's pointwise
+  dilation-covariance on the window: where `y ≥ a` and `s·y ≥ a'`, `s·clampedInv_{a'}(s·y) ≈
+  clampedInv_a(y)` (both clamps inert `= 1/·`, closed by the `s·(1/(s·y)) = 1/y` cancellation, with
+  the inverse witnesses read off the rational lower bounds via `Pos_of_Rle_ofQ`). **Honest scope**:
+  the ingredients only; the integral-level Haar invariance `∫ φ dx/x = ∫ φ(a·x) dx/x` assembling them
+  through the change of variables is the next brick. Not the convolution, not the Mellin theorem. Crux
+  stays `none`.
+- **The pointwise dilation-covariance of the reciprocal** (new `Analysis/RinvDilate.lean`): the
+  algebraic heart of Haar invariance. `Rmul_ofQ_Rinv_Rmul` proves `s·(1/(s·y)) ≈ 1/y` — under the
+  substitution `y = s·x`, the Jacobian factor `s` from `dy = s·dx` exactly cancels the `1/s` from
+  `1/(s·x)`, leaving the density `1/x` unchanged. Proved from the inverse law `x·(1/x) = 1`
+  (`Rmul_Rinv_self`) by uniqueness of the multiplicative inverse (both `s·(1/(s·y))` and `1/y` are the
+  inverse of `y`); the inverse witnesses carry the positivity, and a witness for `s·y` can exist only
+  when `s > 0`. **Honest scope**: the pointwise density identity only. The integral-level Haar
+  invariance `∫ φ dx/x = ∫ φ(a·x) dx/x` that assembles this — the change of variables
+  `riemannIntegralI_dilate` carried across the clamped reciprocal — is the next brick. Not the
+  convolution, not the Mellin theorem. Crux stays `none`.
+- **The linear change of variables for the certified interval integral** (new
+  `Analysis/DilateIntegral.lean`): the multiplicative-substitution engine of transform-bridge Wall 1
+  (Haar measure). `riemannIntegralI_dilate` proves `∫_{s·lo}^{s·(lo+w)} f(y) dy ≈ s·∫_lo^{lo+w} f(s·x) dx`
+  — the affine substitution `y = s·x` at the value level, for any bounded-Lipschitz `f` and rational
+  scale `s > 0`. Proof by GLOBAL affine distributivity: both sides pull back to `[0,1]` with integrands
+  pointwise-equal everywhere (`s·(lo + w·t) = (s·lo) + (s·w)·t`), so no window restriction is needed;
+  the two natural Lipschitz moduli (`L·(s·w)` vs `(L·s)·w`) are reconciled through
+  `riemannIntegral_certif_irrel` (certificate-independence of the integral value). `dilate_lip` /
+  `dilate_fc` supply the slope-`s` chain rule (`x ↦ f(s·x)` is `(L·s)`-Lipschitz and `≈`-congruent).
+  **Honest scope**: this is the LINEAR (Lebesgue) substitution, the covariance of the *unweighted*
+  interval integral — the engine of, but NOT yet, Haar invariance `∫ φ dx/x = ∫ φ(ax) dx/x` (which
+  needs this carried through the `1/x` weight, the next brick). Not the convolution, not the Mellin
+  theorem; the whole-space positivity those would carry is step 4 = RH. Crux stays `none`.
+- **The multiplicative Haar-measure integral over a bounded interval** (new
+  `Analysis/HaarInterval.lean`): the first certified integral against the invariant measure `dx/x` of
+  the multiplicative group — the measure the Mellin transform and the multiplicative convolution
+  theorem integrate against, and the second transform-bridge wall (Wall 1, the Haar measure). Reuses
+  the step-3 L² product machinery (`IntegralInner`'s `l2lip`/`l2fc`) with one new integrand: the
+  clamped reciprocal (`ClampedInv`) packaged as an `L2Test` (`recipTest a`, modulus `(1/a)²`, bound
+  `1/a`, both rational; inert `= 1/x` on `[a,∞)`, exactly `1/q` at every rational `q ≥ a` by
+  `haarDensity_at_rational`). `innerIonI φ ψ lo w = ∫_lo^{lo+w} φ·ψ` lifts the `[0,1]`-fixed `innerI`
+  to a general rational interval through the affine gateway (`innerIonI_self_nonneg`: the interval L²
+  norm is `≥ 0`); `haarIntegral φ a lo w = ∫_lo^{lo+w} φ(x)·(1/max(x,a)) dx` is the Haar integral, the
+  genuine `∫ φ dx/x` when `a ≤ lo`, and `≥ 0` for a non-negative test (`haarIntegral_nonneg`).
+  **Honest scope — fenced hard**: this constructs the `dx/x` integral over an interval bounded away
+  from `0`, as a certified real. It is NOT **Haar invariance** (`∫ φ(x) dx/x = ∫ φ(ax) dx/x`, the
+  measure's defining property — needs the affine change of variables carried through the `1/x`
+  weight), NOT the exp/log change of variables tying it to the additive line, NOT the convolution
+  `⋆`, NOT the Mellin convolution theorem. Those are the transform-bridge walls that would make
+  `weilPrimeGram (vFrom g)` the genuine autocorrelation Gram — step 4 = RH. Crux stays `none`.
+- **The multiplicative group action on tests — first structural prerequisite of the transform bridge**
+  (new `Square/MultShift.lean`): the dilation `x ↦ a·x` that the `{n, 1/n}` point representation
+  (`WeilTest`) provably cannot carry (`a·(1/n) = a/n` leaves the lattice), now built on the function-
+  space `L2Test`. `dilateTest a φ` is a genuine `L2Test` (`(dilateTest a φ).f x = φ.f (a·x)`, Lipschitz
+  modulus `L·a`, bound `M`); `dilateTest_comp` is the GROUP LAW (`dilateTest a (dilateTest b φ) ≈
+  dilateTest (a·b) φ`), `dilateTest_one` the identity. This supplies the multiplicative group action
+  underlying the Weil `f ⋆ g^τ` co-support coupling — the exact capability whose absence forced the
+  coupled kernel's `v` to stay at the point-value level. **Honest scope — fenced hard**: this is ONLY
+  the group ACTION and its algebraic law on the ADDITIVE-measure `L2Test`; it is NOT Haar-invariant
+  (`innerI = ∫₀¹·dt` is not dilation-invariant; the multiplicative Haar `dx/x` is unbuilt), NOT the
+  convolution `⋆`, NOT the Mellin convolution theorem. One structural notch of the deep transform
+  bridge; the walls (Haar measure, convolution) remain, and the whole-space positivity they would carry
+  is step 4 = RH. Surfaced by an adversarial transform-bridge scoping workflow (the multiplicative-shift
+  angle, judged BUILD/forward/not-padding). Also `logPull φ u = φ(eᵘ)` (the log-line pullback, sending
+  the multiplicative half-line to the additive line) and **`logPull_dilate_shift`** — the DILATION↔SHIFT
+  covariance: on the log line the dilation by `n` becomes the additive shift by `log n`
+  (`logPull (dilateTest n φ) u ≈ logPull φ (log n + u)`, from `Rexp_logN` and `RexpReal_add`) — the
+  defining identity of the multiplicative↔additive (Wall 1) bridge, tying the group action to the
+  additive shift. `logPull_dilate_shift_comp` completes it to a HOMOMORPHISM: composing two dilations =
+  summing two shifts (`logPull (dilateTest m (dilateTest n φ)) u ≈ logPull φ ((log n + log m) + u)`) — the
+  multiplicative group of dilations maps to the additive group of shifts. Crux stays `none`.
+- **The coupled Weil dichotomy** (new `Square/CoupledWeilDichotomy.lean`): the coupled-kernel analog of
+  the built `burnol_sonine_dichotomy`, packaging the honest step-4 structure. For a coupled kernel with
+  an indefinite archimedean multiplier (some `arch(k) < 0`, as the genuine Burnol `α(2) < 0`),
+  `coupledWeil_sonine_dichotomy` states it is NOT `WeilPSD` over the whole space (the indicator `δ_k`
+  breaks dominance) AND is `≥ 0` on the Sonine co-support subspace (`PrimeNull` ∩ archimedean
+  complement). Exactly the doc's step-4 dichotomy at the coupled level: indefinite over all tests,
+  positive on a strict subspace; carrying that positivity to the whole space via the genuine transform
+  coupling is step 4 = RH. **Honest scope**: a packaging of two already-honest results, asserting no
+  whole-space positivity. Instantiated at the GENUINE Burnol multiplier `burnolMult` (whose index-1
+  sample is the proven `α(2) < 0`, `not_Rnonneg_burnolAlphaTwo`): `coupledWeilBurnol_not_psd` and
+  `coupledWeilBurnol_sonine_dichotomy` — the obstruction and dichotomy at real archimedean data. Crux
+  stays `none`.
+- **The Sonine co-support recovers coupled positivity** (new `Square/CoupledWeilSonine.lean`): the
+  POSITIVE companion of the indefinite-arch obstruction. On the discrete `f, f̂` co-support subspace —
+  the transform-side `PrimeNull` (`Σ_i c_i·v(m,i) = 0` at every prime place, so the prime energy is
+  exactly zero, `weilQuad_primeGram_prime_null`) intersected with the archimedean complement (arch form
+  `≥ 0`, `multForm_psd_on_complement`) — the coupled Weil form is `arch − 0 = arch ≥ 0`
+  (`coupledWeil_psd_on_sonine_restriction`). This realizes, at the coupled-kernel level, the doc's
+  central mechanism: the co-support coupling cancels the arch-negative band. **Honest scope**: positivity
+  on a STRICT subspace — it does NOT force full Weil positivity (the doc's second dichotomy branch: it
+  sharpens the localization, it does not close the crux). Extending it from the co-support subspace to
+  the whole space via the genuine transform coupling (unbuilt) is step 4 = RH. Also
+  `coupledWeilCorrected_psd_on_primeNull` (using Burnol's correction `arch + corr ≥ 0` the coupled form
+  is `≥ 0` on the co-support ALONE, no complement) and its genuine instance
+  `coupledWeilBurnol_psd_on_primeNull` (`burnol_corrected_nonneg` discharged) — the coupled-kernel analog
+  of Burnol's sharpest unconditional positivity; the corrected kernel differs from the genuine one by a
+  window-supported defect and does not close the crux. Crux stays `none`.
+- **The indefinite-arch obstruction, kernel-checked** (new `Square/CoupledWeilIndefinite.lean`): turns
+  the coupled kernel's standing honesty caveat into a theorem. If the archimedean multiplier has ANY
+  negative entry (`¬ Rnonneg (arch k)`), `ArchDominatesPrime` over ALL tests is FALSE
+  (`archDominatesPrime_false_of_neg_arch`) — the coordinate indicator `δ_k` gives arch energy
+  `arch(k) < 0` below the nonnegative prime energy `Σ_m w(m)v(m,k)²` — hence the coupled kernel is NOT
+  `WeilPSD` (`coupledWeil_not_psd_of_neg_arch`, via `coupledWeil_psd_iff_dominates`). So for the genuine
+  indefinite arch (`α(2) < 0`, `burnol_pairing_indefinite`) the capstone's "= RH" reading holds ONLY
+  under the (unbuilt) Sonine-space test restriction that cancels the arch-negative band — over the whole
+  space it is simply false. **Honest scope**: a NEGATIVE structural result — it does not close the crux;
+  it proves closing cannot proceed by raw whole-space dominance and must use the co-support restriction.
+  Axiom-clean {propext, Quot.sound}. Crux stays `none`.
+- **The diagonal-dominance lever for the coupled kernel** (new `Square/CoupledWeilDiagDominant.lean`):
+  applies the Gershgorin certificate to `coupledWeil`, giving a CONCRETE per-`n` sufficient condition
+  for the coupled positivity. Since the coupled kernel's off-diagonal entries are `−primeGram(i,j)`
+  (`coupledWeil_offAbs_eq`: `|·| = |primeGram(i,j)|`) and its diagonal is `arch(n) − primeGram(n,n)`,
+  diagonal dominance reads `Σ_{j≠n}|primeGram(n,j)| ≤ arch(n) − primeGram(n,n)`
+  (`coupledWeil_diagDominant_of_primeRowSum`); under it the coupled kernel is `WeilPSD`
+  (`coupledWeil_psd_of_diagDominant`, via `coupledWeil_sym`), hence `LiNonneg`
+  (`coupledWeil_liNonneg_of_primeRowSum`). **Honest scope**: a SUFFICIENT condition on the prime
+  off-diagonal mass, never asserted; STRICTLY STRONGER than the exact dominance (= RH) — PSD does not
+  imply diagonal dominance, so the genuine kernel may be PSD (RH) without being diagonally dominant. A
+  concrete, per-`n`, bracket-checkable lever, NOT a discharge. Crux stays `none`.
+- **The Gershgorin PSD certificate: diagonal dominance ⟹ WeilPSD** (new `Square/DiagDominant.lean`):
+  a general, UNCONDITIONAL, sqrt-free positive-semidefiniteness certificate the repo lacked — beyond
+  the rank-one / Euclidean-Gram certificates, an entire new PSD class. `WeilPSD_of_diagDominant`: a
+  symmetric kernel whose off-diagonal absolute row sum is dominated by its diagonal (`DiagDominant`:
+  `Σ_{j≠i}|B(i,j)| ≤ B(i,i)` ∀i) is `WeilPSD`. Constructivized via the pointwise AM-GM
+  `2·x·(y·k) ≥ −(x²+y²)·|k|` (`cross_term_lower`, from `(|x|−|y|)² ≥ 0`), symmetrized across the double
+  sum (`weilQuad_offdiag_lower`: `weilQuad D c N ≥ −Σ_i c_i²Σ_j|D(i,j)|` for symmetric `D`), split
+  diagonal + off-diagonal (`weilQuad_congr`, `offKernel`), and closed with `Rnonneg_of_Radd_self`.
+  **Honest scope**: `DiagDominant` is a SUFFICIENT CONDITION, never asserted to hold; for the coupled
+  Weil kernel it is a concrete per-`n` sufficient condition for the coupled positivity, STRICTLY
+  STRONGER than the exact dominance (= RH), so whether it holds at the genuine data is unproven — a
+  fence/lever, not a discharge. Adversarially no-smuggling-checked (independent judge: BUILD, non-
+  smuggling, not RH-hard). Axiom-clean {propext, Quot.sound}; no sqrt, no choice. Crux stays `none`.
+- **The explicit-formula decomposition `2λₙ = arch n − primeGram(n,n)`, kernel-explicit** (added to
+  `Square/CoupledWeilGenuine.lean`): `genuineLam_eq_arch_sub_prime` shows, under the diagonal match
+  `hmatch`, that the Li coefficient is exactly the archimedean multiplier MINUS the prime Gram
+  diagonal. This is the arithmetic heart of why `2λₙ` is not manifestly a sum of squares — its
+  intrinsic expression is a DIFFERENCE of the two PSD-form diagonals (arch spectral, prime Gram), so a
+  `RealizesDiag` Euclidean embedding (`gramOf ι D n n = 2λₙ`, a pure SOS) exists only when the arch
+  diagonal dominates the prime — which is RH. Ties the coupled kernel (step 4) to the discharge form.
+  **Honest scope**: `hmatch` (the explicit-formula identity) is never discharged; the decomposition is
+  a conditional restatement, asserting no positivity. Crux fields stay `none`.
+- **Grounding the coupled kernel's `v` in genuine test place-values** (new
+  `Square/CoupledWeilPlaceValue.lean`): closes the faithfulness gap the no-smuggling judges flagged
+  (`v` abstract, faithfulness narrative not mechanized) at the weight+shape level, DEFINITIONALLY. The
+  built `weilPrimeTerm T n = Λ(n+1)·(f(n+1) + (n+1)⁻¹f(1/(n+1)))` factors through the genuine per-place
+  value `placeVal T n` (its second factor): `weilPrimeTerm_eq_placeVal` (`rfl`) and
+  `weilPrimePart_eq_placeVal_sum` (`weilPrimePart T = Σ_m Λ(m+1)·placeVal T m`). Feeding real
+  place-values in — `vFrom g m i = placeVal (g i) m` — makes the prime Gram the concrete cross-prime
+  pairing `weilPrimeGram (vFrom g) M (i,j) = Σ_m Λ(m+1)·placeVal(g i,m)·placeVal(g j,m)`
+  (`primeGram_vFrom_apply`), UNCONDITIONALLY PSD (`weilPrimeGram_vFrom_psd`) and symmetric under
+  swapping tests (`primeGram_vFrom_sym`, the cross-prime reciprocity). **Honest scope**: grounds `v`
+  at the weight+shape level definitionally (`placeVal` IS the factor of the built term; the weight IS
+  `vonMangoldt`); the convolution-theorem link — that `weilPrimeGram (vFrom g) M (i,j)` equals
+  `weilPrimePart (g_i ⋆ g_j^τ)` — needs the unbuilt test convolution `⋆` and stays open, flagged.
+  NOTHING asserts positivity of the coupled form. Crux fields stay `none`.
+- **The coupled kernel welded to the genuine crux** (new `Square/CoupledWeilGenuine.lean`): connects
+  the off-diagonal coupled Weil kernel to the program's central `atlas_crux_localization`, so its
+  strict diagonal dominance is tied to the GENUINE prime–archimedean coupling, not a generic induced
+  square. Under the explicit-formula diagonal match `hmatch` (the coupled Weil diagonal equals `2λₙ =
+  −⟨Cₙ,Cₙ⟩`, an EXPLICIT hypothesis, the `realizesDiag_genuine_iff` discipline),
+  `coupledWeil_diag_pos_iff_genuine_crux` gives `(∀n>0, Pos (coupledWeil arch w v M n n)) ⟺
+  SpectralCrux (genuineSpectralSquare E)` (a `Pos_congr` on the match), and
+  `coupledWeil_diag_pos_iff_genuine_coupling` chains through `atlas_crux_localization` to
+  `∀n>0, Pos (genuineArithSeq E.eta n + genuineArchSeq n)` — THE crux. **Honest scope**: `hmatch` (the
+  explicit-formula identity) is never discharged; there is no instantiation at genuine `ζ` data, and
+  even with it the strict dominance is `SpectralCrux` = RH, never asserted. The weld routes the
+  coupled kernel's face into the central crux equivalence; it discharges nothing. Crux fields stay
+  `none`.
+- **The complement projection does not rescue the coupled kernel** (new
+  `Square/CoupledWeilComplement.lean`): the kernel-checked answer, for the off-diagonal coupled
+  kernel, to whether the DIAGONAL multiplier's unconditional complement-positivity
+  (`multForm_psd_on_complement`) extends — it does NOT. The coupled kernel subtracts the prime Gram
+  (itself PSD for `w ≥ 0`), so on the Sonine complement (test vanishing on the archimedean negative
+  band) the coupled form is `(arch energy ≥ 0) − (prime energy ≥ 0)`, sign UNDETERMINED.
+  `coupledWeil_complement_signed` exhibits both nonnegative pieces and the split;
+  `coupledWeil_complement_lower` gives the genuine negative gap (`≥ −(prime energy)`, not `≥ 0`);
+  `coupledWeil_complement_psd_iff` isolates the residual (positivity ⟺ prime dominated by the now-
+  nonnegative arch energy). The complement kills the archimedean negative band but leaves the
+  subtracted prime untouched — the skeleton's unconditional positivity does not carry to the whole
+  coupled form; that carrying is step 4 = RH (the doc's second dichotomy branch). **Honest scope**:
+  pure sign/algebra abstract over `arch, w, v` (`w ≥ 0`); NOTHING asserts the coupled form is
+  positive or indefinite at genuine data. Crux fields stay `none`.
+- **The coupled Weil kernel as a self-adjoint operator** (new `Square/CoupledWeilOperator.lean`):
+  places the off-diagonal `coupledWeil arch w v M` into the step-3 operator/Hilbert layer, the next
+  self-adjoint operator after the diagonal `multForm α`. `coupledWeil_sym` (symmetric kernel, from
+  `multForm_sym` and `primeGram_sym`); `coupledWeil_self_adjoint` (`⟨(coupledWeil)·c, d⟩ ≈
+  ⟨c, (coupledWeil)·d⟩`, via `applyN_self_adjoint`); `coupledWeil_quad_eq_inner` (its Weil quadratic
+  form IS the inner product against its operator action, so the `WeilPSD` form-language and the
+  operator language coincide on it). **Honest scope**: pure operator algebra abstract over `arch, w,
+  v`; self-adjointness is structural (holds for every symmetric kernel, definite or not) and does NOT
+  bear on positivity — the coupled kernel's `WeilPSD` (= dominance = RH) stays exactly as open. This
+  makes it a first-class self-adjoint operator, the setting a step-4 spectral argument runs in. Crux
+  fields stay `none`.
+- **The coupled Weil form is antitone in the prime band — no finite prime cutoff certifies the
+  dominance** (new `Square/CoupledWeilMono.lean`): the coupled kernel subtracts the prime Gram, and
+  (for nonnegative weights) each added prime-power is a weighted square, so enlarging the band `M`
+  only increases the subtracted prime energy and decreases the coupled form. `coupledWeil_quad_split`
+  gives the form-level split `weilQuad(coupledWeil) = weilQuad(multForm arch) − weilQuad(primeGram)`;
+  `coupledWeil_quad_nonneg_iff` is the per-test dominance atom (`Rnonneg ⟺ prime energy ≤ arch
+  energy`, the `∀`-form being the capstone); `weilQuad_primeGram_mono` proves the prime energy is
+  monotone in `M` (`RsumN_le_prefix`); and `coupledWeil_quad_antitone_M` concludes the coupled form is
+  antitone in `M` — more prime-powers, smaller form. This is the prime-side analogue of the
+  infinite-rank fence: the `Σ_m` over prime-powers cannot be truncated, the dominance must hold
+  against the full prime side. **Honest scope**: pure monotonicity algebra abstract over `arch, w, v`
+  (`w ≥ 0`; the von Mangoldt case is unconditional); NOTHING asserts the dominance holds at any `M`.
+  Crux fields stay `none`.
+- **The coupled Weil kernel meets the crux faces — dominance is sufficient for the crux** (new
+  `Square/CoupledWeilCrux.lean`): wires the off-diagonal `coupledWeil` kernel into the four built
+  pairing/spectral faces. `coupledWeil_diag_eq` reads the diagonal as the scalar Weil shape
+  `arch n − primeGram(n,n)` (the pairing family feeding `weilSpectralSquare`);
+  `coupledWeil_psd_imp_hodgeNeg`/`coupledWeil_psd_imp_liNonneg` carry `WeilPSD (coupledWeil …)` through
+  the diagonal (`WeilPSD_diag`, Gate B free) to Hodge-index negativity and then `LiNonneg`
+  (`spectral_bridge_nonneg`); `archDominatesPrime_imp_liNonneg` is the **composed sufficiency** —
+  `ArchDominatesPrime ⟹ LiNonneg`, so proving the archimedean form dominates the prime Gram yields
+  (non-strict) Li-positivity; and `coupledWeil_diag_strict_iff_crux` is the **exact face** — STRICT
+  diagonal dominance `arch n > primeGram(n,n) ∀n>0` ⟺ `SpectralCrux` of the induced square
+  (`weil_strict_iff_crux`). **Honest scope**: every statement is an implication with the
+  positivity/dominance as an explicit hypothesis, or an equivalence to the still-open crux — NOTHING
+  asserts `WeilPSD`, `ArchDominatesPrime`, or the strict dominance holds; `WeilPSD` gives only the
+  non-strict diagonal, reaching `LiNonneg` (as `embeds_to_liNonneg` does), not the strict crux. This
+  makes precise that assembling the coupled kernel AND proving its dominance closes the crux, and that
+  the dominance IS RH (Weil 1952; Bombieri–Lagarias 1999). Crux fields stay `none`.
+- **The coupled Weil kernel: the off-diagonal assembly — closes the step 3→4 "diagonal-only" gap at the
+  OBJECT level** (new `Square/CoupledWeilKernel.lean`): until now the only Weil kernel ever instantiated
+  was the strictly-diagonal `multForm α` (its off-diagonal killed by sifting), and the prime side
+  `weilPrimePart` was a **scalar per single test**; the program doc's own gap was *"the whole of step 3
+  fires at the diagonal-multiplier level … not the Weil functional on the test space."* This file
+  assembles the genuinely **off-diagonal** coupled kernel `coupledWeil arch w v M (i,j) =
+  (multForm arch)(i,j) − primeGram w v M (i,j)` — the archimedean diagonal multiplier MINUS the **prime
+  Gram** `primeGram w v M (i,j) = Σ_{m<M} w(m)·v(m,i)·v(m,j)`. This is the faithful bilinear extension of
+  the built prime side: `weilPrimePart T = Σ_{n<X} Λ(n+1)·(…)` has von Mangoldt weights `Λ ≥ 0` on
+  per-place test values, so the cross-correlation `g_i ⋆ g_j^τ` has prime side `Σ_n Λ(n+1)·v_i(n)·v_j(n)`
+  = `primeGram (Λ∘succ) v X`; `v m i` is the interface transform value `ĝ_i` at place `m`, exactly as
+  `WeilTest.f` is interface data. Structural laws, all kernel-checked: `primeGram_sym` (symmetric);
+  `weilQuad_primeGram_split` — the prime form is a **weighted sum of squares over prime-powers**,
+  `weilQuad (primeGram w v M) c N = Σ_{m<M} w(m)·(Σ_i c_i·v(m,i))²` (via a finite-Fubini interchange
+  `weilQuad_sumKernel` + the weighted rank-one `weilQuad_wRankOne`); `WeilPSD_primeGram` (PSD for `w ≥ 0`,
+  **no sqrt** — each weighted square is nonneg) and `WeilPSD_weilPrimeGram` (**UNCONDITIONAL** on the
+  genuine von Mangoldt weight, `vonMangoldt_nonneg`); `weilQuad_coupledWeil_split` — **the coupled form is
+  the arch spectral square minus the prime square-sum**, `weilQuad (coupledWeil …) c N =
+  (Σ_i c_i²·arch_i) − (Σ_m w(m)·(Σ_i c_i v(m,i))²)`; and the honest capstone `coupledWeil_psd_iff_dominates`
+  — `WeilPSD (coupledWeil arch w v M) ⟺ ArchDominatesPrime` (the arch form dominates the prime Gram on
+  every test). **Honest scope**: the coupled kernel is a genuinely off-diagonal Weil form abstract over the
+  interface data `arch, w, v` (no `λ`, no zeros); its full positivity is `ArchDominatesPrime` = the
+  archimedean trend dominating the prime oscillation = Weil positivity on the test span, which **IS RH**
+  (the `Dominance.Dominated` face at the quadratic level) and is **never asserted**. A difference of PSD
+  forms is not PSD in general (which is why `WeilPSD_add` has no subtraction analog) — that failure is
+  exactly the crux. This delivers step 4's missing OBJECT and its exact split; step 4's positivity stays
+  RH; crux fields stay `none`.
+- **The on-object angle embedding and its exact diagonal — completes the on-object SOS structure** (new
+  `Square/AngleGramDiagonal.lean`): the **on-object angle embedding** `angleEmb θ` sends each pair of
+  coordinates to the sine-square block `(1 − cos(nθ_k), sin(nθ_k))`, and `angleGram_diag` proves its Gram
+  diagonal is *exactly* the sum of the per-zero blocks — `gramOf (angleEmb θ) (2m) n n = Σ_{k<m}(2 −
+  2cos(nθ_k))` (the finite `RsumN` pair-fold, each pair collapsed by `sineSquarePair`). On the critical
+  line (`θ_k = arg(1 − 1/ρ_k)`) each block is `2·(1 − cos nθ_k)`, twice the per-zero Li term, so the
+  diagonal is `Σ_ρ 2(1 − cos nθ_ρ) = 2λₙ`: the on-object SOS certificate for `2λₙ` on the line, one
+  two-square block per zero. Composed with the fence (`gramDiag_uniform_bound`, entries in `[−2,2]`) this
+  pins that certificate as **infinite-rank** — the `Σ_ρ` over zeros cannot be truncated. **Honest scope**:
+  pure trig/algebra on a **free** angle family (zero-free by type — §6); no zeros, no `λ`, no claim about
+  the sign or growth of `2λₙ`; makes the on-object certificate’s *structure* kernel-checked and sharpens
+  the localization, and does NOT close or approach the crux. Step 4 is RH; crux fields stay `none`.
+- **The on-object sine-square block — kernel-checked SOS structure of the fence** (new
+  `Square/SineSquareSOS.lean`): `sineSquarePair` proves `(1 − cos φ)² + sin²φ = 2 − 2cos φ` for a **free**
+  angle `φ` (zero-free — no zeros, no `λ`). On the critical line the Li term is `1 − Re((1−1/ρ)ⁿ) = 1 −
+  cos(nθ)`, so this is exactly `2·(1 − cos nθ)`, twice the per-zero Li term — the RH-correct sum-of-two-
+  squares decomposition. The on-object certificate for `2λₙ` on the line is therefore `gramOf` of the
+  entries `(1 − cos nθ_ρ, sin nθ_ρ) ∈ [−2,2]`, one pair per zero; composed with the finite-rank fence
+  (`gramDiag_uniform_bound`) this pins the on-object certificate as **infinite-rank** — the `Σ_ρ` over
+  zeros cannot be truncated. Pure trig/algebra (`Rmul_sub_distrib` + `Rcos_sq_add_sin_sq`). **Honest
+  scope**: the *structure* of the on-object SOS made kernel-checked; makes NO claim about the sign or
+  growth of `2λₙ`; sharpens the localization and does NOT close or approach the crux. Step 4 is RH; crux
+  fields stay `none`.
+- **The finite-rank impossibility fence for the genuine diagonal — crux localization** (new
+  `Square/AngleEmbeddingBound.lean`): converts *"no fixed-dimension bounded-entry Euclidean embedding can
+  realize `2λₙ`"* from folklore into a kernel-checked theorem, explaining non-smugglingly WHY every finite
+  atlas Gram (`e8Roots`, `atlasM (10,14)`, the Hurwitz companion) is *off-object*. On the critical line the
+  on-object certificate is the sine-square block `2(1−cos nθ) = (1−cos nθ)² + sin² nθ`, so
+  `2λₙ = Σ_ρ 2(1−cos nθ_ρ)` would be `gramOf` of entries `(1−cos nθ_ρ, sin nθ_ρ) ∈ [−2,2]` — *uniformly
+  bounded in `n`*. `gramDiag_uniform_bound` proves entry-squares `≤ ofQ c` (uniform in `n`) ⟹
+  `gramOf ι D n n ≤ RsumN(const c) D`, an `n`-independent bound; `realized_seq_uniformly_bounded` is the
+  contrapositive — a sequence unbounded in `n` (`2λₙ ~ n log n`, Voros/Lagarias) is not the diagonal of any
+  fixed-dimension, uniformly-bounded-entry embedding. `trigEmb` (a free angle family `θ`, **zero-free by
+  type** per §6) with `trigEmb_sq_le` (`cos²≤1`, `sin²≤1`) and `trigGram_uniform_bound` is the concrete
+  on-object-shaped instance. So the on-object certificate for the unbounded `2λₙ` must be **infinite-rank**
+  (the `Σ_ρ` over zeros cannot be truncated) — a genuine sharpening of the localization. **Honest scope**: a
+  kernel-checked negative/structural result using only `cos, sin ∈ [−1,1]` and a free angle family; it makes
+  NO claim about the sign of `2λₙ` and does NOT close or approach the crux. Step 4 is RH; crux fields stay
+  `none`.
+
+Post-v0.21.0 research thread — the constructive **RH witness**, the **ξ-zero symmetry group**, the
+**Bombieri–Lagarias pipeline** wiring the witness to the genuine `λ` (Li's criterion, both
+directions), the **arithmetic Hodge index ⟺ RH** equivalence stated about the *constructed* ζ, the
+**Voros off-line** analysis, and the **Burnol-multiplier obstruction** — the Riemann–Siegel angle's
+non-monotone window and its capstone `α(2) < 0` (the archimedean multiplier is pointwise *indefinite*,
+so single-place positivity provably does not extend — the obstruction, never a false `α ≥ 0`). All
+axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free; the no-smuggling audit
+passes; the crux fields stay `none` (RH open throughout — every classical input is an explicit,
+audit-visible hypothesis, never an axiom).
+
+- **Dimension-independence of the Riesz coefficient on the fixed family — brick 6a** (new
+  `Square/RieszDimInv.lean`): the `L²`-limit reads Riesz projections of *growing* degree, each naturally
+  computed at its own dimension, but the Bessel-tail identity (`pVec_diff_normSq`, brick 5.5) only
+  applies when two projections share the *same* dimension and hence the *same* coefficients. On the fixed
+  family `gsFam` the Riesz coefficient does not depend on the truncation dimension past the minimal one.
+  `Lam_trunc` proves the moment functional `Λ_μ(c)` is independent of the dimension past the support of
+  `c` (a `qsumL` truncation); `aCoef_dim_inv` proves `aCoef μ d gsFam k` is independent of `d > k` — the
+  guarded `Λ_μ(q_k)/⟨q_k,q_k⟩` is a ratio of two truncation-stable rationals (`Lam_trunc` and
+  `qHil_trunc_eq`, brick 3.5a) with the positive-numerator denominator preserved by `Qinv`; `pVec_dim_inv`
+  lifts this to the degree-`N` projection by combination congruence. **Honest scope**:
+  dimension-independence of the *finite* Riesz coefficient/projection on the fixed family, unconditional
+  ℚ arithmetic; NOT the Riesz convergence / L²-limit (needs a supplied Bessel convergence modulus — next
+  brick), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The L²-distance of two polynomial tests is the rational Hilbert form of their difference — brick-6
+  substrate** (new `Square/QPolyDistBridge.lean`): `qPolyTest_dist2I` proves that at a common truncation
+  dimension `D`, `d²(qPolyTest cN D, qPolyTest cM D) = ofQ(qHil (cN − cM) (cN − cM) D)`. Expand
+  `d² = ⟨φ−ψ, φ−ψ⟩` into the four Gram pairings by `L²`-bilinearity (`innerI_sub_left`,
+  `innerI_sub_right`), read each off the bridge (`innerI_qPolyTest_qPolyTest`), combine the four embedded
+  rationals (`Rsub_ofQ_ofQ`), and recognise the resulting four-term as `qHil` of the pointwise difference
+  by `qHil`-bilinearity — unconditional, no orthogonality, no `M ≤ N`. Composed with the Bessel-tail
+  identity (`pVec_diff_normSq`, brick 5.5) this reads the squared increment of the Riesz projections as
+  `ofQ(‖p_N‖² − ‖p_M‖²)`, which is what the convergence brick bounds by a supplied rational modulus.
+  **Honest scope**: identification of the *finite* test's squared `L²`-distance with the rational Hilbert
+  form of the coefficient difference at a *fixed* dimension, unconditional bilinearity; NOT the Riesz
+  convergence / L²-limit (needs the dimension-independent family, dimension-invariance, and a supplied
+  Bessel convergence modulus), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment problem is well-posed — moment-realization capstone** (new
+  `Square/MomentProblemWellPosed.lean`): packages the sub-arc's two halves — conditional *existence* and
+  completion-level *uniqueness* — into the single statement they were aiming at. `besselSeq_realizes_unique`
+  proves any `L²` element with the same moments as the realized one equals it (`L2Elt_moment_eq_imp_eq`
+  applied to `besselSeq_realizes_of_modulus`); `moment_problem_wellposed` is the headline conjunction —
+  a rational sequence `μ` carrying a Bessel modulus is realized by a completed `L²` element `E`
+  (`⟨E, xⁿ⟩ = ofQ(μ n)` for all `n`), and every completed element with those moments is `E`, so the moment
+  map is a **bijection** on this class (the constructive Hausdorff moment theorem for the class). Existence
+  is conditional on the supplied rational Bessel modulus (audit-visible, never asserted for a particular
+  `μ`); uniqueness is unconditional; the composition is a two-line splice of existing results, no new
+  analysis. **Honest scope**: classical measure-theoretic well-posedness of the *moment map*, NOT
+  surjectivity onto arbitrary sequences, NOT positivity of any crux form. Step 4 is RH; crux fields stay
+  `none`.
+- **The Bessel partial norm and the tail identity — closing moment-realization brick** (new
+  `Square/BesselPartialNorm.lean`): exhibits the coda's rational modulus in its classical
+  Bessel/Riesz–Fischer shape. `qHil_congr` proves pointwise `Qeq` in each coefficient vector gives `Qeq`
+  of the Hilbert forms (double-`qsumL` congruence). `pNorm μ N = qHil p_N p_N (N+1)` is the rational
+  squared norm `‖p_N‖²`; `pNorm_parseval` proves `‖p_N‖² = Σ_{k≤N} aCoef_k·(aCoef_k·⟨q_k,q_k⟩)` — the
+  Bessel sum (from `parseval_norm` on `gsFam`); `pNorm_dim_inv` proves `qHil p_N p_N d = ‖p_N‖²` for `d >
+  N` (`qHil_congr` via `pVec_dim_inv` + `qHil_trunc_eq`). `besselDiffNorm_eq_pNorm_sub` then proves — for
+  `j ≤ k` — that the coda's rational squared distance is the *tail* of the Bessel sum, `besselDiffNorm μ j
+  k = ‖p_k‖² − ‖p_j‖²` (orientation via `qHil` squared-difference symmetry, then `pVec_diff_normSq`, then
+  pinning each norm to its minimal dimension). So the coda's modulus condition `besselDiffNorm μ j k ≤
+  (1/(j+1)+1/(k+1))²` is precisely the classical statement that the Bessel partial sums `‖p_N‖² = Σ
+  aCoef_k²‖q_k‖²` form a `ℚ`-Cauchy (convergent) sequence at the framework rate — the Hausdorff/Riesz–
+  Fischer validity condition, now exact and rational. **Honest scope**: the recognizable rational shape of
+  the constructive Riesz–Fischer input, unconditional finite ℚ arithmetic; does NOT remove the
+  realization's conditionality (the modulus is still a supplied, audit-visible hypothesis), NOT
+  surjectivity onto arbitrary sequences, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The constructive Bessel modulus: making the Riesz–Fischer input rational — moment-realization coda**
+  (new `Square/BesselCauchyModulus.lean`): `besselSeq_L2Elt_moment` realizes `μ` *under* the opaque
+  hypothesis `L2CauchyU (besselSeq μ)`; this coda discharges that hypothesis to a **checkable rational
+  condition** on the projections. `besselDiffNorm μ j k = qHil (p_j − p_k)(p_j − p_k) (j+k+1)` is the
+  *rational* squared `L²`-distance of the `j`-th and `k`-th Riesz projections (the `ℚ`-value
+  `besselSeq_dist2I` embeds). `besselSeq_L2CauchyU` proves a rational modulus `besselDiffNorm μ j k ≤
+  (1/(j+1)+1/(k+1))²` produces the real `L2CauchyU (besselSeq μ)` — `Rle_ofQ_ofQ` turns the `ℚ`-bound
+  directly into the real Cauchy bound via `besselSeq_dist2I`. `besselSeq_realizes_of_modulus` composes it
+  end-to-end: a `μ` with such a rational modulus is realized by a completed `L²` element,
+  `⟨E, xⁿ⟩ = ofQ(μ n)` for every `n`. This is the honest constructive Riesz–Fischer input — not the
+  opaque `L2CauchyU`, but the statement that the Bessel/Gram data of the projections is `ℚ`-Cauchy at the
+  framework rate, a condition one can *exhibit* for a given `μ`. **Honest scope**: still **conditional** —
+  the modulus is a supplied, audit-visible hypothesis (never an axiom, never asserted for a particular
+  `μ`); this brick only makes its shape rational and checkable. NOT surjectivity onto arbitrary sequences,
+  NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment realization: the L²-limit of the Riesz projections — final moment-realization brick** (new
+  `Square/MomentRealize.lean`): given a moment sequence `μ` whose Riesz projections are `L²`-Cauchy (the
+  constructive Riesz–Fischer / Bessel condition), the completed `L²` element they define realizes `μ`.
+  `besselSeq_moment` proves `n ≤ m ⟹ ⟨besselSeq μ m, xⁿ⟩ = ofQ(μ n)` — the finite realization identity
+  `realize_moment` read through the moment bridge (`mellinMoment_qPolyTest` + `qHil_eVec_right`), so the
+  degree-`m` projection reproduces `μ` up to degree `m` exactly. `besselSeq_L2Elt_moment` proves —
+  **conditional on** `L2CauchyU (besselSeq μ)` — that the completed element `E = ⟨besselSeq μ, ·⟩`
+  realizes `μ` on the moment map, `⟨E, xⁿ⟩ = ofQ(μ n)` for every `n`: along the completion the reads are
+  *eventually exactly* `ofQ(μ n)`, and the completion's own `2/(j+1)` convergence rate
+  (`L2Elt_converges`) pins the limit member's `n`-th moment (`Req_of_Rle_ofQ_all`, reindexing `j = k+n`).
+  This is the matching **sufficient** direction to the necessary-side confinement
+  (`MomentRangeNecessary`), for sequences carrying the convergence certificate. **Honest scope**:
+  **conditional** — the `L2CauchyU (besselSeq μ)` hypothesis is the constructive Riesz–Fischer input (the
+  Bessel partial-norm sequence `‖p_N‖²` is Cauchy at the completion's rate), an explicit, audit-visible
+  hypothesis, never an axiom and never asserted for a particular `μ`. This is the constructive Hausdorff
+  sufficiency, NOT surjectivity onto arbitrary sequences, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
+- **The Riesz-projection sequence and its L²-distance — penultimate moment-realization brick** (new
+  `Square/BesselSeqDist.lean`): the `L²`-limit of a valid moment sequence is realised by the sequence of
+  its Riesz projections read as polynomial tests at growing dimension. `besselSeq μ m = qPolyTest (p_m)
+  (m+1)` is the degree-`m` Riesz projection as an `L²` test. `besselSeq_innerI_bridge` shows `besselSeq μ
+  m` pairs like the projection recomputed at any common dimension `D > m` (dimension-invariance
+  `innerI_qPolyTest_dim_inv` past the projection's support, then coefficient-congruence
+  `innerI_qPolyTest_coef_congr` under `pVec_dim_inv`, brick 6a). `dist2I_congr` proves the squared
+  distance depends only on the `innerI`-functional of its two arguments (four-term expansion +
+  `innerI_swap`). `besselSeq_dist2I` then proves `d²(besselSeq μ j, besselSeq μ k) = ofQ(qHil (p_j − p_k)
+  (p_j − p_k) D)` at any common dimension `D > j, k` — transport to the common dimension via
+  `dist2I_congr` and the per-index bridge, then the distance bridge `qPolyTest_dist2I`. Composed with the
+  Bessel-tail identity (`pVec_diff_normSq`, brick 5.5) this is exactly `ofQ(‖p_k‖² − ‖p_j‖²)` for `j ≤ k`
+  — the squared increment the convergence brick bounds by a supplied rational modulus. **Honest scope**:
+  the realising sequence and the *identity* for its squared `L²`-distance, unconditional; NOT the
+  convergence itself (`L2CauchyU`, which needs a supplied Bessel modulus) and NOT the limit element / its
+  moments — the final brick; NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **Coefficient-congruence of the rational polynomial test — brick-6 substrate** (new
+  `Square/QPolyCoefCongr.lean`): the polynomial test's pairing depends on its ℚ-coefficients only up to
+  `Qeq`. `innerI_qPolyTest_coef_congr` proves `(∀ i, c_i ≈ c'_i) ⟹ ⟨ψ, qPolyTest c d⟩ = ⟨ψ, qPolyTest c'
+  d⟩`: distribute over the finite sum (`innerI_L2sumN`), each monomial pairing `⟨ψ, c_i·xⁱ⟩` is the real
+  scalar `ofQ c_i` times `⟨ψ, xⁱ⟩` (`innerI_constMul`), and `ofQ` respects `Qeq`, so the two sums agree
+  termwise (`RsumN_congr`). Together with `innerI_qPolyTest_dim_inv` this is the full bridge the
+  convergence brick needs: the Riesz projection `p_N`, whose dimension-independence (`pVec_dim_inv`, brick
+  6a) is a *pointwise* `Qeq`, reads as the *same* `L²` functional at any dimension and under any
+  `Qeq`-equal presentation, so two projections of different degree can be compared at a common dimension.
+  **Honest scope**: `Qeq`-invariance of the *finite* polynomial test's pairing in its coefficient vector,
+  pure `L²`-linearity over ℚ-coefficient monomials; NOT the Riesz convergence / L²-limit (needs a
+  supplied Bessel convergence modulus — next brick), NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
+- **Dimension-invariance of the rational polynomial test — brick-6 substrate** (new
+  `Square/QPolyDimInv.lean`): the polynomial test `qPolyTest c d = Σ_{i<d} c_i·xⁱ` carries a truncation
+  dimension `d` but, as an `L²` object, only sees `c_0,…,c_{d-1}`. `innerI_qPolyTest_dim_inv` proves
+  that if `c` vanishes at every index `≥ D`, the test pairs to the *same* value against any test `ψ` at
+  every dimension `d ≥ D`: distribute over the finite sum (`innerI_L2sumN`), and the extra monomials
+  `c_i·xⁱ` for `i ≥ D` pair to zero (`innerI_constMul` scales the monomial pairing by `ofQ c_i ≈ 0`), so
+  the `RsumN` past `D` is inert (induction on the gap `d − D`). This is the test-level companion of
+  `qHil_trunc_eq` (brick 3.5a): a fixed support-`[0,N]` vector (the Riesz projection `p_N`) reads as an
+  `L²` test at any `d ≥ N+1` with the same value — the tool that brings two Riesz projections of
+  different degree to a common dimension in the convergence brick. **Honest scope**: dimension-stability
+  of the *finite* polynomial test's pairing under support, pure `L²`-linearity over ℚ-coefficient
+  monomials; NOT the Riesz convergence / L²-limit (needs a supplied Bessel convergence modulus — next
+  brick), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Bessel-tail identity for the Riesz projection — brick 5.5** (new `Square/RieszBessel.lean`):
+  the squared `L²`-distance between two Riesz projections telescopes to the *difference* of their
+  squared norms. `pVec_cross` proves `⟨p_P, p_M⟩_d = Σ_{k≤M} aCoef_k·Λ_μ(q_k)` for `M ≤ P` (the
+  projection reads the same low sum regardless of the higher degree `P`) — expanding the low projection
+  (`qHil_combVec_right`) and reading each pairing off the basis (`realize_basis`); in particular
+  `⟨p_N, p_M⟩ = ‖p_M‖²`, i.e. the increment `p_N − p_M` is orthogonal to `p_M`. `pVec_diff_normSq` then
+  proves `‖p_N − p_M‖²_d = ‖p_N‖²_d − ‖p_M‖²_d` for `M ≤ N` by pure bilinearity: expand the squared
+  increment into the four Gram entries (`qHil` over the pointwise `Qsub`), substitute the two
+  cross-terms (`qHil_comm` for the mirror), and the middle terms cancel. This is the exact quantity the
+  convergence brick bounds — read along a truncation schedule the squared increments are a *Bessel
+  tail* `Σ_{M<k≤N} aCoef_k²‖q_k‖²`, and a supplied rational modulus on that tail is the constructive
+  Riesz–Fischer hypothesis. **Honest scope**: the finite Bessel-tail *identity* at a *fixed* dimension,
+  unconditional, pure ℚ arithmetic; NOT the L²-limit / convergence (needs the dimension-independent
+  family and a supplied Bessel convergence modulus — next brick), NOT positivity. Step 4 is RH; crux
+  fields stay `none`.
+- **The dimension-independent Gram–Schmidt family — brick 3.5b** (new `Square/GramSchmidtConcrete.lean`):
+  the committed `gramSchmidt_exists d` (brick 3) is a *`d`-dependent existential* — for each truncation
+  dimension it asserts *some* orthogonal family exists. The `L²`-limit needs one *fixed* family, stable
+  as the degree grows, orthogonal at *every* dimension. `gsBuild m` is the concrete family of the first
+  `m` Gram–Schmidt vectors (structural recursion, extending at index `m` by `nextVec (m+1) m (gsBuild m)`),
+  and `gsFam k = gsBuild (k+1) k` the `k`-th fixed orthogonal polynomial. `gsBuild_lt` (`k < m ⟹
+  gsBuild m k = gsFam k`) is the stability lemma; `gsBuild_props` proves the four invariants at every
+  depth by induction — positive denominators, support on `[0,k]`, monic, and **dimension-uniform**
+  orthogonality `⟨gsBuild m i, gsBuild m j⟩_d = 0` for `i ≠ j` at *every* `d > i, j`. The
+  dimension-uniform orthogonality is the new ingredient: the step gives it at the single dimension `m+1`
+  (`nextVec_ortho`), and truncation-stability (`qHil_trunc_eq`, brick 3.5a) carries it to every larger
+  `d` since each vector is finitely supported. `gsFam_den`/`gsFam_support`/`gsFam_monic`/`gsFam_ortho`
+  are the fixed family's `d`-free public interface. **Honest scope**: the existence-free
+  dimension-independent orthogonal family and its `d`-uniform invariants, finite ℚ linear algebra; NOT
+  the Riesz convergence / L²-limit (needs a supplied Bessel convergence modulus — later brick), NOT
+  moment-range surjectivity, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **Truncation-stability of the rational Hilbert form — brick 3.5a** (new `Square/QHilbertTrunc.lean`):
+  `qHil_trunc_eq_of_ge` proves that if two coefficient vectors `c, c'` both vanish at every index `≥ D`,
+  then the finite Hilbert form is independent of the truncation dimension past `D` —
+  `qHil c c' d = qHil c c' D` for `d ≥ D` — and `qHil_trunc_eq` gives agreement at any two dimensions
+  `≥ D`. Two single-step extensions do the work: `innerHil_trunc_step` (the extra inner term
+  `c_d/(d+j+1)` vanishes) and `qHil_trunc_step` (that plus the extra outer term `c'_d·innerHil`
+  vanishing), chained by induction on the gap `d − D`, each peeling the top of the range via
+  `List.range_succ` (avoiding the choice-tainted `List.nodup_range`). This is the tool that lets a
+  *fixed* support-`[0,N]` vector (the Riesz projection `p_N`) be paired at *any* dimension `d ≥ N` and
+  get the same rational value — the prerequisite for a dimension-independent orthogonal family and hence
+  the `L²`-limit. **Honest scope**: dimension-stability of the *finite* rational form under support,
+  pure ℚ arithmetic; NOT the dimension-independent Gram–Schmidt family (next brick), NOT the Riesz
+  convergence / L²-limit, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **Parseval for the Riesz projection — brick 5** (new `Square/RieszParseval.lean`): `parseval_norm` proves the
+  squared norm of the degree-`N` Riesz projection is the sum of its squared Fourier coefficients times the
+  basis self-norms — `⟨p_N, p_N⟩_d = Σ_{k≤N} aCoef_k·(aCoef_k·⟨q_k,q_k⟩_d)`. Expanding the outer
+  `p_N = Σ_k aCoef_k q_k` (`qHil_combVec_left`) and using `⟨q_k, p_N⟩ = ⟨p_N, q_k⟩` (`qHil_comm`)
+  `= Λ_μ(q_k)` (`realize_basis`) `= aCoef_k·⟨q_k,q_k⟩` (`aCoef_cancel`) collapses each term — the same
+  orthogonality telescoping as the Gram–Schmidt step, now on the projection; this is the identity the
+  convergence brick differences into a Bessel tail. **Honest scope**: Parseval for the *finite* projection at a
+  *fixed* dimension; NOT the L²-limit / convergence, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment realization — brick 4 complete** (new `Square/RieszMoment.lean`): `realize_moment` proves the
+  degree-`N` Riesz projection realizes `μ` against every monomial up to degree `N` — `j ≤ N ⟹ ⟨p_N, x^j⟩_d = μ_j`.
+  The proof is a strong induction on `j` that **dissolves the change of basis** (no Hilbert-matrix inverse is
+  ever built): the defect `D_i = ⟨p_N,x^i⟩ − μ_i` vanishes for `i < j` by the induction hypothesis, so the
+  combination `Σ_{i≤j} (q_j)_i·D_i` collapses to its single leading term `(q_j)_j·D_j`; but that same
+  combination equals `⟨p_N,q_j⟩ − Λ_μ(q_j)` (expand `q_j = Σ_i (q_j)_i x^i` via `vec_self_expand`,
+  `qHil_combVec_right`, `Lam_combVec`, `Lam_eVec`), which vanishes by `realize_basis`; so `(q_j)_j·D_j = 0`,
+  and since the leading coefficient is `≉ 0`, no-zero-divisors force `D_j = 0`. **Honest scope**: the
+  realization identity for the *finite* Riesz projection at a *fixed* dimension — NOT Parseval, NOT the
+  L²-limit / convergence (which additionally needs a dimension-independent family and a supplied Bessel
+  convergence modulus — later bricks), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Riesz realization identity (foundations)** (new `Square/RieszRealize.lean`): the mathematical core of
+  brick 4. `realize_basis` proves the degree-`N` Riesz projection realizes the moment functional against the
+  orthogonal basis — `l ≤ N ⟹ ⟨p_N, q_l⟩_d = Λ_μ(q_l)` — by expanding `p_N = Σ_k aCoef_k q_k`
+  (`qHil_combVec_left`), killing the off-diagonal by orthogonality (`qsumL_range_single`), and cancelling the
+  diagonal (`aCoef_cancel`). `vec_self_expand` proves a vector supported on `[0,j]` equals `Σ_{i≤j} c_i·x^i` —
+  its own coefficient expansion over the monomial basis — the change-of-basis that the full moment identity
+  dissolves (no Hilbert-matrix inverse). **Honest scope**: the realization against the basis + the
+  self-expansion only; NOT yet `⟨p_N, x^j⟩ = μ_j` (the strong induction), NOT Parseval / convergence, NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
+- **The Riesz projection coefficient and vector** (new `Square/RieszCoeff.lean`): the third brick of the
+  moment-realization sub-arc, reading `μ` off the orthogonal basis. `aCoef μ d q k = Λ_μ(q_k)/⟨q_k,q_k⟩_d`
+  (guarded so total, the verbatim `projCoef` structure with `⟨e_m,q_k⟩` replaced by `Λ_μ(q_k)`), its
+  cancellation `aCoef_cancel` (`aCoef_k·⟨q_k,q_k⟩ = Λ_μ(q_k)`), the self-norm positivity `qHil_self_num_pos`
+  (monic `q_k`, `k<d` ⟹ `⟨q_k,q_k⟩_d > 0` for the guard), and the degree-`N` Riesz projection
+  `pVec μ d q N = Σ_{k≤N} aCoef_k·q_k`. **Honest scope**: the coefficient/vector and its cancellation only —
+  finite ℚ linear algebra; NOT the realization identity / Parseval / convergence, NOT positivity. Step 4 is
+  RH; crux fields stay `none`.
+- **Pairing against a monomial — the delta-collapse** (new `Square/QHilEVec.lean`): the second brick of the
+  moment-realization sub-arc. Pairing a coefficient vector against the monomial basis vector `e_j = x^j` picks
+  out a single component — `qHil_eVec_right` (`j<d ⟹ ⟨c, x^j⟩_d = innerHil c d j`, the `j`-th Hilbert moment)
+  and `Lam_eVec` (`j<d ⟹ Λ_μ(x^j) = μ_j`), both from the single-term collapse `qsumL_range_single`
+  (re-exported here as a public, choice-free lemma via `List.range_succ`) applied to the `eVec` delta (off `j`
+  the summand vanishes by `eVec_ne`, at `j` it is the identity by `eVec_self`). **Honest scope**: the
+  monomial-pairing collapses only — finite ℚ linear algebra; NOT the realization / Parseval / convergence
+  bricks, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The moment functional and its linearity — first brick of the moment-realization sub-arc** (new
+  `Square/MomentFunctional.lean`): opens bricks 4–6 of the Hausdorff *sufficiency* direction (constructing an
+  L² element from a valid moment sequence). `Lam μ c d = Σ_{i<d} c_i·μ_i` pairs a polynomial's coefficient
+  vector against the external rational moment sequence `μ`, and `Lam_add`/`Lam_smul`/`Lam_neg`/`Lam_combVec`
+  give it ℚ-linearity in the coefficient argument — line-for-line clones of the `qHil` bilinearity with the
+  Hilbert weight `1/(i+j+1)` replaced by `μ_i`. The Riesz projection that realizes `μ` reads its coefficients
+  off `Lam μ (q_k) / ‖q_k‖²`. **Honest scope**: the functional and its linearity only — finite-dimensional
+  linear algebra, no new mathematics; NOT the Riesz projection / realization / convergence (later bricks), NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
+- **The Gram–Schmidt family exists — brick 3 of the sufficiency arc complete** (new
+  `Square/GramSchmidtFamily.lean`): the orthogonality *step* (`nextVec_ortho`) is assembled by induction into
+  the full orthogonal family. `gramSchmidt_exists d`: for every `m ≤ d` there is a coefficient family that is
+  denominator-valid, each `q_k` (`k<m`) supported on `[0,k]` and monic (leading coefficient `1`), and
+  **mutually orthogonal `⟨q_i, q_j⟩_d = 0` for `i ≠ j`** in the rational Hilbert form. Induction on `m`
+  extending the family by `q_m = nextVec` and discharging the four invariants — den/support/monic from the
+  `nextVec_*` foundations, orthogonality from `nextVec_ortho` (with `qHil_comm` for the mirrored ordering), the
+  self-norm positivity coming from `qHil_self_pos` on the monic `q_i`. This is the orthogonal basis the
+  moment-problem construction runs on. **Honest scope**: the *existence* of the finite orthogonal family for
+  the rational Hilbert form; NOT the Riesz projection / Parseval / convergence that build the L² element from a
+  valid moment sequence (bricks 4–6), NOT the moment-range surjectivity, NOT positivity. Step 4 is RH; crux
+  fields stay `none`.
+- **The Gram–Schmidt orthogonality step** (new `Square/GramSchmidtOrtho.lean`): the mathematical heart of the
+  orthogonal-polynomial construction. `nextVec_ortho` proves that, given `q_0,…,q_{m-1}` mutually orthogonal
+  with positive self-norms, the next vector `q_m = e_m − Σ_{i<m} cf_i q_i` is orthogonal to every earlier `q_j`
+  (`⟨q_j, nextVec⟩_d = 0`). The classical computation, now in the certified symmetric-bilinear `qHil`: expand
+  the projection in the second argument (`qHil_add_right` + `qHil_neg_right` + `qHil_combVec_right`), collapse
+  the resulting sum to its diagonal term (a choice-free single-term collapse over `range m`, peeling the top
+  index via `List.range_succ` to avoid the choice-tainted `List.nodup_range`), cancel with `projCoef_cancel`
+  (`cf_j·⟨q_j,q_j⟩ = ⟨e_m,q_j⟩`), and flip the survivor with symmetry (`qHil_comm`) so `⟨q_j,e_m⟩ − ⟨e_m,q_j⟩ = 0`.
+  **Honest scope**: the single orthogonality *step* only (one new vector against the earlier ones), under the
+  induction hypotheses supplied as arguments; NOT yet the existential induction that assembles the full family
+  (the next brick), NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Gram–Schmidt construction, foundations** (new `Square/GramSchmidt.lean`): the reusable core of the
+  orthogonal-polynomial construction (brick 3 of the sufficiency arc), so the orthogonality induction (next
+  brick) is a clean wiring. `eVec k` is the monomial `x^k` (`1` at index `k`, `0` elsewhere); `projCoef d m q i`
+  is the projection coefficient `⟨e_m,q_i⟩_d / ⟨q_i,q_i⟩_d` with its inverse-cancellation `projCoef_cancel`
+  (`cf_i·⟨q_i,q_i⟩ = ⟨e_m,q_i⟩`, via `Qmul_Qinv`); `nextVec d m q = e_m − Σ_{i<m} cf_i q_i` with its three
+  structural properties — positive denominators (`nextVec_den`), vanishing strictly above index `m`
+  (`nextVec_support`, given each `q_i` supported on `[0,i]`), and leading coefficient `1` at index `m`
+  (`nextVec_monic`). `projCoef` is *guarded* (the real quotient where `⟨q_i,q_i⟩>0`, else `0`) so it is total
+  with a positive denominator at every index — inert on the constructed range `i<m` yet discharging every
+  downstream `∀ i` denominator hypothesis the bilinearity laws impose. **Honest scope**: the construction's
+  *foundations* only — NOT yet the orthogonality
+  (`⟨q_i,q_j⟩ = 0` for `i≠j`, the induction that is the next brick), NOT positivity. Step 4 is RH; crux fields
+  stay `none`.
+- **`qHil` distributes over a linear combination of vectors — the projection algebra** (new
+  `Square/QHilbertComb.lean`): the last algebraic tool before the Gram–Schmidt recursion. `combVec ls cf v` is
+  the coefficient vector of `Σ_{i∈ls} cf_i·v_i`, and `qHil_combVec_left`/`_right` prove
+  `qHil (Σ cf_i v_i) w d = Σ cf_i·qHil (v_i) w d` in each argument — by induction on `ls` from the atomic
+  add/smul laws, with the zero base `qHil 0 w = 0` (`qHil_zero_left`/`_right`). This is exactly what the
+  orthogonality proof needs to expand the projection `Σ_{i<k} cf_i q_i` that the recursion subtracts from a
+  monomial. **Honest scope**: the combination-linearity of the *finite rational* form only; NOT the
+  orthogonal-polynomial construction, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **Symmetry of the rational Hilbert form — completes the Gram–Schmidt algebra** (new `Square/QHilbertSymm.lean`):
+  `qHil_comm` proves `qHil c c' d = qHil c' c d` (the Hilbert matrix `1/(i+j+1)` is symmetric). Together with the
+  bilinearity laws this makes `qHil` a *symmetric bilinear form* — exactly what Parseval
+  `‖Σ aₖ qₖ‖² = Σ aₖ²·⟨qₖ,qₖ⟩` and the two-sided orthogonality `⟨qᵢ,qⱼ⟩ = 0 (i≠j)` consume. The proof pulls the
+  outer coefficient into the inner sum, exchanges the double `qsumL` via a reusable **Fubini** built here
+  (`qsumL_qsumL_swap`: `Σ_{i∈A}Σ_{j∈B} = Σ_{j∈B}Σ_{i∈A}`, by induction on the outer list), then refactors and
+  reindexes `i+j+1 = j+i+1`. **Honest scope**: symmetry of the *finite rational* form plus the `qsumL` Fubini;
+  NOT the orthogonal-polynomial construction, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **Bilinearity of the rational Hilbert form — the Gram–Schmidt algebra** (new `Square/QHilbertBilinear.lean`):
+  the algebraic foundation of the third brick of the Hausdorff *sufficiency* arc (the orthogonalization of the
+  moment construction). `qHil` is proven linear in each `Nat → Q` coefficient-vector argument — `qHil_add_left`,
+  `qHil_smul_left`, `qHil_neg_left` and their `_right` counterparts (`qHil (a+b) c' = qHil a c' + qHil b c'`,
+  `qHil (λ·a) c' = λ·qHil a c'`, `qHil (−a) c' = −qHil a c'`, and symmetrically in the second argument) — the
+  laws the orthogonality proof uses to expand `⟨q_k, q_j⟩`. Each is a `Qeq` identity pushed through the double
+  `qsumL` (`qsumL_add`/`qsumL_smul`/`qsumL_neg`) plus the scalar distributive/associative laws, factored through
+  the inner-sum abbreviation `innerHil c d j = Σ_{i<d} c_i/(i+j+1)`. **Honest scope**: the bilinearity laws of
+  the *finite rational* form only; NOT symmetry (`qHil c c' = qHil c' c`, which needs a `qsumL` Fubini — a
+  separate brick), NOT the orthogonal-polynomial construction, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
+- **The rational Hilbert form is positive-definite — norm-positivity for the Hausdorff *sufficiency* arc** (new
+  `Square/QHilbertPos.lean`): the second brick of the sufficient direction, supplying the strict norm-positivity
+  the Gram–Schmidt orthogonalization of the moment construction consumes. `qHil_self_pos`: a coefficient vector
+  with some nonzero entry gives `qHil c c d > 0`. The bridge is a reusable **definiteness of the L² inner
+  product at a rational point**, `innerI_self_pos_of_ratpoint`: `φ(ofQ r)² > 0 ⟹ ∫₀¹ φ² > 0` for a *rational*
+  `r ∈ [0,1]` — the density strengthening of `innerI_self_pos_of_dyadic` that dissolves its dyadic restriction
+  (the enclosing dyadic index `j = ⌊r·2^m⌋`, clamped `< 2^m`, is computed in `ℕ` since `r` is rational, and
+  `sq_ge_on_piece_near` carries the positive value across the piece even though `r` is not the endpoint).
+  Assembly of `qHil_self_pos`: a nonzero `c` is apart from `0` at some `x = 1/M` (`poly_nonzero_evalP`), where
+  its value is a nonzero *rational* `v` so `v² > 0` decidably, hence `Pos(φ(1/M)²)`, hence `Pos(∫₀¹ φ²)` by
+  ratpoint definiteness, hence `qHil c c d > 0` through the `innerI_qPolyTest_qPolyTest` bridge. **Honest
+  scope**: positive-*definiteness* of the finite rational Hilbert form and the reusable rational-point L²
+  definiteness behind it — a foundation for the orthogonal-polynomial / Riesz construction, NOT that
+  construction, NOT the moment-range surjectivity result, NOT positivity beyond the finite form. Step 4 is RH;
+  crux fields stay `none`.
+- **The rational Hilbert form ↔ inner-product bridge — foundation of the Hausdorff *sufficiency* arc** (new
+  `Square/QHilbertForm.lean`): the first brick toward *constructing* an L² element from a valid moment sequence
+  (the sufficient/"surjectivity" direction). `qHil c c' d = Σ_{i,j<d} c_i·c'_j/(i+j+1)` is the rational Hilbert
+  form of two ℚ-coefficient vectors, and `innerI_qPolyTest_qPolyTest` proves the identity
+  `⟨qPolyTest c, qPolyTest c'⟩ = ofQ(qHil c c')` (via `innerI_L2sumN` + `innerI_constMul` +
+  `mellinMoment_qPolyTest`) — so the L² inner product of rational polynomials *is* the rational Hilbert form,
+  the bridge every downstream step (orthogonalization, norm-positivity, Riesz projection, Parseval) rests on.
+  **Honest scope**: the foundational bridge only; NOT the moment-problem sufficiency result itself (the
+  orthogonal-polynomial construction + convergence remain — a large arc), NOT positivity. Step 4 is RH; crux
+  fields stay `none`.
+- **The moment map's range is confined — moments decay** (new `Square/MomentRangeNecessary.lean`): the
+  Hausdorff / *surjectivity onto function space* front, NECESSARY side. `L2Elt_moment_decay`:
+  `|E.moment n| ≤ √(energy/(2n+1))` with `energy = 2·selfBnd(E.seq 0)+8` — a completed L² member's moments
+  **decay like `1/√n`**, so a sequence that does not decay this fast is *not* a moment sequence: the moment
+  transform is **not surjective onto arbitrary sequences**. Proof is sqrt-free at the read level (integral
+  Cauchy–Schwarz `⟨E.seqⱼ,xⁿ⟩² ≤ ⟨E.seqⱼ,E.seqⱼ⟩·⟨xⁿ,xⁿ⟩ ≤ energy·(1/(2n+1))`, the uniform self-energy bound,
+  and the Hilbert value `⟨xⁿ,xⁿ⟩ = 1/(2n+1)`), then `Rsqrt` on the rational radicand, inherited through the
+  limit by `Rabs_Rlim_le`. **Honest scope**: one NECESSARY condition on the range (an obstruction to
+  surjectivity); NOT the full Hausdorff characterization (the sufficient direction — which sequences *are*
+  moments — needs the Riesz/Hilbert-system construction), NOT positivity. Step 4 is RH; crux fields stay `none`.
+  Also `L2Elt_pairing_bounded`: the extended pairing is an **L²-bounded functional**, `|E.pairing ψ| ≤ √(energy·selfBnd ψ)`
+  for every `ψ` — the *characterizing* necessary condition (by Riesz, an L²-bounded moment functional is exactly one
+  representable by an L² element), confining the range to bounded functionals.
+- **★ RECONSTRUCTION OF AN ARBITRARY L² ELEMENT — the completion transform's last open** (new
+  `Square/DurrmeyerReconstruct.lean`): every completed L² member `E : L2Elt` is the **L²-limit of the
+  Bernstein–Durrmeyer polynomials of its own approximants**, packaged as a member `L2Elt.recon E` equal to
+  `E` — `L2Elt_recon_eq : (L2Elt.recon E).eq E`. This reconstructs the *arbitrary* (non-embedded) element,
+  which `durrOpMom` alone could not (it converges only on embedded tests), via a diagonal over approximants:
+  `reconSeq E m = durrTest (E.seq (3(m+1))) ((recKₘ+3)²−2)` with `recKₘ = 3(m+1)·((E.seq(3(m+1))).L.num.toNat+1)`
+  absorbing each approximant's Lipschitz constant, so the sequence is L²-Cauchy (`reconSeq_cauchy`, via the
+  sqrt-free `dist2I_triangle2`), its moments equal `E`'s (`L2Elt_recon_moment`, sqrt-free CS `innerI_sub_sq_le`
+  + `Rle_of_Rsq_le` + the generalized reschedule `pairingIU_reschedule_rate_gen`), and `L2Elt_recon_eq` follows
+  from the **free** completion-level injectivity `L2Elt_moment_eq_imp_eq`. Also mints
+  `pairingIU_reschedule_rate_gen` (any read schedule `≥ selfBnd ψ·(m+1)` converges to `pairingIU` at rate
+  `4/(m+1)`, generalizing the `B·(m+1)` form). **Honest scope**: the arbitrary element reconstructed as the
+  L²-norm limit of an explicit Durrmeyer-polynomial sequence (reading the approximants' moment data, which
+  converges to `E`'s); NOT a single closed form from `E.moment` directly, NOT surjectivity onto function space
+  (Hausdorff), NOT positivity. Step 4 (band-coupling positivity) is RH; crux fields stay `none`.
+- **The Bernstein–Durrmeyer image as a test + its L² convergence** (new `Square/DurrmeyerTest.lean`): the
+  foundation for the remaining open — reconstructing an *arbitrary* L² element from its moments. On `[0,1]`,
+  `durrOp φ n x = (n+1)·Σ_k bernR(x,n,k)·⟨φ,b_{n,k}⟩` with `bernR(x,n,k) = (bernBasisTest n k).f x`, so the
+  Durrmeyer image packages as a finite `L2sumN` of `constTest·bernBasisTest` — an `L2Test` for free (no manual
+  Lipschitz estimate): `durrTest φ n hn` with `durrTest_eq_on_unit` (agrees with `durrOp φ n` on `[0,1]`). Then
+  `durrTest_L2_converges`: `‖φ − durrTest φ ((k+3)²−2)‖²_{L²[0,1]} ≤ (φ.L/(k+3))²` — the L²-norm companion of
+  the pointwise `durrOp_converges`, mirroring `bernOp_L2_converges`. This makes the Durrmeyer reconstruction an
+  object the L² machinery can act on. **Honest scope**: the Durrmeyer image as a test and its L² convergence
+  *on an embedded test*; NOT yet the reconstruction of a non-embedded limit member (that needs Durrmeyer
+  L²-stability + a diagonal argument). NOT positivity, NOT surjectivity. Step 4 is RH; crux fields stay `none`.
+- **★ FULL (two-member) injectivity of the moment map on the completion** (new
+  `Square/PairingMomentInjective.lean`): the definitive injectivity statement, generalizing the zero-version
+  from "kernel trivial" to genuine injectivity. **`pairingIU_moment_eq_imp_eq`**: two L²-Cauchy limit members
+  `Φ, Ψ` whose extended moment sequences are **equal** pair **equally** against **every** test `ψ`
+  (`L2Elt_moment_eq_imp_eq`: `E.eq F`) — so a limit member is *uniquely determined* (as a pairing functional)
+  by its moment sequence. The proof mirrors the zero-arc at the relative (`≈`) level: `pairingIU_clampProd_eq`
+  / `pairingIU_bernBasis_eq` (the Pascal induction with base = moment equality) and `pairingIU_L2sumN_eq` /
+  `pairingIU_bernOpCTest_eq` give `pairingIU Φ B_N(ψ) ≈ pairingIU Ψ B_N(ψ)`; the two residuals are each bounded
+  by `pairingIU_bernResidual_bound` (the determinacy brick's per-read Cauchy–Schwarz + uniform-energy +
+  `bernOp_L2` bound, extracted as a public, moment-independent helper serving both members), so
+  `|pairingIU Φ ψ − pairingIU Ψ ψ| → 0`. **Honest scope**: full injectivity of the moment map on the
+  completion; NOT positivity, NOT surjectivity onto function space. Step 4 (band-coupling positivity) is RH;
+  crux fields stay `none`.
+- **★ COMPLETION-LEVEL MOMENT DETERMINACY — the moment map is injective on the completion** (new
+  `Square/PairingBernBasisZero.lean`, `Square/PairingBernOpZero.lean`, `Square/PairingMomentDeterminacy.lean`):
+  the culmination of the extended-pairing arc, closing the reachable core of the doc's open "reconstruction of
+  an *arbitrary* L² element". **`pairingIU_moment_zero_imp_zero`**: an L²-Cauchy *limit member* `Φ` whose
+  extended moments `pairingIU Φ (xⁱ) h` **all** vanish pairs to **zero** against **every** test `ψ` — so a
+  limit member is determined, as a pairing functional, by its moment sequence (`L2Elt_moment_zero_imp_eq_zero`
+  reads this as `E.eq (L2Elt.of zeroL2)`). The proof is sqrt-free: for the Bernstein residual
+  `χ = ψ − B_N(ψ)` (`N=(k+1)²`), `pairingIU Φ ψ h ≈ pairingIU Φ χ h` because the operator test pairs to zero
+  (`pairingIU_bernOpCTest_zero`, the H₄ reduction lifted to a limit member via `pairingIU_L2sumN_zero` +
+  `pairingIU_constMul`); every honest read is bounded by integral Cauchy–Schwarz + the uniform self-energy
+  `⟨Φₘ,Φₘ⟩ ≤ E` + the L²-density bound `⟨χ,χ⟩ ≤ (5·L_ψ/(8(k+1)))²` (key `Qle`: `E ≤ E²`), a bound the limit
+  inherits (`Rabs_Rlim_le`) and which forces `pairingIU Φ ψ h ≈ 0` at the `1/(k+1)` rate. Supporting bricks:
+  `pairingIU_bernBasis_zero`/`pairingIU_clampProd_zero` (the H₁ Pascal reduction lifted to a limit member). This
+  is the injectivity half at the completion level — the analog of `moment_determinacy` for a limit member
+  rather than a single test. **Honest scope**: injectivity of the moment map on the completion; NOT positivity,
+  NOT surjectivity onto function space. Step 4 (band-coupling positivity) is RH; crux fields stay `none`.
+- **Completion-level determinacy foundations, part 2** (new `Square/PairingIULinear2.lean`,
+  `Square/PairingIUEnergy.lean`): building on the reschedule/linearity brick, two more foundation facts the
+  moment-determinacy-at-the-completion argument consumes. **(a)** `pairingIU_natScale`: scalar (ℕ)
+  homogeneity of the extended pairing, `pairingIU Φ (natScale c ψ) h = c·pairingIU Φ ψ h`, by induction from
+  right-additivity with base `pairingIU Φ zeroL2 = 0`. **(b)** `pairingIU_unit_congr`: the extended pairing
+  sees the test only through its values on `[0,1]` — reschedule to a common `B = selfBnd ψ + selfBnd ψ'`, where
+  the two `B`-scheduled reads agree by `innerI_right_congr_on_unit`. Together (a)+(b) lift the H₁ Bernstein-basis
+  reduction (`innerI_clampProd_zero`) from a fixed test to a limit member. **(c)** `innerI_self_le_uniform`: a
+  uniform self-energy bound `⟨Φ_j,Φ_j⟩ ≤ 2·selfBnd(Φ 0)+8` for **every** `j` — a Cauchy sequence has uniformly
+  bounded energies — via the sqrt-free parallelogram doubling `⟨x,x⟩ ≤ 2·d²(x,y)+2·⟨y,y⟩` (from
+  `⟨x−2y,x−2y⟩ ≥ 0`) at `y = Φ 0` with `d²(Φ_j,Φ 0) ≤ 4`. This feeds the pairing-level Cauchy–Schwarz bound in
+  the determinacy tail. **Honest scope**: reusable substrate for the completion-level determinacy argument; NOT
+  positivity, NOT surjectivity. Step 4 is RH; crux fields stay `none`.
+- **Schedule-independence + right-linearity of the extended pairing** (new `Square/PairingIUReschedule.lean`):
+  `pairingIU Φ ψ h` reads the L²-Cauchy sequence `Φ` along the *ψ-dependent* schedule `j ↦ selfBnd ψ·(j+1)`,
+  which blocked reasoning about `pairingIU` of a *combination* of tests. This brick proves that any coarser
+  schedule `j ↦ B·(j+1)` with `B ≥ selfBnd ψ` converges to the **same** limit at rate `4/(k+1)`
+  (`pairingIU_reschedule_rate`) — a direct `dist2I` + sqrt-free Cauchy–Schwarz estimate: the cross-schedule gap
+  `⟨Φ_{B(k+1)},ψ⟩ − ⟨Φ_{S(k+1)},ψ⟩` squares to `≤ (2/(k+1))²` via `innerI_sub_sq_le` + `Rle_of_Rsq_le` (the
+  sqrt wall is dodged because `B ≥ S` relaxes `(1/B)·selfBnd ψ ≤ 1`, an exact perfect-square bound). Picking a
+  common `B` and summing three reschedule rates through the Archimedean collapse then gives **right-linearity of
+  the extended pairing** in the test argument: `pairingIU_add_right`, `pairingIU_neg_right`, `pairingIU_sub_right`
+  (`⟨E, ψ+χ⟩ = ⟨E,ψ⟩+⟨E,χ⟩`, etc.). This is the linearity the completion-level moment-determinacy argument
+  consumes. **Honest scope**: schedule-independence and right-linearity of the extended pairing; NOT positivity,
+  NOT surjectivity. Step 4 is RH; crux fields stay `none`.
+- **The completion axis — THE COMPLETED L² SPACE, WITH LIMIT MEMBERS** (new `Square/L2ElementSpace.lean`):
+  `L2Complete.lean` extended the pairing along an L²-Cauchy sequence but produced only pairing *values* ("no
+  limit member"). This packages the Cauchy sequence itself as a first-class **limit member** object,
+  `structure L2Elt where seq : Nat → L2Test; cauchy : L2CauchyU seq`, with: the extended pairing as a method
+  (`L2Elt.pairing`), the limit **moment sequence** (`L2Elt.moment`), a faithful embedding of every test
+  (`L2Elt.of` the constant sequence; `L2Elt_of_pairing = ⟨φ,ψ⟩`), the **weak convergence** of the sequence to its
+  limit member (`L2Elt_converges`, rate `2/(j+1)`), and the equivalence of members (`L2Elt.eq` = same pairing
+  against every test, proved refl/symm/trans). For an embedded test the reconstruction closes the loop —
+  `durrOpMom (L2Elt.of φ).moment` recovers `φ` (`L2Elt_of_reconstruct`). A **Bishop-style setoid completion, NOT a
+  `Quotient`**: the `Real` pairing is only `Req`-well-defined (not `Eq`), so `Quotient.liftOn` cannot carry it —
+  the equivalence lives alongside the carrier and every operation respects it. **Honest scope**: the limit member
+  as an object with its pairing/moment/embedding/convergence; NOT a norm-limit *function* (L² convergence is not
+  pointwise), NOT reconstruction of an arbitrary (non-Lipschitz) L² element — only of embedded tests. NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion front — RECONSTRUCTION FROM MOMENT DATA ALONE** (new
+  `Square/MomentInversionRaw.lean`): the Bernstein–Durrmeyer operator, already moment-computable, made an
+  operator on a *raw* moment sequence `μ : Nat → Real` — `durrOpMom μ n x = (n+1)·Σ_k b_{n,k}(x)·C(n,k)·(Δⁿ⁻ᵏμ)_k`
+  (`momDiffRaw` = the Pascal recursion on `μ` directly). It reads only the moments (`durrOpMom_eq_durrOp`:
+  `durrOpMom (mellinMoment φ) = durrOp φ`) and reconstructs the test from its moment sequence at the certified
+  rate `|durrOpMom (mellinMoment φ) ((k+3)²−2) x − φ(x)| ≤ φ.L/(k+3)` on `[0,1]` (`durrOpMom_converges`). So a
+  bounded-Lipschitz test is recovered **from its moment sequence alone** — the transform pair's inversion stated
+  purely on the moment data, the direction the surjectivity question asks about. The convergence is now delivered
+  as a **first-class limit object** (`durrOpMom_tendsTo`: `RTendsTo (fun m => durrOpMom (mellinMoment φ) (Kₘ·Kₘ−2) x) (φ.f x)`
+  on `[0,1]`, `Kₘ = (φ.L.num.toNat+1)·(m+1)+3`), the moment-side companion of `durrOp_tendsTo` — the reindex
+  `k := (φ.L.num.toNat+1)·(m+1)` swallows the Lipschitz constant, turning `φ.L/(k+3)` into `≤ 1/(m+1)`. **Honest
+  scope**: reconstruction on the moment sequences that arise from the bounded-Lipschitz class; NOT the Hausdorff
+  characterization of which raw sequences are moment sequences, NOT a completed L² space, NOT positivity. Step 4 is
+  RH; crux fields stay `none`.
+- **Co-support depth-existence, sub-brick N₅ — THE FACTOR-THEOREM APARTNESS** (new
+  `Square/QPolyApart.lean`): upgrades N₄ from a nonzero coefficient VECTOR to a nonzero FUNCTION. For every
+  `K` the depth-`K` co-support member is apart from `0` at a point of `[0,1]`
+  (`coSupport_member_apart`: `∃ member ∈ HatVanishes·K, ∃ x∈[0,1], member.f x ≉ 0`) — so the co-support object
+  is genuinely **inhabited beyond zero at every depth**, matching the `K = 1..7` realized levels. Route
+  (large-`M` evaluation, no synthetic division): the member's value at a rational `r∈[0,1]` is
+  `ofQ (qPolyEval c r d)` (`qPolyTest_eval_ofQ`, via the `powTest i .f (ofQ r) = ofQ(rⁱ)` recursion +
+  `clamp01_ofQ` + `RsumN_ofQ_qsumL_range`); a nonzero coefficient vector yields an explicit `M ≥ 1` with
+  `qPolyEval c (1/M) d ≉ 0` (`poly_nonzero_evalP`: a bottom-Horner `evalP`, the majorant `|evalP| ≤ Σ|cᵢ|`, and
+  `c₀`-domination at `M = |B|.num.toNat·(c 0).den + 1`); evaluating at `1/M ∈ [0,1]` gives the witness
+  (`Qeq_of_ofQ_eq_zero` via `Qarch_gen` bridges `ofQ q ≈ 0 ⟹ Qeq q ⟨0,1⟩`). Choice-free `{propext, Quot.sound}`.
+  **Honest scope**: the member is nonzero as a function; NOT positivity beyond the skeleton. Step 4 is RH; crux
+  fields stay `none`.
+- **Co-support depth-existence, sub-brick N₄ — CO-SUPPORT MEMBERS EXIST AT EVERY DEPTH** (new
+  `Square/QCoSupportExists.lean`): the capstone welding N₂ and N₃ on the Hilbert system. For every `K` the
+  homogeneous system — the support row `Σᵢcᵢ` and the moment rows `Σᵢcᵢ/(i+n+1)` (`n<K`) — has `K+1` equations
+  in `K+2` unknowns, so `qkernel_exists` (N₂) supplies a coefficient vector `c` with a nonzero coordinate and
+  `qPolyTest_hatVanishes` (N₃) turns it into a certified co-support member `qPolyTest c hc (K+2)` in
+  `HatVanishes·K` (`coSupport_member_exists`). This is the **general-`K` inhabitation** the layer previously had
+  only for `K = 1..7` (each `deepK` found by an off-kernel `ℚ`-linear solve and certified) — the "hypergeometric
+  identity the layer cannot reach", reached by row reduction. Choice-free `nodup_range_cf`/`nodup_map_succ`
+  replace the classical `List.nodup_range` (core pulls `Classical.choice`). **Honest scope**: the member is
+  nonzero as a VECTOR (`∃v, cᵥ ≉ 0`); that it is nonzero as a FUNCTION on `[0,1]` — the monomials being linearly
+  independent there — is the factor-theorem apartness, a separate brick NOT proved here. NOT positivity. Step 4
+  is RH; crux fields stay `none`.
+- **Co-support depth-existence, sub-brick N₃ — THE ℚ-COEFFICIENT POLYNOMIAL MEMBER** (new
+  `Square/QPolyMember.lean`): the member constructor that turns a rational coefficient vector directly into a
+  co-support member, with NO denominator-clearing into `polyPN`'s Nat coefficients. `qPolyTest c hc d =
+  Σ_{i<d} (constTest (ofQ cᵢ))·(powTest i)` is a bounded-Lipschitz test whose Mellin moment is the rational
+  Hilbert contraction of `c`, `mellinMoment (qPolyTest c hc d) n = ofQ (Σ_{i<d} cᵢ/(i+n+1))`
+  (`mellinMoment_qPolyTest`, via `innerI_symm` + `innerI_L2sumN` + `innerI_constMul` + `innerI_powTest_hilbert`),
+  and whose unit-support is `Σcᵢ = 0` (`qPolyTest_supp`). So a rational kernel vector drops straight into
+  `hatVanishes_of_moments` (`qPolyTest_hatVanishes`). Bridges `qsumL_append` and `RsumN_ofQ_qsumL_range` weld the
+  real `RsumN` (over `0..d`) to the rational `qsumL` (over `List.range d`); `innerI_powTest_qMono` pairs the
+  rational-scaled monomial. **Honest scope**: a member *constructor* — the nonzero coefficient vector it consumes
+  comes from the kernel lemma (N₂); no positivity. Step 4 is RH; crux fields stay `none`.
+- **Co-support depth-existence, sub-brick N₂ — AN OVER-DETERMINED HOMOGENEOUS ℚ-SYSTEM HAS A NONZERO
+  SOLUTION** (new `Square/QLinearKernel.lean`): the Gaussian-elimination fact the layer never had —
+  `#equations < #variables ⟹ ∃ nonzero c` with every `Σ_{i∈vars} (row i)·(cᵢ) ≈ 0` (`qkernel_exists`). The proof
+  is a **division-free** row reduction, recursion on the equation list: with a pivot variable `p`
+  (`e₀ p ≉ 0`), the remaining rows are *scaled* — `e' = (e₀ p)·e − (e p)·e₀`, so `e'(p) = 0` and no division is
+  needed — the reduced system lives on `vars.erase p`, the IH supplies a nonzero `c'`, and it lifts to a nonzero
+  `c` on `vars` by `cᵢ := (e₀ p)·c'ᵢ` off the pivot and `c p := −Σ (e₀ i)·c'ᵢ`. Helpers: `ball_or_exists_not`
+  (decidable pivot search), `redEqRow` (the scaled row op), and the **choice-free** `erase_len_succ` /
+  `not_mem_erase_nodup` (core's `List.length_erase_of_mem` and `List.Nodup.not_mem_erase` both pull
+  `Classical.choice`, so they are reproved by induction). **Honest scope**: pure finite rational linear algebra;
+  no members, no positivity yet. Step 4 is RH; crux fields stay `none`.
+- **Co-support depth-existence, sub-brick N₁ — RATIONAL SUMS OVER A VARIABLE LIST** (new
+  `Square/QSumList.lean`): the substrate for the missing existence theorem. The member generator (`polyPN`,
+  brick 66) reduced "a co-support member exists at depth `K`" to "the homogeneous `ℚ`-linear system
+  `Σᵢcᵢ = 0`, `Σᵢcᵢ/(i+n+1) = 0` (`n<K`) has a nonzero solution" — the Gaussian-elimination fact the layer
+  never had (the doc's "hypergeometric identity the layer cannot reach"). This brick lays its foundation:
+  `qsumL f vars = Σ_{i∈vars} f i`, a `List`-indexed rational sum, with the linear-algebra laws (`qsumL_add`,
+  `qsumL_neg`, `qsumL_smul`, `qsumL_congr`, `qsumL_zero`) and the **pivot split** `qsumL_erase`
+  (`Σ_vars f ≈ f p + Σ_{vars.erase p} f` for `p∈vars` — the row operation elimination performs). Indexing by a
+  `List` rather than a `Nat` range is what makes "eliminate variable `p`" reindexing-free (`vars.erase p`
+  drops exactly that variable). **Honest scope**: pure finite rational arithmetic; no members, no co-support,
+  no positivity yet. Step 4 is RH; crux fields stay `none`.
+- **The co-support object, sub-brick M₁ — THE FILTRATION INTERSECTION IS TRIVIAL** (new
+  `Square/CoSupportTrivial.lean`): `(∀ K, φ ∈ HatVanishes·K) ⟹ φ ≈ 0 on [0,1]`
+  (`hatVanishes_all_imp_zero`), i.e. `⋂_K HatVanishes·K = {0}` — a unit-supported test orthogonal to *every*
+  monomial `xⁿ` is zero on `[0,1]`. The **monomial system is total**: the dual of L² density
+  (`bernOp_L2_converges` — polynomials dense ⟺ nothing nonzero is orthogonal to all of them). Each level
+  unfolds via `hatVanishes_iff_orthogonal` to `⟨φ,xⁿ⟩ ≈ 0` for `n < K`; at `K = i+1` every moment
+  `mellinMoment φ i = innerI φ (powTest i)` (definitionally) vanishes, and `moment_determinacy_unit` (the
+  completed Bernstein arc) closes. Density (approximation) and totality (determinacy) are now the two proven
+  halves of the monomial system's L² completeness. **Honest scope**: a determinacy corollary about the
+  co-support filtration of one unit-supported test; NOT a completed L² space of functions, NOT surjectivity
+  onto function space, NOT positivity beyond the complement. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick L₃ — THE L² DENSITY LIMIT, PACKAGED** (new
+  `Square/BernsteinL2Limit.lean`): the explicit-rate L₂ bound packaged as a first-class `RTendsTo` limit —
+  `RTendsTo (fun m => ⟨φ − bernOpCTest φ ((Kₘ+1)²) …, φ − …⟩) 0` with `Kₘ = (φ.L.num.toNat+1)(m+1)`
+  (`bernOp_L2_tendsTo`): the Bernstein polynomials converge to `φ` **in the `L²[0,1]` norm** in the
+  codebase's canonical limit predicate (Bishop `2/(m+1)+2/(n+1)` modulus). The reindex `Kₘ` turns the L₂
+  rate `(5φ.L/(8(Kₘ+1)))²` into `≤ 1/(m+1)` (`energy_reindex_le` — the squared denominator has one factor of
+  `Kₘ+1` to spare over the linear numerator `25·φ.L.num²`; the nonlinear `Int` chain is explicit
+  `Int.mul_le_mul`, `omega` can't); the energy is `≥ 0`, so `|energy − 0| = energy` and the one-sided rate
+  suffices, and `rate_to_seq` (the `L = 0` instance of K1's rate⟹`RTendsTo` packaging) closes. The L₂ density
+  result delivered as a genuine limit object — the **packaged-limit companion of the durrOp strong-inversion
+  limit (K1)**. **Honest scope**: one polynomial scheme's convergence to a bounded-Lipschitz test in the
+  `L²[0,1]` norm, as an `RTendsTo` limit; NOT a completed L² space of *functions* (no limit member, no
+  inversion of an arbitrary L² element), NOT surjectivity onto function space, NOT positivity. Step 4 is RH;
+  crux fields stay `none`.
+- **The Bernstein arc, sub-brick L₂ — L² DENSITY OF THE BERNSTEIN POLYNOMIALS** (new
+  `Square/BernsteinL2Density.lean`): the uniform (sup-norm) convergence of L₁ upgrades to convergence in the
+  L² norm — the energy of the Bernstein residual of `φ` vanishes at a rational rate,
+  `‖φ − bernOpCTest φ ((k+1)²) …‖²_{L²[0,1]} = ⟨φ−B_nφ, φ−B_nφ⟩ ≤ (5·φ.L/(8(k+1)))²`
+  (`bernOp_L2_converges`), so the polynomials `bernOpCTest φ n` are **dense in `L²[0,1]`** (the residual → 0
+  in energy). The reusable `innerI_self_le_of_bound` turns a pointwise sup bound `|g(x)| ≤ B` on `[0,1]` into
+  `⟨g,g⟩ = ∫₀¹ g² ≤ B²` (`Rsq_le_of_abs_le` pointwise, then unit-local monotonicity of the certified integral
+  against the constant `B²`), applied to the residual `g = φ − bernOpCTest` with the uniform bound from L₁.
+  This is the **approximation half of the completed function space** the Mellin front left open —
+  complementary to `L2Complete.lean` (which extends the pairing along L²-Cauchy sequences but constructs no
+  approximating family) and to moment determinacy (the injectivity half): the moment map is injective, and its
+  image polynomials are L²-dense. **Honest scope**: convergence of one polynomial scheme to a bounded-Lipschitz
+  test in the `L²[0,1]` norm at an explicit rational rate; NOT a completed L² space of *functions* (no limit
+  member, no inversion of an arbitrary L² element), NOT surjectivity onto function space, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick L₁ — UNIFORM (WEIERSTRASS) CONVERGENCE OF THE OPERATOR-AS-TEST** (new
+  `Square/BernsteinUniform.lean`): on `[0,1]` the Bernstein operator test `bernOpCTest φ n` (H₄ — an honest
+  `L2Test` agreeing with `B_n(φ)` there, hence a polynomial on `[0,1]`) converges to `φ` with an
+  `x`-INDEPENDENT rational rate, `|φ(x) − (bernOpCTest φ ((k+1)²) …).f x| ≤ 5·φ.L/(8(k+1))`
+  (`bernOp_uniform_converges`). Assembly from bricks in hand: the pointwise deviation transfer
+  (H₅, `bernOpCTest_pointwise_dev`, `|φ(x) − B_n(x)| ≤ φ.L·Σ_k |k/n−x|·b_{n,k}(x)`) meets the AM-GM
+  deviation-sum bound (H₆, `bernOp_devsum_bound`, `2δn·Σ_k |k/n−x|·b_{n,k}(x) ≤ δ²+n/4`) at the schedule
+  `δ = k+1`, `n = (k+1)²`, where the deviation sum is `≤ (5/4)(k+1)²/(2(k+1)³) = 5/(8(k+1))` (divided out by
+  `Rle_of_Rmul_ofQ_le`); scaling by `φ.L` gives the uniform rate. This is the **constructive Weierstrass
+  approximation theorem** for the bounded-Lipschitz class — the *approximation* companion of moment
+  determinacy (the injectivity half), and the first handle on the completed function space the Mellin front
+  left open. **Honest scope**: uniform (sup-norm) convergence of one polynomial scheme with an explicit
+  rational rate; NOT L² density (next sub-brick), NOT surjectivity onto function space, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick K1 — THE DURRMEYER LIMIT AS A PACKAGED `RTendsTo` OBJECT** (new
+  `Square/DurrmeyerTendsTo.lean`): `RTendsTo (fun m => durrOp φ (Kₘ²−2) x) (φ.f x)` with
+  `Kₘ = (φ.L.num.toNat+1)(m+1)+3` (`durrOp_tendsTo`) — the reindexed Durrmeyer sequence converges to `φ(x)`
+  in the codebase's canonical limit predicate `RTendsTo` (Bishop `2/(k+1)+2/(n+1)` modulus). The reindex
+  absorbs the constant `φ.L`: the explicit rate `φ.L/(k+3)` at `k = Kₘ−3` becomes `≤ 1/(m+1) ≤ 2/(m+1)`
+  (`durrRate`, a pure-ℤ `Int.mul_le_mul` chain — `omega` can't, the bound is nonlinear); the single real
+  bound is pushed to the `.seq` level in both directions via `seq_diff_le` + `Qabs_le_of_both`
+  (`tendsTo_of_rate`, a reusable rate⟹`RTendsTo` helper). This **upgrades the explicit-rate `durrOp_converges`
+  (J₅d-final) to a first-class limit object** — the strong pointwise Mellin inversion delivered as a genuine
+  `RTendsTo` limit, closing the "packaged limit object" gap. **Honest scope**: the packaged pointwise limit;
+  NOT the transform pair's surjectivity onto function space, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
+- **The Mellin-inversion arc, sub-brick J₅d-final — STRONG POINTWISE MELLIN INVERSION (the Durrmeyer
+  convergence capstone)** (new `Square/DurrmeyerConverge.lean`): the Bernstein–Durrmeyer operator converges
+  to the test pointwise on `[0,1]`. The multiplied-form deviation bound
+  `2δ·|durrOp φ n x − φ(x)| ≤ φ.L·(δ² + T_n(x))` for any rational `δ > 0` (`durrOp_dev_bound`), folding in the
+  T_n bound (J₅a) to `2δ·|durrOp φ (p+3) x − φ(x)| ≤ φ.L·(δ² + 1/(p+5))` (`durrOp_dev_bound_le`), and the
+  **limit** along the schedule `n = (k+3)²−2`, `δ = 1/(k+3)`:
+  `|durrOp φ ((k+3)²−2) x − φ(x)| ≤ φ.L/(k+3) → 0` (`durrOp_converges`). The assembly:
+  `durrOp φ − φ(x) = durrOp(residual ψ = φ − φ(x)·1)` (J₅c `durrOp_dev_eq`); the rational multiple `2δ·ψ` is
+  dominated on `[0,1]` by `G = φ.L·(δ² + (·−x)²)` via `amgm_2delta` + `φ.hlip`; `durrOp_abs_le_dom` transports
+  the domination through `innerI_abs_le_mono` (J₅d-crux) + `bernBasisTest_f_nonneg` + `bernR_nonneg`;
+  `durrOp_scalar` (`durrOp((constTest s)·h) = s·durrOp(h)`) + `durrOp_add`/`durrOp_constTest` compute
+  `durrOp G = φ.L·(δ² + T_n)` with the squared deviation matched to the operator monomials pointwise; the
+  squeeze divides by `2δ` (`Rle_of_Rmul_ofQ_le`). Together with weak inversion (I₃b, `⟨φ,ψ⟩` recovered from
+  the moments) this **closes the constructive reconstruction of a bounded-Lipschitz test from its moments** —
+  the moment/Mellin transform is now invertible both weakly (pairing) and strongly (pointwise). **Honest
+  scope**: pointwise convergence `durrOp φ n x → φ(x)` with the explicit rate; NOT the transform pair's
+  surjectivity onto function space, NOT positivity. Step 4 (band-coupling positivity) is RH; crux fields stay
+  `none`.
+- **The Mellin-inversion arc, sub-brick J₅a — THE DURRMEYER SECOND CENTRAL MOMENT BOUND** (new
+  `Square/DurrmeyerCentral.lean`): `T_n(x) = durrOp(x²) − 2x·durrOp(x) + x² ≤ 1/(n+2)` on `[0,1]`
+  (`durrOp_central2_le`, stated for `n = p+3` so the `n−1`, `n+2`, `n+3` are subtraction-free defeq). The
+  exact identity `T_n·(n+2)(n+3) = 2(n−3)x(1−x) + 2` is cleared from the moment closed forms `M⁽¹⁾`, `M⁽²⁾`
+  (J₄) by distributing the weight, clearing both denominators, and a signed-monomial normal-form collapse
+  (`ring_uor`); then `quarter_bound` (`x(1−x) ≤ ¼`) gives `2p·x(1−x) + 2 ≤ p+6`, and `Rle_of_Rmul_ofQ_le`
+  divides by the positive weight `(p+5)(p+6)` to land `≤ 1/(p+5)`. This is the vanishing Durrmeyer kernel
+  variance `∫₀¹ (t−x)²·K_n(x,t) dt → 0` that drives the pointwise convergence `durrOp φ n x → φ(x)`.
+  **Honest scope**: the second-central-moment bound; NOT convergence, NOT inversion, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick J₅d-crux — POINTWISE-DOMINATION MONOTONICITY OF THE L² PAIRING**
+  (new `Square/IntegralMono.lean`): `|⟨ψ,χ⟩| ≤ ⟨g,χ⟩` whenever `|ψ| ≤ g` and `χ ≥ 0` on `[0,1]`
+  (`innerI_abs_le_mono`). Both integrands are weakened to the common modulus `L = l2L ψ χ + l2L g χ`
+  (`lip_weaken` + `riemannIntegral_certif_irrel`, the `energy_from_pointwise` pattern), then
+  `riemannIntegral_le_unit` closes the two pointwise dominations `ψ·χ ≤ |ψ|·χ ≤ g·χ` (positive branch) and
+  `−g·χ ≤ −|ψ|·χ ≤ ψ·χ` (negative branch, landed through `innerI_neg_left`), combined by `Rabs_le_of_both`.
+  This is the integral-monotonicity engine the Durrmeyer pointwise-convergence estimate runs its residual
+  bound through — a general L² fact, useful beyond Durrmeyer. **Honest scope**: the domination bound; NOT
+  convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick J₅c — THE DURRMEYER OPERATOR REPRODUCES CONSTANTS, AND THE
+  DEVIATION AS AN OPERATOR IMAGE** (new `Square/DurrmeyerConst.lean`): `durrOp (constTest c) n x = c`
+  (`durrOp_constTest`, the `M_n⁽⁰⁾`-scaling — the constant rides through `⟨constTest c, b_{n,k}⟩ = c·⟨1,
+  b_{n,k}⟩` via `innerI_symm`/`innerI_right_congr_on_unit`/`innerI_constMul`, then `c·durrOp(powTest 0) =
+  c·1 = c`), hence `durrOp φ n x − φ(x) = durrOp (φ − φ(x)·1) n x` (`durrOp_dev_eq`, via `durrOp_sub`, J₅b).
+  So the pointwise deviation is the Durrmeyer image of the **residual** `ψ = φ − φ(x)·1`, which is
+  Lipschitz-`L` and vanishes at `x` (`|ψ(t)| = |φ(t)−φ(x)| ≤ L|t−x|`) — exactly the object the convergence
+  estimate consumes. **Honest scope**: constant reproduction and the deviation reformulation; NOT the
+  second-moment estimate, NOT convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
+- **The Mellin-inversion arc, sub-brick J₅b — LINEARITY OF THE DURRMEYER OPERATOR** (new
+  `Square/DurrmeyerLinear.lean`): `durrOp (φ ± ψ) n x = durrOp φ n x ± durrOp ψ n x` (`durrOp_add`,
+  `durrOp_sub`). The L² pairing `⟨·, b_{n,k}⟩` is additive/subtractive in its first slot
+  (`innerI_add_left`, `innerI_sub_left`), the Bernstein weight `b_{n,k}(x)` distributes
+  (`Rmul_distrib`, `Rmul_sub_distrib`), the finite sum splits (`RsumN_Radd`, `RsumN_Rsub`), and the
+  `(n+1)` scalar pulls back through. This is the algebraic housekeeping the pointwise-convergence capstone
+  needs: it lets the deviation `durrOp φ n x − φ(x)` be split test-by-test and re-assembled. **Honest
+  scope**: linearity of `durrOp` in `φ`; NOT the second-moment estimate, NOT convergence, NOT inversion,
+  NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick J₄ — THE DURRMEYER MOMENTS OF THE LOW MONOMIALS** (new
+  `Square/DurrmeyerMomentSum.lean`): the Durrmeyer operator's action on `1, x, x²`,
+  `durrOp 1 n x = 1` (`durrOp_powTest_zero`, `M_n⁽⁰⁾ = 1`, the normalization `∫₀¹ K_n = 1` — a genuine
+  averaging operator), `durrOp x n x = (nx+1)/(n+2)` (`durrOp_powTest_one`, `M_n⁽¹⁾`), and
+  `durrOp x² n x = (n(n−1)x² + 4nx + 2)/((n+2)(n+3))` (`durrOp_powTest_two`, `M_n⁽²⁾`). Each weight (J₃) is
+  reindexed and its constant pulled out of the sum (`RsumN_mul_const`); the `k`-sums collapse against the raw
+  Bernstein moments `Σ_k b_{n,k}(x)·(k+1) = nx+1` (`bernR_shift1`) and `Σ_k b_{n,k}(x)·(k+1)(k+2) =
+  n(n−1)x²+4nx+2` (`bernR_shift2`, via the Nat identity `(k+1)(k+2) = k(k−1)+4k+2` feeding `bernR_sq`), and
+  the factorial ratios reduce (`(n+1)·n!/(n+2)! = 1/(n+2)`, etc.). These are the three moments the second
+  central moment `T_n(x) = M_n⁽²⁾ − 2x·M_n⁽¹⁾ + x²` — the vanishing quantity driving `durrOp φ n x → φ(x)` —
+  is assembled from. **Honest scope**: the exact closed forms `M_n⁽⁰⁾`, `M_n⁽¹⁾`, `M_n⁽²⁾`; NOT `T_n`
+  assembled/bounded, NOT convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick J₃ — THE DURRMEYER INTEGRALS OF THE MONOMIALS** (new
+  `Square/DurrmeyerWeights.lean`): the per-`k` weights `⟨xʲ, b_{n,k}⟩ = ∫₀¹ tʲ·b_{n,k}(t) dt` for
+  `j = 0,1,2`. From J₁+J₂ the raw value is `C(n,k)·(n−k)!·(k+j)!/(n+j+1)!` (`durrInt_raw`), which the
+  factorial identity `C(n,k)·k!·(n−k)! = n!` collapses to `⟨1, b_{n,k}⟩ = n!/(n+1)!` (`durrInt_zero`),
+  `⟨x, b_{n,k}⟩ = (k+1)·n!/(n+2)!` (`durrInt_one`), `⟨x², b_{n,k}⟩ = (k+1)(k+2)·n!/(n+3)!` (`durrInt_two`).
+  These are the weights the Durrmeyer moment sums `M_n⁽ʲ⁾(x)` — and hence the second central moment `T_n(x)`
+  that drives `durrOp φ n x → φ(x)` — consume. The factorial denominators ride as opaque atoms (sidestepping
+  cast normalization); the `fct(k+j)` numerators expand by `fct_succ` and `choose_mul_fct` closes via
+  `ring_uor` on ℤ atoms. **Honest scope**: the closed-form monomial Durrmeyer integrals; NOT the summed
+  moments, NOT the second-moment estimate, NOT convergence, NOT inversion, NOT positivity. Step 4 is RH;
+  crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick J₂ — THE FINITE DIFFERENCES OF THE HILBERT MOMENT SEQUENCE IN
+  CLOSED FORM** (new `Square/DurrmeyerMoments.lean`): `momDiff (powTest j) k m = m!·(k+j)!/(k+j+m+1)!`
+  (`momDiff_powTest`). The moment sequence of the monomial test `xʲ` is the Hilbert-matrix row
+  `mellinMoment (powTest j) i = 1/(i+j+1)`, and its forward finite differences telescope to the factorial
+  value (`Δᵐ[1/(k+c)] = m!/((k+c)(k+c+1)···(k+c+m))`). Induction on `m`, base the moment `1/(k+j+1)`; the
+  step is a factorial identity (`(k+j+m+2)−(k+j+1) = m+1` factors the telescoping) discharged by `ring_uor`
+  on explicit integer atoms. This is the exact-value input to the Durrmeyer pointwise-inversion estimate:
+  with J₁, `∫₀¹ b_{n,k}(t)·tʲ dt = C(n,k)·momDiff (powTest j) k (n−k)`, so the Durrmeyer moments (and hence
+  the second-moment/convergence bound) become computable. **Honest scope**: the closed form of
+  `momDiff (powTest j)`; NOT the Durrmeyer moments, NOT the second-moment estimate, NOT convergence, NOT
+  inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick J₁ — THE BERNSTEIN–DURRMEYER OPERATOR IS COMPUTABLE FROM THE
+  MOMENTS** (new `Square/MomentDurrmeyer.lean`): the first step toward *pointwise* reconstruction. The
+  Durrmeyer operator `durrOp φ n x = (n+1)·Σ_k b_{n,k}(x)·⟨φ, b_{n,k}⟩` is the positive summability operator
+  built from the *integrals* `⟨φ, b_{n,k}⟩ = ∫₀¹ φ·b_{n,k}` (vs. the Bernstein operator `B_n`, which uses the
+  point values `φ(k/n)`). Each Durrmeyer coefficient is moment data — a scaled finite difference
+  `⟨φ, b_{n,k}⟩ = C(n,k)·(Δⁿ⁻ᵏμ)_k` (`innerI_bernBasis_eq_momDiff`, via the new general second-slot
+  ℕ-scaling `innerI_natScale_right` and I₁) — so `durrOp` reads `φ` only through its moment sequence
+  (`durrOp_eq_momData`). This makes `durrOp` the candidate for pointwise inversion: it is a function of `x`,
+  computed from moments, and (as a standard positive kernel `(n+1)Σ_k b_{n,k}(x)b_{n,k}(t)` with `∫₀¹=1`, no
+  boundary or free-`x` pathology) `→ φ(x)`. **Honest scope**: the identity `durrOp = (moment-data sum)` and
+  the single-basis moment value; NOT the normalization, NOT the second-moment estimate, NOT the convergence
+  `durrOp φ n x → φ(x)`, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick I₃b — THE RECONSTRUCTION SUMS CONVERGE TO THE PAIRING (weak
+  inversion capstone)** (new `Square/MomentReconConverge.lean`): along the explicit schedule `n = (k+1)²`,
+  `δ = k+1`, the moment-data reconstruction sum converges to the pairing with an explicit modulus,
+  `|⟨φ,ψ⟩ − bernReconSum φ ψ ((k+1)²)| ≤ (5·M_φ.num·L_ψ.num)/(k+1)` (`bernReconSum_converges`) — so
+  `⟨φ,ψ⟩ = lim_k bernReconSum φ ψ ((k+1)²)`, and the right side is computed entirely from `φ`'s moment
+  sequence (I₂). **The moment transform of `φ` is invertible on its pairing action**: the whole functional
+  `ψ ↦ ⟨φ,ψ⟩` is recovered from `φ`'s moments alone, for every bounded-Lipschitz `ψ`. Together with general
+  determinacy (H₈, the injectivity half) this closes the **weak** form of the moment/Mellin transform pair
+  on the general class. The proof divides the multiplied-form reconstruction energy bound (I₃a) by
+  `2δn = 2(k+1)³` (the determinacy schedule and its exposed division helper `Rle_of_Rmul_ofQ_le`); the
+  residual rational inequality factors exactly as the determinacy capstone
+  (`i − h = 5·M_φ.num·L_ψ.num·(k+1)³·(8·M_φ.den·L_ψ.den − 1) ≥ 0`, with `φ.L` replaced by `ψ.L`).
+  **Honest scope**: the weak (pairing) inversion with the explicit rate; NOT pointwise reconstruction of
+  `φ` from its moments (the strong/uniform inversion), NOT the full transform-pair surjectivity onto
+  function space, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick I₃a — THE TWO-FUNCTION RECONSTRUCTION ENERGY BOUND** (new
+  `Square/MomentReconEnergy.lean`): `2δn · |⟨φ,ψ⟩ − bernReconSum φ ψ n| ≤ M_φ·L_ψ·(δ²+n/4)` for any `δ ≥ 0`
+  (`bernOp_recon_energy_bound`), the multiplied-form bound on the **reconstruction error**. Since
+  `⟨φ,ψ⟩ − bernReconSum φ ψ n = ⟨φ, ψ − B_n(ψ)⟩` (`innerI_resid_eq`, via `innerI_sub_right` and I₂), the
+  residual integrand `φ·(ψ − B_nψ)` is bounded pointwise on `[0,1]` by `M_φ·L_ψ·(deviation)` — the general
+  pointwise bound `energy_pt_gen` with `ψ`'s own Lipschitz constant, deviation via
+  `bernOpCTest_pointwise_dev` for `ψ` — and `2δn·(deviation sum) ≤ δ²+n/4` (H₆, φ-independent). The scalar
+  `2δn` is pulled out at the raw-integral level by the now-exposed general `energy_from_pointwise` (H₇,
+  made public — it was already abstract in both slots), with `ψ − B_nψ` kept abstract so the operator test
+  is never `whnf`-forced. This is the **two-function generalization** of the determinacy energy bound
+  `bernOp_energy_bound` (which is the `φ = ψ`, moment-null case): determinacy squeezes a fixed real
+  `⟨φ,φ⟩` to zero with `n → ∞`; inversion squeezes the `n`-indexed reconstruction error to zero, so a
+  schedule `δ, n` making the right side `o(2δn)` yields `bernReconSum φ ψ n → ⟨φ,ψ⟩`. **Honest scope**: the
+  multiplied-form reconstruction-error bound and the residual identity; NOT yet the limit
+  `bernReconSum φ ψ n → ⟨φ,ψ⟩`, NOT inversion, NOT the transform pair's surjectivity, NOT positivity. Step
+  4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick I₂ — THE OPERATOR PAIRING IS THE RECONSTRUCTION SUM** (new
+  `Square/MomentReconSum.lean`): `⟨φ, B_n(ψ)⟩ = Σ_{k=0}^n ψ(k/n)·C(n,k)·(Δⁿ⁻ᵏμ)_k`
+  (`innerI_bernOpCTest_eq_reconSum`), the **reconstruction sum** (`bernReconSum`). Pairing `φ` against the
+  Bernstein operator of a test `ψ` and distributing over its finite sum (`innerI_L2sumN`, the general
+  companion of `innerI_L2sumN_zero`), pulling each real coefficient `ψ(k/n)·C(n,k)` through
+  (`innerI_constMul`, H₃), and rewriting each single-basis integral as a finite difference of moments
+  (`clampProd_integral_eq_momDiff`, I₁) evaluates the pairing as an explicit sum whose right-hand side
+  reads `φ` **only through the finite differences `(Δⁿ⁻ᵏμ)_k = momDiff φ k (n−k)` of its moment sequence**
+  — so the pairing of `φ` with any Bernstein-operated test is computed from `φ`'s moment data alone. This
+  is the algebraic backbone of the weak (pairing) inversion of the moment map: since `B_n(ψ) → ψ`
+  (Bernstein's theorem), one expects `⟨φ,ψ⟩ = lim_n ⟨φ, B_n(ψ)⟩`, recovering the whole pairing functional
+  from the transform data. No signed binomial coefficients and no operator `.f x` reduction appear — the
+  identity lives entirely at the pairing level. **Honest scope**: the exact identity
+  `⟨φ, B_n(ψ)⟩ = bernReconSum φ ψ n`; NOT the convergence `⟨φ, B_n(ψ)⟩ → ⟨φ,ψ⟩`, NOT inversion, NOT the
+  transform pair's surjectivity, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Mellin-inversion arc, sub-brick I₁ — THE RECONSTRUCTION COEFFICIENTS ARE FINITE DIFFERENCES OF
+  THE MOMENTS** (new `Square/MomentFiniteDiff.lean`): `⟨φ, xᵏ(1−x)ᵐ⟩ = (Δᵐμ)_k`
+  (`clampProd_integral_eq_momDiff`), where `(Δᵐμ)_k` is the `m`-th forward difference of the moment
+  sequence `μ_n = ⟨φ, xⁿ⟩` (`momDiff`: `Δ⁰_k = μ_k`, `Δ^{m+1}_k = Δᵐ_k − Δᵐ_{k+1}`). With determinacy (the
+  transform pair's injectivity, now general) saying the moments *determine* `φ`, inversion is the
+  constructive recovery; its coefficients are the integrals of `φ` against the Bernstein basis factors,
+  and this shows they are **computable from the moments alone**. The proof reuses the determinacy arc's
+  Pascal recursion `xᵏ(1−x)ᵐ⁺¹ = xᵏ(1−x)ᵐ − xᵏ⁺¹(1−x)ᵐ` (`clampProd_step_pt`, now public) — which *is*
+  the finite-difference recursion — so the two sides agree by induction on `m`, base `⟨φ, xᵏ⟩ = μ_k`.
+  No signed binomial coefficients are ever formed. **Honest scope**: the finite-difference identity for
+  the reconstruction coefficients; NOT the reconstruction operator, NOT its convergence, NOT inversion,
+  NOT the transform pair's surjectivity. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₈ — GENERAL MOMENT DETERMINACY (the capstone)** (new
+  `Square/MomentDeterminacy.lean`): a bounded-Lipschitz test whose **every** integer moment vanishes is
+  the zero function on `[0,1]` — `(∀ n, ⟨φ, xⁿ⟩ ≈ 0) ⟹ ⟨φ,φ⟩ ≈ 0` (`moment_determinacy`) `⟹ ∀ x ∈ [0,1],
+  φ(x) ≈ 0` (`moment_determinacy_unit`). This **closes the general-determinacy question** the
+  polynomial-class result (brick 64) left open. The energy `⟨φ,φ⟩` equals the pairing with the Bernstein
+  residual (H₅), which the multiplied-form energy bound (H₇) controls: `2δn·⟨φ,φ⟩ ≤ M_φ·L·(δ²+n/4)` for
+  every `δ ≥ 0`. Under the schedule `δ = k+1`, `n = (k+1)²`, dividing by `2δn = 2(k+1)³` gives
+  `⟨φ,φ⟩ ≤ 5·M_φ·L/(8(k+1)) ≤ (5·M_φ.num·L.num)/(k+1)`; the real squeeze (`Req_of_Rle_ofQ_all`) forces
+  `⟨φ,φ⟩ ≈ 0` (it is `≥ 0` by `innerI_self_nonneg`), and brick 79 (`innerI_self_zero_imp_zero`) lifts that
+  to the pointwise statement. **A genuine constructive Weierstrass/Bernstein theorem: no `sqrt`, no case
+  split, choice-free.** The immediate corollary `moment_injective_unit` — **the moment map is injective on
+  the general class** (two bounded-Lipschitz tests with the same integer moment sequence agree on `[0,1]`,
+  via `moment_determinacy_unit` on `φ − ψ`) — completes the transform pair's injectivity half for *all*
+  bounded-Lipschitz tests, not just polynomials. **Honest scope**: general moment determinacy/injectivity
+  on `[0,1]`; NOT Mellin inversion, NOT the transform pair's surjectivity, NOT positivity. Step 4 (the
+  band-coupling positivity) is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₇ — THE MULTIPLIED-FORM ENERGY BOUND** (new
+  `Square/BernsteinEnergyBound.lean`): `2δn·|⟨φ, φ − B_n(φ)⟩| ≤ M_φ·L·(δ² + n/4)`, any `δ ≥ 0`
+  (`bernOp_energy_bound`) — the `2δn`-weighted bound on the L² energy of the Bernstein residual. The
+  residual integrand is bounded pointwise on `[0,1]` by `M_φ·(deviation)` (H₅ + `φ.hbd`), and
+  `2δn·(deviation sum) ≤ δ² + n/4` (H₆); the scalar `2δn` is pulled out at the **raw integral** level via
+  the rational `riemannIntegral_Rsmul` (weakened to the common modulus `l2L + 2δn·l2L`), certificate
+  independence realigns to `⟨φ,ψ⟩`, and the unit-local absolute integral bound
+  (`riemannIntegral_abs_le_unit`) closes. **Mechanization note**: the residual test `φ − B_n(φ)` is kept
+  *abstract* in the helper and the scaling is done directly on `ofQ (2δn)` (no `constTest`), so the
+  deeply-nested operator test is never `whnf`-forced — the earlier `constTest`-based route blew up
+  `isDefEq` on reducing `(L2Test.mul (constTest 2δn) ψ).f x`; the final `ofQ`-product association also
+  needs `ofQ_congr` (Nat multiplication is not definitionally associative). With `⟨φ,φ⟩ = ⟨φ, φ − B_nφ⟩`
+  (H₅), the schedule `δ = 2ᵐ, n = 4ᵐ` sends the right side `→ 0` geometrically. **Honest scope**: the
+  multiplied-form energy bound and the unit-local absolute integral bound; NOT yet `⟨φ,φ⟩ ≈ 0`, NOT
+  determinacy. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₆ — THE MULTIPLIED-FORM DEVIATION BOUND** (new
+  `Square/BernsteinDevBound.lean`): `2δn·Σ_k |k/n − x|·b_{n,k}(x) ≤ δ² + n/4` on `[0,1]`, any `δ > 0`
+  (`bernOp_devsum_bound`) — the rational bound on the deviation sum. Bernstein's central-moment bound
+  (sub-brick F) is stated with `|k − nx|`, the operator deviation (sub-brick G) with `|k/n − x|`; they
+  differ by `n`. `devsum_rescale` rescales (`n·devsum` = the central-moment sum), `bernR_abs_moment`
+  applies, and the unconditional `x(1 − x) ≤ 1/4` (`quarter_bound`, from `(x − 1/2)² ≥ 0` via
+  `Rsub_sq_expand` and a **structural** additive rearrangement — `ring_uor` blows on the multi-fraction
+  `Qeq` cross-multiplication) clamps `nx(1−x) ≤ n/4`. Kept in multiplied form (`2δn·(…) ≤ …`) so the
+  reciprocal `1/(2δn)` is only formed later at a concrete schedule, where it is a fixed power of two.
+  **Honest scope**: the multiplied-form deviation-sum bound and `x(1−x) ≤ 1/4`; NOT yet the energy bound,
+  NOT `⟨φ,φ⟩ ≈ 0`, NOT determinacy. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₅ — THE DETERMINACY REDUCTION + DEVIATION TRANSFER** (new
+  `Square/BernsteinDeviationTransfer.lean`): two facts that turn the operator moment-integral (H₄) into a
+  bound on the L² energy of a moment-null test. **Reduction**: since `⟨φ, B_n(φ)⟩ ≈ 0`,
+  `⟨φ,φ⟩ ≈ ⟨φ, φ − B_n(φ)⟩` (`innerI_self_eq_sub`) — the energy equals the pairing of `φ` with its
+  Bernstein *residual*. **Deviation transfer**: on `[0,1]` the residual is bounded by Bernstein's
+  pointwise deviation `|φ(x) − (bernOpCTest φ n hn).f x| ≤ L·Σ_k |k/n − x|·b_{n,k}(x)`
+  (`bernOpCTest_pointwise_dev`), because the operator test agrees with the honest `bernOp` there (H₄) and
+  `bernOp` obeys the bound (sub-brick G; the sign flip inside the absolute value is inert). Together:
+  `⟨φ,φ⟩ = ⟨φ, φ − B_nφ⟩` with the residual → 0 uniformly forces `⟨φ,φ⟩ ≈ 0`. **Honest scope**: the
+  reduction and the pointwise deviation bound for the residual; NOT yet the energy bound, NOT `⟨φ,φ⟩ ≈ 0`,
+  NOT determinacy. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₄ — THE BERNSTEIN OPERATOR AS A TEST + ITS MOMENT-INTEGRAL** (new
+  `Square/BernsteinOperatorTest.lean`): the clamped operator `B_n(φ) = Σ_k φ(k/n)·C(n,k)·clamp01ᵏ(1−clamp01)ⁿ⁻ᵏ`
+  is realized as a genuine `L2Test` (`bernOpCTest`) that (a) **pairs to zero** against a moment-null `φ`,
+  `⟨φ, B_n(φ)⟩ ≈ 0` (`innerI_bernOpCTest_zero`) — each summand is a real coefficient times a single-basis
+  integral that already vanishes (`innerI_constMul_zero ∘ innerI_clampProd_zero`), finite-additive via
+  `innerI_L2sumN_zero`; and (b) **agrees with the honest `bernOp`** on `[0,1]`,
+  `(bernOpCTest φ n hn).f x ≈ B_n(φ)(x)` (`bernOpCTest_eq_on_unit`, via the H₂ match + associativity), so
+  the pointwise deviation bound (sub-brick G) transfers to it. Together these are exactly `∫₀¹ φ·B_n(φ) = 0`
+  plus the handle on `∫₀¹ φ·(φ − B_n(φ))` the determinacy step consumes. The real coefficients `φ(k/n)`
+  (which cannot scale an `L2Test`) are carried as constant tests (H₃) with `C(n,k)` folded in, so the
+  operator stays bounded-Lipschitz and the pairing is finite-additive. **Honest scope**: the operator as
+  a test, its vanishing pairing, and its `[0,1]`-agreement; NOT yet the deviation integral, NOT `⟨φ,φ⟩ ≈ 0`,
+  NOT determinacy. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₃ — THE CONSTANT TEST + REAL-SCALAR PAIRING LAW** (new
+  `Square/ConstScale.lean`): `⟨φ, (constTest c)·ψ⟩ ≈ c·⟨φ, ψ⟩` (`innerI_constMul`), hence
+  `⟨φ, (constTest c)·ψ⟩ ≈ 0` when `⟨φ, ψ⟩ ≈ 0` (`innerI_constMul_zero`). The Bernstein operator
+  `B_n(φ) = Σ_k φ(k/n)·b_{n,k}` has real coefficients `φ(k/n)`; a real scalar cannot scale an `L2Test`
+  (whose bound must be rational), so the coefficient is carried as a **constant test** `constTest c`
+  (`f ≡ c`, bound `|c| ≤ mB`) and multiplied into the basis by the test algebra. The pairing law then
+  reduces `⟨φ, c·b_{n,k}⟩ = c·⟨φ, b_{n,k}⟩ = c·0 = 0` once the single-basis integral vanishes
+  (`innerI_bernBasis_zero`). Proof is the real-scalar mirror of `innerI_add_left`: certificate weakening
+  to a common modulus, `riemannIntegral_congr` to move `φ·(c·ψ)` to `c·(φ·ψ)`, then
+  `riemannIntegral_Rsmul` to pull `c` out. **Honest scope**: the constant test and the real-scalar case
+  of pairing linearity; NOT yet the operator, NOT the deviation integral, NOT determinacy. Step 4 is RH;
+  crux fields stay `none`.
+- **Real-scalar linearity of the certified integral** (new `Analysis/IntegralRsmul.lean`):
+  `∫₀¹ (c·f) = c·∫₀¹ f` for **any** `c : Real` (`riemannIntegral_Rsmul`) — the real-coefficient case the
+  linear-algebra API was missing beyond the rational `riemannIntegral_smul`. The one new analytic
+  ingredient is that a real scalar commutes with the Bishop limit, `lim (c·X) = c·(lim X)`
+  (`Rmul_Rlim_of_approx`): where the rational version leaned on `Rlim_ofQ_mul_of_approx` (tied to
+  `ofQ q`), this is proved directly from the two-sided convergence rate `|X m − lim X| ≤ 2/(m+1)`
+  (`Rabs_dist_Rlim`) and the canonical bound `|c| ≤ xBound c` (`Rabs_le_ofQ_xBound`, from `canon_bound`)
+  — the gap `|lim(c·X) − c·lim X|` telescopes through `(c·X)_m` to `(2 + 2·xBound c)/(m+1)`, and the
+  real-level squeeze (`Req_of_Rle_ofQ_all`) closes. **Why**: the Bernstein determinacy arc integrates
+  `φ` against `B_n(φ) = Σ_k φ(k/n)·b_{n,k}`, whose coefficients `φ(k/n)` are reals; pulling the real
+  coefficient out of `∫φ·(c·b_{n,k}) = c·∫φ·b_{n,k} = c·0 = 0` needs exactly this law. **Honest scope**:
+  real-scalar linearity of the base integral over `[0,1]`; general infrastructure, nothing here touches
+  the Weil form or determinacy directly. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₂ — THE CLAMPED BASIS MATCHES THE HONEST ONE ON `[0,1]`** (new
+  `Square/BernsteinClampMatch.lean`): `bernR x n k ≈ C(n,k)·(clampProdTest k (n−k)).f x` for `0 ≤ x ≤ 1`
+  (`bernR_eq_scaled_clampProd`) — the weld between the clamped building blocks (genuine
+  bounded-Lipschitz tests that pair through the certified integral) and the honest basis `bernR` (built
+  from `Rpow`, unbounded off `[0,1]`) over which Bernstein's pointwise deviation bound (sub-brick G) is
+  stated. The correspondences `(powTest k).f x = clamp01(x)ᵏ` (`powTest_f_eq`) and
+  `(powMinusTest m).f x = (1 − clamp01 x)ᵐ` (`powMinusTest_f_eq`) are clean inductions, and `clamp01 x = x`
+  on `[0,1]` (`clamp01_eq_self`, `qBandQ_eq_of_band`) collapses both to the honest monomials. The `C(n,k)`
+  factor is carried outside as the real `RofNat (choose n k)`, so the deviation arc can absorb it into
+  the operator's real coefficient without touching the sealed `natScale`. Since the certified integral
+  only ever samples `[0,1]`, this is exactly the bridge the operator/deviation integrals need. **Honest
+  scope**: the clamped-vs-honest identity on `[0,1]`; NOT yet the operator integral, NOT the deviation
+  integral, NOT determinacy. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick H₁ — THE BERNSTEIN BASIS PAIRS TO ZERO** (new
+  `Square/BernsteinBasisZero.lean`): for a test `φ` whose *every* integer moment vanishes,
+  `⟨φ, C(n,k)·xᵏ·(1−x)ⁿ⁻ᵏ⟩ = ∫₀¹ φ(x)·b_{n,k}(x) dx ≈ 0` (`innerI_bernBasis_zero`) — the FIRST
+  integration step of the determinacy arc. Bernstein's theorem writes `B_n(φ) = Σ_k φ(k/n)·b_{n,k}`, so
+  `∫₀¹ φ·B_n(φ) = Σ_k φ(k/n)·∫₀¹ φ·b_{n,k}`; the real coefficients `φ(k/n)` are only outer factors, so
+  the operator integral collapses once each single-basis integral vanishes. The proof needs **no**
+  monomial bookkeeping and **no** signed-binomial `polyPN`: the basis factor obeys the Pascal recursion
+  `xᵏ(1−x)ᵐ⁺¹ = xᵏ(1−x)ᵐ − xᵏ⁺¹(1−x)ᵐ` (`clampProd_step_pt`), so by induction on `m`, bilinearity
+  (`innerI_sub_right`) and unit-restriction congruence (`innerI_right_congr_on_unit`, brick 90) reduce
+  every basis pairing to the base moment `⟨φ, xᵏ⟩ = mellinMoment φ k ≈ 0` (`innerI_clampProd_zero`). The
+  clamped building blocks (`powTest`, `1 − clampTest`) keep everything a genuine bounded-Lipschitz test
+  and agree with the honest `bernR` on `[0,1]` — the only place the certified integral samples.
+  **Honest scope**: the single-basis moment-integral over `Real`; NOT yet the operator integral (needs
+  the `bernR`-matching and the finite sum), NOT the deviation integral, NOT determinacy, NOT inversion,
+  NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick G — THE BERNSTEIN OPERATOR + POINTWISE DEVIATION** (new
+  `Square/BernsteinDeviation.lean`): the Bernstein operator `B_n(φ)(x) = Σ_{k=0}^n φ(k/n)·b_{n,k}(x)`
+  (`bernOp`, `n ≥ 1`) and its pointwise distance to `φ`, `|B_n(φ)(x) − φ(x)| ≤ L·Σ|k/n − x|·b_{n,k}(x)`
+  on `[0,1]` (`bernOp_deviation`) — Bernstein's theorem itself. Since `φ(x) = φ(x)·Σb` (partition of
+  unity), `B_n(φ)(x) − φ(x) = Σ(φ(k/n) − φ(x))·b`; the triangle inequality on the finite sum
+  (`RsumN_Rabs_le`, basis `≥ 0`) and the Lipschitz modulus `|φ(k/n) − φ(x)| ≤ L|k/n − x|` (the `L2Test`
+  field `hlip`) give the bound. With `bernR_abs_moment` (sub-brick F) the right side is
+  `≤ (L/2δ)(δ² + nx(1−x)) → 0`. **Mechanization note**: the sample point `k/n` is kept `irreducible`
+  (`ratPt`) and the operator sealed behind an unfolding lemma (`bernOp_unfold`), so the free-variable
+  denominator never triggers a `whnf` blow-up, and every intermediate is a pinned `have`. **Honest
+  scope**: the operator + pointwise deviation over `Real`; NOT yet the moment-integral, NOT determinacy,
+  NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick F — THE FIRST ABSOLUTE CENTRAL MOMENT (convergence core)** (new
+  `Square/BernsteinConverge.lean`): `2δ·Σ_{k=0}^n |k − nx|·b_{n,k}(x) ≤ δ² + nx(1−x)` for `x ∈ [0,1]` and
+  any `δ > 0` (`bernR_abs_moment`) — the sqrt-free, split-free heart of Bernstein convergence. Bernstein's
+  theorem bounds `|B_n(φ)(x) − φ(x)| ≤ L·Σ|k/n − x|·b`, so convergence rests on this moment; classically
+  it's `√(variance)` with a near/far index split by `|k/n − x| ≷ δ`, but over the constructive reals BOTH
+  are unavailable (no `sqrt`; `|k/n − x| ≤ δ` is undecidable for real `x`). The constructive substitute is
+  the pointwise AM-GM `2δ|t| ≤ δ² + t²` (`amgm_2delta`, from `(δ − |t|)² ≥ 0`), which needs neither: summed
+  against the nonnegative basis (`bernR_nonneg`, `RsumN_le`) and closed by the variance (`bernR_variance`)
+  and partition (`bernR_partition`). Choosing `δ` small then `n` large drives the right side to `0`.
+  **Honest scope**: the first absolute central moment over `Real`; NOT yet the Bernstein operator on a
+  test, NOT the moment-integral, NOT determinacy, NOT inversion, NOT positivity. Step 4 is RH; crux fields
+  stay `none`.
+- **The Bernstein arc, sub-brick E — THE BERNSTEIN VARIANCE IDENTITY** (new
+  `Square/BernsteinVariance.lean`): `Σ_{k=0}^n (k−nx)²·b_{n,k}(x) = nx(1−x)` (`bernR_variance`) — THE
+  estimate the Bernstein operator's ε-δ convergence divides by (Chebyshev: `Σ_{|k/n−x|>δ} b ≤
+  x(1−x)/(nδ²) ≤ 1/(4nδ²)`), the gateway from the moment identities to convergence. Expand `(k−nx)²`
+  (`Rsub_sq_expand`), split by `RsumN` linearity into the second factorial moment + mean
+  (`Σk²b = Σk(k−1)b + Σkb`, `bernR_sq` + `bernR_mean`), the partition of unity (`bernR_partition`), and
+  the doubled cross term, then collapse the `(nx)²` contributions
+  (`(n(n−1)x² + nx + n²x²) − 2·n²x² = nx − nx² = nx(1−x)`). The real-algebra runs manually (no `ring`
+  over abstract reals): additive rearrangements go through `Rsub_Radd_Radd`, the `(nx)²`-cancellation
+  through a purpose-built `var_collapse`. Minted: `RofNat_sub` (`ℕ→ℝ` respects truncated subtraction).
+  **Honest scope**: the variance identity over `Real`; NOT the ε-δ convergence yet, NOT the
+  moment-integral, NOT determinacy, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay
+  `none`.
+- **The Bernstein arc, sub-brick D — THE BERNSTEIN SECOND FACTORIAL MOMENT** (extends
+  `Analysis/BernsteinMoments.lean`): `Σ_{k=0}^n k(k−1)·b_{n,k}(x) = n(n−1)·x²` (`bernR_sq`) — the second
+  moment the variance needs (`Σ k²·b = Σ k(k−1)·b + Σ k·b`). The `k = 0, 1` terms drop; each `k = j+2`
+  term reindexes by the double identity `(j+2)(j+1)·C(m+2,j+2) = (m+2)(m+1)·C(m,j)` (`dfact_choose`, two
+  applications of `succ_mul_choose`) into `(n(n−1)x²)·b_{n−2,j}(x)`, so the whole sum is
+  `n(n−1)x²·(partition for n−2)`. **Honest scope**: the second factorial moment over `Real`; NOT the
+  variance assembly yet (`Σ(k−nx)²b = nx(1−x)`), NOT convergence, NOT inversion, NOT positivity. Step 4
+  is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick C — THE BERNSTEIN MEAN IDENTITY** (new
+  `Analysis/BernsteinMoments.lean`): `Σ_{k=0}^n k·b_{n,k}(x) = n·x` (`bernR_mean`), the first Bernstein
+  moment beyond the partition of unity. Classic reindex: the `k = 0` term drops, and each `k = j+1` term
+  collapses by the combinatorial identity `(k+1)·C(n+1,k+1) = (n+1)·C(n,k)` (`succ_mul_choose`, proved
+  from the factorial identity `choose_mul_fct_mul_fct` by `ℕ`-cancellation) into `(n·x)·b_{n−1,j}(x)`, so
+  the whole sum is `n·x·(partition for n−1) = n·x`. Minted: `RofNat_mul` (the `ℕ→ℝ` embedding is
+  multiplicative), `bernR_mean_term` (the per-term reindex). **Honest scope**: the mean identity over
+  `Real`; NOT the variance yet (`Σ(k−nx)²b = nx(1−x)`, the estimate convergence divides by), NOT
+  convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick B — THE BERNSTEIN BASIS + PARTITION OF UNITY** (new
+  `Analysis/Bernstein.lean`): the real Bernstein basis `bernR x n k = C(n,k)·xᵏ·(1−x)ⁿ⁻ᵏ` and its
+  **partition of unity** `Σ_{k=0}^n b_{n,k}(x) = 1` (`bernR_partition`), read off the real binomial
+  theorem at `(a,b) = (x, 1−x)` since `x + (1−x) = 1` and `1ⁿ = 1`. This is the first of the three
+  Bernstein moment identities and the normalization every later convergence estimate divides by; the
+  mean and variance identities follow. **Honest scope**: the Bernstein basis and the partition of unity
+  over `Real` — infrastructure for the determinacy/inversion arc; NOT the mean/variance identities yet,
+  NOT convergence, NOT inversion, NOT positivity. Step 4 is RH; crux fields stay `none`.
+- **The Bernstein arc, sub-brick A — THE REAL BINOMIAL THEOREM** (new `Analysis/RealBinomial.lean`):
+  `(a+b)ⁿ ≈ Σ_{i=0}^{n} C(n,i)·aⁱ·bⁿ⁻ⁱ` (`Rbinomial`, over `RsumN`/`Rpow`) — the foundation of the
+  Bernstein-approximation arc that the two remaining Mellin-front items (general bounded-Lipschitz moment
+  *determinacy* and *inversion*) both reduce to. The repo's `Binomial.lean` carries the theorem only over
+  `ℚ`, but the Bernstein polynomials are evaluated at a *real* argument `x ∈ [0,1]`, so it is reproved
+  over the constructive reals: the real Bernstein term `binTermR a b n i = C(n,i)·aⁱ·bⁿ⁻ⁱ`, its Pascal
+  per-term step `binTermR_succ`, boundary laws, and the theorem by induction (multiply the `n`-case by
+  `(a+b)`, front-peel, recombine by Pascal, collapse to `a·S + b·S = (a+b)·S`) — mirroring the `ℚ` proof
+  with manual real-algebra chains (no `ring` tactic over abstract reals). Reusable plumbing minted:
+  `RsumN_front` (finite-sum front-peel), `RofNat_add` (`ℕ→ℝ` additive), `Rpow_add` (`xᵐ⁺ⁿ = xᵐ·xⁿ`).
+  **Honest scope**: the binomial theorem over `Real` + the real Bernstein term/transfer laws —
+  infrastructure for the determinacy/inversion arc; NOT itself a Mellin-front result, NOT inversion, NOT
+  positivity. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 123 — THE CONTINUOUS TRANSFORM SEPARATES POLYNOMIAL TESTS** (new
+  `Square/ContinuousMomentGenInjective.lean`): two compactly-supported polynomial tests whose
+  *continuous* transforms agree at every integer exponent below `max d d'` are the same function on
+  `[0,1]` (`compactMomentGenLim_poly_eq_imp_function_eq`) — the injectivity/uniqueness half of the
+  transform pair, now realized for the continuous transform object itself. Injectivity/separation was
+  proven for the integer moment sequence (bricks 87/88, via `L²`-definiteness); the a→0 continuous
+  transform agrees with the integer Mellin moment at every integer exponent (brick 115), so equal
+  continuous transforms ⇒ equal moments ⇒ (brick 88) equal functions on `[0,1]`. This lifts the pair's
+  uniqueness direction from the moment sequence to the genuine continuous transform of bricks 112–122.
+  **Honest scope**: injectivity/separation on the **polynomial** class at integer exponents, over
+  `[0,1]`; NOT general (bounded-Lipschitz) determinacy — that still needs Bernstein — NOT inversion, NOT
+  any positivity. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 122 — THE ℤ-LINEAR TRANSFORM COMPUTES ON A ℤ⁺-FAMILY** (new
+  `Square/ContinuousMomentGenFamily.lean`): `compactMomentGenLim (k·clampTest) n ≈ k/(n+2)`
+  (`compactMomentGenLim_natScale_clamp`), for every integer scale `k` and integer exponent `n`. The
+  concrete payoff of the linearity arc: homogeneity (brick 121) carries the single-test closed form
+  `1/(n+2)` (brick 116) across the whole `ℤ⁺`-orbit of `clampTest` with no new analysis —
+  `transform(k·clampTest)(n) ≈ k·(1/(n+2)) = k/(n+2)` — exhibiting the continuous transform as a genuinely
+  *computable* `ℤ`-linear map on an infinite family of tests, not merely an existence object. **Honest
+  scope**: a closed-form evaluation on the `ℤ⁺`-clamp family at integer exponents; NOT the
+  pairing/inversion, NOT any positivity. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 121 — THE CONTINUOUS TRANSFORM IS ℤ⁺-HOMOGENEOUS** (new
+  `Square/ContinuousMomentGenScale.lean`): `compactMomentGenLim (k·φ) s ≈ k·compactMomentGenLim φ s`
+  (`compactMomentGenLim_natScale`), where `k·φ = natScale k φ` is the `k`-fold sum of a test and the
+  value side scales by `natScaleR`, the `k`-fold real sum. With additivity/negation/subtraction
+  (bricks 118–120) this completes the continuous transform as a genuinely **ℤ-linear map** on the test
+  class — it commutes with `+`, `−`, and integer scaling. Proof by induction on `k` from additivity:
+  `natScale (k+1) φ = φ + natScale k φ`, so `transform(k+1)·φ ≈ transform φ + k·transform φ` (brick 118
+  + IH); the base `transform(0·φ) = transform 0 = 0` is `Rlim_zero` against `innerI_zeroL2`
+  (`compactMomentGenLim_zeroL2`). The one obstacle was mechanical: `natScale` is sealed
+  (`@[irreducible]`, keeping its `k`-fold structure from whnf-exploding when a moment reads `.M`), which
+  also blocks unfolding it inside `compactMomentGenLim` — resolved by unfolding it as a *propositional*
+  equation first (`natScale_succ`/`natScale_zero`, `rfl` under a local `unseal`), rewriting, and only
+  then applying the additivity law, so the seal is never forced through `momRate`. **Honest scope**:
+  integer homogeneity; the transform's linearity is now complete; NOT the pairing/inversion. Step 4 is
+  RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 120 — THE CONTINUOUS TRANSFORM RESPECTS SUBTRACTION** (new
+  `Square/ContinuousMomentGenSub.lean`): `compactMomentGenLim (φ − ψ) s ≈ compactMomentGenLim φ s −
+  compactMomentGenLim ψ s` (`compactMomentGenLim_sub`), completing the continuous transform as a **linear
+  map** on the test class. Immediate composite of additivity (brick 118) and negation (brick 119), since
+  `L2Test.sub φ ψ = L2Test.add φ (−ψ)`: `transform(φ − ψ) ≈ transform φ + transform(−ψ) ≈ transform φ −
+  transform ψ`. With add/neg/sub the transform's linearity is complete — the algebraic half of the
+  transform pair. **Honest scope**: subtraction-compatibility; NOT the pairing/inversion. Step 4 is RH;
+  crux fields stay `none`.
+- **The pre-Hilbert layer, brick 119 — THE CONTINUOUS TRANSFORM IS NEGATION-COMPATIBLE** (new
+  `Square/ContinuousMomentGenNeg.lean`): `compactMomentGenLim (−φ) s ≈ −compactMomentGenLim φ s`
+  (`compactMomentGenLim_neg`), the second structural law of the transform pair — with additivity
+  (brick 118) this makes the continuous transform a genuine linear map on the test class. The proof
+  mirrors additivity: at each floor `innerI_neg_left` flips the sign (`(−φ).M = φ.M`, so brick 117 gives
+  the same rate), and `Req_of_geom_rate` passes the two-floor bound to the limit. **Honest scope**:
+  negation-compatibility; NOT the full pairing/inversion. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 118 — THE CONTINUOUS TRANSFORM IS ADDITIVE** (new
+  `Square/ContinuousMomentGenLinear.lean`): `compactMomentGenLim (φ + ψ) s ≈ compactMomentGenLim φ s +
+  compactMomentGenLim ψ s` (`compactMomentGenLim_add`) — the first structural law of the transform pair.
+  Now that the transform is the schedule-independent `a → 0` limit at every floor (brick 117), it can be
+  treated as a map and its algebra proven: at each floor the compact moment is additive
+  (`innerI_add_left`), and passing to the limit — controlled by the brick-117 rate on all three of
+  `φ+ψ`, `φ`, `ψ` — gives additivity. The passage uses a reusable Archimedean collapse
+  `Req_of_geom_rate` (two reals within `E·(1/2^m)` for every `m` are equal, the constant `E` absorbed by
+  the `n < 2^n` reindex). **Honest scope**: additivity of the continuous transform in the test slot; NOT
+  the full pairing/inversion. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 117 — THE CONTINUOUS TRANSFORM IS THE `a → 0` LIMIT AT EVERY FLOOR**
+  (new `Square/ContinuousMomentGenRate.lean`): `|compactMoment φ (1/2^m) s − compactMomentGenLim φ s| ≤
+  2·M_φ·(1/2^m)` (`compactMomentF_dist_lim`) — the transform value is **schedule-independent**. Brick 112
+  defined the continuous transform as the Bishop limit along one reindex schedule `r(j) = momRate φ j`;
+  to use it as a structured map (linearity, the pairing) the value must be the honest `a → 0` limit at
+  every floor, not just the reindexed ones. This supplies exactly that, with an explicit rate,
+  triangulating through the reindexed sequence at depth `j = m + k` (brick 111's floor-Cauchy bound for
+  the `[m, r(j)]` gap, `Rabs_dist_Rlim` for the `[r(j), lim]` gap) and killing the residual `2/(k+1)`
+  with the Archimedean collapse. **Honest scope**: the schedule-independent convergence rate — the
+  ingredient the transform's linearity consumes; NOT the pair or inversion yet. Step 4 is RH; crux fields
+  stay `none`.
+- **The pre-Hilbert layer, brick 116 — THE CONTINUOUS TRANSFORM COMPUTES** (new
+  `Square/ContinuousMomentClampValue.lean`): `compactMomentGenLim clampTest n ≈ 1/(n+2)`
+  (`compactMomentGenLim_clamp_eq`) — a concrete closed-form evaluation of the abstract `a → 0` continuous
+  Mellin transform on the clamped identity, verifying end to end that the machinery produces the correct
+  number. At the integer exponent `n` the continuous transform is the integer moment (brick 115), and the
+  integer moment of `clampTest` obeys the Hausdorff law `mellinMoment clampTest n = 1/(n+2)`
+  (`mellinMoment_clamp_general`, brick 33) — so the two compose to `1/(n+2)`. **Honest scope**: a concrete
+  evaluation at integer exponents; NOT the transform pair, NOT inversion. Step 4 is RH; crux fields stay
+  `none`.
+- **The pre-Hilbert layer, brick 115 — THE CONTINUOUS TRANSFORM AT THE INTEGER EXPONENT IS THE INTEGER
+  MELLIN MOMENT** (new `Square/ContinuousMomentNatLimit.lean`): `compactMomentGenLim φ n ≈ mellinMoment
+  φ n` for every `n` (`compactMomentGenLim_natExpR_eq_mellin`) — closing the doc's "identification with
+  the integer moments beyond `s = 1`" (brick 109 was `n = 1` only). Brick 112 built the continuous
+  Mellin moment at general real `s` as the `a → 0` limit; this pins that limit, at every integer exponent
+  `s = n`, to the pre-existing integer moment `mellinMoment φ n = ∫₀¹ φ·xⁿ`. The floor defect at exponent
+  `n` (brick 114) is within `1/(j+1)` of the integer moment after the same constant-absorbing reindex as
+  brick 109, so `Rlim_eval_real_rate` identifies the Bishop limit with the integer moment. The continuous
+  transform and the discrete moment sequence now agree on the integers. **Honest scope**: identification
+  at integer exponents; NOT the transform pair, NOT inversion. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 114 — THE FLOOR DEFECT AT THE INTEGER EXPONENT DECAYS LIKE `1/2^m`**
+  (new `Square/ContinuousMomentNatTail.lean`): `|compactMoment φ (1/2^m) n − mellinMoment φ n| ≤
+  2·M_φ·(1/2^m)` (`compactMomentF_natExpR_sub_mellin_bound`). Brick 113 makes the compact integrand
+  agree with `(powTest n).f` on `[1/2^m, 1]`, so their difference — realized as `innerI φ
+  (compactPowTest_n −ₜ powTest n)` through `innerI_sub_right` — vanishes on the dyadic tail and is
+  bounded by `2·M_φ`, and the dyadic tail bound (brick 107) gives the geometric decay. This is brick 108
+  (the `s = 1` floor defect) at general integer exponent — the Cauchy estimate that pins the `a → 0`
+  limit to the integer Mellin moment. **Honest scope**: a quantitative floor-defect bound at the integer
+  exponent; NOT the limit identification (brick 115). Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 113 — THE COMPACT POWER AT THE INTEGER EXPONENT IS THE CLAMPED
+  MONOMIAL** (new `Square/ContinuousMomentNatExp.lean`): `compactPow a (natExpR n) t ≈ (powTest n).f t
+  = clamp01(t)ⁿ` for every real `t ∈ [a,1]` and every `n` (`compactPow_natExpR_eq_powTest`),
+  generalizing brick 106 (`s = 1`) to all integer exponents. The exponent `natExpR n = 1 + ⋯ + 1` (`n`
+  ones); the identity is a clean induction — base `compactPow_zero`, step the power law
+  `compactPow_exp_add` (brick 99) + the inductive hypothesis + brick 106 (`compactPow a 1 t ≈ clamp01
+  t`), whose product is `(powTest (n+1)).f t` by the `L2Test.mul` definition of `powTest`. Packaged with
+  `natExpR_nonneg` and `natExpR_eq_ofQ` (`≈ ofQ⟨n,1⟩`, the `σ = ⟨n,1⟩` bound). **Honest scope**: the
+  integrand identity at the integer exponent on `[a,1]`; NOT the limit identification (brick 115). Step 4
+  is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 112 — THE CONTINUOUS MELLIN MOMENT AT GENERAL REAL `s` EXISTS** (new
+  `Square/ContinuousMomentGenLimit.lean`): the compact moment at exponent `s` converges, as the floor
+  `→ 0`, to a constructed real `compactMomentGenLim φ s`, defined as the Bishop limit of the regular
+  reindexed floor sequence — **the Mellin transform of `φ` at the continuous exponent `s ∈ [0, σ]`**,
+  the object the Mellin front was missing at general `s`. At general `s` there is no integer target, so
+  the content is that the floor sequence is CAUCHY (`compactMomentGenSeq_RReg`): brick 111's
+  floor-difference bound at the two reindexed depths, weakened through the same constant-absorbing
+  reindex `r(j)` as brick 109 (via `n < 2^n`), feeding `RReg_of_real_bound` (the two orderings by
+  `Nat.le_total`); `compactMomentGenSeq_tendsto` records the `a → 0` convergence (`Rlim_tendsTo`). This
+  is "the continuous parameter proper" — the transform defined pointwise in real `s`. **Honest scope**:
+  the limit's existence (via regularity) at general real `s`; this DEFINES the transform pointwise but
+  is NOT the transform PAIR, NOT inversion, NOT any positivity. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 111 — THE COMPACT MELLIN MOMENT AT GENERAL `s` IS CAUCHY IN THE
+  FLOOR** (new `Square/ContinuousMomentGenTail.lean`): `|compactMoment φ (1/2^p) s − compactMoment φ
+  (1/2^q) s| ≤ 2·M_φ·(1/2^p)` for `p ≤ q` (`compactMoment_floor_diff_bound`). At general real `s` there
+  is no integer target (unlike `s = 1`, brick 109), so the deliverable is that the floor sequence
+  CONVERGES — this brick supplies the Cauchy estimate. The two compact-power integrands agree on the
+  overlap `[1/2^p, 1]` (real-level floor-independence, brick 110), so their difference — realized as
+  `innerI φ (compactPowTest_p −ₜ compactPowTest_q)` through `innerI_sub_right` — vanishes on that dyadic
+  tail and is bounded by `2·M_φ`, and the dyadic tail bound (brick 107) gives the geometric decay.
+  Structurally identical to brick 108, with real-level floor-independence replacing the clamp identity.
+  **Honest scope**: the Cauchy estimate at general `s`; NOT the limit object yet (brick 112). Step 4 is
+  RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 110 — REAL-LEVEL FLOOR INDEPENDENCE** (new
+  `Square/ContinuousMomentFloorReal.lean`): `compactPow a s x ≈ compactPow a' s x` for every real
+  `x ≥` both floors (`compactPow_floor_indep_real`), lifting brick 97's rational-point
+  floor-independence to all reals. The certified integral only needed rationals for the fixed-floor
+  moment, but the `a → 0` limit at general `s` needs the difference of two integrands to vanish on the
+  whole overlap `[max(a,a'), 1]`. Real-level inertness (`clampedInv_eq_of_ge`: above the floor the
+  clamped reciprocal IS `1/x`) supplies it — above both floors both compact powers equal
+  `gPowClamp(−s)(1/x)`; the positivity witness for `x` is free from `x ≥ a > 0` (`Pos_mono`). **Honest
+  scope**: floor-independence of the integrand at every real point above both floors; NOT the limit,
+  NOT any `x^s` identification. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 109 — THE `a → 0` MELLIN LIMIT AS A CONSTRUCTED LIMIT OBJECT** (new
+  `Square/ContinuousMomentLimit.lean`): the compact Mellin moment at `s = 1` converges, as the floor
+  `1/2^{r(j)} → 0`, to the integer Mellin moment — `Rlim (compactMomentSeq φ) ≈ mellinMoment φ 1`
+  (`compactMomentOne_limit_eq_mellin`). Brick 108's quantitative defect `2·M_φ·(1/2^m)` is packaged into
+  a genuine Bishop limit: the depth reindex `r(j) = (⌈2·M_φ⌉+1)·(j+1)` absorbs the constant `2·M_φ` (via
+  `n < 2^n`), so the reindexed sequence `compactMomentSeq φ j = compactMoment φ (1/2^{r(j)}) 1` lies
+  within `1/(j+1)` of the target (`compactMomentSeq_rate`); it is a regular sequence
+  (`compactMomentSeq_RReg`, the triangle through the shared limit) whose Bishop limit **is**
+  `mellinMoment φ 1` (`Rlim_eval_real_rate`). This is "the continuous parameter proper" at the
+  transform's boundary `s = 1`: the compact totalization's floor dependence is a removable artifact and
+  the limit recovers the genuine integer Mellin moment. **Honest scope**: the `a → 0` limit at `s = 1`
+  as a constructed real limit; NOT the transform pair, NOT inversion, NOT the full continuous
+  `s`-parameter transform. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 108 — THE FLOOR DEFECT DECAYS LIKE `1/2^m`** (new
+  `Square/ContinuousMomentTailBound.lean`): `|compactMoment φ (1/2^m) 1 − mellinMoment φ 1| ≤
+  2·M_φ·(1/2^m)` (`compactMomentOne_sub_mellin_bound`) — **the `a → 0` Mellin limit made quantitative**.
+  Brick 106 pins the two integrands together on `[1/2^m, 1]`, so their difference `φ·(compactPow − clamp)`
+  vanishes there and is bounded by `2·M_φ` on `[0, 1/2^m)`; realized as `innerI φ (compactPowTest −ₜ
+  powTest 1)` through the new second-slot subtraction `innerI_sub_right` (derived from `innerI_symm` and
+  the first-slot `innerI_sub_left`), it feeds the dyadic tail bound (brick 107) to give the geometric
+  `2·M_φ/2^m` decay. As the depth `m → ∞` the floor `1/2^m → 0` and the defect vanishes — an explicit
+  modulus of convergence for the floor-dependence brick 106 localized. **Honest scope**: a quantitative
+  floor-defect bound at `s = 1`, compact side; NOT the transform pair, NOT inversion, NOT yet the
+  continuous parameter as a limit object. Step 4 is RH; crux fields stay `none`.
+- **Certified integration, brick 107 — THE DYADIC TAIL BOUND** (new `Square/IntegralTailBound.lean`): a
+  globally-bounded (`|f| ≤ B`), Lipschitz integrand that vanishes on the dyadic tail `[1/2^m, 1]` has
+  `|∫₀¹ f| ≤ B·(1/2^m)` (`riemannIntegral_dyadic_tail_bound`). Induction on the depth `m` via the
+  midpoint split (brick 68): at `m+1` the `[1/2, 1]` half vanishes by hypothesis (window bound with
+  `B = 0`) and the `[0, 1/2]` half rescales to depth `m` under the affine pullback, the width factor
+  `1/2` supplying the geometric decay; at `m = 0` the global `|∫₀¹ f| ≤ B` (comparison against the
+  constants `±B`, a private base case). The genuine subdivision identity `∫₀¹ = ∫₀^a + ∫_a^1` at an
+  arbitrary rational `a` is **not** in the repo and is **not needed** — the floor sequence is ours to
+  choose, so the dyadic floors `1/2^m`, reachable by the midpoint split alone, suffice. **Honest scope**:
+  a quantitative decay bound for the certified `[0,1]` integral; integration substrate, nothing here
+  touches the Weil form. Crux fields stay `none`.
+- **The pre-Hilbert layer, brick 106 — THE COMPACT POWER AT `s = 1` AGREES WITH THE CLAMPED-IDENTITY TEST
+  ON `[a,1]`** (new `Square/ContinuousMomentClamp.lean`): `compactPow a 1 t ≈ clampTest.f t` for every
+  real `t ∈ [a,1]` (`compactPow_one_eq_clamp`), the integrand-agreement form of brick 104. `clampTest.f =
+  clamp01` is inert on `[0,1]` (`clamp01 t ≈ t`) and `compactPow a 1 t ≈ t` on `[a,1]` (brick 104), so
+  the two integrands `compactPow a 1` and `(powTest 1).f` coincide off the sub-`a` region `[0,a)`. Since
+  `innerI φ ·` integrates over `[0,1]`, this pins the entire floor-dependence of `compactMoment φ a 1`
+  (versus `mellinMoment φ 1`) to `[0,a)` — the `O(M·a)` tail whose `a → 0` limit is the last Mellin step.
+  **Honest scope**: integrand agreement on `[a,1]` at `s = 1`; the `a → 0` limit converting it to
+  `compactMoment φ a 1 ≈ mellinMoment φ 1` remains. No transform pair, no inversion, no positivity. Step
+  4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 105 — THE COMPACT POWER AT EXPONENT `2` IS THE SQUARE FOR GENERAL REAL
+  `t`** (new `Square/ContinuousMomentGenTwo.lean`): `compactPow a 2 t ≈ t²` for every real `t ∈ [a,1]`
+  (`compactPow_two_general`), composing the general-real `s = 1` identity (brick 104) with the power law
+  (brick 99, valid for all real `t`): `compactPow a (1+1) t ≈ compactPow a 1 t · compactPow a 1 t ≈ t·t`.
+  The integer `t^n` identification now holds for all real `t ∈ [a,1]` by iterating the power law, not
+  only rationals. **Honest scope**: the general-real `s = 2` value on `[a,1]`; general integer `n`
+  iterates this, the `a → 0` limit is still separate. No transform pair, no inversion, no positivity.
+  Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 104 — THE COMPACT POWER AT EXPONENT `1` IS THE IDENTITY FOR GENERAL
+  REAL `t`** (new `Square/ContinuousMomentGeneral.lean`): `compactPow a 1 t ≈ t` for every real
+  `t ∈ [a,1]` (`compactPow_one_general`), lifting the rational-point value (brick 102) to all reals by
+  density — the doc's flagged "not for general real `t`", closed at `s = 1`. `compactPow a 1` is
+  Lipschitz (brick 93) and equals `q` at every rational `q ∈ [a,1]` (brick 102), so for any real
+  `t ∈ [a,1]` the clamped rational sample `qN = clamp(t.seq N, [a,1])` is within `1/(N+1)` of `t`
+  (`band_approx_close`, via the `1`-Lipschitz band projection `qBandQ`) and carries the value:
+  `|compactPow a 1 t − t| ≤ (L+1)/(N+1) → 0` (`step_bound` + Archimedean collapse `Rle_of_Rsub_le_eps`).
+  No `exp∘log` inverse is used — the density route goes entirely through the rational values (the
+  per-sample estimate is factored through `step_bound` with an ABSTRACT rational to keep `whnf` off the
+  nested clamp term). **Honest scope**: the general-real identification at `s = 1` on `[a,1]`; general
+  `s` iterates the power law (bricks 99/103), the `a → 0` limit is still separate. No transform pair, no
+  inversion, no positivity. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 103 — THE COMPACT POWER AT EXPONENT `2` IS THE SQUARE AT RATIONAL
+  POINTS** (new `Square/ContinuousMomentTwo.lean`): `compactPow a 2 (q) ≈ q²` for every rational
+  `q ∈ (a,1]` (`compactPow_ofQ_two`), the `t² = t·t` value obtained by composing the power law (brick
+  99, `compactPow a (1+1) = compactPow a 1 · compactPow a 1`) with the `s = 1` value (brick 102). The
+  integer-power evaluation drops out of the exponent-structure laws with no new analysis — the same
+  route lifts to every integer exponent by iterating the power law. **Honest scope**: the `s = 2` value
+  at rationals, a worked instance of the integer-power reader the moment identification iterates. No
+  transform pair, no inversion, no positivity, no `a → 0` limit, no general real `t`. Step 4 is RH; crux
+  fields stay `none`.
+- **The pre-Hilbert layer, brick 102 — THE COMPACT POWER AT EXPONENT `1` IS THE IDENTITY AT RATIONAL
+  POINTS** (new `Square/ContinuousMomentOne.lean`): `compactPow a 1 (q) ≈ q` for every rational
+  `q ∈ (a,1]` (`compactPow_ofQ_one`), the `t^1 = t` specialization completing the endpoint picture
+  alongside brick 95's `t^0 = 1`. The engine is `Rexp_logN_sub`: `exp(logN A − logN D) ≈ A/D` for all
+  `A, D ≥ 1` (via `RexpReal_add`, `Rexp_logN`, and `RexpReal_neg_eq_recip` for `exp(−logN D) = 1/D`) —
+  the rational-value reader for brick 101's closed form; at `s = 1` the exponent `−(log q_den − log
+  q_num)` collapses to `log q`, read off as `q`. **Honest scope**: the `s = 1` value at rationals;
+  `Rexp_logN_sub` is the reusable exp-of-log-ratio reader the integer-`n` agreement and moment
+  identification will consume. No transform pair, no inversion, no positivity, no `a → 0` limit. Step 4
+  is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 101 — THE `t^s` IDENTIFICATION AT ALL RATIONAL POINTS OF `(a,1]`** (new
+  `Square/ContinuousMomentValueAll.lean`): `compactPow a s (q) ≈ q^s` for every rational `q ∈ (a,1]`,
+  with NO lower cutoff (`compactPow_ofQ_pow_all`). Brick 100 was capped at `q ≥ 1/4` by the `[1,4]`
+  radius of `RlogPos_ofQ_eq_logN`; that cap is lifted here by the general bridge `RlogPos_eq_Rlog_gen` at
+  `K = (A+D)²` — for the base `A/D` the convergence condition `1 ≤ K·(1−ρ²)` (with `ρ = (A−D)/(A+D)`,
+  `1−ρ² = 4AD/(A+D)²`) becomes `1 ≤ 4AD`, true for all `A, D ≥ 1`. So `RlogPos_ofQ_eq_logN_all` evaluates
+  `log(A/D) = logN A − logN D` for every `A ≥ D ≥ 1`, and the whole chain (`rrpowPos_ofQ_eq_all` →
+  `gPowClamp_ofQ_eq_all` → `compactPow_ofQ_pow_all`) drops the `A ≤ 4D` hypothesis throughout. The
+  identification now holds at EVERY rational partition point `i/(N+1) ∈ [a,1]` the certified integral
+  samples. **Honest scope**: covers all rational `q ∈ (a,1]`; the general REAL-`t` identification and the
+  `a → 0` limit remain separate steps. No transform pair, no inversion, no positivity. Step 4 is RH; crux
+  fields stay `none`.
+- **The pre-Hilbert layer, brick 100 — THE `t^s` IDENTIFICATION AT RATIONAL POINTS** (new
+  `Square/ContinuousMomentValue.lean`): `compactPow a s (q) ≈ exp(−s·(log q_den − log q_num)) = q^s`
+  (`compactPow_ofQ_pow`) for every rational `q ∈ [max(a, 1/4), 1]` — the genuine `t^s` identification the
+  doc flagged as needing `log(1/t) = −log t`, delivered at the rational points the certified integral
+  actually samples, WITHOUT that lemma. The block on the general-real identification is that reals lack
+  per-index band bounds; an `ofQ` constant has a *constant* sequence, so its bounds are trivial. At
+  `q ≥ a` the compact power drops to `gPowClamp(−s)(1/q)` (brick 97), on the clean base `1/q ∈ [1,4]`
+  (i.e. `q ∈ [1/4,1]`) the reciprocal-clamp is inert (`gPowClamp_ofQ_eq`, via `RlogPos_congr_gen` at
+  `B = 4`), and `RlogPos(1/q)` evaluates to `logN q_den − logN q_num` (`rrpowPos_ofQ_eq`, off
+  `RlogPos_ofQ_eq_logN` — which also gives `rlogPos_one`, `log 1 = 0`). So the totalized power IS the
+  honest power at the partition points `i/(N+1)`. **Honest scope**: the identification holds at RATIONAL
+  points `q ∈ [max(a,1/4),1]` (the `[1,4]`-radius of `RlogPos_ofQ_eq_logN` forces `q ≥ 1/4`); the
+  general real-`t` identification, and `compactMoment φ a n ≈ mellinMoment φ n` (which needs it at all
+  samples plus the `a→0` limit), stay open. No transform pair, no inversion, no positivity. Step 4 is RH;
+  crux fields stay `none`.
+- **The pre-Hilbert layer, brick 99 — THE POWER LAW IN THE EXPONENT** (new
+  `Square/ContinuousMomentAdd.lean`): `compactPow a (s + s') t ≈ compactPow a s t · compactPow a s' t`
+  (`compactPow_exp_add`), i.e. `t^{s+s'} = t^s·t^{s'}` on the totalized compact power (brick 93) — the
+  third and last exponent-structure law after continuity (brick 96) and monotonicity (brick 98). At a
+  fixed `t` the compact power is `exp(−s·L_t)`, and `exp` turns the additive exponent into a product:
+  `exp(−(s+s')·L_t) = exp((−s·L_t)+(−s'·L_t)) = exp(−s·L_t)·exp(−s'·L_t)` via `Rneg_Radd`,
+  right-distributivity, and `RexpReal_add`. So the totalized power is a homomorphism `(ℝ,+) → (ℝ,·)` in
+  the exponent — the defining functional equation of a power. **Honest scope**: the pointwise power law
+  (`s, s'` any reals — purely `exp`'s additivity); still the totalized power, not identified with `t^s`
+  off the clamp (needs `log(1/t) = −log t`). No transform pair, no inversion, no positivity. Step 4 is
+  RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 98 — THE COMPACT POWER IS ANTITONE IN THE EXPONENT** (new
+  `Square/ContinuousMomentMono.lean`): `s ≤ s' ⟹ compactPow a s' t ≤ compactPow a s t`
+  (`compactPow_antitone_exp`) — the monotone companion to brick 96's continuity; together they
+  characterize how the continuous Mellin integrand (brick 93) depends on `s` (continuously and
+  monotonically). At a fixed `t` the compact power is `exp(−s·L_t)` with `L_t = compactBaseLog a t ≥ 0`,
+  so a larger exponent scales `−s·L_t` down and `exp` is monotone (`RexpReal_le_of_le`) — the familiar
+  fact that a base in `(0,1]` decreases under a larger exponent, here on the totalized power, for ALL
+  `t` (no sign hypothesis on `s`). **Honest scope**: pointwise antitonicity of the integrand; the
+  moment-level `compactMoment φ a s' ≤ compactMoment φ a s` would need a GLOBALLY non-negative test and
+  is not asserted. No transform pair, no inversion, no positivity. Step 4 is RH; crux fields stay
+  `none`.
+- **The pre-Hilbert layer, brick 97 — THE TRANSFORM'S INTEGRAND IS FLOOR-INDEPENDENT AT RATIONAL SAMPLE
+  POINTS** (new `Square/ContinuousMomentFloor.lean`): `compactPow a s (q) ≈ (1/q)^{−s}` for every
+  rational `q ≥ a` (`compactPow_ofQ`) — at `q ≥ a` the clamp is inert (`clampedInv a q = 1/q`), so the
+  value drops the floor `a` — hence two floors `a, a' ≤ q` give the *same* integrand value at `q`
+  (`compactPow_floor_indep`). The certified Riemann integral samples its integrand only at the RATIONAL
+  partition points `i/(N+1) ∈ [0,1)`, so above the floor those samples are floor-free: the only
+  floor-dependence of `compactMoment φ a s` is through the sub-`a` points — the `O(M·a^{s+1})` tail of
+  brick 93 — the structural fact the `a → 0` limit rests on. **Honest scope**: floor-independence of the
+  integrand VALUES at rational points `≥ a`; the `a → 0` limit of `compactMoment` itself (a Cauchy
+  estimate on the sub-`a` tail) is not assembled, and `(1/q)^{−s}` is still the reciprocal power, not
+  `q^s` (which needs `log(1/q) = −log q`). No transform pair, no inversion, no positivity. Step 4 is RH;
+  crux fields stay `none`.
+- **The pre-Hilbert layer, brick 96 — THE COMPACT POWER IS LIPSCHITZ IN THE EXPONENT** (new
+  `Square/ContinuousMomentExp.lean`): `|compactPow a s x − compactPow a s' x| ≤ 4·|s − s'|·L_x`
+  (`compactPow_exp_lipschitz`) — the pointwise continuity in `s` that makes the continuous Mellin
+  parameter (brick 93) a genuinely *continuous* one. At a fixed `x` the compact power is `exp(−s·L_x)`
+  with `L_x = log(max(1/max(x,a),1)) ≥ 0` (`compactBaseLog`, the clamped-reciprocal base-log), so the
+  `s`-difference is `|exp(−s·L_x) − exp(−s'·L_x)| ≤ 4·|(−s·L_x)−(−s'·L_x)| = 4·|s−s'|·L_x`, via the
+  symmetric exp-Lipschitz `RexpReal_abs_lipschitz` (bound `1`, each exponent `−s·L_x ≤ 0`) and
+  distributivity. **Honest scope**: pointwise continuity with the `x`-dependent constant `4·L_x`; the
+  UNIFORM constant (needed to carry continuity to `compactMoment φ a s` by integration) requires
+  `L_x ≤ log(1/a)` for all `x`, i.e. the per-index `[1,1/a]`-band presentation of the clamped
+  reciprocal, and is not established here. No transform pair, no inversion, no positivity. Step 4 is
+  RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 95 — THE CONTINUOUS TRANSFORM SPECIALIZES TO THE INTEGER SKELETON AT
+  `s = 0`** (new `Square/ContinuousMomentZero.lean`): `compactMoment φ a 0 ≈ mellinMoment φ 0 = ∫₀¹ φ`
+  — the consistency check that the continuous parameter (brick 93) agrees with the integer moment map
+  where they overlap. At `s = 0` the compact power is the constant `1` everywhere (`compactPow_zero`:
+  `t^0 = exp(0·log t) = exp 0 = 1`, uniformly in the floor `a` — the exponent kills the log before the
+  base/clamp matter), so the compact power test and `oneTest = powTest 0` agree on `[0,1]`, and the
+  certified `L²` pairing — which only integrates over `[0,1]` — cannot distinguish them
+  (`innerI_right_congr_on_unit`). This is the first EVALUATION of the continuous transform (bricks
+  93–94 built and pinned its algebra; this reads off a value) and the anchor that the continuous
+  exponent genuinely extends the integer moments. **Honest scope**: the single specialization `s = 0`;
+  the general `compactMoment φ a n ≈ mellinMoment φ n` (`n ≥ 1`) needs the `t^s ≈ tⁿ` identification on
+  `[a,1]` (which needs `log(1/t) = −log t`) and is not established here. No transform pair, no
+  inversion, no positivity. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 94 — THE CONTINUOUS MELLIN TRANSFORM IS LINEAR IN THE TEST AND
+  `L²`-BOUNDED** (new `Square/ContinuousMomentLinear.lean`): the compact-side continuous moment
+  `compactMoment φ a s = ∫₀¹ φ·t^s` (brick 93) pairs `φ` against a *fixed* power test, so every
+  first-slot law of the certified `L²` pairing `innerI` transfers: additivity (`compactMoment_add`),
+  negation (`compactMoment_neg`), subtraction (`compactMoment_sub`), and the Cauchy–Schwarz bound
+  `(compactMoment φ a s)² ≤ ⟨φ,φ⟩·⟨t^s,t^s⟩` (`compactMoment_cs`) — the continuous-exponent analog of
+  the integer-moment `mellinMoment_cs`. So `compactMoment · a s` is a genuine `L²`-bounded linear
+  functional on the bounded-Lipschitz test class at every exponent `s ≥ 0`. **Honest scope**:
+  linearity and the CS bound at a fixed floor `a` — no continuity in `s`, no transform pair, no
+  inversion, no positivity beyond `innerI`'s. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 93 — THE COMPACT-SIDE CONTINUOUS MELLIN PARAMETER** (new
+  `Square/ContinuousMoment.lean`): the transform `∫₀¹ φ(t)·t^s dt` at a *continuous* real exponent
+  `s ≥ 0` (`compactMoment φ a s = innerI φ (compactPowTest …)`), generalizing the integer moments
+  `mellinMoment φ n = ∫₀¹ φ·tⁿ` to a continuum of exponents on the unit interval. The power `t ↦ t^s`
+  — which vanishes at `t = 0`, where the naive `RrpowPos` needs `t > 0` — is totalized by the
+  RECIPROCAL clamp `compactPow a s t = gPowClamp (−s) (clampedInv a t) = max(1/max(t,a),1)^{−s}`,
+  composing two already-certified integrands: on `[a,1]` this is exactly `t^s`, on `[0,a)` the floor
+  pins it at the constant `a^s`, so it is a genuine total, bounded (`≤ 1`, `compactPow_abs_le_one`),
+  `4·σ·(1/a)²`-Lipschitz (`compactPow_lipschitz`, composing `gPowClamp (−s)`'s `4·|s|`-Lipschitz bound
+  with `clampedInv a`'s `(1/a)²`-Lipschitz bound) `L2Test` (`compactPowTest`). This is the compact
+  analog of the theta half-line `thetaMellinPow` (`ThetaMellinPow.lean`), which already carries the
+  `σ ≤ 1` exponents — together the two ends of the Mellin front. **Honest scope**: continuous exponent
+  on `[0,1]` at a fixed rational floor `a`; the transform is totalized near `0`, so it matches the true
+  `∫₀¹ φ·t^s` only up to the sub-`a` tail, and the exact identification `compactPow a s ≈ t^s` on
+  `[a,1]` (needs `log(1/t) = −log t`) and the `a → 0` limit are NOT established here — no transform
+  pair, no inversion, no positivity. Step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 92 — THE EXTENDED PAIRING IS WELL-DEFINED ON `[0,1]`-CLASSES AT THE
+  COMPLETION LEVEL** (new `Square/PairingIUCongr.lean`): two `L²`-Cauchy sequences whose members agree
+  on `[0,1]` have equal extended pairing against every `ψ` (`pairingIU_congr_on_unit`) — brick 90's
+  left congruence carried through the Bishop limit by `Rlim_congr`. So the `[0,1]`-quotient structure
+  of bricks 89–91 (the pairing and metric factor through `[0,1]`) is stable under `L²` completion,
+  closing the `[0,1]`-restriction thread. **Honest scope**: well-definedness of the extended pairing
+  *values* on `[0,1]`-classes — NOT the `L²`-function-space limit member (still open), not the moment
+  problem. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 91 — THE `L²` METRIC FACTORS THROUGH `[0,1]`-RESTRICTION** (new
+  `Square/PairingUnitDist.lean`): `dist2I` depends only on the `[0,1]`-restrictions of both tests —
+  `φ ≈ φ'`, `ψ ≈ ψ'` on `[0,1]` ⟹ `dist2I φ ψ ≈ dist2I φ' ψ'` (`dist2I_congr_on_unit`), via brick 90's
+  two-argument congruence on `φ − ψ`. Together with bricks 82/89/90, the `L²` inner product and its
+  metric are a genuine *well-defined and definite* structure on the `[0,1]`-equivalence classes of
+  tests. **Honest scope**: well-definedness of the metric on the `[0,1]`-restriction, not the
+  `L²`-function-space limit member (open), not the moment problem. Nothing touches the Weil form; step
+  4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 90 — THE `L²` PAIRING FACTORS THROUGH `[0,1]`-RESTRICTION** (new
+  `Square/PairingUnitCongr.lean`): tests agreeing on `[0,1]` pair identically with everything —
+  `∀ x ∈ [0,1], φ(x) ≈ φ'(x)` ⟹ `⟨φ,ψ⟩ ≈ ⟨φ',ψ⟩` for every `ψ` (`innerI_left_congr_on_unit`), and by
+  symmetry in the right argument (`innerI_right_congr_on_unit`). Immediate from brick 89 on the
+  difference `φ − φ'` (which vanishes on `[0,1]`) through `innerI_sub_left`. With brick 81's
+  definiteness, the `L²` pairing is thus a genuine bilinear form on the `[0,1]`-equivalence classes of
+  tests — it depends only on the restriction to `[0,1]`, both arguments. **Honest scope**:
+  well-definedness on the `[0,1]`-restriction, not the `L²`-function-space limit member (open), not
+  the moment problem. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 89 — A TEST VANISHING ON `[0,1]` PAIRS TO ZERO WITH EVERYTHING**
+  (new `Square/PairingUnitZero.lean`): `⟨φ, ψ⟩ = ∫₀¹ φ·ψ ≈ 0` for every `ψ` when `φ` vanishes on
+  `[0,1]` (`innerI_zero_of_left_unit_zero` — the integrand vanishes at every rational partition point,
+  so `riemannIntegral_zero_of_partition_zero` from brick 81 applies), and the nullity survives `L²`
+  completion (`pairingIU_zero_of_left_unit_zero`, via `Rlim_zero`). This generalizes brick 81's
+  `⟨φ,φ⟩` version to an arbitrary second argument; with brick 79 the pairing's left null space is
+  *exactly* the tests vanishing on `[0,1]`, consistently across the pairing and its completion.
+  **Honest scope**: left-nullity from `[0,1]`-vanishing and its stability under `L²` completion of the
+  first argument — NOT the `L²`-function-space limit member (still open; only pairing *values* here),
+  not the moment problem. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 88 — THE MELLIN TRANSFORM SEPARATES POLYNOMIAL TESTS** (new
+  `Square/MellinInjectivePair.lean`): the two-test form of injectivity — two compactly supported
+  polynomial tests whose transforms (= moments) agree below `max d d'` are the same function on
+  `[0,1]` (`polyPN_moment_eq_imp_function_eq`). The difference `p − q` is decomposed through
+  `innerI`-bilinearity (`innerI_sub_left`) into `polyN` pieces, each killed by brick 64's
+  `innerI_polyPN_zero` — so no coefficient addition through the sealed `natScale` is needed — giving
+  `⟨p−q, p−q⟩ ≈ 0`, and brick 79's definiteness forces `p ≈ q` pointwise on `[0,1]`. **Honest scope**:
+  separation on the *polynomial* class — the uniqueness direction of the transform pair there, not
+  the full pair/inversion, not the continuous parameter, not beyond polynomials (the open
+  general-determinacy question, Bernstein). Nothing touches the Weil form; step 4 is RH; crux fields
+  stay `none`.
+- **The pre-Hilbert layer, brick 87 — THE MELLIN TRANSFORM IS INJECTIVE ON THE COMPACT POLYNOMIAL
+  CLASS** (new `Square/MellinInjective.lean`): a compactly supported polynomial test whose transform
+  vanishes below its coefficient count (`HatVanishes … d`, i.e. `f̂(n) = 0` for `n < d`) is the zero
+  **function** on `[0,1]` (`polyPN_hatVanishes_zero_function`) — a one-line weld of `polyPN_level_null`
+  (brick 64: co-support ⟹ `L²`-null) with `innerI_self_zero_imp_zero` (brick 79: `L²`-null ⟹ pointwise
+  zero). Since for compact support the transform is the moment sequence (`mellinHat_compact`), this is
+  the injectivity half of the transform pair, realized on the polynomial class. **Honest scope**:
+  injectivity on the *polynomial* class only — not the general transform pair / inversion, not the
+  continuous parameter, and not injectivity beyond polynomials (that is the open general-determinacy
+  question, needing Bernstein). Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 86 — THE MELLIN TRANSFORM RESPECTS NEGATION AND SUBTRACTION** (new
+  `Square/MellinLinearNeg.lean`): `(−φ)^(n) ≈ −φ̂(n)` (`mellinHat_neg` — moment by `innerI_neg_left`,
+  twisted window by `riemannIntegralI_neg` = `twTerm_neg`, tail by `genSum_Rneg_of_termwise` +
+  `Rlim_neg` = `twTail_neg`) and `(φ−ψ)^(n) ≈ φ̂(n) − ψ̂(n)` (`mellinHat_sub`, composing add+neg
+  through `L2Test.sub = add _ (neg _)`). With `mellinHat_add`, the transform's linear structure is
+  complete, so the transform-side vanishing conditions (`HatVanishes`) cut out genuine linear
+  **sub**spaces of the test class. **Honest scope**: the transform's linearity at the integer sample
+  points `f̂(n)` on the decaying-test class — not the continuous Mellin parameter, the transform
+  *pair*, or inversion, which remain open. Nothing touches the Weil form; step 4 is RH; crux fields
+  stay `none`.
+- **The pre-Hilbert layer, brick 85 — THE THREE FLAGSHIP LEVEL-3 MEMBERS ARE PAIRWISE-DISTINCT
+  FUNCTIONS ON `[0,1]`** (new `Square/CoSupportPairwise.lean`): brick 84's bridge across all three
+  pairs — `deep3`/`deep4` and `deep3`/`deep5` differ at the third moment (`−1/2520` vs `0`),
+  `deep4`/`deep5` at the fourth (`1/13860` vs `0`) — bundled as `deep345_pairwise_distinct_on_unit`.
+  So the moment-table independence (`deep345_independent`) is fully upgraded to a function-level
+  statement for the realized triple. **Honest scope**: pairwise distinctness (each pair does not
+  agree everywhere — the constructive negation), weaker than function-level linear independence of
+  the triple; realized members only. Nothing touches the Weil form; step 4 is RH; crux fields stay
+  `none`.
+- **The pre-Hilbert layer, brick 84 — DISTINCT CO-SUPPORT LEVELS ARE DISTINCT FUNCTIONS ON
+  `[0,1]`** (new `Square/CoSupportDistinct.lean`): the reusable bridge
+  `distinct_on_unit_of_moment_ne` — two tests whose *difference* carries a nonzero moment cannot
+  agree pointwise on `[0,1]` (metric iff brick 82 + moment bridge brick 63). Applied to the
+  filtration: `deep3` (level 3, third moment `−1/2520`) and `deep4` (level 4, third moment `0`)
+  differ in `⟨deep3−deep4, x³⟩ = −1/2520 ≠ 0`, hence are genuinely distinct **functions** on `[0,1]`
+  (`deep3_deep4_distinct_on_unit`) — the moment-table independence (`deep345_independent`) upgraded
+  to function level. **Honest scope**: `¬ (∀ x ∈ [0,1], φ(x) ≈ ψ(x))` — "do not agree everywhere",
+  the constructive negation, not a constructed point of disagreement; realized members only. Nothing
+  touches the Weil form; step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 83 — THE CO-SUPPORT MEMBERS ARE GENUINELY NONZERO FUNCTIONS ON
+  `[0,1]`** (new `Square/CoSupportFunction.lean`): the function-level upgrade the definiteness iff
+  unlocks. A test with nonzero `L²` self-energy cannot vanish identically on `[0,1]`
+  (`not_vanishing_of_innerI_self_not_zero`, the `.mpr` of `innerI_self_zero_iff_unit_zero`
+  contraposed). Chained against the certified `Pos` moment-energy (`momentL2Sq_zero_of_innerI...`
+  contrapositive), `deep3` (`deep3_not_vanishing_on_unit`) and the whole `combo345 a b c` family with
+  `a ≥ 1` (`combo345_not_vanishing_on_unit`) are honestly nonzero **functions** on `[0,1]` — the
+  filtration's distinct levels are now witnessed by tests that genuinely differ *as functions* there,
+  not merely in their moments.
+  - **Honest scope**: `¬ (∀ x ∈ [0,1], φ(x) ≈ 0)` — "does not vanish identically", the constructive
+    negation of universal vanishing, NOT a constructed point of non-vanishing. The co-support
+    skeleton's positivity is still diagonal-multiplier level only. Nothing touches the Weil form;
+    step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 82 — THE `L²` DISTANCE IS A GENUINE METRIC ON `[0,1]`** (new
+  `Square/L2MetricIff.lean`): the two-directional separation iff
+  (`dist2I_zero_iff_pointwise_eq`): `dist2I φ ψ ≈ 0 ⟺ ∀ x ∈ [0,1], φ(x) ≈ ψ(x)`. Brick 80 forward
+  (separation) + brick 81 reverse (definiteness) applied to the difference test `L2Test.sub φ ψ`
+  (whose value at `x` is `φ(x) − ψ(x)` definitionally). So the `L²` distance-squared vanishes
+  **exactly** on the pointwise-`[0,1]`-equality relation — a genuine metric there, zero set neither
+  coarser nor finer than pointwise agreement. **Honest scope**: the separation iff on `[0,1]`, not a
+  full isometry, not the moment problem. Nothing touches the Weil form; step 4 is RH; crux fields
+  stay `none`.
+- **The pre-Hilbert layer, brick 81 — `⟨φ,φ⟩` IS A DEFINITE INNER PRODUCT ON `[0,1]`** (new
+  `Square/L2DefiniteIff.lean`): the reverse of brick 79, closing definiteness to an **iff**
+  (`innerI_self_zero_iff_unit_zero`): `∫₀¹ φ² ≈ 0 ⟺ ∀ x ∈ [0,1], φ(x) ≈ 0`. The new direction — a
+  test vanishing at every point of `[0,1]` has zero `L²` energy (`innerI_self_zero_of_unit_zero`) —
+  goes through a **`[0,1]`-restricted** integral argument: the certified Riemann sums sample only the
+  rational partition points `i/(N+1) ∈ [0,1)`, so an integrand vanishing there has every Riemann sum
+  zero, hence every dyadic sum, hence the telescoping limit zero
+  (`riemannIntegral_zero_of_partition_zero`, via `riemannSum_congr` + `RsumN_const` +
+  `genSum_telescope` + `Rlim_zero`). The generic congruence lemmas quantify over *all* reals and are
+  unusable here (the converse is false off `[0,1]`, where the integral is blind), so the
+  partition-restricted lemma is the load-bearing new piece.
+  - Together the two directions make the `L²` seminorm a genuine **norm** on the bounded-Lipschitz
+    class mod pointwise-`[0,1]` equality: the pairing is positive-**definite**. **Honest scope**:
+    still not the moment problem (a nonzero test with every *moment* vanishing needs Bernstein).
+    Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 80 — THE `L²` INNER PRODUCT SEPARATES POINTS OF `[0,1]`** (new
+  `Square/L2Separation.lean`): two tests at `L²` distance zero agree at every point of `[0,1]`
+  (`dist2I_zero_imp_pointwise_eq`) — brick 79's point-definiteness applied to the difference test
+  (`dist2I φ ψ = ⟨φ−ψ, φ−ψ⟩`, so `≈ 0` forces `(φ−ψ)(x) ≈ 0`, and `(φ−ψ)(x) = φ(x) − ψ(x)`
+  definitionally). The `L²` class thereby **injects into the values on `[0,1]`**: the pairing's null
+  relation is pointwise equality there, so the completion axis is a genuine *pre-Hilbert* structure,
+  not merely semi-normed. Specialized to the polynomial class in `polyPN_dist2I_zero_imp_eq`.
+  - **Honest scope**: one direction, on `[0,1]` only — separation (injectivity into functions on
+    `[0,1]`), not a full isometry. The converse (agree on `[0,1]` ⟹ `dist2I ≈ 0`) is the
+    integral-of-a-vanishing-integrand direction, false off `[0,1]` and needing a `[0,1]`-restricted
+    argument not performed. Nothing touches the Weil form; step 4 is RH; crux fields stay `none`.
+- **The pre-Hilbert layer, brick 79 — DEFINITENESS AT EVERY POINT OF `[0,1]`** (new
+  `Square/DyadicDenseReal.lean`): every unit-interval real is dyadically approximable
+  (`dyadicApproximable_of_unit`), discharging brick 76's `DyadicApproximable` hypothesis for an
+  **arbitrary** `x ∈ [0,1]`. So `∫₀¹ φ² ≈ 0 ⟹ φ(x) ≈ 0` at **every** point
+  (`innerI_self_zero_imp_zero`), and a polynomial test with `d` vanishing moments is the zero
+  **function** on `[0,1]` (`polyPN_unit_zero`) — brick 64's moment-determinacy upgraded to a
+  function-level determinacy on the polynomial class.
+  - The mechanism is the one bricks 68–78 assembled: locate the real's own rational approximant
+    `x.seq N` to within `1/(N+1)` (`Rabs_sub_seq_le`), floor it to a dyadic point (brick 75), clamp
+    the index into range (brick 77), transport the vanishing value by the Lipschitz certificate
+    (brick 76). The one genuinely new ingredient is the **out-of-range case analysis**: the
+    approximant need not lie in `[0,1)`, so when it dips below `0` or reaches `1` the clamped point
+    sits at the boundary and the distance is bounded there directly from `0 ≤ x ≤ 1` (`case_lo`,
+    `case_hi`), not through the floor (`case_mid`). This is what the brick-78 note flagged as the one
+    remaining, purely-mechanical step; it is now performed.
+  - **Honest scope**: point-definiteness at every real point of `[0,1]` — a statement about the
+    value of a bounded-Lipschitz test at a point, **not** the moment problem. A nonzero test with
+    every *moment* vanishing is a different question, still open, still needing a constructive
+    approximation theorem (Bernstein) the repo does not have. Nothing touches the Weil form; step 4
+    is RH; the crux fields stay `none`.
+- **The pre-Hilbert layer, brick 78 — DEFINITENESS AT EVERY RATIONAL POINT** (new
+  `Square/DyadicDense.lean`): the rationals of `[0,1)` are dyadically approximable
+  (`dyadicApproximable_ofQ` — brick 75's floor + brick 77's clamp + `2^m` outrunning any rational
+  via `exists_depth`), which **discharges brick 76's `DyadicApproximable` hypothesis on the
+  rationals**. So `∫₀¹ φ² ≈ 0 ⟹ φ(q) ≈ 0` at every rational `q ∈ [0,1)`
+  (`innerI_self_zero_imp_rational_zero`), and brick 64's polynomial determinacy reaches the
+  **function** on a dense point set (`polyPN_rational_zero`). Every step is a `ℚ` computation; no
+  real is compared to anything.
+  - This is a strict strengthening of brick 74 (dyadic points → all rationals). The extension to
+    **all** reals is now purely mechanical in shape — `Rabs_sub_seq_le` plus the triangle
+    inequality, with the out-of-range approximant handled by a decidable case split — but is **not**
+    performed here.
+  - Honest scope: definiteness at every rational point, still not all points, and it says nothing
+    about the moment problem (a nonzero test with all *moments* vanishing, still open, still needs
+    Bernstein).
+
+- **The pre-Hilbert layer, brick 77 — THE CLAMPED DYADIC INDEX** (new `Square/DyadicClamp.lean`):
+  the second piece brick 76 named as missing. Brick 75's floor `⌊q·2^m⌋` lands in `[0, 2^m)` only
+  when `q` is already in `[0,1)`, but the density argument feeds it the approximants `x.seq N` of a
+  real `x ∈ [0,1]`, which need **not** be in range. `dyadJC q m := min (⌊q·2^m⌋) (2^m − 1)` caps
+  it; `dyadJC_lt` is unconditional, and `dyadJC_approx` shows the clamp is inert in range so brick
+  75's estimate survives.
+  - Honest scope: the clamped index and its range bound only. It does **not** prove the
+    approximation quality of the clamped point for an *out-of-range* `q` — that needs the
+    (decidable) case analysis on `q` below `0` / in range / at-or-above `1`, which is not carried
+    out. So `DyadicApproximable` is **still not discharged** and brick 74's definiteness remains
+    stated at dyadic points.
+
+- **Substrate — A REAL IS WITHIN `1/(N+1)` OF ITS OWN APPROXIMANT** (new
+  `Analysis/RSeqApprox.lean`): `|x − ofQ (x.seq N)| ≤ 1/(N+1)` (`Rabs_sub_seq_le`, and the flipped
+  orientation `Rabs_seq_sub_le`). One of the two pieces brick 76 named as missing. It says a Bishop
+  real's rational data is an *effective* approximation with a known rate, which is what makes the
+  density argument possible: one cannot locate a real by comparison, but one can read off a
+  rational within a prescribed distance and locate **that**, which is decidable. Definitional
+  unwinding plus regularity — `Rsub x (ofQ q)` reads at `2n+1`, and the slack `1/(2n+2) ≤ 2/(n+1)`
+  closes it.
+
+- **The pre-Hilbert layer, brick 76 — THE TRANSPORT HALF OF DENSITY** (new
+  `Square/L2DefiniteDensity.lean`): brick 74 gave `∫₀¹ φ² ≈ 0 ⟹ φ(p) ≈ 0` at dyadic `p`; this
+  carries the value to any point the dyadics approximate.
+  - `abs_le_of_near_dyadic`: `|φ(x)| ≤ L·|x − p|` — one line of Lipschitz, since `φ(p) ≈ 0`.
+  - `zero_of_dyadic_approximable`: if every rate is met by some dyadic point, `φ(x) ≈ 0`, by the
+    Archimedean criterion.
+  - What this buys is that the remaining work is now a **single, purely metric** statement with no
+    analysis in it: `DyadicApproximable x`. Non-vacuous (`dyadicApproximable_dyadPt`).
+  - **Honest scope — what is and is not proven.** `zero_of_dyadic_approximable` is stated *under*
+    `DyadicApproximable x` as a **hypothesis, not discharged here** for general `x ∈ [0,1]`. So
+    this brick does **not** by itself upgrade brick 74 from dyadic points to all points.
+    Discharging it needs two things the repo still lacks: a bound `|x − ofQ (x.seq N)| ≤ 1/(N+1)`
+    relating a real to its own approximants, and a clamp of `⌊q·2^m⌋` into `[0, 2^m)` for a
+    rational that may sit slightly outside `[0,1)` (brick 75 supplies the floor but assumes the
+    rational is already in range). Until both land, the definiteness statement of record remains
+    `innerI_self_zero_imp_dyadic_zero`, at dyadic points.
+
+- **Certified integration, brick 75 — EVERY RATIONAL HAS A DYADIC POINT WITHIN `1/2^m`** (new
+  `Square/DyadicApprox.lean`): `0 ≤ q`, `q.num.toNat < q.den` gives `j = ⌊q·2^m⌋ < 2^m` with
+  `|q − j/2^m| ≤ 1/2^m` (`dyadJ_lt`, `dyadApprox_spec`) — the constructive floor the density
+  extension of brick 74 was missing.
+  - **This is where the constructivity actually lives.** One cannot locate a *real* (given `x`
+    there is no deciding `x ≤ 1/2`), but one *can* locate a *rational*, because `ℚ` has decidable
+    order and `ℕ` division is computable. Every real carries rational approximants `x.seq N` of
+    known accuracy, so locating the rational suffices.
+  - The witness is `ℕ` division and its correctness is the division algorithm and nothing else:
+    `d·j + r = n·2^m` with `r < d` *is* `|q − j/2^m| ≤ 1/2^m` after clearing denominators.
+  - Two gate catches, both `Classical.choice` leaks that `lake build` accepted and `#print axioms`
+    rejected: **`omega` reasons classically about `n / d` when the divisor is a variable**, and
+    `Nat.lt_of_mul_lt_mul_left` is itself choice-dependent. Both replaced by explicit choice-free
+    steps (`bracket_core`'s two `calc`s; a `Nat.lt_or_ge` split for the cancellation).
+  - Honest scope: the **rational** half of the density argument, complete and self-contained. The
+    assembly — pushing it through `x.seq N` to a real `x`, then through `sq_ge_on_piece_near` to
+    conclude `φ(x) ≈ 0` for every `x ∈ [0,1]` — is **not** performed. Until it is, brick 74's
+    definiteness remains stated at dyadic points.
+
+- **Toward density (in `Square/L2Definite.lean`)** — `sq_ge_on_piece_near`: brick 74's piece lemma
+  with the hypothesis `ofQ A ≈ p` weakened to `|ofQ A − p| ≤ W`, the drop across the piece becoming
+  `2·Lg·W`. This is the reusable half of the extension from dyadic points to **all** points: for a
+  general real `x` one cannot ask for a dyadic endpoint *equal* to `x`, only for one within a
+  chosen width. The extension itself is **not** done — it additionally needs a constructive
+  rational-to-dyadic floor (`j := ⌊q·2^m⌋` on a rational approximant of `x`, computable since `ℚ`
+  has decidable order, then clamped into `[0, 2^m)`), which is not built.
+
+- **The pre-Hilbert layer, brick 74 — THE L² INNER PRODUCT IS DEFINITE AT DYADIC POINTS** (new
+  `Square/L2Definite.lean`): `φ(j/2^m)² > 0 ⟹ ∫₀¹ φ² > 0` (`innerI_self_pos_of_dyadic`), hence
+  `∫₀¹ φ² ≈ 0` forces `φ` to vanish at every dyadic point of `[0,1)`
+  (`innerI_self_zero_imp_dyadic_zero`). This is what the locality chain of bricks 68–73 was for.
+  - **The constructive point.** A definiteness argument classically picks a neighbourhood of a
+    point where `|φ|` is large; constructively one may not *locate* a real, since given `x₀` there
+    is no deciding whether `x₀ ≤ 1/2`. Restricting to **dyadic** points dissolves this: `p = j/2^m`
+    already *is* a dyadic endpoint, so the piece is the depth-`(M+m)` interval at index `j·2^M`,
+    computed entirely in `ℕ`. No order on reals is decided anywhere.
+  - The rest is arithmetic on `g = φ·φ`, already certified with modulus `l2L φ φ`: `Pos (g p)`
+    gives a rational `a > 0` below it (`Pos_imp_ofQ_le`); the depth is chosen so the Lipschitz drop
+    across the piece is `≤ a/2` (`exists_depth`, via `Nat.lt_two_pow_self`), leaving `g ≥ a/2`
+    there (`sq_ge_on_piece`); brick 73 converts that into `Pos (∫₀¹ g)`.
+  - **Brick 64 is upgraded on the polynomial class** (`polyPN_dyadic_zero`): a `d`-coefficient
+    polynomial test with `d` vanishing moments is zero at every dyadic point — determinacy at the
+    level of the *function*, not only its moments. `PolyDeterminacy.lean`'s scope note is corrected
+    accordingly (it had said the pointwise step was unreachable for want of interval splitting;
+    bricks 68–73 supply exactly that, so the note was stale).
+  - Honest scope: definiteness **at dyadic points**. Extending to every real point is a density
+    argument and is **not** performed here; nor is the moment problem — this says nothing about
+    whether a nonzero test can have all *moments* vanishing, which still needs Bernstein.
+
+- **Certified integration, brick 73 — A POINTWISE BOUND ON A PIECE IS A NUMERIC BOUND ON THE
+  INTEGRAL** (new `Square/IntervalMinorant.lean`): `c ≤ g` on `[a, a+w]` gives
+  `w·c ≤ ∫_a^{a+w} g` (`riemannIntegralI_ge_const`), plus `riemannIntegralI_unit` identifying
+  `∫_0^{0+1}` with the plain `∫₀¹`. Composed with brick 72: **a positive constant on one dyadic
+  piece forces the whole integral positive** (`riemannIntegral_pos_of_piece`).
+  - The comparison used is the **local** one (`riemannIntegralI_le_unit`), needing `c ≤ g` only on
+    the affine image of `[0,1]` — i.e. only on the piece. That locality is the whole point: the
+    bound is available on the small interval and nowhere else.
+  - Honest scope: this consumes a piece and a certified bound on it and produces the integral
+    bound. It does **not** produce them. For `L²` definiteness one still has to choose the dyadic
+    depth from the Lipschitz constant and the size of `|φ|` at the point — the arithmetic step,
+    not done here.
+
+- **Certified integration, brick 72 — EVERY DYADIC SUB-INTERVAL LOWER-BOUNDS THE WHOLE** (new
+  `Square/DyadicDescent.lean`): for a non-negative integrand and `j < 2^m`,
+  `∫_{a+j·w/2^m}^{a+(j+1)·w/2^m} f ≤ ∫_a^{a+w} f` (`riemannIntegralI_ge_dyadic`) — the induction
+  bricks 70 and 71 were built for, and the form "positive on a piece ⟹ positive overall" has to
+  take before it is usable, since the piece may be **arbitrarily small**.
+  - The induction is on the depth: at depth `m+1` the index splits as `j = 2q` or `j = 2q+1`, and
+    the interval is exactly the left or right half of the depth-`m` interval at `q`, so brick 71's
+    one-step bound applies and the hypothesis finishes. Brick 71's `riemannIntegralI_congr_Q`
+    bridges the two computed endpoint forms.
+  - Mechanically: `j` occurs inside the denominator-positivity **proof terms** the statement
+    carries, so it is eliminated by `subst` (obtained from `∃ q, j = 2q ∨ j = 2q+1`) and never by
+    `rw`, which would not be type-correct; the depth is moved by `Nat.pow_succ` inside the `Qeq`
+    goals only, where no proof terms live.
+  - Honest scope: a lower bound by **one** dyadic sub-interval. This is not a subdivision identity
+    (the pieces are never summed), and it is **not yet** `L²` definiteness: that still needs the
+    constructive location step — choosing the piece around a point of non-vanishing using only
+    rational comparisons, never a decidable order on reals.
+
+- **Certified integration, brick 71 — A HALF LOWER-BOUNDS ITS INTERVAL, AND ENDPOINTS ONLY
+  MATTER UP TO `Qeq`** (new `Square/IntervalPiece.lean`): the general form of brick 69, plus the
+  congruence an induction over dyadic descents actually needs.
+  - `riemannIntegralI_ge_left_half` / `_ge_right_half`: for a non-negative integrand each half of
+    `[a, a+w]` lower-bounds it — brick 70's split with the other half thrown away.
+  - `riemannIntegralI_congr_Q`: interval integrals depend on `(a, w)` only through `Qeq`. This was
+    quietly missing and blocks any descent on its own: a descent computes `a + 2q·w/2^{m+1}` on one
+    route and `a + q·w/2^m` on the other, which are equal **rationals** but not equal **terms**, so
+    the two sides of an induction could not be connected at all. It follows from brick 70's
+    `riemannIntegral_congr_mod` — the pulled-back integrands agree pointwise and the moduli `L·w`,
+    `L·w'` are `Qeq`-equal.
+  - Honest scope: the one-step bound and the endpoint congruence. The descent to a depth-`m` dyadic
+    sub-interval is the induction these support and is **not** performed here.
+
+- **Certified integration, brick 70 — EVERY INTERVAL SPLITS AT ITS MIDPOINT** (new
+  `Square/IntervalSplit.lean`): `∫_a^{a+w} f ≈ ∫_a^{a+w/2} f + ∫_{a+w/2}^{a+w} f`
+  (`riemannIntegralI_split_half`). Brick 68 split `[0,1]`; this is the general law, and iterating
+  it reaches every dyadic sub-interval of every interval.
+  - The mechanism is that the affine pullbacks **compose**: `α_{a,w} ∘ α_{0,1/2} = α_{a,w/2}` and
+    `α_{a,w} ∘ α_{1/2,1/2} = α_{a+w/2,w/2}` (`affineMap_half_left`, `affineMap_half_right`). So
+    brick 68 applied to `f ∘ α_{a,w}` already produces the two half-interval integrands — once the
+    certificate moduli `(L·w)·½` and `L·(w/2)` are reconciled. They are `Qeq`-equal but not
+    syntactically equal, and that reconciliation is the reusable half of the brick:
+    `riemannIntegral_congr_mod` (weaken to a common modulus, move the certificate, transport the
+    integrand).
+  - Honest scope: one split, at the midpoint of an arbitrary interval. **Iterating it is left to
+    the consumer** — no induction over subdivisions is performed here — and nothing about
+    non-dyadic split points is claimed. Integration substrate; the crux fields stay `none`.
+
+- **Certified integration, brick 69 — POSITIVE ON A PIECE ⟹ POSITIVE OVERALL** (new
+  `Square/IntegralPiece.lean`): the first use of brick 68's splitting law, in the shape every
+  downstream consumer wants. For a non-negative Lipschitz integrand each half of `[0,1]` is a
+  lower bound for the whole integral (`riemannIntegral_ge_left_half`,
+  `riemannIntegral_ge_right_half`), so `Pos` on a half gives `Pos` overall
+  (`riemannIntegral_pos_of_left_half`, `riemannIntegral_pos_of_right_half`).
+  - Before brick 68 this could not be said at all: every gateway law acted on a fixed interval, so
+    a bound established on part of the domain had no route to the whole. With the split it is
+    three lines — the other half is non-negative, so it can only help.
+  - Honest scope: the **coarsest** scale of the statement — halves, not arbitrary sub-intervals.
+    The general form needs the split at an arbitrary `[a, a+w]` (brick 68 composed under the
+    affine pullback), which is *not* done here, and this is therefore **not yet** an `L²`
+    definiteness statement: that additionally needs a constructive way to locate a point of
+    non-vanishing inside a dyadic piece using only rational comparisons.
+
+- **Certified integration, brick 68 — THE INTEGRAL SPLITS AT THE MIDPOINT** (new
+  `Square/IntegralSplit.lean`): `∫₀¹ f ≈ ∫₀^{1/2} f + ∫_{1/2}^1 f`
+  (`riemannIntegral_split_half`), the one structural law the integral gateway did not have.
+  - Every prior law of the gateway — `riemannIntegral_nonneg`, `_le`, `_add`, `_congr`, `_neg`,
+    `_smul` and their interval mirrors — acts on a **fixed** interval. Nothing related an integral
+    to integrals over its sub-intervals, which is why "positive on a piece ⟹ positive overall"
+    had no route, and with it `∫₀¹ φ² ≈ 0 ⟹ φ ≈ 0` (L² definiteness) — the step that would let
+    brick 64's determinacy be stated as "is the zero function" rather than "is moment-null".
+  - The proof is exact at every finite level: the partition points of the two halves at level `m`
+    **interleave** into those of `f` at level `m+1` (`affine_left_point`, `affine_right_point`), so
+    `½·D_m(f(x/2)) + ½·D_m(f((1+x)/2)) = D_{m+1}(f)` as a finite identity (`riemannSum_halves`,
+    `dyadicR_halves`) with `RsumN_split_at` doing the two-block flattening. Only then is a limit
+    taken: three `riemannIntegral_dyadic_dist` reads at a common depth, gap `(D+E)/(k+1)` for every
+    `k`, closed both ways by the Archimedean criterion.
+  - Two mechanization notes worth keeping: the `Nat` indices sit inside the `Nat.succ_pos` proof
+    terms the denominators carry, so they must be moved by `subst`-based index congruences
+    (`riemannSum_idx`, `RsumN_idx`), never by `rw`; and `riemannIntegral`'s implicit integrand
+    must **not** be left to unification against an inline lambda carrying `by decide` proofs —
+    that whnf-explodes, and naming the pullbacks (`halfL`, `halfR`) fixes it.
+  - Honest scope: one split, at the midpoint, for the Lipschitz class on `[0,1]`. Composing it
+    under the affine pullback gives every dyadic subdivision, but that composition is not performed
+    here, and nothing about non-dyadic split points is claimed. Integration substrate only —
+    nothing here touches the Weil form; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 67 — THE LEVEL IS AT LEAST THREE-DIMENSIONAL, AND A RETRACTION**
+  (new `Square/CoSupportDimThree.lean`): `a·deep3 + b·deep4 + c·deep5` with vanishing `x³`, `x⁴`
+  and `x⁵` moments forces `a = b = c = 0` (`deep345_independent`) — the third coefficient brick 55
+  left open.
+  - The missing entry was the `x⁵` row, the one all three members contribute to
+    (`−1/924`, `1/5544`, `−1/72072`), whose assembled identity carries the product denominator
+    `924·5544·72072 ≈ 3.7·10¹¹`.
+  - **Retraction.** Brick 55's docstring recorded that step as overrunning the elaborator's whnf
+    budget and "not worth a workaround". **That record was wrong.** The assembled identity is
+    *linear* in the coefficients, so `ring_uor` normalises it in a single pass, and
+    `combo345_moment_five` elaborates at the **default** heartbeat budget with no `set_option` at
+    all. Nothing conceptual and nothing mechanical was in the way. `CoSupportDimension.lean`'s
+    header and `deep34_independent`'s docstring are corrected in this commit to say so.
+  - Consequence: co-support level `3` carries three `ℕ`-independent constructed members, so
+    brick 58's `ℕ`-parametrized family is genuinely three-parameter.
+  - Honest scope: independence over `ℕ` coefficients of three constructed members, read off the
+    exact moment table — still not a dimension formula, still nothing about unrealized levels.
+
+- **The pre-Hilbert layer, brick 66 — THE MEMBER GENERATOR, AND THE `K = 7` MEMBER IN FIFTEEN
+  LINES** (new `Square/PolyMember.lean`): brick 65 turned a polynomial test's moments into an
+  explicit rational; this turns that into a *constructor*.
+  - **The support law** (`polyPN_supp`): a `ℤ`-coefficient polynomial test is `[0,1]`-supported
+    exactly when its two coefficient sums agree. That is the "both parts sum to the same value"
+    identity every constructed member has quietly satisfied (`deep6`'s parts both sum to `4279`) —
+    now a theorem, because `clamp01` is `1` past `1`, so the value on every half-line window *is*
+    the coefficient sum (`polyN_window_val`).
+  - **The generator** (`polyPN_hatVanishes`): matching coefficient sums plus `K` matching Hilbert
+    contractions produce a certified depth-`K` co-support member. Solve the `ℚ`-linear Hilbert
+    system, get a member — no per-degree integration, no hand-built `pv_`/`fv_` chains.
+  - **Exercised at once**: `deep7 = x − 36x² + 420x³ − 2310x⁴ + 6930x⁵ − 12012x⁶ + 12012x⁷ −
+    6435x⁸ + 1430x⁹` (both parts summing to `20793`), first non-vanishing moment
+    `⟨deep7, x⁷⟩ = −1/1750320`. The strict filtration chain reaches `0 ⊋ 1 ⊋ ⋯ ⊋ 8`
+    (`cosupport_chain_strict_eight`) and the skeleton's positivity fires on it (`weil_psd_deep7`).
+    Every one of those is now a `decide` on rational arithmetic — fifteen lines where brick 60
+    needed a two-hundred-line file.
+  - Honest scope: a **constructor, not an existence theorem**. It says a *given* solution of the
+    rational system yields a member, not that solutions exist at every depth — that is still the
+    hypergeometric identity the layer cannot reach; each `deepK` is found by a `ℚ`-linear solve
+    outside the kernel and certified inside it. The positivity remains the skeleton's diagonal
+    multiplier form on moment data, not the Weil functional on the test space. Step 4 is RH; the
+    crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 65 — EVERY POLYNOMIAL TEST'S MOMENT, IN CLOSED FORM** (new
+  `Square/PolyMoment.lean`): `⟨Σ_{i<d} a_i xⁱ, xⁿ⟩ = Σ_{i<d} a_i/(i+n+1)`
+  (`mellinMoment_polyN`, `mellinMoment_polyPN`) — an explicit **rational**, read straight off
+  brick 34's Hilbert matrix.
+  - Every constructed member so far (`cubeBump`, the quartic, `deep3 … deep6`, `lin1`, `lin2`) had
+    its moments evaluated by a hand-built `pv_add`/`pv_scale` chain, one theorem per degree per
+    member. This is the general law those chains were instances of, proved once by induction on
+    the coefficient count.
+  - Consequence: the polynomial co-support theory is **finite rational linear algebra**. Level `K`
+    membership is the `K` rational equations `polyMomQ a n d = polyMomQ b n d`
+    (`polyPN_moments_zero_of_rational`), and with brick 64 the case `K = d` already forces the
+    *whole* moment sequence to vanish (`polyPN_all_moments_zero_of_rational`). Constructing a
+    member at any depth is a `ℚ`-linear solve against the Hilbert matrix — no new integration, no
+    new per-degree engine.
+  - Cross-checked against an independently hand-computed value: the same coefficient data as
+    brick 36's `lin1 = x − 3x² + 2x³`, run through `polyMomQ`, reproduces `⟨lin1,x⁰⟩ = 0` and
+    `⟨lin1,x¹⟩ = −1/60` (`polyMoment_lin1_zero`, `polyMoment_lin1_one`).
+  - Honest scope: a closed form for the moments. It says nothing about *which* coefficient vectors
+    solve the system (existence at general `K` is still the hypergeometric identity the layer
+    cannot reach), nothing about the support side, and nothing about the Weil form.
+
+- **The pre-Hilbert layer, brick 64 — DETERMINACY ON THE POLYNOMIAL CLASS, AND A DEGREE FLOOR
+  FOR CO-SUPPORT MEMBERS** (new `Square/PolyDeterminacy.lean`): the layer's first determinacy
+  result, and the structural reason the built members grow in degree with their level.
+  - For an integer-coefficient polynomial test with `d` coefficients (`polyPN a b d`, the repo's
+    own positive/negative-part idiom): **first `d` moments vanish ⟹ `⟨p,p⟩ ≈ 0` ⟹ every moment
+    vanishes** (`innerI_polyPN_self_zero`, `polyPN_all_moments_zero`, `momentL2Sq_polyPN_zero`).
+  - Read backwards it is a **degree floor** (`polyPN_degree_floor`, `polyPN_level_null`): a
+    polynomial test that is not L²-null cannot sit in co-support level `d` on `d` coefficients, so
+    a nonzero level-`K` member needs more than `K` of them. The built members obey it exactly —
+    `deep3` is in level 3 and runs to `x⁴`, `deep6` is in level 6 and runs to `x⁸` — and this says
+    that growth is **forced**, not an artifact of how the members were solved.
+  - No approximation theory is used: expanding `p` in the *first* slot, bilinearity turns `⟨p,p⟩`
+    into a `ℕ`-scaled sum of `⟨xⁱ,p⟩ = ⟨p,xⁱ⟩` over `i < d`, each a hypothesis; the scaling
+    transfer is brick 43's `pv_scale` at the rational value `0`, so the sealed (`@[irreducible]`)
+    `natScale` is never unfolded. The step from zero energy to every moment is brick 63.
+  - Honest scope: determinacy for **polynomial** tests only. The general question — a nonzero
+    bounded-Lipschitz test with every moment vanishing — is untouched; it needs a constructive
+    approximation theorem (Bernstein) the repo does not have. Step 4 is RH; crux fields `none`.
+
+- **The pre-Hilbert layer, brick 63 — THE MOMENT GEOMETRY IS AN L² INVARIANT** (new
+  `Square/L2MomentBridge.lean`): the compatibility law between the layer's two energies — the
+  function-space `⟨φ,φ⟩ = ∫₀¹ φ²` (bricks 9–14) and the `ℓ²` moment energy `‖φ̂‖²` (bricks 40–61).
+  - `⟨φ,φ⟩ ≈ 0 ⟹ every moment vanishes ⟹ ‖φ̂‖² ≈ 0`
+    (`moments_zero_of_innerI_self_zero`, `momentL2Sq_zero_of_innerI_self_zero`), and the L²-null
+    tests are a radical — they pair to zero with everything (`innerI_zero_of_innerI_self_zero`),
+    the L² mirror of brick 61's `crossMomL2_zero_of_null`.
+  - `d²(φ,ψ) ≈ 0` transfers the moments (`mellinMoment_congr_of_dist2I`), hence the `ℓ²` energy
+    (`momentL2Sq_congr_of_dist2I`, through brick 47) and the co-support depth
+    (`moments_vanish_congr_of_dist2I`): the whole moment geometry **descends to the L² quotient**,
+    which is the compatibility the completion axis needs — brick 62's extended pairing is indexed
+    by L²-Cauchy sequences while bricks 40–61 live on moment sequences.
+  - Nothing new is constructed: brick 9's integral Cauchy–Schwarz supplies
+    `⟨φ,xⁿ⟩² ≤ ⟨φ,φ⟩·⟨xⁿ,xⁿ⟩`, fed through brick 61's square-root-free vanishing step.
+  - Capstone `innerI_deep3_self_not_zero`: brick 45's certified nonzero *moment* energy (from the
+    exact rational third moment `−1/2520`) turns into a certified nonzero *L²* energy — a fact
+    about an integral, proved entirely on the moment side.
+  - Honest scope: the containment runs **one way only** (L²-null ⊆ moment-null). The converse is
+    the determinacy question and is untouched. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 62 — THE UNIFORM L² COMPLETENESS CRITERION** (new
+  `Square/L2Complete.lean`): brick 14 built the extended L² pairing `pairingILim` along a sequence
+  of tests, but behind a hypothesis mentioning the *second slot* (`d²(Φⱼ,Φₖ)·⟨ψ,ψ⟩` small), so it
+  had to be re-verified per `ψ` and was never instantiated. This removes that.
+  - **`L2CauchyU Φ := ∀ j k, d²(Φⱼ,Φₖ) ≤ (1/(j+1) + 1/(k+1))²`** — a condition on the sequence
+    ALONE — yields the extended pairing `pairingIU Φ ψ` against **every** test, at rate `2/(j+1)`.
+  - The bridge is bricks 40/43's move: an index rescale turns a rate into a Bishop modulus. Each
+    test carries a *natural-number* bound on its own energy (`selfBnd`, `innerI_self_le_selfBnd`,
+    read off brick 10's uniform pairing bound); reading `Φ` along `j ↦ selfBnd ψ·(j+1)` divides the
+    modulus by `S`, hence the squared modulus by `S²`, and one factor of `S` is exactly what the
+    energy costs (`dist2I_scaled_le`). The estimate is a rational *identity*
+    (`1/(S(j+1)) + 1/(S(k+1)) = (1/S)·(1/(j+1) + 1/(k+1))`) plus `S ≤ S²` — no approximation.
+  - **The payoff**: the co-support levels are closed under L² limits *of functions*
+    (`pairingIU_zero_of_moments`, `pairingIU_cosupport_closed`) — bricks 48 and 57 closed the
+    co-support under the test algebra and under completion of coefficient vectors; this closes it
+    in the function-space topology the genuine Sonine condition lives in.
+  - Non-vacuity and faithfulness: `dist2I_self`, `L2CauchyU_const`, `pairingIU_const` (on a
+    constant sequence the extended pairing is the pairing).
+  - Honest scope: this constructs the extended pairing **values** on the completion, not a limit
+    *function* — no completed L² space of functions, no limit member, no inversion. Nothing touches
+    the Weil form; step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 61 — POLARIZATION AND THE NULL SPACE** (new
+  `Square/MomentDefinite.lean`): the two laws that upgrade bricks 49–59's positive-semi-definite
+  pairing to an inner product with a *characterized* kernel.
+  - **The polarization identity** (`momentL2Sq_polarization`):
+    `4·⟪φ,ψ⟫ ≈ ‖(φ+ψ)^‖² − ‖(φ−ψ)^‖²`, stated multiplication-free (`(X+X)+(X+X)`), since the
+    substrate carries no scalar action on `Real`. Brick 59 expanded the energy by the pairing;
+    this inverts it, so the two constructions are one quadratic functional and the pairing carries
+    no information its own diagonal does not. `crossMomL2_congr_of_energies` reads it as rigidity.
+  - **The null-space characterization** (`momentL2Sq_zero_iff`): `‖φ̂‖² ≈ 0` iff every moment
+    `⟨φ, xⁿ⟩` vanishes. Brick 42 gave one direction; the converse is new and turns on a
+    **square-root-free "no nilpotents" step** (`Req_zero_of_sq_zero`): `Rle_of_Rsq_le` reflects the
+    order through squaring on the non-negatives, so `|x|·|x| ≈ 0 ≈ 0·0` forces `|x| ≤ 0` outright
+    — no root is ever extracted.
+  - **The null space is a radical** (`crossMomL2_zero_of_null`): via Cauchy–Schwarz (brick 51) and
+    the same vanishing step, a null test pairs to zero against *every* `ψ`, so the form descends to
+    a definite inner product on the quotient.
+  - Realized: `deep3_not_null` / `deep3_moment_not_all_zero` — the constructed `K = 3` member is
+    outside the null space, by brick 45's certified positive energy.
+  - Honest scope: this *characterizes* the null space as the moment-null tests; it does **not**
+    show that space is trivial. Whether a nonzero bounded-Lipschitz test on `[0,1]` can have every
+    moment vanish is the determinacy question, untouched. Nothing here touches the Weil form; step
+    4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 60 — THE `K = 6` CO-SUPPORT MEMBER** (new
+  `Square/DeepMemberSix.lean`):
+  `deep6 = x − 28x² + 252x³ − 1050x⁴ + 2310x⁵ − 2772x⁶ + 1716x⁷ − 429x⁸`, the solution of the
+  depth-6 moment system over brick 34's Gram form (coefficients summing `4279 − 4279 = 0`). Six
+  vanishing moments, then the first non-vanishing one read off the same matrix with no new
+  integration — `⟨deep6, x⁶⟩ = 95311/280 − 2190451/6435 = 1/360360` — so `deep6 ∉ HatVanishes · 7`
+  (`cosupport_strict_at_six`), and with bricks 37, 41 and 54 the chain reads
+  **`0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4 ⊋ 5 ⊋ 6 ⊋ 7`** (`cosupport_chain_strict_seven`). `weil_psd_deep6` fires the
+  skeleton's unconditional positivity on a test whose transform vanishes at six integer points.
+  HONEST SCOPE: one more member and one more strict level — NOT a proof that every level is
+  inhabited or strict. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 59 — THE MOMENT ENERGY IS A QUADRATIC FORM, AND THE PAIRING IS
+  ITS POLAR FORM** (new `Square/MomentQuadratic.lean`):
+  **`‖(φ+ψ)^‖² ≈ (‖φ̂‖² + ⟪φ,ψ⟫) + (⟪φ,ψ⟫ + ‖ψ̂‖²)`** (`momentL2Sq_add`), the sign-flipped
+  companion (`momentL2Sq_sub`), and **the parallelogram law**
+  `‖(φ+ψ)^‖² + ‖(φ−ψ)^‖² ≈ (‖φ̂‖² + ‖ψ̂‖²) + (‖φ̂‖² + ‖ψ̂‖²)` (`momentL2Sq_parallelogram`). So the
+  `ℓ²` energy of bricks 40–47 and the bilinear pairing of bricks 49–52, 56 are two faces of ONE
+  object: the energy is the pairing's diagonal (brick 49) and expands by the pairing (here) —
+  exactly the structure a positivity argument acts on, rather than two separately-constructed
+  limits. No new limit: everything is derived from the diagonal identity, symmetry and
+  left-additivity, with symmetry supplying the right-slot laws (`crossMomL2_add_right`,
+  `crossMomL2_neg_right`, `momentL2Sq_neg`). The parallelogram's four cross terms `+X,+X,−X,−X`
+  cancel through the `RsumL` additive normalizer — `ring_uor` is `Int`/`Q`-only and the pointwise
+  route would clear denominators multiplicatively — and the cancellation needs NO permutation:
+  `RsumL_cancel_anywhere` splits the list in place, twice. Step 4 is RH; the crux fields stay
+  `none`.
+
+- **The pre-Hilbert layer, brick 58 — THE POSITIVITY FIRES ON AN INFINITE FAMILY OF NONZERO
+  CO-SUPPORT MEMBERS** (new `Square/CoSupportFamily.lean`): bricks 29 and 48 fired the skeleton's
+  unconditional positivity at single constructed members; brick 57 made the levels linear
+  subspaces; this draws the consequence at the whole realized family. For every `a, b, c : ℕ` the
+  combination `combo345 a b c` lies in level `3`, so **`combo345_weil_psd`** and — at the
+  truncation-uniform *completed* `ℓ²` member — **`combo345_weil_psd_completed`** hold at every
+  truncation. The family is non-vacuous *uniformly*: whenever `a ≥ 1` the member carries strictly
+  positive moment energy (**`combo345_energy_pos`**), because brick 55's table reads the third
+  moment off the first coefficient exactly (`⟨combo345 a b c, x³⟩ = −a/2520`, squaring to
+  `a²/6350400`) and brick 45 turns a nonzero moment into `Pos` energy. So the positivity fires on
+  infinitely many genuinely nonzero members, indexed faithfully by `a`, not on a family that
+  might collapse to the zero sequence. HONEST SCOPE: still the discrete diagonal-multiplier form
+  on moment data, now over a realized infinite family rather than single instances — NOT the Weil
+  functional on the test space, NOT positivity beyond the complement. Step 4 is RH; the crux
+  fields stay `none`.
+
+- **The pre-Hilbert layer, brick 57 — THE CO-SUPPORT LEVELS ARE GENUINE LINEAR SUBSPACES** (new
+  `Square/CoSupportSubspace.lean`): brick 22 gave closure under `+` at a shared decay constant;
+  on compact support the rest follows cleanly, because there the predicate *is* moment-vanishing
+  and the moment map is linear — **`hatVanishes_neg`, `hatVanishes_sub`, `hatVanishes_natScale`**
+  (plus the compact restatement `hatVanishes_add_supp`), with the support side closed alongside
+  (`unitSupported_neg`/`_add`/`_sub`). The payoff is **`combo345_in_level_three`**: EVERY
+  natural-coefficient combination `a·deep3 + b·deep4 + c·deep5` lies in level `3`. Read with
+  brick 55 — those three are independent as far as the moment functionals at `3,4,5` see them —
+  each realized level carries an infinite, genuinely multi-dimensional family rather than one
+  witness and its multiples. This matters for the route because step 4's coupling would have to
+  act on a *space*. HONEST SCOPE: closure under the linear operations on the compact-support
+  branch (decay constant `0`); the general shared-`C` statement remains brick 22's addition only.
+  Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 56 — THE PAIRING IS LINEAR, AND HENCE CONTINUOUS IN THE TEST**
+  (new `Square/MomentPairingNeg.lean`): brick 52 gave additivity; this gives the other half of
+  linearity and reads off the consequence — **`⟪−φ,ψ⟫ ≈ −⟪φ,ψ⟫`** (`crossMomL2_neg_left`),
+  **`⟪φ−ψ,χ⟫ ≈ ⟪φ,χ⟫ − ⟪ψ,χ⟫`** (`crossMomL2_sub_left`), and the modulus of continuity
+  **`|⟪φ,χ⟫ − ⟪ψ,χ⟫| ≤ 2·M_{φ−ψ}·M_χ`** (`crossMomL2_dist_le`): two tests close in the bound `M`
+  of their difference have close pairings against every fixed `χ`. With bricks 49–52 the moment
+  pairing is now a symmetric, bilinear, Cauchy–Schwarz-obeying, continuous form. Negation needed
+  the same care as addition: `⟪−φ,ψ⟫` and `⟪φ,ψ⟫` are `Rlim`s along *different* rescale schedules
+  (`crossScale (−φ) ψ` need not equal `crossScale φ ψ`), so the comparison is again made at a
+  COMMON CUT, where `crossMomSum_neg_left` is exact and brick 52's `crossMomSum_dist_limit`
+  carries both sides. Subtraction is then free, `L2Test.sub` being `add _ (neg _)` by definition.
+  Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 55 — THE CO-SUPPORT LEVELS ARE NOT ONE-DIMENSIONAL** (new
+  `Square/CoSupportDimension.lean`): level `HatVanishes · 3` carries a family of at least
+  dimension two, so its inhabitation is not the accident of a single witness and its multiples.
+  `deep3`, `deep4`, `deep5` all lie in level `3` (`deep345_in_level_three`), and the moment
+  functionals at `3, 4, 5` separate them in a TRIANGULAR pattern — every entry read off brick
+  34's Hilbert matrix with no new integration (`cosupport_triangular_table`, with the three new
+  evaluations `⟨deep3,x⁴⟩ = −1/1260`, `⟨deep3,x⁵⟩ = −1/924`, `⟨deep4,x⁵⟩ = 1/5544`).
+  Lower-triangular with nonzero diagonal, so the coefficients come off one at a time:
+  **`deep34_independent`** does the first two — the `x³` moment sees only `deep3`, then the `x⁴`
+  moment only `deep4`. New reusable pieces: `nat_eq_zero_of_ofQ_zero` and its negated companion,
+  which turn a vanishing constructed real `ofQ ⟨a,d⟩ ≈ 0` back into `a = 0` (the substrate has no
+  `ofQ` injectivity lemma, so the honest route is to exhibit the `Pos` witness a nonzero `a`
+  would supply and collide it with `not_Pos_zero`). HONEST SCOPE: independence over NATURAL
+  coefficients, and only for the first TWO of the three members — the third step's rational
+  identity carries denominators (`924·5544·72072`) that blow the elaborator's whnf budget, and is
+  not worth a workaround for a statement the table already exhibits. Not a dimension formula, not
+  a basis, nothing about unconstructed levels. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 54 — THE `K = 5` CO-SUPPORT MEMBER** (new
+  `Square/DeepMemberFive.lean`):
+  `deep5 = x − 21x² + 140x³ − 420x⁴ + 630x⁵ − 462x⁶ + 132x⁷`, the solution of the depth-5 moment
+  system over brick 34's Gram form. Five vanishing moments, then the first non-vanishing one read
+  off the same matrix with no new integration — `⟨deep5, x⁵⟩ = 748873/9009 − 665/8 = −1/72072` —
+  so `deep5 ∉ HatVanishes · 6` (`cosupport_strict_at_five`) and, with bricks 37 and 41, the chain
+  reads **`0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4 ⊋ 5 ⊋ 6`** (`cosupport_chain_strict_six`). The member is apart from
+  zero at `deep5(1/10) = −3843/625000` — the first constructed member whose sample value is
+  NEGATIVE, so apartness is witnessed on the negation — and `weil_psd_deep5` fires the skeleton's
+  unconditional positivity on a nonzero test whose transform vanishes at five integer points.
+  HONEST SCOPE: one more member and one more strict level, NOT a proof that every level is
+  inhabited or strict. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 53 — DEEP CO-SUPPORT IS NEARLY ORTHOGONAL TO EVERYTHING** (new
+  `Square/CoSupportPairing.lean`): brick 42's diagonal rate, generalized to the bilinear pairing —
+  **`φ ∈ HatVanishes · K ⟹ |⟪φ, ψ⟫| ≤ 2·M_φ·M_ψ/(K+1)` for EVERY `ψ`**
+  (`crossMomL2_abs_le_of_hatVanishes`). Brick 42 said a depth-`K` member carries little moment
+  *energy* (`‖φ̂‖² ≤ 2M_φ²/(K+1)`), which is the case `ψ = φ`; this says the same member is nearly
+  perpendicular to the whole space, at the same rate, with the bound linear in each test's own
+  `M`. So the deep levels of the filtration are not merely thin — they are nearly orthogonal to
+  everything the layer can pair them against. The proof is the co-support condition eating the
+  head of the series: below `K` the `φ`-moments vanish, so every cross partial sum is *literally*
+  a window from the cut `K` (`crossMomSum_zero_below`, `crossMomSum_eq_window`), and brick 49's
+  window bound applies uniformly in the window length; the limit inherits from both sides as in
+  brick 50. Instance at `deep3` (rate `1/4`). Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 52 — THE MOMENT PAIRING IS BILINEAR** (new
+  `Square/MomentPairingBilinear.lean`): the last inner-product law, and the one the substrate
+  makes hardest — **`⟪φ + ψ, χ⟫ ≈ ⟪φ, χ⟫ + ⟪ψ, χ⟫`** (`crossMomL2_add_left`). At every *finite*
+  truncation the identity is exact (the moment map is additive, so the coefficient vectors add
+  and `innerN_add_left` splits the sum); the difficulty is entirely in the limit, since `RReg` is
+  not closed under addition here and the three pairings are `Rlim`s along three *different*
+  rescale schedules, leaving no common index for a termwise comparison. The fix is to compare at
+  a COMMON CUT instead of at the schedules: the window bound gives more than convergence along
+  the chosen schedule — *any* cut beyond the `j`-th scheduled one is within `1/(j+1)` of the
+  scheduled read (`crossMomSum_dist_scheduled`), hence within `3/(j+1)` of the limit
+  (**`crossMomSum_dist_limit`**, the reusable half: the pairing may be read off *any*
+  sufficiently deep partial sum, not only the rescaled ones the construction happened to use).
+  At the cut `(c₁+c₂+c₃)·(k+1)` all three are within `3/(k+1)` of partial sums satisfying the
+  identity exactly, so the gap is `9/(k+1)` for every `k` and the Archimedean criterion closes
+  both directions. New reusable piece: `Rabs_sub_triangle`. With brick 50's symmetry it transfers
+  to the right slot. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 51 — CAUCHY–SCHWARZ AT THE LIMIT** (new
+  `Square/MomentPairingCS.lean`): brick 46's uniform bound on the *finite* cross sums is upgraded
+  to the pairing itself — **`⟪φ,ψ⟫² ≤ momentL2Sq φ · momentL2Sq ψ`** (`crossMomL2_sq_le`). With
+  bricks 49–50 this completes the sqrt-free inner-product geometry on moment sequences: a
+  symmetric bilinear pairing, its diagonal the `ℓ²` energy, obeying Cauchy–Schwarz. Passing a
+  *squared* bound through a Bishop limit is the interesting step, since the substrate has no
+  square root and `Rlim` does not commute with multiplication; the route avoids both by the
+  difference-of-squares identity `x² − X² = (x − X)(x + X)`, which makes the gap a PRODUCT of one
+  small factor (`|x − X_k| ≤ 2/(k+1)`, the convergence rate) and one merely bounded factor
+  (`|x + X_k| ≤ 2·(2M_φM_ψ)`, brick 50 on both terms). The gap is then `O(1/(k+1))` for every `k`,
+  and the Archimedean criterion `Rle_of_Rsub_le_eps` converts that into the bound — no expansion
+  of `(X + e)²`, no square root. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 50 — THE MOMENT PAIRING IS SYMMETRIC AND UNIFORMLY BOUNDED**
+  (new `Square/MomentPairingLaws.lean`): the two laws that make brick 49's `⟪φ,ψ⟫` behave like
+  an inner product rather than an arbitrary limit — **`⟪φ,ψ⟫ ≈ ⟪ψ,φ⟫`** (`crossMomL2_symm`) and
+  **`|⟪φ,ψ⟫| ≤ 2·M_φ·M_ψ`** (`crossMomL2_abs_le`). Symmetry is not free: the two limits run
+  along *different rescale schedules* (`crossScale φ ψ` and `crossScale ψ φ` agree only up to
+  `Nat.mul_comm`), so the sequences are not syntactically the same; `crossScale_comm` aligns the
+  cuts and then `innerN_symm` matches them termwise through `Rlim_congr`. The bound is the
+  window bound read from cut `0` — every partial cross sum is already within `2M_φM_ψ` of zero —
+  inherited by the limit from both sides (`Rlim_le_ofQ` above, `const_le_Rlim` below). On the
+  diagonal it recovers brick 40's `momentL2Sq φ ≤ 2M_φ²` from the pairing side
+  (`momentL2Sq_le_via_pairing`). Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 49 — THE BILINEAR MOMENT PAIRING CONVERGES** (new
+  `Square/MomentPairing.lean`): the off-diagonal companion to the `ℓ²` norm —
+  **`⟪φ,ψ⟫ := Σ_n ⟨φ,xⁿ⟩·⟨ψ,xⁿ⟩` now exists as a constructed real** (`crossMomL2`), with the
+  diagonal identity **`⟪φ,φ⟫ ≈ momentL2Sq φ`** (`crossMomL2_diag`) and the canonical convergence
+  rate (`crossMomL2_approx`). Brick 46 bounded the cross sums uniformly; this shows they actually
+  converge, so the moment sequences carry a genuine bilinear pairing and not merely a norm.
+  THE SQUARE ROOT IS EXACT, which is what keeps it sqrt-free: the Cauchy modulus needs an
+  absolute bound on a window, and Cauchy–Schwarz on the window against brick 39's two tails gives
+  `(2M_φ²/(a+1))·(2M_ψ²/(a+1))` — the *exact square of the rational* `2M_φM_ψ/(a+1)`
+  (`crossBound`), so `Rle_of_Rsq_le` converts the squared bound to the linear one with no square
+  root anywhere (the substrate has none on general reals, and none is needed; the AM-GM route
+  `|ab| ≤ ½(a²+b²)` would need a real algebraic expansion, this needs only rational arithmetic).
+  The rescale is then LINEAR — the modulus wanted is `1/(j+1)`, not its square — reusing brick
+  40's `scale_cross` with `crossScale φ ψ = 2|M_φ.num||M_ψ.num| + 1`. The diagonal identity
+  sandwiches two differently-rescaled limits via brick 45 and `term_le_Rlim`. HONEST SCOPE: the
+  bilinear `ℓ²` pairing of moment sequences of bounded-Lipschitz tests on `[0,1]` — a pairing on
+  moment data, not an inner product on a completed function space, and nothing about the Weil
+  form. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 48 — THE SKELETON'S POSITIVITY FIRES ON THE COMPLETED `ℓ²`
+  MEMBER** (new `Square/CoSupportCompletion.lean`): the co-support result moves off finite
+  moment data and onto the truncation-uniform limit object the completion axis constructs —
+  **`Rnonneg (weilQuad (multForm burnolMult) (limMemberU (momIdx φ) _) N)`**
+  (`weil_psd_on_completed_cosupport`) for every `[0,1]`-supported test whose transform vanishes
+  at `0, 1`, at every truncation. The band hypothesis is discharged, not assumed: the completed
+  member's band coordinate *is* the test's first moment (brick 44), which co-support kills
+  (`limMemberU_momIdx_band_zero`). WHY IT IS NOT A RESTATEMENT of brick 16's
+  `sonine_complement_complete`: that carried positivity through a completion for a
+  *fixed-truncation* member of an *abstract* band-vanishing Cauchy family; here the family is
+  the moment data of a constructed test, the member is *truncation-uniform*, convergence is
+  strong at every truncation (`deep3_momIdx_converges`), and the member is **not the zero
+  sequence** — `completed_cosupport_nonzero` records `Pos (momentL2Sq deep3)` from brick 45, so
+  the completion-level positivity is not vacuous. Instances at `deep3` and `deep4`. HONEST
+  SCOPE: still the discrete diagonal-multiplier form on moment data, now at the completion
+  level — NOT the Weil functional on the test space, and NOT positivity beyond the complement.
+  Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 47 — THE MOMENT ENERGY IS A MOMENT-INVARIANT** (new
+  `Square/MomentInvariant.lean`): **`(∀ n, ⟨φ,xⁿ⟩ ≈ ⟨ψ,xⁿ⟩) ⟹ momentL2Sq φ ≈ momentL2Sq ψ`**
+  (`momentL2Sq_congr`) — the well-definedness the `ℓ²` norm needs to be a norm *on the moment
+  sequence* rather than an artifact of the construction. The norm was built through an index
+  rescale keyed to the test's own bound `M_φ` (`momScale φ`), so a priori two tests with the
+  same moments but different `M` read their limits along different schedules; this shows the
+  value is the same regardless — the rescale is scaffolding, not content. The proof is brick 45
+  used both ways: equal moments give equal partial energies (`momentSqSum_congr`), so each
+  rescaled read of one energy equals a partial energy of the other, which brick 45 bounds by its
+  total; `Rlim_le_const` gives `≤` and symmetry closes it. Capstone: a second certified nonzero
+  energy, `Pos (momentL2Sq bumpU)` off `⟨bumpU, x⁰⟩ = 1/6`. HONEST SCOPE: well-definedness of
+  the `ℓ²` moment energy for bounded-Lipschitz tests on `[0,1]`, nothing about the Weil form.
+  Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 46 — A UNIFORM CAUCHY–SCHWARZ FOR THE MOMENT SEQUENCES** (new
+  `Square/MomentGram.lean`): the cross moment sums are controlled by the two `ℓ²` energies at
+  every truncation at once —
+  **`(Σ_{n<N} ⟨φ,xⁿ⟩·⟨ψ,xⁿ⟩)² ≤ momentL2Sq φ · momentL2Sq ψ`** (`crossMomSum_sq_le`). The proof
+  is the finite Hilbert core meeting brick 45: the moment sequence is literally a coordinate
+  vector (`momSeq φ n = ⟨φ,xⁿ⟩`), so the layer's sqrt-free finite Cauchy–Schwarz (`cauchy_schwarz`,
+  via the Lagrange identity) applies verbatim, and brick 45's `momentSqSum φ N ≤ momentL2Sq φ`
+  lifts each diagonal factor from the partial energy to the total (product monotonicity closing
+  it). No new limit is constructed — a uniform bound on finite sums, so the `ℓ²` cross geometry
+  is exhibited without a fresh completion. HONEST SCOPE: the `ℓ²` geometry of the moment map on
+  bounded-Lipschitz tests, not an inner product on a completed function space, nothing about the
+  Weil form. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 45 — THE ENERGY DETECTS THE MOMENTS** (new
+  `Square/MomentEnergyDetect.lean`): the "from the limit" companion to brick 42.
+  **`⟨φ, xⁿ⟩² ≤ momentL2Sq φ`** for every `n` (`mellinMoment_sq_le_momentL2Sq`), so any moment
+  apart from zero forces the energy apart from zero (`momentL2Sq_pos_of_moment`). Brick 42
+  bounded the energy from ABOVE by co-support depth; this bounds it from BELOW by every squared
+  moment, and together they say the energy sees exactly the moment data. The enabler is
+  `momentSqSum φ N ≤ momentL2Sq φ` (`momentSqSum_le_momentL2Sq`) — the `X k ≤ lim X` direction,
+  available because the rescaled partial sums are monotone (`term_le_Rlim`); a `≤ Rlim` from a
+  fixed term was the one comparison the completion axis lacked (`Rlim_le_ofQ` only bounds the
+  limit from above). Capstone: the constructed `K = 3` member `deep3` has third moment `−1/2520`,
+  apart from zero, so **`Pos (momentL2Sq deep3)`** — a certified NONZERO moment energy, as a
+  genuinely nonzero not-full-co-support test must carry. HONEST SCOPE: a lower bound on the
+  `ℓ²` moment energy by individual squared moments — still the compact `[0,1]` moment map,
+  nothing about the Weil form. It does NOT settle determinacy (a nonzero test with all moments
+  zero would need `momentL2Sq φ = 0 → φ = 0`, a moment-problem uniqueness this does not
+  provide). Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 44 — THE COMPLETED MEMBER *IS* THE MOMENT SEQUENCE** (new
+  `Square/MomentMember.lean`): the identification brick 43 deliberately declined to claim.
+  **`limMemberU (momIdx φ) _ i ≈ ⟨φ, xⁱ⟩`** (`limMemberU_momIdx`), so the object brick 17
+  constructs from the `ℓ²` data is `momSeq φ` on the nose — the very sequence the skeleton's
+  unconditional positivity consumes (`weil_psd_on_cosupport`) — and strong convergence reads
+  directly on it: `d²(momIdx φ j, momSeq φ) ≤ N·(2/(j+1))²` at every truncation
+  (`momIdx_converges_to_momSeq`). This is where brick 38's *sharp* decay earns its keep a
+  second time: the limit is evaluated at a **uniform** linear rate (`Rlim_eval_real_rate`),
+  which needs `|momIdx φ j i − ⟨φ,xⁱ⟩| ≤ C/(j+1)` for EVERY `j`, not merely eventually. Below
+  the cut the difference is literally zero; above it the cut condition `c(j+1)² ≤ i` forces
+  `j+1 ≤ i` (`cut_index_le`), so `|⟨φ,xⁱ⟩| ≤ M/(i+1)` is already `≤ C/(j+1)` at `C = momScale φ`
+  (`momScale_ge_num`, `moment_rate_cross`). A merely bounded moment sequence would leave only
+  an eventual bound, which the uniform-rate evaluator cannot use. HONEST SCOPE: the completed
+  member of the moment cuts, identified — still the compact `[0,1]` moment map of a
+  bounded-Lipschitz test, not the `L²` function-space completion, and nothing about the Weil
+  form. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 43 — THE FIRST GENUINE `ℓ²` INSTANCE OF THE
+  TRUNCATION-UNIFORM COMPLETION** (new `Square/MomentCompletion.lean`): the moment vector of
+  any bounded-Lipschitz test, cut along a **quadratically** rescaled truncation, satisfies the
+  completion axis's own interface — **`momIdx_sqCauchyU : SqCauchyU (momIdx φ)`**, i.e.
+  `∀ N, d²(momIdx φ j, momIdx φ k) ≤ (1/(j+1) + 1/(k+1))²` with the modulus *independent of the
+  truncation `N`*. So brick 17's `limMemberU`/`limMemberU_converges` fires on real `ℓ²` data
+  rather than on a hypothesis (`momIdx_completes`): the layer's completion axis and its
+  `L²`/moment axis meet. The rescale is the content — brick 39's tail bound is `2M²/(a+1)` at
+  cut `a` while the canonical Cauchy modulus is a SQUARE, so brick 40's linear rescale
+  `a = c(j+1)` (enough for the norm) is too slow; the truncation-uniform statement needs
+  `a = c·(j+1)²`, discharging through the same `scale_cross` step at `k = (j+1)²` (that lemma
+  promoted from private to public for the second consumer). The termwise input is that cutting
+  a coordinate only removes energy (`momTrunc_diff_sq_le`), so the whole squared distance is a
+  TAIL of the squared-moment series at every truncation at once (`dist2_momTrunc_le`). HONEST
+  SCOPE: a realized `SqCauchyU` instance from the compact `[0,1]` moment map — the completion
+  axis's "genuine `ℓ²` weights" supplied by an actual object, NOT the `L²` function-space
+  strong completeness (still open); the identification of the resulting `limMemberU` with the
+  moment sequence itself is not claimed. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 42 — DEEP CO-SUPPORT MEANS SMALL MOMENT ENERGY** (new
+  `Square/CoSupportEnergy.lean`): the filtration's levels are not just properly nested
+  (bricks 36–37, 41), they are quantitatively **thin** —
+  **`φ ∈ HatVanishes · K ⟹ ‖φ̂‖² = Σ_n ⟨φ, xⁿ⟩² ≤ 2·M_φ²/(K+1)`**
+  (`momentL2Sq_le_of_hatVanishes`), and full co-support (every moment vanishing) gives energy
+  exactly zero (`momentL2Sq_zero_of_moments`). The proof is bricks 39–40 doing their job
+  together: depth `K` kills the head of the sum outright (`momentSqSum_zero` — the first `K`
+  terms are literally zero), so *every* partial sum is a tail, and brick 39's uniform tail
+  bound read at `N = K` bounds them all at once (`momentSqSum_le_of_moments`, by cases on
+  `N ≤ K` or `N = K + d`); brick 40's `Rlim` then inherits the bound termwise through
+  `Rlim_le_ofQ` — no epsilon argument, because the bound is uniform in the index rather than
+  approached in the limit. HONEST SCOPE: a rate for the moment energy of a bounded-Lipschitz
+  test on `[0,1]` in terms of co-support depth. It bounds nothing about the Weil functional,
+  and says nothing about whether a nonzero test with all moments vanishing exists (the
+  determinacy question is untouched). Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 41 — THE `K = 4` CO-SUPPORT MEMBER, AND THE STRICT CHAIN
+  EXTENDED** (new `Square/DeepMemberFour.lean`):
+  `deep4 = x − 15x² + 70x³ − 140x⁴ + 126x⁵ − 42x⁶`, the nonzero rational solution of
+  `Σᵢ aᵢ/(i+n+1) = 0` for `n = 0,1,2,3` together with the support condition `Σᵢ aᵢ = 0` —
+  a finite linear-algebra problem over brick 34's Gram closed form, not a construction
+  problem. Delivered: `deep4_supp` (`197 − 197 = 0`), the four vanishing moments,
+  **`deep4_hatVanishes`** (`HatVanishes deep4 4`), the first non-vanishing moment
+  `⟨deep4, x⁴⟩ = 1291/60 − 14911/693 = 1/13860` (`deep4_moment_four`, read off the same Gram
+  matrix — no new integration), hence `deep4 ∉ HatVanishes · 5` and
+  **`cosupport_strict_at_four`**. With brick 37's witnesses this gives
+  **`cosupport_chain_strict_five`**: `0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4 ⊋ 5`, every level properly containing
+  the next, each by an explicit constructed test. The member is apart from zero
+  (`deep4(1/10) = 3609/500000`), so **`weil_psd_deep4`** fires the skeleton's unconditional
+  positivity on genuinely nonzero `f, f̂` data whose transform vanishes at four integer points.
+  HONEST SCOPE: one more member and one more strict level — NOT a proof that every level is
+  inhabited or strict (that needs invertibility of the Hilbert sections in general), and the
+  positivity is still the skeleton's diagonal multiplier form on moment data. Step 4 is RH;
+  the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 40 — THE `ℓ²` NORM OF THE MOMENT SEQUENCE, AS A CONSTRUCTED
+  REAL** (new `Square/MomentNorm.lean`): `‖φ̂‖² := Σ_n ⟨φ, xⁿ⟩²` is now an object
+  (`momentL2Sq`, a genuine `Real` — not a supremum, not a hypothesis), with
+  `0 ≤ ‖φ̂‖² ≤ 2·M_φ²` (`momentL2Sq_nonneg`, `momentL2Sq_le`) and the partial sums converging
+  to it at the canonical rate (`momentL2Sq_approx`). Constructively "monotone and bounded"
+  does *not* give a limit — a modulus is required, and brick 39's uniform tail bound is
+  exactly one. The construction turns rate into Bishop regularity by **rescaling the index**:
+  read the partial sums along `N = c·(j+1)` for any natural `c ≥ 2M_φ²` (`momScale`, here
+  `2|M.num|² + 1`, which works because `M.den ≥ 1`), so consecutive reads differ by at most
+  `2M²/(c(j+1)+1) ≤ 1/(j+1)` — the `RReg` modulus on the nose (`momentSqIdx_RReg`), and `Rlim`
+  applies. Supporting pieces: the reusable substrate split
+  `Σ_{i<N+K} = Σ_{i<N} + Σ_{i<K}(N+i)` (`RsumN_split_at`), the monotonicity that comes free
+  from the terms being squares (`momentSqSum_mono`), and the Cauchy rate `momentSqSum_diff_le`.
+  HONEST SCOPE: the `ℓ²` norm of the *moment* sequence of a bounded-Lipschitz test on `[0,1]`
+  — not a norm on a completed function space, not the completion axis's truncation-uniform
+  weights, and nothing about the Weil form. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 39 — THE `ℓ²` DATUM, WITH AN EXPLICIT TAIL RATE** (new
+  `Square/MomentSummable.lean`): the squared moments are not merely bounded, they are
+  **summable**, and the tails are certified small —
+  **`Σ_{i<K} ⟨φ, x^{N+i}⟩² ≤ 2·M_φ²/(N+1)` uniformly in `K`** (`momentSqTail_le`), so the
+  window sums go to zero at rate `1/(N+1)`; at `N = 0` this is the uniform partial-sum bound
+  `Σ_{n<K} ⟨φ, xⁿ⟩² ≤ 2·M_φ²` (`momentSqSum_le`). This is what brick 38's *sharp* decay was
+  for: the Cauchy–Schwarz rate `O(1/√n)` has non-summable squares, while the square of the
+  comparison rate is dominated by the telescoping term `2/((n+1)(n+2))` — the domination is
+  the one rational fact `n+2 ≤ 2(n+1)` (`mellinMoment_sq_le`). The dominating series is then
+  summed **exactly**, not estimated: `Σ_{i<K} 2/((N+i+1)(N+i+2)) = 2K/((N+1)(N+K+1))`
+  (`teleFrom_eq`), a closed form at every window `(N, K)`, from which the uniform bound is one
+  rational comparison (`teleFrom_le`). New reusable piece: `Rsq_le_of_abs_le` (`|m| ≤ B`,
+  `B ≥ 0` ⟹ `m² ≤ B²`, routed through `|m·m| = |m|·|m|` so no sign case split). HONEST SCOPE:
+  a summability rate for the compact `[0,1]` moment map on the bounded-Lipschitz class — *not*
+  the completion axis's truncation-uniform `ℓ²` weights (those are about `innerN`'s discrete
+  coordinates), and nothing about the Weil form. Step 4 is RH; the crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 38 — THE SHARP MOMENT DECAY** (new
+  `Square/MomentDecay.lean`): **`|⟨φ, xⁿ⟩| ≤ M_φ/(n+1)`** (`mellinMoment_abs_le`) for every
+  test of the bounded-Lipschitz class — the first quantitative rate on the moment map, and
+  the sharp one (attained in order at `φ = xᵏ`, where `⟨xᵏ,xⁿ⟩ = 1/(k+n+1)`). It matters that
+  the route is comparison and not Cauchy–Schwarz: CS through `⟨xⁿ,xⁿ⟩ = 1/(2n+1)` gives only
+  `O(1/√n)`, whose squares are *not* summable, whereas `O(1/n)` makes the squared moments
+  summable — the `ℓ²` datum the completion axis wants rather than a merely bounded sequence.
+  Proof: on `[0,1]` the monomial is nonnegative (`powTest_nonneg`), so `φ(x)·xⁿ ≤ M_φ·xⁿ`
+  pointwise; `riemannIntegral_le_unit` integrates it against `riemannIntegral_smul` and brick
+  34's `∫₀¹ xⁿ = 1/(n+1)`, at a three-term shared modulus (each summand present so every
+  weakening is a `Qle_self_add` — `|M| ≥ 1` is not available). New reusable piece:
+  `lip_smul_of` (scalar Lipschitz transfer, `q·f` is `|q|·L_f`-Lipschitz). The lower half is
+  free: the upper bound at `L2Test.neg φ`, which carries the SAME `M`, with `innerI_neg_left`
+  flipping the sign. Honest scope: a rate on the compact `[0,1]` moment map; not the
+  truncation-uniform `ℓ²` weights of the completion axis (those are about the discrete
+  coordinates), and nothing about the Weil form; step 4 is RH. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 37 — THE STRICT CHAIN THROUGH DEPTH 4** (new
+  `Square/CoSupportChain.lean`): the co-support filtration is strictly decreasing at *every*
+  level the layer has reached —
+  `HatVanishes · 0 ⊋ 1 ⊋ 2 ⊋ 3 ⊋ 4` (**`cosupport_chain_strict`**). Brick 36 witnessed the two
+  ends; this brick fills the middle with the two members the Hilbert system supplies:
+  **`lin1 = x − 3x² + 2x³`** (moment `0` vanishes as `1 − 1`, moment `1` is
+  `11/15 − 3/4 = −1/60`) and **`lin2 = x − 6x² + 10x³ − 5x⁴`** (moments `0, 1` vanish as
+  `3 − 3` and `7/3 − 7/3`, moment `2` is `23/12 − 67/35 = 1/420`). Each is unit-supported
+  (coefficients sum to zero), apart from zero (`lin1(1/10) = 9/125`, `lin2(1/10) = 99/2000`),
+  in its level and provably not the next. Every moment is read straight off
+  `⟨xⁱ, xʲ⟩ = 1/(i+j+1)` — no new integration, and both members are assembled in the `P − N`
+  linear form brick 35's now-public helpers evaluate mechanically (`sub_ofQ_val` promoted too).
+  Honest scope: strictness at the four realized levels, each by an explicit constructed test;
+  NOT a proof that every level is strict — that needs the Hilbert sections' invertibility in
+  general — and nothing about the Weil form; step 4 is RH. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 36 — THE CO-SUPPORT FILTRATION DOES NOT COLLAPSE** (new
+  `Square/CoSupportStrict.lean`): the nested subspaces
+  `HatVanishes · 0 ⊇ HatVanishes · 1 ⊇ ⋯` are STRICTLY decreasing at the realized levels, each
+  strictness witnessed by a constructed test in one level and provably not the next.
+  Membership was the earlier bricks' work; strictness needs the first NON-vanishing moment,
+  and brick 34's Gram closed form supplies it by arithmetic alone: **`deep3_moment_three`** —
+  `(1/5 + 30/7 + 14/9) − (10/6 + 35/8) = 1903/315 − 145/24 = −1/2520 ≠ 0`, hence
+  **`deep3_not_hatVanishes_four`** and `cosupport_strict_at_three` (level 3 properly contains
+  level 4). At the bottom, `cosupport_strict_at_zero` records brick 25's `bumpU = x(1−x)`
+  (`f̂(0) = 1/6 ≠ 0`) in the vacuous level 0 and not level 1. Brick 35's six value-chaining
+  helpers (`pv_add`/`pv_neg`/`pv_scale`, `fv_add`/`fv_neg`/`fv_scale`) are promoted to public
+  — they are the reusable half. Why it matters: a condition that collapsed past some depth
+  would make the genuine `f, f̂` space finite-dimensional in the relevant direction, and the
+  coupling step 4 needs could not be an infinite-dimensional phenomenon; strictness at the
+  realized depths is the finite shadow of that non-collapse — evidence, stated as exactly
+  that. Honest scope: two witnessed levels (`0 ⊋ 1`, `3 ⊋ 4`), NOT a proof that every level
+  is strict, and nothing about the Weil form; step 4 is RH. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 35 — THE `K = 3` CO-SUPPORT MEMBER, READ OFF THE HILBERT
+  MATRIX** (new `Square/DeepMemberThree.lean`): with brick 34's Gram closed form, a member at
+  depth `K` is no longer a construction problem but a rational linear system —
+  `Σᵢ aᵢ/(i+n+1) = 0` for `n < K` plus `Σᵢ aᵢ = 0` — solved at `K = 3` by
+  `a = (1, −10, 30, −35, 14)`: **`deep3 = x − 10x² + 30x³ − 35x⁴ + 14x⁵`**. The reusable half
+  is **`natScale k φ`** (the `k`-fold sum) with its three transfer laws — support, pointwise
+  values, pairing values (`innerI_natScale_val`, on `innerI_zeroL2`) — so integer-coefficient
+  combinations are assembled and evaluated without hand-built addition trees. Delivered:
+  `deep3_supp` (`45 − 45 = 0` at every window point), `deep3_moment_zero/_one/_two` (each a
+  `decide`-able rational identity over the Hilbert entries), **`deep3_hatVanishes`**,
+  `deep3_value_tenth` (`p(1/10) = 333/12500`) with `deep3_apart`, and **`weil_psd_deep3`** —
+  the skeleton's unconditional positivity on a member whose transform vanishes at THREE
+  integer points. Mechanization note: the member is built as `P − N` through
+  `L2Test.sub`/`innerI_sub_left`, NOT as a `neg`-wrapped summand — a `L2Test.neg` at the head
+  of a deep test tree sends `innerI` unification into a whnf blowup that survives 2M
+  heartbeats (bisected; the same chain with the `neg` removed elaborates instantly). Honest
+  scope: one member at `K = 3`; the positivity is still the skeleton's diagonal multiplier
+  form on moment data, not the Weil functional, and not positivity beyond the complement
+  (step 4, = RH). The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 34 — THE HILBERT MATRIX IS THE GRAM MATRIX OF THE MONOMIAL
+  BAND** (new `Square/HilbertGram.lean`): **`⟨xⁱ, xʲ⟩ = 1/(i+j+1)`**
+  (`innerI_powTest_hilbert`) — the band the co-support condition is orthogonality *to*
+  (brick 28's weld) now has its Gram matrix in closed form at every entry. Two ingredients:
+  `powTest_mul` (the monomial tests multiply, `xⁱ·xʲ = x^{i+j}` pointwise by induction through
+  `Rmul_assoc`, so the pairing's integrand IS a single monomial) and
+  `riemannIntegral_powTest_all` (`∫₀¹ clamp01ᵐ = 1/(m+1)` for EVERY `m`, brick 33's law plus
+  the constant case), reached at the pairing's own modulus by transport and certificate
+  independence. Corollaries: `hilbertGram_symm`, `mellinMoment_powTest`, and
+  **`mellinMoment_clamp_via_hilbert`** — brick 33's Hausdorff law recovered as the `i = 1`
+  row, so the moment law is the Hilbert matrix's first row. Honest scope: the Gram matrix
+  only — no positive-definiteness, no inverse, no conditioning, and nothing about the Weil
+  form; positivity on the band's orthogonal complement is step 4 and is RH. The crux fields
+  stay `none`.
+
+- **The pre-Hilbert layer, brick 33 — THE HAUSDORFF MOMENT LAW** (new
+  `Square/MomentLaw.lean`): **`mellinMoment clampTest n ≈ 1/(n+2)` for EVERY `n`** — one
+  theorem subsuming the five per-degree engines; the clamp's moment sequence is the full
+  Hausdorff moment data of Lebesgue measure on `[0,1]`. No Faulhaber folds: the engine is the
+  discrete mean-value bracket `(m+1)·iᵐ ≤ (i+1)^(m+1) − i^(m+1) ≤ (m+1)·(i+1)ᵐ`
+  (`pow_succ_lower`/`_upper`, by induction with the Nat identities discharged through `Int`
+  ring normalization), which telescopes to `(m+1)·Σiᵐ ≤ N^(m+1) ≤ (m+1)·(Σiᵐ + Nᵐ)`
+  (`powSum_lower`/`_upper`), so the left Riemann sums sit within `1/(N+1)` of `1/(m+1)`
+  UNIFORMLY in the degree (`powSum_defect_le`), and `Rlim_eval` closes every degree by the
+  same rate (`riemannIntegral_powTest_succ`: `∫₀¹ clamp01^(k+1) ≈ 1/(k+2)`). Mechanization:
+  the cast-dedup gotcha bites hard at symbolic exponents — `push_cast` expands
+  `↑((N+1)^m) → (↑(N+1))^m`, so pow-cast atoms must be `generalize`d to plain Nat variables
+  *before* `push_cast`, and the numerator bound is proved as a single all-Nat inequality cast
+  once at the end (`omega` for the Nat-subtraction cast, `Int.natCast_mul`/`Int.natAbs_ofNat`
+  for the rest). Honest scope: all integer moments; the continuous Mellin parameter,
+  transform pair, and inversion remain open; no coupling; step 4 is RH. The crux fields stay
+  `none`.
+
+- **The pre-Hilbert layer, brick 32 — THE NONZERO `K = 2` CO-SUPPORT MEMBER** (new
+  `Square/DeepMember.lean`): **`deepBump = x(1−x)(1−5x+5x²)`**, realized in EXPANDED linear
+  form `c − 6c² + 10c³ − 5c⁴` from the test algebra, so the moments split by the pairing's
+  BILINEARITY (`innerI_add_left`/`innerI_neg_left` through the `pair_add` split-and-collapse
+  helper) into the certified engine values of bricks 23–31, which cancel exactly:
+  `∫p = 1/2 − 2 + 5/2 − 1 = 0` and `∫xp = 1/3 − 3/2 + 2 − 5/6 = 0` — no product expansion,
+  no shared-modulus juggling. Unit support from `p(1) = 0` (the saturated clamp collapses the
+  coefficient tree to `(1+10) − (6+5) = 0`); apartness at `x = 1/10` (`p(1/10) = 99/2000`,
+  `Pos`); **`deepBump_hatVanishes`** places it in `HatVanishes · 2`; and the capstone
+  **`weil_psd_nonzero_instance`**: the skeleton's unconditional complement-positivity
+  (`weil_psd_on_cosupport`, brick 29) fires on the moment sequence of a certified NONZERO
+  test whose CONSTRUCTED transform vanishes on the band — genuinely nonzero `f, f̂` data in
+  the Sonine complement, no RH. Honest scope: one member at `K = 2`; the positivity remains
+  the skeleton's diagonal multiplier form on moment data — not the Weil functional on the
+  test space, and not positivity beyond the complement (step 4, = RH). The crux fields stay
+  `none`.
+
+- **The pre-Hilbert layer, brick 31 — THE QUINTIC EVALUATION** (new
+  `Square/MomentQuintic.lean`): **`∫₀¹ clamp01(x)⁵ dx ≈ 1/6`** — the engine at degree five:
+  `sumQuinticsQ` (`Σ i⁵ = k²(k−1)²(2k²−2k−1)/12`), `riemannSum_clampQuint`
+  (`= N²(2N²+2N−1)/(12(N+1)⁴)`), `genSum_clampQuint_eval` + `quint_defect_le` (the `N⁴`
+  terms again cancel; numerator `−(36N³+78N²+48N+12) ≤ 72(N+1)³` coefficientwise), the
+  schedule-uniform rate, `riemannIntegral_clampQuint_gen`, and
+  `mellinMoment_clamp_four ≈ 1/6`. The clamp's moment data reads
+  `(1/2, 1/3, 1/4, 1/5, 1/6, …)`; with brick 30 both engines the nonzero `K = 2` co-support
+  member `x(1−x)(1−5x+5x²)` consumes are delivered. Honest scope: degree `n = 4`; the
+  general law remains open; no coupling; step 4 is RH. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 30 — THE QUARTIC EVALUATION** (new
+  `Square/MomentQuartic.lean`): **`∫₀¹ clamp01(x)⁴ dx ≈ 1/5`** — the engine at degree four:
+  `sumQuarticsQ` (Faulhaber, `Σ i⁴ = k(k−1)(2k−1)(3k²−3k−1)/30`), `riemannSum_clampQuad`
+  (`= N(2N+1)(3N²+3N−1)/(30(N+1)⁴)`), `genSum_clampQuad_eval` + `quad_defect_le` (the `N⁴`
+  terms cancel; the numerator collapses to `−(75N³+175N²+125N+30)` and the coefficientwise
+  bound `≤ 150(N+1)³` closes it, nonlinear monomials as `omega` atoms over explicit
+  nonnegativity facts), the schedule-uniform rate, `riemannIntegral_clampQuad_gen` by
+  `Rlim_eval`, and `mellinMoment_clamp_three ≈ 1/5`. The clamp's moment data reads
+  `(1/2, 1/3, 1/4, 1/5, …)`; first of the two engines (with the quintic) that the nonzero
+  `K = 2` co-support member `x(1−x)(1−5x+5x²)` consumes. Honest scope: degree `n = 3`; the
+  general law remains open; no coupling; step 4 is RH. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 29 — THE BAND BRIDGE** (new `Square/BandBridge.lean`): the
+  moment map `momSeq φ = (mellinMoment φ n)ₙ` carries `f, f̂` data into the discrete
+  skeleton, relating the two bands: `momSeq_fourier` (`⟨momSeq φ, δₖ⟩_N ≈ ⟨φ, xᵏ⟩` — the
+  indicator directions correspond to the monomial directions along the moment map),
+  `momSeq_band_vanishes` (the co-support condition pushes forward to the skeleton's band
+  condition), `momSeq_bandProj_fixed` (a `K = 2` co-support test's moment sequence is FIXED
+  by the skeleton's `bandProj` — it already lives in the Sonine complement), and the
+  capstone **`weil_psd_on_cosupport`**: for a `[0,1]`-supported test with `HatVanishes φ 2`,
+  the discrete Weil multiplier form is nonnegative on its moment sequence at every
+  truncation — `burnol_pairing_psd_on_sonine`'s band hypothesis discharged by the
+  CONSTRUCTED transform's vanishing, not assumed of an abstract coefficient family. The
+  skeleton's unconditional positivity realized on genuine `f, f̂` data; no RH. Honest scope:
+  the bridge runs through the moment map at the Burnol skeleton's single-index band; the
+  positivity is the skeleton's diagonal form on moment data, not the Weil functional on the
+  test space, and not positivity beyond the complement (step 4, = RH); the `K = 2` instance
+  is inhabited by the zero member only — a nonzero `K = 2` member needs the quartic engine
+  (banked). The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 28 — THE WELD** (new `Square/CoSupportWeld.lean`): the
+  transform-side co-support condition IS an orthogonality condition —
+  **`hatVanishes_iff_orthogonal`**: for `[0,1]`-supported tests,
+  `HatVanishes φ K ⟺ ⟨φ, xⁿ⟩ ≈ 0 for all n < K`. The `f, f̂` pair is bundled (`MellinPair`,
+  a test with its all-order decay data; `MellinPair.hat` its transform;
+  `MellinPair.hat_compact` the pair-level `f̂(n) ≈ ⟨φ, xⁿ⟩`), the condition extends over the
+  band's span by bilinearity (`orthogonal_band_add`), and the realized instance is genuine:
+  `cubePair_orthogonal` — the certified NONZERO cubic bump is orthogonal to the `K = 1`
+  monomial band with its transform vanishing there. The function-space mirror of the
+  skeleton's `c(i) = 0` band condition, now about constructed `f` and constructed `f̂`.
+  Honest scope: the band is the MONOMIAL band, not yet the skeleton's indicator band (that
+  relation is the remaining welding step toward `bandProj`); no continuous parameter, no
+  inversion; positivity on the orthogonal complement is step 4 and is RH. The crux fields
+  stay `none`.
+
+- **The pre-Hilbert layer, brick 27 — THE NONZERO CO-SUPPORT SUBSPACE MEMBER** (new
+  `Square/CubicMember.lean`): a genuine nonzero `[0,1]`-supported test INSIDE
+  `HatVanishes · 1`. The member is the cubic bump `cubeBump = bumpU·(1−2·clamp)`
+  (`x(1−x)(1−2x)`), realized by the test-algebra combinators alone: `cubeBump_supp` (the
+  `bumpU` factor kills every window point), **`mellinMoment_cubeBump`** — the zeroth moment
+  vanishes EXACTLY (`(1/2 − 1/3) − (2/3 − 1/2) = 0`: the integrand expands pointwise to the
+  certified test tree `(c − c²) − ((c² + c²) − (c³ + c³))`, chosen to match the derivation so
+  no seq-level add/neg reshuffle — which the reindexing Bishop `Radd` does not admit — is
+  needed; the three engine values cancel at one shared modulus through
+  `riemannIntegral_add`/`_neg`), **`cubeBump_hatVanishes`** (membership via the brick-22
+  moment bridge), and **`cubeBump_value_quarter`/`cubeBump_apart`** (`f(1/4) ≈ 3/32`, `Pos`).
+  With brick 25 the co-support geometry is complete on constructed objects: the vanishing
+  subspace is PROPER (`bumpU` outside) and INHABITED BEYOND ZERO (`cubeBump` inside, apart
+  from zero). Mechanization note: the whnf-timeout gotcha struck again and was resolved
+  structurally, not by heartbeats — den-proof terms must match the component rational's shape
+  (`add_den_pos` forces an `add`-shaped metavariable; use `by decide` for `neg`-shaped
+  components). Honest scope: one member at `K = 1`; deeper `K` needs higher-degree
+  evaluations; no coupling — positivity on the co-support class is step 4 and is RH. The crux
+  fields stay `none`.
+
+- **The pre-Hilbert layer, brick 26 — THE CUBIC EVALUATION** (new `Square/MomentCube.lean`):
+  **`∫₀¹ clamp01(x)³ dx ≈ 1/4`** — the evaluation engine mirrored one more degree up:
+  `sumCubesQ` (Nicomachus, `Σ i³ = (k(k−1)/2)²`), `riemannSum_clampCube`
+  (`= N²/(4(N+1)²)` at the inert samples), `genSum_clampCube_eval` + `cube_defect_le` (the
+  numerator collapses to `−(8N+4)`), the schedule-uniform rate, and
+  `riemannIntegral_clampCube_gen` by `Rlim_eval`; payoff `mellinMoment clampTest 2 ≈ 1/4`.
+  The clamp's moment data now reads `(1/2, 1/3, 1/4, …)` — three values of the Hausdorff
+  sequence, and the last evaluation the nonzero co-support member (`x(1−x)(1−2x)`, zeroth
+  moment `1/2 − 1 + 1/2 = 0`) consumes. Honest scope: the general `1/(n+2)` law remains open;
+  no coupling; step 4 is RH. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 25 — THE FIRST NONZERO TRANSFORM VALUE** (new
+  `Square/CoSupportMember.lean`): a genuine `[0,1]`-supported test with **`f̂(0) ≈ 1/6 > 0`**,
+  and the co-support subspace is PROPER. The member is the unit bump `bumpU = clamp·(1−clamp)`
+  (`x(1−x)` on `[0,1]`), realized by the test-algebra combinators alone. New substrate:
+  `qCapQ_eq_of_ge` (the band clamp's missing saturation side) → `clamp01_sat`
+  (`clamp01 x ≈ 1` for `x ≥ 1`) → with the affine window's lower bound
+  (`affine_window_ge_one`), `bumpU_supp` — the first NONZERO member of the compact class.
+  `mellinMoment_bumpU` evaluates `∫₀¹ x(1−x) = 1/6` (pointwise collapse to `clamp − clamp²`,
+  certificate transport to the shared modulus, integral additivity, bricks 23–24's values
+  `1/2 − 1/3`); `mellinHat_bumpU_value`/`mellinHat_bumpU_pos` carry it through
+  `mellinHat_compact` to the transform — the first strict positivity (`Pos`) of the
+  constructed `f̂`; and `bumpU_not_hatVanishes` shows `bumpU ∉ HatVanishes · 1`, so with brick
+  22's zero member the vanishing subspace is both inhabited and strict: the co-support
+  condition genuinely cuts. Honest scope: the nonzero member OF the subspace (the cubic bump
+  `x(1−x)(1−2x)`, needing `∫x³ = 1/4`) is banked next; no coupling; step 4 is RH. The crux
+  fields stay `none`.
+
+- **The pre-Hilbert layer, brick 24 — THE FIRST QUADRATIC EVALUATION OF THE GATEWAY** (new
+  `Square/MomentSquare.lean`): **`∫₀¹ clamp01(x)² dx ≈ 1/3`** — the identity engine of
+  `IntegralEval.lean` mirrored one polynomial degree up on the globally-Lipschitz *clamped*
+  square (the bare `x²` is not admissible): the `ℚ`-level square fold (`sumSquaresQ`,
+  `Σ i² = k(k−1)(2k−1)/6`), the exact Riemann sums (`riemannSum_clampSq`, clamp inert at the
+  dyadic samples), the telescoped evaluation and rational defect (`genSum_clampSq_eval`,
+  `sq_defect_le` — the numerator collapses to `−(9N+6)` at the symbolic level via the
+  `natAbs` bridge), the schedule-uniform rate, and `riemannIntegral_clampSq_gen` by
+  `Rlim_eval`. Payoff: **`mellinMoment clampTest 1 ≈ 1/3`** — the pairing integrand
+  `clamp·(1·clamp)` collapses globally to the clamped square at the pairing's own modulus by
+  transport. The clamp's moment data now reads `(1/2, 1/3, …)`: the Hausdorff moment sequence
+  of Lebesgue measure on `[0,1]`, value by value in the kernel. Honest scope: degree `n = 1`;
+  the general `1/(n+2)` law and any transform value remain open. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 23 — THE MOMENT MAP TAKES CERTIFIED NONZERO VALUES** (new
+  `Square/MomentValue.lean`; `Analysis/IntegralLocal.lean` gains the unit-local congruence):
+  **`riemannIntegral_congr_unit`** — `∫₀¹ f ≈ ∫₀¹ g` from agreement on `[0,1]` only
+  (antisymmetry of `riemannIntegral_le_unit`), the lemma every clamped-integrand evaluation
+  runs through; `clamp01_inert` (the band identity at real arguments); and the first nonzero
+  values of the transform-side data: `mellinMoment oneTest 0 ≈ 1` (constant integral through
+  the global congruence) and **`mellinMoment clampTest 0 ≈ 1/2`** (clamp inert on the sampling
+  domain → unit-local congruence to the identity integrand at the shared modulus `L = 1` →
+  `riemannIntegral_id_gen`). With brick 22's `mellinMoment_zeroL2 ≈ 0` the moment functionals
+  provably separate tests. Honest scope: compact `[0,1]` moment values, NOT transform values
+  (`clampTest` has no half-line decay); the first nonzero full-transform value is the banked
+  next construction. The crux fields stay `none`.
+
+- **The pre-Hilbert layer, brick 22 — THE CO-SUPPORT PREDICATE** (new
+  `Square/HatVanishes.lean`): the transform-side vanishing condition is now a stated,
+  subspace-shaped, inhabited predicate about constructed transforms. The decay data is
+  bundled — `WindowDecay` (the exponent-`(n+2)` bound `mellinHat` consumes) and `AllDecay`
+  (every order at one constant, the superpolynomial-decay class) — with the two laws that
+  make shared constants reachable: weakening in `C` (`windowDecay_weaken`/`allDecay_weaken`
+  via `qmul_le_right_mono`) and addition at the summed constant (`windowDecay_add`/
+  `allDecay_add`, triangle against the distributed bound). On that class **`HatVanishes φ K`**
+  (`f̂(n) ≈ 0` for `n < K`) with: `hatVanishes_mono` (downward filtration),
+  **`hatVanishes_add`** — THE SUBSPACE THEOREM (brick 21's `mellinHat_add` against
+  `0 + 0 ≈ 0`), and `hatVanishes_of_moments` — the compact bridge welding the predicate to
+  the brick-10 moment skeleton through `mellinHat_compact`. Nonvacuity: the constructed zero
+  test `zeroL2`, all moments evaluated to `0` (`mellinMoment_zeroL2`, integrand pointwise
+  `≈ 0` → congruence to the constant integrand → `riemannIntegral_const_gen`), and
+  `hatVanishes_zeroL2` placing it in the class at every `K`. Honest scope: integer points
+  only, no band-indexed vanishing set tied to `bandProj`, no NONZERO member yet (banked
+  next), no coupling — positivity on a co-support class is step 4 and is RH. The crux fields
+  stay `none`.
+
+- **The pre-Hilbert layer, brick 21 — THE TRANSFORM IS LINEAR** (new
+  `Square/MellinLinear.lean`): **`mellinHat_add`** — `(φ+ψ)^(n) ≈ φ̂(n) + ψ̂(n)` at a shared
+  decay constant (the shared-modulus design of `riemannIntegral_add`): the compact piece by
+  brick 7's pairing additivity at the monomial test, the tail by `twTail_add` (window sums
+  add termwise via `twTerm_add` — the `innerI_add_left` pattern at the interval level through
+  the new `riemannIntegralI_certif_irrel` — and the Bishop limits combine by
+  `Rlim_add_of_approx` on the SAME schedule). With linearity the transform-side vanishing
+  conditions cut out SUBSPACES of the test class — the shape the co-support coupling
+  consumes. Plus `Qle_self_add_l` made public (brick 7). Honest scope: additivity only — no
+  scalar action, no continuous parameter, no coupling; crux fields `none`.
+- **`mellinHat_compact` — the transform of a compactly supported test IS its moment
+  sequence** (in `Square/MellinHat.lean`): if `φ` vanishes on `[1,∞)` (at every window
+  point), the twisted tail vanishes term by term (each `twTerm ≈ 0` by the window bound at
+  `B = 0` and `Rle_antisymm`, the `genSum`s collapse, `Rlim_zero` kills the tail) and
+  `f̂(n) ≈ mellinMoment φ n` — the first EVALUATION of the constructed transform, welding
+  the compact (brick 10) and half-line (bricks 18–20) Mellin objects into one; with
+  `hdec_of_supp` (vanishing satisfies the decay hypothesis at `C = 0`). Crux fields `none`.
+- **The pre-Hilbert layer, brick 20 — THE MELLIN TRANSFORM AT INTEGER POINTS** (new
+  `Square/MellinHat.lean`): **`mellinHat φ n = mellinMoment φ n + twTail φ n` — the first
+  constructed value of the `f ↦ f̂` direction**, `f̂(n) = ∫₀^∞ φ(t)·tⁿ dt` as a certified
+  real for every test with exponent-`(n+2)` window decay. The twisted integrand is built per
+  window from the algebra (`φ · powWinTest m n`, brick 19 — equal to `φ·tⁿ` on the window by
+  inertness); `tw_collapse` — the exponent-generic estimate
+  `C·(m+2)ⁿ/(m+1)^{n+2} ≤ (C·2ⁿ)/((m+1)m)` from the Nat core
+  `(m+2)ⁿ(m+1)m ≤ 2ⁿ(m+1)^{n+2}`, power atoms generalized before the ring normalizer;
+  `twTerm_bound` — the twisted window integrals obey the gateway's `K/((m+1)m)` shape at
+  `K := C·2ⁿ` (brick 18's window bound, `powWinTest_M_le` feeding the power factor);
+  **`twTail`** — the twisted half-line tail as a Bishop limit (`genSum_RReg` at modulus
+  `C·2ⁿ`); plus the public `qmul_le_left_mono`. Honest scope: integer points only,
+  window-clamped twist; no continuous parameter, no transform pair, no inversion, no
+  coupling; crux fields `none`.
+- **The pre-Hilbert layer, brick 19 — the WINDOW POWER substrate of the Mellin twist** (new
+  `Square/WindowPower.lean`): the transform's `tⁿ` twist grows on the half-line, so it is no
+  single global test — but on each window `[m+1, m+2]` it is one: `bandTest m` (the
+  `qBandQ`-clamped identity: 1-Lipschitz, bounded by `m+2`, INERT on its window,
+  `bandTest_inert ≈ t`) and `powWinTest m n` (its `n`-th power by iterated `L2Test.mul` —
+  certificates compose automatically through the test algebra; `powWinTest_succ_inert`:
+  recursively `≈ (previous)·t` on the window, base `≡ 1`, so the window power IS `tⁿ`
+  there). The twisted integrand of the transform at integer `n` on window `m` is the algebra
+  product `φ · powWinTest m n` — automatic certificates, agreeing with `φ(t)·tⁿ` on the
+  window. The twisted tail (summing window integrals under exponent-strengthened decay) is
+  the banked next brick. Honest scope: per-window powers and inertness only — no transform,
+  no tail, no pair; crux fields `none`.
+- **The pre-Hilbert layer, brick 18 — THE MELLIN FRONT OPENED: the decaying test class and
+  `∫₀^∞ φ`** (new `Analysis/MellinDecay.lean`): `riemannIntegralI_abs_le_window` — the
+  missing bridge from pointwise to window data: an integrand bounded by `B` on `[a, a+w]`
+  has `|∫_a^{a+w} f| ≤ w·B` (window-local comparison against `±B`-constants, whose interval
+  integrals evaluate through certificate independence); `MellinTest` — an `L2Test` bundled
+  with quadratic pointwise decay `|f| ≤ C/(m+1)²` per window; `mellinTerm_bound` — the
+  derived two-sided `C/((m+1)m)` gateway data; **`mellinIntegral φ = ∫₀^∞ φ`** — the
+  certified full Mellin-domain integral of every decaying test (compact gateway piece plus
+  convergent half-line tail), with nonnegativity. The `f,f̂` objects live over this domain;
+  the transform's `t^{s−1}` twist is the banked next brick. Honest scope: the half-line
+  integral only — NOT the Mellin transform (no twist, no pair, no inversion); crux `none`.
+- **The pre-Hilbert layer, brick 17 — THE TRUNCATION-UNIFORM COMPLETION** (new
+  `Square/UniformCompletion.lean`): the fixed-truncation fence of brick 15 removed —
+  `limMember_coherent` (the limit coordinates are truncation-COHERENT: members built at any
+  two truncations agree where both are defined, since both are Bishop limits of sequences
+  pointwise `≈ F j i`); `limMemberU` (the diagonal member — ONE infinite object, coordinate
+  `i` built at truncation `i+1`); `limMemberU_eq` (it agrees with every fixed-truncation
+  member on its range); **`limMemberU_converges`** — for a truncation-uniform squared-Cauchy
+  sequence (`SqCauchyU`), the single member satisfies `d²(F j, limMemberU) ≤ N·(2/(j+1))²`
+  at EVERY truncation: strong convergence of one uniformly constructed infinite object,
+  choice-free. Honest scope: per-`N` rate with a uniform CONSTRUCTION, not a
+  truncation-uniform rate (that needs genuine ℓ² summability data, fenced open); the L²
+  function-space strong completeness remains the last completeness lack; crux fields `none`.
+- **The pre-Hilbert layer, brick 16 — THE SONINE COMPLEMENT IS CLOSED UNDER COMPLETION**
+  (new `Square/CompleteComplement.lean`): `limMember_band_zero` — band-vanishing Cauchy
+  sequences have band-vanishing limit members (the band coordinate of the limit is the limit
+  of the band coordinates); **`sonine_complement_complete`** — the skeleton's unconditional
+  complement-positivity survives the passage to limits: the Weil multiplier pairing of every
+  constructed limit member is `≥ 0` at every truncation. The completion arc closes its loop
+  with the skeleton dichotomy: the projection subspace is complete and positivity is not
+  lost in the limit — so what step 4 must supply is exactly the coupling BEYOND this closed
+  subspace, not limit bookkeeping inside it. Honest scope: the skeleton's band condition
+  only; nothing about the genuine `f,f̂` coupling (step 4, = RH); crux fields `none`.
+- **The pre-Hilbert layer, brick 15 — STRONG COMPLETENESS at fixed truncation: the limit
+  member CONSTRUCTED** (new `Square/Completion.lean`): for a `dist2`-Cauchy sequence
+  (`SqCauchy`, the canonical sqrt-free squared modulus), the limit member exists as a
+  CONSTRUCTION — each coordinate is the extended pairing against the indicator basis
+  (`limMember F N hF = fun i => pairingLim F δᵢ`); `sqCauchy_pairing` transfers the modulus
+  through `⟨δᵢ,δᵢ⟩ ≈ 1` (on the truncation) / `≈ 0` (beyond); `limMember_coord_dist` gives
+  the coordinatewise canonical rate `2/(j+1)` (the coefficients ARE the coordinates, brick
+  11); **`limMember_converges`** — `d²(F j, limMember) ≤ N·(2/(j+1))²`: every Cauchy
+  sequence converges in `dist2` to its constructed limit, choice-free, with an effective
+  rate. The pre-Hilbert space at fixed truncation is COMPLETE. Honest scope: fixed
+  truncation only — the truncation-uniform completion and the L² strong completeness remain
+  open; crux fields `none`.
+- **The pre-Hilbert layer, brick 14 — the L² MIRROR of the completion axis** (new
+  `Square/PairingLimitI.lean`): `L2Test.neg`/`L2Test.sub` (closure under negation —
+  reusing the existing `lip_neg`/`congr_neg` — and subtraction; with `add` and `mul` the
+  test class is a commutative algebra with subtraction); `innerI_neg_left` (`⟨−φ,ψ⟩ ≈
+  −⟨φ,ψ⟩` — the negated test has the SAME product modulus definitionally, one congruence +
+  `riemannIntegral_neg`) and `innerI_sub_left`; `dist2I` (the L² squared distance);
+  `innerI_sub_sq_le` (L² Cauchy–Schwarz continuity, from brick 9's integral CS at the
+  difference test); **`pairingILim`** — the L² pairings along a squared-Cauchy sequence of
+  tests are `RReg` and their Bishop limit exists with effective rate `≤ 2/(j+1)`
+  (`pairingILim_dist`). The completion axis is now open on BOTH the discrete and the
+  function-space side. Honest scope: pairing values only; no completed L², no limit member,
+  no strong convergence, nothing toward `f,f̂`; crux fields `none`.
+- **The pre-Hilbert layer, brick 13 — THE PAIRING EXTENDS TO CAUCHY SEQUENCES: the
+  completion axis opened** (new `Square/PairingLimit.lean`): `inner_sub_sq_le` — the
+  Cauchy–Schwarz continuity of the pairing, `(⟨f,g⟩−⟨f',g⟩)² ≤ d²(f,f')·⟨g,g⟩` (the modulus
+  of continuity squared, since the substrate has no sqrt); `pairing_RReg` — a sequence of
+  test families squared-Cauchy against `g` (`d²(Fⱼ,Fₖ)·⟨g,g⟩ ≤ (1/(j+1)+1/(k+1))²`) has
+  `RReg` pairings, the squared modulus converting to the canonical linear rate through the
+  existing `Rle_of_Rsq_le` (order-reflection of squaring) and `RReg_of_real_bound` (the
+  completeness bridge); **`pairingLim`** — the extended pairing value `lim_j ⟨Fⱼ,g⟩` exists
+  as a constructed real with the effective rate `pairingLim_dist` (`≤ 2/(j+1)`). The pairing
+  extends past finite approximation — the weak-limit half of completeness, the honest
+  constructive one available without countable choice. Honest scope: pairing values only, no
+  completed space, no limit member, no strong convergence; crux fields `none`.
+- **The pre-Hilbert layer, brick 12 — the PARALLELOGRAM LAW and the squared-distance
+  geometry** (new `Square/Parallelogram.lean`): bilinearity completed on the second slot
+  (`innerN_add_right`/`innerN_sub_right`); **`parallelogram`** —
+  `⟨f+g,f+g⟩ + ⟨f−g,f−g⟩ ≈ 2⟨f,f⟩ + 2⟨g,g⟩` (bilinear expansion, the `±⟨f,g⟩, ±⟨g,f⟩` cross
+  terms cancelling as multiset pairs in the `RsumL` normalizer) — the identity certifying the
+  pairing is genuine inner-product geometry; `dist2 = ⟨f−g,f−g⟩` (the substrate has no sqrt,
+  so the metric geometry runs on the square) with nonneg/self/symm and
+  **`dist2_doubling`** — `d²(f,h) ≤ 2d²(f,g) + 2d²(g,h)`, the quasi-triangle inequality that
+  Cauchy sequences and completions are phrased with sqrt-free, an immediate corollary of the
+  parallelogram law. The completion axis now has its metric substrate. Honest scope: fixed
+  truncation, no completion constructed, L² mirror banked (needs `L2Test.neg`); crux `none`.
+- **The pre-Hilbert layer, brick 11 — PARSEVAL at the full indicator basis** (new
+  `Square/Parseval.lean`): at the complete finite basis the layer's Bessel inequality
+  SATURATES — `fourierC_indic` (`⟨f,δₖ⟩_N ≈ f(k)`: the coefficients are the coordinates),
+  `proj_indic_eq` (the projection onto the full basis is the identity on the truncation),
+  **`parseval_indic`** (`Σ_{k<N} ⟨f,δₖ⟩² ≈ ⟨f,f⟩_N`), and `bessel_saturates_at_indic`
+  (the ≤ and the ≈ side by side). The Bessel/Parseval boundary is now kernel-checked: the
+  infinite-dimensional statement is exactly what a completion — and only a completion — would
+  add. Honest scope: finite truncations; no infinite-dimensional Parseval, no completeness;
+  crux fields `none`.
+- **The pre-Hilbert layer, brick 10 — the test ALGEBRA and the integer Mellin moments** (new
+  `Square/TestAlgebra.lean`): `L2Test.mul` — the bounded-Lipschitz class is **closed under
+  multiplication** with every certificate field an already-proven lemma (`l2L`/`l2lip`/`l2fc`/
+  `l2bd`); with `L2Test.add` the class is a genuine function algebra, and pointwise product is
+  the autocorrelation-side operation. `clamp01`/`clampTest` (the `[0,1]` band clamp as a
+  1-Lipschitz test, inert on unit-interval rationals), `oneTest`, and `powTest n` (clamped
+  monomials by iterated product — certificates compose automatically).
+  **`mellinMoment φ n = ∫₀¹ φ·clamp01ⁿ`** — the integer-point Mellin data of every test as
+  certified reals, with the uniform pairing bound (`innerI_abs_le`, now public) and the
+  L²-boundedness of the moment functionals (`mellinMoment_cs`). Honest scope: the moment
+  skeleton is to the transform what the discrete band skeleton is to the Sonine space — NOT
+  the Mellin transform (no continuous parameter, no half-line, no inversion); crux `none`.
+- **The pre-Hilbert layer, brick 9 — THE INTEGRAL CAUCHY–SCHWARZ** (new
+  `Square/IntegralCSFull.lean`): **`innerI_cauchy_schwarz`** — `⟨φ,ψ⟩² ≤ ⟨φ,φ⟩·⟨ψ,ψ⟩` for
+  the L² pairing over the certified integral, sqrt-free, division-free, completion-free. The
+  ε-collapse: `a² − bc = (a² − Aₖ²) + (Aₖ² − BₖCₖ) + (BₖCₖ − bc)` through the level-`(k+1)`
+  dyadic sums — the middle `≤ 0` at every level (brick 8's per-level CS, i.e. brick 1's
+  discrete Lagrange SOS through the sampled families), the outer two `O(1/(k+1))` via the
+  effective error bound, the uniform sum bounds, and the product-difference telescope
+  (`Rabs_prod_diff`); closed by the one-sided ε-collapse. With symmetry (brick 6) and
+  bilinearity (brick 7), `innerI` now satisfies ALL the inner-product laws the discrete
+  `innerN` does — the L² side of the step-3 layer has its Cauchy–Schwarz. Helpers:
+  `Rabs_le_of_close`, `qmul_eps_le`/`qmul_eps_le_left`, `l2bd`. Crux fields `none`.
+- **The pre-Hilbert layer, brick 8 — per-level Cauchy–Schwarz + the effective dyadic error
+  bound** (new `Square/IntegralCS.lean`): `riemannSum_cauchy_schwarz` — at every partition
+  level `R_N(fg)² ≤ R_N(f²)·R_N(g²)`, because the `RsumN` core of a product Riemann sum IS
+  (definitionally) brick 1's truncated inner product of the sampled families, so the discrete
+  sqrt-free Cauchy–Schwarz applies and the uniform weight `1/(N+1)` squares out
+  (`(wA)² ≈ w²A² ≤ w²BC ≈ (wB)(wC)`, `RprodL` reassociation); `riemannSum_abs_le` (bounded
+  integrand ⟹ `|R_N(h)| ≤ M`); **`riemannIntegral_dyadic_dist`** — `|∫₀¹f − D_m| ≤ (⌈L⌉+2)/m`
+  at every level `m ≥ 1` (telescoping Cauchy modulus to the schedule, distance-to-limit past
+  it): every certified integral now carries an explicit rational error at every dyadic
+  Riemann sum. These are the two analytic inputs of the integral Cauchy–Schwarz; the
+  ε-collapse assembly is the banked next brick. Crux fields `none`.
+- **The pre-Hilbert layer, brick 7 — BILINEARITY of the L² pairing** (new
+  `Analysis/IntegralBilinear.lean`): the bounded-Lipschitz test class is closed under addition
+  (`L2Test.add`, summed certificates via the existing `Radd_lipschitz_real` + triangle);
+  `lip_weaken` (a certificate at `L` is one at any `L' ≥ L`) puts all three integrands of a
+  sum at the common modulus where `riemannIntegral_add` applies, and certificate independence
+  moves each end back to its canonical certificate: **`innerI_add_left`**
+  (`⟨φ+φ',ψ⟩ ≈ ⟨φ,ψ⟩+⟨φ',ψ⟩`) and `innerI_add_right` (by symmetry). With `innerI_symm`, the
+  L² pairing is now a genuine symmetric additive pairing on the test class — the
+  function-space mirror of brick 1's discrete `innerN` laws. Banked next: the integral
+  Cauchy–Schwarz (uniform-weight Riemann-sum route). Crux fields `none`.
+- **The pre-Hilbert layer, brick 6 — CERTIFICATE INDEPENDENCE of the certified integral**
+  (new `Analysis/IntegralCertIrrel.lean`): `riemannIntegral` depends only on the integrand,
+  not on which Lipschitz certificate constructed it (`riemannIntegral_certif_irrel`). The
+  engine: `genSum_gap` — the telescoping Cauchy modulus of the dyadic sums (`1/((m+1)m) =
+  1/m − 1/(m+1)`, so the increment tail between levels `M ≤ M'` telescopes EXACTLY to
+  `≤ K/M`, no geometric estimate); `Rabs_dist_Rlim` (two-sided `|X m − lim X| ≤ 2/(m+1)`,
+  with the `RTendsTo_le_Rsub` mirror); `Rlim_eval_real_rate` (`Rlim_eval_real` at an
+  arbitrary linear rate `C/(j+1)`); the two digamma schedules both reach level `≥ j+1` at
+  index `j`, so the `L'`-scheduled sums converge to the `L`-scheduled limit at rate
+  `(⌈L⌉+2)/(j+1)` and the Bishop limits agree. Payoff: **`innerI_symm`** — the L² pairing is
+  honestly symmetric (`⟨φ,ψ⟩ ≈ ⟨ψ,φ⟩`, no shared-certificate caveat), a genuine symmetric
+  pairing on the bounded-Lipschitz class. Scope: the base integral on `[0,1]`; improper and
+  complex layers keep per-certificate congruences; crux fields `none`.
+- **The pre-Hilbert layer, brick 5 — the L² PAIRING OVER THE CERTIFIED INTEGRAL** (new
+  `Analysis/IntegralInner.lean`): `L2Test` bundles a test function with the gateway's data
+  (rational Lipschitz modulus, rational global bound, the three certificates — the class the
+  realized Weil tests live in); `innerI φ ψ = ∫₀¹ φ·ψ` is the certified integral of the
+  product (certificate from the existing `Rmul_lipschitz`, constant `M_φL_ψ + M_ψL_φ`) — the
+  first genuine function-space inner product of the step-3 layer, a constructed real, not an
+  interface field; `innerI_self_nonneg` (`∫₀¹ φ² ≥ 0`) and `innerI_symm_certif` (symmetry at
+  the shared product certificate). Banked next, in order: certificate-independence of
+  `riemannIntegral` (the two-schedule limit comparison), bilinearity at a common weakened
+  modulus, the integral Cauchy–Schwarz. Honest scope: no completion, no measure theory; crux
+  fields `none`.
+- **The pre-Hilbert layer, brick 4 — the `N → ∞` passage: the truncated forms STABILIZE**
+  (new `Square/StableInner.lean`): for finitely-supported test families (`FinSupp`) the
+  truncated sums, inner products, and Weil pairings stop moving past the support bound
+  (`RsumN_stable`/`innerN_stable`/`weilQuad_stable`), so the direct limit is ATTAINED —
+  `innerN_welldef` and `weilQuad_welldef` make `⟨f,g⟩` and `weilQuad M c` genuine numbers on
+  the finitely-supported space (any two truncations past the bound agree), collapsing the
+  `∀ N` direct-limit quantifier of `WeilPSD` to a single value on each test; the band
+  projection acts on the space (`FinSupp_bandProj`). Honest scope: stabilization on the dense
+  finitely-supported subspace — no completion constructed; crux fields `none`.
+- **The pre-Hilbert layer, brick 3 — orthogonal projection and BESSEL'S INEQUALITY** (new
+  `Square/Projection.lean`): orthonormal families (`OrthoFam`), Fourier coefficients
+  `cₖ = ⟨f,eₖ⟩_N`, the finite-rank projection `Pf = Σ cₖeₖ` with `proj_coeff` (coefficients
+  reproduced, by sifting through orthonormality) and `inner_proj`/`proj_self_inner`
+  (`⟨f,Pf⟩ ≈ Σcₖ² ≈ ⟨Pf,Pf⟩`); **`bessel`**: `Σ_{k<K} ⟨f,eₖ⟩² ≤ ⟨f,f⟩_N` via
+  `⟨f−Pf, f−Pf⟩ ≥ 0` — constructive, sqrt-free, no division; `indic_ortho` (the coordinate
+  indicators are the skeleton's orthonormal basis). THE SONINE INSTANCE: the skeleton's band
+  restriction is now a genuine projection OPERATOR — `bandProj` is idempotent
+  (`bandProj_idem`) and self-adjoint (`bandProj_self_adjoint`), and
+  `bandProj_pairing_nonneg` gives `weilQuad (multForm burnolMult) (bandProj c) N ≥ 0` for
+  EVERY test family, unconditionally — pairing ∘ projection ≥ 0 with no support hypothesis
+  left to the caller. Honest scope: Bessel not Parseval — no completeness, no claim the band
+  projection is the genuine `f,f̂` co-support coupling; crux fields `none`.
+- **The pre-Hilbert layer, brick 2 — self-adjoint operators at the truncated level** (new
+  `Square/SelfAdjoint.lean`): kernels act as operators (`applyN B c N = (Σ_j B(i,j)cⱼ)ᵢ`); the
+  Weil quadratic form IS the inner product against the action (`weilQuad_eq_inner`:
+  `weilQuad B c N ≈ ⟨c, B·c⟩_N` — form language and operator language coincide); symmetric
+  kernels are self-adjoint (`applyN_self_adjoint`: `⟨B·c, d⟩ ≈ ⟨c, B·d⟩`, via the new real
+  finite Fubini `RsumN_swap`); and the Sonine skeleton's multiplier form is the motivating
+  instance — symmetric (`multForm_sym`), diagonal (`applyN_multForm`: `((multForm α)·c)(i) ≈
+  α(i)cᵢ`), self-adjoint (`multForm_self_adjoint`), with the Burnol pairing as its quadratic
+  form (`burnol_pairing_eq_inner`) — the language step 4 (the band-coupling positivity) has to
+  be phrased in. Honest scope: finite truncations, no completeness/spectral theory; crux `none`.
+- **The pre-Hilbert layer, brick 1 — the Sonine route's step 3 OPENED** (new
+  `Square/PreHilbert.lean`): the truncated inner product `⟨f,g⟩_N = Σ_{i<N} fᵢgᵢ` on test
+  families, with the four inner-product laws (`innerN_symm`/`innerN_add_left`/
+  `innerN_smul_left`/`innerN_self_nonneg`), prefix monotonicity of the squared norm
+  (`innerN_self_mono` — the directed structure the completion-free layer works with), and the
+  **sqrt-free Cauchy–Schwarz** (`cauchy_schwarz`) via the **Lagrange identity**
+  (`lagrange_identity`): the Cauchy–Schwarz defect `⟨f,f⟩⟨g,g⟩ − ⟨f,g⟩²` is exhibited as the
+  EXPLICIT sum of 2×2 minors `Σ_{i<j} (fᵢgⱼ − fⱼgᵢ)²` — no discriminant, no division, no square
+  root (the substrate has none): the certificate is the SOS itself, the intrinsic-certificate
+  shape of the discharge form realized unconditionally at the pre-Hilbert level. Plus the
+  finite-sum plumbing (`RsumN_neg`/`RsumN_sub`/`RsumN_le_prefix`/`Rsub_sq_expand`). Honest
+  scope: finite truncations only — no L², no completeness, no operators; crux fields `none`.
+- **`t4WeilValue_pos` — `W(t4) > 0`: THE FIRST CERTIFIED POSITIVITY ON THE
+  AUTOCORRELATION CONE with a live prime side** (new `Square/ConeSlot.lean`): `t4Slot`
+  realizes the cone-shaped log-tent as a `WeilSlot` with every interface field a genuine
+  constructed integral — poles `= t4PoleA + t4PoleB ≈ 9/4 + t4H²`, archimedean tail
+  `= t4ArchTail ≈ t4H·log(3/2) − t4Dilog` (assembled from the compact reciprocal half,
+  the constructed dilog, and the improper remainder; the `log 5` telescopes cancel,
+  `t4ArchTail_eq`) — and `t4WeilValue_eq` gives the closed form with the dilog carried
+  as the constructed object. The sign (margin `≈ +0.0558`) closes through `M = 512`
+  harmonic wedges (`log 2`, `log 3/2`, `log 3`, both sides), the standing
+  `log 4π`/`γ` brackets, the rational dilog lower bound, and one exact rational
+  `decide`. NOT claimed: positivity for the cone — that uniform statement is RH; the
+  crux fields stay `none`.
+- **`t4Dilog_ge` — the dilog constructed and bounded, fully rationally** (new
+  `Analysis/DilogPhi.lean`, `DilogPhiVal.lean`, `DilogPieces.lean`, `DilogValue.lean`):
+  the last new object of the `W(t4)` campaign, `∫₁⁴ log x/(x−1) dx = −Li₂(−3) ≈ 1.93939`
+  (no log closed form), realized through the kernel identity
+  `log x/(x−1) = ∫₀¹ ds/(1+s(x−1))` — the removable singularity at `x = 1` REMOVED BY
+  CONSTRUCTION. The kernel `Φ(u) = ∫₀¹ clampedInv 1 (1+s·band₍₀,₃₎(u)) ds` is a certified
+  integral for every real `u` (16-Lipschitz via the integral of the pointwise bound;
+  antitone at rationals); every inner sample at rational `(s,u)` is the exact rational
+  `1/(1+su)`, so the level sums are single rationals (`phiRat`) and the monotone bracket
+  collapses `Φ` to `decide` material. The three pieces `∫₀¹ Φ(c'+t) dt` sum to `t4Dilog`,
+  and **`t4Dilog ≥ 1909/1000`** closes with one rational `decide` over `3×16×128`-point
+  folds — no logs, no wedges anywhere in the bracket.
+- **`riemannIntegral_anti_upper/lower` — the monotone dyadic bracket** (new
+  `Analysis/MonotoneIntegral.lean`): for a sample-antitone integrand ONE finite dyadic
+  sum brackets the certified integral, `D_M − V/2^M ≤ ∫₀¹ f ≤ D_M` — the refinement
+  regroup factored Lipschitz-free (`riemannSum_refine_regroup`), antitone pair terms
+  (`refine_anti`/`refine_gap`), the accumulated geometric level gap
+  (`dyadicR_level_anti`/`level_gap`), and the limit transfer (`Rlim_le_const` + the new
+  `const_le_Rlim` mirror) under the schedule `M ≤ digammaMidx L j` (arranged by
+  weakening `L`). Plus `riemannIntegral_le_sample` (sample-only integrand comparison)
+  and the reusables `RsumN_telescope`, `Rneg_Rsub_flip`, `Rle_Radd_of_Rsub_le`. The
+  bracket engine for integrals with no closed form.
+- **`t4B12/23/34/h/q` — the `t4PoleB` pieces, part 4: constructed and evaluated** (in
+  `Analysis/T4PoleBPieces.lean`): the five interval integrals of `t4F(x)/x` over
+  `[1/4, 4]`, each a genuine constructed `riemannIntegral` — the three unit pieces
+  `t4H·recip − ½·gLx` at shared modulus `2 + LxQ c`, the `[1/2,1]` piece
+  `log2·recip + ½·gLx`, the `[1/4,1/2]` piece `½·gLx` (the substitution constant
+  cancels the cone height, as in poleA) — with values `t4H·Δlog_c − ½ΔHn_c`,
+  `log2·Δlog₁ + ½ΔHn₁`, `½ΔHn₁`. `t4PoleB` (the five-piece sum) is defined; the
+  `4(log2)² = t4H·t4H` assembly is the companion brick. Axiom-clean; crux fields
+  `none`.
+- **`t4Improper_eq` — the `t4` arch tail, part 2: the improper remainder** (new
+  `Analysis/T4TailImproper.lean`): `∫₁^∞ (1/(w+2) − 1/(w+4)) dw ≈ log 5 − log 3` —
+  the substituted `∫₄^∞ 2/(x²−1) dx`, the second evaluated `improperIntegral1` (the
+  shifted mirror of the tent\'s): blocks pull back to `gRecipC (m+3) − gRecipC (m+5)`
+  and evaluate by `recipC_gen`; the partial sums telescope
+  (`(log(N+3) − log3) − (log(N+5) − log5)`, `tail_step_alg`); block decay `K = 3`;
+  deviation `≤ (2N+7)/((N+4)(N+3))` against the `K = 3` schedule. Remaining for the
+  tail: the dilog half (`∫₁⁴ log x/(x−1)`, two-sided bracket) and the slot assembly.
+  Axiom-clean; crux fields `none`.
+- **`t4Trecip_sum` — the `t4` arch tail, part 1: the compact reciprocal half** (new
+  `Analysis/T4ArchPieces.lean`): the arch tail\'s compact integrand on `[1,4]`
+  collapses to `2log2/(x+1) − log x/(x−1)`; the reciprocal half is realized as three
+  constructed pieces `∫₀¹ t4H/(b+t) dt ≈ t4H·(log(b+1) − log b)` (bases `2, 3, 4`,
+  `riemannIntegral_recipC_smul` at weakened modulus `5`), telescoping to
+  `t4H·(log5 − log2)`. Remaining for the tail: the dilog half (`log x/(x−1)`,
+  two-sided bracket) and the improper remainder (`−t4H·(log5 − log3)`, the
+  `TentArchTail` telescope mirror). Axiom-clean; crux fields `none`.
+- **`t4PoleB_eq` — `t4PoleB ≈ (2log2)² = 4(log2)²`, EXACT** (in
+  `Analysis/T4PoleBPieces.lean`): the cone tent\'s `∫ f/x` pole component evaluates to
+  the exact square `t4H·t4H`. The five constructed pieces (`t4B12/23/34/h/q`, part 4)
+  telescope: the upper `A`-cluster gives `t4H·(log4 − log1) = t4H·t4H` and the
+  `B`-cluster `−(1/2)·(Hn4 − Hn1) = −(1/2)·t4H·t4H` (both `log3`/`Hn3` drop without
+  expansion), the lower pieces give `log2² + log2² = (1/2)·t4H·t4H`, and the halves
+  cancel to the square. The SECOND `t4` slot component pinned (after `t4PoleA = 9/4`);
+  remaining for `W(t4)`: the archimedean tail (recipC pieces + the dilog bracket) and
+  the sign theorem. Axiom-clean; crux fields `none`.
+- **`t4B_lower_eval` — the `t4PoleB` pieces, part 3: the lower pieces** (in
+  `Analysis/T4PoleBPieces.lean`): `∫₀¹ (C·(1/(c+t)) + (1/2)·gLx c) dt ≈ C·Δlog_c +
+  (1/2)·ΔHn_c`, generic in the bounded real constant — the `[1/2, 1]` piece at
+  `C = log 2` and the `[1/4, 1/2]` piece\'s scaffold. The simplifying observation:
+  the poleB measure `dx/x` is scale-INVARIANT, so the sub-unit pieces pull back with
+  NO outer weight (`[1/2,1] ↦ (log2 + log(1+t))/(1+t) dt` exactly). Next: the five
+  instances and the `4(log2)²` assembly. Axiom-clean; crux fields `none`.
+- **`t4B_upper_eval` — the `t4PoleB` pieces, part 2: the upper pieces** (in
+  `Analysis/T4PoleBPieces.lean`): `∫₀¹ (t4H·(1/(c+t)) + (−1/2)·gLx c) dt ≈
+  t4H·(log(c+1) − log c) − (1/2)·(Hn(c+1) − Hn(c))` — the pulled-back
+  `∫_c^{c+1} (2log2 − log x)/x dx`, general in the base (`1 ≤ c ≤ 3`) with the
+  weakening certificates (`Qle` to the shared modulus) as decidable hypotheses;
+  through `riemannIntegral_add`, the real-scalar reciprocal engine at `B = 2`, and
+  the `gLx` engine. Next: the three upper instances, the two lower pieces
+  (`(1/2)`, `(1/4)`-weighted), and the `4(log2)²` assembly. Axiom-clean; crux fields
+  `none`.
+- **`smul_lip`/`add_lip` + `t4H_abs` — the `t4PoleB` pieces, part 1: the combinators**
+  (new `Analysis/T4PoleBPieces.lean`): the generic Lipschitz combinators the poleB
+  piece integrands (`C·gRecipC + q·gLx`) consume — `|C| ≤ B` gives `C·f` at `B·L_f`;
+  `f + g` at `L_f + L_g` — plus the cone-height bounds `0 ≤ t4H = 2log2 ≤ 2` and
+  `|log 2| ≤ 1`, feeding `riemannIntegral_recipC_smul` at `B = 2` resp. `B = 1`.
+  Next: the five piece definitions and evaluations, then the `4(log2)²` assembly.
+  Axiom-clean; crux fields `none`.
+- **`riemannIntegral_recipC_smul` — the real-scalar reciprocal evaluation** (new
+  `Analysis/RecipSmulEval.lean`): `∫₀¹ C·(1/(c+t)) dt ≈ C·(log(c+1) − log c)` for a
+  REAL constant `C` with `|C| ≤ B`, `B.num ≤ 5` — the first real-scalar integral
+  evaluation, possible because the reciprocal family\'s Riemann sums are EXACT
+  rationals (`riemannSum_gRecipC = hFold`), so the dyadic sums scale by `C` exactly
+  (`riemannSum_smul` is real-scalar) and the defect is `|C|·wedge ≤ B/(c(c+1)2^m)`.
+  This is the engine the `t4` poleB pieces need for their `2log2·(1/x)` halves; the
+  `(1/2)·gLx` halves use the rational-scalar API. Next: the five poleB pieces and the
+  `4(log2)²` assembly. Axiom-clean; crux fields `none`.
+- **`riemannIntegral_gLx1/2/3` — the `∫ log/x` layer COMPLETE: the evaluation** (in
+  `Analysis/LogOverXEval.lean`): `∫₀¹ 2·log(c+t)/(c+t) dt ≈ Hn(c+1) − Hn(c)`
+  (`= log²(c+1) − log²c`), certified for `c = 1, 2, 3` at the product-Lipschitz datum
+  `2c+2` — the THIRD certified evaluation family (after the harmonic `recipC` and the
+  `∫log` `Gn` families), and the engine `poleB = 4(log2)²` consumes. Assembly: the
+  anchor `D₀ = (1/c)·2·log c`, the schedule rate at any `midx ≥ 5(j+1)` (discharged
+  per instance: `2c+3 ≥ 5`), `Rlim_eval_real`. Next: the five `t4` poleB pieces and
+  the `4(log2)²` assembly (mirror of `t4PoleA`). Axiom-clean; crux fields `none`.
+- **`dyadicR_gLx_defect` — the `∫ log/x` layer, part 8b-ii: the dyadic defect** (new
+  `Analysis/LogOverXEval.lean`): `|D_m − (Hn(c+1) − Hn(c))| ≤ (5m+5)/2^m` — the
+  convergence core of `∫₀¹ 2log(c+t)/(c+t) dt`. The deviation decomposes exactly
+  (`lxe_insert`) into the sample-bracket slack (`≤ (2m+5)·2^m/A²`, capped gap + the
+  `M/A²` reverse) plus the cross term `2·log(2^m)·(Δlog − hFold)` (`≤ 2m/(c(c+1)2^m)`,
+  the harmonic wedge absorbing the scale identity\'s cross term), totalling
+  `(4m+5)/2^m`. GOTCHA confirmed: `ring_uor` mis-atomizes repeated cast occurrences
+  (`↑2^m` thrice) — use core `Int.add_mul`/`Int.mul_assoc` on cast-heavy goals.
+  Remaining: the `digammaMidx` rate + `Rlim_eval_real` + instances. Axiom-clean; crux
+  fields `none`.
+- **`lxr_cap` + `Hn_sample_upper_cap` — the `∫ log/x` layer, part 8b-i: the rate
+  ingredients** (new `Analysis/LogOverXRate.lean`): the schedule arithmetic
+  `5(j+1) ≤ m ⟹ (5m+5)(j+1) ≤ 2^m` (via `m(m+1) ≤ 2^m`, `m ≥ 5`), the per-cell
+  log-sum cap `≤ 2m + 4` at `M = 2^m` (`logN_mono` into `(c+1)2^m`, split by
+  `logN_mul_gen`, `log(c+1) ≤ 2`, `log(2^m) ≤ m`), the capped sample bracket
+  `hsSample ≤ ΔHn + gapQE`, and the rational collapse `gapQE ≤ E·c/A²`. What remains
+  for `∫₀¹ 2log(c+t)/(c+t) = Hn(c+1) − Hn(c)`: the rate core (triangle over the
+  three slack terms + `Hn_scale_diff` + `hFoldC_defect`) and the `Rlim` wiring.
+  Axiom-clean; crux fields `none`.
+- **`hsFold_gap_cap` + `logN_two_pow_le` — the `∫ log/x` layer, part 8a: the
+  log-aware gap** (in `Analysis/LogSqStep.lean`): the rate ledger showed the part-3
+  crude cap does NOT decay once unscaled (the sample fold is already the scaled
+  Riemann sum), so the fold gap is re-proven with an arbitrary per-cell log-sum cap
+  `E` (`hsFold_gap_cap`, cells `E/((A+j)(A+j+1))`), fed by the new magnitude bounds
+  `log 2 ≤ 1` (`Rlog_le_sub_one` at the rational base) and `log(2^m) ≤ m`
+  (`logN_pow_two` + the `k·x ≤ k` fold) — at `M = 2^m` the cap is `E ~ 2m + 4` and
+  the telescoped gap is `~ m/M`, which the `digammaMidx` schedule absorbs
+  (`m² ≤ 2^m`). Axiom-clean; crux fields `none`.
+- **`Hn_scale_diff` — the `∫ log/x` layer, part 7: the scale identity** (in
+  `Analysis/LogSqStep.lean`): `Hn(kM) ≈ Hn(k) + (2·log M·log k + Hn(M))`
+  (`Hn_scale_expand`, the `(a+b)²` expansion over `logN_mul_gen`) and the difference
+  `Hn((c+1)M) − Hn(cM) ≈ (Hn(c+1) − Hn(c)) + 2·log M·(log(c+1) − log c)` — `Hn(M)`
+  and `log²M` cancel, leaving exactly the cross term that the collapse\'s
+  `−2·log(N+1)·hFold` will absorb (`hFoldC_defect`: `hFold ≈ log(c+1) − log c` within
+  `1/(c(c+1)M)`). All pieces for the `gLx` rate are now on the table. Axiom-clean;
+  crux fields `none`.
+- **`riemannSum_gLx` — the `∫ log/x` layer, part 6: the point values and the Riemann
+  fold** (new `Analysis/LogOverXSum.lean`): `gLx c (j/(N+1)) ≈ 2(log(c(N+1)+j) −
+  log(N+1))·(N+1)/(c(N+1)+j)` (`gLx_point`, free from `gLog_point` + `gRecipC_point`),
+  the fold `Σ_{i<k} gLx ≈ (N+1)·hsSample(c(N+1), k) − 2log(N+1)·harmTermFoldC(k)`
+  (`RsumN_gLx` — the log² content lands in `LogSqStep`'s sample fold, the cross term in
+  `HarmonicLogC`'s harmonic fold), and the collapse `riemannSum (gLx c) N ≈
+  hsSample(c(N+1), N+1) − 2log(N+1)·hFold(c(N+1), N+1)` (`riemannSum_gLx`). Next: the
+  `Hn` scale identity (`(a+b)²` expansion over `logN_mul_gen`) and the rate.
+  Axiom-clean; crux fields `none`.
+- **`gLx` + `gLx_lip_of` — the `∫ log/x` layer, part 5: the integrand family** (new
+  `Analysis/LogOverX.lean`): the totalized integrand
+  `gLx c t = (gLog c t + gLog c t)·gRecipC c t` (`= 2·log(c+t)/(c+t)` on `[0,1]`) with
+  the full gateway data — the uniform bounds `0 ≤ gLog c ≤ c` (`gLog_le`, the first
+  consumer of `RlogPos_le_sub_one`: `log x ≤ x − 1` at the presented band modulus) and
+  `|gRecipC| ≤ 1` (`Rinv_le_ofQ_inv` over the clamp floor), the doubled-integrand
+  `2`-Lipschitz combinator `twoF_lip` (generic in the `1`-Lipschitz factor), and the
+  product-Lipschitz certificate `gLx_lip_of` at constant `2c·1 + 1·2 = 2c + 2`
+  (`Rmul_lipschitz` — its first gateway consumer). The objects
+  `riemannIntegral (gLx c)` construct for `c = 1, 2, 3`. Next: the point values and
+  the rate against `Hn(c+1) − Hn(c)`. Axiom-clean; crux fields `none`.
+- **`Hn_sample_upper/lower` — the `∫ log/x` layer, part 4b: the two-sided sample
+  bracket** (in `Analysis/LogSqStep.lean`): the reverse slack `hsFoldHi ≤ hsSample +
+  c/A²` (per cell the weighted log step `δ/(A+k) ≤ 1/(A+k)² ≤ 1/A²`, summed at the
+  common denominator `A²`), and the combined bracket
+  `(Hn(A+M) − Hn(A)) − M/A² ≤ hsSample ≤ (Hn(A+M) − Hn(A)) + gapQ` — the sample fold
+  (the exact `log/x` Riemann-sum shape) is now two-sided against the `log²`
+  antiderivative difference, with both slacks decaying like `1/M` after scaling. Next:
+  the `log/x` integrand family and the rate wiring. Axiom-clean; crux fields `none`.
+- **`hsSample_le_foldHi` — the `∫ log/x` layer, part 4a: the sample fold** (in
+  `Analysis/LogSqStep.lean`): `hsSample = Σ_{j<c} 2·log(A+j)/(A+j)` — the exact shape
+  the `log/x` Riemann sums take — with the cell-wise comparison
+  `hsSample ≤ hsFoldHi` (`2·log(A+j) ≤ log(A+j) + log(A+j+1)` by `logN_mono`, same
+  weight). With the telescopes and the fold gap this brackets the sample fold against
+  `Hn(A+c) − Hn(A)` from above; the reverse slack (`foldHi ≤ sample + c/A²`, via the
+  step bracket squared) is the next brick. Axiom-clean; crux fields `none`.
+- **`hsFold_gap` — the `∫ log/x` layer, part 3: the fold gap** (in
+  `Analysis/LogSqStep.lean`): `hsFoldHi ≤ hsFoldLo + Σ_{j<c} 2(K+1)/((A+j)(A+j+1))`
+  for any cap `A + c ≤ K` — the KEY insight verified in the kernel: the crude
+  `log n ≤ n` bound (`logN_le_self`) suffices, because the harmonic cells
+  `1/((A+j)(A+j+1))` telescope to `≤ c/A²`, killing a factor of `A ~ cM` (the scaled
+  defect decays like `1/M` with no log-precision anywhere). Per-cell:
+  `Rmul_sub_distrib_right` collapses the weight difference to the harmonic cell.
+  Next: the `log/x` Riemann fold comparison and the eval
+  `∫₀¹ 2log(c+t)/(c+t) = Hn(c+1) − Hn(c)`. Axiom-clean; crux fields `none`.
+- **`Hn_tele_lower/upper` — the `∫ log/x` layer, part 2: the telescopes** (in
+  `Analysis/LogSqStep.lean`; toward `poleB = 4(log2)²`): the step-folds
+  `hsFoldLo/hsFoldHi` (`Σ_{j<c} (log(A+j) + log(A+j+1))·w` at the lower/upper step
+  weights `w = 1/(A+j+1), 1/(A+j)`) and the two-sided telescope
+  `Hn(A) + foldLo ≤ Hn(A+c) ≤ Hn(A) + foldHi`, general in the base and the count —
+  the `Gn_tele` pattern one level up. Next: the fold gap and the `log/x` Riemann
+  comparison. Axiom-clean; crux fields `none`.
+- **`Hn_step_lower/upper` — the `∫ log/x` layer, part 1: the `log²` step bracket** (new
+  `Analysis/LogSqStep.lean`; Sonine route, step 2 — the `W(t4)` campaign, toward
+  `poleB = 4(log2)²`): the antiderivative object `Hn(n) = (log n)²` (`= 2·∫₁ⁿ log x/x`)
+  with `Hn(1) ≈ 0` and the two-sided unit-step bracket
+  `(log i + log(i+1))/(i+1) ≤ Hn(i+1) − Hn(i) ≤ (log i + log(i+1))/i`, GENERAL in `i` —
+  the difference of squares collapses the step (`Rmul_sub_add_self`), the certified
+  per-step log bracket (`ExpBounds`) bounds the first factor, and `Rnonneg_logN` carries
+  the product. The exact mirror of `LogStep`'s `Gn` engine one level up; the telescopes
+  over `i = c·2^m + j` and the `log/x` Riemann comparison are the next bricks.
+  Axiom-clean; crux fields `none`.
+- **`t4PoleA_eq` — `t4PoleA ≈ 9/4`, EXACT** (`Analysis/T4PoleAAssembly.lean` part 2;
+  Sonine route, step 2 — the `W(t4)` campaign): the cone tent's `∫ f` pole component
+  evaluates to the exact rational `9/4` — the `log 2` coefficient cancels
+  (`−2 + 3/2 + 1/2 = 0`) and the rationals total `1 + 2 − 1/2 − 1/4 = 9/4`. Assembly
+  through a normal form `a·log2 + q` (rational `a, q`): `Gn 2 − Gn 1 ≈ 2log2 − 1`
+  (`gn21_nf`), `Gn 4 − Gn 2 ≈ 6log2 − 2` (`gn42_nf`, via `logN 4 ≈ 2·logN 2`), the
+  telescoped middle `t4A23 + t4A34 ≈ −2log2 + 2`, `t4Ah ≈ (3/2)log2 − 1/2`,
+  `t4Aq ≈ (1/2)log2 − 1/4`, summed by the NF kit (`ta_nf_add`/`ta_nf_smul` +
+  scalar-collapse privates). First of the three `t4` slot components pinned; next:
+  poleB (`= 4(log2)²`) and the archimedean tail (the dilog bracket). Axiom-clean;
+  crux fields `none`.
+- **`t4A12_val` + `t4A2334_val` — the `t4PoleA` assembly, part 1** (new
+  `Analysis/T4PoleAAssembly.lean`; Sonine route, step 2 — the `W(t4)` campaign): the
+  first *exact* piece value — `t4A12 ≈ 1` (`∫₁² (2log2 − log x) dx = 1`: the cone
+  height is `Gn 2`'s own log term definitionally, so the logs cancel inside the
+  piece) — and the middle-piece telescope `t4A23 + t4A34 ≈ (t4H + t4H) − (Gn 4 − Gn 2)`,
+  which drops `Gn 3` (the assembly's only `log 3` carrier) without ever expanding it.
+  Remaining for `t4PoleA ≈ 9/4`: expand `Gn 4 − Gn 2` through `logN 4 ≈ 2·logN 2`,
+  fold in `t4Ah`/`t4Aq`, cancel the `log 2` coefficient (`6 − 8 + 3/2 + 1/2 = 0`).
+  Axiom-clean; crux fields `none`.
+- **`t4A12/23/34/h/q` — the `t4PoleA` pieces, constructed and evaluated** (new
+  `Analysis/T4PoleAPieces.lean`; Sonine route, step 2 — the `W(t4)` campaign): the five
+  interval integrals of the cone tent `t4F(x) = 2log2 − |log x|` over `[1/4, 4]`, each
+  a genuine constructed `riemannIntegral` in pulled-back unit form (`x = c + t` on
+  `[c, c+1]` at `c = 1, 2, 3`; `x = (1+t)/2` and `x = (1+t)/4` on the sub-unit
+  intervals, the substitution constants split by `log((1+t)w) = log(1+t) + log w` —
+  on `[1/4, 1/2]` the split *exactly cancels* the cone height, leaving the bare
+  `∫₀¹ log(1+t)`). Piece values kernel-evaluated against the `∫log` layer:
+  `2log2 − (Gn(c+1) − Gn(c))` for the three unit pieces, `(1/2)(log2 + (Gn2 − Gn1))`,
+  `(1/4)(Gn2 − Gn1)`. The generic vehicles `int_const_sub_eval`/`int_const_add_eval`
+  (`∫(C ∓ f) = C ∓ ∫f`, any Real constant, any modulus) and the certificate
+  combinators `lip_const_sub/add`, `lip_neg` (+ congr forms) are new reusable gateway
+  API. `t4PoleA` (the five-piece sum) is defined; the assembly `t4PoleA ≈ 9/4` (the
+  logs cancel exactly) is the companion brick. Axiom-clean; crux fields `none`.
+- **`riemannIntegral_logC1/2/3` — the `∫ log` layer, part 2c(v): the evaluation — THE
+  `∫ log` LAYER IS COMPLETE** (new `Analysis/LogIntegralEval.lean`; Sonine route,
+  step 2 — the `W(t4)` campaign): `∫₀¹ log(c+t) dt ≈ Gn(c+1) − Gn(c)`
+  (`= (c+1)log(c+1) − c·log c − 1`), certified for `c = 1, 2, 3` on the `1`-Lipschitz
+  data — the second non-rational family of certified integral evaluations (after the
+  harmonic `recipC` family), and the values the five `t4PoleA` pieces consume. The
+  assembly: the dyadic defect `|D_m − (Gn(c+1) − Gn(c))| ≤ (1/2^m)·hFold(c·2^m, 2^m)
+  ≤ 1/2^m` (`dyadicR_gLog_defect`, from the part 2c(iv) collapse + bracket + scale
+  identity, with `hFold_le_ratio`: the harmonic block is at most `M/A`); the anchor
+  `D₀ = gLog c (0) ≈ log c`; the `digammaMidx` schedule (`genSum_gLog_rate`) and
+  `Rlim_eval_real` — the `HarmonicLogC` template end to end. General-base engine
+  `riemannIntegral_logC_gen` (Lipschitz datum a hypothesis); root witness clauses for
+  the three instances; audit entries. Next: the five `t4PoleA` pieces (`[k, k+1]` at
+  `c = 1, 2, 3` direct; `[1/4, 1/2]`, `[1/2, 1]` by affine substitution with the log
+  constants split off), whose logs cancel to the exact `9/4`. Axiom-clean; crux
+  fields `none`.
+- **`riemannSum_gLog` + `Gn_scale_identity` — the `∫ log` layer, part 2c(iv): the Riemann
+  sums and the scale identity** (new `Analysis/LogRiemann.lean`; Sonine route, step 2 —
+  the `W(t4)` campaign): the four structural facts turning the point values and the
+  `LogStep` telescopes into the dyadic rate for `∫₀¹ log(c+t) dt` — the fold
+  (`RsumN_gLog`: `Σ_{i<k} gLog c (i/(N+1)) ≈ logFold(c(N+1), k) − k·log(N+1)`, `k ≤ N+1`),
+  the collapse (`riemannSum_gLog`: the full sum
+  `≈ (1/(N+1))·logFold(c(N+1), N+1) − log(N+1)`), the two-sided bracket
+  (`logFold_le_Gn`/`Gn_le_logFold`: `ΔGn − hFold(A,M) ≤ logFold(A,M) ≤ ΔGn`, closing
+  `LogStep`'s telescopes into `Rle` pairs against `ΔGn = Gn(A+M) − Gn(A)`), and the
+  scale identity (`Gn_scale_identity`:
+  `(1/M)·(Gn((c+1)M) − Gn(cM)) ≈ (Gn(c+1) − Gn(c)) + log M`, via `Gn_scale_expand` —
+  `logN_mul_gen` driven through the antiderivative). The `− log(N+1)` of the collapse
+  exactly absorbs the `+ log M` of the identity, so the Riemann sums converge to
+  `Gn(c+1) − Gn(c)` with defect `(1/M)·hFold(cM,M) ≤ 1/(cM)` — the rate at the
+  `digammaMidx` schedule and `Rlim_eval_real` are the next brick. Axiom-clean; crux
+  fields `none`.
+- **`RlogPos_ofQ_eq_logN` + `gLog_point` — the `∫ log` layer, parts 2c(ii)–(iii): the
+  log-of-rational bridge and the point values** (new `Analysis/LogRatBridge.lean`,
+  `Analysis/LogPointVal.lean`; Sonine route, step 2 — the `W(t4)` campaign): (2c-ii)
+  `RlogPos (ofQ ⟨a,d⟩) ≈ logN a − logN d` on the band `d ≤ a ≤ 4d`, by
+  **exp-injectivity** — `exp(RlogPos(a/d) + logN d) ≈ (a/d)·d ≈ a ≈ exp(logN a)`
+  (`RexpReal_add`, `Rexp_log_ratQ`, `Rexp_logN`), cancelled by the general
+  `RexpReal_inj_gen` (no nonnegativity side conditions, so no `logN` monotonicity
+  needed); the radius certificate consumed is exactly part 2c(i)'s `radius_half_proj`,
+  fed to `RlogPos_eq_Rlog` at the presented modulus `B = a/d`. No new series, no new
+  integral — an identity between two already-constructed logarithms. (2c-iii) the point
+  values `gLog c (j/(N+1)) ≈ logN(c(N+1)+j) − logN(N+1)` for `1 ≤ c ≤ 3`, `j ≤ N+1`,
+  GENERAL in the dyadic sample — every fold of every Riemann sum of `∫₀¹ log(c+t) dt`
+  routes through this single theorem: the constant-real sum collapses
+  (`c + j/(N+1) ≈ (c(N+1)+j)/(N+1)`), the band clamp is inert on the sample
+  (`qBandQ_eq_of_band`), `RlogPos_congr` fires at `B = c+1`
+  (`radius_half_proj (c+1) 1` — the two `c ≤ 3` constraints, the modulus certificate
+  and the bridge band, are the same constraint), and the bridge lands the `logN`
+  difference that `LogStep`'s telescopes speak. Root witness clause added (the ∀-shape
+  point-value fact); audit entries added. Remaining for `riemannIntegral_logC`: the
+  `genSum` rate (the `HarmonicLogC` schedule over `Gn`'s telescopes) and
+  `Rlim_eval_real` wiring. Axiom-clean; crux fields `none`.
+- **`qBandQ` + `gLog` + `radius_half_of_le4` — the `∫ log` layer, parts 2a–2c(i)** (new
+  `Analysis/BandClamp.lean`, `Analysis/LogIntegrand.lean`, `Analysis/LogRatCert.lean`;
+  Sonine route, step 2 — the `W(t4)` campaign): (2a) the two-sided per-index band clamp
+  `qBandQ a b x` (`seqₙ = min(b, max(xₙ, a))`) with the new `Qmin` suite, `1`-Lipschitz,
+  congruent, inert on the band, uniform positivity witness — the totalizer manufacturing
+  exactly the seq-wise facts `RlogPos`'s lemmas consume; (2b) the totalized `log`
+  integrand `gLog c t = RlogPos(band_{[1,c+1]}(c+t))`, its congruence and `1`-Lipschitz
+  data general in the base with decidable certificate hypotheses, and the instances
+  `c = 1, 2, 3` (budgets `K_B = 42/64/90`, `K_BB = 90/280/714`, all certs by `decide`;
+  the presented-radius certs provably fail for `c ≥ 5` — concrete instances are the
+  design). The gateway objects `riemannIntegral (gLog c)` now construct; (2c-i) the
+  uniform small-radius certificate `2(a−d)² ≤ (a+d)²` for `d ≤ a ≤ 4d`, GENERAL in the
+  dyadic sample via the witness identity `(a+d)² − 2(a−d)² = (4d−a)(a−d) + ad + 3d²`
+  (`ring_uor` + `Int.mul_nonneg`, no size bound) — what lets `RlogPos_eq_Rlog` fire at
+  every sample of `∫₀¹ log(c+t)` uniformly. Remaining for the evaluation: the
+  log-of-rational bridge (exp-injectivity assembly), the `genSum` rate from `LogStep`'s
+  telescopes, `riemannIntegral_logC`. Axiom-clean; crux fields `none`.
+- **`Gn_step_lower`/`Gn_step_upper` + telescopes — the `∫ log` layer, part 1** (new
+  `Analysis/LogStep.lean`; Sonine route, step 2 — the engine for the `W(t4)` campaign):
+  with `Gn(n) = n·log n − n` (the `log` antiderivative at integer arguments,
+  `Gn_one ≈ −1`), the unit step is bracketed by the endpoint samples,
+  `Gn(i) + log i ≤ Gn(i+1) ≤ Gn(i) + log(i+1)` — PURE ALGEBRA over the per-step
+  logarithm bracket (`ExpBounds.lean`): multiply `1/(i+1) + log i ≤ log(i+1)` by `i+1`
+  (resp. `log(i+1) ≤ 1/i + log i` by `i`) and the rational parts collapse to `1`.
+  Telescoping (`Gn_tele_lower`/`Gn_tele_upper`) gives the two-sided Riemann bound
+  `Gn(A) + Σ_{j<c} log(A+j) ≤ Gn(A+c) ≤ Gn(A) + Σ_{j<c} log(A+j+1)`, and the fold gap
+  is bounded by the EXISTING rational harmonic fold (`logFold_gap`:
+  `Σ log(A+j+1) ≤ Σ log(A+j) + hFold A c`). Since the dyadic Riemann samples of a `log`
+  integrand at rational points ARE `logN` differences at integer arguments
+  (`log(c + j/2^m) = logN(c·2^m + j) − logN(2^m)`), this is exactly the rate content for
+  `∫₀¹ log(c+t) dt = (c+1)·log(c+1) − c·log c − 1` at defect `hFold(c·2^m, 2^m) ≤ 1/(c·2^m)`
+  — part 2 wires it into the gateway. Verified target (30-digit numeric check recorded):
+  `W(t4) = 9/4 + 4(log 2)² − [primes + (log 4π + γ)·2 log 2 + tail] ≈ +0.0981 > 0`, the
+  sign RH demands on the cone; the tail's dilog piece (`−Li₂(−3)`) will be certified by
+  brackets, not closed form. Root witness extended with the step-bracket pair (∀-clause);
+  axiom-clean; crux fields `none`.
+- **`t4Test` + `t4PrimePart_eq` — THE FIRST CONE-SHAPED TEST DATUM WITH A LIVE PRIME SIDE**
+  (new `Square/ConeTent.lean`; Sonine route, step 2 — toward the autocorrelation cone): the
+  square-scale symmetric log-tent `t4F(x) = 2·log 2 − |log x|` on `[1/4, 4]` realized as a
+  genuine `WeilTest` (`X = 4`). The key unblocking observation: in the log variable the
+  test is the autocorrelation of the box on `[−log 2, log 2]` — the box with RATIONAL knots
+  `[1/2, 2]` in `x` — so at SQUARE scales `X = c²` the `√2` obstruction (recorded against
+  the scale-2 tent, generating box knots `2^{∓1/2}`) vanishes. The datum is log-valued at
+  rational points (`f(a/b) = 2·log 2 ∓ (log a − log b)`), which `WeilTest.f : Q → Real`
+  carries natively; `f(1) = 2·log 2 > 0` (`t4F_one`) is the on-cone marker `∫|g|²` that the
+  off-cone bump lacked. The finite-place side is EVALUATED in closed form
+  (`t4PrimePart_eq`): `primes(t4) ≈ log 2·(3/2·log 2) + log 3·(4/3·(2·log 2 − log 3))`
+  `≈ 1.1421` — the prime `2` enters with the test's own log-weight (`Λ(2)·f(2) = (log 2)²`),
+  the prime `3` through the symmetric pair `f(3) = f(1/3)`, and the `Λ(4) = log 2` term
+  dies on the knot `f(4) = 0` by `log`-multiplicativity. HONEST SCOPE: datum + prime side
+  only — the slot integrals need the certified `∫ log` layer (not yet built), and the exact
+  CC weight normalization of the cone element is deliberately not asserted (`t4F` is
+  claimed as the log-coordinate autocorrelation shape only). Root witness extended with
+  `t4F_one` and `t4PrimePart_eq`; axiom-clean; crux fields `none`.
+- **`bumpSlot` + `bumpWeilValue_neg` — THE FIRST REALIZED SLOT WITH A LIVE PRIME SIDE, and
+  the first certified NEGATIVE Weil value: `W(bump) < 0`** (new `Analysis/BumpPieces.lean` +
+  `Square/BumpSlot.lean`; Sonine route, step 2 — the frontier past the prime-free window):
+  the off-center tent with knots `1, 2, 3` (peak AT the prime `2`) is realized as a genuine
+  `WeilTest` (`bumpF : Q → Real`, `X = 3` — the first test whose support MEETS the primes;
+  it is the genuine function whose consumed evaluations `demoWeilTest` records), and its
+  `WeilSlot` is inhabited with every field a kernel-evaluated integral: poles
+  `= bumpPoleA + bumpPoleB ≈ 1 + (3·log 3 − 4·log 2)` (`bump_pieceA1/A2` the affine edges,
+  `bump_pieceB1/B2` the `f̃(0)` pieces `1 − 1/x` and `3/x − 1` through the reciprocal
+  bridges), archimedean tail `= bumpArchTail ≈ 6·log 2 − 3·log 3` — COMPACT for this test:
+  `f(1) = 0` kills both the `(2/x)f(1)` subtraction and the improper remainder, and the
+  PV-cancelled integrand reduces by exact rational algebra (`x/(x+1) = 1 − 1/(x+1)` on
+  `[1,2]`; partial fractions `−1 + 1/(x−1) + 2/(x+1)` on `[2,3]`, consuming the base-3
+  bridge `∫₀¹ dx/(3+x) ≈ log 4 − log 3`). The finite-place side is NONZERO
+  (`bumpPrimePart_eq ≈ log 2` — the prime `2` enters the assembled functional through the
+  peak, `Λ(3)` dying on the right knot), the archimedean constant vanishes (`f(1) = 0`),
+  and the value reduces to closed form (`bumpWeilValue_eq`):
+  `W(bump) = 1 + 6·log 3 − 11·log 2 ≈ −0.0329`. **`bumpWeilValue_neg` certifies
+  `W(bump) < 0`** via the harmonic wedges at `M = 128` (`bmp_L2`/`bmp_U32`/`bmp_L43`;
+  worst-case wedge error `7/256 ≈ 0.027` against margin `0.033`, realized margin `≈ 0.024`;
+  one closing bignum `decide`). WHAT THE SIGN MEANS: the Weil criterion is positivity on
+  the AUTOCORRELATION cone `g ⋆ g^τ`, and the bump is admissible but NOT an autocorrelation
+  (`f(1) = ∫|g|² = 0` forces `g = 0`) — so a certified `W < 0` is CONSISTENT with RH and is
+  the honest counterpart of `tentWeilValue_pos`: kernel-checked proof that Weil positivity
+  is NOT a pointwise feature of the admissible class — the `f, f̂` coupling structure
+  (Sonine steps 3–4) is load-bearing. The cancellation-not-magnitude finding (`α(2) < 0`,
+  `arch(1) < 0`), now at the level of the assembled functional. Root witness extended with
+  both facts; axiom-clean; crux fields `none`.
+- **`tentSlot` + `tentWeilValue_pos` — THE FIRST REALIZED WEIL SLOT, and the first realized
+  window-positivity instance: `W(tent) > 0`** (new `Square/TentSlot.lean`; Sonine route,
+  step 2 boundary crossed for one genuine test): `Pairing.lean`'s `WeilSlot` interface is
+  INHABITED with every field a kernel-evaluated constructed integral — the tent test datum
+  `tentF : Q → Real` (piecewise-linear, knots `1/2, 1, 2`, Bombieri-admissible, support
+  proofs kernel-checked), poles `= tentPoleA + tentPoleB ≈ 3/4 + log 2`, archimedean tail
+  `= tentArchTail ≈ −1 − 6·log 2 + 3·log 3`. The finite-place side VANISHES
+  (`tentPrimePart_eq` — the `X = 2` prime-free window realized: the knots sit exactly at
+  the prime-2 evaluation points), the archimedean constant collapses (`f(1) = 1`), and the
+  Weil functional reduces to closed form (`tentWeilValue_eq`):
+  `W(tent) ≈ (3/4 + log 2) − ((log 4π + γ) + (−1 − 6·log 2 + 3·log 3))
+   = 7/4 + 7·log 2 − 3·log 3 − log 4π − γ ≈ +0.198`. **`tentWeilValue_pos` certifies
+  `W(tent) > 0`** — rational brackets for `log 2` and `log 3 − log 2` come from the
+  harmonic wedges at `M = 32` (`tent_L2`/`tent_U32`/`tent_L32`/`tent_L3`: the fold values
+  are exact rationals with ~10⁵⁰-digit-product denominators; ONE closing `decide` performs
+  the bignum arithmetic), `log 4π`/`γ` from the standing brackets. This is what
+  window-supported Weil positivity LOOKS like when realized — one test, one certified sign;
+  the pairing-family positivity (`∀` tests) remains the crux and is RH. Axiom-clean; crux
+  fields `none`.
+- **`tentArchTail_eq` — the tent's full archimedean tail ≈ `−1 − 6·log 2 + 3·log 3`: THE
+  THIRD EVALUATED WEIL-SLOT COMPONENT, completing all three tent slot fields** (new
+  `Analysis/TentArchTail.lean`; Sonine route, step 2): the improper part past the support,
+  `∫₁^∞ (1/w − 1/(w+2)) dw = ∫₂^∞ 2/(x²−1) dx ≈ log 3` (`improperTail_eq`), is the FIRST
+  EVALUATED `improperIntegral1` — a certified half-line integral reduced in the kernel. Each
+  unit block `T m = ∫_{m+1}^{m+2} hTail` is two instances of the general-base bridge
+  (`integralTerm_hTail : T m ≈ [log(m+2)−log(m+1)] − [log(m+4)−log(m+3)]`); the `K = 3`
+  decay hypothesis comes from the per-step logarithm bracket (`T m ∈ [1/(m+2) − 1/(m+3),
+  1/(m+1) − 1/(m+4)] ⊆ [0, 3/((m+1)m)]`, `tail_decay`); the partial sums TELESCOPE
+  (`genSum_hTail : Σ_{i<N} T i ≈ (log(N+1) − log 1) − (log(N+3) − log 3)`, a three-line
+  additive rearrangement per step, `tail_step_alg`); the defect `log(N+3) − log(N+1) ≤
+  2/(N+1)` (the bracket twice) beats the schedule `digammaMidx 3 j = 4(j+1)`, and
+  `Rlim_eval_real` evaluates the limit. Assembled: `tentArchTail = tent_arch12 −
+  improperTail ≈ −(1 + 2·log 2 − 4·(log 3 − log 2)) − log 3 = −1 − 6·log 2 + 3·log 3`.
+  With `tentPoleA_eq` (3/4), `tentPoleB_eq` (log 2), and `weilArchConst` already
+  constructed, ALL `WeilSlot` interface fields for the tent test are now kernel-evaluated —
+  the realized slot instance and `weilValue` are the next (assembly) brick. Axiom-clean;
+  crux fields `none`.
+- **`riemannIntegral_recipC` — the GENERAL-BASE harmonic bridge: `∫₀¹ dx/(c+x) ≈
+  log(c+1) − log c` for EVERY natural base `c ≥ 1`** (new `Analysis/HarmonicLogC.lean`;
+  Sonine route, step 2): the `HarmonicLog32` construction with the base as a parameter —
+  left sums are `H_{(c+1)M} − H_{cM}`, the wedge telescopes `cM → (c+1)M` with width
+  `1/(c(c+1)M)` (both cancellations by `logN_mul_gen`), anchor `D₀ = 1/c`. This is the
+  block engine the improper archimedean tail needs: `∫₂^∞ −2/(x²−1) dx = −log 3` is a
+  `genSum` of unit blocks `∫_{m+1}^{m+2}(1/w − 1/(w+2))` (`ImproperIntegral.lean`), and each
+  block is `[log(m+2)−log(m+1)] − [log(m+4)−log(m+3)]` — two instances of this theorem;
+  the partial sums telescope to `log 3 − (log(N+3) − log(N+1))` with defect `≤ 2/(N+1)` by
+  the per-step bracket, so `Rlim_eval_real` will close the tail. Wired into the root witness
+  as a universally-quantified clause (`∀ c ≥ 1`). Axiom-clean; crux fields `none`.
+- **`tent_arch12` — the archimedean tail's compact `[1,2]` piece ≈ `−1 − 6·log 2 + 4·log 3`,
+  and general log-additivity** (new `Analysis/HarmonicLog32.lean`,
+  `Analysis/TentArchPiece.lean`; Sonine route, step 2): the PV-cancelled tail integrand on
+  the tent's support, `∫₁² −(1 + 2/x − 4/(x+1)) dx`, is CONSTRUCTED (floor-1 clamp only —
+  `x ≥ 1`, `x+1 ≥ 2` on the domain) and EVALUATED:
+  `≈ −(1 + 2·log 2 − 4·(log 3 − log 2))`. The new core is
+  **`riemannIntegral_recip32`: `∫₀¹ dx/(2+x) ≈ log 3 − log 2`** — the base-`2M` harmonic
+  bridge (left sums are `H_{3M} − H_{2M}`, the wedge telescopes the per-step bracket from
+  `2M` to `3M` with width `1/(6M)`), whose only new analytic input is
+  **`logN_mul_gen`: `log(k·m) = log k + log m`** (the `logN_mul` doubling proof at an
+  arbitrary factor, via `exp` injectivity — `HarmonicLog`'s folds and telescopes were
+  already general in base and count). The pullback is pointwise congruent to
+  `−(1 + 2·gRecip − 4·gRecip32)` (`tent_arch_pull`) and gateway linearity reduces the value
+  to the two certified reciprocal integrals. Remaining for the full tail
+  `−1 − 6·log 2 + 3·log 3`: the improper piece past the support,
+  `∫₂^∞ −2/(x²−1) = −log 3`. Axiom-clean; crux fields `none`.
+- **`tentPoleB_eq` — the tent's `f̃(0)` component ≈ `log 2`: THE SECOND EVALUATED WEIL-SLOT
+  COMPONENT, and the first integral evaluation to a NON-RATIONAL value** (new
+  `Analysis/ExpBounds.lean`, `Analysis/HarmonicLog.lean`, `Analysis/TentLogPiece.lean`;
+  Sonine route, step 2): the tent test's `∫₀^∞ f(x)/x dx` pole part is CONSTRUCTED as two
+  certified interval integrals and EVALUATED in the kernel:
+  `∫_{1/2}^{1}(2 − 1/x) + ∫_{1}^{2}(2/x − 1) ≈ (1 − log 2) + (2·log 2 − 1) = log 2`.
+  With `tentPoleA_eq` this completes the tent's pole block `f̃(1) + f̃(0) = 3/4 + log 2`.
+  The chain, bottom-up: (i) **`ExpBounds.lean`** — the series bounds `1 + q ≤ exp q`
+  (`RexpReal_ofQ_ge_one_add`) and the exact geometric cap `exp(1/(e+1)) ≤ (e+1)/e`
+  (`RexpReal_unit_le`, strengthened-induction closed form `expSum_unit_le_geom`), giving the
+  **per-step logarithm bracket** `1/(i+1) ≤ log(i+1) − log i ≤ 1/i` (`logN_step_lower/upper`,
+  via `RexpReal_reflects_le` — the constructive derivative of `log` at the integers);
+  (ii) **`HarmonicLog.lean`** — the telescoped wedge `log 2 ≤ Σ_{j<M} 1/(M+j) ≤ log 2 + 1/(2M)`
+  (`log2_le_hFold`/`hFold_le_log2_add`, through `logN_mul` and the exact telescoping defect
+  `hFold_eq_hFoldLo`), the harmonic Riemann-sum identity `R_N(1/(1+t)) = Σ_{j<M} 1/(M+j)`
+  (`riemannSum_gRecip`, per-point `clampedInv` evaluation + ℚ-fold), the new limit engine
+  `Rlim_eval_real` (rate-convergent Bishop limits evaluate to a REAL target — `Rlim_eval`
+  generalized, one extra regularity step of the target), and the headline
+  **`riemannIntegral_recip`: `∫₀¹ dx/(1+x) ≈ log 2`** — the constructive
+  fundamental-theorem step for `1/x`; (iii) **`TentLogPiece.lean`** — the two tent pieces
+  totalized with the FLOOR-1 clamp only (on `[1/2,1]` via `1/x = 2·(1/(2x))`, `2x ∈ [1,2]` —
+  no second clamp floor, no scaling identity), affine pullbacks POINTWISE congruent to
+  `2 − 2·gRecip` and `2·gRecip − 1` (`tent_pull1/2`), evaluated by gateway linearity
+  (`_const/_smul/_neg/_add`) over `riemannIntegral_recip`, assembled in `tentPoleB_eq`.
+  Also: order helpers (`Rsub_le_of_le_Radd`, `Radd_le_cancel_right`, `Rsub_shift_drop`,
+  `Rneg_involutive`, `Rmul_two_eq`). Root witness extended with `riemannIntegral_recip` and
+  `tentPoleB_eq`. Axiom-clean; crux fields `none`; RH open.
+- **`clampedInv` — the clamped-reciprocal gadget: the totalized `1/x` integrand** (new
+  `Analysis/ClampedInv.lean`; Sonine route, the recorded next brick after `tentPoleA_eq`):
+  `clampedInv a x := 1/max(x, a)` (rational floor `a > 0`) is a genuine TOTAL function of `x`
+  carrying exactly the certified-integration gateway's data — congruence (`clampedInv_congr`),
+  the globally-Lipschitz bound with the RATIONAL constant `(1/a)²` (`clampedInv_lipschitz`),
+  non-negativity, inertness `≈ 1/x` on `[a, ∞)` (`clampedInv_eq_of_ge`), and seq-exact rational
+  evaluation `clampedInv a (ofQ q) ≈ ofQ (1/q)` for `q ≥ a` (`clampedInv_ofQ`, via the new
+  `Rinv_ofQ`). The design resolves `Rinv`'s witness-as-data obstruction to totality: the
+  per-index clamp `qClampQ a x` (seq `n ↦ max(xₙ, a)`, the floor-`a` generalization of
+  `qClampOne`; `1`-Lipschitz via `Qmax_const_lip`, inert on `[a,∞)`) keeps the argument `≥ a`
+  at EVERY index, so ONE witness (`k = 2·a.den`, `Qbound_lt_pos`) serves every `x`
+  (`qClampQ_witness`). The reciprocal side is fully algebraic over the `Rinv` laws — no
+  per-index reasoning about `Rmul`'s reindex: the Real-level difference identity
+  `1/u − 1/v ≈ (v−u)·((1/u)·(1/v))` (`Rinv_sub_Rinv`), the floor cap `1/u ≤ 1/a`
+  (`Rinv_le_ofQ_inv`), and the two-leg absolute assembly (`Rinv_abs_lipschitz`, the
+  `Rlog_abs_lipschitz` pattern). Plus `lip_mono` (Lipschitz-modulus upgrade, for aligning
+  the shared `L` that `riemannIntegral_add` requires) and `Qlt_of_Qlt_Qle`. With this,
+  partial fractions reduce every remaining tent-slot integrand (`2 − 1/x`,
+  `−(1 + 2/x − 4/(x+1))`, the shifted tail `−2/(u(u+2))`) to affine combinations the gateway
+  integrates. Wired into the root witness (`F1Square.lean`): the `(1/a)²` Lipschitz datum at
+  `a = 1/2` and the evaluation `clampedInv (1/2) 2 ≈ 1/2`. Axiom-clean; crux fields `none`.
+- **`tentPoleA_eq` — THE FIRST EVALUATED WEIL-SLOT COMPONENT** (new
+  `Analysis/AffineIntegral.lean`; Sonine route, step 2 boundary moving): the tent test
+  (piecewise-linear, knots `1/2, 1, 2` — the `X = 2` prime-free window, all prime-side
+  evaluations vanishing) has its `∫₀^∞ f(x) dx` pole part CONSTRUCTED as certified interval
+  integrals AND evaluated in the kernel:
+  `∫_{1/2}^{1} (2x−1) dx + ∫_{1}^{2} (2−x) dx ≈ 1/4 + 1/2 = 3/4` (`tent_piece1`/`tent_piece2`/
+  `tentPoleA_eq`) — a `WeilSlot` interface integral reduced, not carried as data. Built on the
+  new affine evaluation layer: `lip_const`/`lip_scaled`/`lip_affine` (Lipschitz data for any
+  modulus dominating the slope), `riemannIntegral_scaled` (`∫₀¹ q·x = q/2`),
+  `riemannIntegral_affine` (`∫₀¹ (α + qx) = α + q/2`), `affine_pullback_eq` (the interval
+  pullback of an affine map is affine), and the schedule-general `riemannIntegral_id_gen`
+  (the value `1/2` for EVERY valid Lipschitz datum — the L-irrelevance the `smul` route
+  needs). RECORDED for the next brick: the tent's remaining components (`f̃(0) = log 2`, the
+  archimedean tail `−1 − 6log2 + 3log3`) have rational-function integrands
+  (`2 − 1/x`, `−(x²−x+2)/(x(x+1))`, `−2/(x²−1)` past support — the PV singularity cancels
+  exactly against the `f(1)`-subtraction); their construction needs a globally-Lipschitz
+  clamped-reciprocal gadget over `Rinv` (the `RmaxZero` clamp keeps the argument `≥ a > 0`
+  pointwise, so the `Rinv` witness is uniform). Axiom-clean; crux fields `none`.
+- **`riemannIntegral_id` — `∫₀¹ x dx ≈ 1/2`, the first NON-CONSTANT certified integral
+  evaluation, and `Rlim_eval`, the limit-evaluation engine** (new `Analysis/IntegralEval.lean`;
+  Sonine route, step 1): the Weil pairing's interface fields are integrals whose
+  piecewise-polynomial closed forms are "routine but unverified in print" (`Weil.lean`) —
+  reducing them in the kernel bottoms out in evaluating the gateway's integrals on explicit
+  integrands, and the gateway had only `riemannIntegral_const`. Now built: `Rlim_eval` (a
+  Bishop limit whose terms sit within `1/(j+1)` of a rational `c` IS `ofQ c` — proof at the
+  diagonal, where the rate hypothesis at index `m = 2n+1` lands the `Radd`-inflated sample
+  exactly on the limit's `4n+3` approximant), the `ℚ`-level Gauss fold `sumIota`,
+  `riemannSum_id` (`R_N(id) = N/(2(N+1))`), `genSum_id_eval`/`genSum_id_rate` (the telescoped
+  dyadic sums sit within `1/(2·2^M)` of `1/2`), and the evaluation itself. With the existing
+  `_const`/`_add`/`_smul`/`_neg` linear API, every piecewise-LINEAR integrand now evaluates in
+  closed form over rational intervals — the stratum the tent-window Weil tests live in; the
+  realized `WeilSlot` (tent test, `X = 2`, prime-free window) is the recorded next brick.
+  Mechanization note: a flipped `Req_symm` on an `Rneg_ofQ` congruence sent the unifier into
+  structure-eta defeq on symbolic-`2^M` rationals (a `whnf` timeout) — congruence direction
+  matters even between defeq-close terms. Axiom-clean; crux fields `none`.
+- **`Rlambda3_lt_Rlambda4` — `λ₃ < λ₄`, the Li head certified strictly increasing through
+  `n = 4`, and `convexClass3_pruned` — THE FIRST KILL AT ORDER 3** (new
+  `Analysis/LambdaFourThreeGap.lean`): `λ₄ − λ₃ ≥ 0.035` (true `0.178`). The route is the
+  DIFFERENCE, not the endpoints: bounding `λ₄` below and `λ₃` above separately fails
+  (`0.2185 < 0.2486`) because each `ηⱼ` bracket width is then paid twice, and at binomial
+  weights `3..6` that doubling swamps the true gap. The archimedean sides ARE cheap separately
+  (cost `≈ 0.008`, since the constant `1` cancels exactly and the `ζ` weights are small), so only
+  the arithmetic side needs an identity — `lambda4_arith_split`:
+  `λ₄^{arith} − λ₃^{arith} = −(η₀ + 3η₁ + 3η₂ + η₃)`, obtained from the `nsmulR` splits
+  (`nsmulR6_split`, `nsmulR4_split_left`) plus ONE 7-atom `RsumL` rearrangement whose
+  permutation is built STRUCTURALLY from `List.Perm.swap`/`cons`/`trans` (`decide` on
+  `List.Perm` is barred — it pulls `Classical.choice`). Two supporting brackets: the TIGHT
+  `reta3_le_t` (`η₃ ≤ 0.0462725`, on `γ₃ ≤ 1/40` and `γ₂ ≤ −0.003`; the stock `reta3_le`'s
+  `0.145303` rests on the loose `γ₃ ≤ 1/8` and is far too weak) and `genuineArchSeq4_ge_t`
+  (`arch(4) ≥ −1.024325`, the `ζ(3) ≤ 1.205` sharpening of the stock `−1.066325`, which misses
+  by `0.042`). `convexClass3_pruned` then kills the order-3 convex class — unreachable by the
+  contraction lever, whose order-3 form is true by only `1.3%`, whereas the convex lever needs
+  just `λ₃ < λ₄`, a `34%` margin. Axiom-clean; crux fields `none`, RH open.
+- **`convexClass12_pruned` / `convex_lamRec_fails` — the CONVEX-COMBINATION lever (sixth prune),
+  general in the order** (`Square/GateAFiniteList.lean`): non-negative coefficients with
+  `Σ aᵢ ≤ 1` cap `s K` by the maximum of the window (`convex_cap`, stated for arbitrary `K`), so
+  a sequence strictly exceeding that maximum kills the class. Against the doubled Li sequence the
+  numeric input is only `λ_K < λ_{K+1}` — certified at `K = 1, 2` by `Rlambda_head_increasing` —
+  instead of the contraction lever's far heavier `λ_{K+1} > λ₁ + … + λ_K`. Supporting substrate:
+  `RsumN_mul_right`, `Rle_Rsub_zero_of_Rle`, `Rsub_double`/`Pos_Rsub_double` (a strict gap
+  doubles). RECORDED for the next session: the `K = 3` instance is a one-liner once
+  `Pos (λ₄ − λ₃)` is certified, and an exact rational check confirms
+  **`λ₄ − λ₃ ≥ 0.047033` is already reachable from brackets IN STOCK** through the difference
+  identity `λ₄ − λ₃ = γ − 3η₁ − 3η₂ − η₃ − ½(γ+log4π) + (9/4)ζ(2) − (21/8)ζ(3) + (15/16)ζ(4)`;
+  the outstanding work is purely the additive-cancellation mechanization (a 7-atom `RsumL`
+  rearrangement after `nsmulR` splitting — note `decide` on `List.Perm` is barred, it pulls
+  `Classical.choice`). Bounding `λ₄` and `λ₃` separately does NOT suffice (`0.2185 < 0.2486`):
+  it pays each `η` bracket width twice, which is exactly what the difference avoids.
+- **`gateA_prune_ledger` — the Gate-A prune ledger as one kernel-checked statement, plus two
+  new order-uniform kills** (`Square/GateAFiniteList.lean`):
+  - **`nonPositiveClass_pruned` (fifth prune, uniform in the order)**: no Gate-A finite list has
+    ALL coefficients `≤ 0`, at EVERY order `K = 1..4` — for every η₄-anchored η-data, rule, and
+    dimension. Unlike the contraction prunes this needs NO numerics: a combination of
+    non-negative terms with non-positive coefficients is non-positive (`RsumN_nonpos`), while
+    every doubled Li value in reach is strictly positive. The general core
+    (`nonPositive_lamRec_fails`) is stated for arbitrary `K`; the `K ≤ 4` ceiling is exactly the
+    reach of the certified `Pos λₙ` rungs, so each future rung widens this prune by one order
+    for free.
+  - **`orderZeroClass_pruned`**: the degenerate order `K = 0` is dead for free (the empty
+    recurrence forces `2λₙ ≈ 0`, refuted by `Pos λ₁`).
+  - **`gateA_prune_ledger`** bundles all four killed classes and records the surviving space:
+    order `2` with an expanding coefficient, orders `3, 4` with some positive coefficient, and
+    every order `K ≥ 5`.
+  - RECORDED BOUNDARY (so the route is not re-attempted): the contraction lever
+    `λ_{K+1} > λ₁ + … + λ_K` is TRUE at `K = 1, 2`, true-but-razor-thin at `K = 3`
+    (`0.3858` vs `0.3230`, needing the `λ₄` lower to ~1% of truth), and **FALSE from `K = 4`**
+    (`λ₅ ≈ 0.518 < λ₁+λ₂+λ₃+λ₄ ≈ 0.7088`) — mathematically exhausted, not under-certified.
+  Axiom-clean; crux fields `none`, RH open.
+- **`Rlambda_head_increasing` — the certified Li head is STRICTLY INCREASING** (`λ₁ < λ₂ < λ₃`,
+  `Analysis/LambdaTwoThreePrecision.lean`): `Rlambda1_lt_Rlambda2` (gap `≥ 0.05589`) and
+  `Rlambda2_lt_Rlambda3` (gap `≥ 0.042`), from the now-disjoint brackets. Sharpens
+  `Rlambda1_ne_Rlambda2` from *distinct* to *ordered*, and is the shape the cheaper
+  convex-combination prune consumes (`Σaᵢ = 1, aᵢ ≥ 0` forces `λ_{K+1} ≤ λ_K`); extending it to
+  `λ₃ < λ₄` needs a `λ₄` lower above `0.2554` — blocked on the `γ₁` bracket, whose 12%-wide
+  spread dominates the `η₁` slack at coefficient `6`.
+- **`Rlambda4_le` — the `λ₄` UPPER bracket (`λ₄ ≤ 0.563`), the fourth two-sided Li
+  coefficient** (new `Analysis/LambdaFourUpper.lean`): `λ₄^{arith} = −(4η₀+6η₁+4η₂+η₃) ≤
+  1.5458115` via the `η₃` floor `η₃ ≥ −0.0313379`, which needed four product LOWER bounds —
+  each the `ge`-mirror of a stock upper: `Rgamma_pow4_ge` (`γ⁴ ≥ 0.577⁴`),
+  `Rgamma_sq_gamma1_ge` (`γ²γ₁ ≥ 0.578²·(−0.0762)`, mixed sign), `Rgamma1_sq_ge`
+  (`γ₁² ≥ 0.0677²`, via the double-negation square identity), `Rgamma_gamma2_ge`
+  (`γγ₂ ≥ 0.578·(−0.014)`); and `arch(4) = 1 − 2(γ+log4π) + (9/2)ζ(2) − (7/2)ζ(3) +
+  (15/16)ζ(4) ≤ −0.9828225` (`genuineArchSeq4_le`, the third `log 4π`-lower consumer). True
+  value `λ₄ ≈ 0.385812`. The `λ₅` upper — the last 3×3-Hankel ingredient for the order-2
+  expansion kill — runs through the unbuilt `γ₄` upper, the next numeric campaign.
+  Axiom-clean; crux fields `none`, RH open.
+- **`contractionClass2_pruned` — the order-2 CONTRACTION class is dead (fourth prune)**
+  (`Square/GateAFiniteList.lean`): no Gate-A finite list exists at order 2 with BOTH
+  coefficients `≤ 1` (any reals), for every η₂-anchored η-data, rule, and dimension — the
+  recurrence forces `2λ₃ ≈ a₀·2λ₁ + a₁·2λ₂ ≤ 2λ₁ + 2λ₂ ≤ 0.25082`, refuted by
+  `2λ₃ ≥ 0.2872` (witness `n = 100`). Contains the canonical shift class `(0, 1)`
+  (period-one-from-`n = 2` diagonals). The doubled Li sequence certifiably outruns any
+  sub-unit combination of its two predecessors: `λ₁ + λ₂ ≤ 0.12541 < 0.1436 ≤ λ₃`.
+  Surviving order-2 candidates need a coefficient `> 1`; their kill (the 3×3 Hankel
+  determinant on `λ₁..λ₅`) needs `λ₄, λ₅` uppers — the `γ₄`-upper campaign. Axiom-clean;
+  crux fields `none`.
+- **`Rlambda2_le` / `Rlambda3_ge` — the third two-sided Li coefficient and the tightened `λ₃`
+  lower** (new `Analysis/LambdaTwoThreePrecision.lean`): `λ₂ ≤ 1016/10⁴` (true `0.0923457`;
+  the `log 4π`-lower consumer, joining `Rlambda2_pos`/`Rlambda2_ge` — λ₂ two-sided), and
+  `λ₃ ≥ 1436/10⁴` (true `0.207639`; the stock positivity lower was `0.0584`): arithmetic side
+  tightened to `λ₃^{arith} ≥ 1.173914` (`Rlambda3_arith_ge_t`, via `reta1_le4`,
+  `Rgamma_cube_ge`, the sharp `Rgamma_gamma1_ge`, `Rgamma2_ge_neg0014`), archimedean side
+  reused (`archLoR_le`). Axiom-clean; crux fields `none`.
+- **`order1Class_pruned` — the ENTIRE order-1 candidate family is dead (third prune)**
+  (`Square/GateAFiniteList.lean`): for every η-data anchored through `η₂` (`StieltjesEta3`),
+  every atlas rule, every dimension, and EVERY real coefficient `c`, no Gate-A finite list of
+  order 1 exists. The two one-step relations at `n = 0, 1` force the coefficient-free product
+  identity `(2λ₂)² ≈ (2λ₃)(2λ₁)` (associativity/commutativity eliminate `c`), and the certified
+  brackets refute it outright: `(2λ₂)² ≥ 0.1594² = 0.02540836 > 0.02432430 ≥ 0.5108·0.04762 ≥
+  (2λ₃)(2λ₁)` (via `Rlambda2_ge`, `Rlambda3_le`, `Rlambda1_le`; refuted at witness index
+  `n = 2000` through the new `not_Rle_ofQ_of_witness`). Subsumes both earlier order-1 prunes on
+  η₂-anchored data, and records the structural law: order-K classes consume the first K+1 λ's
+  (anchors through `η_K`). The surviving Gate-A candidate frontier is order `K ≥ 2`.
+  Axiom-clean; crux fields `none`, RH open.
+- **`Rlambda3_le` — the `λ₃` UPPER bracket (`λ₃ ≤ 0.2554`), the second two-sided Li
+  coefficient** (new `Analysis/LambdaThreeUpper.lean`): consumes the fresh `log 4π` lower
+  (`arch(3) = 1 − (3/2)(γ+log4π) + (9/4)ζ(2) − (7/8)ζ(3) ≤ −1.008445`, `genuineArchSeq3_le`)
+  and two forced sharp ingredients on the arithmetic side (`λ₃^{arith} = −(3η₀+3η₁+η₂) ≤
+  1.2638249`, `Rlambda3_arith_le`): the MIXED-SIGN product upper `γγ₁ ≤ 0.577·(−0.0677) =
+  −0.0390629` (`Rgamma_gamma1_le` — its negativity is load-bearing; the two-sided abs bound
+  `|γγ₁| ≤ 0.044` overshoots the kill budget by 0.25) and the tight `γ₂ ≤ −3/1000`
+  (`Rgamma2_le_neg0003`, v0.22). Plus `Rgamma_cube_le` (`γ³ ≤ 0.578³`) and the named
+  `Rlambda2_ge` (`λ₂ ≥ 0.0797`, from the LambdaGap atoms). True values: `λ₃ ≈ 0.207639`,
+  `λ₂ ≈ 0.0923457`. Axiom-clean; crux fields `none`.
+- **`contractionClass_pruned` — the SECOND candidate class killed: the entire contraction class**
+  (`Square/GateAFiniteList.lean`): no Gate-A finite list exists with order 1 and ANY real
+  coefficient `c ≤ 1`, for every anchored η-data, rule, and dimension — `lamRec` forces
+  `2λ₂ ≈ c·2λ₁ ≤ 2λ₁` (via `satisfiesRec_order1_step`, `Pos λ₁`, and `Rmul` monotonicity),
+  clashing with the certified gap through the new order-clash lemma `not_Pos_of_Rnonneg_Rneg`
+  (`Pos z` and `Rnonneg (−z)` are contradictory at the approximant level) and
+  `lambda_gap_pos_double` (`Pos (2λ₂ − (λ₁+λ₁))`, from `lambda_gap_pos` via
+  `Rlambda1_double_eq`). Strictly generalizes `constantClass_pruned` (`c = 1`): the doubled Li
+  sequence certifiably EXPANDS at its first step, so no non-expanding order-1 rule can carry the
+  Gate-A diagonal. The surviving order-1 candidates are the strict expansions `c > 1`; their kill
+  (`λ₃λ₁ vs λ₂²`) needs a `λ₃` upper — the next bracket. Axiom-clean; crux fields `none`.
+- **`Rlog4pic_ge` — the `log 4π` LOWER bracket (`log 4π ≥ 2.53038`) and the first TWO-SIDED Li
+  coefficient (`Rlambda1_le : λ₁ ≤ 0.02381`)** (new `Analysis/LogFourPiLower.lean`): the substrate
+  carried only upper log brackets (built for the λ-positivity proofs) plus the crude `log π ≥ 1`;
+  every λ UPPER bound — what the next Gate-A prunes consume — needs `log 4π` from below. Built:
+  `artSum_le_base` (NEW substrate lemma — artanh partial sums are monotone in the base, via
+  `qpow_le_base`), `Rpi_seq_ge_314` (every Machin approximant `≥ 3.14`, the depth-6 sharpening of
+  `Rpi_seq_ge_three`: `arctan(1/5) ≥ 0.197354`, `arctan(1/239) ≤ 0.004226`, tail `(1/2)¹⁵`),
+  `tmap_ge_314` (`q ≥ 3.14 ⟹ tmap q ≥ 107/207`, exactly `tmap(3.14)`), hence
+  `RpiTmap ≥ 107/207` pointwise; then `log 2 ≥ 2·artSum(1/3,8) ≥ 0.69314` (`Rlog2c_ge_69314`) and
+  `log π ≥ 2·artSum(107/207,5) ≥ 1.1441` (`Rlogpic_ge_11441`, base- then depth-monotonicity
+  through the artanh diagonal), assembling to `log 4π ≥ 253038/10⁵` (true `2.531024`; upper
+  companion `2.5316`). From it `2λ₁ ≤ 0.04762` (`Rtwolambda1_le`) and `λ₁ ≤ 2381/10⁵`
+  (true `0.0230957`) — with `Rlambda1_pos` the first Li coefficient is bracketed two-sidedly.
+  Axiom-clean; crux fields `none`, RH open.
+- **`GateA_of_finiteList` — the Gate-A finite-list template (certificate front, workstream 2)**
+  (new `Square/GateAFiniteList.lean`): Gate A specified as a finite exact hypothesis list around a
+  generating recurrence, exactly as the certificate front prescribes — fix `D`, an order `K` and
+  coefficients `a`, and require the `K` base identities `gramOf ι D (1+i) (1+i) ≈ 2λ_{1+i}`, the
+  order-`K` recurrence on the embedding's squared-norm diagonal (`gramRec`), and the SAME
+  recurrence on the doubled genuine Li sequence (`lamRec`) — bundled as `GateAList`. The reduction
+  theorem `GateA_of_finiteList` proves the list implies `RealizesDiag` (hence, Gate B being free,
+  `LiNonneg (genuineLamSeq)` — `finiteList_is_liNonneg`, the honest ledger: a satisfied list IS the
+  crux content, and satisfiability is NEVER asserted). Engine: `linRec_unique` — two sequences
+  under one order-`K` linear recurrence over the constructive reals with `≈`-equal initial window
+  coincide (course-of-values induction, fully kernel-checked). Two-sided guards in the
+  `GateA.lean` discipline: `finiteList_satisfiable` (at the template square the constant rule
+  passes the WHOLE list and the reduction delivers `RealizesDiag` end to end) and
+  `finiteList_can_fail` (the zero rule satisfies both recurrences yet its base identity is
+  refuted — the base carries content). Every candidate `(ι, D, K, a)` is henceforth checked
+  against this one list. Axiom-clean; crux fields `none`, RH open.
+- **`constantClass_pruned` — the first candidate class killed through the template (workstream 1
+  record)**: the order-1 constant class `(K, a) = (1, 1)` — every rule whose Gate-A diagonal is
+  period-one from `n = 1` — is refuted for EVERY anchored η-data, every atlas rule `ι`, and every
+  dimension `D` at once: its `lamRec` forces `2λ₂ ≈ 2λ₁` (`constantClass_lamRec_fails`, via
+  `satisfiesRec_const_step` + `Rdouble_inj`), contradicting the certified gap. One finite
+  certified fact kills the infinite class — the template doing its prune job.
+- **`Rlambda1_ne_Rlambda2` — the first certified SEPARATION of two Li coefficients** (new
+  `Analysis/LambdaGap.lean`): `2λ₂ − 2λ₁ ≥ 1130/10⁴ = 0.113` (`lambda_gap_lower`, true value
+  `≈ 0.1385`), hence `Pos (2λ₂ − 2λ₁)` and `λ₁ ≉ λ₂`. The route dodges the missing `log 4π`
+  LOWER bracket entirely: in `(λ₂ + λ₂) − Rtwolambda1` the `log 4π` atoms cancel
+  ALGEBRAICALLY (one `RsumL_cancel_anywhere` pair in the `RAddNF` normalizer), and every
+  surviving atom enters with the sign whose certified bracket already exists (`γ ≥ 0.577`,
+  `γ² ≤ 0.578²`, `γ₁ ≤ −0.0677`, `log 4π ≤ 2.5316`, `ζ(2) ≥ 1.644`) — no new numerics. KEY
+  mechanization gotcha, recorded for reuse: equating two differently-associated `RsumL`
+  list spellings by defeq sends the unifier through transient comparisons of DIFFERENT `Real`
+  atoms into the Bishop-reindexed `.seq` towers (observed 11 GB OOM); the fix is to bridge each
+  `++`-spelling to the common cons literal by an ALIGNED `List`-level `rfl` and `rw` the
+  composed equations into the goal — element comparisons stay syntactic (6 MB). Axiom-clean;
+  crux fields `none`.
+- **`coupling_n5_positive` — the `n = 5` prime–archimedean coupling is positive** (new
+  `Square/CruxN5Closed.lean`): composes `coupling_n5_iff_pos_lambda5` (the reduction of the coupling's
+  `n = 5` instance to the closed form `Rlambda5`) with `Rlambda5_pos`, conquering the `n = 5` coefficient
+  of `atlas_crux_localization`'s `∀ n, coupling(n) > 0` — the first new rung beyond `n = 4`, matching the
+  `coupling_head_positive` / `Rlambda2_pos` / `coupling_n3_positive` / `Rlambda4_pos` family. Does NOT close
+  the crux (the uniform `∀ n`, = RH). Axiom-clean; crux fields `none`.
+- **`Pos Rlambda5` — the fifth Li coefficient is positive** (new `Analysis/LambdaFivePos.lean`): the
+  `n = 5` prime–archimedean coupling coefficient is conquered — the FIRST new rung beyond `n = 4`, and the
+  first to carry `γ₄`. Certified `λ₅ ≥ 83316/10⁶ ≈ +0.0833` (true `λ₅ ≈ 0.518`), assembled from
+  `Rlambda5_arith ≥ 1018316/10⁶ ≈ +1.0183` (the η-anchor uppers `reta1_le5`…`reta4_le5` on the TIGHT
+  brackets of `LambdaFivePrecision`, via `Rlambda5_S_le`/`Rlambda5_arith_ge_r`) and
+  `genuineArchSeq 5 ≥ −935000/10⁶ = −0.935` (`genuineArchSeq5_ge`: `arch(5) = 1 − (5/2)(γ+log4π) +
+  (15/2)ζ(2) − (35/4)ζ(3) + (75/16)ζ(4) − (31/32)ζ(5)`, using the tightened `ζ(3) ≤ 1.205`). This required
+  the full n=5 constant-precision campaign: `γ₄` was NOT the sole gate — the margin (−0.652 with the n≤4
+  brackets) is dominated by `η₃`'s `choose(5,4) = ×5` amplification of the loose `γ₃ ≤ 1/8`, so the closure
+  needed the tighter `γ₃ ≤ 1/40`, `γ₂ ∈ [−0.014, −0.003]`, `γ₁ ≤ −69/1000`, `ζ(3) ≤ 1.205` (STEP 1), then
+  the direct η-by-η `λ₅^arith` lower bound + `arch(5)` lower bound + the `Pos` assembly (STEP 2-4, mirroring
+  `LambdaFourPos`). Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free,
+  no-smuggling audited; crux fields `none`, RH open.
+- **n=5 constant-precision brackets** (new `Analysis/LambdaFivePrecision.lean`, STEP 1 of the `Pos λ₅`
+  closure): the tightened Stieltjes/ζ brackets the n=5 margin needs — `γ₃ ≤ 1/40` (`Rgamma3_le_1_40`),
+  `γ₂ ≤ −3/1000` (`Rgamma2_le_neg0003`), `γ₂ ≥ −14/1000` (`Rgamma2_ge_neg0014`), `γ₁ ≤ −69/1000`
+  (`Rgamma1_le_neg069`), `ζ(3) ≤ 1.205` (`zeta3_le_1205`) — each a one-degree-up-precision mirror of the
+  existing bracket theorem at larger `N` and higher log-cap depth `T` (γ₃: T=21,N=650,j=500; γ₂/γ₁:
+  T=12,N=600/256,j=400), with the large-N `decide` accumulators reduced under the lakefile `--tstack`
+  and the correction-weakening lemmas (`corr_weaken500` etc.) handling the `2^1014`-scale middle terms
+  via a raised `exponentiation.threshold`. WHY: the `Pos λ₅` margin (−0.652 with the n≤4 brackets) is
+  dominated by `η₃`'s `choose 5 4 = ×5` amplification of the loose `γ₃ ≤ 1/8` — so n=5 needs these
+  tighter constants (not `γ₄`, whose bracket contributes only ±0.04). With them the margin turns
+  positive (+0.083). Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, no-smuggling
+  audited; crux fields `none`, RH open.
+- **`Rgamma4_ge_neg02` — the certified `γ₄` LOWER bracket `γ₄ ≥ −1/5`** (new `Analysis/GammaFourLower.lean`):
+  the numeric heart of the `n = 5` gate, completing the `decompForm4` ladder. The one-degree-up mirror of
+  `GammaThreeLower`: rational partial-sum lower bound `lnQuartSumLo` (Σ(ln k)⁴/k), the `logBound⁵`/`logBound⁴`
+  upper bounds for the subtracted `(1/5)(ln N)⁵` and `½(ln N)⁴/N` corrections, the five per-step LOWER
+  part-bounds against `decompForm4` (`b4C2_ge ≥ 0`, `b3R3_ge ≥ −27/D`, `b2R2_ge4 ≥ −16/D`, `bR1_ge4 ≥ −2/D`,
+  `R0_ge4 ≥ −1/D`, `D = p(p+1)`; via the polynomial-log caps `(ln p)²≤4p`/`(ln p)³≤27p`), telescoped to
+  `sStep4 ≥ −46/(p(p+1))` and `γ₄ ≥ hSeq4(N) − 46/(N+1)` (`Rgamma4_ge_hSeq4`, via `Rgamma4 = Rlim g4SeqDyadic`),
+  collapsed to the rational `gBound4lo` and closed by one big-integer kernel `decide` at `N = 245`. The target
+  is the LOOSE `−1/5` (not `−1/20`): `γ₄` enters `λ₅` only through the small favourable `−(5/24)γ₄` term, so
+  `−1/5` is amply sufficient for `Pos λ₅` while keeping the `decide` inside the default kernel stack (the tight
+  `−1/20` would force N ≳ 830, past the C-stack ceiling). Axiom-clean (`{propext, Quot.sound}`), no
+  `sorry`/`native_decide`, choice-free, no-smuggling audited; crux fields `none`, RH open.
+- **`sStep4_decomp` — the trapezoidal residual identity `sStep4 ≈ decompForm4`** (`Analysis/GammaFourBracket.lean`,
+  the keystone of the `decompForm4` machinery): `decompForm4_eq_RsumL` / `lhsForm4_eq_RsumL` each expand to the
+  same 11 canonical signed `RprodL` monomials (`b⁴C2`→3, `b³R3`→2, `b²R2`→2, `bR1`→2, `R0`→2), matched by
+  `decomp_generic4` (the keystone `Req (lhsForm4 …) (decompForm4 …)`, via a kernel-verified 11-element
+  `List.Perm` `[n2,n4,n6,n8,n10,n1,n3,n5,n7,n9,n11] ~ [n1..n11]`), and `sStep4_decomp` lands it at the log
+  atoms (`a=ln(p+1)`, `b=ln p`, `u0=1/p`, `u1=1/(p+1)`) by rewriting the quintic difference
+  `(ln(p+1))⁵−(ln p)⁵` through `quintic_diff_identity`. With this, the per-step trapezoidal residual `sStep4`
+  is now an exact `b`-power decomposition — the bound-ready form the `γ₄` lower bracket telescopes. New
+  degree-5/6 normalizers `Rmul_eq_RprodL6L`/`quart_times_pair`/`cube_times_triple`/`pair_times_sqpair`/
+  `single_times_cubepair`. Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, no-smuggling audited.
+- **`decompForm4` — the bound-ready trapezoidal residual decomposition** (`Analysis/GammaFourBracket.lean`,
+  defs `lhsForm4`/`decompForm4` + theorems `partA4_eq`/`partC4_eq`): the third `decompForm4` brick, the
+  degree-4 mirror of `decompForm3`. `lhsForm4 = ½a⁴u1 + ½b⁴u0 − (1/5)·δ·W₄` (the stage-1 residual after
+  `quintic_diff_identity`) is grouped by powers of `b` into `decompForm4 = b⁴·C2 + b³·R3 + b²·R2 + b·R1 + R0`
+  with `C2 = ½(u0+u1)−δ`, `R3 = 2δ(u1−δ)`, `R2 = δ²(3u1−2δ)`, `R1 = δ³(2u1−δ)`, `R0 = ½δ⁴u1 − (1/5)δ⁵`
+  (`δ = a−b`) — the coefficients that will make `b²·R2 ≤ 0` drop and leave the clean-telescoping terms.
+  `partA4_eq` expands `½a⁴u1` (via `quartic_binom`) and `partC4_eq` expands `(1/5)·δ·W₄` (via `W4_expand`),
+  each into 5 canonical `RprodL` monomials, with the coefficient-collapse helpers `half_four`/`half_six`/
+  `fifth_five`/`fifth_ten`. Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free,
+  no-smuggling audited.
+- **`W4_expand` — the quintic-factor expansion `W₄(b+δ, b)`** (`Analysis/GammaFourBracket.lean`,
+  `a⁴+a³b+a²b²+ab³+b⁴ ≈ 5b⁴ + 10b³δ + 10b²δ² + 5bδ³ + δ⁴`, `δ = a−b`): the second `decompForm4` algebra
+  brick — the `(a−b)·W₄` factor of the quintic difference `a⁵−b⁵` (`quintic_diff_identity`), with `a = b+δ`
+  substituted. Built by the clean factoring `W₄ = a⁴ + (a³+a²b+ab²+b³)·b`, reusing `quartic_binom` for `a⁴`
+  and the degree-3 `W_expand` for the inner cubic factor, then an aligned 5-term + 4-term collection
+  (`W4_collect`) — flatten to one 9-element `RsumL`, a kernel-verified `List.Perm` to bring like terms
+  adjacent, merge (new `one_plus_four`/`four_plus_one`/`four_plus_six`/`six_plus_four` coefficient lemmas,
+  `Radd_eq_RsumL4`/`RsumL5` flatteners), reassociate to the left-nested target. Axiom-clean
+  (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free, no-smuggling audited.
+- **`quartic_binom` — the degree-4 binomial identity over the constructive reals** (`Analysis/GammaFourBracket.lean`,
+  `(b+d)⁴ ≈ b⁴ + 4·b³d + 6·b²d² + 4·bd³ + d⁴`): the first reusable algebra brick of the `decompForm4`
+  trapezoidal decomposition that the `γ₄` numeric bracket rests on (the sole remaining `n = 5` gate
+  toward `Pos λ₅`). Built as a one-degree-up mirror of `cube_binom` — `cube_binom·(b+d)`, eight monomials
+  normalized to canonical coefficient-first form via `Rmul_swap_last`/`Rmul_comm`/`Rmul_assoc`, collected
+  through the `RsumL` append/permute machinery (a kernel-verified 8-element `List.Perm`), and merged with
+  `three_plus_one`/`three_plus_three`/`one_plus_three`. Elaborates in ~1 s at the default heartbeat budget
+  (the degree-4 explicit congruence is fast *when structurally exact*: any single mismatch triggers a
+  `whnf` blow-up, since the `Real` ops are reducible structure defs — the diagnostic lesson of this brick).
+  Axiom-clean (`{propext, Quot.sound}`), no `sorry`/`native_decide`, choice-free, no-smuggling audited.
+- **The fifth Li coefficient `λ₅` as a closed-form constructive object** (new `Analysis/LambdaFive.lean`
+  + `Square/CruxFrontierN5.lean`, `Rlambda5`, `coupling_n5_iff_pos_lambda5`): the next rung of the
+  genuine λ-ladder, the FIRST to carry `γ₄` (`Rgamma4`). The new η-anchor is **`η₄ = −γ⁵ − 5γ³γ₁ − 5γγ₁²
+  − (5/2)γ²γ₂ − (5/2)γ₁γ₂ − (5/6)γγ₃ − (5/24)γ₄`**, derived from the `−ζ′/ζ` Laurent data via
+  `ηⱼ = (j+1)gⱼ₊₁` (`−log F = Σ gⱼuʲ`, `F = (s−1)ζ`) — the same recursion that reproduces `η₀..η₃`
+  exactly, and numerically confirmed (`η₄ ≈ −0.005539`, `λ₅^{arith} ≈ +1.45906`, `λ₅^{∞} ≈ −0.94094`,
+  `λ₅ ≈ +0.51812`, the standard Li value). `λ₅^{arith} = −(5η₀+10η₁+10η₂+5η₃+η₄)` and the closed form
+  meets the genuine ladder at `n = 5` (`genuineLam_five`), so the `n = 5` coupling conquest reduces
+  exactly to `Pos Rlambda5` (`coupling_n5_iff_pos_lambda5`/`crux_frontier_n5`), mirroring `n = 4`. This
+  builds the λ₅ OBJECT; it does NOT prove `Pos λ₅` (which awaits the `γ₄` numeric bracket + the
+  multi-constant assembly). `γ₄` enters `λ₅` only via `η₄` with the tiny FAVOURABLE coefficient
+  `+(5/24)γ₄ ≈ +0.0015`. Axiom-clean (`{propext, Quot.sound}`), choice-free, no-smuggling audited; the
+  crux fields stay `none`, RH open.
+
+- **The fourth Stieltjes constant `γ₄` as a genuine constructive real** (new `Analysis/GammaFour.lean`,
+  `Rgamma4 := Rlim g4SeqDyadic g4SeqDyadic_RReg`, `γ₄ ≈ +0.00722`): the arithmetic-side prerequisite for the
+  `n = 5` coupling rung (`λ₅`), built as the full degree-5 mirror of `GammaThree`'s `γ₃`. The
+  EM-accelerated defining sequence `g₄(j) = Σ_{k≤j+1}(ln k)⁴/k − (1/5)(ln(j+1))⁵`, whose per-step
+  trapezoidal residual `e₄` is summable-enveloped `e₄ ∈ [−a⁴/(p(p+1)), 4a³/(p(p+1))]` (`a = ln(p+1)`),
+  then dyadic-block-telescoped to a Bishop-regular sequence (`g4SeqDyadic_RReg`, reindex `M(j)=2j+22`)
+  whose limit is `γ₄`. New degree-5 algebra: the **quintic factoring** `a⁵−b⁵ = (a−b)(a⁴+a³b+a²b²+ab³+b⁴)`
+  (`quintic_diff_identity`, via the reusable `Rmul_swap_outer`/`Rmul_swap_last` monomial-reassociation
+  helpers), the `W₄ ∈ [5b⁴, 5a⁴]` envelopes, and the degree-3/degree-4 discrete-antiderivative domination
+  chains (`Q_U(m)=8m³+72m²+264m+408`, `Q_L(m)=2m⁴+24m³+132m²+408m+598`, each verified by `ring_uor` to
+  satisfy `2Q_U(m)−Q_U(m+1)=8(m+2)³` / `2Q_L(m)−Q_L(m+1)=2(m+2)⁴`). The cubic/quartic infrastructure
+  (`logCube`, `logQuartic`, `quartic_diff_identity`, `W3_le_4a3`, `Csum`, the block caps) is reused from
+  `GammaThree`. With `γ`, `γ₁`, `γ₂`, `γ₃` (bracketed) and `ζ(5)`, this is the last unbuilt Stieltjes
+  constant for the `η₄` Taylor data behind `λ₅`. Axiom-clean (`{propext, Quot.sound}`), choice-free,
+  no-smuggling audited; the crux fields stay `none`, RH open. The two-sided `γ₄` bracket + the `λ₅` rung
+  are the remaining `n = 5` steps.
+
+- **ζ-value brackets — `ζ(5) ∈ [1.036, 1.052]`** (`Analysis/ZetaTwo.lean`, `zeta5_lower`/`zeta5_upper`):
+  the next ζ-constituent for the future `n = 5` coupling rung, mirroring the `ζ(4)` block (partial-sum
+  lower `zetaSum_five_70_ge` and decreasing-upper `zetaU_five_70_le`, each one rational `decide` at
+  `N = 70`, lifted through the generic `zeta_ge_partial`/`zeta_le_partial`). Just as `ζ(4)` feeds
+  `Pos Rlambda4`, this is the `ζ(5)` prerequisite for a `Pos Rlambda5`. Axiom-clean, crux `none`.
+
+- **Stieltjes brackets — the γ₃ LOWER bracket `γ₃ ≥ −1/20`, completing the two-sided `−1/20 ≤ γ₃ ≤ 1/8`**
+  (new `Analysis/GammaThreeLower.lean`, `Rgamma3_ge_neg005`): the companion of `GammaThreeBracket`'s
+  `Rgamma3_le` (`γ₃ ≤ 1/8`), filling the documented gap (`γ₃` had an upper bracket but "no lower bracket
+  yet"). Same discrete Euler–Maclaurin construction as the other brackets — the accelerated sequence
+  `hSeq3 j = g₃(j) − ½·(ln(j+1))³/(j+1)` whose per-step trapezoidal residual `sStep3` is now bounded
+  *below* (`sStep3 ≥ −6/(p(p+1))`, `sStep3_lower_tele`) by mirroring the four-part decomposition
+  `decompForm3 = b³C2 + b²R2 + b·R1 + R0` downward: `b³C2 ≥ 0`, `b²R2 ≥ −3/(p(p+1))` (via the square-cap
+  `(ln p)² ≤ 4p`), `b·R1 ≥ −2/(p(p+1))`, `R0 ≥ −1/(p(p+1))` (via the new quartic self-bound `d⁴ ≤ 1/p⁴`).
+  Telescoped to `γ₃ ≥ hSeq3(N) − 6/(N+1)` (`Rgamma3_ge_hSeq3`), then certified at `N = 199` with the
+  LOWER-direction rational evaluators — the new cubed-log sum lower bound `lnCubeSumLo`/`lnCubeSum_ge`
+  (`logLowBound` cubed, round-down) against the `logBound`-upper corrections `logQuartic_le`/
+  `halfCubeOver_le` — collapsed to the single `gBound3lo` and one big-integer kernel `decide`
+  (`gamma3_lo_decide`). This is the `γ₃` prerequisite for the future `λ₅` rung (the `η₄` Taylor data needs
+  a two-sided `γ₃`). Axiom-clean (`{propext, Quot.sound}`), choice-free, no-smuggling audited; the crux
+  fields stay `none`, RH open.
+
+- **Track 1 (item 0) — the LARGE-argument end of the arctangent range extension** (new
+  `Analysis/RArctanExt.lean`, `RarctanExt` / `RarctanExt_value_eq` / `RarctanR_add_RarctanExt`): the
+  constructive `arctan` at large argument `|t| ≥ 16`, via the complementary-angle reduction
+  `arctan(1/s) = π/2 − arctan s`. `RarctanR s` (`RArctan.lean`) is defined only for `|s| ≤ ρ < 1/16`, so its
+  reciprocal `1/s` (`≥ 16`) lies far outside the radius; `arctanExt s := π/2 − arctan s` supplies that value
+  through the complementary angle — sidestepping the `1 − s·(1/s) = 0` singularity that blocks the
+  tangent-addition route. The value identity `RarctanExt_value_eq` (`tan(arctanExt s) = 1/s`) composes the
+  real-argument value identity `RarctanR_value_eq` (`RArctanValue.lean`) with the complementary-tangent
+  formula `Rsin_cos_pi_half_sub_tan_real` (`TanPiQuarter.lean`) — the real-level form of the reduction
+  `ComplexArgUpper.CargUpper_tan` already applies for the complex argument; the genuinely-new piece is the
+  explicit *real* reflection identity `RarctanR_add_RarctanExt` (`arctan s + arctan(1/s) = π/2`).
+  **Honest scope:** this closes only the large-argument end; the middle band `1/16 < |t| < 16` (where `1/t`
+  is also outside `1/16`) remains the open part of the *full* range extension `Carg`/`Clog` need toward
+  `log ξ` — closing it needs a larger value-identity radius or an addition-law stepping argument. Crux
+  `none`. Axiom-clean, grep-novel.
+
+- **Track 1 (item 6) — the Hadamard/`bl` witness sum in reciprocal-moment-order form**
+  (`Analysis/MomentCayley.lean`, `hadamard_witnessSum_moment`): the item-6 object, assembled on the
+  *genuine* zeros. For a `HadamardXi` enumeration of the nontrivial zeros, the `bl` witness sum over its
+  `s = 1` factors equals `−Σ_{k=1}^{n} Re(M_k)` with `M_k = Σ_j C(n,k)(−1/ρⱼ)ᵏ` the order-`k` reciprocal
+  moment over the reciprocals `1/ρⱼ`: `Σ_j (1 − Re((1 − 1/ρⱼ)ⁿ)) = −Σ_{k} Re(M_k)`. Chains
+  `witnessSum_hadFactor_eq_liRatio` (Hadamard `s=1` factors = Cayley factors), the per-zero
+  `liRatio_eq_one_sub_inv` lifted across the list (`witnessSum_mapidx_congr` + `List.map_map`), and the
+  moment decomposition `witnessSum_moment_order` — `λₙ`'s zero-sum decomposed by moment order over the
+  actual Hadamard zero enumeration. The remaining classical content (`Σ_ρ ρ^{−k}` as the `ζ`-data with its
+  archimedean place; the `HadamardXi` convergence seam) is unchanged; crux `none`. Axiom-clean, grep-novel.
+
+- **Track 1 (item 6) — the moment expansion lands on the genuine Cayley object** (new
+  `Analysis/MomentCayley.lean`, `liRatio_witnessTerm_moment` / `liRatio_npow_moment` /
+  `liRatio_eq_one_sub_inv`): the abstract binomial moment machinery (`ComplexBinomial.lean`, for any
+  `w = 1 − u`) is instantiated at the *actual* Bombieri–Lagarias Cayley factor `liRatio ρ = 1 − 1/ρ`
+  (`CayleyMap.lean`), with `u = 1/ρ = Cinv ρ`. `liRatio_eq_one_sub_inv` puts `liRatio ρ` in the exact
+  `1 + (−u)` form (via `hadFactor_one_eq_liRatio` + `1·(1/ρ) ≈ 1/ρ`); then the per-zero witness term on
+  the real object follows directly: `1 − Re((1 − 1/ρ)ⁿ) = −Re(Σ_{k=1}^{n} C(n,k)(−1/ρ)ᵏ)` — the per-zero
+  summand of `RHWitness.witnessSum` over the explicit-formula reciprocal moments `(1/ρ)ᵏ`. Closes the
+  loop: the whole moment-expansion arc is now consumed by the genuine Cayley/Li object behind `bl`, not an
+  abstract `w`. The remaining classical content (`Σ_ρ ρ^{−k}` as the `ζ`-data with its archimedean place)
+  is unchanged; crux `none`. Axiom-clean, grep-novel.
+
+- **Track 1 (item 6) — the two Li-term linearizations agree `reciprocalMomentPoly_eq_neg_u_cgeomSum`**
+  (`Analysis/ComplexBinomial.lean`): the binomial reciprocal-moment polynomial equals `−u` times the
+  geometric sum of `LiLinearize.lean`. For `w = 1 − u` (so `u = 1/ρ`), both `reciprocalMomentPoly u n`
+  (`Σ_{k=1}^{n} C(n,k)(−u)ᵏ`, from the binomial) and `−u·Σ_{k<n} wᵏ` (`cone_sub_npow_factor`) are exactly
+  `wⁿ − 1`, hence equal: `reciprocalMomentPoly u n ≈ −(u·Σ_{k<n} wᵏ)`. Pins the new binomial-moment
+  representation to the pre-existing geometric one — no representation drift between `ComplexBinomial.lean`
+  and `LiLinearize.lean`, the same per-zero Li contribution in two algebraic forms. Pure algebra,
+  axiom-clean, grep-novel.
+
+- **Track 1 (item 6) — moment-side closure `momentListPoly_append` / `momentListPoly_snoc`**
+  (`Analysis/ComplexBinomial.lean`): the summed reciprocal-moment polynomial is additive over
+  concatenation of the zero list (`momentListPoly (l₁++l₂) n = momentListPoly l₁ n + momentListPoly l₂ n`,
+  pure `Cadd_assoc` fold), with the `snoc` increment. The moment-side analogues of the proven
+  `witnessSum_append`/`_snoc`: splitting the zero enumeration (the incremental `bl` partial sums
+  `List.range M`, or the conjugate-pair grouping `{ρ, 1−ρ, ρ̄, 1−ρ̄}`) splits the moment sum. Pure algebra,
+  axiom-clean, grep-novel.
+
+- **Track 1 (item 6) — a structural shape-match `witnessSum_eq_genuineArith`** (new
+  `Analysis/MomentEta.lean`): the constructive moment-expansion form of a finite witness sum
+  (`witnessSum_moment_order`, `ComplexBinomial.lean`) and the constructive arithmetic `η`-form
+  (`genuineArithSeq`, `GenuineLi.lean`) carry the *same* binomial-weighted shape (`−Σ_k` of
+  `C(n,k)`-weighted terms), so they are equal term-by-term under one per-order coefficient hypothesis
+  `Re(M_k) = C(n,k)·η_{k−1}` (`seam`, an explicit audit-visible hypothesis, never an axiom, never
+  discharged): `Σ_w (1 − Re(wⁿ)) = −Σ_{j=1}^{n} C(n,j)·η_{j−1}` (clean induction `moment_re_eq_arithTail`,
+  matching the `(CsumN …).re`/`arithTail` recursions). **Honesty scope:** this is a shape-level identity
+  between two constructed representations, **not** a discharge or relocation of `bl`. `genuineArithSeq` is
+  only the *arithmetic* piece of `λₙ` (`λₙ = genuineArithSeq + genuineArchSeq`; `λ₁^{arith} = γ ≈ 0.577`
+  vs the full `λ₁ ≈ 0.023`), while the genuine Bombieri–Lagarias zero-sum limit equals the *full* `λₙ`; and
+  the true explicit formula relates the zero moments to the `−ζ′/ζ` data **plus** the archimedean place,
+  which the per-order `seam` omits. So the `seam` is not asserted for the genuine zeros, and `bl` is not
+  shrunk — closing it constructively (explicit formula + archimedean term + Hadamard convergence) remains
+  the open Track-1 work. Crux fields `none`; RH open. Axiom-clean, no-smuggling audited, grep-novel.
+
+- **Track 1 (item 6) — `λₙ` decomposed by reciprocal-moment order** (`Analysis/ComplexBinomial.lean`,
+  `witnessSum_moment_order`, `momentListPoly_swap`, `momentList`): the Fubini interchange of the sum over
+  zeros with the sum over orders. `momentListPoly_swap` swaps `Σ_{u∈us} Σ_{k=1}^{n} C(n,k)·(−u)ᵏ ≈
+  Σ_{k=1}^{n} Σ_{u∈us} C(n,k)·(−u)ᵏ` (list induction, `CsumN_add` regrouping). Combined with
+  `witnessSum_eq_neg_momentList`, `witnessSum_moment_order` gives `λₙ`'s zero-sum (`bl`) as
+  `Σ_w (1 − Re(wⁿ)) = −Σ_{k=1}^{n} Re(M_k)` with `M_k = Σ_{u∈us} C(n,k)·(−u)ᵏ` the order-`k` reciprocal
+  moment — `λₙ`'s explicit decomposition into the per-order moments `Σ_ρ ρ^{−k}`. This is the structural
+  endpoint of the constructive moment expansion: the sole remaining classical input is the per-order
+  identity of each `M_k` with the `−ζ′/ζ` Taylor data (the single labelled `bl` seam), reduced from a
+  monolithic limit to one clean identity per order. Axiom-clean, grep-novel.
+
+- **Track 1 (item 6) — the witness sum in reciprocal-moment form** (`Analysis/ComplexBinomial.lean`,
+  `witnessSum_eq_neg_momentList`, `momentListPoly`): the per-zero `witnessTerm_moment` summed over the
+  zero list. Over the Cayley factors `w = 1 − u` of a moment list `us = {1/ρ}`, the Li witness sum
+  `Σ_w (1 − Re(wⁿ))` equals `−Re(Σ_{u∈us} Σ_{k=1}^{n} C(n,k)·(−u)ᵏ)` — `λₙ`'s zero-sum (`bl`) written
+  entirely over the explicit-formula reciprocal moments `(1/ρ)ᵏ`. With the order-`k` moment
+  `M_k = Σ_ρ Re(ρ^{−k})` factored out, `λₙ = Σ_{k=1}^{n} (−1)^{k+1} C(n,k)·M_k`, leaving the sole classical
+  seam as the per-order identity `M_k = η`-data (`−ζ′/ζ` Taylor coefficients). Clean list induction
+  (`Rneg_Radd` regrouping), axiom-clean, grep-novel.
+
+- **Track 1 (item 6) — the per-zero witness term in reciprocal-moment form** (`Analysis/ComplexBinomial.lean`,
+  `witnessTerm_moment` / `Cnpow_one_sub_momentPoly`, `reciprocalMomentPoly`): the forced consumer of the
+  complex binomial. For `w = 1 − u` the per-zero Li witness term `1 − Re(wⁿ)` equals `−Re(Σ_{k=1}^{n}
+  C(n,k)·(−u)ᵏ)` — the binomial expansion of `wⁿ` with the leading `1` cancelling the outer `1` (front-split
+  via `CsumN_shift` + `binTermC_zero`), leaving exactly the negated reciprocal-moment polynomial. With
+  `u = 1/ρ` this is the per-zero summand of `witnessSum` (`RHWitness.lean`) written over the explicit-formula
+  moments `(1/ρ)ᵏ`; summing over the zeros and interchanging the two finite sums gives `λₙ` as
+  `Σ_{k=1}^{n} (−1)^{k+1} C(n,k)·M_k` with `M_k = Σ_ρ Re(ρ^{−k})` the order-`k` reciprocal moment — isolating
+  the single classical seam `M_k = η`-data. Axiom-clean, grep-novel.
+
+- **Track 1 (item 6, pure algebra) — the binomial theorem over the constructive `Complex` API**
+  `(1 + b)ⁿ ≈ Σ_{k=0}^{n} C(n,k)·bᵏ` (`Cnpow_one_add_eq`, new `Analysis/ComplexBinomial.lean`), and its
+  Cayley-factor consequence `Cnpow_one_sub_eq`: `w = 1 − u ⟹ wⁿ ≈ Σ_k C(n,k)·(−u)ᵏ`. For the
+  Bombieri–Lagarias factor `w = 1 − 1/ρ` the moment is `u = 1/ρ`, so this writes each per-zero power
+  `(1 − 1/ρ)ⁿ` over the explicit-formula **reciprocal moments** `(1/ρ)ᵏ = Σ_ρ ρ^{−k}` — the binomial
+  expansion applied to exactly the object the `bl` witness sum `Σ_w (1 − Re(wⁿ))` is built from,
+  extending the `witnessSum_eq_linear` moment-factoring line one step further (full moment polynomial,
+  not just the single `1/ρ`). The remaining classical content (moments `Σ_ρ ρ^{−k}` as the `η`-polynomial)
+  stays the single labelled seam; crux fields `none`. Built choice-free with nat-scalar `Cnsmul` (so
+  Pascal's rule `C(n+1,k)=C(n,k)+C(n,k−1)` is the clean complex additivity `Cnsmul_add`, no `ofReal`
+  embedding of coefficients), plus the supporting `Cmul_Cnsmul`, `Cmul_CsumN` (mult over finite sum),
+  `CsumN_congr_le` (bounded congruence), and the subtraction-free index shift `CsumN_shift`. Grep-verified
+  novel (the existing `Binomial.lean` is the ℚ binomial; this is the genuinely-complex one), axiom-clean.
+
+- **Track 1 (`bl` witness) — partial-sum telescoping `witnessSum_append`/`witnessSum_snoc`** (`Analysis/RHWitness.lean`):
+  the Li/zero-sum witness `Σ_w (1 − Re(wⁿ))` is additive over concatenation of the zero list
+  (`witnessSum (l₁++l₂) = witnessSum l₁ + witnessSum l₂`, pure `Radd_assoc` fold), with the `snoc`
+  increment `witnessSum (l ++ [w]) = witnessSum l + (1 − Re(wⁿ))`. This is the analogue, on the
+  explicit-formula/`bl` side, of the integral's additive linearity, and the exact shape of the `bl`
+  partial sums `witnessSum ((List.range M).map zeroCayley) n` as `M` grows by one — the increment the
+  convergence seam `reg` is stated over. Grep-verified novel, axiom-clean.
+
+- **Track 2 (integration) — scalar linearity lifted up the full Mellin stack** (`Analysis/IntervalIntegral.lean`,
+  `Analysis/ImproperIntegral.lean`, `Analysis/ComplexIntegral.lean`): `riemannIntegralI_smul`
+  (interval `∫ₐ^{a+w}`, left-commuting `q` past the width `w`), `integralTerm_smul`, `improperIntegral1_smul`
+  (the half-line tail, via `Rlim_ofQ_mul_of_approx` directly), `halfLineIntegral_smul` (`∫₀^∞ (q·f)=q·∫₀^∞ f`),
+  and `ChalfLineIntegral_smul` (complex Mellin, componentwise, real-rational scalar → explicit pair
+  `⟨q·∫gr, q·∫gi⟩`). **With `_add` and `_neg` at every layer, the constructive integral — through the complex
+  Mellin domain — is now a full real-rational-linear functional**, the form the Weil pairing's real test
+  coefficients act through. The re/im-mixing complex `Cmul` scalar remains the one deferred (downstream) case.
+- **Track 2 (integration) — scalar linearity `riemannIntegral_smul` (`∫(q·f)=q·∫f`)** via
+  `Rlim_ofQ_mul_of_approx` (`Analysis/RlimProps.lean`, `Analysis/RiemannSum.lean`,
+  `Analysis/DyadicIntegral.lean`): the scalar half of integral linearity — with `_add`/`_neg`, the
+  full **linear-functional** structure of the certified integral (`∫(α·f + β·g) = α·∫f + β·∫g` for
+  rational `α,β`). `Rlim_ofQ_mul` is generalized to `Rlim_ofQ_mul_of_approx` (`W ≈ q·X` pointwise, `W`'s
+  regularity given — one `happ`-triangle over the core, exactly the `Rlim_add → Rlim_add_of_approx`
+  move, since `RReg(q·X)` is not derivable when `|q|>1`). The finite chain: new `RsumN_Rmul_const`,
+  `riemannSum_smul`, `genSum_Rmul_of_termwise`, `Rmul_Rsub_distrib_loc` — dyadic sums scale at every
+  level — then `Rlim_ofQ_mul_of_approx` + `Rmul_distrib` carry the scalar through the limit (shared
+  Lipschitz `L`, so the reindexes align). Grep-verified novel, axiom-clean.
+- **Track 1 (limit substrate) — scalar-multiple limit `Rlim_ofQ_mul`** (`Analysis/RlimProps.lean`):
+  `lim (q·X) = q·lim X` for a constant `q : ℚ` — the scalar half of limit linearity, and the genuinely
+  hard one. `Rmul`'s reindex `Ridx q y n = 2·RmulK(q,y)·(n+1)−1` is magnitude-dependent (varies across
+  the meta-sequence), so `Rlim_add`'s clean `8n+7` alignment does not port. The UOR insight that makes it
+  tractable: **`q` is a CONSTANT**, so its sequence is invariant and the `Qabs_mul_diff` cross term
+  vanishes, leaving only `|q|·|X-difference|`; and `RmulK ≥ 1` forces every reindex `≥ 8(n+1)`, so each
+  regularity term is `≤ const/(n+1)` *regardless* of the (varying) magnitude bound. `Req_of_lin_bound`
+  absorbs the `|q|` constant (`C = |q.num|`). The substrate for the scalar half of integral linearity
+  (`∫(q·f) = q·∫f`). Grep-verified novel, axiom-clean.
+- **Track 2 (integration) — complex integral congruence `Cintegral_congr` / `ChalfLineIntegral_congr`**
+  (`Analysis/ComplexIntegral.lean`): `∫ z ≈ ∫ z'` when the real/imaginary integrand parts agree pointwise,
+  for the complex line integral `∫_a^{a+w}` and the complex Mellin integral `∫₀^∞` — componentwise from
+  the real `riemannIntegralI_congr`/`halfLineIntegral_congr`. The integrand-congruence the Weil/theta
+  complex-integrand rewrites need; completes the complex integral's `_congr` alongside `_add`/`_neg`.
+  Grep-verified novel, axiom-clean.
+- **Track 2 (integration) — integral negation up the full stack `halfLineIntegral_neg` / `ChalfLineIntegral_neg`**
+  (`Analysis/IntervalIntegral.lean`, `Analysis/ImproperIntegral.lean`, `Analysis/ComplexIntegral.lean`):
+  `∫(−f) = −∫f` lifted from the base through `riemannIntegralI_neg` (interval, affine + `Rmul_neg_right`)
+  → `integralTerm_neg` → `improperIntegral1_neg` (`∫₁^∞`, `genSum_Rneg_of_termwise` + `Rlim_neg` via the
+  now-public `RReg_Rneg`) → `halfLineIntegral_neg` (`∫₀^∞`) → `ChalfLineIntegral_neg` (complex Mellin,
+  componentwise). **With the `_add` chain this completes the full additive-GROUP linearity of the entire
+  integral stack** (real + complex Mellin: `∫(f−g)=∫f−∫g`), the substrate the signed Weil functional
+  `poles − primes − arch` needs. Grep-verified novel, axiom-clean.
+- **Track 2 (integration) — integral negation `riemannIntegral_neg` (base)** (`Analysis/RiemannSum.lean`,
+  `Analysis/DyadicIntegral.lean`): `∫₀¹ (−f) = −∫₀¹ f`, the `−1`-scalar case completing (with
+  `riemannIntegral_add`) the additive-GROUP linearity of the base integral (`∫(f−g)=∫f−∫g`, for the
+  signed Weil functional). The dyadic sums negate at every finite level — new primitives `RsumN_Rneg`
+  (`Σ(−F)=−ΣF`), `riemannSum_neg`, `genSum_Rneg_of_termwise` — and `Rlim_neg` (with `RReg_neg`, inlined
+  locally) carries it through the limit; `dyadicTerm` negation via `Rsub_Rneg_Rneg`. Modulus-safe
+  (negation doesn't inflate the index). Grep-verified novel, axiom-clean.
+- **Track 2 (integration) — base-integral congruence `riemannIntegral_congr` / `riemannIntegralI_congr`**
+  (`Analysis/DyadicIntegral.lean`, `Analysis/IntervalIntegral.lean`): `∫f ≈ ∫g` for `f ≈ g` pointwise on
+  `[0,1]` and `[a,a+w]` — the integral respects `≈` of the integrand, completing the `_congr` family
+  (the improper/half-line congruences already existed; the two base integrals were the gap). Each is
+  `Rle_antisymm` of the corresponding `_le` both ways. Axiom-clean. (The integrand-congruence substrate
+  any future integral rewrite — including a negation/subtraction zero-trick — needs.)
+- **Track 2 (integration) — complex Mellin integral linearity `ChalfLineIntegral_add`** (additive part)
+  (`Analysis/ComplexIntegral.lean`): `∫₀^∞ ((gfr+ggr) + i(gfi+ggi)) = ∫₀^∞(gfr+i·gfi) + ∫₀^∞(ggr+i·ggi)`
+  — the additive half of linearity for the constructive **complex** Mellin integral, the object the
+  windowed Weil pairing and the Mellin transform of the theta relation (item 3) inhabit. Componentwise
+  from the real `halfLineIntegral_add` (real and imaginary parts, each at its own shared Lipschitz
+  constant `Lr`/`Li` and decay rate `Kr`/`Ki`). Grep-verified novel, axiom-clean.
+- **Track 2 (integration) — half-line/Mellin integral linearity `halfLineIntegral_add`** (additive part)
+  (`Analysis/IntervalIntegral.lean`, `Analysis/ImproperIntegral.lean`): `∫₀^∞ (f+g) = ∫₀^∞ f + ∫₀^∞ g`,
+  the substrate the Weil/theta Mellin integrals live on (Track-2 step 2), lifted up the integral stack
+  from `riemannIntegral_add`: `riemannIntegralI_add` (interval `[a,a+w]`, via the affine rescaling +
+  `Rmul_distrib`) → `integralTerm_add` (the unit tail increment) → `improperIntegral1_add`
+  (`∫₁^∞`, the tail increments add ⟹ partials add via `genSum_Radd_of_termwise`, then
+  `Rlim_add_of_approx` joins the limits) → `halfLineIntegral_add` (`∫₀^∞ = ∫₀¹ + ∫₁^∞`, `Radd_swap`).
+  All at a shared Lipschitz constant `L` so the dyadic reindexes align. Grep-verified novel, axiom-clean.
+- **Track 2 (integration) — Riemann-integral linearity `riemannIntegral_add`** (`Analysis/DyadicIntegral.lean`):
+  `∫₀¹ (f+g) = ∫₀¹ f + ∫₀¹ g` — the additive half of linearity for the certified Bishop-limit integral,
+  and the first genuine consumer of `Rlim_add_of_approx` (validating the limit-additivity layer end to
+  end). The three integrals share a Lipschitz constant `L` (caller supplies `L ≥ L_f + L_g` with all
+  three Lipschitz proofs at `L`), so they use the same dyadic reindex `digammaMidx L` and the limits
+  align — no integral-`L`-independence lemma needed. The dyadic sums add at every finite level
+  (`riemannSum_add` ⟹ `dyadicR` ⟹ `dyadicTerm` via `Rsub_Radd_Radd` ⟹ `genSum` via the new
+  `genSum_Radd_of_termwise`), so the integral sequences satisfy `Z_{f+g} ≈ Z_f + Z_g` pointwise; the
+  combined convergence is GIVEN (its own `dyadicSum_RReg`), so `Rlim_add_of_approx` joins the limits
+  without a (non-derivable) combined regularity. Grep-verified novel, axiom-clean.
+- **Track 1 (item 6 — series substrate) — series additivity `Cseries_add`, via `Rlim_add_of_approx`**
+  (`Analysis/RlimProps.lean`, `Analysis/ComplexLimit.lean`, `Analysis/ComplexSeries.lean`):
+  `Σ_k (Fₖ + Gₖ) ≈ (Σ_k Fₖ) + (Σ_k Gₖ)` — linearity of the complex infinite sum, the forced tool for
+  splitting a log-derivative / witness series into its component series (item 6). This had appeared
+  *blocked* (the fixed `RReg` modulus is not preserved under summation, so a combined regularity is not
+  derivable) — the unblock is the **generalization `Rlim_add_of_approx`** (`lim W ≈ lim X + lim Y` when
+  `W ≈ X + Y` pointwise): it takes `W`'s regularity as GIVEN rather than deriving the sum's, so the
+  caller's `CsumConv (F+G)` carries `W = CsumN (F+G)`, which is pointwise `≈ CsumN F + CsumN G` by
+  `CsumN_add`. Proof of `Rlim_add_of_approx`: the `Rlim_add` `8n+7` diagonal alignment plus one triangle
+  for the `happ` error (`2/(4n+4) + 10/(8n+8) = 14/(8n+8) ≤ 2/(n+1)`, still absorbed by
+  `Req_of_lin_bound`); `Rlim_add` becomes its `happ = refl` corollary. `Clim_add_of_approx` is the
+  componentwise lift; `Cseries_add` a 1-liner over it. Grep-verified novel, axiom-clean.
+- **Track 1 (item 5 — product substrate) — finite-product multiplicativity `CprodN_mul`**
+  (`Analysis/ComplexSeries.lean`): `∏_{k<N} (Fₖ·Gₖ) ≈ (∏_{k<N} Fₖ)·(∏_{k<N} Gₖ)` — the complex finite
+  product distributes over a factorwise product, the algebraic substrate for factoring the Hadamard
+  product `∏(1 − s/ρ)` (item 5; e.g. splitting a factor across the product). Proved by induction on `N`
+  over a new four-term product interchange `(a·b)·(c·d) ≈ (a·c)·(b·d)` (`Cmul_mul_mul_comm`, from
+  `Cmul_assoc`/`Cmul_comm`) — the multiplicative mirror of `CsumN_add`'s `Cadd_add_add_comm`. Completes
+  the multiplicative half of the `CprodN` API alongside `CprodN_congr`/`CprodN_succ_one`. Grep-verified
+  novel, axiom-clean.
+- **Track 1 (item 0 — limit/series substrate) — negation closure `Clim_neg` / `CsumN_neg`**
+  (`Analysis/ComplexLimit.lean`, `Analysis/ComplexSeries.lean`): `lim (−X) ≈ −lim X` and
+  `Σ_{n<N} (−Fₙ) ≈ −(Σ_{n<N} Fₙ)` — the negation half of the complex limit/finite-sum linearity (with
+  `Clim_add`/`CsumN_add`, the full additive-group structure; subtraction pervades the log-derivative
+  `1 − Re(·)` / `−ζ′/ζ`). Both modulus-SAFE — negation does not inflate the sequence index, so `RReg` is
+  preserved exactly (no rate doubling, unlike `Clim_add`). `Clim_neg` lifts the real `Rlim_neg`
+  componentwise (still threading the transformed regularity as a hypothesis, the codebase idiom);
+  `CsumN_neg` is an induction over the new `Cneg_Cadd` (`−(a+b) ≈ (−a)+(−b)`, from `Rneg_Radd`).
+  Grep-verified novel, axiom-clean.
+- **Track 1 (item 0 — limit substrate) — Bishop-limit additivity `Rlim_add` / `Clim_add`**
+  (`Analysis/RlimProps.lean`, `Analysis/ComplexLimit.lean`): `lim (X + Y) ≈ lim X + lim Y` over ℝ and ℂ —
+  the forced gateway to complex series linearity (`Cseries_add`) for splitting a witness / log-derivative
+  series into its two component series (Hadamard `bl`, item 6). The real `Rlim_add` is the substantive
+  piece: the `RTendsTo` rate would *double* under `Radd` (the known "modulus not closed under `Radd`"
+  obstruction), so the canonical `RTendsTo_add` is false; instead the proof goes through
+  `Req_of_lin_bound` (which absorbs the constant) and the key alignment that **both** diagonals land at the
+  same sequence position `8n+7` — `lim(X+Y)` at `(X (4n+3))_{8n+7}` (the `Radd` index inflation
+  `2·(4n+3)+1`), `(lim X)_{2n+1}` at `(X (8n+7))_{8n+7}` — so the gap is pure meta-regularity `RReg`,
+  giving `5/(8(n+1)) ≤ 2/(n+1)` per component. `Clim_add` is then the clean componentwise lift. Both
+  grep-verified novel, axiom-clean.
+- **Track 1 (item 0 — complex-limit substrate) — zero limit `Clim_zero`**
+  (`Analysis/ComplexLimit.lean`): a regular complex sequence pointwise `≈ 0` has limit `≈ 0` — the
+  complex lift of the real `Rlim_zero` (`RlimProps.lean`, used real-side in the dyadic telescoping
+  convergence proofs), the convergence side of a telescoped complex series of differences vanishing.
+  Componentwise (both `Rlim_zero` halves), the companion of the existing `Clim_congr`. Grep-verified
+  novel. Axiom-clean.
+- **Track 1 (item 0/6 — complex-series substrate) — finite-sum linearity `CsumN_add`**
+  (`Analysis/ComplexSeries.lean`): `Σ_{n<N} (Fₙ + Gₙ) ≈ (Σ_{n<N} Fₙ) + (Σ_{n<N} Gₙ)` — additivity of the
+  complex partial sum, the forced algebraic substrate for splitting a witness / log-derivative series
+  into its two component series (toward the Hadamard `bl` expansion, item 6). Proved by induction on `N`
+  over a new four-term addition interchange `(a+b)+(c+d) ≈ (a+c)+(b+d)` (`Cadd_add_add_comm`, from
+  `Cadd_assoc`/`Cadd_comm`); no real `RsumN_add` is needed — the swap is done directly over `Cadd`.
+  Completes the additive half of the `CsumN` API alongside the existing `CsumN_congr`. Axiom-clean.
+- **Crux frontier (`n = 3`) — tighter γ₁ upper `≤ −0.055`** (`Analysis/GammaOne.lean`, `Rgamma1_le_neg055`):
+  the dominant `−6γ₁` contribution to the `Pos Rlambda3` (`λ₃`) certificate, tightened from `−0.0445`
+  (`Rgamma1_le_neg445`, artanh depth `T = 2`) to `−0.055` at depth `T = 4` (`gBound200_T4_le_neg055`,
+  a kernel `decide`). Diagnosis recorded: the residual gap to the true `γ₁ ≈ −0.0728` is the `gSeq`
+  Euler–Maclaurin overshoot `+(ln N)/(2N)` (a *convergence* limit, not bound depth — raising `T`
+  further plateaus), whose removal is the remaining `GammaTwoBracket`-scale acceleration (the single
+  hardest `λ₃` brick).
+- **Crux frontier (`n = 3`) — ζ(2)/ζ(3) brackets toward `Pos Rlambda3`** (`Analysis/ZetaTwo.lean`):
+  the named-missing `ζ(2)` upper bound and two-sided `ζ(3)` for the `λ₃` positivity certificate. The
+  reusable `zeta_le_partial` (`ζ(s) ≤ S(N) + 1/(N+1)`, the mirror of `zeta_ge_partial`, via the
+  decreasing upper sequence `zetaU` and the rigorous tail-overestimate `Σ_{k>N+1} 1/kˢ ≤ 1/(N+1)`)
+  gives `ζ(2) ≤ 1.646` (`zeta2_upper`; with `zeta2_lower ≥ 1.63` brackets the Basel constant) and
+  `ζ(3) ∈ [1.201, 1.217]` (`zeta3_lower`/`zeta3_upper`, two-sided Apéry). These discharge two of the
+  constant-precision inputs the `n = 3` coupling coefficient `Pos Rlambda3` needs (the dominant
+  remaining gap is the tight two-sided `γ₁`). Axiom-clean.
+
+- **Track 1 (item 1 — the Γ place on the strip) — the complex digamma term**
+  (`Analysis/ComplexDigamma.lean`, increment 1): the archimedean `Γ′/Γ` series
+  `ψ(s) = −γ + Σ_{n≥0} [1/(n+1) − 1/(s+n)]` lifted to complex `s` with `Re s ≥ c > 0` (the strip) —
+  the piece of item 1 the real-line `Gamma.lean` does not provide. Built from the complex reciprocal
+  `Cinv` ALONE (no `Cpow`/`Clog`), so it is entirely free of the `1/16` value-identity barrier. The
+  term layer: the shifted argument `s+n` (`CdigammaArg`), its modulus-squared floor `|s+n|² ≥ c²`
+  (`ofQ_le_CnormSq_CdigammaArg`, from `(Re s+n)² ≥ c²` and `(Im s)² ≥ 0`) and the resulting positivity
+  witness `CdigammaArg_witness` (squared-floor analogue of the real `digammaArg_witness`), and the
+  complex term `CdigammaTerm = 1/(n+1) − 1/(s+n)`. Per-term bounds, regular partial sums, and the
+  limit object `CDigamma` follow in later increments via the generic `RReg_of_real_bound` engine.
+  Axiom-clean.
+  - **Increment 2a — the factored telescoping identity** `Cterm_n = (s−1)·P_n` with
+    `P_n = 1/(n+1)·1/(s+n)` (`CdigammaTerm_factored`, complex analogue of the real
+    `digammaTerm_eq_factored`). The engine is the abstract reciprocal-difference identity
+    `Cadd_neg_eq_mul_of_inv` (`P − I ≈ (a−Q)·(P·I)` whenever `a·I ≈ 1`, `Q·P ≈ 1`, the ℂ analogue of
+    `Rsub_eq_mul_of_inv`), instantiated with `a = s+n` (`Cmul_Cinv`) and `Q = n+1`
+    (`Cmul_natSucc_inv`), then `(s+n)−(n+1) ≈ s−1` (`CdigammaArg_sub_succ_eq`). This factorization
+    exposes the `O(1/n²)` decay (the `1/(n+1)` and `1/(s+n)` summands each only `O(1/n)`), the
+    prerequisite for the per-term bounds.
+  - **Increment 2b/2c — the per-term component bounds** `|Re P_n| ≤ 1/((n+1)n)` and
+    `|Im P_n| ≤ B/((n+1)n)` (`|Im s| ≤ B`), via the inverse-comparison helper `x·(1/N) ≤ 1/x` when
+    `x² ≤ N` (no cancellation), the modulus-squared floors `|s+n|² ≥ σ_n²` and `|s+n|² ≥ n`
+    (`CnormSq_CdigammaArg_ge`), and the real-line `digamma_Rinv_le`. `Re P_n = F·(σ_n/N) ≤ F·(1/n)`
+    and `Im P_n = F·((−Im s)/N)` bounded two-sidedly via an abstract product lemma. This is the
+    `O(1/n²)` decay made rational — the input the generic `RReg_of_real_bound` engine needs.
+  - **Increment 2d — the full term-component bounds** `|Re Cterm_n| ≤ (B1+B2²)/((n+1)n)` and
+    `|Im Cterm_n| ≤ (B1·B2+B2)/((n+1)n)` (`|Re s−1| ≤ B1`, `|Im s| ≤ B2`), via
+    `CdigammaTerm_re_bound`/`_im_bound`. From `Cterm = (s−1)·P`, each component is a sum/difference of
+    two `±`-bounded products (combined by abstract `cdig_Rsub_prod_bound`/`cdig_Radd_prod_bound` over
+    `Rmul_le_mul_of_abs`/`Rneg_mul_le_of_abs`), then collapsed to a single `K/((n+1)n)`. Both
+    components are now summable `O(1/n²)` — the regular-partial-sums and `CDigamma` limit follow.
+  - **Increment 3 — the limit object `CDigamma`** (the complex digamma on the strip). A generic
+    convergence layer (`genSum`/`genTail_two_sided`/`genSum_RReg`) — any real term sequence with
+    `|T n| ≤ K/((n+1)n)` has regular `K`-reindexed partial sums — reusing the real-line telescoping
+    infrastructure (`digammaRsum`/`digammaMidx`/`digammaTailQ_Midx_le`) and the generic
+    `RReg_of_real_bound` engine. Instantiated for both `Re Cterm` and `Im Cterm`
+    (`CdigammaReSum_RReg`/`CdigammaImSum_RReg`), giving the **constructive complex
+    `ψ(s) = −γ + Σ_{n≥0}[1/(n+1) − 1/(s+n)]`** as `⟨Rlim Re-sums, Rlim Im-sums⟩` (the `Ceta`/`Czeta`
+    componentwise-limit pattern), with `−γ` on the real part. This is **item 1's barrier-free
+    archimedean piece complete**: the real-line `Digamma` lifted to complex `s` on the strip, built
+    from `Cinv` alone.
+  - **Increment 4 — the complex Spouge bracket** `c₀ + Σ_{k=1}^N cₖ/(s+k)` (`CspougeBracket`), the
+    `Cinv`-sum core of the complex Spouge `Γ` on the strip. Mirrors the real `spougeBracketAux` with
+    `Rinv → Cinv` and the real coefficients scaled in via `ofReal`, reusing the `CdigammaArg`
+    reciprocal-witness machinery — barrier-free (no `Cpow`/`Clog`). Non-vacuity `cspougeBracketWitness`
+    at `s=1, a=4, N=2`. Note: the complex `Cpow`/`Clog` *definition* needs only the argument ratio
+    `< 1` (not the `1/16` value identity, which is only for additivity *properties*), so the base power
+    `(s+a)^{s+½}` and the full `Γ` assembly are buildable barrier-free by choosing the Spouge shift `a`
+    large enough to keep the base's argument small — the remaining item-1 pieces.
+  - **Increment 5 — the complex Spouge `Γ` approximant `CSpougeGamma`** (item 1's `Γ(s/2)`-on-the-strip
+    object). The faithful complex lift of the real `SpougeGamma`: `Γ(s+1) ≈ (s+a)^{s+½}·e^{−(s+a)}·[c₀ +
+    Σ_{k=1}^N cₖ/(s+k)]` for complex `s` (`Re s ≥ c > 0`), assembled from `Cpow` (base power), `Cexp`,
+    and the `CspougeBracket`. The base power's `Clog`/`Carg` need only the argument-ratio bound `< 1`
+    (a caller hypothesis, satisfied by taking the shift `a` large relative to `|Im s|`) — not the
+    `1/16` value identity — so the construction is barrier-free; positivity witnesses
+    (`CspougeBase_cnormSq_witness`/`_re_witness`, floor `|s+a|² ≥ c²`) come from the floor `c`. As for
+    the real `SpougeGamma`, this is the constructive approximant object (no `Ceq` to the true `Γ`
+    asserted). **Item 1's complex `Γ` on the strip is now built** (object-level), alongside the
+    barrier-free complex digamma `CDigamma`.
+  - **Increment 6 — the direct `Γ(w)` Spouge variant `CSpougeGammaW`** (`Re w > 0`), the
+    strip-applicable form for `Γ(s/2)` (`Re(s/2) ∈ (0,½)`). `Γ(w) ≈ (w+b)^{w−½}·e^{−(w+b)}·[c₀ +
+    Σ_{k=1}^N cₖ/(w+(k−1))]` (Spouge with `z = w−1`, base shift `b = a−1`, terms `1/(w+(k−1))`). Unlike
+    `CSpougeGamma(w−1)`, every node (`w+b`, `w+(k−1)` for `k ≥ 1`) keeps `Re > 0` for `Re w > 0`,
+    `b ≥ 0`, so it is valid throughout the strip — the prerequisite for assembling
+    `ξ(s) = ½ s(s−1) π^{−s/2} Γ(s/2) ζ(s)` (item 2; the other factors `π^{−s/2}` via `Cpow` over the
+    real `Rpi` base, and `ζ` via `CzetaStrip`, are in hand).
+- **Track 1 (item 2 — the completed ξ, assembled)** (`Analysis/ComplexXi.lean`). The conductor factor
+  `π^{−s/2} = exp((−s/2)·log π)` (`CpiPow`) built from the *real* `log π = Rlog_pi` (`Pi.lean`) embedded
+  as `⟨log π, 0⟩` — sidestepping the complex `Clog`/`Carg`/`cnormSq` of `π` entirely (no `1/16` barrier,
+  and no infeasible `Rpi²` `whnf`; `Rlog_pi` stays an opaque atom). The polynomial prefactor `½·s·(s−1)`
+  (`CxiPoly`, entire, taming `ζ`'s pole at `s=1`), and the **product assembly**
+  `Cxi s gammaHalf zeta = ½s(s−1)·π^{−s/2}·Γ(s/2)·ζ(s)` (`Cxi`), with the heavy-data factors `Γ(s/2)`
+  (via `CSpougeGammaW` at `s/2`) and `ζ(s)` (via `CzetaStrip`) passed as already-built values to keep
+  the interface clean. This is the constructive **assembly** of ξ from the item-1 / Track-1 pieces; the
+  analytic *properties* (functional equation, order-1 bound, Hadamard) of items 3–5 are separate and
+  not asserted. Axiom-clean.
+- **Track 1 — `Rlim` congruence infrastructure** (`Analysis/RlimProps.lean`): `Rlim_congr` (pointwise
+  `≈` regular sequences have `≈` diagonal limits — from `Req` at index `4n+3`, since `2/(4n+4) ≤
+  2/(n+1)`) and `Rlim_neg` (`lim(−X) ≈ −lim X`, seq-equal hence definitional). The limit-level
+  congruences any property/convergence argument over `Rlim`-built objects needs — e.g. the complex
+  digamma's symmetries and the eventual `CSpougeGamma → Γ` convergence. Axiom-clean. Also
+  `Rinv_congr` (`1/x ≈ 1/y` from `x ≈ y`, across different positivity witnesses — via the cancellation
+  `1/x ≈ (1/x)(y/y) ≈ (1/x)(x/y) ≈ 1/y`, no witness-dependent reindexing), filling a previously-missing
+  reciprocal congruence.
+- **Track 1 — real-part conjugation invariance of the complex digamma** `Re ψ(s̄) = Re ψ(s)`
+  (`CDigamma_re_conj`, `Analysis/ComplexDigammaConj.lean`), a genuine *property* of the constructed
+  `CDigamma`. Since `Re(1/(s+n)) = (Re s+n)/|s+n|²` and `|s+n|²` is conjugation-invariant (`Im` enters
+  only squared, `CnormSq_CdigammaArg_conj`), every term's real part agrees (`CdigammaTerm_re_conj`, via
+  `Rinv_congr`), so the two real-part partial-sum sequences are pointwise `≈` (`genSum_congr`) and their
+  diagonal limits agree (`Rlim_congr`). This is the archimedean face of ξ's conjugate-pair zero
+  symmetry; the line `Re ψ(1/4 + iτ/2)` of Track 2 is its instance. The first verified analytic
+  property atop the item-1 objects (advancing beyond the approximant constructions). Axiom-clean.
+  Now extended to the **full conjugation symmetry** `ψ(s̄) = conj ψ(s)` (`CDigamma_conj`, a `Ceq`):
+  the imaginary part flips, `Im ψ(s̄) = −Im ψ(s)` (`CDigamma_im_conj`), since `Im(1/(s+n)) = −Im s/|s+n|²`
+  negates under `s ↦ s̄` while `|s+n|²` stays fixed — proved via the new generic `genSum_neg`
+  (`Σ(−T) = −ΣT`) and `RReg_neg` (regularity preserved under negation), then `Rlim_neg`. This is the
+  archimedean place's reflection symmetry (ξ's conjugate-pair zero structure), and it exercises the
+  full `Rlim_congr`/`Rlim_neg`/`Rinv_congr` toolkit.
+- **Track 1 — conjugation symmetry of the completed ξ, reduced to the Γ/ζ factor symmetries**
+  (`Analysis/ComplexXiConj.lean`): `ξ(s̄) = conj ξ(s)` (`Cxi_conj`) — the structural symmetry behind
+  ξ's conjugate-pair zeros. Two factors are conjugation-symmetric outright: the conductor `π^{−s/2}`
+  (`CpiPow_conj`, via the reusable `Cexp_conj`, no `Clog`/modulus baggage) and the polynomial
+  `½s(s−1)` (`CxiPoly_conj`, pure ℂ-ring algebra). The `Γ(s/2)` and `ζ(s)` factors enter `Cxi` as
+  supplied values, so their conjugation is taken as explicit hypotheses and `Cxi_conj` distributes
+  `Cconj` through the product — isolating the genuine remaining content (the Γ conjugation, a large
+  `Clog`/`Cpow` chain; the ζ conjugation) as named audit-visible hypotheses, the program's standard
+  relocation. Axiom-clean.
+- **Track 1 — the complex digamma value anchor** `ψ(1) = −γ` (`CDigamma_one`,
+  `Analysis/ComplexDigammaValue.lean`): the convention witness that the constructed `CDigamma` is
+  genuinely `Γ′/Γ` (complex lift of the real `Digamma_one_eq_neg_gamma`). At `s = 1` the factored term
+  `Cterm_n = (s−1)·P_n` vanishes (`CdigammaTerm_one_eq_zero`, since `s−1 = 0` via `Cadd_neg` and
+  `0·P = 0`), so both real and imaginary partial sums are pointwise `≈ 0` and their limits vanish
+  (`CDigammaCore_one_eq_zero`, via `genSum_congr` to the all-zero sequence + the reusable `Rlim_zero`),
+  giving `ψ(1) = −γ + 0 = −γ`. Also adds the reusable `Rlim_zero` (pointwise-`0` regular sequence ⟹
+  limit `0`) and `genSum_const_zero`. Axiom-clean.
+- **Track 1 — left-sector argument additivity** `CargLeft(zw) = CargLeft z + Carg w`
+  (`Analysis/ComplexArgLeftAdd.lean`): left-half-plane `z` (`Re z < 0`) times principal `w`, the
+  product again left. Reflects the principal `Carg_add` through the `+π` shift via `−(zw) = (−z)·w`
+  (`Cneg_Cmul_left`): both `−z` and `w` are right half-plane, so `arg(−(zw)) = arg(−z) + arg w` and
+  the `+π` regroups to `(arg(−z) + π) + arg w = CargLeft z + Carg w`. With this, the cross-sector
+  additivity `arg(zw) = arg z + arg w` is now proved in all four sectors (principal, upper, lower,
+  left) — argument additivity over the whole punctured plane. Axiom-clean.
+- **Track 1 — the left-half-plane argument (full-plane atan2)** `CargLeft` (`Analysis/ComplexArgLeft.lean`)
+  with the `π` values (`Analysis/TanPiQuarter.lean`): `cos π = −1`, `sin π = 0` (`Rcos_pi`/`Rsin_pi`,
+  double-angle on `π/2 = Rpi_half`), the π-shift formulas `sin(x+π) = −sin x`, `cos(x+π) = −cos x`
+  (`Rsin_add_pi`/`Rcos_add_pi`), and `CargLeft z = arg(−z) + π` for `Re z < 0` with genuine tangent
+  `tan(CargLeft z) = Im z/Re z` (`CargLeft_tan`, value identity on `−z` + π-shift, `tan(A+π) = tan A`).
+  With the principal `Carg`, `CargUpper`, and `CargLower`, the argument is now defined over the whole
+  punctured plane near the four axes — the `Re z < 0` quadrants of `atan2`. Axiom-clean.
+- **Track 1 — the general complex power** `z^w = exp(w·log z)` (`Analysis/ComplexPowGen.lean`,
+  `Cpow`), the bridge from item 0's complex logarithm to item 1's complex Γ. Where `ncpow` gives only
+  `n^s` for a *natural* base `n ≥ 2` (the ζ Dirichlet terms), `Cpow` raises a *complex* base on the
+  principal sector — needed for Spouge's `(z+a)^{z+1/2}` in `Γ(s/2)` and `π^{−s/2}` in `ξ`. Defined as
+  `Cexp(w·Clog z)`; the exponent law `z^{w₁+w₂} = z^{w₁}·z^{w₂}` (`Cpow_add_exp`) is immediate from
+  `Cexp_add` + distributivity, and the **base law `(zw)^v = z^v·w^v`** (`Cpow_mul_base`) follows from
+  the `Clog` additivity of item 0 (`Clog_add`) + distributivity + `Cexp_add` — concretely bridging
+  item 0 to item 1. Axiom-clean (`{propext, Quot.sound}`).
+- **Track 1 — the lower-sector argument + its additivity** `CargLower` (`Analysis/ComplexArgLower.lean`):
+  for `Im z < 0`, `arg(z) = −arg(z̄)` (`CargLower z = −CargUpper(Cconj z)`, `z̄` upper). Genuine
+  tangent `tan(CargLower z) = Im z/Re z` (`CargLower_tan`, from `CargUpper_tan` of `z̄` + sin-oddness /
+  cos-evenness), and additivity `CargLower(zw) = Carg z + CargLower w` (`CargLower_add`) — the
+  conjugate reflection of `CargUpper_add` through `Cconj_Cmul` (`z̄w̄ = (zw)‾`) and `CargUpper_congr`.
+  Completes the argument across all four wedges near the axes (ξ's zeros are conjugate pairs).
+  Axiom-clean (`{propext, Quot.sound}`).
+- **Track 1 — ★★ cross-sector complex-logarithm additivity** `Clog(zw) = Clog z + Clog w` past
+  `|arg| < π/4` (`Analysis/ComplexLogUpperAdd.lean`, `ClogUpper_add`): `ClogUpper(zw) = Clog z +
+  ClogUpper w` for principal `z` × upper `w` (product upper). Real half from the modulus hypothesis
+  `hmod` + `Rmul_distrib` (as in `Clog_add`); imaginary half the *fully discharged* cross-sector
+  argument additivity `CargUpper_add`. The complex logarithm is now additive across the
+  principal/upper boundary — the second-sector capstone of substrate item 0. Axiom-clean.
+- **Track 1 — ★★ cross-sector argument additivity** `arg(zw) = arg z + arg w` across the
+  principal/upper boundary (`Analysis/ComplexArgUpperAdd.lean`, `CargUpper_add`):
+  `CargUpper(zw) = Carg z + CargUpper w` for principal `z` (`Re z > 0`) × upper `w` (`Im w > 0`),
+  product upper, all ratios `< 1/16`. The clean reduction via the coordinate swap `swapC z =
+  ⟨Im z, Re z⟩`: `CargUpper z = π/2 − Carg(swapC z)` and the exact identity `swapC(zw) = swapC w · z̄`
+  (`swapC_Cmul_Cconj`, componentwise), so `CargUpper(zw) = π/2 − Carg(swapC w · z̄) =
+  π/2 − Carg(swapC w) − Carg(z̄) = CargUpper w + Carg z` — reusing the principal `Carg_add` and the
+  conjugate symmetry `Carg_conj`. Reusable congruence gaps filled: `Rdiv_congr` (division respects
+  `≈`, via denominator cancellation `Rdiv_mul_cancel`/`Rmul_right_cancel` — no `Rinv`-congruence
+  needed) and `Carg_congr` (the argument respects `≈`). Axiom-clean (`{propext, Quot.sound}`). The
+  argument is now additive across `|arg| < π/4`, not only within it.
+- **Track 1 — ★ argument conjugate symmetry** `arg(z̄) = −arg z` (`Analysis/ComplexArgUpper.lean`,
+  `Carg_conj`): `Carg(Cconj z) = −Carg z`. Since `Cconj z = ⟨Re z, −Im z⟩` has ratio `−(Im z/Re z)` and
+  `arctan` is odd (`RarctanR_neg`, via `RarctanR_congr` on the ratio `Rmul_neg_left`). A building block
+  of cross-sector additivity (it turns a subtracted angle into a conjugate factor). Axiom-clean.
+- **Track 1 — `arctan` is odd** `arctan(−t) = −arctan t` (`Analysis/RArctanValue.lean`,
+  `RarctanR_neg`, with rational `arctanTerm_neg`/`arctanSum_neg`) — the conjugate symmetry of the
+  argument (`arg(z̄) = −arg z`), since `arctan` sums only odd powers. From the artanh-term oddness
+  `artTerm_neg` (`(−1)ⁿ` factor preserved). A foundational reusable property toward the cross-sector
+  argument additivity. Axiom-clean (`{propext, Quot.sound}`).
+- **Track 1 — the complex logarithm past `|arg| < π/4`** (`Analysis/ComplexLogUpper.lean`,
+  `ClogUpper`): `ClogUpper z = ½·log|z|² + i·(π/2 − arctan(Re/Im))` on the upper sector (`Im z > 0`,
+  `|Re/Im| ≤ ρ < 1`, i.e. `|arg| ∈ (π/4, π/2]`) — the extension of the principal `Clog` past its
+  `|arg| < π/4` domain. Real part = the same genuine modulus log `½·log|z|²`; imaginary part = the
+  genuine second-sector argument `CargUpper` (`CargUpper_tan`). Anchored by `Im (ClogUpper i) = π/2`
+  (`ClogUpper_I_im`, i.e. `log i = i·π/2`). Axiom-clean (`{propext, Quot.sound}`). (Cross-sector
+  additivity — the full-plane atan2 — is the following brick.)
+- **Track 1 — ★ the upper-half argument is genuine** `tan(CargUpper z) = Im z/Re z`
+  (`Analysis/ComplexArgUpper.lean`, `CargUpper_tan`): `sin(CargUpper z) = (Im/Re)·cos(CargUpper z)`
+  for `Im z > 0`, `Re z` apart from `0`, `|Re/Im| ≤ ρ < 1/16` (the steep wedge off the imaginary
+  axis). Confirms the second-sector argument `CargUpper z = π/2 − arctan(Re/Im)` is the genuine
+  argument (not just a definition): the reciprocal reduction gives `tan(π/2 − arctan(Re/Im)) =
+  1/(Re/Im) = Im/Re`. Built from the real-argument value identity `RarctanR_value_eq`
+  (`tan(arctan(Re/Im)) = Re/Im`), the real complementary tangent `Rsin_cos_pi_half_sub_tan_real`, and
+  the reciprocal `(Im/Re)·(Re/Im) = 1` (`Rmul_Rinv_self`). The second-sector analogue of the
+  principal-sector `tan(Carg z) = Im/Re`. Axiom-clean (`{propext, Quot.sound}`).
+- **Track 1 — ★★ the real-argument value identity** `sin(arctan t) = t·cos(arctan t)` for a REAL
+  argument `t` (`Analysis/RArctanValue.lean`, `RarctanR_value_eq`) — the keystone lifting the
+  rational `Rsin_arctan_value_eq` (fixed `t₀`, the heart of `tan(arctan t₀)=t₀`) to a real ratio, as
+  `Carg z = arctan(Im z/Re z)` and its reciprocal extension require. The lift is NOT naive
+  approximation (which blows up the Lipschitz constant via the approximants' denominators): it clones
+  the nested-diagonal bridge directly for `RarctanR t`, sampling the argument at one deep index
+  `q = t.seq(Rartanh_R ρ D)` per diagonal step, where the `t₀`-parametric composition lemmas
+  (`cos_nested_general`/`sin_nested_general`, `|t₀| ≤ ρ`) apply — so all bounds stay `ρ.den`-based.
+  `Rcos_RarctanR_nested` / `Rsin_RarctanR_nested` are the cos/sin real-argument nested bounds (the
+  `Rmul` reconciliation is `X`-regularity, argument-agnostic). The capstone triangle:
+  `sin(arctan t).seq n →[Rsin nested] peval(sin∘arctan) q (2D+1) →[degree shift, exact]
+  q·peval(cos∘arctan) q (2D) →[Rcos nested] q·(Rcos(arctan t)).seq R →[reg] t·cos`, the new leg over
+  the rational case being the factor reconciliation `q ↦ t` (sin-shift factor `q` vs `Rmul` factor
+  `t`), discharged by `t`-regularity and the `|Rcos| ≤ expM_U 1 2` bound (`altSum_abs_le_U`). The
+  sqrt-free real-argument `tan∘arctan = id` — the substrate of the reciprocal `Carg`/`Clog` lift.
+  Axiom-clean (`{propext, Quot.sound}`).
+- **Track 1 — ★ the reciprocal/complementary tangent** `tan(π/2 − A) = 1/tan A`
+  (`Analysis/TanPiQuarter.lean`, `Rsin_cos_pi_half_sub_tan` + `TanReal.compl`) — the value-level
+  engine of the reciprocal reduction `arctan t = π/2 − arctan(1/t)`, which is how the argument axis
+  reaches `|arg| ≥ π/4`. From the complementary formulas `sin(π/2 − x) = cos x`, `cos(π/2 − x) = sin x`
+  (`Rsin_pi_half_sub` / `Rcos_pi_half_sub`, themselves from `Rsin_sub` / the new `Rcos_sub` and the
+  `π/2` values) and `sin A = s·cos A`: if `A` has tangent `s` and `t·s = 1`, then `π/2 − A` has
+  tangent `t` (`t·cos(π/2−A) = t·sin A = t·s·cos A = cos A = sin(π/2−A)`). `TanReal.compl` packages
+  this as a bundle operation, so a small-argument leaf (`|s| < 1/16`) yields a LARGE-tangent angle
+  that still composes with `.add`/`.step` — tangents beyond the value-identity radius are now
+  constructible (`tan_pi_half_sub_arctan_eighteen`: `tan(π/2 − arctan(1/18)) = 18`). Axiom-clean
+  (`{propext, Quot.sound}`). (The full-plane `Carg` atan2 with quadrant `±π` shifts is the next brick.)
+- **Track 1 — ★ `tan(π/4) = 1` and the `π/2` values `cos(π/2) = 0`, `sin(π/2) = 1`**
+  (`Analysis/TanPiQuarter.lean`, `sin_eq_cos_pi4` / `Rcos_pi_half` / `Rsin_pi_half`) — the anchors of
+  the **full-range complex argument** (`Carg`/`Clog` past the principal sector `|arg| < π/4`, via the
+  reciprocal reduction `arctan t = π/2 − arctan(1/t)`). The obstacle this clears: the value identity
+  `sin(arctan t) = t·cos(arctan t)` (`Rsin_arctan_value_eq`) holds only for `|t| < 1/16` (the
+  nested-composition radius forced by `DN_arctan_decay`), but Machin's
+  `π = 16·arctan(1/5) − 4·arctan(1/239)` uses `1/5 > 1/16`. The fix is **Gauss's Machin-like formula**
+  `π/4 = 12·arctan(1/18) + 8·arctan(1/57) − 5·arctan(1/239)`, all three arguments `< 1/16` (common
+  radius `ρ = 1/18`): the value identity applies to each leaf, and the 25-leaf chain is built through
+  `Rsin_cos_add_tan` (which needs only `1 − ab > 0`, never that the *output* tangent is small), so the
+  running tangent climbs to exactly `1` while every step's `|running·leaf| ≤ 0.039`. A `TanReal` bundle
+  (`angle`, rational `tan`, `sin = tan·cos`) with `.add`/`.retag`/`.step` carries the chain (each
+  step's tangent relabelled to a `Qeq`-equal literal to keep the positivity `decide`s shallow); the
+  exact rational tangent of the combination is `vval`-checked to be `1`, giving `sin(π/4) = cos(π/4)`.
+  Double-angle on `π/2 = 2·(π/4)` (`Rcos_add_of_tan`, `Rsin_add_of_tan`) then yields
+  `cos(π/2) = 1 − 1·1 = 0` and, via Pythagoras, `sin(π/2) = 2·cos²(π/4) = 1`. Axiom-clean
+  (`{propext, Quot.sound}`). (Consistency `Rpi = 4·Spi4.angle` with the Machin `Rpi` of `Pi.lean`, and
+  the reciprocal arctan reduction + lift to `Carg`/`Clog`, are the following bricks.)
+- **Track 1 — ★ the arctan addition law** `arctan a + arctan b = arctan((a+b)/(1−ab))`
+  (`Analysis/ArctanTan.lean`, `Rarctan_add` / `Rarctan_add_of_small`): the imaginary half of `Clog`
+  additivity, built on the value-level `tan` substrate below. The chain: the abstract
+  tangent-addition capstone `Req_add_of_tan_values` (the arctan analog of `Req_add_of_exp_values` —
+  `A+B=C` from the tangent *values* via `Rsin_cos_add_tan` + tangent-injectivity `Rtan_inj`); the
+  `RsinAux` apartness `Pos_RsinAux_of_small` (`sin w/w ≥ 1/2` for `|w| ≤ 1`, since the degree-2 head
+  `1−w²/6+w⁴/120 ≥ 5/6` by `altSum_sin_two_ge` and the tail is `≤ 2/6` by `altSum_trunc_bound`); and
+  the angle-difference magnitude bound `Rarctan_diff_seq_le` (each angle `≤ 2ρ` via `Rarctan_seq_abs_le`
+  + `geoSum_le_two`, so the `Radd`/`Rsub`-reindexed difference is `≤ 6ρ ≤ 1` via `Qmul_two_le_third`
+  from `16ρ < 1`). `Rarctan_add_of_small` then makes the apartness automatic — the law holds for any
+  `|a|, |b|, |(a+b)/(1−ab)| ≤ ρ` with the shared `ρ < 1/16` thicket and `1 − ab > 0`. **Lifted to real
+  arguments** (`RarctanR_add_real_via`): `arctan s + arctan t = arctan((s+t)/(1−st))` for reals `s, t`
+  with `Y = RarctanR(vvalReal s t)` — the arctan analog of `Rartanh_add_real_via`, cleaner since the
+  `vval` denominator is sign-robust (no `wvalR`-style split). Two legs through
+  `W = arctanSum(vval(s_P,t_P),·)`: the argument-variation `arctanSum_vval_argdiff`
+  (`≤ 12(|a−a'|+|b−b'|)`) and the combination `RarctanConst_add_vval_rho` (= `Rarctan_add_of_small`
+  read at the diagonal index). **Packaged as complex argument additivity** `arg(zw) = arg z + arg w`
+  (`Analysis/ComplexArgAdd.lean`, `Carg_add`): for `z, w` with `Re z, Re w, Re(zw)` apart from `0` and
+  the three ratios `Im/Re ≤ ρ < 1/16`, `Carg(zw) = Carg z + Carg w`. The bridge is the complex-division
+  **ratio identity** `Im(zw)/Re(zw) ≈ vvalReal(ratio z, ratio w)`, proved by cross-multiplication: the
+  `vvalReal` defining relation `vvalReal_rel_via` (`V·(1−st) ≈ s+t`, the rational `vval_rel` lifted to
+  the diagonal by regularity) feeds the real-algebra cross-identity `ratio_cross_via`
+  (`vvalReal(r_z,r_w)·Re(zw) = Im(zw)`), which together with `Rdiv_mul_cancel` and `Rmul_right_cancel`
+  gives the identity; then `RarctanR_congr` + `RarctanR_add_real_via` close it. **This completes the
+  imaginary (harder) half of `Clog` additivity.**
+- **Track 1 — ★ complex logarithm additivity** `Clog(zw) = Clog z + Clog w` (`ComplexArgAdd.lean`,
+  `Clog_add`): the capstone of substrate item 0. `Clog z = ½·log|z|² + i·arg z`, so additivity splits
+  into the modulus half (`RlogPos`-multiplicativity) and the imaginary half (`Carg_add`, fully
+  discharged). `Clog(zw).re = ½·log|zw|² ≈ ½(log|z|²+log|w|²) = Clog z.re + Clog w.re` (`Rmul_distrib`),
+  `Clog(zw).im = Carg(zw) = Carg z + Carg w` (`Carg_add`). The general positive-real
+  log-multiplicativity `log|zw|² = log|z|²+log|w|²` (via `cnormSq_mul` + `Rlog_mul` + integer-part
+  telescoping) is the one explicit audit-visible hypothesis, isolated exactly as the program isolates
+  each heavy input — RH-*independent*, no smuggling. Crux fields stay `none`.
+- **Track 1 — ★ the `Clog_add` modulus seam discharged for bounded moduli** (`Analysis/RlogMulPos.lean`,
+  `Analysis/ClogAddBounded.lean`): the `hmod` hypothesis of `Clog_add` is now a **theorem**, not an
+  assumption, in the small-radius regime (squared moduli `1 ≤ |z|², |w|² ≤ B`). The substrate stack:
+  `reindex_Req` (a regular sequence reindexed past its tail presents the same real); `Rlog_congr`
+  (`Rlog` is a congruence in its argument at small radius, `tmap_lip` lifted through `Rartanh_congr`);
+  `RlogPos_unfold` (`RlogPos x k = Rlog (reindexed x) Mx` at the auto-derived radius, definitional);
+  the **`RlogPos → Rlog` bridge** `RlogPos_eq_Rlog` (auto-radius log = presented-radius `Rlog x B`,
+  routed through `Rartanh_radius_indep` `Mx→B` then `Rlog_congr` along `reindex_Req` — crucially only
+  `B` need be small, not the loose auto-radius); `RlogPos_mul` (`log(xy) = log x + log y` for positive
+  reals in `[1,B]`, bridging all three `RlogPos` calls into `Rlog_mul`); and `RlogPos_congr` (carrying
+  `RlogPos` across `≈`). Assembled in `RlogPos_cnormSq_mul` — exactly the `hmod` proposition,
+  `log|zw|² = log|z|²+log|w|²`, from elementary positivity/bound data via `cnormSq_mul`. The capstone
+  `Clog_add_bounded` then states `Clog(zw) = Clog z + Clog w` with **no** `RlogPos`-multiplicativity
+  hypothesis. Crux fields stay `none`.
+- **Track 1 — ★★ symmetric-band `Clog` additivity (signed-τ)** (`Analysis/RlogMulSigned.lean`):
+  `Clog_add_signed` extends the modulus-seam discharge from `[1,B]` to the **symmetric band**
+  `[1/B, B]` — squared moduli on *either* side of 1 (the realistic Hadamard regime, where the
+  `artanh` argument `tmap(x.seq)` turns negative). The signed substrate, built bottom-up via the
+  **oddness route** that sidesteps re-deriving the `t≥0` corner bounds: `exp(2·artanh τ)=(1+τ)/(1−τ)`
+  for `τ<0` follows from the nonneg case by `artanh(−σ)=−artanh σ` (`Rartanh_neg`) + exp-of-negation
+  (`Rexp_TwoArtanh_of_neg`), unified sign-agnostically (`Rexp_TwoArtanh_signed_rho`). Then the signed
+  addition law `TwoArtanh_add_wvalR_rho` (three signed exp-identities through `Req_add_of_exp_values_gen`
+  + the signed multiplicativity `wvalR_hg`), its `×2`-strip `RartanhConst_add_wvalR_rho`, the signed
+  real lift `Rartanh_add_real_via_signed` (the arg-variation/`wvalR` den-positivity legs were already
+  sign-agnostic), the signed real log-multiplicativity `Rlog_mul_signed` (`tmap_abs_lt_one` two-sided
+  + `wvalR_tmap_seq_bound_signed`), `RlogPos_mul_signed`, and the assembly
+  `RlogPos_cnormSq_mul_signed`/`Clog_add_signed` (witness from a lower bound, `pos_witness_of_mulM_ge`,
+  since the squared-modulus product may dip below 1). Crux fields stay `none`.
+- **Track 1 — ★★★ general-modulus complex `Clog` additivity (`ρ<1` relaxation)** (`Analysis/RadiusGen.lean`):
+  `Clog_add_gen` removes the small-radius cap entirely — `Clog(zw) = Clog z + Clog w` with the modulus
+  seam `hmod` discharged for squared moduli in `[1/B, B]` at **any** `B ≥ 1`. The load-bearing
+  finding: `ρ²≤1/2` was never needed for convergence, only for the clean constant `2`; the artanh
+  reindex `(ρ.den²+4ρ.den)(n+1)` already absorbs the general even-sum bound `Σρ^{2k} ≤ 1/(1−ρ²) ~
+  ρ.den/2`, with the **canonical `K = ρ.den`** valid for every `ρ<1`. The full `_gen` stack (~20
+  lemmas): `geoEvenSum_le_gen` → `Rartanh_congr_gen`/`artSum_depth_recip_gen`/`Rartanh_radius_indep_gen`
+  (continuity) → `Rlog_congr_gen`/`RlogPos_eq_Rlog_gen`/`RlogPos_congr_gen` (bridge) →
+  `wval_halfbound_gen` (denominator factor `ρ.den` vs `2`)/`wval_lip1_gen`/`wval_lip2_gen`
+  (Lipschitz constant `ρ.den²` vs `4`)/`wval_inner_pos_gen` → `artSum_wval_argdiff_gen`
+  (constant `Kσ·ρ.den²`) → `Rartanh_add_real_via_gen` (the real artanh addition diagonal; combination
+  leg already radius-agnostic) → `wvalReal_gen`/`tmul_wvalReal_via_gen` (reindex `2ρ.den²(n+1)`
+  absorbing the larger constant) → `Rlog_mul_via_gen` → `Rlog_mul_gen` → `RlogPos_mul_gen` →
+  `RlogPos_cnormSq_mul_gen` → `Clog_add_gen`. Substrate item 0's modulus seam is now closed at full
+  generality. Crux fields stay `none`.
+- **Track 1 — ★ value-level `sin(arctan t) = t·cos(arctan t)`** (`Analysis/ArctanODE.lean`,
+  `Rsin_arctan_value_eq`): `Req (Rsin (Rarctan t₀)) (Rmul (ofQ t₀) (Rcos (Rarctan t₀)))` for
+  `|t₀| ≤ ρ < 1/16`. This **completes the formal-PS → value (FTC) bridge** that lifts the formal
+  identity `sin∘arctan = t·(cos∘arctan)` (`sin_arctan_eq`) to the constructive reals — the sole
+  remaining gap for argument-additivity, and the `artanh`-free analog of the real `artanh` doubling.
+  The full stack, built from scratch on the corner-decay machinery: the closed `C/(n+1)` decay rate
+  `DN_arctan_decay` (the `(M+1)²` polynomial absorbs into the geometric base only at `ρ < 1/16`, via
+  `sq_le_four_pow`), the reciprocal composition bounds `DN_{sin,cos}_recip`, the degree-shift identity
+  `peval_sin_arctan_shift : peval(sin∘arctan,t,m+1) = t·peval(cos∘arctan,t,m)` (no division — `sin =
+  t·cos` directly), the diagonal↔peval identifications (`Rcos_seq_eq_peval`, `RsinAux_seq_eq_peval`),
+  the argument-Lipschitz bounds (`peval_cosCoeff_Lip`, `peval_{cos,sin}Coeff_arctan_argdiff_recip`,
+  via `altSum_Lip_le` + `qsq_diff_le` with `LipS` bounded uniformly by `LipS_le_U`), the geometric
+  arctan tail `geoSum_diff_recip`, and the nested-diagonal cores `cos_nested_general`/`sin_nested_general`
+  with their real wrappers `Rcos_arctan_nested`/`Rsin_arctan_nested` — the latter handling the **`Rmul`
+  reconciliation** (`Rsin = Rmul X (RsinAux X)` evaluates `X` at the outer reindex but `RsinAux`
+  internally at a deeper one; the gap `|X.seq R − X.seq D|·|RsinAux|` is killed by `X`'s regularity).
+  The final `Req_of_lin_bound` is a 3-term triangle through `peval(sin∘arctan)` and the shift.
+  RH-*independent* analytic infrastructure; crux fields stay `none`.
+
+- **The RH witness** (`F1Square/Analysis/RHWitness.lean`) — the constructive witness of RH's forward
+  direction (`RH ⟹ λₙ ≥ 0`), exhibited as an object. On the critical line a zero's Cayley factor
+  `w = 1−1/ρ` has unit modulus; unit modulus survives every power via the Atlas composition norm
+  (`cnormSq_npow` over `cnormSq_mul`, the Brahmagupta–Fibonacci / Hurwitz two-square identity), so
+  `|wⁿ|² = 1`, hence `Re(wⁿ) ≤ 1` with NO `sqrt` (`Rle_of_Rmul_self_le`). Each Li term `1 − Re(wⁿ)` is
+  thus manifestly `≥ 0` (`witnessTerm_nonneg`), and the finite witness sum `Σ (1 − Re(wⁿ))` is `≥ 0`
+  for every `n` (`witnessSum_nonneg`, `rh_witness`). Strengthened from unit modulus to the **closed
+  half-plane** `|w|² ≤ 1` (`Re ρ ≥ ½`, `cnormSq_Cnpow_le_one` via `Rnpow_le_Rnpow`); `rh_witness_onLine`
+  is the boundary (on-line) face. The hypothesis IS RH (`onLine_is_unit_modulus`) and is never
+  discharged — producing the witness unconditionally is RH itself.
+- **The functional-equation reflection + conjugation symmetry** (`F1Square/Analysis/Reflection.lean`)
+  — the completed-ζ 4-fold zero symmetry `{ρ, ρ̄, 1−ρ, 1−ρ̄}` realized on the Li growth ratio as exact
+  `Real` algebra. Reflection `ρ↦1−ρ`: `cnormSq(1−ρ) = csubOneNormSq ρ`, `csubOneNormSq(1−ρ) = cnormSq ρ`
+  (via `Rneg_sq`/`Rneg_Rsub`), so the mirror Cayley ratios are reciprocal (`r(ρ)·r(1−ρ) = 1`), and
+  `mirror_both_in_disk_iff`: a zero and its mirror are both in the closed Cayley disk iff `|ρ−1|² = |ρ|²`
+  (unit modulus, on the line). Conjugation `ρ↦ρ̄` (`Cconj`) preserves both moduli, hence disk-membership
+  (`inClosedDisk_Cconj`); `symmetry_orbit_in_disk_iff` shows the whole orbit lies in the disk iff on the
+  line — the structural reason RH's "all zeros in the disk" equals "all zeros on the line". Does not
+  prove the zeros are there (RH, untouched).
+- **The Voros off-line branch, constructively** (`Reflection.lean`, `Analysis/OffLineGrowth.lean`) —
+  `offLine_left_not_inClosedDisk`: a zero left of the line leaves the closed Cayley disk
+  (`liRatio_left_of_line` ⟹ `|w|² > 1`), the geometric seed of the off-line branch, *proven*.
+  `offLine_term_grows`: its witness term's squared modulus then strictly grows (`|wⁿ⁺¹|²−|wⁿ|² > 0`);
+  `witnessTerm_tempered`: on the closed disk the term is bounded in `[0,2]`; `voros_term_dichotomy`
+  packages the tempered-vs-exponential alternative at the term level. The step from exponential growth
+  to a negative coefficient (phase + saddle-point over the sum) stays the classical interface.
+- **The Bombieri–Lagarias pipeline + Li's criterion, both directions** (`Square/BLPipeline.lean`) —
+  `Rnonneg_Rlim` (non-negativity passes to a Bishop limit) is the new constructive core. `BLZeroSum`
+  carries the BL zero-sum representation and the on-line unit-modulus fact as explicit hypotheses;
+  `bl_rh_implies_liNonneg` is the forward direction `RH ⟹ LiNonneg(genuineLamSeq)`. `LiBridge` adds
+  the Voros dichotomy (a constructive `∨`, choice-free — grounded as an *asymptotic* theorem,
+  Voros/Lagarias + the `n ≳ T²/t` threshold); `liNonneg_implies_onLine` is the reverse; `li_criterion`
+  is the full equivalence `LiNonneg(genuineLamSeq) ⟺ AllZerosOnLine`. Both classical inputs are
+  explicit `LiBridge` fields, audit-visible; the equivalence is axiom-clean.
+- **The constructive Cayley transform — the `onLine_unit` leg DISCHARGED** (`Analysis/CayleyMap.lean`,
+  `Square/BLPipeline.lean`). The BL pipeline had carried the on-line unit-modulus fact `|1−1/ρ|² = 1`
+  as an explicit `BLZeroSum` hypothesis; it is not independent content — it is forced by the Li
+  growth-ratio geometry. `CayleyMap.lean` builds the genuine map `liRatio ρ = (ρ−1)·(1/ρ)` over the
+  constructive complex reciprocal (`Cinv`) and proves its modulus law: `cnormSq_recip`
+  (`|ρ|²·|1/ρ|² = 1`, from `Cmul_Cinv` through `cnormSq_mul`, no explicit `Rinv` algebra) and
+  `cnormSq_liRatio_on_line` (`Re ρ = ½ ⟹ |liRatio ρ|² = 1`, via `liRatio_on_line`). `blZeroSum_ofZeros`
+  then builds a `BLZeroSum` from genuine zero data with `onLine_unit` **derived**, not assumed — so the
+  BL interface is shrunk to its irreducible classical core (the explicit-formula zero-sum `bl` + its
+  convergence `reg`); `bl_rh_implies_liNonneg_ofZeros` is the forward direction from that shrunk
+  interface. No `sqrt`, choice-free.
+- **The per-zero Li contribution, linearized — the explicit-formula framework's algebraic core**
+  (`Analysis/LiLinearize.lean`). `cone_sub_npow_factor` — the geometric factorization
+  `1 − wⁿ = (1−w)·Σ_{k<n} wᵏ` for complex `w`, by induction; with `w = 1−1/ρ` (`liRatio`), `1−w = 1/ρ`,
+  so it exhibits the first moment `1/ρ` as an explicit factor of every per-zero Li contribution.
+  `witnessTerm_eq_linear` — the real part: the `RHWitness` per-zero term
+  `1 − Re(wⁿ) = Re((1−w)·Σ_{k<n} wᵏ)`; `witnessSum_eq_linear` lifts it to the pipeline object,
+  `witnessSum ws n = Σ_w Re((1−w)·Σ_{k<n} wᵏ)` (the sum the BL `bl` interface equates to `λₙ`).
+  Summed over zeros this expresses `λₙ` through the power moments
+  `Σ_ρ ρ^{−k}`; that those moments equal the `−ζ′/ζ` Taylor data `ηⱼ` plus the archimedean place (the
+  explicit formula / Hadamard factorization) stays the classical interface. Also adds the small complex
+  commutative-ring lemmas the substrate had not yet needed (`cmul_czero`, `cadd_zero`, `cmul_cneg`, the
+  local congruences) — reusable for any future complex algebra. No zeros placed, no positivity asserted.
+- **The closed-disk witness hypothesis IS RH (set-level closure)** (`Analysis/Reflection.lean`,
+  `Square/BLPipeline.lean`). `rh_witness_onLine` carried, in prose, that the half-plane (closed Cayley
+  disk) witness does not secretly weaken RH; this upgrades it to a theorem. `double_inj` — doubling is
+  injective (`x+x = y+y ⟹ x = y`, the constructive "divide by 2" via `half_double`); `onLine_of_ratios_eq`
+  / `onLine_iff_ratios_eq` — the converse of `liRatio_on_line` (`|ρ−1|² = |ρ|² ⟹ Re ρ = ½`), so unit
+  Cayley modulus is EQUIVALENT to being on the line; `ReflClosed` + `allInClosedDisk_iff_allOnLine` —
+  for a reflection-closed zero set, "every Cayley factor in the closed disk" (the witness hypothesis)
+  ⟺ `AllZerosOnLine`. Composed in `li_criterion_disk`: `λₙ ≥ 0 ∀n ⟺ every zero's Cayley factor lies in
+  the closed unit disk` — Li's criterion in the witness's own geometry, the most natural geometric
+  phrasing of RH on this substrate.
+- **RH stated about the constructed ζ** (`Analysis/RiemannZero.lean`) — `NontrivialZero` bundles a
+  strip point with its `CzetaStrip` convergence certificate and a vanishing proof, making the genuine
+  zero set a clean predicate (`isZeroOfZeta`); `RiemannHypothesisStrip := ∀ Z, Re Z.s = ½` is RH for
+  the ζ this repo builds, formalized as the open statement it is; `riemannHypothesisStrip_iff` ties it
+  to the pipeline's `AllZerosOnLine`.
+- **The arithmetic Hodge index ⟺ RH** (`Square/AtlasAnalyticFace.lean`) — `hodgeIndex_iff_RH`:
+  `SpectralHodgeNeg(𝕊) ⟺ AllZerosOnLine` (via `genuine_hodgeNeg_iff` + `li_criterion`);
+  `hodgeIndex_iff_riemannHypothesis`: `SpectralHodgeNeg(𝕊) ⟺ RiemannHypothesisStrip` — the F1-square
+  Hodge index equated end to end to RH about the constructed ζ. `atlas_coupling_analytic_face` bundles
+  the geometric and analytic faces. `hodgeIndex_iff_closedDisk` (this release): the same Hodge index ⟺
+  every zero's Cayley factor in the closed unit disk (via `li_criterion_disk`) — so the geometric
+  Hodge index, Li-positivity, the on-line condition, and the witness's closed-disk geometry are ONE
+  connected proposition.
+- **Track 1 — ★ REAL log-multiplicativity `Rlog(x·y) = Rlog x + Rlog y`** (`Analysis/ArtanhAdd.lean`,
+  `Rlog_mul`), what `Clog` additivity needs (`Re Clog(zw) = Re Clog z + Re Clog w` via
+  `log(|z|²|w|²) = log|z|² + log|w|²`). The full binary analog of the doubling `Rlog_sq`, built from
+  scratch over many bricks: the rational addition law (below) → the sign-robust division-free addition
+  map `wvalR a b = (a+b)/(1+ab)` with its full Lipschitz machinery (`wval_lip1`/`wval_lip2` via the
+  certified cleared identities + the constant-`4` denominator estimate `wval_lip1_den` and radius
+  half-bound `wval_halfbound`) → the two rational identities `wvalR_rel` and `tmap_mul_wvalR`
+  (`tmap(x·y) = wvalR(tmap x, tmap y)`, the bridge `log(xy)↔` the addition map) → the real binary map
+  `wvalReal` with regularity → the ★ **capstone** `Rartanh_add_real_via` (the real-argument `artanh`
+  addition, binary analog of `Rartanh_double_real_via`: the doubling's single-variable polynomial bound
+  `Dterm_recip` has *no* binary analog, so its combination leg is the exact rational law itself,
+  `RartanhConst_add_wval_rho`, which inherently relates the depth-`n` `wval` to the depth-`(2n+1)`
+  summands; arg-variation by `artSum_wval_argdiff`) → the wiring `Rlog_mul_via`/`Rlog_mul_algebra` →
+  `Rlog_mul`, mirroring `Rlog_sq`'s radius bookkeeping (common bound `B`, `x,y ∈ [1,B]` *pointwise* so
+  the `artanh` arguments `tmap(·)` are non-negative — `tmap_nonneg_lt_one`; `hbw` via
+  `wvalR_tmap_seq_bound`; radius alignment `ρ_B → ρ_{B²}` via `Rartanh_radius_indep`). RH-independent
+  interface-shrinking toward `bl`; the crux fields stay `none`.
+- **Track 1 — the real `arctan` addition map `vvalReal = (s+t)/(1−s·t)`** (`Analysis/ArtanhAdd.lean`),
+  the argument-addition substrate for `Clog`'s imaginary half (`arg(zw) = arg z + arg w`). The full
+  `arctan` analog of the `wval`/`artanh` Lipschitz stack: the division-free map `vval a b` with its
+  cleared one-sided differences (`vval_argdiff1`/`vval_argdiff2`, factor `1+c²` vs `artanh`'s `1−c²`),
+  the radius half-bound `vval_halfbound` (denominator `1−ac`), the strengthened `2c² ≤ 1`
+  (`vval_csq_le`, which the `arctan` Lipschitz core needs vs `artanh`'s `c² ≤ 1`), symmetry `vval_comm`,
+  inner-positivity `vval_inner_pos` (`1−ab > 0`), the binary Lipschitz bounds `vval_lip1`/`vval_lip2`
+  (constant `6`, vs `artanh`'s `4`, on the certified denominator estimate `vval_lip1_den`), and the real
+  map `vvalReal` with regularity (`12n+11` reindex absorbing the two Lipschitz-`6` terms, since
+  `12·Qbound(12n+11) = Qbound n`). RH-independent; the crux fields stay `none`.
+- **Track 1 — ★ the formal identity `sin∘arctan = t·(cos∘arctan)`** (`Analysis/ArctanODE.lean`,
+  `sin_arctan_eq`), the formal-power-series shadow of `tan(arctan t) = t` (the sole remaining gap for
+  argument-additivity). A complete constructive formal-PS ODE toolkit, built from scratch on the
+  `fderiv`/`fmul`/`fcomp` calculus (`ExpLog.lean`): the `sin`/`cos` coefficient ODEs
+  (`sin_fderiv : sin′=cos`, `cos_fderiv : cos′=−sin`), the composition chain-rule ODEs
+  (`sinComp_deriv : (sin∘arctan)′=(cos∘arctan)·A′`, `cosComp_deriv : (cos∘arctan)′=−(sin∘arctan)·A′`,
+  via `fcomp_chain`), the convolution evaluators (`fmul_Xident : (t·H)(k+1)=H(k)`,
+  `fmul_onePlusSq : ((1+t²)·H)(k+2)=H(k+2)+H(k)`, `onePlusSq_geomAlt : (1+t²)·A′=1`,
+  `absorb_onePlusSq_geomAlt : (1+t²)·(P·A′)=P`, `X_sq_eq_sq2 : X²=t²`), and the **formal ODE-uniqueness
+  lemma** `ode_unique` (the discrete `(1+t²)H′=t·H ∧ H(0)=0 ⟹ H=0`, via the coefficient recurrence
+  `(k+3)H(k+3)=−k·H(k+1)` and a triple-invariant induction). The capstone applies `ode_unique` to
+  `G = sin∘arctan − t·(cos∘arctan)`: `Gseq_ode` shows `(1+t²)G′ = t·G` (both sides collapse to the
+  common form `X·S − t²·C`), `Gseq_zero` gives `G(0)=0`, so `G ≈ 0`. **Finding:** this is the formal
+  half; lifting it to the value identity `Rsin(arctan t) = t·Rcos(arctan t)` needs the composition-series
+  value bridge (convergence/rearrangement, template `Rartanh_double_real_via`/`dcomp_artSum`). RH-*independent*
+  analytic infrastructure; crux fields stay `none`.
+- **Track 1 — the formal `arctan` ODE `A′(t) = 1/(1+t²)`** (`Analysis/ArctanODE.lean`), the
+  alternating sibling of `dgeom_ode`: the arctan coefficient sequence `arctanCoeff` has formal
+  derivative `fderiv arctanCoeff = geomAlt` (`arctan_fderiv`, the `1/(1+t²)` coefficients), with the
+  `(1+t²)`-annihilation `geomAlt(k+2) + geomAlt(k) ≈ 0` (`geomAlt_recurrence`) and boundary
+  `geomAlt 0 = 1`, `geomAlt 1 = 0`. Built on the `fderiv`/`fmul` formal-power-series calculus
+  (`ExpLog.lean`). **Finding (sharp diagnosis):** unlike the `artanh` exp engine — whose geometric
+  series is *exactly rational-summable* to `(1+w)/(1−w)`, giving an exact value identity — the `arctan`
+  series is *not* rational-summable, so this formal ODE does **not** collapse to a value identity. The
+  one remaining gap for argument-addition (hence `Clog`'s imaginary half) is precisely the value-level
+  inverse-function fact `tan(arctan t) = t` (equivalently `Rsin(arctan t) = t·Rcos(arctan t)`); the
+  `vval` algebra, `Rsin_add`/`Rcos_add`, and `Rcos_sq_add_sin_sq` are all already in place around it, so
+  only the formal-PS → value (fundamental-theorem-of-calculus) bridge — seeded by `arctan_fderiv` —
+  remains. RH-*independent* analytic infrastructure; the crux fields stay `none`.
+- **Track 1 — the rational `artanh` addition law** (`Analysis/ArtanhAdd.lean`), the arithmetic heart of
+  log-multiplicativity `log(xy) = log x + log y` (hence of `Clog` additivity, hence of the Hadamard
+  `log ξ`). `Rexp_twoArtanh_general` packages the heavy `Rexp_two_artanh_ofQ` parameter thicket **once**
+  for an arbitrary rational `0 ≤ τ < 1` (the radius-`ρ = τ` analog of `Rexp_twoArtanhRecip`, now at a
+  *general* base): with `τ = p/q`, `d = q−p`, the target `g = (q+p)/d = (1+τ)/(1−τ)` and the budget
+  `C = (2L+4)q²` clears with slack `(2L+4)q²·d(j+1)²·(d−1) ≥ 0` — clean because `d ≥ 1` (two private
+  `Int` lemmas `twoArtanhGen_hM2_int`/`_hBC_int`, the `ring_uor`-slack + `omega` pattern). Then
+  `TwoArtanh_add_rat` proves `2·artanh c = 2·artanh a + 2·artanh b` for rationals `0 ≤ a,b,c < 1`,
+  gated on the multiplicativity side-condition `(1+c)/(1−c) = ((1+a)/(1−a))·((1+b)/(1−b))` (which is
+  exactly `c = (a+b)/(1+ab)`): three instances of `Rexp_twoArtanh_general` feed the exp-injectivity
+  additivity core `Req_add_of_exp_values` (`RArctanCongr.lean`). With the continuity `RarctanR_congr`
+  (rational→real lift) this is the route to real log-multiplicativity. `Rnonneg_TwoArtanhConst` records
+  `2·artanh τ ≥ 0` for `τ ≥ 0`.
+  - **`wval` — the division-free addition map** `(a+b)/(1+ab)` (numerator `pa·qb+pb·qa`, denominator
+    `qa·qb+pa·pb`), with `wval_den_pos`/`wval_num_nonneg`/`wval_lt` (the last via the slack
+    `(qa−pa)(qb−pb) > 0`, the `a,b < 1` margins) and the multiplicativity identity `wval_hg`
+    (`(1+wval)/(1−wval) = ((1+a)/(1−a))·((1+b)/(1−b))`, both sides clearing to
+    `(qa+pa)(qb+pb)(qa−pa)(qb−pb)` — a pure-`Int` `ring_uor` identity once the `Nat.cast`/`toNat`
+    bridges are discharged). `TwoArtanh_add_wval` then gives the addition law in directly-usable form
+    `2·artanh(wval a b) = 2·artanh a + 2·artanh b` with the `hg` side-condition discharged once and the
+    sum-argument `c = wval a b` computed — leaving only trivial positivity obligations for callers.
+  - **Binary Lipschitz core for the real lift** (`wval_argdiff1_cleared`/`wval_argdiff2_cleared`,
+    `wvalR`/`wvalR_den_pos`/`wvalR_argdiff1`/`wvalR_argdiff2`). Structural finding: the unary doubling
+    lift `Rartanh_double_real_via` works through a *single-variable* polynomial composition
+    (`dcomp_artSum`/`peval (fcomp acoef kdbl)`), which binary addition lacks — so its real lift needs a
+    genuine two-variable continuity argument over a sign-robust binary map. The certified algebraic
+    heart: each one-sided variation of `(s+t)/(1+st)` factors as `(Δ-cross)·(1 − other²)` — pure-`Int`
+    `ring_uor` identities, the analog of `uval_diff_cleared`. The sign-robust real-map basis `wvalR`
+    (the *whole* `1+ab` numerator under `.toNat`, positive for `|a|,|b| < 1`, unlike `wval` which is
+    `≥0`-only) is wired to those identities by `wvalR_argdiff1`/`_argdiff2`: the `Qsub` numerator of a
+    one-sided map difference equals `(Qsub a b).num·(qc²−pc²)` resp. `(Qsub c d).num·(qa²−pa²)`.
+  - **The binary Lipschitz bound** `|wvalR a c − wvalR b c| ≤ 4·|a − b|` (`wval_lip1`), the analog of
+    `uval_lip` for the addition map. Its certified cores: `wval_lip1_den` (the constant-`4` denominator
+    estimate `(qc²−pc²)·qa·qb ≤ 4·D(a,c)·D(b,c)`, via `(qa·qc)(qb·qc) ≤ (2D_ac)(2D_bc)`), `wval_halfbound`
+    (the radius half-bound `qa·qc ≤ 2(qa·qc+pa·pc)` from `|a|,|c| ≤ ρ`, `ρ² ≤ ½` — the small-radius the
+    unary doubling also needed), and `wval_csq_le` (`|c| < 1`, i.e. `pc² ≤ qc²`, from the radius). The
+    wrapper composes `wvalR_argdiff1` (numerator `(a−b)(1−c²)`) over the denominator estimate via
+    `n·d ≤ n·e` (`n = |a−b|`-cross). (The `wvalReal` regularity and the two-variable diagonal addition
+    build on this.)
+  RH-independent interface-shrinking toward discharging `bl`; the crux fields stay `none`.
+- **Track 1, brick 1 — arctan at a general REAL argument** (`Analysis/RArctan.lean`). The forced-first
+  prerequisite of the `Γ(s/2) → ξ → Hadamard` stack that discharges the `bl` seam: complex `Clog` on
+  the right half-plane needs `arg(z) = arctan(Im z / Re z)` at a general real ratio, and the repo had
+  only rational-argument `Rarctan` (truncation-only). `RarctanR t ρ` lifts arctan to a real argument
+  (`|t| ≤ ρ < 1`), mirroring the real-argument `Rartanh`: since `arctanTerm t n = (−1)ⁿ·artTerm t n`,
+  the sign vanishes under `Qabs`, so `arctanTerm_diff_bound`, `arctanSum_Lip_le`, and the diagonal
+  `RarctanR_diag_le` reuse the shared sign-independent machinery (`Rartanh_R`, `geoEvenSum`,
+  `geoEven_bound`, `artanh_reindex`, `qpow_geom_bound`, `arctanSum_trunc`). RH-independent
+  interface-shrinking toward discharging `bl`; the crux fields stay `none`.
+- **Burnol's correction — the sharpest UNCONDITIONAL Weil-positivity mechanism** (`Square/SonineProjection.lean`).
+  A deep-research survey (101 agents, 3-vote adversarial verification) identified the sharpest
+  unconditional (NOT RH-equivalent) Weil-positivity theorem: Burnol's support-restricted positivity
+  (arXiv math/0101068). Since `α(τ) → +∞` at `±∞` the negative band is bounded, so `∃Aε>0` with
+  `Aε·cos(ετ) + α(τ) ≥ 0 ∀τ`, and `cos(ετ)` integrates to zero on the window `[1/c,c]` —
+  positivity recovered on the window, unconditionally. Discretized here: `multForm_psd_via_correction`
+  (a correction making the multiplier pointwise `≥0` and vanishing on the support of the test family
+  ⟹ the pairing is `≥0`, unconditional), and the Burnol instance `burnolCorr` /
+  `burnol_corrected_nonneg` (the `α(2)<0` band lifted to `α(2)+(−α(2))=0`, the corrected multiplier
+  pointwise nonneg) / `burnol_pairing_psd_via_correction` (window positivity via the correction).
+  The unconditional ceiling is the single archimedean place; full positivity (the multi-place /
+  `f↔f̂` coupling) is RH and stays open. (Verified context: Connes–Consani Selecta 2021 single-place
+  bound `W∞ ≥ Tr(ϑ(g)Sϑ(g)*) − c|ĝ(0)|²`, `c=4γ/log2`; the precise gap is the Beurling
+  inner-function condition — the ratio-of-local-factors multipliers are not inner.)
+- **The Sonine projection — Weil positivity recovered on the band complement**
+  (`Square/SonineProjection.lean`). The crux frontier, formalized. With the natural finite routes
+  foreclosed (component isolation RH-equivalent; pointwise single-place positivity refuted; free SOS
+  for `2λₙ` = RH), what is left standing is a PROJECTION: positivity of the *whole* Weil pairing
+  recovered on the Sonine complement (Connes–Consani / Burnol). Extrapolated from the proven
+  α-indefiniteness and the Atlas signature geometry: `multForm α` is the discrete Weil multiplier form
+  `Σ_τ α(τ)|g(τ)|²` diagonalized; `weilQuad_multForm` collapses it to `Σ_i c_i² α(i)` (via `RsumN_sift`);
+  `multForm_psd_iff` — the whole form is PSD ⟺ the multiplier has no negative band; and the load-bearing
+  **`multForm_psd_on_complement`** — UNCONDITIONALLY, if the test family vanishes on the negative band,
+  the pairing is `≥ 0` (positivity recovered on the Sonine complement, a theorem, no RH). The Burnol
+  instance (`burnol_pairing_indefinite` / `burnol_pairing_psd_on_sonine` / `burnol_sonine_dichotomy`):
+  the bare pairing is indefinite (the `α(2)<0` band is real), but projecting off the band (`c(1)=0`)
+  recovers positivity via `α(0)>0`. What is unconditional (band-complement positivity) vs what is RH
+  (extending it to the whole space via the genuine Sonine `f↔f̂` coupling) is now explicit. Crux `none`.
+- **The Burnol multiplier is indefinite — pointwise single-place positivity REFUTED**
+  (`Analysis/BurnolAlphaTwo.lean`). `α(0) > 0` (`burnolAlphaZero_pos`, window center) and `α(2) < 0`
+  (`burnolAlphaTwo_neg`, off-center) were both proven; this packages the frontier statement they
+  jointly establish. `burnol_multiplier_indefinite` — the bare archimedean multiplier takes both
+  signs; `burnolAlphaSample` + `burnolAlpha_not_pointwise_nonneg` / `burnolAlpha_not_pointwise_nonpos`
+  — on its computed samples it is neither everywhere `≥ 0` nor everywhere `≤ 0`, so pointwise
+  single-place positivity is refuted (both directions). The Connes–Consani / Burnol Sonine-space
+  projection (positivity after projecting onto the prime-free window), NOT a pointwise `α ≥ 0`, is the
+  genuine Track-2 resolution; the obstruction (Burnol "a further idea seems necessary") is now a named
+  theorem. Crux fields stay `none`.
+- **The prime-free window is maximal** (`Square/Pairing.lean`) — `prime_window_maximal`: the conquered
+  prime-free window is at `X = 1`; the prime `2` enters at the next term (`Λ(2) = log 2`), the discrete
+  Connes–Consani interval `(1/2, 2)`.
+- **The atlas spectral signature** (`Square/AtlasSpectrum.lean`) — `atlasM_signature`: signature
+  `(10,14)`; `atlasM_not_hodge_signature`: ten positive directions ≠ the Hodge form's one, so the
+  spectral operator is structurally distinct from the crux's intersection form.
+- **Literature reconnaissance — the frontier, sourced (2020–2026 survey, adversarially verified).** A
+  deep multi-source survey (102 agents, 3-vote verification per claim) confirms the program's honest
+  frontier with citations: **every** Li/Keiper-coefficient positivity statement is *exactly equivalent
+  to RH* — Li's criterion `RH ⟺ λₙ ≥ 0` (Bombieri–Lagarias 1999; Lagarias, *Ann. Inst. Fourier* 57,
+  2007; Selberg class, Mazhouda 2015; model-space/de Branges reformulation, Suzuki 2023, arXiv
+  2301.05779) — so there is **no known unconditional bridge** to global positivity. The off-line ⟹
+  `λₙ < 0` step is *asymptotic*, via steepest descents/Darboux on a superzeta integral (Voros, arXiv
+  1403.4558 / 2204.01036 / math/0404213), with the violation regime astronomically far out (`n ≳ T²/t
+  ≈ 10²⁵` given RH verified to `T₀ ≈ 2.4·10¹²`) — confirming the `LiBridge.dichotomy` grounding. The
+  ONLY unconditional positivity is the **single archimedean-place** Weil positivity (Connes–Consani,
+  *Selecta* 2021, arXiv 2006.13771) — the prime-free Sonine window, which this repo formalizes as
+  `prime_window_maximal` / `archimedean_center_positive`; its semi-local generalization *implies* RH
+  (no unconditional route), CC noting an obstruction (non-monotonic Riemann–Siegel angle). Net: the
+  crux's open content is genuinely-new mathematics, and the unconditional boundary is exactly the
+  single-place window already implemented here. Crux fields stay `none`.
+- **The Riemann–Siegel angle obstruction, formalized** (`Analysis/RiemannSiegel.lean`) — the survey's
+  named barrier to the single-place → semi-local extension, made an axiom-clean theorem. The
+  Riemann–Siegel angle `θ(t) = arg Γ(1/4 + i t/2) − (t/2)·log π` (the phase of the completed-ζ
+  functional equation) has center slope `θ′(0) = ½·(ψ(1/4) − log π)`, and `rsCenterSlope_neg :
+  Pos (Rneg rsCenterSlope)` proves it strictly negative — `ψ(1/4) < log π`, so `θ` *decreases* through
+  the symmetry point `t = 0`. This non-monotonicity is exactly the obstruction Connes–Consani note to
+  a monotonicity-based propagation of the single-archimedean-place positivity across further places.
+  The proof uses `psiQuarter_upper` (`ψ(1/4) ≤ −3`, the value bounded *above* — the opposite direction
+  to the α(0) certificate, whose `psiQuarter_lower` bounds it below) and `Rnonneg_Rlogπc` (`log π ≥ 0`,
+  via `Rnonneg_Rartanh_of_nonneg` on the repo's canonical `Rlogπc = 2·artanh((π−1)/(π+1))`, the same
+  `log π` of α(0)/λ₁/λ₂). The **obstruction formalized faithfully — not a route through it**.
+- **The archimedean kernel `Re ψ(1/4 + iτ/2)` ASSEMBLED, and the angle is non-monotone two-sidedly**
+  (`Analysis/PsiLine.lean`) — a large construction. `DigammaWindow.lean` had built the `τ`-parameterized
+  kernel *term* and its monotonicity but not the assembled kernel; this builds it at the frontier point
+  `τ = 10` (`s = τ²/4 = 25`), the first value of `Re ψ` along the critical line off the center `ψ(1/4)`.
+  The window term splits exactly as `windowTerm n 25 = windowTerm n 0 + cₙ`,
+  `cₙ = 1600/[(4n+1)((4n+1)²+400)] ≥ 0` (`corrT_eq_windowTerm_gain`, the faithfulness bridge to
+  `DigammaWindow`), so `Re ψ(1/4 + 5i) = ψ(1/4) + Σ cₙ`. `corrCore` is `Σ cₙ` as a **genuine
+  constructive real** — a manifestly positive convergent series, with regularity proved *from scratch*
+  via the telescoping `cₙ ≤ tel(n) − tel(n+1)`, `tel(n) = 100/(4n+1)`, holding for all `n` through the
+  manifest square `(4n−1)² + 380 ≥ 0` (depth schedule `j ↦ 25(j+1)`). `psiLineRe5 := ψ(1/4) + corrCore`,
+  with lower bracket `psiLineRe5_lower : Re ψ(1/4 + 5i) ≥ 1.28` (true value `≈ 1.61`) from
+  `psiQuarter_lower` and `corrCore_lower` (`Σ cₙ ≥ 5.6`, the certified 12-term partial sum). Consequence:
+  `rsLineSlope10_pos : θ′(10) > 0` (`Re ψ(1/4+5i) > log π`, using `Rlogπc_le`), and the capstone
+  `rsAngle_non_monotone : θ′(0) < 0 ∧ θ′(10) > 0` — for one `θ` (one `log π = Rlogπc`), the slope changes
+  sign, so the Riemann–Siegel angle is **non-monotone, two-sided**: the bounded-negative-band structure
+  Burnol / Connes–Consani must work around. The obstruction completed as a theorem; it sharpens the
+  barrier, it does not cross it. Crux fields stay `none`.
+- **The kernel parameterized, and the monotone climb (θ convex on the window)** (`Analysis/PsiLine.lean`)
+  — `corrCoreP sn sd` / `psiLineReP sn sd` assemble `Re ψ(1/4 + iτ/2) = ψ(1/4) + Σ cₙ(s)` for *every*
+  rational `s = τ²/4 = sn/sd ∈ [0, 25]`, not just `s = 25`. The key reductions are exact: `cₙ` is
+  monotone in `s` with `cₙ(s) ≤ cₙ(25) ⟺ sn ≤ 25·sd` (each divides out `(4n+1)³`), so the `s = 25`
+  telescoping dominates every `s ≤ 25` uniformly — the *same* depth schedule `j ↦ 25(j+1)` gives
+  regularity for all of them, and the climb is then a termwise comparison. `psiLineReP_mono`:
+  `s ≤ s' ⟹ Re ψ(1/4 + i√s) ≤ Re ψ(1/4 + i√s')` — `Re ψ(1/4 + iτ/2)` is **monotone increasing in `τ`**,
+  the analytic heart `DigammaWindow` recorded, now a theorem about the *assembled* kernel. Combined with
+  `rsAngle_non_monotone`, the slope `θ′ = ½(Re ψ − log π)` is monotone increasing from `θ′(0) < 0` to
+  `θ′(10) > 0` — so `θ` is **convex on the window with a unique minimum**, and the negative-`α` band is a
+  single bounded interval. The obstruction's exact shape, made a theorem; crux fields stay `none`.
+- **`θ′ > 0` on the whole upper band** (`Analysis/PsiLine.lean`) — `rsAngle_increasing_on_band`: for
+  *every* rational `s = τ²/4 ∈ [16, 25]`, `θ′ > 0` (`Re ψ(1/4 + i√s) > log π`). The monotone climb
+  carries a single sharper positive point — `rsLineSlope16_pos : θ′(8) > 0` (`Re ψ(1/4 + 4i) ≥ 1.18`
+  from `ψ(1/4) ≥ −4.32` and the certified `Σ cₙ(16) ≥ 5.5`) — to the entire interval `s ≥ 16`. So the
+  Riemann–Siegel angle's unique minimum sits at `τ < 8`, and beyond it `θ` rises monotonically: a genuine
+  interval of positivity, not a single point. (`corrCoreP_ge_partial` generalizes the partial-sum lower
+  bracket to any cutoff `N ≤ 25`.) Crux fields stay `none`.
+- **The kernel reduces to `ψ(1/4)` at the center** (`Analysis/PsiLine.lean`) — `psiLineReP_zero`:
+  `Re ψ(1/4 + i·0) = ψ(1/4)`, the assembled-level analog of `DigammaWindow.windowTerm_zero` (`corrCoreP_zero`:
+  `Σ cₙ(0) = 0`, every `s=0` correction term vanishes). With `psiLineRe5 = psiLineReP 25 1` at the far end,
+  the parameterized assembled kernel is now verified-correct at **both endpoints** of the window — a
+  faithfulness anchor closing the construction. Crux fields stay `none`.
+- **`α(2) < 0` — Burnol's archimedean multiplier is pointwise INDEFINITE** (`Analysis/BurnolAlphaTwo.lean`,
+  with a new lower-bound substrate). The bare multiplier `α(τ) = 8√2·cos(τ·log2)/(1+4τ²) + h₊(τ)`,
+  `h₊(τ) = Re ψ(1/4+iτ/2) − log π`, is shown **negative at `τ = 2`** (`burnolAlphaTwo_neg :
+  Pos (Rneg burnolAlphaTwo)`) — the honest kernel analog of Burnol's "a further idea seems necessary":
+  single-place positivity does *not* extend across the band, which is exactly why the Sonine projection
+  is needed. We prove the **obstruction**, never a (false) `α ≥ 0`. The pieces, all axiom-clean
+  (`{propext, Quot.sound}`), each its own bracket added to the substrate:
+  - `Rpi_lower_three : π ≥ 3` (`Analysis/Pi.lean`) — sharp `π` *lower* bound via depth-parameterized
+    arctan brackets (`arctanSum_diag_ge_at`/`_le_at`, tail `ρ^(2a+3)`); the repo had only `π ≤ …`.
+  - `Rlogpi_ge_one : log π ≥ 1` (`Analysis/LogPiLower.lean`) — `log π = 2·artanh((π−1)/(π+1)) ≥ 2·½`,
+    resting on `π ≥ 3`; the first positive *lower* bound on a log in the substrate (companion to
+    `Rlogπc_le`).
+  - `psiQuarter_upper_tight : ψ(1/4) ≤ −4` (`Analysis/PsiQuarter.lean`) — the sharp upper bracket
+    (a two-branch `n<6` / `n≥6` Int case split on the digamma series).
+  - `corrCoreP_one_upper : Σ cₙ(1) ≤ 4.22`, `psiLineReP_one_upper : Re ψ(1/4+i) ≤ 0.22`,
+    `archKernel_at_two_below_logpi : Pos (Rsub Rlogπc (psiLineReP 1 1 …))` — i.e. `h₊(2) < 0`
+    (`Analysis/PsiLine.lean`), from `Re ψ(1/4+i) = ψ(1/4) + Σcₙ(1) ≤ −4 + 4.22 = 0.22` and `log π ≥ 1`.
+  - `sqrt2_mul_self : √2·√2 = 2` and `sqrt2_le_three_halves : √2 ≤ 3/2` (`Analysis/BurnolAlphaTwo.lean`)
+    — the **exp∘log inverse** (`RrpowPos_add` + `Rexp_RlogNat`), no `sqrt` primitive.
+  Assembled: with `|cos| ≤ 1`, `8√2 ≤ 12` and `1/(1+16) = 1/17` bound the oscillating term by `12/17`,
+  so `α(2) ≤ 12/17 + (0.22 − 1) = 12/17 − 78/100 = 126/1700` negated, i.e. `−α(2) ≥ 1/100 > 0`. The
+  obstruction to extending single-place positivity, mechanized at a point. Crux fields stay `none`.
+- **Erratum** — corrected the stale `λ₃ ≈ 0.0173` / `λ₃^∞ ≈ −1.20` (a computational error) to the
+  standard Li value `λ₃ ≈ 0.2076` / `λ₃^∞ ≈ −1.013` across `LambdaThree.lean`, `CruxFrontierN3.lean`,
+  `Attempt.lean`, `ROADMAP.md`, and the v0.20.0 changelog entry; recorded the precision analysis (the
+  binding constraint is `γ₁`, not `γ`; six constants need ~0.1–0.3% relative precision).
+
+## [0.21.0] - 2026-06-16
+
+Stage G — the arithmetic Hodge-index crux via the missing-object embedding, and the UOR Atlas
+formalized. **Outcome: LOCALIZED** — the route is built end to end and the Atlas is formalized to
+its frontier, but the crux did not close; `hodgeIndexHolds` / `liPositivityHolds` stay `none`,
+RH OPEN. Every commit green, axiom-clean `{propext, Quot.sound}`, no `sorry`/`native_decide`.
+
+### Added — the embedding route
+- `Square/WeilPSD.lean` — the finite-truncation PSD predicate `WeilPSD`; `WeilPSD_rankOne` (a
+  rank-one Gram is the manifest square); `WeilPSD_gramOf` (Gate B free for any embedding into ℝ^D);
+  the embedding bridge `embeds_to_hodgeNeg` / `realizesDiag_genuine_iff`.
+- `Square/FrobForm.lean` — the full primitive form `FullForm` on the Frobenius carrier; the
+  diagonal forced to `−2λₙ`; `negPSD_to_hodgeNeg`; a non-trivial shift-length off-diagonal.
+- `Square/AtlasRule.lean` — the zero-free `AtlasRule`; `atlasRule_growth_filter`; **`cayley_relocation`**
+  (the §6 recorded negative result: a zero-built candidate's match ⟺ RH).
+- `Square/KillTest.lean` — the decidable finite-Gram kill-test (throwaway pre-filter).
+- `Square/GateA.lean` — the λ-free pairing `atlasPair`; `gateA_is_liNonneg` (Gate A under free
+  Gate B is RH); two-sided no-smuggling guards (`gateA_satisfiable`, `gateA_can_fail`).
+- `Square/E8Seed.lean` — the E₈ Gram as an embedding Gram (PSD free), verified `= 4×` the standard
+  E₈ Cartan matrix (`e8_is_cartan`), strictly positive diagonal.
+- `Square/GaugeTower.lean` — the gauge tower carrying a metric; `not_WeilPSD_of_neg_diag` and the
+  make-or-break obstruction `limit_indefinite_of_neg_signature`.
+- `Square/StageG.lean` — `stageG_frontier_located` (the adjudication); the **conditional closure**
+  `strictRealizes_closes_crux` / `strictRealizes_is_liCrux`.
+- `Square/GateSanity.lean` — `crux_gate_faithful`: the crux gate discriminates and **closes on a
+  genuine witness** (it does not arbitrarily fail).
+
+### Added — the UOR Atlas (from the `uor-atlas.md` formalization document)
+- `Square/AtlasSpectrum.lean` — the spectral operator `M = (O+2)I − T·Π_T − O·Π_O` (§5/§6.6),
+  sourcing `Σ = {10,2,7,−1}`; verified multiplicities `{1,2,7,14}` and trace `24`; `atlasM_indefinite`;
+  the Hurwitz norm `atlasNorm_psd` (a different, definite object — §9).
+- `Square/AtlasCharacteristics.lean` — the convergence tower (§1), the Euler–Lefschetz
+  self-intersection `χ(Sᵏ)=1+(−1)ᵏ` vanishing at the process levels (§11), the spectral balance
+  (§5), and the §10 connections (`dim G₂ = 14`, `24 = dim E₈^T`, `θ_{E₈}=E₄`).
+- `Square/AtlasAddressing.lean` — the addressing inverse system (§5), parametric generation (§8),
+  and the prime skeleton = explicit-formula prime side `Λ(p)=log p` (§10/§12).
+- `Square/AtlasClasses.lean` — the class structure (§2) and the transforms `σ,τ,μ` as finite-order
+  class permutations (§3).
+- `Square/AtlasConservation.lean` — no-loss, round-trip identity, scale-invariance (§4/§5).
+
+### Added — Atlas discovery program (exploration; following discoveries to their next threads)
+- `Square/AtlasForcing.lean` — what makes a value NOT a coincidence: parametric identity
+  (`multSum_eq_dim`: dimension `= T·O` for all `T,O`) or over-determination; the discovery
+  `trace_eq_dim_at_T3` (trace = dimension forced by the extremal `T = 3`).
+- `Square/AtlasRHConnection.lean` — `atlas_shift_eq_weight` (addressing prime ↔ Frobenius orbit ↔
+  `Λ(p)=log p`); `atlas_feeds_rh` (three live points where the Atlas feeds the RH program).
+- `Square/LefschetzCoupling.lean` — the crux refined to its Lefschetz shape: `H² > 0`
+  (`eH_sq_pos`), `vanCyc` primitive (`vanCyc_perp_H`), and `genuine_crux_arch_coupling` (crux ⟺
+  sign of the prime–archimedean coupling `arith(n)+arch(n)`, the `ff_hodge_iff_hasse` shape over ℤ).
+- `Square/ArchimedeanPlace.lean` — the `arch(n)` facet: conquered at the head (`n=1,2`) and in the
+  Connes–Consani window (`α(0) > 0`); open outside (the tail bound).
+- `Square/AtlasModular.lean` — `θ_{E₈^T} = E₄³ = E₆² + 1728·Δ` through order `q⁵` by power-series
+  convolution; `Δ = η²⁴`, the `24 = dim E₈^T` = the modular `24`.
+- `Square/AtlasExceptional.lean` — the Freudenthal–Tits magic square (`R,C,H,O → F₄,E₆,E₇,E₈`); the
+  `dim 𝔤 = rank·(h+1)` law; `dim G₂ = (T−1)(O−1) = 14`; `240 = dim E₈ − rank E₈`.
+- `Square/AtlasCoxeter.lean` — the E₈ exponents are the totatives of the Coxeter number `30`;
+  `rank E₈ = φ(30) = 8 = O`; the `30/8/120/240/248` forced web.
+- `Square/AtlasSynthesis.lean` — `atlas_forced_web`: every Atlas constant a function of `{T,O}=(3,8)`,
+  no coincidences; `atlas_web_and_open_crux`: the honest boundary (the web does not force RH).
+- `Square/AtlasCruxSynthesis.lean` — `atlas_crux_localization`: the Atlas forces the prime side, the
+  crux is the prime–archimedean coupling sign, conquered at head + window, no shortcut.
+- `Square/CruxFrontierN3.lean` — the next coefficient pinned: the `n=3` coupling `> 0 ⟺ Pos Rlambda3`.
+- `Square/UniformClosure.lean` — closure is ONE structural fact, not enumeration (§2 thesis):
+  `enumeration_insufficient` + `uniform_fact_closes`.
+- `Square/CoxeterCandidate.lean` — a §7 named uniform-rule candidate (Coxeter iteration, order 30)
+  tested and KILLED by the growth pre-filter (periodic ⟹ bounded ⟹ cannot match `2λₙ ~ n log n`).
+- `Square/SinglePrime.lean` — the Single Prime Hypothesis: the Atlas as one Prime object emanating
+  all structure (`single_generator_emanates`); unity ⟹ uniform closure.
+- `Square/AtlasGenerator.lean` — the shift-length uniform-rule candidate `atlasShiftDiag`; survives
+  the growth filter (unbounded `n log n` class) where Coxeter died.
+- `Square/AtlasCoherence.lean` — coherence (the conserved zero-state) is the closure condition, not
+  a single facet (`atlas_coherent`, `coherent_closure_not_single_facet`).
+- `Square/AtlasComposition.lean` — the composition-algebra norm (§6.3/§9/§10): the 2-, 4-, 8-square
+  identities (`two/four/eight_square`, Hurwitz) — Degen's octonion identity verified by `ring_uor`.
+- `Square/AtlasTopology.lean` — the Betti signature (§6.5) and Bott/Clifford periodicity (§10); the
+  tower forced four ways.
+- `Square/AtlasCalculus.lean` — the seven operators, the free-monoid `Term`, and the catamorphism
+  with its universal property (§3/§4): form determines function (`op_count`, `cata_unique`).
+- `Square/AtlasComplete.lean` — `atlas_complete`: the roll-up witnessing every facet (§1–§15)
+  formalized, as facets of one `{T,O}` object, with the crux honestly open.
+
+### Changed
+- `scripts/honesty_audit.sh` — new **no-smuggling** check (the metric analog of `intrinsicH1_dict`):
+  the Gate-A pairing must be λ-free.
+- `F1Square.lean` — v0.21.0 notes on the crux fields; a witness binding the stage-G route, crux none.
+
 ## [0.20.0] - 2026-06-15
 
 ### Added — stage F: the UOR construction of the crux (`H¹`-object + FORCED dictionary) and the certified `γ₂ ≥ −0.02` bracket (pure Lean 4, no Mathlib, no `sorry`, choice-free)
@@ -128,10 +5377,12 @@ choice-free (`{propext, Quot.sound}`), audited; the build is warning-free; the g
   constructive real. For ANY η-data anchored through `η₂` the genuine ladder meets it at `n = 3`
   (`genuineArith_three`, `genuineLam_three`) exactly as at `n = 1, 2` — the closed form is faithful,
   not ad hoc. `Pos λ₃` is NOT claimed: the `γ₂` bracket that gates the `η₂` term is now closed
-  (`γ₂ ≥ −0.02`, above), but `λ₃ ≈ 0.0173` is a small difference of `Θ(1)` terms (`λ₃^{arith} ≈ +1.22`,
-  `λ₃^{∞} ≈ −1.20`), so a positivity certificate needs tight two-sided brackets on all of
-  `γ, γ₁, γ₂, γ³, γγ₁` AND the archimedean `λ₃^{∞}` (via `ζ(2), ζ(3)`) — the full `λ₃`-formula numeric
-  assembly, the remaining open work. Choice-free, audited. The crux fields stay `none`.
+  (`γ₂ ≥ −0.02`, above), but `λ₃ ≈ 0.2076` (`λ₃^{arith} ≈ +1.22`, `λ₃^{∞} ≈ −1.013`; margin ≈ 0.21) is
+  a heavily-cancelled combination of `Θ(1)` terms, so a positivity certificate needs all of
+  `γ, γ₁, γ₂, ζ(2), ζ(3), log 4π` to ~0.1–0.3% relative precision (the binding constraint is `γ₁`) —
+  the full `λ₃`-formula numeric assembly, the remaining open work. Choice-free, audited. The crux
+  fields stay `none`. (Erratum: earlier drafts of this entry stated `λ₃ ≈ 0.0173` / `λ₃^{∞} ≈ −1.20`,
+  a computational error; the correct standard Li value is `0.2076`.)
 - **The Li-term modulus growth law** (`F1Square/Analysis/LiGrowth.lean`) — ties Lever 1 to the Voros
   dichotomy, and is the first end-to-end use of the `RAddNF`+`RMulNF` "ring" engine. `cnormSq_mul`
   proves the Brahmagupta–Fibonacci multiplicativity `|zw|² = |z|²·|w|²` constructively: expand both

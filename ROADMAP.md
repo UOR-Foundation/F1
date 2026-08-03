@@ -1,4 +1,4 @@
-# F1 Square — Roadmap to completion (v0.15.0 → v0.21.0)
+# F1 Square — Roadmap to completion (v0.15.0 → v0.22.0)
 
 The genuine-proof layer (`F1Square/`) builds the 𝔽₁ / Riemann-Hypothesis program from first
 principles in **pure Lean 4** (Lean core + UOR-Foundation, **no Mathlib, no `sorry`/`native_decide`,
@@ -303,9 +303,10 @@ constructed (`Rgamma2`) and its numeric bracket certified via discrete Euler–M
 constructive integration): the trapezoidal-corrected `hSeq → γ₂` has a summable residual whose
 per-step bound telescopes (`s_{j+1} ≥ −1/((j+1)(j+2))`), and a single big-integer `decide` at depth
 `T=3`, denominator `D=10⁸` certifies `hSeq(199) − 1/200 ≥ −1/50`. This is a certified CONSTANT bound
-(evidence), not positivity-of-all-`λₙ`. `Pos λ₃` remains open: `λ₃ ≈ 0.0173` is a small difference
-of `Θ(1)` terms, needing the full `λ₃`-formula numeric assembly (tight brackets on `γ, γ₁, γ₂, γ³,
-γγ₁` and the archimedean `λ₃^{∞}`), not the single `γ₂` input.
+(evidence), not positivity-of-all-`λₙ`. `Pos λ₃` remains open: `λ₃ ≈ 0.2076` (margin ≈ 0.21) is a
+heavily-cancelled combination of `Θ(1)` terms, needing all of `γ, γ₁, γ₂, ζ(2), ζ(3), log 4π` to
+~0.1–0.3% relative precision — the binding constraint is `γ₁` (currently bracketed an order of
+magnitude too loose), not the single `γ₂` input.
 
 The full construction map, as originally scoped, follows.
 
@@ -367,7 +368,44 @@ theorem. The method dictates what to build; the gate decides whether it closes.
 
 ---
 
-## v0.21.0 — (G) Closing the arithmetic Hodge-index crux: the missing object **[planned]**
+## v0.21.0 — (G) Closing the arithmetic Hodge-index crux: the missing object **[shipped — LOCALIZED]**
+
+**Outcome.** The missing-object embedding route is built end to end and the UOR Atlas is formalized
+to the frontier; the gate ran and the crux **did not close** (the §9 *Localized* terminal state).
+`hodgeIndexHolds` / `liPositivityHolds` stay `none`. Delivered (each a green, axiom-clean
+`{propext, Quot.sound}` commit; `scripts/honesty_audit.sh` extended with a no-smuggling check):
+
+- **The embedding route** — `Square/WeilPSD.lean` (Stage S: the finite-truncation PSD predicate, the
+  rank-one/sum-of-squares fact, Gate B free via `WeilPSD_gramOf`, the embedding bridge),
+  `Square/FrobForm.lean` (G0b: the full primitive form on the Frobenius carrier),
+  `Square/AtlasRule.lean` (G0a: the zero-free atlas rule, the growth pre-filter, and the §6 Cayley
+  relocation made formal — `cayley_relocation`), `Square/KillTest.lean` (G0: the decidable kill-test),
+  `Square/GateA.lean` (G1: the λ-free pairing, `gateA_is_liNonneg`, the two-sided no-smuggling
+  guards), `Square/E8Seed.lean` (G2a: the E₈ Gram = `4×` the Cartan matrix, PSD free),
+  `Square/GaugeTower.lean` (G2b: the tower-with-metric and the indefiniteness obstruction),
+  `Square/StageG.lean` (G3: `stageG_frontier_located` and the **conditional closure**
+  `strictRealizes_closes_crux`), `Square/GateSanity.lean` (`crux_gate_faithful`: the gate
+  discriminates and **closes on a genuine witness** — it does not arbitrarily fail).
+- **The UOR Atlas, formalized** (from the `uor-atlas.md` formalization document) —
+  `Square/AtlasSpectrum.lean` (§5/§6.6: the spectral operator `M`, sourcing the signature
+  `Σ = {10,2,7,−1}`, with verified multiplicities `{1,2,7,14}` and trace `24`, and its
+  indefiniteness `atlasM_indefinite`), `Square/AtlasCharacteristics.lean` (§1/§5/§10/§11: the tower,
+  the Euler–Lefschetz self-intersection, the spectral balance, `dim G₂ = 14`, `24 = dim E₈^T`,
+  `θ_{E₈}=E₄`), `Square/AtlasAddressing.lean` (§2/§5/§8/§10/§12: the addressing inverse system, the
+  parametric generation, and the prime skeleton = the explicit-formula prime side `Λ(p)=log p`),
+  `Square/AtlasClasses.lean` (§2/§3: the class structure and the transforms as finite-order
+  permutations), `Square/AtlasConservation.lean` (§4/§5: no-loss, round-trip, scale-invariance).
+
+**What understanding the Atlas revealed (the genuine frontier).** The Atlas's spectral operator `M`
+is *indefinite by design* (its `−1` reflection, dim `14 = dim G₂`, sits in the odd degree where the
+Euler–Lefschetz self-intersection vanishes); its definite object is the Hurwitz norm (§9), which the
+Atlas explicitly does **not** identify with the RH form. So the crux is **not** whole-form
+positive-definiteness — it is negative-semidefiniteness on the *primitive* part (the Lefschetz
+signature), governed by the zeros, exactly as `BridgeFF.ff_hodge_iff_hasse` has it for the curve. The
+Atlas carries the explicit formula's *left side* (the prime skeleton) in full; the open content is
+the coupling to the one missing place (archimedean). The crux stays `none`, RH open.
+
+The original program specification (the two faithful terminal states) follows.
 
 The release goal is to carry the crux **past the v0.20.0 located frontier** by constructing one
 specific object and letting the Lean kernel decide whether it closes the crux. Closure is equivalent
@@ -471,9 +509,52 @@ zero-free, manifestly nonnegative formula for `λₙ` — the problem the strate
 
 ---
 
+## v0.22.0 — the final release: both tracks, and frontier research to exhaustion **[in progress]**
+
+**v0.22.0 is the last planned release. No further releases follow it.** v0.21.0 localized the crux;
+the post-tag thread (the RH witness, the BL pipeline, the Reflection/Voros geometry, and the
+**`α(2) < 0` obstruction** — Burnol's archimedean multiplier proven pointwise *indefinite* on the band)
+sharpened the frontier to its true classical shape. v0.22.0 carries **both** tracks below and does
+**not** arbitrarily limit its approach: any route that can advance the crux is in scope.
+
+Like v0.21.0, the discipline is **exhaustion**: every known avenue in Track 1 and Track 2 is completed,
+and the frontier research continues — new routes, new candidate objects, whatever the mathematics
+admits — **until one of two things happens: the crux closes (RH proven, the gate flips), or we decide
+the work is complete enough to publish as v0.22.0.** We do not yet know which, or when that point comes;
+it is a judgement made against the work, not a pre-set scope. There is no third "give up" state — the
+release ships whichever faithful terminal state the program reaches, exactly as v0.21.0 did.
+
+- **Track 1 — make `hodgeIndex_iff_riemannHypothesis` unconditional-but-for-RH.** The
+  `li_criterion` equivalence currently rests on two explicit, audit-visible `LiBridge` hypotheses:
+  (i) the **Bombieri–Lagarias zero-sum** `λₙ = Σ_ρ (1 − (1 − 1/ρ)ⁿ)` about the *genuine* `λ`
+  (classical, BL 1999), and (ii) the **Voros dichotomy** (tempered `½n(log n−1+γ−log 2π)` vs
+  exponential, *MPAG* 2006). Track 1 discharges these from the constructed ζ / explicit formula where
+  the literature makes them theorems, shrinking the classical interface to RH alone. Known deliverables:
+  the zero-sum derived for the constructed `genuineLamSeq`; the Voros alternative grounded as the
+  asymptotic theorem it is (the `n ≳ T²/t` threshold made constructive); the off-line ⟹ negative-`λ`
+  step (phase equidistribution + saddle-point over the sum) pushed as far as the substrate allows,
+  with whatever remains classical explicitly labelled.
+- **Track 2 — the crux frontier: the `α`-band sign / Sonine projection.** `α(2) < 0` proves the bare
+  multiplier is indefinite, so single-place positivity provably does **not** extend — the
+  Connes–Consani / Burnol resolution is the **Sonine-space projection** (infinite-dimensional), where
+  positivity is recovered after projecting onto the prime-free window. Formalizing that projection is
+  the genuine crux frontier. It is *not* a route through `α ≥ 0` (which is false); it is the construction
+  of the projection under which the windowed positivity holds. This is the make-or-break work, carried
+  to exhaustion alongside any other route that can reach the crux.
+
+The bright line is unchanged and permanent: `hodgeIndexHolds` / `liPositivityHolds` flip
+`none → some true` **iff** a genuine, audited, axiom-clean proof of the criterion lands; they stay
+`none` otherwise. Every v0.22.0 commit stays green, axiom-clean (`{propext, Quot.sound}`),
+`sorry`/`native_decide`-free, choice-free, and no-smuggling-clean.
+
+---
+
 ## What stays open regardless
 
-If v0.18 / v0.19 / v0.20 / v0.21 do not close the crux axiom-clean, `hodgeIndexHolds` /
-`liPositivityHolds` stay `none` and **RH stays open** — the releases still ship every surrounding
-construction (for v0.21.0, the missing-object substrate and a *localized* obstruction theorem). The
-bright line is permanent: the crux is de-hedged iff RH is proven, and it is not until it is.
+If the crux does not close axiom-clean, `hodgeIndexHolds` / `liPositivityHolds` stay `none` and
+**RH stays open** — the releases still ship every surrounding construction (for v0.21.0, the
+missing-object substrate and a *localized* obstruction theorem; for v0.22.0, the discharged interfaces
+and however far the Sonine-projection frontier reaches). The bright line is permanent: the crux is
+de-hedged iff RH is proven, and it is not until it is. **v0.22.0 is the terminal release** — it ships
+when the crux closes or when the work is judged complete to publish, with no further releases planned
+beyond it.
