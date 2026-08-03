@@ -5234,6 +5234,16 @@ open UOR.Bridge.F1Square
 -- / exhaustion-rung brick. No factorization, no positivity, no crux. (band01_le'' private.)
 #print axioms Square.mellinHat_dilate_covariance
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatUniform1.lean) — mellinHat(φ) as the 1-uniform-tiling
+-- improper Mellin integral: instantiating the committed mellinHat_dilate_scaled at s=1 and
+-- collapsing the trivial scale factor (qpow 1 (n+1) ≈ 1; dilate_1 φ ≈ φ lifted through mellinMoment
+-- via riemannIntegral_congr_mod and through twTail via riemannIntegralI_congr_unit_mod + genSum_congr
+-- + Rlim_congr). This REDUCES the committed dilation-covariance hypothesis htile to a pure WIDTH
+-- comparison (s-uniform vs 1-uniform); it does NOT discharge the width comparison. No factorization,
+-- no positivity, no crux. (band01_le1, qpow_one_Qeq, ofQ_qpow_one, the *_dilate1_congr helpers are
+-- private — no audit line.)
+#print axioms Square.mellinHat_eq_uniform1
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

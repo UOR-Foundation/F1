@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **mellinHat as the 1-uniform-tiling improper integral** (new `Square/MellinHatUniform1.lean`):
+  reduces the committed dilation-covariance hypothesis `htile` to a pure WIDTH comparison.
+  Instantiating `mellinHat_dilate_scaled` at the trivial scale `s = 1` and collapsing the scale
+  factor (`qpow 1 (n+1)` is rationally `1`, so `ofQ (qpow 1 (n+1)) ≈ one` and `Rmul one z ≈ z`) with
+  the `dilate_1 φ ≈ φ` congruence (`dilateTest_one`, lifted through both `mellinHat` summands — the
+  compact `mellinMoment` via `riemannIntegral_congr_mod`, the twisted `twTail` window-by-window via
+  `riemannIntegralI_congr_unit_mod` + `genSum_congr` + `Rlim_congr`) gives
+
+      `mellinHat φ n = int_{[0,1]}(φ · powBandGen_{[0,2]}) + Rlim (1-uniform scaled sums)`
+
+  (`mellinHat_eq_uniform1`) — the same RHS shape as the `s = 1` instance of `mellinHat_dilate_scaled`,
+  now identified with `mellinHat φ` itself. Since the s-side of `htile` is the `s`-uniform tiling and
+  this is the `1`-uniform tiling, `htile` reduces to `s`-uniform = `1`-uniform (a pure comparison of
+  two uniform tilings of the same improper integral). A key ingredient is that `scaledTwTerm φ 1 ≈
+  twTerm φ` is a direct application of the committed `twTerm_eq_window_powBandGen`. **Honest scope**:
+  `mellinHat(φ)` as the 1-uniform-tiling integral — it builds NO width comparison (it reduces to it,
+  does not discharge it), NO factorization, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all delivered the full
+  reduction; adversarial verify confirmed the equality genuine, the `dilate_1 ≈ φ` congruences real
+  (not dishonestly weakened), `htile` never referenced/discharged, non-smuggling.)
 - **The half-line Mellin dilation covariance capstone** (new `Square/MellinHatCovariance.lean`):
   names the dilation covariance `s^(n+1) · mellinHat (dilate_s φ) n = mellinHat φ n` and isolates the
   one remaining analytic step — tiling-independence — as an explicit, audit-visible hypothesis. The

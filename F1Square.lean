@@ -404,6 +404,7 @@ import F1Square.Square.ScaledTwistedTail
 import F1Square.Square.CompactMomentDilate
 import F1Square.Square.MellinHatDilateScaled
 import F1Square.Square.MellinHatCovariance
+import F1Square.Square.MellinHatUniform1
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv
