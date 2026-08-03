@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The analytic foundation for general split-point additivity** (new
+  `Square/IntervalSplitAt.lean`): the Riemann-sum machinery an arbitrary-rational interval split
+  needs, which the dyadic-only substrate did not provide. `riemannSum_multiple_refine` — the block
+  refinement bound `|R_{cP-1}(g) - R_{P-1}(g)| <= L/P` (subdividing each of `P` equal subintervals
+  into `c` pieces), generalizing the dyadic doubling to an arbitrary integer factor (via
+  `RsumN_flatten`). `riemannSum_conv_dist` — the general Riemann-sum convergence rate
+  `|int_0^1 g - R_N(g)| <= L/(N+1)` for EVERY `N`, not only the dyadic `2^m` (coarse and integral
+  compared through a common refinement, the tails killed by the Archimedean collapse); this is the
+  piece exhaustion-independence rests on. `riemannSum_split_at_gen` — the exact finite split at a
+  general node `t0 = (a+1)/(a+b+2)` (dense in `(0,1)`), the `(a+b+2)`-point sum as the
+  `t0/(1-t0)`-weighted sum of the two affine block sums, generalizing `riemannSum_halves` (`a=b=0`).
+  **Honest scope**: the substrate for the coming `riemannIntegralI_split_at`
+  (`int_a^{a+w} = int_a^{a+w1} + int_{a+w1}^{a+w}`), whose remaining assembly is the Archimedean
+  limit of `riemannSum_split_at_gen` closed by `riemannSum_conv_dist` plus the affine block
+  composition; that capstone is NOT in this file. Foundation for exhaustion-independence of the
+  improper integral (the half-line dilation covariance). It builds NO improper integral, NO limit
+  beyond the Riemann integral, NO dilation covariance, NO factorization, NO positivity, NO
+  determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three worktree
+  drafters delivered different foundational pieces; adversarial verify confirmed the general split
+  is genuinely proved not midpoint-only, the convergence rate is a genuine common-refinement
+  triangle, non-smuggling, `[propext, Quot.sound]`.)
 - **The per-window rational-scale Mellin dilation** (new `Square/MellinWindowDilate.lean`): the
   first sub-brick of the eventual dilation covariance. For a bounded-Lipschitz base test `f`, a
   degree-`n` window weight `P`, a rational scale `s > 0`, and a window `[lo,lo+w]`, the twisted

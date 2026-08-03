@@ -7158,3 +7158,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.poly_nonzero_evalP
 #print axioms Square.Qeq_of_ofQ_eq_zero
 #print axioms Square.coSupport_member_apart
+
+-- The analytic foundation for general split-point additivity (new Square/IntervalSplitAt.lean): the
+-- Riemann-SUM machinery the arbitrary-rational interval split needs. RsumN_flatten (block flatten);
+-- riemannSum_multiple_refine (block refinement bound |R_{cP}-R_P|<=L/P, general integer factor);
+-- riemannSum_conv_dist (the general Riemann-sum convergence rate |int - R_N|<=L/(N+1) for EVERY N, not
+-- just dyadic 2^m -- the key result exhaustion-independence rests on); riemannSum_split_at_gen (the
+-- exact finite split at a general node t0=(a+1)/(a+b+2), generalizing riemannSum_halves). Foundation
+-- for the coming riemannIntegralI_split_at. No improper integral, no dilation, no positivity, no crux.
+#print axioms Square.RsumN_flatten
+#print axioms Square.riemannSum_multiple_refine
+#print axioms Square.riemannSum_conv_dist
+#print axioms Square.riemannSum_split_at_gen
