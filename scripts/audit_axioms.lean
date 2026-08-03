@@ -5167,6 +5167,17 @@ open UOR.Bridge.F1Square
 -- no half-line assembly, no positivity, no crux.
 #print axioms Square.window_dilate_powBandGen
 
+-- THE PRE-HILBERT LAYER (Square/TwTermPowBand.lean) — the weight-swap connecting the wide-band
+-- powBandGen window integral to the mellinHat tail term twTerm (which carries the integer-window
+-- powWinTest). riemannIntegralI_congr_unit_mod is a REUSABLE different-L window congruence (weaken
+-- both certs to Lf+Lg via lip_weaken, run the same-L congr_unit, move back by certif_irrel).
+-- powWinTest_eq_Rpow_on = powWinTest is tⁿ on its window (mirror of powBandGen_eq_Rpow_on).
+-- twTerm_eq_window_powBandGen = the (ψ·powBandGen) window integral equals twTerm ψ n m, since both
+-- weights reduce to ψ·tⁿ on [m+1,m+2]. No half-line assembly, no reschedule, no positivity, no crux.
+#print axioms Square.riemannIntegralI_congr_unit_mod
+#print axioms Square.powWinTest_eq_Rpow_on
+#print axioms Square.twTerm_eq_window_powBandGen
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

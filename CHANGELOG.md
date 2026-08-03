@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The weight-swap to the mellinHat tail term** (new `Square/TwTermPowBand.lean`): connects the
+  committed per-window dilation identity `window_dilate_powBandGen` (which carries the WIDE-BAND
+  twist weight `powBandGen`) to the `mellinHat` tail term `twTerm` (which carries the
+  INTEGER-WINDOW weight `powWinTest`). The two weights agree on `[m+1, m+2]` (both `tⁿ`) but differ
+  off-window AND carry different Lipschitz constants, so bridging them needs a DIFFERENT-`L` window
+  congruence. Three results: `riemannIntegralI_congr_unit_mod` — a REUSABLE different-`L` window
+  congruence (two integrands certified at possibly different moduli `Lf`, `Lg` that agree on the
+  affine window have equal interval integrals, by weakening both to the common `Lf+Lg` via
+  `lip_weaken` + `Qle_self_add`/`Qle_self_add_l`, running the same-`L` `riemannIntegralI_congr_unit`,
+  and moving each side back by `riemannIntegralI_certif_irrel`); `powWinTest_eq_Rpow_on` — the
+  window-inertness of the integer-window power (`powWinTest m n = tⁿ` on `[m+1, m+2]`, mirror of
+  `powBandGen_eq_Rpow_on`); and `twTerm_eq_window_powBandGen` — the weight swap itself, since on the
+  affine window both integrands reduce to `ψ(t)·tⁿ`. The band-containment hypotheses `hc1`, `hc2`
+  (`[m+1, m+2] ⊆ [lo, hi]`) are load-bearing; the agreement is window-only (off-window the weights
+  legitimately differ, and the lemma never claims otherwise). **Honest scope**: the weight-swap via
+  a reusable different-`L` window congruence and the shared band-inertness of both weights — it
+  builds NO half-line assembly, NO reschedule, NO factorization, NO positivity, NO determinacy, NO
+  crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three worktree drafters all delivered
+  all three lemmas, all `[propext, Quot.sound]`; adversarial verify confirmed the congruence genuine,
+  the window-only agreement not a false all-`x` claim, `hc1`/`hc2` load-bearing, non-smuggling.)
 - **The per-window rational-scale Mellin dilation at the twist weight** (new
   `Square/WindowDilatePow.lean`): the committed per-window rational-scale Mellin dilation
   `mellinWindowDilate` INSTANTIATED at the twist weight `powBandGen`, on the integer window
