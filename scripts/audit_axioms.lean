@@ -5138,6 +5138,17 @@ open UOR.Bridge.F1Square
 #print axioms Square.qmul_le_right_mono
 #print axioms Square.powWinTest_M_le
 
+-- THE PRE-HILBERT LAYER (Square/RationalWindowPower.lean) — the window power substrate on an
+-- ARBITRARY rational window [lo,hi]: bandGen (identity clamped to [lo,hi], inert on its window)
+-- and its iterated powers powBandGen (= tⁿ on the window, bound ≤ hiⁿ). Generalizes the
+-- integer-window powWinTest; the weight object the per-window Mellin dilation covariance consumes
+-- (dilating [m+1,m+2] by rational s lands on the rational window [s(m+1),s(m+2)]). No integral,
+-- no dilation, no positivity, no crux. (bandGen, powBandGen are defs — no audit line.)
+#print axioms Square.bandGen_inert
+#print axioms Square.powBandGen_zero
+#print axioms Square.powBandGen_succ_inert
+#print axioms Square.powBandGen_M_le
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

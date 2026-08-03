@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The windowed power on an arbitrary rational window** (new
+  `Square/RationalWindowPower.lean`): the weight substrate the per-window Mellin dilation
+  covariance needs. `WindowPower.lean` builds the window power `tⁿ` clamped to the INTEGER window
+  `[m+1, m+2]` (`powWinTest`), but dilating that window by a rational scale `s` carries it to the
+  rational window `[s·(m+1), s·(m+2)]`, on which the integer-indexed `powWinTest` is WRONG (still
+  clamped to `[m+1, m+2]`). This generalizes the endpoints to arbitrary rationals `lo, hi` with
+  `0 <= lo <= hi`: `bandGen lo hi` is the identity clamped to `[lo, hi]` (a genuine `L2Test`,
+  1-Lipschitz, bounded by `hi`, inert on its window via `bandGen_inert`), and `powBandGen lo hi n`
+  is its `n`-th power by iterated `L2Test.mul` (certificates compose through the algebra), inert as
+  `tⁿ` on `[lo, hi]` (`powBandGen_succ_inert`) with accumulated bound `<= hiⁿ` (`powBandGen_M_le`).
+  A faithful generalization: the integer case `lo = m+1, hi = m+2` recovers `bandTest`/`powWinTest`
+  exactly, the one added precondition `0 <= lo.num` being part of `0 <= lo <= hi` (automatic in the
+  integer case). **Honest scope**: the windowed power `tⁿ` generalized from integer windows to an
+  arbitrary rational window, clamped/inert on its window exactly like `powWinTest`, with the `hiⁿ`
+  bound — it builds NO integral, NO dilation covariance, NO factorization, NO positivity, NO
+  determinacy, NO crux (a later per-window dilation brick consumes it). Step 4 (band-coupling
+  positivity) is RH; crux `none`. (Three worktree drafters all delivered the full substrate, all
+  `[propext, Quot.sound]`; adversarial verify confirmed `bandGen` a genuine `L2Test`,
+  `powBandGen_succ_inert` genuine window-inertness, the `hiⁿ` bound correct, non-smuggling, and a
+  faithful generalization of `powWinTest`.)
 - **Exhaustion-independence of the improper half-line integral** (new
   `Square/ImproperScheduleIndep.lean`): exhaustion rung 4b. The certified improper Mellin integral
   `int_1^inf f = improperIntegral1` is defined as the Bishop limit of the reindexed partial sums
