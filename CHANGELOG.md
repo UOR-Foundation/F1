@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The half-line Mellin dilation covariance capstone** (new `Square/MellinHatCovariance.lean`):
+  names the dilation covariance `s^(n+1) · mellinHat (dilate_s φ) n = mellinHat φ n` and isolates the
+  one remaining analytic step — tiling-independence — as an explicit, audit-visible hypothesis. The
+  committed `mellinHat_dilate_scaled` gives `s^(n+1)·mellinHat(dilate_s φ) = int_{[0,s]}(φ·powBandGen)
+  + Rlim(scaled sums)`, whose RHS is the improper Mellin integral of the ORIGINAL `φ` against `tⁿ`
+  over the `s`-uniform tiling `{[0,s],[s,2s],…}`. What remains is TILING-INDEPENDENCE: that this
+  `s`-uniform-tiling improper integral equals `mellinHat φ n` (the standard integer-tiling one). Both
+  tilings exhaust `[0,∞)` against the same integrand `φ·tⁿ`, so this is a genuine real-analysis fact
+  (comparison of two cofinal exhaustions), NOT RH. The capstone (`mellinHat_dilate_covariance`) is
+  `Req_trans` of `mellinHat_dilate_scaled` with the explicit tiling-independence hypothesis `htile`
+  (whose LHS matches `mellinHat_dilate_scaled`'s RHS verbatim, defeq via proof irrelevance on the
+  private band-containment proof, confirmed by the successful `Req_trans` compile). This is the
+  program's standard honest-hypothesis pattern — `mellinHat` itself carries its decay `hdec`, the
+  crux carries `hmatch` — with `htile` a genuine non-RH analytic fact carried audit-visibly, to be
+  discharged by a later cap-`Rlim` / exhaustion-rung brick. **Honest scope**: the half-line Mellin
+  dilation covariance modulo an explicit non-RH tiling-independence hypothesis — it builds NO
+  factorization (`M[f⋆g]=M[f]·M[g]`), NO positivity, NO determinacy, NO crux. Step 4 (band-coupling
+  positivity) is RH; crux `none`. (Three worktree drafters all delivered ROUTE 2 — the full
+  tiling-independence ROUTE 1 needs several more bricks; adversarial verify confirmed `htile`'s LHS
+  matches verbatim, `htile` genuinely non-RH and not a smuggle, crux untouched.)
 - **The scaled Mellin transform of a dilated test** (new `Square/MellinHatDilateScaled.lean`):
   assembles the committed compact and tail dilation halves into a single identity. `mellinHat`
   splits as `mellinMoment + twTail`; distributing `s^(n+1)` over that split (`Rmul_distrib`) and

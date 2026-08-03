@@ -5224,6 +5224,16 @@ open UOR.Bridge.F1Square
 -- crux. (band01_le' private — no audit line.)
 #print axioms Square.mellinHat_dilate_scaled
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatCovariance.lean) — the half-line Mellin DILATION
+-- COVARIANCE capstone: s^(n+1)·mellinHat(dilate_s φ) n = mellinHat φ n, by Req_trans of the
+-- committed mellinHat_dilate_scaled with the explicit tiling-independence hypothesis htile (the
+-- s-uniform-tiling improper integral = the standard integer-tiling mellinHat φ). htile is a
+-- GENUINE non-RH real-analysis fact (two cofinal exhaustions of [0,inf) against the common
+-- integrand φ·tⁿ) carried audit-visibly in the honest-hypothesis pattern (as mellinHat carries
+-- hdec, the crux carries hmatch) — NOT a smuggle, NOT RH, NO crux; discharged by a later cap-Rlim
+-- / exhaustion-rung brick. No factorization, no positivity, no crux. (band01_le'' private.)
+#print axioms Square.mellinHat_dilate_covariance
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
