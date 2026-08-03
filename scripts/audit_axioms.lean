@@ -5206,6 +5206,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.genSum_scaled_eq
 #print axioms Square.scaledTwTail_eq_dilate
 
+-- THE PRE-HILBERT LAYER (Square/CompactMomentDilate.lean) — the compact [0,1]-window Mellin
+-- dilation covariance: the scaled compact integral over [0,s] of φ against powBandGen_{[0,s+1]}
+-- equals s^(n+1)·mellinMoment(dilate_s φ) n. The [0,1]-window companion of the tail dilation:
+-- STEP A mellinWindowDilate at lo=0,w=1,band=[0,s+1] (hHom via powBandGen_dilate_on); STEP B
+-- weight-swap to powTest on [0,1] (riemannIntegralI_congr_unit_mod, both = tⁿ there); STEP C the
+-- riemannIntegralI_unit bridge to innerI/mellinMoment. No half-line, no boundary, no split, no
+-- positivity, no crux. (band01_le, aff01_base, aff01_top private — no audit line.)
+#print axioms Square.mellinMoment_dilate
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

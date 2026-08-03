@@ -6,6 +6,22 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The compact [0,1]-window Mellin dilation covariance** (new `Square/CompactMomentDilate.lean`):
+  the compact companion of the tail dilation bricks. For a test `φ`, degree-`n` twist, and rational
+  scale `s > 0`, the scaled compact integral over `[0, s]` of `φ` against the wide-band twist
+  `powBandGen 0 (s+1) … n` equals `s^(n+1)` times the compact moment `mellinMoment` of the
+  `s`-dilated test — `int_0^s (φ · powBandGen_{[0,s+1]}) = s^(n+1) · mellinMoment (dilate_s φ) n`
+  (`mellinMoment_dilate`). Three steps, the `[0,1]`-window analog of
+  `window_dilate_powBandGen`/`twTerm_eq_window_powBandGen`: STEP A is `mellinWindowDilate` at
+  `lo = 0`, `w = 1`, band `[0, s+1]` covering both `[0,1]` and `[0,s]`, its `hHom` discharged by the
+  committed `powBandGen_dilate_on`; STEP B swaps `powBandGen` for the genuine clamped weight
+  `powTest n` on the unit window via the reusable `riemannIntegralI_congr_unit_mod` (both weights are
+  `tⁿ` there, by `powBandGen_eq_Rpow_on` and `powTest_f_eq` + `clamp01_eq_self`); STEP C identifies
+  the unit-window interval integral with `mellinMoment (dilate_s φ) n` through `riemannIntegralI_unit`.
+  **Honest scope**: the compact dilation covariance — it builds NO half-line assembly, NO boundary
+  reconciliation, NO split-point independence, NO full `mellinHat` covariance, NO factorization, NO
+  positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three
+  worktree drafters all delivered the full identity, all `[propext, Quot.sound]`.)
 - **The s-scaled-window twisted tail** (new `Square/ScaledTwistedTail.lean`): the per-window-band
   analog of the `mellinHat` twisted tail `twTail`, carried on the `s`-scaled windows
   `[s(m+1), s(m+2)]`, and its proportionality to the dilated tail. Unlike the finite `reschedule`
