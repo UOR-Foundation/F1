@@ -408,6 +408,7 @@ import F1Square.Square.MellinHatUniform1
 import F1Square.Square.UniformPartialCap
 import F1Square.Square.PartialCommonRefine
 import F1Square.Square.PartialCoarseRefine
+import F1Square.Square.HtileDischarge
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv

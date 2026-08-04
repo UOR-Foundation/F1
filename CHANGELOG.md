@@ -6,6 +6,30 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Discharging the tiling-independence hypothesis; the dilation covariance is now UNCONDITIONAL**
+  (new `Square/HtileDischarge.lean`): removes the last explicit hypothesis `htile` from the half-line
+  Mellin dilation covariance, making `s^(n+1)·mellinHat(dilate_s φ) = mellinHat(φ)` unconditional.
+  Two reusable infrastructure bricks: `scaledTwTerm_bound` — the two-sided `Ks/((m+1)m)` decay of the
+  `s`-scaled twisted window integral (`Ks = s^(n+1)·C·2ⁿ`), obtained by scaling the committed
+  `twTerm_bound (dilate_s φ)` through the per-window bridge `scaledTwTerm_eq`; and
+  `scaledTwTerm_schedule_eq` — rung-4b schedule-independence for the scaled summand (the general
+  `genSum_close` + `Rlim_approx_eq` machinery, general in the summand, with the decay bound). The
+  capstone `htile_holds` PROVES the tiling-independence `Req` **non-circularly** (its hypotheses are
+  routine decay/regularity data — `hdec_phi`, `hdec_fine`, `hReg` — NOT `htile` itself): both the
+  `s`-uniform and `1`-uniform improper Mellin integrals refine (via `partial_coarse_refine` /
+  `partial_s_eq_partial_refine`) to the common `1/q`-tiling (`q = s.den`), where the two `Rlim`s
+  coincide because their cap schedules `{p(dm+1)-1}` and `{q(dm+1)-1}` are both fast cofinal schedules
+  of the SAME summand `genSum(scaledTwTerm φ (1/q))`. `mellinHat_dilate_covariance_uncond` then applies
+  the committed `mellinHat_dilate_covariance` with `htile_holds` discharging its `htile` slot.
+  **Honest scope**: `htile` is a NON-RH real-analysis fact (comparison of two cofinal exhaustions of
+  `[0,∞)` against the common integrand `φ·tⁿ`); discharging it is legitimate analysis that introduces
+  NO factorization (`M[f⋆g]=M[f]·M[g]` remains open), NO positivity, NO `ArchDominatesPrime`, NO
+  determinacy, NO crux. The dilation covariance is a transform property (step-4 object-grounding
+  substrate), NOT the step-4 band-coupling positivity, which is RH and stays the honest wall; the crux
+  fields stay `none`. (Three worktree drafters; one delivered the full discharge, two the
+  infrastructure lemmas; adversarial verify confirmed `htile_holds` non-circular and genuine, the
+  decay bound real, the schedule-independence sound, and — the critical check — NO crux/RH smuggle;
+  `[propext, Quot.sound]`, choice-free, transitively sorry-free.)
 - **The general common-refinement identity of two uniform tilings** (new
   `Square/PartialCoarseRefine.lean`): for a fine rational scale `fine` and a positive integer `k`, the
   coarse scale `coarse := fine·k` has its `coarse`-uniform partial sum equal to the `fine`-uniform

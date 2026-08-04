@@ -5273,6 +5273,23 @@ open UOR.Bridge.F1Square
 -- no crux. (all helpers private, file-scoped.)
 #print axioms Square.partial_coarse_refine
 
+-- THE PRE-HILBERT LAYER (Square/HtileDischarge.lean) — DISCHARGING the tiling-independence
+-- hypothesis htile of the committed mellinHat_dilate_covariance, making the half-line Mellin
+-- dilation covariance s^(n+1)·mellinHat(dilate_s φ) = mellinHat φ UNCONDITIONAL. scaledTwTerm_bound:
+-- the two-sided Ks/((m+1)m) decay of scaledTwTerm (Ks=s^(n+1)·C·2ⁿ), scaling the committed
+-- twTerm_bound through scaledTwTerm_eq. scaledTwTerm_schedule_eq: rung-4b schedule-independence for
+-- the scaled summand (genSum_close + Rlim_approx_eq, general in T, with the decay bound). htile_holds:
+-- the tiling-independence Req PROVED (NON-CIRCULAR — hyps are decay/regularity data, NOT htile) —
+-- both s-uniform and 1-uniform improper integrals refine (partial_coarse_refine) to the common
+-- 1/q-tiling where the two Rlims coincide. mellinHat_dilate_covariance_uncond: the covariance with
+-- htile discharged. htile is a NON-RH real-analysis fact; discharging it introduces NO factorization,
+-- NO positivity, NO ArchDominatesPrime, NO crux (step 4 positivity = RH stays the honest wall). (18
+-- private helpers — no audit line.)
+#print axioms Square.scaledTwTerm_bound
+#print axioms Square.scaledTwTerm_schedule_eq
+#print axioms Square.htile_holds
+#print axioms Square.mellinHat_dilate_covariance_uncond
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
