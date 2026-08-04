@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The general-window rational-scale Mellin dilation covariance** (new
+  `Square/GeneralWindowDilate.lean`): generalizes the committed `window_dilate_powBandGen` from the
+  fixed integer window `[m+1, m+2]` to an ARBITRARY rational window `[lo, lo+w]` — the window
+  `dilMellinF` (the roadmap factorization consumer, `MellinConvGPull.lean`) integrates over. For a
+  rational scale `s > 0` and a wide band `[bandLo, bandHi]` covering both the window and its
+  `s`-scaling `[s·lo, s·(lo+w)]`:
+
+      `int_{[s·lo, s·(lo+w)]}(f · powBandGen) = s^(n+1) · int_{[lo, lo+w]}(dilate_s f · powBandGen)`
+
+  (`general_window_dilate`). A direct application of the committed `mellinWindowDilate` at
+  `P = powBandGen`, arbitrary `(lo, w)`; the only new content is the `hHom` discharge via
+  `powBandGen_dilate_on` with the general-window affine/scaling membership (`y = affineMap lo w x` and
+  `s·y` both in `[bandLo, bandHi]`, chained from the containment hyps `hc1`–`hc4`, each load-bearing).
+  This is the rational base of the real-scale factorization gate (rung 6): `dilMellinF`'s scale
+  `clampedInv(a,t)` is real, so evaluating it will approximate the real scale by rationals and pass
+  this rational-scale general-window covariance to the limit. **Honest scope**: the general-window
+  rational-scale dilation covariance — it builds NO real-scale extension, NO factorization, NO
+  half-line assembly, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is
+  RH; crux `none`. (Three worktree drafters all delivered the full identity; adversarial verify
+  confirmed it is exactly `mellinWindowDilate` at the general window, `hHom` genuinely discharged,
+  `hc1`–`hc4` load-bearing, non-smuggling.)
 - **Discharging the tiling-independence hypothesis; the dilation covariance is now UNCONDITIONAL**
   (new `Square/HtileDischarge.lean`): removes the last explicit hypothesis `htile` from the half-line
   Mellin dilation covariance, making `s^(n+1)·mellinHat(dilate_s φ) = mellinHat(φ)` unconditional.

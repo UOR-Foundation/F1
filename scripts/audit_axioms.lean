@@ -5290,6 +5290,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.htile_holds
 #print axioms Square.mellinHat_dilate_covariance_uncond
 
+-- THE PRE-HILBERT LAYER (Square/GeneralWindowDilate.lean) — the GENERAL-WINDOW rational-scale Mellin
+-- dilation covariance: for an ARBITRARY rational window [lo,lo+w], int_{[s·lo, s·(lo+w)]}(f·powBandGen)
+-- = s^(n+1)·int_{[lo,lo+w]}(dilate_s f·powBandGen), via mellinWindowDilate + powBandGen_dilate_on with
+-- the general-window affineMap membership (band [bandLo,bandHi] covers the window hc1/hc2 and its
+-- s-scaling hc3/hc4). Generalizes window_dilate_powBandGen (fixed [m+1,m+2]) to the window dilMellinF
+-- integrates over — the rational base of the real-scale factorization gate (rung 6). No real-scale
+-- extension, no factorization, no half-line, no positivity, no crux.
+#print axioms Square.general_window_dilate
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
