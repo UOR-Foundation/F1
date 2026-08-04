@@ -7618,6 +7618,19 @@ open UOR.Bridge.F1Square
 -- ∫_t assembly, NO factorization, NO positivity, NO crux.
 #print axioms Square.dilMellinF_pow_eq_riwI
 
+-- Clamp-independence of the convolution's Mellin tail-term on inert windows (new
+-- Square/MulConvClampIndep.lean). mulConvR_S_indep: the convolution value mulConvR f g x S is
+-- independent of the clamp bound S (for |x| ≤ S, |x| ≤ S') — the two Haar integrals integrate the
+-- SAME S-free function f(x·(1/max(t,a)))·g(t)·(1/max(t,a)) at different Lipschitz moduli, bridged by
+-- riemannIntegralI_certif_irrel. twTerm_mulConv_S_indep: consequently, for m+2 ≤ S and m+2 ≤ S', the
+-- m-th twisted tail term twTerm (mulConvRTest f g S) n m is the SAME for both clamps (both clamps inert
+-- on [m+1,m+2] by qBandQ_eq_of_band; congr_unit_mod across the two moduli). The eventually-constant-in-S
+-- fact that makes the clamp-free (S→∞) half-line transform of the convolution well-defined per window —
+-- mellinHat(mulConvRTest f g S) does NOT converge for fixed S (frozen tail). NO S→∞ limit object, NO
+-- half-line assembly, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.mulConvR_S_indep
+#print axioms Square.twTerm_mulConv_S_indep
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
