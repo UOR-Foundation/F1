@@ -5398,6 +5398,17 @@ open UOR.Bridge.F1Square
 -- covariance (that is the capstone), no factorization, no positivity, no crux.
 #print axioms Square.covariance_at_rational_dilateTestR
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatBound.lean) — the Mellin transform has a FINITE, SCALE-INDEPENDENT
+-- MAGNITUDE BOUND: |mellinHat(dilateTestR c φ) n| ≤ φ.M/(n+1) + (Σ_{m<N₀} φ.M·(powWinTest m n).M) + 2,
+-- N₀=digammaMidx(C·2ⁿ) 0. Depends only on φ.M,C,n — NOT c (dilateTestR.M=φ.M). CRUDE (no decay, no
+-- telescoping): moment via mellinMoment_abs_le, tail via |twTail|≤|0th partial sum|+2 (Rabs_dist_Rlim at
+-- j=0) with the finite 0th sum bounded term-by-term by twTerm_crude_bound (riemannIntegralI_abs_le_window,
+-- |twTerm m|≤φ.M·(powWinTest m n).M). The |M_c| bound the covariance capstone's F-continuity multiplies
+-- against. No covariance, no F-continuity, no positivity, no crux.
+#print axioms Square.twTerm_crude_bound
+#print axioms Square.twTail_crude_bound
+#print axioms Square.mellinHat_abs_le
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

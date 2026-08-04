@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The Mellin transform has a bounded magnitude, uniformly in the dilation scale** (new
+  `Square/MellinHatBound.lean`): a finite, scale-INDEPENDENT bound
+
+      `|mellinHat (dilateTestR c φ) n| ≤ φ.M/(n+1) + (Σ_{m<N₀} φ.M·(powWinTest m n).M) + 2`,
+
+  `N₀ = digammaMidx (C·2ⁿ) 0` (`mellinHat_abs_le`). The bound depends only on `φ.M, C, n` — not on the
+  real scale `c`, since `dilateTestR c φ` has `.M = φ.M`. The proof is deliberately CRUDE — no decay, no
+  telescoping: the compact moment is `mellinMoment_abs_le`, and the tail `twTail` (an `Rlim` of partial
+  sums) obeys `|twTail| ≤ |0th partial sum| + 2` by the uniform Bishop-limit rate (`Rabs_dist_Rlim` at
+  `j = 0`), with the finite `N₀`-term 0th sum bounded term-by-term by `|twTerm m| ≤ φ.M·(powWinTest m n).M`
+  (`twTerm_crude_bound`, via `riemannIntegralI_abs_le_window`). The per-window constant growing with `m` is
+  harmless — only finitely many terms are summed; the infinite tail is absorbed by the `2/(j+1)` limit
+  rate. **Why (rung 6)**: the covariance capstone shows `F(c) = cⁿ⁺¹·mellinHat(dilateTestR c φ)` continuous
+  by `|F(c) − F(c')| ≤ |cⁿ⁺¹ − c'ⁿ⁺¹|·|M_c| + |c'ⁿ⁺¹|·|M_c − M_c'|`; the first term needs this finite
+  `|M_c|` bound. **Honest scope**: a finite magnitude bound on the Mellin transform only — NO covariance,
+  NO F-continuity, NO factorization, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling
+  positivity) is RH; crux `none`.
+
 - **The rational-scale dilation covariance in `dilateTestR` form** (new `Square/CovarianceAtRational.lean`):
   the unconditional rational-scale Mellin dilation covariance `qⁿ⁺¹·mellinHat(dilateTest q φ) = mellinHat φ`
   read against the real-scale dilation:
