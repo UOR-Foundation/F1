@@ -6,6 +6,21 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The Archimedean squeeze for Bishop reals** (new `Analysis/RealNullFamily.lean`): if two reals are
+  within `C/(k+1)` of each other for EVERY `k`, they are equal —
+
+      `(∀ k, |x − y| ≤ C/(k+1)) ⟹ x ≈ y`
+
+  (`Req_of_real_null_family`). Fixing a sequence index `n`, the `k`-family gives
+  `|(x−y).seq n| ≤ C/(k+1) + 2/(n+1)` for all `k`, so `Qarch_gen` kills the `C/(k+1)` term to leave
+  `≤ 2/(n+1)`, and `Req_of_lin_bound` turns that into `x − y ≈ 0`. **Why (rung 6)**: this is the
+  real-scale covariance capstone's final step — the combination `F(c) = cⁿ⁺¹·mellinHat(dilateTestR c φ)`
+  is continuous (`covComb_scale_split`) and constant on the rationals (`covariance_at_rational_dilateTestR`),
+  so approximating `c` by rationals `q_k → c` gives `|F(c) − mellinHat φ| ≤ C/(k+1)` for every `k`, and this
+  lemma concludes `F(c) = mellinHat φ`. **Honest scope**: a general Bishop-real equality-from-null-family
+  lemma only — NO covariance, NO factorization, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`.
+
 - **The covariance combination is scale-continuous** (new `Square/CovCombScaleCont.lean`): the object
   `F(c) = cⁿ⁺¹·mellinHat(dilateTestR c φ) n` — whose value the real-scale dilation covariance asserts is the
   constant `mellinHat φ n` — varies continuously in the real dilation scale `c`. For every depth `j`,

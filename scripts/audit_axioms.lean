@@ -546,6 +546,15 @@ open UOR.Bridge.F1Square
 -- (cⁿ⁺¹ vs q_kⁿ⁺¹, B=S) the real-scale covariance capstone consumes alongside mellinHat_scale_split.
 -- General Bishop-real primitive; no covariance, no positivity, no crux.
 #print axioms Analysis.Rpow_base_lip
+
+-- The Archimedean squeeze for Bishop reals (new Analysis/RealNullFamily.lean): if |x−y| ≤ C/(k+1) for
+-- EVERY k (as reals), then x ≈ y (Req_of_real_null_family). Fix index n: the family gives
+-- |(x−y).seq n| ≤ C/(k+1) + 2/(n+1) ∀k, so Qarch_gen kills the C/(k+1) term to leave ≤ 2/(n+1), and
+-- Req_of_lin_bound turns that into x−y ≈ 0. The density-argument closer: a quantity within an
+-- arbitrarily small rational gap of a target at every resolution equals it. The real-scale covariance
+-- capstone's final step (F continuous + F const on rationals ⟹ F(c) = mellinHat φ). General Bishop-real
+-- lemma; no covariance, no positivity, no crux.
+#print axioms Analysis.Req_of_real_null_family
 #print axioms Analysis.genSum_const_zero
 #print axioms Analysis.CdigammaTerm_one_eq_zero
 #print axioms Analysis.CDigammaCore_one_eq_zero
