@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The covariance combination is scale-continuous** (new `Square/CovCombScaleCont.lean`): the object
+  `F(c) = cⁿ⁺¹·mellinHat(dilateTestR c φ) n` — whose value the real-scale dilation covariance asserts is the
+  constant `mellinHat φ n` — varies continuously in the real dilation scale `c`. For every depth `j`,
+
+      `|F(c) − F(c')| ≤ Sⁿ⁺¹·((φ.L + head_j)·|c−c'| + 4/(j+1)) + Bφ·((n+1)·Sⁿ·|c−c'|)`,
+
+  `head_j = Σ_{m<N_j} φ.L·(m+2)·(powWinTest m n).M`, `N_j = digammaMidx(C·2ⁿ) j`, `Bφ` the finite Mellin
+  magnitude bound (`covComb_scale_split`). As `j → ∞`, `c' → c` the RHS → 0. The mixed-product identity
+  splits `F(c) − F(c')` into `cⁿ⁺¹·(M_c − M_c') + (cⁿ⁺¹ − c'ⁿ⁺¹)·M_c'`; the first is bounded by
+  `|cⁿ⁺¹| ≤ Sⁿ⁺¹` times the Mellin scale-continuity `mellinHat_scale_split`, the second by the polynomial
+  base-Lipschitz `Rpow_base_lip` times the Mellin magnitude bound `mellinHat_abs_le`. **Why (rung 6)**:
+  this is the last continuity step before the real-scale covariance — `F` continuous plus `F` constant on
+  the rationals (`covariance_at_rational_dilateTestR`) plus rational density forces `F(c) = mellinHat φ n`
+  at every real `c`. **Honest scope**: the split-at-depth scale-continuity of `F` only — NO real-scale
+  covariance (that is the capstone), NO factorization, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`.
+
 - **The Mellin transform has a bounded magnitude, uniformly in the dilation scale** (new
   `Square/MellinHatBound.lean`): a finite, scale-INDEPENDENT bound
 

@@ -5409,6 +5409,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.twTail_crude_bound
 #print axioms Square.mellinHat_abs_le
 
+-- THE PRE-HILBERT LAYER (Square/CovCombScaleCont.lean) — the COVARIANCE COMBINATION is SCALE-CONTINUOUS:
+-- F(c) = cⁿ⁺¹·mellinHat(dilateTestR c φ) n obeys, for every depth j, |F(c)−F(c')| ≤ Sⁿ⁺¹·((φ.L+head_j)·|c−c'|
+-- + 4/(j+1)) + Bφ·((n+1)·Sⁿ·|c−c'|), head_j=Σ_{m<N_j}φ.L·(m+2)·(powWinTest m n).M, Bφ=mellinHat magnitude
+-- bound. →0 as j→∞, c'→c. mixed-product identity F(c)−F(c')=cⁿ⁺¹·(M_c−M_c')+(cⁿ⁺¹−c'ⁿ⁺¹)·M_c'; first term
+-- ≤|cⁿ⁺¹|≤Sⁿ⁺¹ × mellinHat_scale_split, second ≤ Rpow_base_lip × mellinHat_abs_le. The last continuity
+-- before the real-scale covariance (F continuous + F const on rationals ⟹ F(c)=mellinHat φ). No covariance,
+-- no factorization, no positivity, no crux.
+#print axioms Square.covComb_scale_split
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
