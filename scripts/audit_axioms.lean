@@ -4240,6 +4240,16 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rinv_le_ofQ_inv
 #print axioms Analysis.Rinv_sub_Rinv
 #print axioms Analysis.Rinv_abs_lipschitz
+
+-- The reciprocal / clamped-reciprocal LOWER bound (new Analysis/ClampedInvLower.lean): the mirror of
+-- Rinv_le_ofQ_inv. ofQ_inv_le_Rinv: u ≤ B > 0 ⟹ 1/B ≤ 1/u (1/B ≈ ((1/u)·u)·(1/B) ≈ (1/u)·(u·(1/B)) ≤
+-- (1/u)·(B·(1/B)) ≈ 1/u). Rle_qClampQ_ofQ: x ≤ B, a ≤ B ⟹ max(x,a) ≤ B (Qmax_le). ofQ_inv_le_clampedInv:
+-- x ≤ B, a ≤ B (B>0) ⟹ 1/B ≤ clampedInv a x = 1/max(x,a) — the reciprocal LOWER bound the repo lacked
+-- (it carried only upper bounds), what a convolution decay estimate needs to bound f(x·(1/max(t,a))) on
+-- a bounded t-window. NO convolution decay, NO half-line assembly, NO factorization, NO positivity, NO crux.
+#print axioms Analysis.ofQ_inv_le_Rinv
+#print axioms Analysis.Rle_qClampQ_ofQ
+#print axioms Analysis.ofQ_inv_le_clampedInv
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
