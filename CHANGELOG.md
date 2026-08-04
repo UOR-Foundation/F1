@@ -6,6 +6,21 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **Tendsto ⟹ per-index real closeness, and its Lipschitz image** (new `Analysis/RTendsToClose.lean`):
+  two general Bishop-real convergence primitives. `RTendsTo X L` is a sequence-level predicate
+  (`∀ k n, |X_k.seq n − L.seq n| ≤ 2/(k+1) + 2/(n+1)`); `RTendsTo_imp_close` reads off the real statement
+  it implies — `|X_k − L| ≤ 2/(k+1)` as a real number, for every `k` (the tendsto bound at the doubled
+  index `2n+1`, then `2/(2n+2) ≤ 2/(n+1)`). `Rlip_close` composes this with a real Lipschitz bound: the
+  Lipschitz image of a convergent sequence is close to the image of the limit,
+  `|g(X_k) − g(L)| ≤ K·(2/(k+1))`. **Why (rung 6)**: the real-scale covariance capstone needs
+  `mellinHat (dilate_{q_k} φ) → mellinHat (dilate_c φ)` as `q_k → c` — a Lipschitz map preserving limits —
+  which splits into (i) the Lipschitz image is close to the image-of-limit at the scaled rate `K·2/(k+1)`
+  (built here, no index acceleration) and (ii) converting that closeness back into `RTendsTo` at the
+  canonical rate, which needs a `K`-index reindex (`RmulK`/`Ridx`-style) and is NOT built here.
+  **Honest scope**: two convergence primitives only — NO `RTendsTo` of a Lipschitz image (the reindex half
+  is unbuilt), NO scale continuity, NO covariance, NO factorization, NO positivity, NO determinacy, NO
+  crux. Step 4 (band-coupling positivity) is RH; crux `none`.
+
 - **The rational↔real dilation bridge for the Mellin transform** (new `Square/DilateTestBridge.lean`):
   at a rational scale `q`, the rational-scale dilation `dilateTest q φ` and the real-scale dilation
   `dilateTestR (ofQ q) φ` have LITERALLY IDENTICAL values (`.f x = φ.f (Rmul (ofQ q) x)` for both),

@@ -503,6 +503,16 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rlim_tendsTo
 #print axioms Analysis.Qabs_Qsub_comm
 #print axioms Analysis.RTendsTo_unique
+
+-- Tendsto ⟹ per-index real closeness + its Lipschitz image (new Analysis/RTendsToClose.lean): two general
+-- Bishop-real convergence primitives. RTendsTo_imp_close: RTendsTo X L gives |X_k − L| ≤ 2/(k+1) as a real
+-- (tendsto bound at doubled index 2n+1, then 2/(2n+2) ≤ 2/(n+1)). Rlip_close: a K-Lipschitz g sends a
+-- convergent xs to |g(xs_k) − g(L)| ≤ K·(2/(k+1)) (compose hlip + RTendsTo_imp_close + Rmul_ofQ_ofQ). The
+-- non-acceleration half of the Lipschitz limit-preservation the real-scale covariance capstone needs;
+-- the reindex half (closeness ⟹ RTendsTo at canonical rate) is unbuilt. No scale continuity, no covariance,
+-- no factorization, no positivity, no crux.
+#print axioms Analysis.RTendsTo_imp_close
+#print axioms Analysis.Rlip_close
 #print axioms Analysis.Rlim_congr
 #print axioms Analysis.Rlim_neg
 #print axioms Analysis.Rinv_congr
