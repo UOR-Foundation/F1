@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The rational-scale dilation covariance in `dilateTestR` form** (new `Square/CovarianceAtRational.lean`):
+  the unconditional rational-scale Mellin dilation covariance `qⁿ⁺¹·mellinHat(dilateTest q φ) = mellinHat φ`
+  read against the real-scale dilation:
+
+      `qⁿ⁺¹ · mellinHat (dilateTestR (ofQ q) φ) n = mellinHat φ n`
+
+  (`covariance_at_rational_dilateTestR`). A one-step composition: pull the representation bridge
+  `mellinHat_bridge` (which equates `mellinHat (dilateTest q φ)` and `mellinHat (dilateTestR (ofQ q) φ)`)
+  inside the scalar `qⁿ⁺¹` (`Rmul_congr`), then apply `mellinHat_dilate_covariance_uncond`. It changes only
+  the REPRESENTATION of the covariance, not its content. **Why (rung 6)**: the covariance is proven in
+  `dilateTest` (rational-scale) form, whereas the real-scale continuity foundation
+  (`mellinHat_scale_split`) and the capstone's approximating sequence `q_k → c` live in `dilateTestR` form;
+  this stages the covariance in the exact shape the real-scale limit consumes — `mellinHat φ` replaced by
+  `q_kⁿ⁺¹·mellinHat(dilateTestR (ofQ q_k) φ)` at every rational `q_k`. **Honest scope**: the rational-scale
+  covariance re-expressed only — NO real-scale covariance (that is the capstone), NO factorization, NO
+  half-line assembly, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH;
+  crux `none`.
+
 - **The real power `xᵏ` is base-Lipschitz on a bounded domain** (new `Analysis/RpowBaseLip.lean`): for
   real `x, y` with `|x|, |y| ≤ B` (rational `B ≥ 0`), the iterated real power obeys
 

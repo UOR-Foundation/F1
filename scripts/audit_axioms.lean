@@ -5390,6 +5390,14 @@ open UOR.Bridge.F1Square
 -- passes to the limit. No covariance, no factorization, no positivity, no crux.
 #print axioms Square.mellinHat_scale_split
 
+-- THE PRE-HILBERT LAYER (Square/CovarianceAtRational.lean) — the RATIONAL-scale dilation covariance in
+-- dilateTestR FORM: qⁿ⁺¹·mellinHat(dilateTestR (ofQ q) φ) n = mellinHat φ n. The unconditional covariance
+-- mellinHat_dilate_covariance_uncond (stated with dilateTest q) transported through the representation
+-- bridge mellinHat_bridge (Rmul_congr pulls the bridge inside the scalar qⁿ⁺¹). Changes only the
+-- REPRESENTATION, not the content — the shape the real-scale limit q_k→c consumes. No real-scale
+-- covariance (that is the capstone), no factorization, no positivity, no crux.
+#print axioms Square.covariance_at_rational_dilateTestR
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
