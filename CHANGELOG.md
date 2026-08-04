@@ -6,6 +6,22 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The real power `xᵏ` is base-Lipschitz on a bounded domain** (new `Analysis/RpowBaseLip.lean`): for
+  real `x, y` with `|x|, |y| ≤ B` (rational `B ≥ 0`), the iterated real power obeys
+
+      `|xᵏ⁺¹ − yᵏ⁺¹| ≤ (k+1)·Bᵏ · |x − y|`
+
+  (`Rpow_base_lip`). The standard telescoping estimate `xⁿ − yⁿ = (x − y)·Σ xⁱyⁿ⁻¹⁻ⁱ`, as an induction:
+  the abs-bound `|xᵏ| ≤ Bᵏ` (`Rpow_abs_le`, private) plus the mixed-product identity
+  `x·Pₓ − y·Pᵧ = x·(Pₓ − Pᵧ) + (x − y)·Pᵧ` (`mixed_id`, private) give the step
+  `|xᵏ⁺² − yᵏ⁺²| ≤ B·((k+1)·Bᵏ·|x−y|) + |x−y|·Bᵏ⁺¹ = (k+2)·Bᵏ⁺¹·|x−y|`. **Why (rung 6)**: the real-scale
+  dilation covariance capstone approximates `c` by rationals `q_k → c`, and the outer polynomial factor
+  `cⁿ⁺¹` must be shown close to `q_kⁿ⁺¹` at the rate `|c − q_k|` — this supplies exactly that (`B = S`,
+  exponent `n+1`, `(n+1)·Sⁿ·|c − q_k|`), the companion of the Mellin scale-continuity
+  `mellinHat_scale_split`. **Honest scope**: a general Bishop-real base-Lipschitz bound only — NO
+  covariance, NO factorization, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity)
+  is RH; crux `none`.
+
 - **The Mellin transform is scale-continuous (split-at-depth bound)** (new `Square/MellinHatScaleCont.lean`):
   the integer-point Mellin transform `mellinHat (dilateTestR c φ) n = ∫₀^∞ φ(c·x)·xⁿ dx` varies
   continuously in the real dilation scale `c`. For every schedule depth `j`,

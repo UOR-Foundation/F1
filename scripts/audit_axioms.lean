@@ -538,6 +538,14 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rlim_add_of_approx
 #print axioms Analysis.Rlim_ofQ_mul
 #print axioms Analysis.Rlim_ofQ_mul_of_approx
+
+-- The real power is base-Lipschitz on a bounded domain (new Analysis/RpowBaseLip.lean): |xᵏ⁺¹ − yᵏ⁺¹| ≤
+-- (k+1)·Bᵏ·|x−y| for |x|,|y| ≤ B (rational B≥0). Telescoping induction: abs-bound |xᵏ|≤Bᵏ (Rpow_abs_le,
+-- private) + mixed-product identity x·Px−y·Py = x·(Px−Py)+(x−y)·Py (mixed_id, private) give the step
+-- |xᵏ⁺²−yᵏ⁺²| ≤ B·((k+1)·Bᵏ·|x−y|) + |x−y|·Bᵏ⁺¹ = (k+2)·Bᵏ⁺¹·|x−y|. The polynomial-factor continuity
+-- (cⁿ⁺¹ vs q_kⁿ⁺¹, B=S) the real-scale covariance capstone consumes alongside mellinHat_scale_split.
+-- General Bishop-real primitive; no covariance, no positivity, no crux.
+#print axioms Analysis.Rpow_base_lip
 #print axioms Analysis.genSum_const_zero
 #print axioms Analysis.CdigammaTerm_one_eq_zero
 #print axioms Analysis.CDigammaCore_one_eq_zero
