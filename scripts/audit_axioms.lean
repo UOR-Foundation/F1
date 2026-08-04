@@ -7631,6 +7631,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.mulConvR_S_indep
 #print axioms Square.twTerm_mulConv_S_indep
 
+-- The convolution's Mellin tail-term factored onto the dilated-tail form (new
+-- Square/TwTermMulConvDilated.lean). dilTail_ptw: the swapped outer test's value at each t equals the
+-- dilated-tail integrand (g·clampedInv)·twTerm(dilateTestR (clampedInv a t) f) n m — coupOuterTestSwap_gpull
+-- (g-pullout) composed with dilMellinF_eq_twTerm (the inert-clamped inner x-integral on [m+1,m+2]⊆[0,S]).
+-- twTerm_mulConv_dilated: for m+2 ≤ S, twTerm (mulConvRTest f g S) n m = ∫_t (g(t)·(1/max(t,a)))·
+-- twTerm(dilateTestR (1/max(t,a)) f) n m dt — the per-window bridge from the convolution side onto the
+-- dilation-covariance side (mellinConv_fubini + riemannIntegralI_congr via dilTail_ptw). NO ∫_t
+-- reconstruction of M[g], NO half-line assembly, NO covariance application, NO factorization
+-- M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.dilTail_ptw
+#print axioms Square.twTerm_mulConv_dilated
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
