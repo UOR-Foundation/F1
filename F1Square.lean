@@ -290,6 +290,7 @@ import F1Square.Analysis.IntegralEval
 import F1Square.Analysis.AffineIntegral
 import F1Square.Analysis.ClampedInv
 import F1Square.Analysis.ClampedInvLower
+import F1Square.Analysis.MulConvRDecay
 import F1Square.Analysis.ExpBounds
 import F1Square.Analysis.HarmonicLog
 import F1Square.Analysis.TentLogPiece

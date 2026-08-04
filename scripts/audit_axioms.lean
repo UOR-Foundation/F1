@@ -4250,6 +4250,17 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.ofQ_inv_le_Rinv
 #print axioms Analysis.Rle_qClampQ_ofQ
 #print axioms Analysis.ofQ_inv_le_clampedInv
+
+-- The multiplicative convolution inherits f's window decay (new Analysis/MulConvRDecay.lean).
+-- mulConvR_window_decay: if |f(y)| ≤ Cf/(k+1)^{n+2} whenever |y| ≥ k+1, then for x on window [m+1,m+2]
+-- and a t-window [lo,lo+w] ⊆ (0,1] (a ≤ 1), |mulConvR f g x| ≤ w·M_g·(1/a)·Cf/(m+1)^{n+2}. On the
+-- window the clamped reciprocal 1/max(t,a) ≥ 1 (ofQ_inv_le_clampedInv at B=1), so the argument
+-- x·(1/max(t,a)) ≥ x ≥ m+1 clears the INTEGER threshold (no floors); f's decay + the pointwise product
+-- bound × M_g × 1/a integrate via riemannIntegralI_abs_le_window. The analytic heart of the half-line
+-- assembly (mellinHat(f⋆g) converges only if the convolution's windows decay); f-decay is an explicit
+-- hypothesis. NO half-line assembly, NO generalized tail, NO factorization M[f⋆g]=M[f]·M[g], NO
+-- positivity, NO crux; the general t-window-past-1 case is separate.
+#print axioms Analysis.mulConvR_window_decay
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
