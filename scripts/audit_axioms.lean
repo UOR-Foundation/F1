@@ -4430,6 +4430,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.dilIntegrand_fcX
 #print axioms Square.coupOuterTestSwap_gpull
 #print axioms Square.mellinConv_gpull
+-- The FIRST evaluation of dilMellinF (new Square/DilMellinFEval.lean): dilMellinF_eq_pairing — on any
+-- window [xlo,xlo+xw] ⊆ [0,S] the clamp qBandQ 0 S inside dilIntegrand is inert, so
+-- dilMellinF f ψ S a t = innerIonI (dilateTestR (clampedInv a t) f) ψ [xlo,xlo+xw], the clean interval
+-- L² pairing of the real-scale dilated test against ψ. Strips the clamp and lands dilMellinF on the
+-- pairing/dilation-covariance machinery (the next factorization step reads the covariance off this).
+-- Content = qBandQ_eq_of_band on the affine window point + Rmul_comm, across two integrand moduli via
+-- riemannIntegralI_congr_unit_mod. NO covariance, NO half-line assembly, NO factorization, NO crux.
+#print axioms Square.dilMellinF_eq_pairing
 
 -- The per-window rational-scale Mellin dilation (new Square/MellinWindowDilate.lean): the FIRST
 -- sub-brick of the eventual dilation covariance. For rational s>0 and a window [lo,lo+w],

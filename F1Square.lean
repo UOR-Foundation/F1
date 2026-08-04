@@ -394,6 +394,7 @@ import F1Square.Square.ConvMellinIntegrand
 import F1Square.Square.MellinConv
 import F1Square.Square.MellinConvFubini
 import F1Square.Square.MellinConvGPull
+import F1Square.Square.DilMellinFEval
 import F1Square.Square.MellinWindowDilate
 import F1Square.Square.MellinConvInt
 import F1Square.Square.WindowPower
