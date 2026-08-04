@@ -5373,6 +5373,15 @@ open UOR.Bridge.F1Square
 -- assembly (=mellinHat), no covariance, no factorization, no positivity, no crux.
 #print axioms Square.twTail_scale_split
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatScaleCont.lean) — the MELLIN TRANSFORM is SCALE-CONTINUOUS
+-- (split-at-depth): |mellinHat(dilateTestR c φ) n − mellinHat(dilateTestR c' φ) n| ≤
+-- (φ.L + Σ_{m<N_j} φ.L·(m+2)·(powWinTest m n).M)·|c−c'| + 4/(j+1), N_j = digammaMidx(C·2ⁿ) j, every j.
+-- mellinHat = mellinMoment + twTail: moment φ.L-Lipschitz (mellinMoment_scale_lipschitz) + tail split
+-- (twTail_scale_split); Rsub_Radd_Radd + Rabs_Radd split the sum, Rmul_distrib_right factors |c−c'|. As
+-- j→∞, c'→c the bound →0 = full Mellin scale-continuity. The engine the real-scale covariance capstone
+-- passes to the limit. No covariance, no factorization, no positivity, no crux.
+#print axioms Square.mellinHat_scale_split
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
