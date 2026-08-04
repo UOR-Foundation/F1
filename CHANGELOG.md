@@ -6,6 +6,25 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The twisted tail is scale-continuous (split-at-depth bound)** (new `Square/TwTailScaleCont.lean`):
+  the twisted tail `twTail (dilateTestR c φ) n` varies continuously in the real dilation scale `c`. For
+  every schedule depth `j`,
+
+      `|twTail (dilateTestR c φ) n − twTail (dilateTestR c' φ) n|`
+      `      ≤ (Σ_{m<N_j} φ.L·(m+2)·(powWinTest m n).M)·|c − c'| + 4/(j+1)`,   `N_j = digammaMidx (C·2ⁿ) j`
+
+  (`twTail_scale_split`). As `j → ∞` and `c' → c` the right-hand side → 0, so the tail is continuous in
+  the scale. **No uniform-in-scale decay hypothesis is needed**: `twTail (dilate_c φ) n` is the `Rlim` of
+  the finite partial sums, and the `j`-th partial sum is within `2/(j+1)` of that `Rlim` by the abstract
+  Bishop-completeness rate (`Rabs_dist_Rlim`) — a bound uniform in the scale `c` — so the tail remainders
+  of the two `twTail`s are each `≤ 2/(j+1)` with no extra hypothesis; the middle finite-head difference is
+  the committed `genSum_twTerm_scale_lipschitz`, assembled by a three-term triangle. The per-window
+  constant growing with `m` is irrelevant — the tail beyond depth `j` is controlled by the limit rate,
+  not by summing the per-window bounds. **Honest scope**: the split-at-depth tail-continuity estimate only
+  — NO compact+tail assembly (that is `mellinHat`), NO real-scale covariance, NO factorization, NO
+  half-line assembly, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity) is RH;
+  crux `none`.
+
 - **Tendsto ⟹ per-index real closeness, and its Lipschitz image** (new `Analysis/RTendsToClose.lean`):
   two general Bishop-real convergence primitives. `RTendsTo X L` is a sequence-level predicate
   (`∀ k n, |X_k.seq n − L.seq n| ≤ 2/(k+1) + 2/(n+1)`); `RTendsTo_imp_close` reads off the real statement

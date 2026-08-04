@@ -415,6 +415,7 @@ import F1Square.Square.WindowMomentScaleLip
 import F1Square.Square.TwTermScaleLip
 import F1Square.Square.TailPartialScaleLip
 import F1Square.Square.DilateTestBridge
+import F1Square.Square.TwTailScaleCont
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv

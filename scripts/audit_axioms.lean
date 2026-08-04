@@ -5363,6 +5363,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.twTail_bridge
 #print axioms Square.mellinHat_bridge
 
+-- THE PRE-HILBERT LAYER (Square/TwTailScaleCont.lean) — the twisted tail is SCALE-CONTINUOUS (split-at-depth):
+-- |twTail(dilateTestR c φ) n − twTail(dilateTestR c' φ) n| ≤ (Σ_{m<N_j} φ.L·(m+2)·(powWinTest m n).M)·|c−c'|
+-- + 4/(j+1), N_j = digammaMidx(C·2ⁿ) j, for EVERY depth j. Three-term triangle through the two j-th partial
+-- sums: each twTail is within 2/(j+1) of its own partial sum by the UNIFORM Bishop-limit rate
+-- (Rabs_dist_Rlim, scale-independent), middle = genSum_twTerm_scale_lipschitz (finite head). NO uniform-in-
+-- scale decay hypothesis needed — the tail beyond depth j is controlled by the limit rate, not by summing
+-- the growing per-window constants. As j→∞, c'→c the bound →0 = whole-tail continuity. No compact+tail
+-- assembly (=mellinHat), no covariance, no factorization, no positivity, no crux.
+#print axioms Square.twTail_scale_split
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
