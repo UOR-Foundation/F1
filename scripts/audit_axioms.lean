@@ -7590,6 +7590,16 @@ open UOR.Bridge.F1Square
 -- factorization, no crux.
 #print axioms Square.riwI_eq_of_bound
 
+-- The real-scale moment covariance (new Square/RiwIMomentCovariance.lean): riwI_moment_covariance —
+-- riwI (f·powBandGen_{[0,B]}) qk … = cⁿ⁺¹·mellinMoment(dilateTestR c f) n along a fast positive rational
+-- diagonal qk → c. Discharges the hbound input of riwI_eq_of_bound, mirroring covComb_hbound_of_fast: per
+-- approximant qk(m k), riwSeq(m k) = (qk m k)ⁿ⁺¹·mellinMoment(dilate_{qk m k} f) (riwSeq_term_eq_moment) ≈
+-- H(ofQ qk m k) (Rpow_ofQ + mellinMoment_bridge, dilateTest→dilateTestR), and |H(qk m k)−H(c)| ≤ Lip·|qk m k −c|
+-- (moment_covComb_scale_lip) driven under 2/(k+1) by Qmul_recip_le with the momIdx rational schedule. The one
+-- rate input hconv is FREE for qk(m k)=c.seq(momIdx…) via Rabs_sub_seq_le at positive c; hqk_B/hqk_mS are band/ball
+-- slack. Pure Req — NO positivity, NO factorization, NO half-line assembly, NO step-4 positivity (RH). Crux none.
+#print axioms Square.riwI_moment_covariance
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting

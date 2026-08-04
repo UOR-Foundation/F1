@@ -489,6 +489,7 @@ import F1Square.Square.RealWindowIntegral
 import F1Square.Square.RiwSeqMoment
 import F1Square.Square.MomentCovLip
 import F1Square.Square.RiwILimit
+import F1Square.Square.RiwIMomentCovariance
 import F1Square.Square.IntervalTelescope
 import F1Square.Square.HalfLineExhaustion
 import F1Square.Square.ImproperScheduleIndep
