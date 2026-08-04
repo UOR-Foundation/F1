@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The twisted-tail finite partial sum is Lipschitz in the real dilation scale** (new
+  `Square/TailPartialScaleLip.lean`): the finite head `genSum (twTerm (dilateTestR c φ) n) N` of the
+  twisted tail is Lipschitz in the real scale `c`, with the finite `N`-dependent constant
+  `Σ_{m<N} φ.L·(m+2)·(powWinTest m n).M`:
+
+      `|genSum (twTerm (dilateTestR c φ) n) N − genSum (twTerm (dilateTestR c' φ) n) N|`
+      `      ≤ (Σ_{m<N} φ.L·(m+2)·(powWinTest m n).M) · |c − c'|`
+
+  (`genSum_twTerm_scale_lipschitz`). Composes the atomic per-window bound `twTerm_scale_lipschitz` across
+  the sum: `genSum_Rsub` (difference of sums = sum of differences), a `genSum` finite triangle
+  (`genSum_Rabs_le`, private, the `genSum` analog of `RsumN_Rabs_le`), `genSum_le_genSum` (per-window
+  Lipschitz bound), `genSum_Rmul_const_right` (pull the common `|c−c'|` out). **The wall**: the
+  per-window constant `φ.L·(m+2)·(powWinTest m n).M` grows with `m`, so the partial-sum constant grows
+  with `N` and does NOT converge — the whole tail `twTail (dilate_c φ) n` is therefore NOT Lipschitz in
+  `c` this way; whole-tail scale-continuity would additionally need a uniform-in-scale decay bound
+  controlling the `m ≥ N` remainder (the unbuilt analytic wall). **Honest scope**: Lipschitz-in-scale of
+  the FINITE partial sum only, `N`-growing constant — NO whole-tail continuity, NO half-line real-scale
+  covariance, NO factorization, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling positivity)
+  is RH; crux `none`.
+
 - **The twisted-tail term is Lipschitz in the real dilation scale** (new
   `Square/TwTermScaleLip.lean`): the per-window twisted-tail term
   `twTerm (dilateTestR c φ) n m = ∫_{[m+1, m+2]}(φ(c·x)·powWinTest m n)` is Lipschitz in the real scale

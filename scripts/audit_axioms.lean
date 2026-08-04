@@ -5330,6 +5330,16 @@ open UOR.Bridge.F1Square
 -- factorization, no positivity, no crux.
 #print axioms Square.twTerm_scale_lipschitz
 
+-- THE PRE-HILBERT LAYER (Square/TailPartialScaleLip.lean) — the twisted-tail FINITE PARTIAL SUM is
+-- LIPSCHITZ IN THE REAL SCALE: |genSum(twTerm(dilateTestR c φ) n) N − genSum(twTerm(dilateTestR c' φ) n) N|
+-- ≤ (Σ_{m<N} φ.L·(m+2)·(powWinTest m n).M)·|c−c'|. Composes twTerm_scale_lipschitz across the sum:
+-- genSum_Rsub (diff of sums = sum of diffs) + genSum_Rabs_le (finite triangle, private, = RsumN_Rabs_le
+-- for genSum) + genSum_le_genSum (per-window bound) + genSum_Rmul_const_right (pull |c−c'| out). THE WALL:
+-- per-window const GROWS with m ⇒ partial-sum const grows with N ⇒ NOT convergent ⇒ whole tail is NOT
+-- Lipschitz; whole-tail CONTINUITY needs a uniform-in-scale decay remainder bound (unbuilt). No half-line
+-- covariance, no factorization, no positivity, no crux.
+#print axioms Square.genSum_twTerm_scale_lipschitz
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
