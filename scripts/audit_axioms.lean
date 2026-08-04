@@ -5299,6 +5299,18 @@ open UOR.Bridge.F1Square
 -- extension, no factorization, no half-line, no positivity, no crux.
 #print axioms Square.general_window_dilate
 
+-- THE PRE-HILBERT LAYER (Square/MellinMomentScaleLip.lean) — the compact Mellin moment is LIPSCHITZ IN
+-- THE REAL DILATION SCALE: |mellinMoment(dilateTestR c φ) n − mellinMoment(dilateTestR c' φ) n| ≤
+-- φ.L·|c−c'|. dilateTestR c φ and dilateTestR c' φ share L=φ.L·S and M=φ.M (both scale-independent),
+-- so the two moment integrands sit at ONE common modulus l2L(dilateTestR c φ)(powTest n); the pointwise
+-- difference |φ(c·x)−φ(c'·x)|·|clamp01(x)ⁿ| ≤ φ.L·|c−c'|·|x|·1 is ≤ φ.L·|c−c'| on the unit window
+-- (|x|≤1, powTest_abs_le_one gives |clamp01(x)ⁿ|≤1), delivered by a [0,1]-window distance estimate
+-- (riemannIntegral_dist_le_unit, private — the w=1 analog of riemannIntegralI_dist_le_window). The
+-- continuity engine of the rung-6 rational→real scale extension of the half-line dilation covariance.
+-- No tail continuity, no half-line real-scale covariance, no factorization, no positivity, no crux.
+#print axioms Square.powTest_abs_le_one
+#print axioms Square.mellinMoment_scale_lipschitz
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

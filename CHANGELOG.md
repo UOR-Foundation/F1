@@ -6,6 +6,28 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The compact Mellin moment is Lipschitz in the real dilation scale** (new
+  `Square/MellinMomentScaleLip.lean`): for real scales `c, c'` each bounded by the rational `S`,
+
+      `|mellinMoment (dilateTestR c φ) n − mellinMoment (dilateTestR c' φ) n| ≤ φ.L · |c − c'|`
+
+  (`mellinMoment_scale_lipschitz`). This is the reusable **continuity engine of rung 6** — the
+  rational→real scale extension of the half-line dilation covariance. The half-line covariance
+  `s^(n+1)·mellinHat(dilate_s φ) = mellinHat φ` is already unconditional for a *rational* scale
+  (`mellinHat_dilate_covariance_uncond`); the factorization consumer `dilMellinF` carries a *real*
+  scale `clampedInv(a,t)`, and because the half-line is scale-invariant (no real-window barrier), the
+  extension goes by rational approximation `q_k → c` plus continuity of `mellinHat (dilate_· φ)` in the
+  scale. The key algebra: `dilateTestR c φ` and `dilateTestR c' φ` carry the SAME modulus `L = φ.L·S`
+  and bound `M = φ.M` (both independent of the scale), so their two moment integrands sit at one common
+  modulus `l2L (dilateTestR c φ) (powTest n)`, and the pointwise integrand difference
+  `|φ(c·x) − φ(c'·x)|·|clamp01(x)ⁿ| ≤ φ.L·|c−c'|·|x|·1` is `≤ φ.L·|c−c'|` on the unit window
+  (`|x| ≤ 1`; `powTest_abs_le_one` gives `|clamp01(x)ⁿ| ≤ 1`). The estimate is delivered by a reusable
+  `[0,1]`-window integral-distance lemma (`riemannIntegral_dist_le_unit`, the `w = 1` analog of
+  `riemannIntegralI_dist_le_window`, built here by two one-directional `riemannIntegral_le_unit`
+  comparisons against `∫₀¹(q+K) = ∫₀¹q + K`). **Honest scope**: Lipschitz-in-scale of the compact
+  `[0,1]` moment only — it builds NO tail continuity, NO half-line real-scale covariance, NO
+  factorization, NO half-line assembly, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling
+  positivity) is RH; crux `none`.
 - **The general-window rational-scale Mellin dilation covariance** (new
   `Square/GeneralWindowDilate.lean`): generalizes the committed `window_dilate_powBandGen` from the
   fixed integer window `[m+1, m+2]` to an ARBITRARY rational window `[lo, lo+w]` — the window
