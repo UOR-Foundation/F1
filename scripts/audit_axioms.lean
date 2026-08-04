@@ -7579,6 +7579,17 @@ open UOR.Bridge.F1Square
 -- (riwI = c^{n+1}·mellinMoment(dilateTestR c f)). No Rlim interchange yet, no factorization, no crux.
 #print axioms Square.moment_covComb_scale_lip
 
+-- The real-window integral is the limit of its partials (new Square/RiwILimit.lean): riwI_eq_of_bound —
+-- if the rational partials riwSeq φ' qk … (m k) approach a target L fast enough (|riwSeq(m k) − L| ≤
+-- C₀/(k+1) along a sub-index m with k ≤ m k), then riwI φ' qk … = L. Pure completeness: riwI = Rlim(riwSeq),
+-- so |riwI − riwSeq(m k)| ≤ 2/(m k+1) ≤ 2/(k+1) (Rabs_dist_Rlim + k ≤ m k); triangle with hbound gives
+-- |riwI − L| ≤ (2+C₀)/(k+1), a null family, closed by Req_of_real_null_family. The Rlim-interchange capstone:
+-- for L = c^{n+1}·mellinMoment(dilateTestR c f) n, hbound discharges from riwSeq_term_eq_moment +
+-- mellinMoment_bridge/Rpow_ofQ + moment_covComb_scale_lip along a fast diagonal, giving the real-scale moment
+-- covariance. hbound is an explicit dischargeable input (as in mellinHat_dilate_covariance_real). No
+-- factorization, no crux.
+#print axioms Square.riwI_eq_of_bound
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
