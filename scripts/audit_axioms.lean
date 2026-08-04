@@ -4273,6 +4273,17 @@ open UOR.Bridge.F1Square
 -- summable. f-decay is an explicit hypothesis; t-window is (0,1]. NO generalized tail, NO ∫_t
 -- reconstruction, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.convTwTerm_bound
+
+-- The clamp-free half-line Mellin transform of the convolution EXISTS (new Square/ConvMellinHat.lean).
+-- convTwTerm_two_sided: the ∧-form of convTwTerm_bound (Rneg_le_of_Rabs_le/Rle_of_Rabs_le) at modulus
+-- K = w·Cf·M_g·(1/a)·2ⁿ, the shape genSum_RReg consumes. Then (defs, no audit) convTwTail = Rlim of the
+-- genuine per-window twisted sums (twTerm at minimal clamp m+2, per-m; clamp-free by twTerm_mulConv_S_indep)
+-- via genSum_RReg fed by convTwTerm_two_sided — the convergent tail ∫₁^∞(f⋆g)·xⁿ; convMellinHat =
+-- mellinMoment(f⋆g) + convTwTail = M[f⋆g](n), the clamp-free half-line transform as a constructed real
+-- (mellinHat(mulConvRTest f g S) could NOT converge for fixed S — frozen tail). GOTCHA: explicit T in
+-- genSum_RReg (not _) to avoid whnf blowup from higher-order inference over the m-dependent mulConvRTest.
+-- NO factorization M[f⋆g]=M[f]·M[g] (the ∫_t reconstruction), NO positivity, NO crux.
+#print axioms Square.convTwTerm_two_sided
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
