@@ -5462,6 +5462,18 @@ open UOR.Bridge.F1Square
 -- NO factorization, NO grounding of v=ĝ, NO step-4 positivity (RH). Crux none.
 #print axioms Square.mellinHat_dilate_covariance_real_derived
 
+-- THE PRE-HILBERT LAYER (Square/CovCombHbound.lean) — the covariance continuity gap is a NULL FAMILY:
+-- covComb_hbound_of_fast discharges the last remaining hypothesis (hbound) of the real-scale dilation
+-- covariance. Given a rational sequence qk approximating c fast enough (|c−qk| ≤ 1/(covIdx k + 1) —
+-- FREE for qk k = c.seq(covIdx k) via Rabs_sub_seq_le), the covComb_scale_split gap is ≤ covC0/(k+1),
+-- exactly the hbound shape the Archimedean squeeze consumes. Mechanism: instantiate covComb at c'=qk,
+-- j=k; collapse the two genSum heads to rationals (genSum_ofQ); bound |c−qk| (hfast); drive under
+-- covC0/(k+1) with the rate inequalities Qmul_recip_le/Qmul_four_le, the index covIdx k chosen from the
+-- RATIONAL magnitude of the covComb coefficient. So hbound is no longer a standalone input; the covariance
+-- reduces to the per-approximant decay data alone. Object-grounding; NO factorization, NO grounding of
+-- v=ĝ, NO step-4 positivity (RH). Crux none.
+#print axioms Square.covComb_hbound_of_fast
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
