@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The common-refinement identity of the two uniform tilings** (new
+  `Square/PartialCommonRefine.lean`): for a rational scale `s = <p, q>` (`p = s.num > 0`, `q = s.den`),
+  the `s`-uniform partial sum equals the `(1/q)`-uniform partial sum evaluated at the shifted index
+  `p(N+1)-1`. Both partial sums (compact `[0, scale]` moment + finite scaled twisted tail) collapse via
+  the committed `uniform_partial_eq_cap` at their respective scales to a SINGLE cap integral — the
+  `s`-side to `int_0^{s(N+1)}`, the `(1/q)`-side to `int_0^{(1/q)·p(N+1)}`. Since
+  `s(N+1) = p(N+1)/q = (1/q)·p(N+1)` (`Qeq`, using `(p : Int) = s.num` from `Int.toNat_of_nonneg`, and
+  the index arithmetic `(p(N+1)-1)+1 = p(N+1)`), the two caps agree: the wide-band weights are
+  reconciled on the shared window `[0, s(N+1)]` by `riemannIntegralI_congr_unit_mod` (both `uⁿ`,
+  `powBandGen_eq_Rpow_on`), and the equal cap value by `riemannIntegralI_congr_Q`
+  (`partial_s_eq_partial_refine`). This is the step that lets rung 4b compare the two tilings' widths as
+  fast cofinal schedules of the SAME summand `scaledTwTerm φ (1/q)`. **Honest scope**: the finite
+  common-refinement identity — it builds NO `Rlim`, NO rung-4b application, NO width-comparison
+  completion, NO factorization, NO positivity, NO determinacy, NO crux. Step 4 (band-coupling
+  positivity) is RH; crux `none`. (Three worktree drafters all delivered the full identity; adversarial
+  verify confirmed the equality genuine with the correct shifted index, the cap-value `Qeq` real, the
+  reconciliations not fudged, non-smuggling.)
 - **The s-uniform-tiling partial sum as a single cap integral** (new `Square/UniformPartialCap.lean`):
   the first concrete step of the width comparison that discharges the tiling-independence hypothesis
   `htile`. The `s`-uniform improper Mellin integral is `int_0^s(φ·powBandGen) + Rlim(genSum

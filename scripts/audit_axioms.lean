@@ -5253,6 +5253,16 @@ open UOR.Bridge.F1Square
 -- Cauchy-at-infinity, NO schedule comparison, no positivity, no crux. (all helpers private.)
 #print axioms Square.uniform_partial_eq_cap
 
+-- THE PRE-HILBERT LAYER (Square/PartialCommonRefine.lean) — the common-refinement identity: for a
+-- rational scale s=<p,q> (p=s.num>0, q=s.den), the s-uniform partial sum equals the (1/q)-uniform
+-- partial sum at the shifted index p(N+1)-1, because both collapse (uniform_partial_eq_cap at each
+-- scale) to the SAME cap integral over [0, s(N+1)] (cap values s(N+1)=(1/q)·p(N+1) Qeq via ring_uor
+-- + (p:Int)=s.num; reconciled by riemannIntegralI_congr_unit_mod (both uⁿ) + riemannIntegralI_congr_Q).
+-- The step that lets rung 4b compare the two tilings' widths as fast cofinal schedules of the SAME
+-- genSum(scaledTwTerm φ (1/q)). No Rlim, no rung-4b application, no width-comparison completion, no
+-- positivity, no crux. (all helpers private.)
+#print axioms Square.partial_s_eq_partial_refine
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
