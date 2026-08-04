@@ -6,6 +6,20 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The real-scale Mellin dilation covariance with the rational covariance DERIVED** (new
+  `Square/MellinHatDilateCovarianceRealDerived.lean`): the real-scale covariance
+  `cⁿ⁺¹·mellinHat(dilateTestR c φ) = mellinHat φ` (`mellinHat_dilate_covariance_real_derived`), with the
+  "covariance holds at each rational approximant" hypothesis (`hcov` of the base capstone) now DERIVED
+  rather than assumed. It is discharged from the more primitive, checkable decay data — the
+  per-approximant bounds `hdec_qk`/`hdec_fine_qk` and the schedule regularity `hReg_qk` — through the
+  unconditional `covariance_at_rational_dilateTestR` (its scalar `ofQ (qpow q (n+1))` bridged to the
+  capstone's `Rpow (ofQ q) (n+1)` by `Rpow_ofQ`). So the covariance is no longer assumed on the rationals;
+  it is established there from the tiling-based unconditional covariance, and only `hbound` (the
+  fast-approximation continuity rate) remains an explicit input. **Honest scope**: object-grounding
+  substrate; `hbound` and the diagonal `q_k = c.seq(fast(k))` construction are the deferred plumbing. It
+  builds NO factorization theorem, NO grounding of `v = ĝ`, and NO step-4 band-coupling positivity
+  (`ArchDominatesPrime`), which is RH. The crux fields stay `none`.
+
 - **The real-scale Mellin dilation covariance** (new `Square/MellinHatDilateCovarianceReal.lean`): the
   unconditional rational-scale covariance `qⁿ⁺¹·mellinHat(dilate_q φ) = mellinHat φ` passed to a REAL
   scale `c` — the rung-6 goal of the transform bridge:

@@ -5438,6 +5438,15 @@ open UOR.Bridge.F1Square
 -- grounding v=ĝ); NOT step-4 band-coupling positivity (ArchDominatesPrime), which is RH. Crux none.
 #print axioms Square.mellinHat_dilate_covariance_real
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatDilateCovarianceRealDerived.lean) — the real-scale covariance
+-- with hcov DERIVED (not assumed): mellinHat_dilate_covariance_real_derived discharges the
+-- rational-scale covariance hcov from the primitive per-approximant decay data (hdec_qk/hdec_fine_qk/
+-- hReg_qk) via the unconditional covariance_at_rational_dilateTestR + the Rpow_ofQ scalar bridge
+-- (Rpow (ofQ q)(n+1) = ofQ(qpow q (n+1))). Only hbound (the fast-approximation continuity rate) remains
+-- an explicit input. Object-grounding; the deferred piece is the diagonal q_k=c.seq(fast(k)) construction.
+-- NO factorization, NO grounding of v=ĝ, NO step-4 positivity (RH). Crux none.
+#print axioms Square.mellinHat_dilate_covariance_real_derived
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
