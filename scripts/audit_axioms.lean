@@ -7549,6 +7549,16 @@ open UOR.Bridge.F1Square
 -- real-window integral yet, no covariance, no factorization, no crux.
 #print axioms Square.riemannIntegralI_upper_lip
 
+-- The real-upper-limit window integral (new Square/RealWindowIntegral.lean): riwI φ qk … =
+-- Rlim (fun k => ∫_0^{qk k} φ) — the partial integral ∫_0^c φ to a REAL upper limit c, along a supplied
+-- positive fast rational sequence qk → c. riwSeq_RReg: the partials are regular, via RReg_of_real_bound
+-- fed the upper-limit Lipschitz bound |∫_0^{qk j} − ∫_0^{qk k}| ≤ φ.M·|qk j − qk k| ≤ 1/(j+1)+1/(k+1)
+-- (both orderings by an ordering case split; last step = the supplied fast condition hqk_fast, a fast
+-- diagonal qk=c.seq(idx k) discharges it as in covComb_hbound_of_fast). The wall-breaker object for
+-- evaluating mellinMoment(dilateTestR c f) n = c^{-(n+1)}·∫_0^c (f·xⁿ) at real scale. NO covariance yet,
+-- NO factorization, NO crux.
+#print axioms Square.riwSeq_RReg
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
