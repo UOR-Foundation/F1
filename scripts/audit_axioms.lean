@@ -5474,6 +5474,15 @@ open UOR.Bridge.F1Square
 -- v=ĝ, NO step-4 positivity (RH). Crux none.
 #print axioms Square.covComb_hbound_of_fast
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatDilateCovarianceRealSeq.lean) — the real-scale covariance with
+-- hbound AUTO-DISCHARGED along the fast diagonal: mellinHat_dilate_covariance_real_seq fixes the
+-- approximant sequence to c.seq(covIdx k), so the fast-approximation input is free (Rabs_sub_seq_le) and
+-- hbound is discharged internally by covComb_hbound_of_fast. No separate hbound hypothesis remains — the
+-- covariance rests only on the per-approximant decay/positivity/regularity at the diagonal. The natural
+-- capstone of the hbound-discharge arc. Object-grounding; NO factorization, NO grounding of v=ĝ, NO
+-- step-4 positivity (RH). Crux none.
+#print axioms Square.mellinHat_dilate_covariance_real_seq
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
