@@ -422,6 +422,7 @@ import F1Square.Square.MellinHatScaleCont
 import F1Square.Square.CovarianceAtRational
 import F1Square.Square.MellinHatBound
 import F1Square.Square.CovCombScaleCont
+import F1Square.Square.MellinHatDilateCovarianceReal
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv

@@ -6,6 +6,25 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The real-scale Mellin dilation covariance** (new `Square/MellinHatDilateCovarianceReal.lean`): the
+  unconditional rational-scale covariance `qⁿ⁺¹·mellinHat(dilate_q φ) = mellinHat φ` passed to a REAL
+  scale `c` — the rung-6 goal of the transform bridge:
+
+      `cⁿ⁺¹ · mellinHat (dilateTestR c φ) n = mellinHat φ n`
+
+  (`mellinHat_dilate_covariance_real`). The rational-scale covariance holds at every rational `q`
+  (`covariance_at_rational_dilateTestR`) and the combination `F(c) = cⁿ⁺¹·mellinHat(dilateTestR c φ)` is
+  scale-continuous (`covComb_scale_split`); so `F` is a continuous function constant (`= mellinHat φ`) on
+  the rationals, and by rational density + the Archimedean squeeze (`Req_of_real_null_family`) it is
+  constant on all of `ℝ`. This is the passage the roadmap named — *the rational covariance can pass to
+  real scales* — now made. The two hypotheses `hcov` (rational-scale covariance at the approximants) and
+  `hbound` (the continuity gap is a null family — the approximants converge fast enough) are the honest,
+  dischargeable analytic inputs; **neither is RH-equivalent**. **Honest scope**: object-grounding
+  substrate for the convolution/Mellin factorization (evaluating the inner `x`-integral at a real scale,
+  toward grounding `v = ĝ`). It builds NO factorization theorem `M[f⋆g]=M[f]·M[g]` on its own, NO
+  grounding of `v = ĝ`, and — emphatically — NO step-4 band-coupling positivity (`ArchDominatesPrime`),
+  which is RH. The crux fields stay `none`.
+
 - **The Archimedean squeeze for Bishop reals** (new `Analysis/RealNullFamily.lean`): if two reals are
   within `C/(k+1)` of each other for EVERY `k`, they are equal —
 

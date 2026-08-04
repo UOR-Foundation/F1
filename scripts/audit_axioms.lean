@@ -5427,6 +5427,17 @@ open UOR.Bridge.F1Square
 -- no factorization, no positivity, no crux.
 #print axioms Square.covComb_scale_split
 
+-- THE PRE-HILBERT LAYER (Square/MellinHatDilateCovarianceReal.lean) — THE REAL-SCALE MELLIN DILATION
+-- COVARIANCE (rung-6 goal): cⁿ⁺¹·mellinHat(dilateTestR c φ) n = mellinHat φ n for a REAL scale c. The
+-- rational-scale covariance (covariance_at_rational_dilateTestR) holds at every rational q, and F(c)=
+-- cⁿ⁺¹·mellinHat(dilateTestR c φ) is scale-continuous (covComb_scale_split); so F is continuous +
+-- constant on the rationals ⟹ constant on ℝ, by the Archimedean squeeze Req_of_real_null_family.
+-- hcov (rational covariance at the approximants) and hbound (the continuity gap is a null family = the
+-- approximants converge fast enough) are the two explicit dischargeable analytic inputs, NEITHER RH-
+-- equivalent. OBJECT-GROUNDING substrate (evaluating the inner x-integral at a real scale toward
+-- grounding v=ĝ); NOT step-4 band-coupling positivity (ArchDominatesPrime), which is RH. Crux none.
+#print axioms Square.mellinHat_dilate_covariance_real
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
