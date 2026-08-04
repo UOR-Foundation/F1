@@ -5263,6 +5263,16 @@ open UOR.Bridge.F1Square
 -- positivity, no crux. (all helpers private.)
 #print axioms Square.partial_s_eq_partial_refine
 
+-- THE PRE-HILBERT LAYER (Square/PartialCoarseRefine.lean) — the GENERAL common-refinement: for a
+-- fine scale and a positive integer k, the (fine·k)-uniform partial sum equals the fine-uniform
+-- partial sum at the shifted index k(N+1)-1, because both collapse (uniform_partial_eq_cap at each
+-- scale) to the SAME cap integral over [0, (fine·k)(N+1)] (cap value Qeq: coarse.num=fine.num·k,
+-- coarse.den=fine.den; (k(N+1)-1)+1=k(N+1) needs k>0; reconciled by congr_unit_mod + congr_Q).
+-- Generalizes partial_s_eq_partial_refine to cover BOTH the s-side (k=p) and the 1-side (k=q) of the
+-- width comparison. No Rlim, no rung-4b application, no width-comparison completion, no positivity,
+-- no crux. (all helpers private, file-scoped.)
+#print axioms Square.partial_coarse_refine
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

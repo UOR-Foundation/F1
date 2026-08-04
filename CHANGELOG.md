@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The general common-refinement identity of two uniform tilings** (new
+  `Square/PartialCoarseRefine.lean`): for a fine rational scale `fine` and a positive integer `k`, the
+  coarse scale `coarse := fine·k` has its `coarse`-uniform partial sum equal to the `fine`-uniform
+  partial sum evaluated at the shifted index `k(N+1)-1`. Both collapse via the committed
+  `uniform_partial_eq_cap` at their respective scales to the SAME cap integral over `[0, coarse(N+1)]`:
+  since `coarse(N+1) = fine·k(N+1)` (`Qeq`, because `coarse.num = fine.num·k`, `coarse.den = fine.den`,
+  and `(k(N+1)-1)+1 = k(N+1)` — the index shift correct exactly because `k > 0`), the caps agree, the
+  wide-band weights reconciled on the shared window by `riemannIntegralI_congr_unit_mod` (both `uⁿ`)
+  and the cap value by `riemannIntegralI_congr_Q` (`partial_coarse_refine`). This generalizes the
+  committed `partial_s_eq_partial_refine` (its case `fine = 1/s.den`, `k = s.num.toNat`, `coarse = s`)
+  so that it applies to BOTH the `s`-side (`fine = 1/q`, `k = p`, `coarse = s`) AND the `1`-side
+  (`fine = 1/q`, `k = q`, `coarse = 1`) of the width comparison — the two refinements needed to
+  discharge `htile`. **Honest scope**: the general finite common-refinement identity — it builds NO
+  `Rlim`, NO rung-4b application, NO width-comparison completion, NO factorization, NO positivity, NO
+  determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`. (Three worktree drafters
+  all delivered the full identity; adversarial verify confirmed the equality genuine with `k > 0`
+  load-bearing, the cap-value `Qeq` real, the reconciliations not fudged, non-smuggling — with an
+  injected-`False` sanity check confirming real elaboration.)
 - **The common-refinement identity of the two uniform tilings** (new
   `Square/PartialCommonRefine.lean`): for a rational scale `s = <p, q>` (`p = s.num > 0`, `q = s.den`),
   the `s`-uniform partial sum equals the `(1/q)`-uniform partial sum evaluated at the shifted index
