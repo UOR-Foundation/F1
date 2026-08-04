@@ -4261,6 +4261,18 @@ open UOR.Bridge.F1Square
 -- hypothesis. NO half-line assembly, NO generalized tail, NO factorization M[f⋆g]=M[f]·M[g], NO
 -- positivity, NO crux; the general t-window-past-1 case is separate.
 #print axioms Analysis.mulConvR_window_decay
+
+-- The convolution's Mellin tail-term in genSum-ready decay form (new Square/ConvTwTermBound.lean).
+-- convTwTerm_bound: for a t-window ⊆ (0,1] (a ≤ 1) and f with order-(n+2) window decay, the m-th twisted
+-- tail term of the convolution's Mellin transform at the minimal window-clearing clamp S=m+2 satisfies
+-- |twTerm (mulConvRTest f g (m+2)) n m| ≤ (w·Cf·M_g·(1/a)·2ⁿ)/((m+1)·m) — the (C·2ⁿ)/((m+1)m) shape
+-- genSum_RReg consumes. Mirrors twTerm_bound's single-window logic: clamp-strip on [m+1,m+2]
+-- (qBandQ_eq_of_band + mulConvR_congr) → mulConvR_window_decay → twist ×powWinTest.M ≤ (m+2)ⁿ + collapse
+-- (m+2)ⁿ/(m+1)^{n+2} ≤ 2ⁿ/((m+1)m) via riemannIntegralI_abs_le_window (cd_pow_core/cd_collapse reproved
+-- inline, MellinHat's are private). So the genuine (clamp-free, twTerm_mulConv_S_indep) per-window value is
+-- summable. f-decay is an explicit hypothesis; t-window is (0,1]. NO generalized tail, NO ∫_t
+-- reconstruction, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.convTwTerm_bound
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
