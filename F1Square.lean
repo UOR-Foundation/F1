@@ -486,6 +486,7 @@ import F1Square.Square.IntervalSplitAt
 import F1Square.Square.IntervalSplitAtCap
 import F1Square.Square.IntervalUpperLip
 import F1Square.Square.RealWindowIntegral
+import F1Square.Square.RiwSeqMoment
 import F1Square.Square.IntervalTelescope
 import F1Square.Square.HalfLineExhaustion
 import F1Square.Square.ImproperScheduleIndep

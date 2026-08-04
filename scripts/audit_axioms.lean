@@ -7559,6 +7559,16 @@ open UOR.Bridge.F1Square
 -- NO factorization, NO crux.
 #print axioms Square.riwSeq_RReg
 
+-- The real-window partial evaluates as a scaled moment (new Square/RiwSeqMoment.lean):
+-- riwSeq_term_eq_moment — ∫_0^s (f·powBandGen_{[0,B]}) = s^(n+1)·mellinMoment(dilate_s f) n for rational
+-- s>0 with s+1≤B (window under the fixed band). Three known-lemma steps onto the built mellinMoment_dilate:
+-- riemannIntegralI_congr_Q (bridge window [⟨0,1⟩,s] → [mul s ⟨0,1⟩, mul s ⟨1,1⟩], Qeq windows) then
+-- riemannIntegralI_congr_unit_mod (swap fixed band [0,B] → [0,s+1] on [0,s]; both weights = Rpow p n via
+-- powBandGen_eq_Rpow_on) then mellinMoment_dilate. Evaluates each riwSeq term at the FIXED-band twist weight;
+-- passing the Rlim gives the real-scale moment covariance mellinMoment(dilateTestR c f)=c^{-(n+1)}·riwI. No
+-- Rlim interchange yet, no factorization, no crux.
+#print axioms Square.riwSeq_term_eq_moment
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
