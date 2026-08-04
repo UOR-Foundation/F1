@@ -555,6 +555,13 @@ open UOR.Bridge.F1Square
 -- capstone's final step (F continuous + F const on rationals ⟹ F(c) = mellinHat φ). General Bishop-real
 -- lemma; no covariance, no positivity, no crux.
 #print axioms Analysis.Req_of_real_null_family
+-- genSum of embedded rationals collapses to one embedded rational (new Analysis/GenSumOfQ.lean):
+-- genSum (fun i => ofQ (g i)) N ≈ ofQ (qGenSum g N), qGenSum the rational partial sum mirroring
+-- genSum term-for-term. Exposes the Mellin scale-continuity "head" Σ_{m<N} φ.L·(m+2)·(powWinTest m n).M
+-- as a concrete rational H_N, the key that lets a rational index schedule drive the covariance
+-- continuity gap to 0 (discharging hbound). Substrate finite-sum identity; no analysis, no crux.
+#print axioms Analysis.genSum_ofQ
+#print axioms Analysis.qGenSum_den
 #print axioms Analysis.genSum_const_zero
 #print axioms Analysis.CdigammaTerm_one_eq_zero
 #print axioms Analysis.CDigammaCore_one_eq_zero
