@@ -7540,6 +7540,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegral_split_at_unit
 #print axioms Square.riemannIntegralI_split_at
 
+-- The window integral is Lipschitz in its upper limit (new Square/IntervalUpperLip.lean):
+-- riemannIntegralI_upper_lip — |∫_0^q φ − ∫_0^{q'} φ| ≤ (q−q')·φ.M for rational q ≥ q' > 0, via
+-- riemannIntegralI_split_at (∫_0^q = ∫_0^{q'} + ∫_{q'}^q, difference = the tail) + the window bound
+-- riemannIntegralI_abs_le_window. The continuity of the partial integral q ↦ ∫_0^q φ in the upper
+-- limit — the primitive that lets the REAL-upper-limit window integral ∫_0^c φ be built as the Rlim of
+-- rational partials (the wall-breaker for evaluating mellinMoment(dilateTestR c f) at real scale). No
+-- real-window integral yet, no covariance, no factorization, no crux.
+#print axioms Square.riemannIntegralI_upper_lip
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
