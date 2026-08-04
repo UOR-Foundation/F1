@@ -562,6 +562,14 @@ open UOR.Bridge.F1Square
 -- continuity gap to 0 (discharging hbound). Substrate finite-sum identity; no analysis, no crux.
 #print axioms Analysis.genSum_ofQ
 #print axioms Analysis.qGenSum_den
+-- Rate-arithmetic core for the covariance null family (new Analysis/CovRateQ.lean): two elementary
+-- rational inequalities. Qmul_recip_le — a nonneg rational a scaled by 1/(idx+1) is ≤ 1/D once
+-- idx clears a·D (a.num·D < idx+1 ⟹ a/(idx+1) ≤ 1/D). Qmul_four_le — a nonneg P times the fixed
+-- 4/(k+1) weight is ≤ ⌈4P⌉/(k+1). Together they bound the covComb continuity gap by C₀/(k+1) (the
+-- null-family shape the Archimedean squeeze needs to discharge hbound). Rational inequalities; no
+-- reals, no analysis, no crux.
+#print axioms Analysis.Qmul_recip_le
+#print axioms Analysis.Qmul_four_le
 #print axioms Analysis.genSum_const_zero
 #print axioms Analysis.CdigammaTerm_one_eq_zero
 #print axioms Analysis.CDigammaCore_one_eq_zero
