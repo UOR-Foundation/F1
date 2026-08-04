@@ -7569,6 +7569,16 @@ open UOR.Bridge.F1Square
 -- Rlim interchange yet, no factorization, no crux.
 #print axioms Square.riwSeq_term_eq_moment
 
+-- The moment covariance combination is scale-Lipschitz (new Square/MomentCovLip.lean):
+-- moment_covComb_scale_lip — H(c)=cⁿ⁺¹·mellinMoment(dilateTestR c f) n is Lipschitz in the real scale c:
+-- |H(c)−H(c')| ≤ Sⁿ⁺¹·(f.L·(powTest n).M)·|c−c'| + (f.M/(n+1))·((n+1)Sⁿ)·|c−c'|. The MOMENT analog of
+-- covComb_scale_split, but NO tail (clean single Lipschitz). mixed-product split cⁿ⁺¹·(M_c−M_c') +
+-- (cⁿ⁺¹−c'ⁿ⁺¹)·M_c': first = Sⁿ⁺¹ × moment scale-continuity (window_moment_scale_lipschitz, bridged
+-- [0,1]-interval→mellinMoment by riemannIntegralI_unit), second = moment bound (mellinMoment_abs_le,
+-- f.M/(n+1) scale-independent) × Rpow_base_lip. The continuity for the Rlim-interchange capstone
+-- (riwI = c^{n+1}·mellinMoment(dilateTestR c f)). No Rlim interchange yet, no factorization, no crux.
+#print axioms Square.moment_covComb_scale_lip
+
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
 -- ∫_{[c 0, c N]} f, a pure finite-additivity induction driven by riemannIntegralI_split_at (splitting
