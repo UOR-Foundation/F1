@@ -5321,6 +5321,15 @@ open UOR.Bridge.F1Square
 -- uniform-in-scale decay across windows, unbuilt), no half-line covariance, no factorization, no crux.
 #print axioms Square.window_moment_scale_lipschitz
 
+-- THE PRE-HILBERT LAYER (Square/TwTermScaleLip.lean) — the twisted-tail term is LIPSCHITZ IN THE REAL
+-- SCALE: |twTerm(dilateTestR c φ) n m − twTerm(dilateTestR c' φ) n m| ≤ φ.L·(m+2)·(powWinTest m n).M·|c−c'|.
+-- A direct instance of window_moment_scale_lipschitz at ψ=powWinTest m n, integer window [m+1,m+2]
+-- (lo=m+1, w=1), constant simplified (w=1 drops, (m+1)+1=m+2 via ofQ_congr Qeq). The atomic per-window
+-- continuity of the twisted tail; whole-tail continuity needs a UNIFORM-in-scale decay across the ∞
+-- windows (per-window const GROWS with m, NOT summable) — unbuilt wall. No half-line covariance, no
+-- factorization, no positivity, no crux.
+#print axioms Square.twTerm_scale_lipschitz
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

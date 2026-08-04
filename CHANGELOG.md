@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The twisted-tail term is Lipschitz in the real dilation scale** (new
+  `Square/TwTermScaleLip.lean`): the per-window twisted-tail term
+  `twTerm (dilateTestR c φ) n m = ∫_{[m+1, m+2]}(φ(c·x)·powWinTest m n)` is Lipschitz in the real scale
+  `c` with the rational constant `φ.L·(m+2)·(powWinTest m n).M`:
+
+      `|twTerm (dilateTestR c φ) n m − twTerm (dilateTestR c' φ) n m| ≤ (φ.L·(m+2)·(powWinTest m n).M)·|c − c'|`
+
+  (`twTerm_scale_lipschitz`). A direct instance of `window_moment_scale_lipschitz` at the weight
+  `ψ = powWinTest m n` and the integer window `[m+1, m+2]` (`lo = m+1`, `w = 1`), with the constant
+  simplified (`w = 1` factor drops; `(m+1)+1 = m+2` via `ofQ_congr` on a `Qeq`). This is the atomic
+  per-window continuity fact of the twisted tail `twTail (dilate_c φ) n` (an `Rlim` of finite sums of
+  these terms). **Honest scope**: Lipschitz-in-scale of ONE twisted-tail window term only — it builds
+  NO whole-tail continuity (that additionally needs a uniform-in-scale decay bound across the infinitely
+  many windows, since the per-window constant grows with `m` and is not summable — the unbuilt wall),
+  NO half-line real-scale covariance, NO factorization, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`.
+
 - **General-window scale-Lipschitz of a dilated-test window integral** (new
   `Square/WindowMomentScaleLip.lean`): the window integral `c ↦ ∫_{[lo, lo+w]} φ(c·x)·ψ(x) dx` (real
   scale `c` INSIDE the test `φ`, arbitrary weight test `ψ`, rational window `[lo, lo+w]` with `lo ≥ 0`) is

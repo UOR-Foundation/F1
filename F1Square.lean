@@ -412,6 +412,7 @@ import F1Square.Square.HtileDischarge
 import F1Square.Square.GeneralWindowDilate
 import F1Square.Square.MellinMomentScaleLip
 import F1Square.Square.WindowMomentScaleLip
+import F1Square.Square.TwTermScaleLip
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv
