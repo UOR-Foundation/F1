@@ -16,10 +16,10 @@ approximant `qk (m k)`:
    (`dilateTest` → `dilateTestR`).
 3. `|riwSeq (m k) − cⁿ⁺¹·M(c)| = |H(ofQ (qk (m k))) − H(c)| ≤ Lip·|c − qk (m k)|`
    (`moment_covComb_scale_lip`), and the two coefficient·rate terms are driven under `2/(k+1)` by the
-   rational index schedule `momIdx` (`Qmul_recip_le`), exactly as `covIdx` does.
+   rational index schedule `momCovIdx` (`Qmul_recip_le`), exactly as `covIdx` does.
 
-The fast condition `hconv` (`|c − qk (m k)| ≤ 1/(momIdx k + 1)`) is a supplied, dischargeable input —
-free for the diagonal `qk (m k) = c.seq (momIdx …)` via `Rabs_sub_seq_le` at a positive real `c`
+The fast condition `hconv` (`|c − qk (m k)| ≤ 1/(momCovIdx k + 1)`) is a supplied, dischargeable input —
+free for the diagonal `qk (m k) = c.seq (momCovIdx …)` via `Rabs_sub_seq_le` at a positive real `c`
 (`hqk_pos`), with the window/band data `hqk_B`, `hqk_mS` standard approximation slack. No RH-equivalent
 hypothesis is assumed.
 
@@ -50,23 +50,23 @@ set_option maxHeartbeats 4000000
 -- ===========================================================================
 
 /-- The fixed-band twist weight `f · powBandGen_{[0,B]}ⁿ` whose real-window integral is the moment. -/
-private def bandTwistTest (f : L2Test) (B : Q) (hBd : 0 < B.den) (hleB : Qle (⟨0, 1⟩ : Q) B) (n : Nat) :
+def bandTwistTest (f : L2Test) (B : Q) (hBd : 0 < B.den) (hleB : Qle (⟨0, 1⟩ : Q) B) (n : Nat) :
     L2Test :=
   L2Test.mul f (powBandGen (⟨0, 1⟩ : Q) B (by decide) hBd hleB (by decide) n)
 
 /-- The first Lipschitz coefficient of `|c − c'|` from `moment_covComb_scale_lip`:
     `Sⁿ⁺¹ · (1·(f.L·(0+1)·(powTest n).M))`. -/
-private def momCoeff1 (f : L2Test) (S : Q) (n : Nat) : Q :=
+def momCoeff1 (f : L2Test) (S : Q) (n : Nat) : Q :=
   mul (qpow S (n + 1))
     (mul (⟨1, 1⟩ : Q) (mul (mul f.L (add (⟨0, 1⟩ : Q) (⟨1, 1⟩ : Q))) (powTest n).M))
 
 /-- The second Lipschitz coefficient of `|c − c'|`: `(f.M/(n+1)) · ((n+1)·Sⁿ)`. -/
-private def momCoeff2 (f : L2Test) (S : Q) (n : Nat) : Q :=
+def momCoeff2 (f : L2Test) (S : Q) (n : Nat) : Q :=
   mul (mul f.M (⟨1, n + 1⟩ : Q)) (mul (⟨(n : Int) + 1, 1⟩ : Q) (qpow S n))
 
 /-- **The index schedule** — chosen from the rational magnitude of the two moment-Lipschitz
     coefficients so that each coefficient·rate term lands below `1/(k+1)`. -/
-private def momIdx (f : L2Test) (S : Q) (n k : Nat) : Nat :=
+def momCovIdx (f : L2Test) (S : Q) (n k : Nat) : Nat :=
   ((momCoeff1 f S n).num.toNat + (momCoeff2 f S n).num.toNat + 1) * (k + 1)
 
 -- ===========================================================================
@@ -100,19 +100,19 @@ private theorem momCoeff2_den (f : L2Test) (S : Q) (n : Nat) (hSd : 0 < S.den) :
 -- ===========================================================================
 
 private theorem momIdx_bound1 (f : L2Test) (S : Q) (n k : Nat) :
-    (momCoeff1 f S n).num.toNat * (k + 1) < momIdx f S n k + 1 := by
+    (momCoeff1 f S n).num.toNat * (k + 1) < momCovIdx f S n k + 1 := by
   have h : (momCoeff1 f S n).num.toNat * (k + 1)
       ≤ ((momCoeff1 f S n).num.toNat + (momCoeff2 f S n).num.toNat + 1) * (k + 1) :=
     Nat.mul_le_mul (by omega) (Nat.le_refl _)
-  simp only [momIdx]
+  simp only [momCovIdx]
   omega
 
 private theorem momIdx_bound2 (f : L2Test) (S : Q) (n k : Nat) :
-    (momCoeff2 f S n).num.toNat * (k + 1) < momIdx f S n k + 1 := by
+    (momCoeff2 f S n).num.toNat * (k + 1) < momCovIdx f S n k + 1 := by
   have h : (momCoeff2 f S n).num.toNat * (k + 1)
       ≤ ((momCoeff1 f S n).num.toNat + (momCoeff2 f S n).num.toNat + 1) * (k + 1) :=
     Nat.mul_le_mul (by omega) (Nat.le_refl _)
-  simp only [momIdx]
+  simp only [momCovIdx]
   omega
 
 -- ===========================================================================
@@ -120,7 +120,7 @@ private theorem momIdx_bound2 (f : L2Test) (S : Q) (n k : Nat) :
 -- ===========================================================================
 
 /-- **The real-scale moment covariance.** For a fast positive rational diagonal `qk → c` (with
-    `|c − qk (m k)| ≤ 1/(momIdx k + 1)` — free for `qk (m k) = c.seq (momIdx …)` via `Rabs_sub_seq_le`),
+    `|c − qk (m k)| ≤ 1/(momCovIdx k + 1)` — free for `qk (m k) = c.seq (momCovIdx …)` via `Rabs_sub_seq_le`),
     the real-window integral of the fixed-band twist weight is the real-scale scaled moment:
 
       `riwI (f · powBandGen_{[0,B]}) qk … = cⁿ⁺¹ · mellinMoment (dilateTestR c f) n`.
@@ -137,7 +137,7 @@ theorem riwI_moment_covariance (f : L2Test) (n : Nat) (B S : Q) (hBd : 0 < B.den
     (hqk_B : ∀ k, Qle (add (qk (m k)) (⟨1, 1⟩ : Q)) B)
     (hqk_mS : ∀ k, Rle (Rabs (ofQ (qk (m k)) (hqk_den (m k)))) (ofQ S hSd))
     (hconv : ∀ k, Rle (Rabs (Rsub c (ofQ (qk (m k)) (hqk_den (m k)))))
-      (ofQ (⟨1, momIdx f S n k + 1⟩ : Q) (Nat.succ_pos (momIdx f S n k)))) :
+      (ofQ (⟨1, momCovIdx f S n k + 1⟩ : Q) (Nat.succ_pos (momCovIdx f S n k)))) :
     Req (riwI (bandTwistTest f B hBd hleB n) qk hqk_pos hqk_den hqk_fast)
         (Rmul (Rpow c (n + 1)) (mellinMoment (dilateTestR c S hSd hSn hcS f) n)) := by
   refine riwI_eq_of_bound _ qk hqk_pos hqk_den hqk_fast _ m hm (C₀ := 2) (fun k => ?_)
@@ -178,10 +178,10 @@ theorem riwI_moment_covariance (f : L2Test) (n : Nat) (B S : Q) (hBd : 0 < B.den
     refine Rle_trans (Rmul_le_Rmul_left
       (Rnonneg_ofQ (momCoeff1_den f S n hSd) (momCoeff1_nonneg f S n hSn)) (hconv k)) ?_
     refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ (momCoeff1_den f S n hSd)
-      (Nat.succ_pos (momIdx f S n k)))) ?_
-    exact Rle_ofQ_ofQ (Qmul_den_pos (momCoeff1_den f S n hSd) (Nat.succ_pos (momIdx f S n k)))
+      (Nat.succ_pos (momCovIdx f S n k)))) ?_
+    exact Rle_ofQ_ofQ (Qmul_den_pos (momCoeff1_den f S n hSd) (Nat.succ_pos (momCovIdx f S n k)))
       (Nat.succ_pos k)
-      (Qmul_recip_le (momCoeff1 f S n) (k + 1) (momIdx f S n k)
+      (Qmul_recip_le (momCoeff1 f S n) (k + 1) (momCovIdx f S n k)
         (momCoeff1_nonneg f S n hSn) (momCoeff1_den f S n hSd) (momIdx_bound1 f S n k))
   have hT2 : Rle
       (Rmul (ofQ (mul f.M (⟨1, n + 1⟩ : Q)) (Qmul_den_pos f.hMd (Nat.succ_pos n)))
@@ -194,10 +194,10 @@ theorem riwI_moment_covariance (f : L2Test) (n : Nat) (B S : Q) (hBd : 0 < B.den
     refine Rle_trans (Rmul_le_Rmul_left
       (Rnonneg_ofQ (momCoeff2_den f S n hSd) (momCoeff2_nonneg f S n hSn)) (hconv k)) ?_
     refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ (momCoeff2_den f S n hSd)
-      (Nat.succ_pos (momIdx f S n k)))) ?_
-    exact Rle_ofQ_ofQ (Qmul_den_pos (momCoeff2_den f S n hSd) (Nat.succ_pos (momIdx f S n k)))
+      (Nat.succ_pos (momCovIdx f S n k)))) ?_
+    exact Rle_ofQ_ofQ (Qmul_den_pos (momCoeff2_den f S n hSd) (Nat.succ_pos (momCovIdx f S n k)))
       (Nat.succ_pos k)
-      (Qmul_recip_le (momCoeff2 f S n) (k + 1) (momIdx f S n k)
+      (Qmul_recip_le (momCoeff2 f S n) (k + 1) (momCovIdx f S n k)
         (momCoeff2_nonneg f S n hSn) (momCoeff2_den f S n hSd) (momIdx_bound2 f S n k))
   -- Combine the two bounds and collapse to 2/(k+1).
   refine Rle_trans (Radd_le_add hT1 hT2) ?_

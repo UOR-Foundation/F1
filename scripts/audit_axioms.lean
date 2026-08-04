@@ -5827,7 +5827,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.momIdx_completes
 
 -- THE PRE-HILBERT LAYER, brick 44 (Square/MomentMember.lean) — THE COMPLETED MEMBER IS THE
--- MOMENT SEQUENCE: limMemberU (momIdx φ) i ≈ ⟨φ,xⁱ⟩ (uniform-rate limit evaluation, powered
+-- MOMENT SEQUENCE: limMemberU (momCovIdx φ) i ≈ ⟨φ,xⁱ⟩ (uniform-rate limit evaluation, powered
 -- by brick 38's sharp decay), so the cuts converge strongly to momSeq φ at every truncation.
 #print axioms Square.momScale_ge_num
 #print axioms Square.cut_index_le
@@ -5858,7 +5858,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.momentL2Sq_bumpU_pos
 
 -- THE PRE-HILBERT LAYER, brick 48 (Square/CoSupportCompletion.lean) — THE SKELETON'S POSITIVITY
--- ON THE COMPLETED ℓ² MEMBER: the band coordinate of limMemberU (momIdx φ) is φ's first moment
+-- ON THE COMPLETED ℓ² MEMBER: the band coordinate of limMemberU (momCovIdx φ) is φ's first moment
 -- (brick 44), killed by co-support, so burnol_pairing_psd_on_sonine fires at the completion
 -- level on truncation-uniform data of certified nonzero energy (deep3, deep4 instances).
 #print axioms Square.limMemberU_momIdx_band_zero
@@ -7595,10 +7595,19 @@ open UOR.Bridge.F1Square
 -- diagonal qk → c. Discharges the hbound input of riwI_eq_of_bound, mirroring covComb_hbound_of_fast: per
 -- approximant qk(m k), riwSeq(m k) = (qk m k)ⁿ⁺¹·mellinMoment(dilate_{qk m k} f) (riwSeq_term_eq_moment) ≈
 -- H(ofQ qk m k) (Rpow_ofQ + mellinMoment_bridge, dilateTest→dilateTestR), and |H(qk m k)−H(c)| ≤ Lip·|qk m k −c|
--- (moment_covComb_scale_lip) driven under 2/(k+1) by Qmul_recip_le with the momIdx rational schedule. The one
--- rate input hconv is FREE for qk(m k)=c.seq(momIdx…) via Rabs_sub_seq_le at positive c; hqk_B/hqk_mS are band/ball
+-- (moment_covComb_scale_lip) driven under 2/(k+1) by Qmul_recip_le with the momCovIdx rational schedule. The one
+-- rate input hconv is FREE for qk(m k)=c.seq(momCovIdx…) via Rabs_sub_seq_le at positive c; hqk_B/hqk_mS are band/ball
 -- slack. Pure Req — NO positivity, NO factorization, NO half-line assembly, NO step-4 positivity (RH). Crux none.
 #print axioms Square.riwI_moment_covariance
+
+-- The inner integral evaluated: cⁿ⁺¹·dilMellinF = riwI (new Square/DilMellinFRiwI.lean):
+-- dilMellinF_pow_eq_riwI — cⁿ⁺¹·dilMellinF f (powTest n) S a t [0,1] = riwI (f·powBandGen_{[0,B]}) qk … with
+-- c = clampedInv(a,t), i.e. dilMellinF = c^{-(n+1)}·∫_0^c (f·xⁿ). A one-line composition of
+-- dilMellinF_eq_mellinMoment (dilMellinF = mellinMoment(dilateTestR c f)) and riwI_moment_covariance
+-- (riwI = cⁿ⁺¹·mellinMoment(dilateTestR c f)). The change-of-variables that turns the convolution–Mellin
+-- inner integral into a genuine window integral of f — the substitution the ∫_t assembly consumes. NO
+-- ∫_t assembly, NO factorization, NO positivity, NO crux.
+#print axioms Square.dilMellinF_pow_eq_riwI
 
 -- The finite telescoping of adjacent-window interval integrals (new Square/IntervalTelescope.lean):
 -- exhaustion rung 3. For an increasing rational endpoint sequence c, Σ_{m<N} ∫_{[c m, c(m+1)]} f =
