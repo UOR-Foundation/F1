@@ -6,6 +6,28 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The rational↔real dilation bridge for the Mellin transform** (new `Square/DilateTestBridge.lean`):
+  at a rational scale `q`, the rational-scale dilation `dilateTest q φ` and the real-scale dilation
+  `dilateTestR (ofQ q) φ` have LITERALLY IDENTICAL values (`.f x = φ.f (Rmul (ofQ q) x)` for both),
+  differing only in their Lipschitz-modulus field (`φ.L·q` vs `φ.L·S`); since the certified Mellin
+  objects depend only on the integrand values (certificate independence), the two representations give
+  the same moment, the same twisted tail, and the same transform:
+
+      `mellinMoment (dilateTest q φ) n = mellinMoment (dilateTestR (ofQ q) φ) n`   (`mellinMoment_bridge`)
+      `twTail      (dilateTest q φ) n = twTail      (dilateTestR (ofQ q) φ) n`   (`twTail_bridge`)
+      `mellinHat   (dilateTest q φ) n = mellinHat   (dilateTestR (ofQ q) φ) n`   (`mellinHat_bridge`)
+
+  The moment bridge is one `riemannIntegral_certif_irrel` on the common (defeq) product integrand; the
+  tail bridge is `Rlim_congr` + `genSum_congr` over the per-window `twTerm_bridge`
+  (`riemannIntegralI_certif_irrel`), with the decay hypothesis transferring verbatim because the two
+  tests have defeq `.f`; the transform bridge sums the two halves (`Radd_congr`). This is the connective
+  tissue the real-scale covariance capstone needs: the unconditional rational-scale covariance
+  (`mellinHat_dilate_covariance_uncond`) is stated in `dilateTest` form, while the real-scale continuity
+  foundation is in `dilateTestR` form — this bridge lets the former be read as the latter at every
+  rational scale. **Honest scope**: a representation bridge only — it builds NO real-scale covariance, NO
+  continuity, NO factorization, NO half-line assembly, NO positivity, NO determinacy, NO crux. Step 4
+  (band-coupling positivity) is RH; crux `none`.
+
 - **The twisted-tail finite partial sum is Lipschitz in the real dilation scale** (new
   `Square/TailPartialScaleLip.lean`): the finite head `genSum (twTerm (dilateTestR c φ) n) N` of the
   twisted tail is Lipschitz in the real scale `c`, with the finite `N`-dependent constant

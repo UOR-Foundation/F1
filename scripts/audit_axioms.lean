@@ -5340,6 +5340,19 @@ open UOR.Bridge.F1Square
 -- covariance, no factorization, no positivity, no crux.
 #print axioms Square.genSum_twTerm_scale_lipschitz
 
+-- THE PRE-HILBERT LAYER (Square/DilateTestBridge.lean) — the RATIONAL↔REAL DILATION BRIDGE for the Mellin
+-- transform: at a rational scale q, dilateTest q φ and dilateTestR (ofQ q) φ have LITERALLY IDENTICAL .f
+-- (both φ.f(Rmul (ofQ q) x)), differing only in the Lipschitz-modulus field (φ.L·q vs φ.L·S), so the
+-- certified Mellin objects (certificate-independent) agree: mellinMoment_bridge (one
+-- riemannIntegral_certif_irrel on the common defeq integrand), twTail_bridge (Rlim_congr + genSum_congr
+-- over per-window twTerm_bridge=riemannIntegralI_certif_irrel; decay hyp transfers verbatim via defeq .f),
+-- mellinHat_bridge (Radd_congr of the two halves). Connects the dilateTest-form rational-scale covariance
+-- (mellinHat_dilate_covariance_uncond) to the dilateTestR-form continuity foundation for the real-scale
+-- capstone. A representation bridge only: no real-scale covariance, no continuity, no factorization, no crux.
+#print axioms Square.mellinMoment_bridge
+#print axioms Square.twTail_bridge
+#print axioms Square.mellinHat_bridge
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
