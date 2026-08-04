@@ -76,4 +76,29 @@ theorem dilMellinF_eq_pairing (f ψ : L2Test) (S : Q) (hSd : 0 < S.den)
   refine Req_trans (Rmul_congr (qBandQ_eq_of_band hp_nn hp_hi) (Req_refl _)) ?_
   exact Rmul_comm (affineMap xlo xw hxlo hxw x) (clampedInv a han had t)
 
+/-- **`dilMellinF` at the moment window `[0,1]` with weight `powTest n` is the moment of the dilated
+    test.** Specialising `dilMellinF_eq_pairing` to `ψ = powTest n`, window `[0,1]` (which needs only
+    `S ≥ 1`), and collapsing the `[0,1]`-interval pairing to the plain moment via `riemannIntegralI_unit`:
+
+      `dilMellinF f (powTest n) S a t  =  mellinMoment (dilateTestR (clampedInv a t) f) n`.
+
+    This lands the factorization's inner integral, at the moment window, on `mellinMoment` — carrying
+    its own rational-scale dilation covariance (`mellinMoment_dilate`). -/
+theorem dilMellinF_eq_mellinMoment (f : L2Test) (n : Nat) (S : Q) (hSd : 0 < S.den)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den) (t : Real) (hS1 : Qle (⟨1, 1⟩ : Q) S)
+    (S' : Q) (hS'd : 0 < S'.den) (hS'n : 0 ≤ S'.num)
+    (hcS' : Rle (Rabs (clampedInv a han had t)) (ofQ S' hS'd)) :
+    Req (dilMellinF f (powTest n) S hSd a han had t (⟨0, 1⟩ : Q) (⟨1, 1⟩ : Q)
+          (by decide) (by decide) (by decide))
+        (mellinMoment (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) n) := by
+  have hwin : Qle (add (⟨0, 1⟩ : Q) (⟨1, 1⟩ : Q)) S := by
+    simp only [Qle, add] at hS1 ⊢; push_cast at hS1 ⊢; omega
+  refine Req_trans (dilMellinF_eq_pairing f (powTest n) S hSd a han had t (⟨0, 1⟩ : Q) (⟨1, 1⟩ : Q)
+    (by decide) (by decide) (by decide) (by decide) hwin S' hS'd hS'n hcS') ?_
+  exact riemannIntegralI_unit
+    (l2L_den (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) (powTest n))
+    (l2L_num (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) (powTest n))
+    (l2lip (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) (powTest n))
+    (l2fc (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) (powTest n))
+
 end UOR.Bridge.F1Square.Square

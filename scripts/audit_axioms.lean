@@ -4438,6 +4438,13 @@ open UOR.Bridge.F1Square
 -- Content = qBandQ_eq_of_band on the affine window point + Rmul_comm, across two integrand moduli via
 -- riemannIntegralI_congr_unit_mod. NO covariance, NO half-line assembly, NO factorization, NO crux.
 #print axioms Square.dilMellinF_eq_pairing
+-- dilMellinF at the moment window [0,1] with weight powTest n is the moment of the dilated test
+-- (Square/DilMellinFEval.lean): dilMellinF_eq_mellinMoment — specialise dilMellinF_eq_pairing to the
+-- [0,1] window (needs only S ≥ 1) and collapse the interval pairing to the plain moment via
+-- riemannIntegralI_unit, giving dilMellinF f (powTest n) S a t = mellinMoment (dilateTestR (clampedInv a t) f) n.
+-- Lands the factorization's inner integral (moment window) on mellinMoment, which carries its own
+-- rational-scale dilation covariance (mellinMoment_dilate). NO real-scale covariance, NO factorization, NO crux.
+#print axioms Square.dilMellinF_eq_mellinMoment
 
 -- The per-window rational-scale Mellin dilation (new Square/MellinWindowDilate.lean): the FIRST
 -- sub-brick of the eventual dilation covariance. For rational s>0 and a window [lo,lo+w],
