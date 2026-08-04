@@ -101,4 +101,25 @@ theorem dilMellinF_eq_mellinMoment (f : L2Test) (n : Nat) (S : Q) (hSd : 0 < S.d
     (l2lip (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) (powTest n))
     (l2fc (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) (powTest n))
 
+/-- **`dilMellinF` at the tail window `[m+1,m+2]` with weight `powWinTest m n` is the twisted-tail term
+    of the dilated test.** The half-line analogue of `dilMellinF_eq_mellinMoment`: on the window
+    `[m+1,m+2] ⊆ [0,S]` (needs `m+2 ≤ S`) the clamp is inert, so `dilMellinF f (powWinTest m n) S a t`
+    equals the interval pairing `innerIonI (dilateTestR c f) (powWinTest m n) [m+1,m+2]`, which is
+    definitionally `twTerm (dilateTestR c f) n m`.
+
+    Summing these over `m` (plus the `[0,1]` moment) is the half-line decomposition `mellinHat =
+    mellinMoment + twTail` — the level the prime side reads (tests at prime powers `≥ 1`), which the
+    `[0,1]` moment track alone cannot reach. -/
+theorem dilMellinF_eq_twTerm (f : L2Test) (n m : Nat) (S : Q) (hSd : 0 < S.den)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den) (t : Real)
+    (hSm : Qle (add (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q)) S)
+    (S' : Q) (hS'd : 0 < S'.den) (hS'n : 0 ≤ S'.num)
+    (hcS' : Rle (Rabs (clampedInv a han had t)) (ofQ S' hS'd)) :
+    Req (dilMellinF f (powWinTest m n) S hSd a han had t
+          (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) (by decide))
+        (twTerm (dilateTestR (clampedInv a han had t) S' hS'd hS'n hcS' f) n m) :=
+  dilMellinF_eq_pairing f (powWinTest m n) S hSd a han had t
+    (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) (by decide)
+    (by show (0 : Int) ≤ (m : Int) + 1; omega) hSm S' hS'd hS'n hcS'
+
 end UOR.Bridge.F1Square.Square

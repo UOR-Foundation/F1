@@ -4445,6 +4445,15 @@ open UOR.Bridge.F1Square
 -- Lands the factorization's inner integral (moment window) on mellinMoment, which carries its own
 -- rational-scale dilation covariance (mellinMoment_dilate). NO real-scale covariance, NO factorization, NO crux.
 #print axioms Square.dilMellinF_eq_mellinMoment
+-- dilMellinF at the tail window [m+1,m+2] is the twisted-tail term of the dilated test
+-- (Square/DilMellinFEval.lean): dilMellinF_eq_twTerm — the HALF-LINE analogue of dilMellinF_eq_mellinMoment.
+-- On [m+1,m+2] ⊆ [0,S] (m+2 ≤ S) the clamp is inert, so dilMellinF f (powWinTest m n) S a t =
+-- innerIonI (dilateTestR c f) (powWinTest m n) [m+1,m+2], which is DEFINITIONALLY twTerm (dilateTestR c f) n m
+-- (same riemannIntegralI, proof-irrelevant window args). Pure composition of dilMellinF_eq_pairing. Summing
+-- these over m (+ the [0,1] moment) is the half-line decomposition mellinHat = mellinMoment + twTail — the level
+-- the prime side reads (tests at prime powers ≥ 1), which the [0,1] moment track alone cannot reach. No
+-- half-line assembly yet, NO factorization, NO crux.
+#print axioms Square.dilMellinF_eq_twTerm
 
 -- The per-window rational-scale Mellin dilation (new Square/MellinWindowDilate.lean): the FIRST
 -- sub-brick of the eventual dilation covariance. For rational s>0 and a window [lo,lo+w],
