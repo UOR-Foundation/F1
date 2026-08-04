@@ -6,6 +6,28 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **General-window scale-Lipschitz of a dilated-test window integral** (new
+  `Square/WindowMomentScaleLip.lean`): the window integral `c ↦ ∫_{[lo, lo+w]} φ(c·x)·ψ(x) dx` (real
+  scale `c` INSIDE the test `φ`, arbitrary weight test `ψ`, rational window `[lo, lo+w]` with `lo ≥ 0`) is
+  Lipschitz in `c` with the rational constant `w·φ.L·(lo+w)·ψ.M`:
+
+      `|∫_{[lo,w]} φ(c·x)·ψ(x) − ∫_{[lo,w]} φ(c'·x)·ψ(x)| ≤ (w·φ.L·(lo+w)·ψ.M)·|c − c'|`
+
+  (`window_moment_scale_lipschitz`). This **generalizes the compact continuity engine
+  `mellinMoment_scale_lipschitz` off `[0,1]`** — it is the reusable per-window continuity primitive the
+  rung-6 assembly needs on two fronts: (i) the twisted-tail terms
+  `twTerm (dilate_c φ) n m = ∫_{[m+1, m+2]}(φ(c·x)·powWinTest m n)` are its instance at
+  `ψ = powWinTest m n`, window `[m+1, m+2]` (the finite-head continuity of the tail); (ii) the
+  factorization consumer `dilMellinF` is its instance at the general window `[xlo, xw]`. Same algebra as
+  the compact case, off `[0,1]`: `dilateTestR c φ` and `dilateTestR c' φ` share `L = φ.L·S` and `M = φ.M`
+  (both scale-independent) so the two integrands sit at one common modulus `l2L (dilateTestR c φ) ψ`; on
+  the window the affine point `p = lo + w·x` has `0 ≤ p ≤ lo+w`, so
+  `|φ(c·p) − φ(c'·p)|·|ψ(p)| ≤ φ.L·|c−c'|·(lo+w)·ψ.M`, and `riemannIntegralI_dist_le_window` multiplies by
+  the width `w`. **Honest scope**: Lipschitz-in-scale of one FIXED rational-window dilated-test integral
+  only — it builds NO tail continuity (that needs a uniform-in-scale decay bound across the infinitely
+  many windows, unbuilt), NO half-line real-scale covariance, NO factorization, NO positivity, NO
+  determinacy, NO crux. Step 4 (band-coupling positivity) is RH; crux `none`.
+
 - **The compact Mellin moment is Lipschitz in the real dilation scale** (new
   `Square/MellinMomentScaleLip.lean`): for real scales `c, c'` each bounded by the rational `S`,
 

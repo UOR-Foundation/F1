@@ -5311,6 +5311,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.powTest_abs_le_one
 #print axioms Square.mellinMoment_scale_lipschitz
 
+-- THE PRE-HILBERT LAYER (Square/WindowMomentScaleLip.lean) — GENERAL-WINDOW scale-Lipschitz: the window
+-- integral c ↦ ∫_{[lo,lo+w]} φ(c·x)·ψ(x) (real scale c INSIDE φ, weight test ψ, rational window, lo≥0) is
+-- Lipschitz in c with constant w·φ.L·(lo+w)·ψ.M. Generalizes mellinMoment_scale_lipschitz off [0,1]; the
+-- reusable per-window continuity primitive feeding (i) the twisted-tail terms twTerm(dilate_c φ) n m
+-- (ψ=powWinTest, window [m+1,m+2]) and (ii) dilMellinF (window [xlo,xw]). Same shared-modulus algebra
+-- (dilateTestR c/c' share L=φ.L·S, M=φ.M) + affine point p=lo+w·x has 0≤p≤lo+w so |φ(cp)−φ(c'p)|·|ψ(p)|
+-- ≤ φ.L·|c−c'|·(lo+w)·ψ.M, via riemannIntegralI_dist_le_window (×w width). No tail continuity (needs
+-- uniform-in-scale decay across windows, unbuilt), no half-line covariance, no factorization, no crux.
+#print axioms Square.window_moment_scale_lipschitz
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
