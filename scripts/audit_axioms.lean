@@ -5793,6 +5793,16 @@ open UOR.Bridge.F1Square
 -- none.
 #print axioms Square.covConnect_pure
 
+-- THE COVARIANCE AT c=clampedInv(a,t) (new Square/CovarianceAtClampedInv.lean).
+-- covariance_at_clampedInv: mellinHat_dilate_covariance_real_ge1 instantiated at the genuine window
+-- scale c=clampedInv(a, affineMap lo w s)=1/max(t,a)≥1, all hypotheses discharged from the tail commute's
+-- own data — c≥1 (window_clampedInv_ge_one), c≤1/a (recipTest.hbd), Qinv a≥1 (Qinv_antitone from a≤1),
+-- hdec_c = the exact dilateTestR_window_hdec, mellinHat f at hdec_window_of_hfdec. So the Mellin term
+-- matches convTwTail_eq_intTail's hU verbatim, giving clampedInvⁿ⁺¹·mellinHat(dilate clampedInv f)=
+-- mellinHat f — the hcov slot of covConnect_pure. Object-grounding; NO U, NO factorization, NO v=ĝ
+-- grounding, NO step-4 positivity (RH). Crux none.
+#print axioms Square.covariance_at_clampedInv
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
