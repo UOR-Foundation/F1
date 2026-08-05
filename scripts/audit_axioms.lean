@@ -4284,6 +4284,19 @@ open UOR.Bridge.F1Square
 -- genSum_RReg (not _) to avoid whnf blowup from higher-order inference over the m-dependent mulConvRTest.
 -- NO factorization M[f⋆g]=M[f]·M[g] (the ∫_t reconstruction), NO positivity, NO crux.
 #print axioms Square.convTwTerm_two_sided
+
+-- The convolution's Mellin MOMENT factors as the g-weighted dilated moment of f (new
+-- Square/MomentMulConvDilated.lean): the [0,1] moment-window analog of twTerm_mulConv_dilated.
+-- mom_ptw: the swapped outer test's value at each t equals (g·clampedInv)·mellinMoment(dilateTestR c_t f) n
+-- — coupOuterTestSwap_gpull (at powTest n, window [0,1]) composed with dilMellinF_eq_mellinMoment.
+-- mellinMoment_mulConv_dilated: mellinMoment(mulConvRTest f g 1) n = ∫_t (g(t)·(1/max(t,a)))·
+-- mellinMoment(dilateTestR (1/max(t,a)) f) n dt — a SINGLE ∫_t (no window sum), so the moment piece
+-- factors with NO interchange. riemannIntegralI_unit bridge (mellinMoment ↔ [0,1] interval integral) +
+-- mellinConv_fubini + riemannIntegralI_congr via mom_ptw. Together with twTerm_mulConv_dilated this gives
+-- the per-window factored form for both pieces of convMellinHat=moment+tail. NO tail assembly, NO Σ_m/∫_t
+-- interchange, NO covariance application, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.mom_ptw
+#print axioms Square.mellinMoment_mulConv_dilated
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
