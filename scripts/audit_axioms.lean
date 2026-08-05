@@ -5776,6 +5776,14 @@ open UOR.Bridge.F1Square
 -- Crux none.
 #print axioms Square.mellinHat_dilate_covariance_real_ge1
 
+-- THE COVARIANCE HEAD IDENTITY (new Square/CovarianceHead.lean). Rmul_head_of_covariance: the pure
+-- real-power rearrangement cⁿ⁺¹·H≈M ∧ t·c≈1 ⟹ c·H≈tⁿ·M (via tⁿ·M=tⁿ·cⁿ⁺¹·H=(t·c)ⁿ·c·H=1ⁿ·c·H=c·H,
+-- Rpow_mul_dist + Rpow_one_eq). The head factor g·tⁿ·M[f] of the covConnect's U=Whead−Tmom, obtained by
+-- splitting twTail=mellinHat−mellinMoment and applying mellinHat_dilate_covariance_real_ge1 at
+-- c=clampedInv(a,t) (t·c=1 on window). Pure Real algebra; NO mellinHat, NO factorization, NO v=ĝ
+-- grounding, NO step-4 positivity (RH). Crux none.
+#print axioms Square.Rmul_head_of_covariance
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
