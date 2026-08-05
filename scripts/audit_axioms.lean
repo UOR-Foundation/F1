@@ -4323,6 +4323,14 @@ open UOR.Bridge.F1Square
 -- riemannIntegralI_genSumTest interchanges to the single ∫_t of the summed test. NO N→∞ limit, NO covariance
 -- application, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.convPartial_eq_intGenSum
+
+-- The summed outer test's integrand is the partial dilated tail (new Square/ConvSummedIntegrand.lean).
+-- genSumTest_coupFam_eq: (genSumTest coupFam N).f t = Σ_{m<N} dilTailIntegrand f g n m a t (the g-weighted
+-- dilated tail terms) — induction on N: base sumZeroTest.f≡0=genSum 0, step L2Test.add's Radd composed with
+-- dilTail_ptw (coupOut_m.f t ≈ dilTailIntegrand_m t, clamp m+2 inert on [m+1,m+2]). So the interchange's
+-- ∫_t (genSumTest coupFam N) is the finite ∫_t of the g-weighted partial dilated tail. NO N→∞ limit, NO
+-- covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.genSumTest_coupFam_eq
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
