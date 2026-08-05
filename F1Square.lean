@@ -508,6 +508,7 @@ import F1Square.Square.GenSumCloseRlim
 import F1Square.Square.DilTailPartialClose
 import F1Square.Square.ConvTwTailSchedule
 import F1Square.Square.DigammaMidxCommon
+import F1Square.Square.TwoSidedWeaken
 import F1Square.Square.AtlasAngleFamily
 import F1Square.Square.AngleGramRlim
 import F1Square.Square.IntervalTelescope

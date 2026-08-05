@@ -4406,6 +4406,13 @@ open UOR.Bridge.F1Square
 -- convTwTail's digammaMidx K_conv and the dilated tail's digammaMidx(Cf·2ⁿ). NO factorization, no crux.
 #print axioms Square.digammaMidx_common
 
+-- Two schedule-plumbing lemmas for the common evaluation schedule (new Square/TwoSidedWeaken.lean).
+-- two_sided_weaken: −B ≤ x ≤ B and Qle B B' ⟹ −B' ≤ x ≤ B' (ofQ mono both sides) — lifts
+-- convTwTerm_two_sided from K_conv to K⋆ so genSum_RReg fires at K⋆. Qle_self_toNat_add: a nonneg
+-- rational K ≤ ⟨K.num.toNat + c, 1⟩ (c ≥ 0) — the Qle K_conv K⋆ step. NO factorization, no crux.
+#print axioms Square.two_sided_weaken
+#print axioms Square.Qle_self_toNat_add
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
