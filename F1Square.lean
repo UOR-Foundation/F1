@@ -431,6 +431,7 @@ import F1Square.Square.MellinHatDilateCovarianceReal
 import F1Square.Square.MellinHatDilateCovarianceRealDerived
 import F1Square.Square.CovCombHbound
 import F1Square.Square.MellinHatDilateCovarianceRealSeq
+import F1Square.Square.MellinHatDilateCovarianceRealClean
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv
@@ -513,6 +514,7 @@ import F1Square.Square.DilTailCommute
 import F1Square.Square.DilateTestFineDecay
 import F1Square.Square.MellinHatDecayIndep
 import F1Square.Square.HdecWeaken
+import F1Square.Square.CovarianceAtQk
 import F1Square.Square.AtlasAngleFamily
 import F1Square.Square.AngleGramRlim
 import F1Square.Square.IntervalTelescope

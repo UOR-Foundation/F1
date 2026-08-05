@@ -4451,6 +4451,16 @@ open UOR.Bridge.F1Square
 -- covariance_at_rational_dilateTestR shares across hdec_dil/hdec_phi/hdec_fine. NO covariance, no crux.
 #print axioms Square.hdec_window_weaken
 
+-- The per-k hcov ingredient of the c≥1 Mellin dilation covariance (new Square/CovarianceAtQk.lean).
+-- covariance_at_qk_baseform: for a rational scale q≥1 bounded by S, qⁿ⁺¹·mellinHat(dilateTestR(ofQ q)φ)n
+-- = mellinHat φ n, BOTH read at the reconstruction's uniform decay constant Cf. Routes
+-- covariance_at_rational_dilateTestR at the enlarged constant Cbig=qⁿ⁺¹·Cf+C'+Cf (carries the fine
+-- 1/q.den decay C'=(Cf+φ.M)(2·q.den)ⁿ⁺² and the qⁿ⁺¹-scaled twisted regularity), then bridges every
+-- mellinHat back to Cf by mellinHat_decay_indep; scalar (ofQ q)ⁿ⁺¹ normalised by Rpow_ofQ. This is the
+-- exact hcov k the base density capstone mellinHat_dilate_covariance_real consumes. NO real-scale
+-- covariance (the capstone), no factorization, no v=ĝ grounding, no step-4 positivity. Crux none.
+#print axioms Square.covariance_at_qk_baseform
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
@@ -5741,6 +5751,17 @@ open UOR.Bridge.F1Square
 -- capstone of the hbound-discharge arc. Object-grounding; NO factorization, NO grounding of v=ĝ, NO
 -- step-4 positivity (RH). Crux none.
 #print axioms Square.mellinHat_dilate_covariance_real_seq
+
+-- THE FINE-DECAY WALL REMOVED (new Square/MellinHatDilateCovarianceRealClean.lean).
+-- mellinHat_dilate_covariance_real_clean: the real-scale covariance cⁿ⁺¹·mellinHat(dilateTestR c φ)=
+-- mellinHat φ along the fast diagonal c.seq(covIdx k), but DROPPING the _seq capstone's per-approximant
+-- fine-1/qk.den decay hdec_fine_qk (the c≥1 covariance wall) and regularity hReg_qk — hcov now comes from
+-- covariance_at_qk_baseform, which discharges both internally (fine decay from φ's clean decay hfdec via
+-- dilateTest_fine_window_decay at Cbig; regularity from scaledTwTerm_bound). Rests only on hdec_c/hdec_phi
+-- (window decays), hfdec (φ's clean order-(n+2) decay), and the diagonal hqk_pos/hqk_S/hdec_qk. The
+-- wall-break payoff. Object-grounding; NO factorization, NO grounding of v=ĝ, NO step-4 positivity (RH).
+-- Crux none.
+#print axioms Square.mellinHat_dilate_covariance_real_clean
 
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
