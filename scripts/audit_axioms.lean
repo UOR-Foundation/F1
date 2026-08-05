@@ -4314,6 +4314,15 @@ open UOR.Bridge.F1Square
 -- dilated tail (defs zeroTest/genSumTest need no audit line). NO tail assembly wired to the convolution yet,
 -- NO covariance application, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.riemannIntegralI_genSumTest
+
+-- The convolution's partial tail sum is a single ∫_t (new Square/ConvPartialInterchange.lean), wiring the
+-- interchange to the convolution. coupFam (def): the swapped-outer-test family coupOut_m =
+-- coupOuterTestSwap f g (powWinTest m n) (m+2) … [m+1,m+2]. convPartial_eq_intGenSum: Σ_{m<N} twTerm
+-- (mulConvRTest f g (m+2)) n m = ∫_{lo}^{lo+w} (genSumTest coupFam N) — each term is ∫_t coupOut_m
+-- (mellinConv_fubini via the twTerm=mellinConv defeq bridge), genSum_congr lands the sum on Σ ∫_t coupOut_m,
+-- riemannIntegralI_genSumTest interchanges to the single ∫_t of the summed test. NO N→∞ limit, NO covariance
+-- application, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.convPartial_eq_intGenSum
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
