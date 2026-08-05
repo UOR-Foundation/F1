@@ -4346,6 +4346,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.angleDiagTarget_nonneg
 #print axioms Square.atlasAngleFamily_hodgeNeg
 #print axioms Square.atlasAngleFamily_closes_crux
+
+-- The angle certificate's infinite-rank gram diagonal is the angle sum (new Square/AngleGramRlim.lean).
+-- angleGram_Rlim: Rlim_m gramOf (angleEmb θ)(2m) n n = Rlim_m (angleDiagTarget θ n) — Rlim_congr over the
+-- finite angleGram_diag (both RReg proofs supplied, no RReg-transport). angleEmb_Rlim_closes_crux: the
+-- step-4 reduction stated directly on the BUILT embedding's infinite-rank squared-norm diagonal (the gramOf
+-- object realizesDiag_genuine_iff asks for, past every fixed dimension the rank fence kills) — hpos(Pos of
+-- the gram Rlim) + hid(gram Rlim = 2λₙ) ⟹ SpectralCrux, via angleGram_Rlim + atlasAngleFamily_closes_crux.
+-- Constructs no θ; asserts nothing for genuine 2λₙ (= RH); crux fields none.
+#print axioms Square.angleGram_Rlim
+#print axioms Square.angleEmb_Rlim_closes_crux
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
