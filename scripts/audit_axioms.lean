@@ -5812,6 +5812,19 @@ open UOR.Bridge.F1Square
 -- Whead/Tmom objects yet, NO factorization, NO v=ĝ grounding, NO step-4 positivity (RH). Crux none.
 #print axioms Square.covConnect_at_clampedInv
 
+-- THE UNDILATED MELLIN MAGNITUDE BOUND (new Square/MellinHatIdBound.lean) — the rational modulus for the
+-- constant M[f]=mellinHat f the head test Whead=g·max(t,a)ⁿ·M[f] carries (constTest needs a rational mB).
+-- twTerm_id_crude_bound/twTail_id_crude_bound/mellinHat_id_abs_le mirror the dilated mellinHat_abs_le for
+-- the plain f (moment ≤ φ.M/(n+1) by mellinMoment_abs_le, tail by the finite window sum +2; scale-free via
+-- φ.hbd); mellinHat_id_abs_le_ofQ collapses the genSum-of-ofQ to a single ofQ (mellinHatIdBnd, genSum_ofQ +
+-- Radd_ofQ_ofQ). Object-grounding magnitude bound; NO head test, NO factorization, NO v=ĝ grounding, NO
+-- step-4 positivity (RH). Crux none.
+#print axioms Square.twTerm_id_crude_bound
+#print axioms Square.twTail_id_crude_bound
+#print axioms Square.mellinHat_id_abs_le
+#print axioms Square.mellinHatIdBnd_den
+#print axioms Square.mellinHat_id_abs_le_ofQ
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
