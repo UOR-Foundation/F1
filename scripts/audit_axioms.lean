@@ -4416,6 +4416,16 @@ open UOR.Bridge.F1Square
 -- Nat C = (w.num·(g.M.num·(1/a).num)·3).toNat — the C Rlim_eval_real_rate consumes. NO factorization, no crux.
 #print axioms Square.rate_bound_Qle
 
+-- THE TAIL COMMUTE (new Square/DilTailCommute.lean). convTwTail_eq_intTail: convTwTail f g n = ∫_t U for any
+-- test U whose window-values match g(t)·clampedInv(a,t)·twTail(dilateTestR (clampedInv a t) f) n (hypothesis hU,
+-- the covariance-connect). Composes the whole Wall-3 stack along the common schedule K⋆: convTwTail_eq_fast_schedule
+-- (schedule bump) + genSum_RReg at K⋆ via two_sided_weaken/Qle_self_toNat_add/qmul_le_right_mono/digammaMidx_common,
+-- then Rlim_eval_real_rate over convPartial_eq_intGenSum + genSumTest_coupFam_eq + hU + dilTail_partial_close +
+-- riemannIntegralI_dist_le_of_close + rate_bound_Qle (C=(w.num·(g.M.num·(1/a).num)·3).toNat). PARAMETRIC in hU
+-- (the covariance identification U.f=g·clampedInv·twTail is a hypothesis; grounding v=ĝ still to come). NO
+-- factorization asserted, NO positivity, NO crux. Step 4 (band-coupling positivity) is RH; crux fields `none`.
+#print axioms Square.convTwTail_eq_intTail
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
