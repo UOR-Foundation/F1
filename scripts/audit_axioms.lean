@@ -5825,6 +5825,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.mellinHatIdBnd_den
 #print axioms Square.mellinHat_id_abs_le_ofQ
 
+-- THE RECONSTRUCTION'S HEAD TEST Whead (new Square/HeadTest.lean) — one of the two objects the doc named
+-- missing (Tmom is the existing coupOuterTestSwap). headTest f g n … = L2Test.mul (L2Test.mul g (powTest n))
+-- (constTest M[f] (mellinHatIdBnd f n Cf) …), so .f t = g·clamp01(t)ⁿ·M[f] (headTest_f_eq, via powTest_f_eq);
+-- M[f]=mellinHat f at hdec_window_of_hfdec, its rational modulus from mellinHat_id_abs_le_ofQ.
+-- mellinHatIdBnd_num: the modulus has nonneg numerator (constTest's hMn). Object-grounding; assembles NO U
+-- (=L2Test.sub Whead Tmom) yet, NO factorization, NO v=ĝ grounding, NO step-4 positivity (RH). Crux none.
+#print axioms Square.mellinHatIdBnd_num
+#print axioms Square.headTest_f_eq
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
