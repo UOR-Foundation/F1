@@ -4412,6 +4412,9 @@ open UOR.Bridge.F1Square
 -- rational K ≤ ⟨K.num.toNat + c, 1⟩ (c ≥ 0) — the Qle K_conv K⋆ step. NO factorization, no crux.
 #print axioms Square.two_sided_weaken
 #print axioms Square.Qle_self_toNat_add
+-- rate_bound_Qle: the ∫_t reconstruction's per-index rate w·(g.M·(1/a)·3/(j+1)) ≤ C/(j+1) with the fixed
+-- Nat C = (w.num·(g.M.num·(1/a).num)·3).toNat — the C Rlim_eval_real_rate consumes. NO factorization, no crux.
+#print axioms Square.rate_bound_Qle
 
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each

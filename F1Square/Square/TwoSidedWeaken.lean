@@ -44,4 +44,41 @@ theorem Qle_self_toNat_add {K : Q} (hKd : 0 < K.den) (hK0 : 0 ≤ K.num) (c : In
     Int.mul_le_mul_of_nonneg_right (by omega) (by omega)
   omega
 
+/-- **The `∫_t` reconstruction's per-index rate collapses to `⟨C, j+1⟩`.** The dist bound
+    `w·(g.M·(1/a)·3/(j+1))` is `≤ C/(j+1)` for the fixed Nat `C = (w.num·(g.M.num·(1/a).num)·3).toNat`
+    (denominators `≥ 1` only inflate the RHS). The `C` that `Rlim_eval_real_rate` consumes. -/
+theorem rate_bound_Qle {w gM Qa : Q} (hw0 : 0 ≤ w.num) (hgM0 : 0 ≤ gM.num) (hQa0 : 0 ≤ Qa.num)
+    (hwd : 0 < w.den) (hgMd : 0 < gM.den) (hQad : 0 < Qa.den) (j : Nat) :
+    Qle (mul w (mul (mul gM Qa) (⟨3, j + 1⟩ : Q)))
+        (⟨((w.num * (gM.num * Qa.num) * 3).toNat : Int), j + 1⟩ : Q) := by
+  have hA : (0 : Int) ≤ w.num * (gM.num * Qa.num) * 3 :=
+    Int.mul_nonneg (Int.mul_nonneg hw0 (Int.mul_nonneg hgM0 hQa0)) (by decide)
+  have hAeq : ((w.num * (gM.num * Qa.num) * 3).toNat : Int) = w.num * (gM.num * Qa.num) * 3 :=
+    Int.toNat_of_nonneg hA
+  have hdenpos : (1 : Int) ≤ (w.den : Int) * ((gM.den : Int) * (Qa.den : Int)) := by
+    have h1 : (1 : Int) ≤ (w.den : Int) := by have := hwd; omega
+    have h2 : (1 : Int) ≤ (gM.den : Int) := by have := hgMd; omega
+    have h3 : (1 : Int) ≤ (Qa.den : Int) := by have := hQad; omega
+    calc (1 : Int) = 1 * (1 * 1) := by ring_uor
+      _ ≤ (w.den : Int) * ((gM.den : Int) * (Qa.den : Int)) :=
+          Int.mul_le_mul h1 (Int.mul_le_mul h2 h3 (by omega) (by omega)) (by omega) (by omega)
+  show (mul w (mul (mul gM Qa) (⟨3, j + 1⟩ : Q))).num * ((j + 1 : Nat) : Int)
+      ≤ ((w.num * (gM.num * Qa.num) * 3).toNat : Int)
+        * ((mul w (mul (mul gM Qa) (⟨3, j + 1⟩ : Q))).den : Int)
+  simp only [mul]
+  push_cast
+  rw [hAeq]
+  -- goal (up to ring): A·(j+1) ≤ A·(Dp·(j+1)),  A = w.num·(gM.num·Qa.num)·3 ≥ 0,  Dp = w.den·(gM.den·Qa.den) ≥ 1
+  have hle : ((j : Int) + 1) ≤ ((w.den : Int) * ((gM.den : Int) * (Qa.den : Int))) * ((j : Int) + 1) := by
+    calc ((j : Int) + 1) = 1 * ((j : Int) + 1) := by ring_uor
+      _ ≤ ((w.den : Int) * ((gM.den : Int) * (Qa.den : Int))) * ((j : Int) + 1) :=
+          Int.mul_le_mul_of_nonneg_right hdenpos (by omega)
+  have hmul := Int.mul_le_mul_of_nonneg_left hle hA
+  calc w.num * (gM.num * Qa.num * 3) * ((j : Int) + 1)
+      = (w.num * (gM.num * Qa.num) * 3) * ((j : Int) + 1) := by ring_uor
+    _ ≤ (w.num * (gM.num * Qa.num) * 3)
+          * (((w.den : Int) * ((gM.den : Int) * (Qa.den : Int))) * ((j : Int) + 1)) := hmul
+    _ = w.num * (gM.num * Qa.num) * 3
+          * ((w.den : Int) * ((gM.den : Int) * (Qa.den : Int) * ((j : Int) + 1))) := by ring_uor
+
 end UOR.Bridge.F1Square.Square
