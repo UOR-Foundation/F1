@@ -4332,6 +4332,16 @@ open UOR.Bridge.F1Square
 -- covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.genSumTest_coupFam_eq
 
+-- Scale-uniform tail-decay preservation under real dilation (new Square/DilateTestRDecay.lean).
+-- Rabs_le_Rabs_Rmul_of_one_le: for c ≥ 1, |y| ≤ |c·y| (= |c|·|y| with |c| = c ≥ 1) — dilation by
+-- c ≥ 1 only enlarges the argument. dilateTestR_hfdec: hence f's clean k-indexed order-(n+2) half-line
+-- decay (∀ k, ∀ y, |y| ≥ k+1 → |f(y)| ≤ Cf/(k+1)^{n+2}) transfers to dilateTestR c f with the SAME
+-- constant Cf for EVERY c ≥ 1 — the uniform-in-scale decay the ∫_t reconstruction needs (on the t-window
+-- ⊆ (0,1] the convolution's inner scale clampedInv(a,t) = 1/max(t,a) ≥ 1). NO tail assembly, NO
+-- covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.Rabs_le_Rabs_Rmul_of_one_le
+#print axioms Square.dilateTestR_hfdec
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the

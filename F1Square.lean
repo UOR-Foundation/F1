@@ -501,6 +501,7 @@ import F1Square.Square.MomentMulConvDilated
 import F1Square.Square.IntervalAddTest
 import F1Square.Square.ConvPartialInterchange
 import F1Square.Square.ConvSummedIntegrand
+import F1Square.Square.DilateTestRDecay
 import F1Square.Square.AtlasAngleFamily
 import F1Square.Square.AngleGramRlim
 import F1Square.Square.IntervalTelescope
