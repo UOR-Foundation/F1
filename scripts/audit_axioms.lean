@@ -5834,6 +5834,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.mellinHatIdBnd_num
 #print axioms Square.headTest_f_eq
 
+-- THE TAIL COMMUTE DISCHARGED (new Square/ConvTwTailIntU.lean). convTwTail_eq_intU: the parametric
+-- convTwTail_eq_intTail instantiated at U = L2Test.sub (headTest) (coupOuterTestSwap) = Whead − Tmom, with
+-- hU PROVED — so convTwTail f g n = ∫_t (Whead − Tmom), the tail branch now hypothesis-free. hU from
+-- covConnect_at_clampedInv (per-t head/moment split) + the clamps' window inertness (a≤lo makes
+-- clamp01(t)=max(t,a)=t on [lo,lo+w]⊆(0,1] via qBandQ_eq_of_band/qClampQ_eq_of_ge, so Rpow(clamp01 t)n≈
+-- Rpow(qClampQ a t)n) + headTest_f_eq + mom_ptw (Tmom.f≈momIntegrand). Object-grounding; does NOT yet
+-- compose the moment side into the factorization, NO factorization M[f⋆g]=M[f]·M[g], NO v=ĝ grounding, NO
+-- step-4 positivity (RH). Crux none.
+#print axioms Square.convTwTail_eq_intU
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

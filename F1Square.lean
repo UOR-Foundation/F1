@@ -439,6 +439,7 @@ import F1Square.Square.CovarianceAtClampedInv
 import F1Square.Square.CovConnectClampedInv
 import F1Square.Square.MellinHatIdBound
 import F1Square.Square.HeadTest
+import F1Square.Square.ConvTwTailIntU
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv
