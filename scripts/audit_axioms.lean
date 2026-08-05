@@ -4426,6 +4426,15 @@ open UOR.Bridge.F1Square
 -- factorization asserted, NO positivity, NO crux. Step 4 (band-coupling positivity) is RH; crux fields `none`.
 #print axioms Square.convTwTail_eq_intTail
 
+-- The shrinking-dilation ("fine") window decay (new Square/DilateTestFineDecay.lean) — first brick of the
+-- c≥1 covariance wall-break. dilateTest_fine_window_decay: for φ with clean order-(n+2) decay (Cf) + bound φ.M
+-- and D≥1, the fine dilation dilateTest (1/D) φ (.f y = φ(y/D)) has window decay at the PER-D constant
+-- C' = (Cf+φ.M)·(2D)^(n+2). Two regimes (rcases Nat.lt_or_ge (m+1) D): coarse m+1≥D (arg≥1, φ-decay at
+-- k=(m+1)/D−1, deflation costs (2D)^(n+2) via m+1≤2D(k+1)); fine m+1<D (arg<1, only φ.M, (m+1)^(n+2)≤(2D)^(n+2)).
+-- Per-D constant (NO shared-C blowup) — discharges covariance_at_rational_dilateTestR's hdec_fine at each qk.
+-- NO covariance assembly yet, NO factorization, NO positivity, NO crux.
+#print axioms Square.dilateTest_fine_window_decay
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
