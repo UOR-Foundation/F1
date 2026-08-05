@@ -4395,6 +4395,13 @@ open UOR.Bridge.F1Square
 -- dilated tail's digammaMidx(Cf·2ⁿ) (K_conv and Cf·2ⁿ not comparable in general). NO factorization, no crux.
 #print axioms Square.convTwTail_eq_fast_schedule
 
+-- A common schedule dominating two digammaMidx schedules (new Square/DigammaMidxCommon.lean).
+-- digammaMidx_common: for K⋆ = ⟨K.num.toNat + K'.num.toNat, 1⟩, both digammaMidx K j ≤ digammaMidx K⋆ j
+-- and digammaMidx K' j ≤ digammaMidx K⋆ j — since digammaMidx B j = (B.num.toNat+1)(j+1) depends on B's
+-- numerator only (NOT Qle-monotone). Lets the ∫_t reconstruction evaluate on one schedule dominating both
+-- convTwTail's digammaMidx K_conv and the dilated tail's digammaMidx(Cf·2ⁿ). NO factorization, no crux.
+#print axioms Square.digammaMidx_common
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
