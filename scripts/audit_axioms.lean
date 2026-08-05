@@ -4341,6 +4341,12 @@ open UOR.Bridge.F1Square
 -- covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.Rabs_le_Rabs_Rmul_of_one_le
 #print axioms Square.dilateTestR_hfdec
+-- hdec_window_of_hfdec: clean k-indexed decay ⟹ the window-affineMap decay twTerm_bound/twTail/mellinHat
+-- consume (the window point affineMap (m+1) 1 x ≥ m+1, so the clean bound at index m fires).
+-- dilateTestR_window_hdec: composing the two — the c ≥ 1 dilation's window-format decay with the SAME
+-- constant Cf, exactly what twTail (dilateTestR c f) n requires. NO tail assembly, NO factorization, no crux.
+#print axioms Square.hdec_window_of_hfdec
+#print axioms Square.dilateTestR_window_hdec
 
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each

@@ -60,4 +60,46 @@ theorem dilateTestR_hfdec (f : L2Test) (n : Nat) {Cf : Q} (hCfd : 0 < Cf.den) (h
       (Qmul_den_pos hCfd (Nat.pos_pow_of_pos _ (Nat.succ_pos k))))
   exact hfdec k (Rmul c y) (Rle_trans hy (Rabs_le_Rabs_Rmul_of_one_le hc1 y))
 
+/-- **Clean k-indexed decay ⟹ window-affineMap decay** — the bridge between the two decay-hypothesis
+    shapes in the layer. `twTerm_bound`/`twTail`/`mellinHat` consume the window-affineMap shape
+    `∀ m x, x ∈ [0,1] → |φ(affineMap (m+1) 1 x)| ≤ C/(m+1)^{n+2}`; the clean k-indexed shape
+    `∀ k y, |y| ≥ k+1 → |φ(y)| ≤ C/(k+1)^{n+2}` implies it, because the window point
+    `affineMap (m+1) 1 x = (m+1) + 1·x` is `≥ m+1` (nonneg `x`), so the clean bound at index `m` fires. -/
+theorem hdec_window_of_hfdec (φ : L2Test) (n : Nat) {C : Q} (hCd : 0 < C.den) (hCn : 0 ≤ C.num)
+    (hfdec : ∀ (k : Nat), ∀ y, Rle (ofQ (⟨(k : Int) + 1, 1⟩ : Q) Nat.one_pos) (Rabs y) →
+      Rle (Rabs (φ.f y)) (ofQ (mul C (⟨1, (k + 1) ^ (n + 2)⟩ : Q))
+        (Qmul_den_pos hCd (Nat.pos_pow_of_pos _ (Nat.succ_pos k))))) :
+    ∀ m : Nat, ∀ x, Rle zero x → Rle x one →
+      Rle (Rabs (φ.f (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) x)))
+        (ofQ (mul C (⟨1, (m + 1) ^ (n + 2)⟩ : Q))
+          (Qmul_den_pos hCd (Nat.pos_pow_of_pos _ (Nat.succ_pos m)))) := by
+  intro m x h0 _h1
+  have hxnn : Rnonneg x := Rnonneg_of_Rle_zero h0
+  have hpge : Rle (RnatSucc m)
+      (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) x) :=
+    Rle_self_Radd_right (Rnonneg_Rmul (Rnonneg_ofQ (by decide) (by decide)) hxnn)
+  have haffnn : Rnonneg (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) x) :=
+    Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg Rnonneg_one)
+      (Rle_trans (one_le_RnatSucc m) hpge))
+  exact hfdec m (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) x)
+    (Rle_trans hpge (Rle_of_Req (Req_symm (Rabs_of_nonneg haffnn))))
+
+/-- **The window-format decay of the `c ≥ 1` real dilation** — composing `dilateTestR_hfdec` (clean
+    decay preserved, uniformly in `c ≥ 1`) with `hdec_window_of_hfdec` (clean ⟹ window). This is
+    exactly the decay hypothesis `twTail (dilateTestR c f) n` / `mellinHat (dilateTestR c f) n` require,
+    so the dilated half-line tail EXISTS for every scale `c ≥ 1` with the SAME constant `Cf`. -/
+theorem dilateTestR_window_hdec (f : L2Test) (n : Nat) {Cf : Q} (hCfd : 0 < Cf.den) (hCfn : 0 ≤ Cf.num)
+    (hfdec : ∀ (k : Nat), ∀ y, Rle (ofQ (⟨(k : Int) + 1, 1⟩ : Q) Nat.one_pos) (Rabs y) →
+      Rle (Rabs (f.f y)) (ofQ (mul Cf (⟨1, (k + 1) ^ (n + 2)⟩ : Q))
+        (Qmul_den_pos hCfd (Nat.pos_pow_of_pos _ (Nat.succ_pos k)))))
+    (c : Real) (S : Q) (hSd : 0 < S.den) (hSn : 0 ≤ S.num) (hcS : Rle (Rabs c) (ofQ S hSd))
+    (hc1 : Rle one c) :
+    ∀ m : Nat, ∀ x, Rle zero x → Rle x one →
+      Rle (Rabs ((dilateTestR c S hSd hSn hcS f).f
+            (affineMap (⟨(m : Int) + 1, 1⟩ : Q) (⟨1, 1⟩ : Q) Nat.one_pos (by decide) x)))
+        (ofQ (mul Cf (⟨1, (m + 1) ^ (n + 2)⟩ : Q))
+          (Qmul_den_pos hCfd (Nat.pos_pow_of_pos _ (Nat.succ_pos m)))) :=
+  hdec_window_of_hfdec (dilateTestR c S hSd hSn hcS f) n hCfd hCfn
+    (dilateTestR_hfdec f n hCfd hCfn hfdec c S hSd hSn hcS hc1)
+
 end UOR.Bridge.F1Square.Square
