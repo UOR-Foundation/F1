@@ -436,6 +436,7 @@ import F1Square.Square.MellinHatDilateCovarianceRealGe1
 import F1Square.Square.CovarianceHead
 import F1Square.Square.CovConnectPure
 import F1Square.Square.CovarianceAtClampedInv
+import F1Square.Square.CovConnectClampedInv
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv

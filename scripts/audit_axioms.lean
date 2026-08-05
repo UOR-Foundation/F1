@@ -5803,6 +5803,15 @@ open UOR.Bridge.F1Square
 -- grounding, NO step-4 positivity (RH). Crux none.
 #print axioms Square.covariance_at_clampedInv
 
+-- THE covCONNECT AT THE GENUINE SCALE (new Square/CovConnectClampedInv.lean). covConnect_at_clampedInv:
+-- covConnect_pure instantiated at c=clampedInv(a,t), T=qClampQ a t=max(t,a), so the tail commute's per-t
+-- integrand g·clampedInv·twTail(dilate clampedInv f) EQUALS the head/moment difference
+-- g·max(t,a)ⁿ·mellinHat f − g·clampedInv·mellinMoment(dilate clampedInv f). LHS is hU's target verbatim,
+-- RHS is Whead−Tmom (M[f] factored out). hcov = covariance_at_clampedInv; the reciprocal T·c=1 is
+-- Rmul_Rinv_self (qClampQ_witness…) since clampedInv=Rinv(qClampQ…) by def. Object-grounding; builds NO
+-- Whead/Tmom objects yet, NO factorization, NO v=ĝ grounding, NO step-4 positivity (RH). Crux none.
+#print axioms Square.covConnect_at_clampedInv
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
