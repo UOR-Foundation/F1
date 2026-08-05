@@ -5763,6 +5763,19 @@ open UOR.Bridge.F1Square
 -- Crux none.
 #print axioms Square.mellinHat_dilate_covariance_real_clean
 
+-- THE c∈[1,S] DISCHARGE (new Square/MellinHatDilateCovarianceRealGe1.lean).
+-- mellinHat_dilate_covariance_real_ge1: for a REAL scale c with 1≤c≤S, cⁿ⁺¹·mellinHat(dilateTestR c φ)n=
+-- mellinHat φ n, with EVERY per-approximant obligation discharged internally. Runs the base density
+-- capstone along the two-sided BAND diagonal qk k=(qBandQ 1 S c).seq(covIdx k) — in [1,S] at every index
+-- by construction (qBandQ_ge/le), so hqk_S (≤S), hdec_qk (scale≥1, from hfdec via
+-- dilateTestR_window_hdec), and the numerator positivity covariance_at_qk_baseform needs all discharge.
+-- hcov from covariance_at_qk_baseform; hbound from covComb_hbound_of_fast with hfast FREE (band inert
+-- since c∈[1,S], so c'≈c gives |c−ofQ(qk k)|=|c'−ofQ(c'.seq)|≤1/(N+1) — no clamp-nonexpansiveness lemma).
+-- Rests only on hdec_c/hdec_phi window decays and φ's clean decay hfdec. The scale usable directly at
+-- c=clampedInv(a,t). Object-grounding; NO factorization, NO grounding of v=ĝ, NO step-4 positivity (RH).
+-- Crux none.
+#print axioms Square.mellinHat_dilate_covariance_real_ge1
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
