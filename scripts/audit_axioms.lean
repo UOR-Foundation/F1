@@ -4331,6 +4331,21 @@ open UOR.Bridge.F1Square
 -- ∫_t (genSumTest coupFam N) is the finite ∫_t of the g-weighted partial dilated tail. NO N→∞ limit, NO
 -- covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.genSumTest_coupFam_eq
+
+-- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
+-- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
+-- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
+-- angle structure. atlasAngleFamily_hodgeNeg: the identity Rlim(angleDiagTarget θ n)=2λₙ alone forces
+-- SpectralHodgeNeg (Rlim of nonnegs, across genuine_vanCyc_normal −⟨Cₙ,Cₙ⟩=2λₙ) — the semidefinite face,
+-- NOT the crux. atlasAngleFamily_closes_crux: the STRICT form — identity + ∀n>0 Pos(Rlim(angleDiagTarget θ n))
+-- closes SpectralCrux (Pos(Rlim)=Pos(2λₙ)=Pos(−⟨Cₙ,Cₙ⟩)). The strict hpos is a property of the FREE angle
+-- family (angles nonzero), mirroring the repo's accepted strictRealizes_closes_crux discipline (Pos of a free
+-- embedding's diagonal + the realization identity) at the infinite rank the fence forces, in the angle-SOS
+-- shape. A REDUCTION (hypothesis→crux); NOTHING constructs θ or asserts the identity/strictness for the
+-- genuine 2λₙ (= RH); crux fields stay none.
+#print axioms Square.angleDiagTarget_nonneg
+#print axioms Square.atlasAngleFamily_hodgeNeg
+#print axioms Square.atlasAngleFamily_closes_crux
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
