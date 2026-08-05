@@ -4358,6 +4358,15 @@ open UOR.Bridge.F1Square
 -- limit-inside-integral, NO covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.dilTailIntegrand_window_bound
 
+-- Distance between two interval integrals ≤ window × sup-distance (new Square/IntegralDist.lean).
+-- riemannIntegralI_negTest: ∫(neg φ) = -∫φ at the test level (packaging riemannIntegralI_neg).
+-- riemannIntegralI_dist_le_of_close: if |φ(x)-ψ(x)| ≤ B on the window [lo,lo+w], then
+-- |∫φ - ∫ψ| ≤ w·B — via ∫(φ-ψ)=∫φ-∫ψ (addTest+negTest) and |∫(φ-ψ)|≤w·B (abs_le_window, since
+-- (φ-ψ)(x)=φ(x)-ψ(x) definitionally). The reusable heart of the ∫_t reconstruction's commute, to be
+-- composed with Rlim_eval_real_rate. NO tail assembly, NO limit-inside-integral, NO factorization, no crux.
+#print axioms Square.riemannIntegralI_negTest
+#print axioms Square.riemannIntegralI_dist_le_of_close
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
