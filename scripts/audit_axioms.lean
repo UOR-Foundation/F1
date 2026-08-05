@@ -4358,6 +4358,10 @@ open UOR.Bridge.F1Square
 -- limit-inside-integral, NO covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 -- dilTailIntegrand_bound_of_ge1: the per-t core with clampedInv(a,t) ≥ 1 supplied as a hypothesis (the
 -- t-uniform term bound that feeds genSum_RReg for the dilated tail at a fixed t); window_bound is its corollary.
+-- window_clampedInv_ge_one: on the t-window [lo,lo+w] ⊆ (0,1] (a ≤ 1), the inner scale
+-- clampedInv(a, lo+w·s) = 1/max(t,a) ≥ 1 (window point ≤ 1, ofQ_inv_le_clampedInv B=1). The shared hc1
+-- the reconstruction feeds to dilTail_partial_close (so hU and the closeness use the SAME term).
+#print axioms Square.window_clampedInv_ge_one
 #print axioms Square.dilTailIntegrand_bound_of_ge1
 #print axioms Square.dilTailIntegrand_window_bound
 

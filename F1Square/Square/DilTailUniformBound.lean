@@ -85,12 +85,30 @@ theorem dilTailIntegrand_bound_of_ge1 (f g : L2Test) (n : Nat) {Cf : Q}
   refine Rle_trans (Rmul_le_Rmul_both (Rnonneg_Rabs _) hdnn hgc htwabs) ?_
   exact Rle_of_Req (Rmul_ofQ_ofQ _ _)
 
+/-- **On the `t`-window `[lo, lo+w] ⊆ (0,1]`, the inner dilation scale is `≥ 1`**: for a window point
+    `t = lo + w·s` (`s ∈ [0,1]`) and `a ≤ 1`, `clampedInv(a,t) = 1/max(t,a) ≥ 1`. The window point is
+    `≤ 1` (`lo+w ≤ 1`), so `max(t,a) ≤ 1` and its reciprocal is `≥ 1` (`ofQ_inv_le_clampedInv`, `B=1`).
+    The shared `hc1` derivation the reconstruction feeds to `dilTail_partial_close`. -/
+theorem window_clampedInv_ge_one (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (ha1 : Qle a (⟨1, 1⟩ : Q)) (lo w : Q) (hlo : 0 < lo.den) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
+    (hw1 : Qle (add lo w) (⟨1, 1⟩ : Q)) (s : Real) (h1 : Rle s one) :
+    Rle one (clampedInv a han had (affineMap lo w hlo hw s)) := by
+  have ht'1 : Rle (affineMap lo w hlo hw s) (ofQ (⟨1, 1⟩ : Q) (by decide)) := by
+    have hws : Rle (Rmul (ofQ w hw) s) (ofQ w hw) :=
+      Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ hw hwn) h1)
+        (Rle_of_Req (Rmul_one (ofQ w hw)))
+    refine Rle_trans (Radd_le_add (Rle_of_Req (Req_refl _)) hws)
+      (Rle_trans (Rle_of_Req (Radd_ofQ_ofQ hlo hw))
+        (Rle_ofQ_ofQ (add_den_pos hlo hw) (by decide) hw1))
+  exact Rle_trans (Rle_of_Req (ofQ_congr (by decide) (Qinv_den_pos (by decide)) (by decide)))
+    (ofQ_inv_le_clampedInv han had (B := (⟨1, 1⟩ : Q)) (by decide) (by decide) ht'1 ha1)
+
 /-- **The dilated-tail integrand is bounded uniformly in the window variable `t`.** For a `t`-window
     `[lo, lo+w] ⊆ (0,1]` (`lo+w ≤ 1`, `a ≤ 1`) and `f` with clean order-`(n+2)` half-line decay
     (constant `Cf`), the `m`-th dilated-tail integrand at any window point `t = lo + w·s` (`s ∈ [0,1]`)
     obeys `|dilTailIntegrand f g n m a t| ≤ (g.M·(1/a)·Cf·2ⁿ)/((m+1)m)`, a bound with NO `t`-dependence.
     A corollary of `dilTailIntegrand_bound_of_ge1`: on the window `t ≤ 1` (and `a ≤ 1`) the scale
-    `clampedInv(a,t) = 1/max(t,a) ≥ 1` (`ofQ_inv_le_clampedInv`). The pointwise-in-`t` companion of
+    `clampedInv(a,t) = 1/max(t,a) ≥ 1` (`window_clampedInv_ge_one`). The pointwise-in-`t` companion of
     `convTwTerm_bound`. -/
 theorem dilTailIntegrand_window_bound (f g : L2Test) (n : Nat) {Cf : Q}
     (hCfd : 0 < Cf.den) (hCfn : 0 ≤ Cf.num)
@@ -106,20 +124,9 @@ theorem dilTailIntegrand_window_bound (f g : L2Test) (n : Nat) {Cf : Q}
               (mul (mul Cf (⟨((2 ^ n : Nat) : Int), 1⟩ : Q)) (⟨1, (m + 1) * m⟩ : Q)))
           (Qmul_den_pos (Qmul_den_pos g.hMd (Qinv_den_pos han))
             (Qmul_den_pos (Qmul_den_pos hCfd Nat.one_pos) (digamma_succ_mul_pos hm)))) := by
-  intro s h0 h1
-  -- the window point t' = lo + w·s ∈ [lo, lo+w] ⊆ (0,1]
-  have ht'1 : Rle (affineMap lo w hlo hw s) (ofQ (⟨1, 1⟩ : Q) (by decide)) := by
-    have hws : Rle (Rmul (ofQ w hw) s) (ofQ w hw) :=
-      Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ hw hwn) h1)
-        (Rle_of_Req (Rmul_one (ofQ w hw)))
-    refine Rle_trans (Radd_le_add (Rle_of_Req (Req_refl _)) hws)
-      (Rle_trans (Rle_of_Req (Radd_ofQ_ofQ hlo hw))
-        (Rle_ofQ_ofQ (add_den_pos hlo hw) (by decide) hw1))
-  -- clampedInv a t' ≥ 1 (t' ≤ 1, a ≤ 1)
-  have hc1 : Rle one (clampedInv a han had (affineMap lo w hlo hw s)) :=
-    Rle_trans (Rle_of_Req (ofQ_congr (by decide) (Qinv_den_pos (by decide)) (by decide)))
-      (ofQ_inv_le_clampedInv han had (B := (⟨1, 1⟩ : Q)) (by decide) (by decide) ht'1 ha1)
+  intro s _h0 h1
   exact dilTailIntegrand_bound_of_ge1 f g n hCfd hCfn hfdec a han had
-    (affineMap lo w hlo hw s) hc1 m hm
+    (affineMap lo w hlo hw s)
+    (window_clampedInv_ge_one a han had ha1 lo w hlo hw hwn hw1 s h1) m hm
 
 end UOR.Bridge.F1Square.Square
