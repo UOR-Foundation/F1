@@ -4370,6 +4370,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegralI_negTest
 #print axioms Square.riemannIntegralI_dist_le_of_close
 
+-- Partial sum at a faster schedule is within 3/(j+1) of the accelerated limit (new Square/GenSumCloseRlim.lean).
+-- genSum_close_Rlim: for a decay term T with |T m| ≤ K/((m+1)m) and any schedule R ≥ digammaMidx K,
+-- |genSum T (R j) - Rlim(genSum T ∘ digammaMidx K)| ≤ 3/(j+1) — triangle (genSum_close ≤ 1/(j+1) +
+-- Rabs_dist_Rlim ≤ 2/(j+1)). The rate depends only on T's decay constant K, so for T = twTerm(dilate c f) n
+-- (K = Cf·2ⁿ, scale-independent) it is UNIFORM in the dilation scale c — the ∫_t reconstruction's tail
+-- estimate at the convolution's own schedule. NO tail assembly, NO factorization, NO positivity, no crux.
+#print axioms Square.genSum_close_Rlim
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the

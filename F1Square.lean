@@ -504,6 +504,7 @@ import F1Square.Square.ConvSummedIntegrand
 import F1Square.Square.DilateTestRDecay
 import F1Square.Square.DilTailUniformBound
 import F1Square.Square.IntegralDist
+import F1Square.Square.GenSumCloseRlim
 import F1Square.Square.AtlasAngleFamily
 import F1Square.Square.AngleGramRlim
 import F1Square.Square.IntervalTelescope
