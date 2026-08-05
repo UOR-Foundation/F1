@@ -4356,6 +4356,9 @@ open UOR.Bridge.F1Square
 -- the t-uniform term bound; the g-weight |g(t)·clampedInv| ≤ g.M·(1/a) is t-uniform too. The pointwise-in-t
 -- companion of convTwTerm_bound (which bounds the integrated ∫_t value). NO tail assembly, NO
 -- limit-inside-integral, NO covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+-- dilTailIntegrand_bound_of_ge1: the per-t core with clampedInv(a,t) ≥ 1 supplied as a hypothesis (the
+-- t-uniform term bound that feeds genSum_RReg for the dilated tail at a fixed t); window_bound is its corollary.
+#print axioms Square.dilTailIntegrand_bound_of_ge1
 #print axioms Square.dilTailIntegrand_window_bound
 
 -- Distance between two interval integrals ≤ window × sup-distance (new Square/IntegralDist.lean).
