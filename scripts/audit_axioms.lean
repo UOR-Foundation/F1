@@ -5784,6 +5784,15 @@ open UOR.Bridge.F1Square
 -- grounding, NO step-4 positivity (RH). Crux none.
 #print axioms Square.Rmul_head_of_covariance
 
+-- THE covCONNECT ALGEBRA (new Square/CovConnectPure.lean). covConnect_pure: with mellinHat(dilate c f)
+-- abstracted as mom+tw (its def mellinMoment+twTail), the covariance cⁿ⁺¹·(mom+tw)≈M and reciprocal
+-- T·c≈1 give the tail integrand as the head/moment difference g·c·tw ≈ (g·Tⁿ·M) − (g·c·mom). Built on
+-- Rmul_head_of_covariance (head c·(mom+tw)=Tⁿ·M) + Rmul_distrib/Rmul_sub_distrib/Rmul_assoc. This is the
+-- exact split U=Whead−Tmom the tail commute's hU consumes (Whead.f=g·Tⁿ·M[f], Tmom.f=g·c·mellinMoment).
+-- Pure Real algebra; supplies NO U, NO factorization, NO v=ĝ grounding, NO step-4 positivity (RH). Crux
+-- none.
+#print axioms Square.covConnect_pure
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
