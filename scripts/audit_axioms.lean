@@ -5844,6 +5844,17 @@ open UOR.Bridge.F1Square
 -- step-4 positivity (RH). Crux none.
 #print axioms Square.convTwTail_eq_intU
 
+-- THE Tmom-CANCELLATION READOFF: convMellinHat = ∫_t Whead (new Square/ConvMellinHatIntWhead.lean).
+-- convMellinHat_eq_intWhead: by def convMellinHat = mellinMoment(mulConv) + convTwTail; the moment side is
+-- ∫_t Tmom (riemannIntegralI_unit + mellinConv_fubini, at Tmom's STANDARD certs — stopping before
+-- mellinMoment_mulConv_dilated's mom_ptw rewrite so it's syntactically the tail-side integral) and the tail
+-- side is ∫_t (Whead − Tmom) (convTwTail_eq_intU), so the Tmom integrals cancel (riemannIntegralI_addTest +
+-- negTest) leaving ∫_t Whead. Since Whead.f t=g·max(t,a)ⁿ·M[f], ∫Whead=M[f]·∫(g·tⁿ) — the convolution
+-- theorem M[f⋆g]=M[f]·(compact moment of g) on the window (a≤lo), one scalar pullout away. Object-grounding;
+-- does NOT yet pull M[f] out of ∫Whead, NO closed factorization, NO v=ĝ grounding, NO step-4 positivity (RH).
+-- Crux none.
+#print axioms Square.convMellinHat_eq_intWhead
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
