@@ -4348,6 +4348,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.hdec_window_of_hfdec
 #print axioms Square.dilateTestR_window_hdec
 
+-- The dilated-tail integrand is bounded UNIFORMLY in t (new Square/DilTailUniformBound.lean).
+-- dilTailIntegrand_window_bound: for a t-window ⊆ (0,1] and f with clean order-(n+2) decay, at EVERY
+-- window point t = lo+w·s the m-th dilated-tail integrand g(t)·(1/max(t,a))·twTerm(dilate (1/max(t,a)) f) n m
+-- is ≤ (g.M·(1/a)·Cf·2ⁿ)/((m+1)m), with NO t-dependence in the constant. On the window t ≤ 1 (a ≤ 1) the
+-- inner scale clampedInv(a,t) ≥ 1 (ofQ_inv_le_clampedInv), so dilateTestR_window_hdec + twTerm_bound give
+-- the t-uniform term bound; the g-weight |g(t)·clampedInv| ≤ g.M·(1/a) is t-uniform too. The pointwise-in-t
+-- companion of convTwTerm_bound (which bounds the integrated ∫_t value). NO tail assembly, NO
+-- limit-inside-integral, NO covariance, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.dilTailIntegrand_window_bound
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
