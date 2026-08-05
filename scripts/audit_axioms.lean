@@ -4435,6 +4435,16 @@ open UOR.Bridge.F1Square
 -- NO covariance assembly yet, NO factorization, NO positivity, NO crux.
 #print axioms Square.dilateTest_fine_window_decay
 
+-- twTail/mellinHat independent of the witnessing decay constant (new Square/MellinHatDecayIndep.lean) — the
+-- schedule-bridge for the c≥1 covariance wall-break. twTail_decay_indep: twTail φ n at two valid decay
+-- constants C1,C2 = SAME value (both Rlim of genSum(twTerm φ n), reconciled through the common schedule
+-- digammaMidx K⋆ = ⟨(C1·2ⁿ).num.toNat+(C2·2ⁿ).num.toNat,1⟩ via genSum_close×2 + digammaMidx_common +
+-- Rlim_approx_eq + Rabs triangle). mellinHat_decay_indep = Radd_congr(mellinMoment)(twTail_decay_indep).
+-- Reconciles the covariance-at-qk (proved at C=(Cf+φ.M)·(2·qk.den)^(n+2)) to the reconstruction's uniform Cf.
+-- NO covariance assembly yet, NO factorization, NO positivity, NO crux.
+#print axioms Square.twTail_decay_indep
+#print axioms Square.mellinHat_decay_indep
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
