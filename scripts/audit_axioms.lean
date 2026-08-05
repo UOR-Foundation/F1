@@ -4445,6 +4445,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.twTail_decay_indep
 #print axioms Square.mellinHat_decay_indep
 
+-- Window-decay constant weakening (new Square/HdecWeaken.lean). hdec_window_weaken: ψ's order-(n+2)
+-- window decay at C1 ⟹ same at C2 for Qle C1 C2 (ofQ mono in the numerator via qmul_le_right_mono).
+-- Generic in ψ — lifts the reconstruction's tight Cf-decay to the larger per-approximant constant
+-- covariance_at_rational_dilateTestR shares across hdec_dil/hdec_phi/hdec_fine. NO covariance, no crux.
+#print axioms Square.hdec_window_weaken
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the

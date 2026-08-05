@@ -512,6 +512,7 @@ import F1Square.Square.TwoSidedWeaken
 import F1Square.Square.DilTailCommute
 import F1Square.Square.DilateTestFineDecay
 import F1Square.Square.MellinHatDecayIndep
+import F1Square.Square.HdecWeaken
 import F1Square.Square.AtlasAngleFamily
 import F1Square.Square.AngleGramRlim
 import F1Square.Square.IntervalTelescope
