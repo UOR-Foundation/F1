@@ -4387,6 +4387,14 @@ open UOR.Bridge.F1Square
 -- NO covariance, NO factorization, NO positivity, no crux.
 #print axioms Square.dilTail_partial_close
 
+-- convTwTail is its own limit at any faster schedule (new Square/ConvTwTailSchedule.lean).
+-- convTwTail_eq_fast_schedule: for any R with digammaMidx K_conv j ≤ R j (K_conv = w·Cf·M_g·(1/a)·2ⁿ),
+-- Rlim(genSum (conv twisted terms) ∘ R) = convTwTail f g n. Via Rlim_approx_eq on the 1/(j+1)
+-- schedule-closeness (genSum_close fed by convTwTerm_two_sided) — the analog of improper_schedule_eq for
+-- the convolution's clamp-free tail. Lets the ∫_t reconstruction evaluate on a schedule dominating the
+-- dilated tail's digammaMidx(Cf·2ⁿ) (K_conv and Cf·2ⁿ not comparable in general). NO factorization, no crux.
+#print axioms Square.convTwTail_eq_fast_schedule
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
