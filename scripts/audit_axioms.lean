@@ -4378,6 +4378,15 @@ open UOR.Bridge.F1Square
 -- estimate at the convolution's own schedule. NO tail assembly, NO factorization, NO positivity, no crux.
 #print axioms Square.genSum_close_Rlim
 
+-- The convolution-schedule partial of the dilated tail is close to K·twTail (new Square/DilTailPartialClose.lean).
+-- dilTail_partial_close: for t with clampedInv(a,t) ≥ 1 and any schedule R ≥ digammaMidx(Cf·2ⁿ),
+-- |Σ_{m<R j} dilTailIntegrand·t - g(t)·clampedInv·twTail(dilate c_t f) n| ≤ (g.M·(1/a))·3/(j+1), rate uniform
+-- in t. Chain: genSum_Rmul_of_termwise pulls K=g(t)·clampedInv out (dilTailIntegrand_m t = K·twTerm(dilate c_t f) n m
+-- defeq), Rmul_sub_distrib factors K out of the difference, genSum_close_Rlim bounds |genSum(twTerm) (R j) - twTail|
+-- by 3/(j+1) (its Rlim IS twTail by def), |K| ≤ g.M·(1/a) closes the product. NO limit-inside-integral, NO Ttail,
+-- NO covariance, NO factorization, NO positivity, no crux.
+#print axioms Square.dilTail_partial_close
+
 -- The Gate-A Atlas-intrinsic angle family = step-4 implementation target, STATED (new
 -- Square/AtlasAngleFamily.lean). angleDiagTarget_nonneg: every partial Σ_{k<m}(2−2cos(nθ_k)) ≥ 0 (each
 -- block 2−2cos=(1−cos)+(1−cos)≥0 via Rcos_le_one) — the certificate's semidefinite face is free from the
