@@ -4297,6 +4297,23 @@ open UOR.Bridge.F1Square
 -- interchange, NO covariance application, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
 #print axioms Square.mom_ptw
 #print axioms Square.mellinMoment_mulConv_dilated
+
+-- General-window integral additivity over L2Test.add (new Square/IntervalAddTest.lean).
+-- riemannIntegralI_addTest: ∫_{lo}^{lo+w} (φ+ψ) = ∫ φ + ∫ ψ — the interval-integral analog of
+-- innerI_add_left. Three integrands weakened to the common modulus φ.L+ψ.L (lip_weaken) where
+-- riemannIntegralI_add fires; certif_irrel returns each summand to its canonical modulus. The two-term
+-- additivity the Σ_m/∫_t interchange (the convolution factorization's tail assembly) is built from by
+-- induction. NO Σ_m/∫_t interchange, NO tail assembly, NO factorization, NO positivity, NO crux.
+#print axioms Square.riemannIntegralI_addTest
+-- riemannIntegralI_genSumTest: THE Σ_m/∫_t INTERCHANGE (finite) — Σ_{m<N} ∫_{lo}^{lo+w} (T m) =
+-- ∫_{lo}^{lo+w} Σ_{m<N} (T m), for any test family T : Nat → L2Test. Induction on N: base ∫ 0 = 0
+-- (riemannIntegralI_const + Rmul_zero, zeroTest matching const's fields defeq), step riemannIntegralI_addTest
+-- on genSumTest T (N+1) = (genSumTest T N)+(T N). The m-dependent-modulus obstacle is dissolved: the sum
+-- test genSumTest carries the summed modulus intrinsically, so no manual weakening compounding. This is the
+-- interchange that turns the convolution's per-window tail-term sum into a single t-integral of the summed
+-- dilated tail (defs zeroTest/genSumTest need no audit line). NO tail assembly wired to the convolution yet,
+-- NO covariance application, NO factorization M[f⋆g]=M[f]·M[g], NO positivity, NO crux.
+#print axioms Square.riemannIntegralI_genSumTest
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
