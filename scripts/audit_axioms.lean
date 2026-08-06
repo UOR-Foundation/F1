@@ -2947,6 +2947,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.weilPrimeGram_vFrom_psd
 #print axioms Square.primeGram_vFrom_sym
 
+-- GROUNDING v=ĝ IN THE TRANSFORM (new Square/CoupledWeilVHat.lean). The coupled kernel intends v m i=ĝ_i(m)
+-- (Mellin transform), not the point-value placeVal of vFrom. vHat g m i := mellinMoment (g i) m = ĝ_i(m)=∫₀¹g_i·xᵐ
+-- feeds the genuine transform (zero-free): primeGram_vHat_apply gives weilPrimeGram(vHat g) M (i,j)=
+-- Σ_m Λ(m+1)·ĝ_i(m)·ĝ_j(m); weilPrimeGram_vHat_psd (unconditional PSD, Λ≥0); primeGram_vHat_sym; and
+-- primeGram_vHat_diag (the diagonal = Σ Λ(m+1)·ĝ_i(m)², the transform-domain prime energy the
+-- autocorrelation-recovery law ties to weilPrimePart(g_i⋆g_i^τ) via Wall 3's factorization). Object-grounding;
+-- does NOT prove weilPrimeGram(vHat)=autocorrelation prime side, NO coupled positivity, NO step-4 dominance
+-- (ArchDominatesPrime), which is RH. Crux none.
+#print axioms Square.primeGram_vHat_apply
+#print axioms Square.weilPrimeGram_vHat_psd
+#print axioms Square.primeGram_vHat_sym
+#print axioms Square.primeGram_vHat_diag
+
 -- v0.21.0 stage G — the UOR Atlas spectral operator (sourced Σ = {10,2,7,−1}, Atlas §5/§6.6):
 -- verified spectrum/trace, the indefiniteness (the sourced make-or-break), and the definite norm.
 #print axioms Square.blockEig_spectrum

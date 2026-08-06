@@ -340,6 +340,7 @@ import F1Square.Square.CoupledWeilOperator
 import F1Square.Square.CoupledWeilComplement
 import F1Square.Square.CoupledWeilGenuine
 import F1Square.Square.CoupledWeilPlaceValue
+import F1Square.Square.CoupledWeilVHat
 import F1Square.Square.DiagDominant
 import F1Square.Square.CoupledWeilDiagDominant
 import F1Square.Square.CoupledWeilIndefinite
