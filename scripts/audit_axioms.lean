@@ -5884,6 +5884,15 @@ open UOR.Bridge.F1Square
 -- NO step-4 band-coupling positivity (ArchDominatesPrime), which is RH. Crux none.
 #print axioms Square.convMellinHat_eq_MfMoment
 
+-- THE REFLECTION COVARIANCE IN LOG-COORDINATES (new Square/LogReflect.lean). logPull_reflect_neg:
+-- logPull (reflectTest a φ) u ≈ logPull φ (−u) on the inert window (exp u ≥ a) — the multiplicative
+-- inversion x↦1/x of reflectTest is the additive negation u↦−u under logPull (sibling of
+-- logPull_dilate_shift). The log-coordinate keystone of M[g^τ](s)=M[g](−s), the self-dual arm of the
+-- autocorrelation recovery. Proof: clamp drops on the window (clampedInv_eq_of_ge), 1/exp u = exp(−u)
+-- by inverse-uniqueness (exp(−u)·exp u=exp 0=1), φ.hfc lifts. NOT the reflected Mellin moment (needs the
+-- log-integral rep on top), NOT the autocorrelation identification, NO step-4 positivity (RH). Crux none.
+#print axioms Square.logPull_reflect_neg
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

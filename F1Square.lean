@@ -444,6 +444,7 @@ import F1Square.Square.ConvTwTailIntU
 import F1Square.Square.ConvMellinHatIntWhead
 import F1Square.Square.ConstMulRight
 import F1Square.Square.ConvMellinHatFactor
+import F1Square.Square.LogReflect
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv
