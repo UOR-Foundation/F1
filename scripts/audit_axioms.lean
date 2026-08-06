@@ -5855,6 +5855,22 @@ open UOR.Bridge.F1Square
 -- Crux none.
 #print axioms Square.convMellinHat_eq_intWhead
 
+-- THE RIGHT-CONSTANT SCALAR PULLOUT (new Square/ConstMulRight.lean). riemannIntegralI_mulConstTest_right:
+-- ∫_t(ψ(t)·c)=c·∫_t ψ(t) — the mirror of riemannIntegralI_constTestMul for the constant on the RIGHT
+-- (Whead's outer factor). Reconciles the product modulus to a common Lc (certif_irrel), commutes ψ·c→c·ψ
+-- (riemannIntegralI_congr via Rmul_comm), pulls c out (riemannIntegralI_Rsmul), realigns. Object-grounding
+-- scalar linearity; no factorization, no v=ĝ grounding, no step-4 positivity (RH). Crux none.
+#print axioms Square.riemannIntegralI_mulConstTest_right
+
+-- THE ON-WINDOW CONVOLUTION FACTORIZATION (new Square/ConvMellinHatFactor.lean). convMellinHat_eq_MfMoment:
+-- convMellinHat f g n = M[f]·∫_t(g·tⁿ), M[f]=mellinHat f — the readoff M[f⋆g]=M[f]·M[g] on the window
+-- (a≤lo), with M[g] the compact ∫_t g·tⁿ. Composes convMellinHat_eq_intWhead (=∫Whead) with
+-- riemannIntegralI_mulConstTest_right (M[f], Whead's outer constTest, pulls out). Wall 3 of the transform
+-- bridge COMPLETE: grounds v=ĝ at the value level — at prime powers this turns mulConv into
+-- weilPrimeGram(vFrom g), the genuine autocorrelation prime side. Does NOT assemble the coupled kernel,
+-- NO step-4 band-coupling positivity (ArchDominatesPrime), which is RH. Crux none.
+#print axioms Square.convMellinHat_eq_MfMoment
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
