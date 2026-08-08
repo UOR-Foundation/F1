@@ -5978,6 +5978,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.windowMoment_eq_mellinMoment
 #print axioms Square.mellinMoment_reflect_selfDual
 
+-- MILESTONE B, BRICK 4: THE HONEST ASYMMETRIC AUTOCORRELATION FACTORIZATION (new
+-- Square/ConvAutocorrFactor.lean). convAutocorr_factor_selfDual: for self-dual g_i,g_j (φ_j vanishing
+-- outside (a,1/a)) on window [a,1], convMellinHat g_i (reflectTest a g_j) m ≈ mellinHat(g_i)(m)·
+-- mellinMoment(g_j)(m) — i.e. M[g_i⋆g_j^τ](m)=mellinHat(g_i)·mellinMoment(g_j). Composes
+-- convMellinHat_eq_MfMoment (factors into mellinHat(g_i)·∫_[a,1](reflectTest g_j)·tᵐ) + brick 1
+-- windowMoment_reflect_selfDual (drops reflection) + brick 2 windowMoment_eq_mellinMoment (fed brick 2a
+-- vanishing, collapses to mellinMoment g_j). ASYMMETRIC (f-side mellinHat, g-side mellinMoment): this
+-- makes THE WINDOW WALL kernel-explicit — the symmetric Gram identification needs mellinHat(g_i)=
+-- mellinMoment(g_i), FALSE for support straddling x=1, NOT crossed here. NOT the point-value Weil prime
+-- side (different functional). NO step-4 positivity (RH). Crux none.
+#print axioms Square.convAutocorr_factor_selfDual
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
