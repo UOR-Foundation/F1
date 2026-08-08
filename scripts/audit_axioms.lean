@@ -4524,6 +4524,16 @@ open UOR.Bridge.F1Square
 -- Constructs no θ; asserts nothing for genuine 2λₙ (= RH); crux fields none.
 #print axioms Square.angleGram_Rlim
 #print axioms Square.angleEmb_Rlim_closes_crux
+
+-- FRONTIER DISCOVERY — THE RAW ANGLE TARGET'S LIMIT IS BOUNDED (new Square/AngleTargetBound.lean).
+-- angleDiagTarget_Rlim_le_two: for EVERY θ with reg, Rlim(angleDiagTarget θ n) ≤ 2 (angleDiagTarget θ n 0
+-- = 0 + Rlim_tendsTo at k=0 gives |0−Rlim| ≤ 2/1). This exposes a SATISFIABILITY GAP in the certificate
+-- route's closing mechanism: reg forces Rlim ≤ 2 (indep of θ), but hid demands Rlim = 2λₙ ~ n log n → ∞
+-- (2λ₇ ≈ 2.2 > 2), so reg ∧ hid are jointly unsatisfiable on the genuine data — the raw-target reduction
+-- (angleGram_Rlim / atlasAngleFamily_closes_crux) is valid but cannot be INSTANTIATED to close the crux.
+-- The fix is an accelerated angle target (RReg via a rate schedule, unbounded limit). A defect in one
+-- mechanism's statement, not an obstruction to RH; asserts no positivity of 2λₙ. Crux none.
+#print axioms Square.angleDiagTarget_Rlim_le_two
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
