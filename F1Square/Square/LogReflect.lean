@@ -67,4 +67,22 @@ theorem logPull_reflect_neg (a : Q) (han : 0 < a.num) (had : 0 < a.den) (φ : L2
   show Req (φ.f (clampedInv a han had (RexpReal u))) (φ.f (RexpReal (Rneg u)))
   exact φ.hfc _ _ harg
 
+/-- **The reflection generator's interaction with dilation** (the second multiplicative-group law in
+    log-coordinates, completing `MultShift`'s dilation laws): reflecting a dilated test negates the
+    argument AND adds the dilation shift —
+    `logPull (reflectTest a (dilateTest n φ)) u ≈ logPull φ (log n − u)`. The honest analog of
+    `logPull_dilate_shift_comp` for the reflection generator (`reflect ∘ dilate`); composes
+    `logPull_reflect_neg` (reflect ↦ negation) with `logPull_dilate_shift` (dilate ↦ shift), at the
+    negated argument `−u`. On the window `exp u ≥ a`. -/
+theorem logPull_reflect_dilate (a : Q) (han : 0 < a.num) (had : 0 < a.den) (n : Nat) (hn : 1 ≤ n)
+    (φ : L2Test) (u : Real) {kx : Nat} (hkx : Qlt (Qbound kx) ((RexpReal u).seq kx))
+    (hx : Rle (ofQ a had) (RexpReal u)) :
+    Req (logPull (reflectTest a han had
+            (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0:Int) < (n:Int); omega) Nat.one_pos φ)) u)
+        (logPull φ (Radd (logN n hn) (Rneg u))) :=
+  Req_trans
+    (logPull_reflect_neg a han had
+      (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0:Int) < (n:Int); omega) Nat.one_pos φ) u hkx hx)
+    (logPull_dilate_shift n hn φ (Rneg u))
+
 end UOR.Bridge.F1Square.Square

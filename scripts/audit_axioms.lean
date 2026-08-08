@@ -5893,6 +5893,13 @@ open UOR.Bridge.F1Square
 -- log-integral rep on top), NOT the autocorrelation identification, NO step-4 positivity (RH). Crux none.
 #print axioms Square.logPull_reflect_neg
 
+-- THE REFLECTION GENERATOR'S DILATION LAW (Square/LogReflect.lean). logPull_reflect_dilate:
+-- logPull (reflectTest a (dilateTest n φ)) u ≈ logPull φ (log n − u) — reflecting a dilated test is
+-- negation + the dilation shift; the honest analog of logPull_dilate_shift_comp for the reflect∘dilate
+-- generator, completing MultShift's log-coordinate group laws. Composes logPull_reflect_neg with
+-- logPull_dilate_shift at −u. Substrate; NOT the reflected moment, NO step-4 positivity (RH). Crux none.
+#print axioms Square.logPull_reflect_dilate
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
