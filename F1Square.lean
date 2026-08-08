@@ -454,6 +454,7 @@ import F1Square.Square.MulConv
 import F1Square.Square.MulConvCongr
 import F1Square.Square.Autocorr
 import F1Square.Square.SelfDualAutocorr
+import F1Square.Square.WindowMomentReflect
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare

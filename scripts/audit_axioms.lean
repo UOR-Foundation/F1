@@ -5954,6 +5954,17 @@ open UOR.Bridge.F1Square
 -- the full autocorrelation identification, NO step-4 positivity (ArchDominatesPrime), which is RH. Crux none.
 #print axioms Square.autocorr_selfDual_eq_conv
 
+-- MILESTONE B, BRICK 1: WINDOW-MOMENT REFLECTION SYMMETRY OF THE SELF-DUAL CLASS (new
+-- Square/WindowMomentReflect.lean, workflow-built). windowMoment_reflect_selfDual:
+-- ∫_[lo,lo+w] (reflectTest a (selfDualTest a φ))·tᵐ ≈ ∫_[lo,lo+w] (selfDualTest a φ)·tᵐ on
+-- [lo,lo+w]⊆[a,1/a] — the moment-integral twin of Milestone A's autocorr_selfDual_eq_conv. One
+-- riemannIntegralI_congr_unit_mod (different moduli; reflectTest carries (1/a)²) fed by
+-- selfDualTest_self_dual_pointwise over the affineMap window points a≤t≤1/a. NO change of variables, NO
+-- case-split. Composed with the [a,1]-support collapse it gives M[reflectTest g]=M[g] (bricks 2-3). The
+-- SYMMETRIC transform Gram identification stays blocked by the f-side window wall (mellinHat≠mellinMoment
+-- for straddling support). NO step-4 positivity (RH). Crux none.
+#print axioms Square.windowMoment_reflect_selfDual
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
