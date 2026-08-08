@@ -5907,6 +5907,16 @@ open UOR.Bridge.F1Square
 -- reason g^τ is self-inverse. Substrate; NOT the reflected moment, NO step-4 positivity (RH). Crux none.
 #print axioms Square.logPull_reflect_involutive
 
+-- THE SELF-DUAL (MELLIN-EVEN) TEST CLASS (new Square/SelfDualTest.lean). logPull_selfDualTest_self_dual:
+-- selfDualTest a φ := φ + reflectTest a φ is invariant under reflectTest on the reciprocal-symmetric
+-- window (logPull (reflectTest a (selfDualTest a φ)) u ≈ logPull (selfDualTest a φ) u) — the
+-- Connes-Consani test class the autocorrelation self-dual arm needs, the payoff of the reflection
+-- involution. reflectTest+logPull distribute over L2Test.add definitionally; involution collapses the
+-- reflect²φ summand; Radd_comm reorders. NOT the reflected Mellin MOMENT identity (needs innerI
+-- congruence + [0,a) boundary handling), NOT the autocorrelation identification, NO step-4 positivity
+-- (RH). Crux none.
+#print axioms Square.logPull_selfDualTest_self_dual
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
