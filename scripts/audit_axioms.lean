@@ -4547,6 +4547,19 @@ open UOR.Bridge.F1Square
 #print axioms Square.angleDiagTargetAcc_nonneg
 #print axioms Square.atlasAngleFamily_hodgeNeg_acc
 #print axioms Square.atlasAngleFamily_closes_crux_acc
+
+-- reg' DISCHARGE (new Square/AngleRegDischarge.lean). Discharges the reg' hypothesis of
+-- atlasAngleFamily_closes_crux_acc to a SATISFIABLE convergence-rate condition. angleDiagTarget_mono:
+-- the raw partials Σ_{k<m}(2−2cos nθ_k) are monotone (each block 2−2cos≥0). angleDiagTargetAcc_RReg:
+-- given a monotone schedule (hmono) + a canonical-rate bound on the ACCELERATED increments (htail:
+-- Y k − Y j ≤ 1/(j+1) for j≤k), the accelerated target is RReg (via RReg_of_real_bound, mirroring
+-- czetaRe_RReg). FRONTIER FINDING: the hypothesis is stated on the accelerated increments, NOT a linear
+-- schedule — the raw tails decay like (log m)²/m (not 1/m), so sched j = B(j+1) is VACUOUS; the
+-- accelerated-increment form IS satisfiable (any Cauchy modulus of the raw series is realized by a
+-- schedule). Pure convergence analysis on a FREE θ; asserts nothing about the limit being 2λₙ (that is
+-- hid = RH); constructs no θ/sched. Crux none.
+#print axioms Square.angleDiagTarget_mono
+#print axioms Square.angleDiagTargetAcc_RReg
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz

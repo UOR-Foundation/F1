@@ -541,6 +541,7 @@ import F1Square.Square.AtlasAngleFamily
 import F1Square.Square.AngleGramRlim
 import F1Square.Square.AngleTargetBound
 import F1Square.Square.AngleTargetAcc
+import F1Square.Square.AngleRegDischarge
 import F1Square.Square.IntervalTelescope
 import F1Square.Square.HalfLineExhaustion
 import F1Square.Square.ImproperScheduleIndep
