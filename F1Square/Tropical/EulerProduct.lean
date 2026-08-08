@@ -79,4 +79,21 @@ theorem R5_euler_product :
     (pMul (pDetN 4 IminusTB) [1, 0, 1, 2, 1, 4, 5, 6, 13]).take 9
       = [1, 0, 0, 0, 0, 0, 0, 0, 0] := by decide
 
+/-- A degree-`≤3` integer polynomial `[c₀,c₁,c₂,c₃]` evaluated at `t = p/q` and cleared by `q³`:
+    `c₀·q³ + c₁·p·q² + c₂·p²·q + c₃·p³` — the sign of the true value at `p/q` (for `q > 0`). -/
+def clearedEval3 (c : Poly) (p q : Int) : Int :=
+  c.getD 0 0 * q ^ 3 + c.getD 1 0 * p * q ^ 2 + c.getD 2 0 * p ^ 2 * q + c.getD 3 0 * p ^ 3
+
+/-- **The dynamical zeta's leading pole = the topological-entropy base, bracketed** (a fragment of the
+    prime-orbit theorem R8). The zeta's smallest positive pole is the smallest positive root `t*` of the
+    denominator `det(I − tB) = 1 − t² − 2t³` (`R5_det`), and `t* = 1/ρ(B)` for `ρ(B)` the Perron
+    eigenvalue = `e^{h}`, `h` the topological entropy. The denominator changes sign between `t = 13/20`
+    and `t = 33/50`: positive at `0.65` (`clearedEval3 … 13 20 = 226 > 0`), negative at `0.66`
+    (`clearedEval3 … 33 50 = −1324 < 0`), computed directly from the determinant. So `t* ∈ (0.65, 0.66)`,
+    i.e. `ρ(B) ∈ (1.51, 1.54)` and `h = log ρ(B) ∈ (0.41, 0.44)` — consistent with the doc's
+    `h ≈ 0.4196`. (The full asymptotic `π(L) ~ e^{hL}/L` is analysis, not formalized here.) -/
+theorem entropy_pole_bracket :
+    0 < clearedEval3 (pDetN 4 IminusTB) 13 20
+    ∧ clearedEval3 (pDetN 4 IminusTB) 33 50 < 0 := by decide
+
 end UOR.Bridge.F1Square.Tropical

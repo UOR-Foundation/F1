@@ -352,6 +352,11 @@ open UOR.Bridge.F1Square
 -- (no λ/zeros/StieltjesEta). Crux none.
 #print axioms Tropical.R5_det
 #print axioms Tropical.R5_euler_product
+-- entropy_pole_bracket (R8 fragment): the dynamical zeta's leading pole (topological-entropy base) is
+-- the smallest positive root t*=1/ρ(B) of det(I−tB)=1−t²−2t³; sign change of the (cleared) determinant
+-- between t=13/20 (226>0) and t=33/50 (−1324<0) brackets t*∈(0.65,0.66), h=log ρ(B)≈0.4196. RH-independent
+-- (full π(L)~e^{hL}/L asymptotic NOT formalized). Crux none.
+#print axioms Tropical.entropy_pole_bracket
 
 -- v0.2.0 — sibling carriers (R14, R15, R16).
 #print axioms Tropical.R14_kappaBool_perm_invariant
