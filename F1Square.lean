@@ -80,6 +80,7 @@ import F1Square.Square.UniformClosure
 import F1Square.Square.CoxeterCandidate
 import F1Square.Square.SinglePrime
 import F1Square.Square.AtlasGenerator
+import F1Square.Square.AtlasGrowth
 import F1Square.Square.AtlasCoherence
 import F1Square.Square.AtlasComposition
 import F1Square.Square.AtlasTopology

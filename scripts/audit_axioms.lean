@@ -3130,6 +3130,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.atlasShiftDiag_mono
 #print axioms Square.atlasShiftDiag_step_ge_one
 #print axioms Square.atlasGenerator_survives_growth
+-- ATLAS SMOOTH-FACET n log n GROWTH CLASS (new Square/AtlasGrowth.lean). atlasShiftDiag_double_ge:
+-- over a doubling window [n,2n) the atlas candidate grows by ≥ n·log(n+2) (RsumN_split_at window,
+-- each term log(n+i+2)≥log(n+2) by logN_mono, RsumN_const+RsumN_le), i.e. SUPER-LINEAR = the n log n
+-- class, sharpening the mere step≥1 unboundedness. Zero-free, atlas-intrinsic growth-filter calibration
+-- (the 2λₙ~n log n necessary-condition side); does NOT connect to 2λₙ (that identity is RH), asserts no
+-- positivity. Crux none.
+#print axioms Square.atlasShiftDiag_double_ge
 
 -- v0.21.0 stage G — coherence is the closure condition: the Atlas closes by coherence across all
 -- facets (zero-state laws), not a single facet.
