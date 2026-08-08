@@ -5926,6 +5926,24 @@ open UOR.Bridge.F1Square
 -- (RH). Crux none.
 #print axioms Square.mulConv_congr_right
 
+-- THE VALUE-LEVEL REFLECTION INVOLUTION (new Square/ValueInvolution.lean). clampedInv_involutive:
+-- clampedInv a (clampedInv a t) ≈ t on the reciprocal-symmetric window a ≤ t ≤ 1/a (t witness) — both
+-- clamps inert (clampedInv a t ≈ 1/t via clampedInv_eq_of_ge; 1/t ≥ a via ofQ_inv_le_Rinv +
+-- Qinv(Qinv a)=a), outer clamp inert too, Rinv involution 1/(1/t)=t. The value-level (pointwise-in-t)
+-- form the convolution consumes. Rests on private Qinv_Qinv + Rinv_involutive. NOT the self-duality yet,
+-- NO step-4 positivity (RH). Crux none.
+#print axioms Square.clampedInv_involutive
+
+-- POINTWISE SELF-DUALITY OF THE MELLIN-EVEN CLASS (new Square/SelfDualPointwise.lean).
+-- reflectTest_involutive_pointwise: (reflectTest a (reflectTest a φ)).f t ≈ φ.f t on a≤t≤1/a (φ.hfc
+-- through clampedInv_involutive). selfDualTest_self_dual_pointwise: (reflectTest a (selfDualTest a φ)).f
+-- t ≈ (selfDualTest a φ).f t on the window — reflectTest & .f distribute over L2Test.add, pointwise
+-- involution collapses the reflect²φ summand, Radd_comm reorders (value-level twin of
+-- logPull_selfDualTest_self_dual). The version mulConv_congr_right consumes (agreement AT the integration
+-- points t). NOT the autocorrelation identity yet, NO step-4 positivity (RH). Crux none.
+#print axioms Square.reflectTest_involutive_pointwise
+#print axioms Square.selfDualTest_self_dual_pointwise
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
