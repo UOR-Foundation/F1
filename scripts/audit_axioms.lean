@@ -4534,6 +4534,19 @@ open UOR.Bridge.F1Square
 -- The fix is an accelerated angle target (RReg via a rate schedule, unbounded limit). A defect in one
 -- mechanism's statement, not an obstruction to RH; asserts no positivity of 2λₙ. Crux none.
 #print axioms Square.angleDiagTarget_Rlim_le_two
+
+-- THE FIX — THE ACCELERATED ANGLE TARGET (new Square/AngleTargetAcc.lean). angleDiagTargetAcc θ n sched
+-- j := angleDiagTarget θ n (sched j): the raw partials reindexed by a monotone schedule. For sched 0 > 0
+-- it starts from a LARGE partial (not 0), so RReg no longer caps the limit — reg' and hid (Rlim=2λₙ) are
+-- JOINTLY SATISFIABLE, repairing the satisfiability gap of AngleTargetBound. angleDiagTargetAcc_nonneg
+-- (each partial ≥0, semidefinite face free); atlasAngleFamily_hodgeNeg_acc (identity ⟹ SpectralHodgeNeg);
+-- atlasAngleFamily_closes_crux_acc (the STRICT reduction ⟹ SpectralCrux) — the proof is target-agnostic
+-- (Pos_congr on hid/hpos through genuine_vanCyc_normal), so it transfers verbatim to a target where the
+-- hypotheses can actually be met on the unbounded 2λₙ. Constructs no θ/sched; asserts nothing about the
+-- genuine 2λₙ (hid = RH); reg' discharge (choosing sched) is separate convergence analysis. Crux none.
+#print axioms Square.angleDiagTargetAcc_nonneg
+#print axioms Square.atlasAngleFamily_hodgeNeg_acc
+#print axioms Square.atlasAngleFamily_closes_crux_acc
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz
