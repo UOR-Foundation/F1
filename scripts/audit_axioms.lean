@@ -5917,6 +5917,15 @@ open UOR.Bridge.F1Square
 -- (RH). Crux none.
 #print axioms Square.logPull_selfDualTest_self_dual
 
+-- CONVOLUTION SECOND-ARGUMENT WINDOW-CONGRUENCE (new Square/MulConvCongr.lean). mulConv_congr_right:
+-- if g ≈ g' on the integration window [lo,lo+w], then mulConv f g x ≈ mulConv f g' x — g enters only
+-- through the integrand's window values. One riemannIntegralI_congr_unit_mod (window-only, different
+-- moduli); integrands (f(x/t)·g(t))·(1/max(t,a)) agree from the middle factor (Rmul_congr twice). The
+-- reusable tool turning self-duality (reflectTest g ≈ g on window) into autocorr(g)=g⋆g WITHOUT a change
+-- of variables. NOT the reflected moment, NOT the autocorrelation identification, NO step-4 positivity
+-- (RH). Crux none.
+#print axioms Square.mulConv_congr_right
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

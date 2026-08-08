@@ -449,6 +449,7 @@ import F1Square.Square.SelfDualTest
 import F1Square.Square.MellinLinear
 import F1Square.Square.HaarInvariant
 import F1Square.Square.MulConv
+import F1Square.Square.MulConvCongr
 import F1Square.Square.Autocorr
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
