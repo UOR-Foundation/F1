@@ -345,6 +345,14 @@ open UOR.Bridge.F1Square
 #print axioms Tropical.R13_intersection_nonneg
 #print axioms Tropical.R13_bezout
 
+-- Dynamical zeta / Euler product (R5, new Tropical/EulerProduct.lean). det(I−tB)=1−t²−2t³ (R5_det,
+-- a 4×4 integer-polynomial determinant of B=adjOfW) and 1/det(I−tB)=1+t²+2t³+t⁴+4t⁵+5t⁶+6t⁷+13t⁸+…
+-- (R5_euler_product: det·zeta ≡ 1 mod t⁹) — the Artin–Mazur/Bowen–Lanford rational dynamical zeta
+-- factoring over the tropical primes (cycles), the characteristic-1 Euler-product SHADOW. RH-independent
+-- (no λ/zeros/StieltjesEta). Crux none.
+#print axioms Tropical.R5_det
+#print axioms Tropical.R5_euler_product
+
 -- v0.2.0 — sibling carriers (R14, R15, R16).
 #print axioms Tropical.R14_kappaBool_perm_invariant
 #print axioms Tropical.R15_faceted_address
