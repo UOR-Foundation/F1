@@ -4560,6 +4560,10 @@ open UOR.Bridge.F1Square
 -- hid = RH); constructs no θ/sched. Crux none.
 #print axioms Square.angleDiagTarget_mono
 #print axioms Square.angleDiagTargetAcc_RReg
+-- angleDiagTargetAcc_RReg_of_modulus: the schedule EXHIBITED as the raw-series convergence modulus
+-- (sched := mod). reg' ⟸ mere convergence of the raw angle series (classical zero-density, non-RH),
+-- schedule constructed not assumed. hconv asserts nothing about the limit value/sign (2λₙ = hid = RH).
+#print axioms Square.angleDiagTargetAcc_RReg_of_modulus
 #print axioms Analysis.clampedInv_congr
 #print axioms Analysis.Rnonneg_clampedInv
 #print axioms Analysis.clampedInv_lipschitz

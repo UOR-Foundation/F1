@@ -117,4 +117,24 @@ theorem angleDiagTargetAcc_RReg (θ : Nat → Real) (n : Nat) (sched : Nat → N
     exact Rle_ofQ_ofQ (Nat.succ_pos k) (add_den_pos (Nat.succ_pos j) (Nat.succ_pos k))
       (Qle_add_self (by show (0 : Int) ≤ 1; decide))
 
+/-- **reg' from a raw-convergence MODULUS — the schedule is constructed, not assumed.** If `mod` is a
+    monotone reindex witnessing that the raw angle series is Cauchy at the canonical rate — every partial
+    beyond index `mod j` sits within `1/(j+1)` of the `mod j`-th partial (`hconv`) — then the schedule
+    `sched := mod` makes the accelerated target `RReg`. This is `angleDiagTargetAcc_RReg` with the
+    accelerated tail supplied by the modulus: for `j ≤ k`, `mod j ≤ mod k` (monotone), so
+    `Acc k − Acc j = P(mod k) − P(mod j) ≤ 1/(j+1)` is exactly `hconv j (mod k)`.
+
+    It exhibits `reg'` as a consequence of MERE CONVERGENCE of the raw series — classical, unconditional
+    zero-density (`Σ 1/γ² < ∞`), never RH — with the schedule EXHIBITED as the convergence modulus rather
+    than posited. `hconv` says nothing about the limit's value (`2λₙ = hid`, RH) or sign; it constructs no
+    `θ`. The crux fields stay `none`. -/
+theorem angleDiagTargetAcc_RReg_of_modulus (θ : Nat → Real) (n : Nat) (mod : Nat → Nat)
+    (hmod_mono : ∀ j k, j ≤ k → mod j ≤ mod k)
+    (hconv : ∀ j m, mod j ≤ m →
+        Rle (Rsub (angleDiagTarget θ n m) (angleDiagTarget θ n (mod j)))
+            (ofQ (⟨1, j + 1⟩ : Q) (Nat.succ_pos j)))
+    : RReg (angleDiagTargetAcc θ n mod) :=
+  angleDiagTargetAcc_RReg θ n mod hmod_mono
+    (fun j k hjk => hconv j (mod k) (hmod_mono j k hjk))
+
 end UOR.Bridge.F1Square.Square
