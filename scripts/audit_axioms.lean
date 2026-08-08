@@ -2972,6 +2972,25 @@ open UOR.Bridge.F1Square
 #print axioms Square.atlasM_indefinite
 #print axioms Square.atlasNorm_psd
 
+-- THE ATLAS POSITIVITY STRUCTURE (new Square/AtlasPositivityStructure.lean) — the crux-closing
+-- strategy's "understanding the positivity of the UOR Atlas", as theorems not prose. (1) The conserved
+-- positivity BALANCE: atlasPosMass=38 (10·1+7·2+2·7), atlasReflMass=14 (1·14), atlasPositivity_balance:
+-- posMass−reflMass = atlasTrace = T·O = 24 (the zero-state positivity invariant, refining the (10,14)
+-- signature by eigenvalue-mass). (2) The DIFFERENCE-OF-PSD decomposition: atlasM = multForm posEig −
+-- multForm reflEig (atlasM_eq_pos_sub_refl), both parts WeilPSD (atlasPos_psd/atlasRefl_psd via
+-- multForm_psd_iff; posEig/reflEig nonneg) — the SAME shape as coupledWeil = multForm arch − primeGram,
+-- and by atlasM_indefinite NOT PSD: the finite computable instance of the "difference of PSD need not be
+-- PSD" phenomenon whose PSD-ness on genuine data is RH. Does NOT connect the definite parts to 2λₙ (§9
+-- gap = RH, NOT made), asserts NO ArchDominatesPrime/WeilPSD of a genuine form. Crux none.
+#print axioms Square.atlasPosMass_eq
+#print axioms Square.atlasReflMass_eq
+#print axioms Square.atlasPositivity_balance
+#print axioms Square.atlasPosEig_nonneg
+#print axioms Square.atlasReflEig_nonneg
+#print axioms Square.atlasPos_psd
+#print axioms Square.atlasRefl_psd
+#print axioms Square.atlasM_eq_pos_sub_refl
+
 -- v0.21.0 stage G — gate sanity: the crux gate discriminates (accepts/rejects/closes-on-witness).
 #print axioms Square.crux_gate_faithful
 

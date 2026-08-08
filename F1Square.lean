@@ -58,6 +58,7 @@ import F1Square.Square.GaugeTower
 import F1Square.Square.StageG
 import F1Square.Square.SonineProjection
 import F1Square.Square.AtlasSpectrum
+import F1Square.Square.AtlasPositivityStructure
 import F1Square.Square.GateSanity
 import F1Square.Square.AtlasCharacteristics
 import F1Square.Square.AtlasAddressing
