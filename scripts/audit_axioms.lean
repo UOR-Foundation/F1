@@ -5900,6 +5900,13 @@ open UOR.Bridge.F1Square
 -- logPull_dilate_shift at −u. Substrate; NOT the reflected moment, NO step-4 positivity (RH). Crux none.
 #print axioms Square.logPull_reflect_dilate
 
+-- THE REFLECTION INVOLUTION (Square/LogReflect.lean). logPull_reflect_involutive: reflectTest applied
+-- twice returns the original on the reciprocal-symmetric window a ≤ exp u ≤ 1/a —
+-- logPull (reflectTest a (reflectTest a φ)) u ≈ logPull φ u — the order-2 group law (u↦−u↦u) completing
+-- the reflection generator's log-coordinate laws (logPull_reflect_neg twice + Rneg_neg). The structural
+-- reason g^τ is self-inverse. Substrate; NOT the reflected moment, NO step-4 positivity (RH). Crux none.
+#print axioms Square.logPull_reflect_involutive
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.

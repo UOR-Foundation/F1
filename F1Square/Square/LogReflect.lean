@@ -85,4 +85,20 @@ theorem logPull_reflect_dilate (a : Q) (han : 0 < a.num) (had : 0 < a.den) (n : 
       (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0:Int) < (n:Int); omega) Nat.one_pos φ) u hkx hx)
     (logPull_dilate_shift n hn φ (Rneg u))
 
+/-- **The reflection is an involution on the symmetric window** (the order-2 group law, completing the
+    reflection generator's log-coordinate laws): applying `reflectTest` twice returns the original test —
+    `logPull (reflectTest a (reflectTest a φ)) u ≈ logPull φ u` — on the reciprocal-symmetric window
+    `a ≤ exp u ≤ 1/a` (i.e. both `exp u ≥ a` and `exp(−u) ≥ a`, the domain where both clamps are inert).
+    Two applications of `logPull_reflect_neg` (`u ↦ −u ↦ −(−u) = u`) and `Rneg_neg`. This is the
+    structural reason `g^τ` is self-inverse — the reflection generator of the multiplicative group. -/
+theorem logPull_reflect_involutive (a : Q) (han : 0 < a.num) (had : 0 < a.den) (φ : L2Test)
+    (u : Real) {kx : Nat} (hkx : Qlt (Qbound kx) ((RexpReal u).seq kx))
+    (hx : Rle (ofQ a had) (RexpReal u))
+    {kx2 : Nat} (hkx2 : Qlt (Qbound kx2) ((RexpReal (Rneg u)).seq kx2))
+    (hx2 : Rle (ofQ a had) (RexpReal (Rneg u))) :
+    Req (logPull (reflectTest a han had (reflectTest a han had φ)) u) (logPull φ u) :=
+  Req_trans (logPull_reflect_neg a han had (reflectTest a han had φ) u hkx hx)
+    (Req_trans (logPull_reflect_neg a han had φ (Rneg u) hkx2 hx2)
+      (φ.hfc _ _ (RexpReal_congr (Rneg_neg u))))
+
 end UOR.Bridge.F1Square.Square
