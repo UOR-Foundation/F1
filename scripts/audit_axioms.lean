@@ -5944,6 +5944,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.reflectTest_involutive_pointwise
 #print axioms Square.selfDualTest_self_dual_pointwise
 
+-- MILESTONE A: AUTOCORRELATION OF A MELLIN-EVEN TEST = ITS SELF-CONVOLUTION (new
+-- Square/SelfDualAutocorr.lean). autocorr_selfDual_eq_conv: autocorr (selfDualTest a φ) x ≈
+-- mulConv (selfDualTest a φ) (selfDualTest a φ) x on [lo,lo+w]⊆[a,1/a] (a≤lo, lo+w≤1/a). autocorr g =
+-- g⋆g^τ and g^τ ≈ g on the window (selfDualTest_self_dual_pointwise fed to mulConv_congr_right over the
+-- affineMap window points a≤t≤1/a), so the reflected factor collapses to g — REACHED BY CONGRUENCE, no
+-- nonlinear change-of-variables. This is the object identity M's factorization will act on to reach
+-- weilPrimeGram(vHat g) for the Connes-Consani class. NOT the transform identification (milestone B), NOT
+-- the full autocorrelation identification, NO step-4 positivity (ArchDominatesPrime), which is RH. Crux none.
+#print axioms Square.autocorr_selfDual_eq_conv
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
