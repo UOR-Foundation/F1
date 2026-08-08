@@ -92,6 +92,7 @@ import F1Square.Tropical.Closure
 import F1Square.Tropical.Signature
 import F1Square.Tropical.Spectrum
 import F1Square.Tropical.Siblings
+import F1Square.Tropical.WalkCounts
 import F1Square.Analysis.Rat
 import F1Square.Analysis.RingNF
 import F1Square.Analysis.RingTac

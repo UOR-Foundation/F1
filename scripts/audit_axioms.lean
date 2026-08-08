@@ -329,6 +329,13 @@ open UOR.Bridge.F1Square
 #print axioms Tropical.R10_diff_spectrum
 #print axioms Tropical.R11_kappa_fiber
 
+-- Bowen–Lanford closed-walk trace identity (R6, new Tropical/WalkCounts.lean). N_m = tr(Bᵐ) for the
+-- 0/1 adjacency B = support of W: N_1..N_8 = 0,2,6,2,10,14,14,34 (power sums of adjacency eigenvalues,
+-- the counting companion of the tropical cycle spectrum R4). RH-independent embeddings-model realization
+-- (no λ/zeros/StieltjesEta). Crux none.
+#print axioms Tropical.adjOfW_eq
+#print axioms Tropical.R6_closed_walk_counts
+
 -- v0.2.0 — sibling carriers (R14, R15, R16).
 #print axioms Tropical.R14_kappaBool_perm_invariant
 #print axioms Tropical.R15_faceted_address
