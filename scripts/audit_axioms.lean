@@ -2990,6 +2990,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.atlasPos_psd
 #print axioms Square.atlasRefl_psd
 #print axioms Square.atlasM_eq_pos_sub_refl
+-- The finite kernel witness: two PSD forms (multForm posEig/reflEig) whose DIFFERENCE (= atlasM) is NOT
+-- PSD — atlasM_diff_not_psd (neg diagonal at reflection index 10, transported from atlasM_neg_entry) and
+-- atlas_diff_of_psd_not_psd (the packaged ∧). The Atlas concretely/decidably realizes the crux's exact
+-- phenomenon (coupledWeil = arch − prime, a difference of PSD whose PSD-ness on genuine data is RH). It
+-- EXHIBITS why the crux is not automatic; does NOT close it. Crux none.
+#print axioms Square.atlasM_diff_not_psd
+#print axioms Square.atlas_diff_of_psd_not_psd
 
 -- v0.21.0 stage G — gate sanity: the crux gate discriminates (accepts/rejects/closes-on-witness).
 #print axioms Square.crux_gate_faithful

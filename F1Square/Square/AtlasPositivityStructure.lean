@@ -124,4 +124,22 @@ theorem atlasM_eq_pos_sub_refl (i j : Nat) :
     rw [e1, e2, e3]
     exact Req_symm (Req_trans (Radd_congr (Req_refl zero) Rneg_zero) (Radd_zero zero))
 
+/-- **The difference `posEig − reflEig` is NOT PSD** — its diagonal entry at the `−1` reflection index
+    `10` is `0 − 1 = −1 < 0` (transported from `atlasM_neg_entry` across `atlasM_eq_pos_sub_refl`). -/
+theorem atlasM_diff_not_psd :
+    ¬ WeilPSD (fun i j => Rsub (multForm atlasPosEig i j) (multForm atlasReflEig i j)) :=
+  not_WeilPSD_of_neg_diag 10
+    (Pos_congr (Rneg_congr (atlasM_eq_pos_sub_refl 10 10)) atlasM_neg_entry)
+
+/-- **THE ATLAS IS THE FINITE KERNEL WITNESS THAT "A DIFFERENCE OF PSD FORMS NEED NOT BE PSD"** —
+    `multForm posEig` and `multForm reflEig` are each `WeilPSD`, yet their difference (`= atlasM`) is
+    NOT. This is exactly the crux's phenomenon (`coupledWeil = multForm arch − primeGram`, a difference
+    of PSD forms whose PSD-ness on the genuine data is RH), here realized concretely and decidably at the
+    Atlas: the Atlas is the computable instance, the genuine coupling the RH instance. It exhibits WHY
+    the crux is not automatic — it does NOT close it. Crux fields stay `none`. -/
+theorem atlas_diff_of_psd_not_psd :
+    WeilPSD (multForm atlasPosEig) ∧ WeilPSD (multForm atlasReflEig)
+    ∧ ¬ WeilPSD (fun i j => Rsub (multForm atlasPosEig i j) (multForm atlasReflEig i j)) :=
+  ⟨atlasPos_psd, atlasRefl_psd, atlasM_diff_not_psd⟩
+
 end UOR.Bridge.F1Square.Square
