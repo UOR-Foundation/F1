@@ -336,6 +336,15 @@ open UOR.Bridge.F1Square
 #print axioms Tropical.adjOfW_eq
 #print axioms Tropical.R6_closed_walk_counts
 
+-- §8's four further constructions, completed in Lean (R10,R11 already in Spectrum; R12,R13 new
+-- Tropical/FurtherConstructions.lean). R12 reversal symmetry spectrum(W)=spectrum(Wᵀ) (tropical
+-- functional equation); R13 tropical intersection-positivity is free — mult=mᵤmᵥ|det(u,v)| is a Nat
+-- (R13_intersection_nonneg) + tropical Bézout (R13_bezout: line∩line=1, line∩conic=2). The manifest
+-- characteristic-1 shadow of the Hodge positivity the ℚ-object lacks; RH-independent. Crux none.
+#print axioms Tropical.R12_reversal_symmetry
+#print axioms Tropical.R13_intersection_nonneg
+#print axioms Tropical.R13_bezout
+
 -- v0.2.0 — sibling carriers (R14, R15, R16).
 #print axioms Tropical.R14_kappaBool_perm_invariant
 #print axioms Tropical.R15_faceted_address
