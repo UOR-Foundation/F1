@@ -5965,6 +5965,19 @@ open UOR.Bridge.F1Square
 -- for straddling support). NO step-4 positivity (RH). Crux none.
 #print axioms Square.windowMoment_reflect_selfDual
 
+-- MILESTONE B, BRICKS 2a/2/3 — THE REFLECTION MOMENT SYMMETRY M[reflectTest g]=M[g] (new
+-- Square/SelfDualMomentSymmetry.lean, workflow-built, congruence route). selfDual_vanish_below_floor:
+-- below the floor x≤a, both selfDualTest a φ and reflectTest a (selfDualTest a φ) vanish (φ vanishing at
+-- floor+ceiling; clamp sends x→1/a and double-clamp→≤a). windowMoment_eq_mellinMoment: for h vanishing on
+-- [0,a], ∫_[a,1] h·tᵐ ≈ mellinMoment h m (split [0,1]=[0,a]∪[a,1] via riemannIntegralI_split_at, [0,a]
+-- piece=0, riemannIntegralI_unit). mellinMoment_reflect_selfDual (SUB-GOAL 1): M[reflectTest a g](m) ≈
+-- M[g](m) for g=selfDualTest a φ, φ supported in (a,1/a) — chains the [a,1] collapse (both sides) around
+-- windowMoment_reflect_selfDual (brick 1). NO change of variables. NOT the convolution factorization, NOT
+-- the symmetric transform Gram (f-side window wall), NO step-4 positivity (RH). Crux none.
+#print axioms Square.selfDual_vanish_below_floor
+#print axioms Square.windowMoment_eq_mellinMoment
+#print axioms Square.mellinMoment_reflect_selfDual
+
 -- THE PRE-HILBERT LAYER, brick 20 (Square/MellinHat.lean) — THE MELLIN TRANSFORM AT INTEGER
 -- POINTS: the exponent-generic collapse, the twisted gateway data, and mellinHat = moment +
 -- convergent twisted tail — the first constructed value of the f ↦ f̂ direction.
