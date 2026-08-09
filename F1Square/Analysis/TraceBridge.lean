@@ -1,7 +1,8 @@
 /-
-F1 square — Track 1, the **trace bridge**: the ARITH+ARCH-COMPLETE explicit-formula identity
-connecting the zero-moment side of `λₙ` to the FULL constructed closed form
-`genuineLamSeq = genuineArithSeq + genuineArchSeq`.
+F1 square — Track 1, the **trace bridge**: the ARITH+ARCH-COMPLETE explicit-formula identity,
+carried as a single labelled UNDISCHARGED seam, connecting the zero-moment side of `λₙ` to the FULL
+constructed closed form `genuineLamSeq = genuineArithSeq + genuineArchSeq`. Nothing here is asserted
+for the genuine zeros; the identity is a reduction around a hypothesis, not an established theorem.
 
 WHAT THIS IS. The Bombieri–Lagarias zero-sum `witnessSum(zeroCayley) n = Σ_ρ (1 − Re((1−1/ρ)ⁿ))`
 was already decomposed, by pure algebra, into per-order reciprocal moments
@@ -11,7 +12,7 @@ computable analytic data — and, crucially, that data has TWO places: the `−�
 `ηⱼ` (the ARITHMETIC / prime side, `genuineArithSeq`) AND the Γ-factor / pole / trivial-zero
 contribution (the ARCHIMEDEAN side, `genuineArchSeq`). Both closed forms are already built in this
 substrate for every `n`. This module states the trace identity as a single labelled seam over BOTH
-places and derives, constructively, that the zero-sum equals the full `λₙ`.
+places and derives, constructively and only UNDER that seam, that the zero-sum equals the full `λₙ`.
 
 WHY THIS SUPERSEDES `MomentEta.witnessSum_eq_genuineArith`. That earlier shape-match equated the
 zero-moment sum with `genuineArithSeq` ALONE, under an arith-only per-order seam. Its own honesty
@@ -27,8 +28,11 @@ built closed-form combination `arithTail − genuineArchSeq` at level `n`:
     `Re(Σ_{k=1}^n M_k)  =  (Σ_{j=1}^n C(n,j) η_{j−1})  −  λₙ^{∞}`.
 
 Rearranged, `−Re(Σ M_k) = −Σ C(n,j)η_{j−1} + λₙ^{∞} = genuineArithSeq + genuineArchSeq = genuineLamSeq`,
-which is exactly the zero-sum by `witnessSum_moment_order`. So the seam IS the explicit formula, split
-across the two places; everything else here is `Radd`/`Rneg` bookkeeping, discharged constructively.
+which is exactly the zero-sum by `witnessSum_moment_order`. So the seam is the per-level
+explicit-formula identity for a given (finite) zero-enumeration — with the enumeration and its
+symmetric convergence to ALL zeros carried by the companion `conv`/`factored`/`bl` seams, not here —
+split across the two places; everything else in this module is `Radd`/`Rneg` bookkeeping, discharged
+constructively.
 
 THE `n = 1` ANCHOR — the classical secondary constant. At `n = 1` the seam reads (for the genuine
 moments `u = 1/ρ`)
