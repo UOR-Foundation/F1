@@ -2373,9 +2373,10 @@ open UOR.Bridge.F1Square
 
 -- HP OPERATOR CONTRACT (task 3, new Square/HilbertPolyaSpec.lean, ζ-free construction layer) +
 -- CONDITIONAL BRIDGE (task 8, new Square/HilbertPolyaBridge.lean, the only HP module touching zeros).
--- The contract's operator-theoretic predicates (IsDense/Symmetric/AdjointDomainEq/Closable/Closed/
--- EssSelfAdjoint/SelfAdjoint/HasSelfAdjointGenerator/TraceFormula) are NAMED OBLIGATIONS (defs, not
--- theorems — no audit line). PROVED: specMap_orbit (the operator's orbit action = the free H¹ action,
+-- The contract's predicates are now QUARANTINED under a Nominal prefix (NominalDense/NominalSymmetric/
+-- NominalAdjointDomainEq/NominalClosable/NominalClosed/NominalEssSelfAdjoint/NominalSelfAdjoint/
+-- NominalHasSelfAdjointGenerator/NominalTraceFormula) — NAMED OBLIGATIONS (defs, no audit line), NOT
+-- operator-theoretic notions (vacuous on the axiom-free bundle). PROVED: specMap_orbit (orbit action = free H¹,
 -- via H1_universal). BRIDGE (proved conditionals): transformedSpectrum_onLine (½+iμ on Re=½,
 -- unconditional); riemannHypothesis_of_zeroInclusion (ZeroInclusion spec → RiemannHypothesisStrip);
 -- rh_of_selfadjoint_and_inclusion (the literal on-line + inclusion form). Self-adjointness alone is
@@ -2384,12 +2385,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.transformedSpectrum_onLine
 #print axioms Square.riemannHypothesis_of_zeroInclusion
 #print axioms Square.rh_of_selfadjoint_and_inclusion
--- HONESTY REPAIR (names must denote their objects): the HP contract predicates are VACUOUS on the
--- axiom-free bundle. zeroBundle_SelfAdjoint PROVES inner≡0 (not an inner product) satisfies SelfAdjoint
--- — so the name does NOT denote self-adjointness; a genuine contract needs vector-space/inner-product
--- axioms (separate programme). zeroInclusion_of_rh PROVES RH→ZeroInclusion, so the bridge's hypothesis
--- is EQUIVALENT to RH (a repackaging via the Real-typed μ), not an operator-derived reduction. Crux none.
-#print axioms Square.zeroBundle_SelfAdjoint
+-- HONESTY REPAIR (names must denote their objects): the HP predicates are VACUOUS on the axiom-free
+-- bundle, now QUARANTINED under the Nominal prefix. zeroBundle_NominalSelfAdjoint PROVES inner≡0 (not an
+-- inner product) satisfies NominalSelfAdjoint — so the name does NOT denote self-adjointness; a genuine
+-- contract needs vector-space/inner-product axioms (the separate programme now begun in FinInnerProduct).
+-- zeroInclusion_of_rh PROVES RH→ZeroInclusion, so the bridge's hypothesis is EQUIVALENT to RH. Crux none.
+#print axioms Square.zeroBundle_NominalSelfAdjoint
 #print axioms Square.zeroInclusion_of_rh
 -- HP POSITIVE METRIC (task 4, new Square/HilbertPolyaMetric.lean, ζ-free). posForm c N = Σ_{i<N} c_i²
 -- (the Euclidean/Hurwitz diagonal norm). posForm_nonneg (PSD) + posForm_definite (POSITIVE-DEFINITE:
@@ -2399,7 +2400,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.posForm_nonneg
 #print axioms Square.posForm_definite
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
--- the finite approximant finiteHP B N satisfies the contract's Symmetric obligation at truncation N
+-- the finite approximant finiteHP B N satisfies the contract's NominalSymmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
 -- adjoint-domain/self-adjointness/Stone/trace/spectral rungs stay OPEN. Finite evidence (imports the
 -- ζ-tainted finite machinery — separate from the ζ-free contract). Crux none.

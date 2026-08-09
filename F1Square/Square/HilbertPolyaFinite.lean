@@ -13,9 +13,10 @@ prefix-kernel symmetry `⟨applyN B x, y⟩_N = ⟨x, applyN B y⟩_N` at trunca
 It is NOT derived from any Atlas structure — `B` is an arbitrary symmetric kernel supplied by the caller.
 
 WHAT THIS IS NOT. A prefix-kernel symmetry at truncation `N` discharges **only** the finite symmetry
-equation. It does NOT discharge: `IsDense`, `Closable`, `Closed`, `AdjointDomainEq`, `SelfAdjoint` (the
-`N → ∞` / adjoint-domain content — and recall `SelfAdjoint` is itself vacuous on this axiom-free bundle,
-`zeroBundle_SelfAdjoint`), `HasSelfAdjointGenerator` (Stone), `TraceFormula`, or any spectral/zero
+equation. It does NOT discharge: `NominalDense`, `NominalClosable`, `NominalClosed`,
+`NominalAdjointDomainEq`, `NominalSelfAdjoint` (the `N → ∞` / adjoint-domain content — and recall
+`NominalSelfAdjoint` is itself vacuous on this axiom-free bundle, `zeroBundle_NominalSelfAdjoint`),
+`NominalHasSelfAdjointGenerator` (Stone), `NominalTraceFormula`, or any spectral/zero
 obligation. Those rungs remain OPEN. A symmetric kernel truncated at `N`, on an infinite carrier with a
 stipulated adjoint, is not a self-adjoint unbounded operator; finite-`N` symmetry is not essential
 self-adjointness, and none of this is Atlas-derived.
@@ -49,13 +50,13 @@ def finiteHP (B : Nat → Nat → Real) (N : Nat) : HilbertPolyaSpec where
   adj := fun c => applyN B c N
 
 /-- **PROVED (FINITE) — the finite approximant discharges the finite `Symmetric` obligation.** For a
-    symmetric kernel `B` (`SymKernel B`), `Symmetric (finiteHP B N)` holds at each truncation `N`:
+    symmetric kernel `B` (`SymKernel B`), `NominalSymmetric (finiteHP B N)` holds at each truncation `N`:
     `⟨applyN B x, y⟩_N = ⟨x, applyN B y⟩_N` (`applyN_self_adjoint`). This is the single finite rung of
     the operator ladder that is dischargeable today; every infinite rung (density, closability,
     closedness, adjoint-domain equality, self-adjointness, Stone generator, trace, spectral inclusion,
     completeness) remains OPEN. A finite symmetry result, NOT self-adjointness. -/
 theorem finiteHP_symmetric (B : Nat → Nat → Real) (hB : SymKernel B) (N : Nat) :
-    Symmetric (finiteHP B N) := by
+    NominalSymmetric (finiteHP B N) := by
   intro x y _ _
   show Req (innerN (applyN B x N) y N) (innerN x (applyN B y N) N)
   exact applyN_self_adjoint hB x y N
