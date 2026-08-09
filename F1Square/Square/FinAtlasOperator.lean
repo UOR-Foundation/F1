@@ -39,10 +39,12 @@ NOT an unbounded Atlas spectrum; it is sourced only for the 24-dimensional carri
 TYPED over `Fin 24` (`atlasSeedEig`/`atlasSeedWeight`/`atlasSeedOp`), so the unsourced tail is
 UNREPRESENTABLE by construction; the `ℕ`-indexed tower weight `atlasObsEig` is `atlasEig` on `i < 24`
 and `0` for `i ≥ 24` (`atlasObsEig_sourced`/`atlasObsEig_seam`), agreeing with the seed on the carrier
-(`atlasSeedOp_eq`) and vanishing beyond (`atlasObs_vanishes_off_carrier`). The seed genuinely restricts
-`M` to the carrier (`atlasSeedWeight_eq_atlasM`) and its spectrum is BOUNDED in `[−1,10]`
-(`atlasSeedEig_bounded`/`atlasEig_range`) — a bounded, finite-rank (≤ 24) observable, NOT a plausible
-HP operator.
+(`atlasSeedOp_eq`) and vanishing beyond (`atlasObs_vanishes_off_carrier`). The seed restricts `M` to
+the carrier at the DIAGONAL-WEIGHT level (`atlasSeedWeight_eq_atlasM`: the weight equals `atlasM i i`;
+a matrix-action agreement with `atlasSeedOp` is `atlasSeedOp_eq`), and its eigenvalue VALUES are
+integer-bounded in `[−1,10]` (`atlasSeedEig_bounded`/`atlasEig_range` — an entry bound, not a
+formalized operator-norm/finite-rank theorem). Being supported on the 24-carrier and bounded-valued,
+it is not a plausible HP operator.
 
 WHY NO UNBOUNDED SOURCED LIFT (verified, not assumed). A genuine Hilbert–Pólya operator must be
 UNBOUNDED; the sourced Atlas supplies no such diagonal. The addressing/refinement tower is a finite
@@ -279,10 +281,11 @@ theorem atlasSeedOp_herm (x y : CVec 24) :
     (Ceq_trans (diagOp_herm 24 atlasWeight x y)
       (cInner_congr (CVecEq_refl x) (CVecEq_symm (atlasSeedOp_eq y))))
 
-/-- **The seed spectrum is BOUNDED in `[−1, 10]`** (reviewer's defect-2, as a theorem): every seed
-    eigenvalue lies in `[−1, 10]` (`atlasEig_range` on the sourced carrier). So `atlasSeedOp` is a
-    BOUNDED observable (operator norm `≤ 10`), finite-rank on `CVec 24` — it CANNOT be the necessarily
-    unbounded Hilbert–Pólya operator. -/
+/-- **The seed eigenvalue VALUES are integer-bounded in `[−1, 10]`** (`atlasEig_range` on the
+    carrier). This is an integer inequality on the diagonal ENTRIES — NOT a formalized operator-norm
+    bound `⟨Ax,Ax⟩ ≤ 100⟨x,x⟩`, eigenpair, or finite-rank theorem. It records that the sourced seed
+    takes only bounded values, the qualitative reason it cannot be the (necessarily unbounded) HP
+    operator; a genuine operator-norm/finite-rank statement is not asserted here. -/
 theorem atlasSeedEig_bounded (i : Fin 24) : -1 ≤ atlasSeedEig i ∧ atlasSeedEig i ≤ 10 :=
   atlasEig_range i.val
 

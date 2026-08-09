@@ -8443,3 +8443,33 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimAtlas_add
 #print axioms Square.dlimAtlas_smul
 #print axioms Square.dlimAtlas_herm
+
+-- The Atlas refinement operator: a CANDIDATE unbounded symmetric operator on the direct-limit core
+-- (new Square/AtlasRefinementOperator.lean). Extrapolates the strongest zero-free UOR-native unbounded
+-- candidate from the Atlas refinement structure and TESTS it. atlasCandEval on the typed carrier
+-- AtlasAddr=(scale ℓ, block∈Fin 24): (M₂₄ eigenvalue at block) + ℓ·log5, where ℓ·log5 = orbitShift 5
+-- (sourced Frobenius-orbit length, p=5=atlasPrime0). log5_ge_one: log5≥1 zero-free (logN_ge_k_log2 +
+-- logN_2_ge_half in the ComplexZeta-free RealPow). atlasCandWeight_val/_mul24: raw-index form.
+-- atlasCandWeight_base + atlasCandOp_base_action: base-ACTION agreement with atlasSeedOp on CVec 24
+-- (the candidate extends M₂₄). atlasCandEval_scale_succ + atlasCand_scale_gap: refinement intertwining
+-- (each scale level adds exactly log5). atlasCand_scale_step + atlasCandWeight_scale_ge +
+-- atlasCand_unbounded: GENUINE unboundedness (∀B ∃i, B≤weight i) — non-finite-rank, unlike M₂₄⊕0.
+-- dlimDiagW_wd/_add/_smul/_herm: generic real-diagonal descent to the colimit; dlimCand/atlasCandDLimOp
+-- (defs) package the candidate as a symmetric operator on dlimPreHilbert. THE FAILED BRIDGE:
+-- atlasCand_scale_gap proves the scale-tower spectrum is an ARITHMETIC PROGRESSION (constant gap log5)
+-- — the zeros' gaps shrink, so the candidate is REJECTED at the spectral/zero bridge. NO spectral→zero
+-- correspondence asserted; crux none.
+#print axioms Square.log5_ge_one
+#print axioms Square.atlasCandWeight_val
+#print axioms Square.atlasCandWeight_mul24
+#print axioms Square.atlasCandWeight_base
+#print axioms Square.atlasCandOp_base_action
+#print axioms Square.atlasCandEval_scale_succ
+#print axioms Square.atlasCand_scale_gap
+#print axioms Square.atlasCand_scale_step
+#print axioms Square.atlasCandWeight_scale_ge
+#print axioms Square.atlasCand_unbounded
+#print axioms Square.dlimDiagW_wd
+#print axioms Square.dlimDiagW_add
+#print axioms Square.dlimDiagW_smul
+#print axioms Square.dlimDiagW_herm

@@ -93,11 +93,12 @@ theorem atlasM_not_hodge_signature :
     1 < ((List.range 24).filter (fun i => decide (0 < atlasEig i))).length := by
   rw [atlasM_signature.1]; decide
 
-/-- **The spectrum is BOUNDED**: every eigenvalue lies in `[−1, 10]` (the four values `{10,7,2,−1}`),
-    at EVERY index `n` — including the constant `−1` tail. So the diagonal Atlas operator has spectrum
-    contained in `[−1, 10]`; it is a BOUNDED observable (operator norm `≤ 10`), never unbounded. This
-    is the spectral half of "the sourced Atlas operator is bounded" — the reason the seed cannot itself
-    be the (necessarily unbounded) Hilbert–Pólya operator. -/
+/-- **The eigenvalue VALUES are integer-bounded in `[−1, 10]`** (the four values `{10,7,2,−1}`), at
+    EVERY index `n` — including the constant `−1` tail. This is an integer inequality on the diagonal
+    ENTRIES; it is NOT (by itself) a formalized operator-norm bound `⟨Ax,Ax⟩ ≤ 100⟨x,x⟩`, an eigenpair
+    statement, or a finite-rank theorem. It records that the sourced diagonal takes only bounded
+    values — the qualitative reason the seed cannot be the (necessarily unbounded) Hilbert–Pólya
+    operator. -/
 theorem atlasEig_range : ∀ n, -1 ≤ atlasEig n ∧ atlasEig n ≤ 10
   | 0 => by decide
   | 1 => by decide
