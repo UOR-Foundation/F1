@@ -2601,6 +2601,8 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.RarctanR_add_RarctanExt
 #print axioms Analysis.moment_re_eq_arithTail
 #print axioms Analysis.witnessSum_eq_genuineArith
+#print axioms Analysis.witnessSum_eq_genuineLam
+#print axioms Analysis.traceBridge_one
 #print axioms Analysis.onLine_is_unit_modulus
 #print axioms Analysis.rh_witness
 #print axioms Analysis.rh_witness_onLine

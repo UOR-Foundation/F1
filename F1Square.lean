@@ -229,6 +229,7 @@ import F1Square.Analysis.Gamma
 import F1Square.Analysis.LiComplete
 import F1Square.Analysis.ArchTrend
 import F1Square.Analysis.GenuineLi
+import F1Square.Analysis.TraceBridge
 import F1Square.Analysis.PsiQuarter
 import F1Square.Analysis.LogPiLower
 import F1Square.Analysis.BurnolAlpha
