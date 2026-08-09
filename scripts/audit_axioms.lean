@@ -2603,6 +2603,7 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.witnessSum_eq_genuineArith
 #print axioms Analysis.witnessSum_eq_genuineLam
 #print axioms Analysis.traceBridge_one
+#print axioms Analysis.momentList_eq_binom_powerSum
 #print axioms Analysis.onLine_is_unit_modulus
 #print axioms Analysis.rh_witness
 #print axioms Analysis.rh_witness_onLine

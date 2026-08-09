@@ -96,4 +96,62 @@ theorem traceBridge_one (E : StieltjesEta) (us : List Complex)
     Req (witnessSum (us.map (fun u => Cadd Cone (Cneg u))) 1) Rlambda1 :=
   Req_trans (witnessSum_eq_genuineLam E us 1 traceSeam) (genuineLam_one E)
 
+-- ===========================================================================
+-- The Keiper–Li binomial-transform structure of the zero side: the level-`n`
+-- moment factors as (binomial coefficient) × (n-independent secondary constant).
+-- ===========================================================================
+
+/-- Four-term interchange `(a + b) + (p + q) ≈ (a + p) + (b + q)`, from `Cadd` assoc/comm. -/
+private theorem regroup4 (a b p q : Complex) :
+    Ceq (Cadd (Cadd a b) (Cadd p q)) (Cadd (Cadd a p) (Cadd b q)) :=
+  Ceq_trans (Cadd_assoc a b (Cadd p q))
+    (Ceq_trans (Cadd_congr (Ceq_refl a)
+        (Ceq_trans (Ceq_symm (Cadd_assoc b p q))
+          (Cadd_congr (Cadd_comm b p) (Ceq_refl q))))
+      (Ceq_trans (Cadd_congr (Ceq_refl a) (Cadd_assoc p b q))
+        (Ceq_symm (Cadd_assoc a p (Cadd b q)))))
+
+/-- A fixed scalar distributes over a complex sum: `c·(a + b) ≈ c·a + c·b` (the complex-argument
+    additivity of `Cnsmul`, complementary to `Cnsmul_add`'s scalar additivity). -/
+private theorem Cnsmul_Cadd (c : Nat) (a b : Complex) :
+    Ceq (Cnsmul c (Cadd a b)) (Cadd (Cnsmul c a) (Cnsmul c b)) := by
+  induction c with
+  | zero => exact Ceq_symm (cadd_zero Czero)
+  | succ c ih =>
+      refine Ceq_trans (Cadd_congr (Ceq_refl (Cadd a b)) ih) ?_
+      exact regroup4 a b (Cnsmul c a) (Cnsmul c b)
+
+/-- `c · 0 ≈ 0`. -/
+private theorem Cnsmul_czero : ∀ c, Ceq (Cnsmul c Czero) Czero
+  | 0 => Ceq_refl Czero
+  | (c + 1) => Ceq_trans (czero_cadd (Cnsmul c Czero)) (Cnsmul_czero c)
+
+/-- The `n`-INDEPENDENT `k`-th reciprocal power sum `σ_k = Σ_{u∈us} (−u)ᵏ` (`= Σ_ρ (−1/ρ)ᵏ` for the
+    zero moments `u = 1/ρ`). This is the Keiper–Li SECONDARY CONSTANT at order `k`: it carries no
+    `n`, and the level-`n` moments are its binomial multiples (`momentList_eq_binom_powerSum`). Its
+    real part `Re σ_k` is the classical secondary constant (`Re σ₁ = 1 + γ/2 − ½ log 4π`). -/
+def powerSumList : List Complex → Nat → Complex
+  | [], _ => Czero
+  | (u :: rest), k => Cadd (Cnpow (Cneg u) k) (powerSumList rest k)
+
+/-- **THE KEIPER–LI BINOMIAL TRANSFORM** — the level-`n` reciprocal moment factors as the binomial
+    coefficient times the `n`-independent secondary constant:
+
+      `M_k = Σ_ρ C(n,k+1)(−1/ρ)^{k+1} = C(n,k+1) · σ_{k+1}`,  `σ_j = Σ_ρ (−1/ρ)ʲ` (`powerSumList`).
+
+    So ALL the `n`-dependence of the zero side sits in the binomial coefficients `C(n,k+1)`, and the
+    secondary constants `σ_j` are fixed — exactly the structure of the classical Li/Keiper explicit
+    formula (each `λₙ` a binomial transform of the fixed `σ_j`). This is what makes the trace-bridge
+    seam an infinite family of `n`-uniform statements `Re σ_j = (closed form)` rather than a separate
+    fact per `n`. Pure algebra: `Cnsmul` linearity over the list sum. No seam, no RH. -/
+theorem momentList_eq_binom_powerSum (n k : Nat) : ∀ us : List Complex,
+    Ceq (momentList us n k) (Cnsmul (choose n (k + 1)) (powerSumList us (k + 1)))
+  | [] => Ceq_symm (Cnsmul_czero (choose n (k + 1)))
+  | (u :: rest) =>
+      Ceq_trans
+        (Cadd_congr (Ceq_refl (binTermC (Cneg u) n (k + 1)))
+          (momentList_eq_binom_powerSum n k rest))
+        (Ceq_symm (Cnsmul_Cadd (choose n (k + 1)) (Cnpow (Cneg u) (k + 1))
+          (powerSumList rest (k + 1))))
+
 end UOR.Bridge.F1Square.Analysis
