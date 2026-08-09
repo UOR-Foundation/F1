@@ -84,7 +84,7 @@ private theorem Qle_of_sq_le_loc {x y : Q} (hx : 0 ≤ x.num) (hy : 0 ≤ y.num)
   · omega
 
 /-- A Bishop square is non-negative (replica of `Analysis.CosSinBound.Rnonneg_Rmul_self`): `0 ≤ y·y`. -/
-private theorem Rnonneg_Rmul_self_loc (y : Real) : Rnonneg (Rmul y y) := by
+theorem Rnonneg_Rmul_self_loc (y : Real) : Rnonneg (Rmul y y) := by
   intro n
   show Qle (neg (Qbound n)) (mul (y.seq (Ridx y y n)) (y.seq (Ridx y y n)))
   have hsq : 0 ≤ (y.seq (Ridx y y n)).num * (y.seq (Ridx y y n)).num := by
@@ -127,7 +127,7 @@ private theorem Rle_self_Radd_left_loc {a b : Real} (ha : Rnonneg a) : Rle b (Ra
 
 /-- Two non-negative reals summing to `0` are each `0` — antisymmetry of `≤`: `a ≤ a+b ≈ 0` and
     `a ≥ 0`, likewise for `b`. -/
-private theorem Radd_eq_zero_split {a b : Real} (ha : Rnonneg a) (hb : Rnonneg b)
+theorem Radd_eq_zero_split {a b : Real} (ha : Rnonneg a) (hb : Rnonneg b)
     (h : Req (Radd a b) zero) : Req a zero ∧ Req b zero :=
   ⟨Rle_antisymm (Rle_trans (Rle_self_Radd_right_loc hb) (Rle_of_Req h)) (Rle_zero_of_Rnonneg ha),
    Rle_antisymm (Rle_trans (Rle_self_Radd_left_loc ha) (Rle_of_Req h)) (Rle_zero_of_Rnonneg hb)⟩
@@ -152,7 +152,7 @@ private theorem RsumN_nonneg_eq_zero_imp (F : Nat → Real) (hnn : ∀ i, Rnonne
     auxiliary Bishop index `n = (k+1)²`, `√`-monotonicity turns `x_{r(n)}² ≤ 2/(n+1)` (from the
     hypothesis, `r = Ridx x x n`) into `|x_{r(n)}| ≤ 2/(k+1)`; the triangle inequality plus regularity
     then bound `|xₘ|` by `2/(m+1) + 3/(k+1)`, and the Archimedean tail vanishes. -/
-private theorem Rmul_self_eq_zero_imp {x : Real} (hsq : Req (Rmul x x) zero) : Req x zero := by
+theorem Rmul_self_eq_zero_imp {x : Real} (hsq : Req (Rmul x x) zero) : Req x zero := by
   intro m
   refine Qarch_gen (C := 3)
     (Qabs_den_pos (Qsub_den_pos (x.den_pos m) (by rw [zero_seq]; decide)))

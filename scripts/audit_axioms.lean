@@ -2399,6 +2399,30 @@ open UOR.Bridge.F1Square
 -- Composition (|xy|=|x||y|) and completion are further named obligations. Crux none.
 #print axioms Square.posForm_nonneg
 #print axioms Square.posForm_definite
+-- The 3 square-definiteness lemmas exposed from HilbertPolyaMetric for the complex IP space's PD proof.
+#print axioms Square.Rnonneg_Rmul_self_loc
+#print axioms Square.Radd_eq_zero_split
+#print axioms Square.Rmul_self_eq_zero_imp
+-- GENUINE FINITE COMPLEX INNER-PRODUCT SPACE (Fin N → ℂ, new Square/FinInnerProduct.lean) — replaces the
+-- quarantined nominal contract with an ACTUAL sesquilinear positive-definite Hermitian inner product.
+-- cInner x y = Σ conj(xᵢ)yᵢ: sesquilinear (add/smul both slots, conj-linear in 1st), Hermitian (cInner_conj),
+-- POSITIVE-DEFINITE (self diagonal real+nonneg, and cInner_self_definite: ⟨x,x⟩=0 ⇒ x=0, via Bishop
+-- square-definiteness), coherent embeddings preserving the inner product (cInner_embed). Crux none.
+#print axioms Square.cvecSum_congr
+#print axioms Square.cvecSum_add
+#print axioms Square.cvecSum_smul
+#print axioms Square.cvecSum_conj
+#print axioms Square.cvecSum_im_zero
+#print axioms Square.cvecSum_re_nonneg
+#print axioms Square.cInner_add_right
+#print axioms Square.cInner_add_left
+#print axioms Square.cInner_smul_right
+#print axioms Square.cInner_smul_left
+#print axioms Square.cInner_conj
+#print axioms Square.cInner_self_im_zero
+#print axioms Square.cInner_self_re_nonneg
+#print axioms Square.cInner_self_definite
+#print axioms Square.cInner_embed
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
 -- the finite approximant finiteHP B N satisfies the contract's NominalSymmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
