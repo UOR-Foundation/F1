@@ -2384,6 +2384,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.transformedSpectrum_onLine
 #print axioms Square.riemannHypothesis_of_zeroInclusion
 #print axioms Square.rh_of_selfadjoint_and_inclusion
+-- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
+-- the finite approximant finiteHP B N satisfies the contract's Symmetric obligation at truncation N
+-- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
+-- adjoint-domain/self-adjointness/Stone/trace/spectral rungs stay OPEN. Finite evidence (imports the
+-- ζ-tainted finite machinery — separate from the ζ-free contract). Crux none.
+#print axioms Square.finiteHP_symmetric
 #print axioms Square.H1_orbit
 #print axioms Square.H1_universal
 #print axioms Square.H1_isFree
