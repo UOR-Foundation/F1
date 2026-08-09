@@ -2370,6 +2370,20 @@ open UOR.Bridge.F1Square
 -- Hilbert carrier. H1_phi_not_surjective: succ n ≠ 0 ⇒ succ not surjective ⇒ not invertible ⇒ not
 -- unitary. The genuine unitary H¹ carrier is the open operator contract. Crux none.
 #print axioms Square.H1_phi_not_surjective
+
+-- HP OPERATOR CONTRACT (task 3, new Square/HilbertPolyaSpec.lean, ζ-free construction layer) +
+-- CONDITIONAL BRIDGE (task 8, new Square/HilbertPolyaBridge.lean, the only HP module touching zeros).
+-- The contract's operator-theoretic predicates (IsDense/Symmetric/AdjointDomainEq/Closable/Closed/
+-- EssSelfAdjoint/SelfAdjoint/HasSelfAdjointGenerator/TraceFormula) are NAMED OBLIGATIONS (defs, not
+-- theorems — no audit line). PROVED: specMap_orbit (the operator's orbit action = the free H¹ action,
+-- via H1_universal). BRIDGE (proved conditionals): transformedSpectrum_onLine (½+iμ on Re=½,
+-- unconditional); riemannHypothesis_of_zeroInclusion (ZeroInclusion spec → RiemannHypothesisStrip);
+-- rh_of_selfadjoint_and_inclusion (the literal on-line + inclusion form). Self-adjointness alone is
+-- insufficient; SpectralCompleteness (stronger, spurious-spectrum exclusion) stated but unused. Crux none.
+#print axioms Square.specMap_orbit
+#print axioms Square.transformedSpectrum_onLine
+#print axioms Square.riemannHypothesis_of_zeroInclusion
+#print axioms Square.rh_of_selfadjoint_and_inclusion
 #print axioms Square.H1_orbit
 #print axioms Square.H1_universal
 #print axioms Square.H1_isFree

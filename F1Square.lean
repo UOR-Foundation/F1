@@ -43,6 +43,8 @@ import F1Square.Square.Attempt
 import F1Square.Square.Dominance
 import F1Square.Square.Pairing
 import F1Square.Square.Cohomology
+import F1Square.Square.HilbertPolyaSpec
+import F1Square.Square.HilbertPolyaBridge
 import F1Square.Square.WeilLattice
 import F1Square.Square.Forced
 import F1Square.Square.WeilPSD
