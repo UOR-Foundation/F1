@@ -34,10 +34,13 @@ namespace UOR.Bridge.F1Square.Square
 
 open UOR.Bridge.F1Square.Analysis
 
-/-- **The Hilbert–Pólya operator bundle**: a carrier `H` with an inner product `inner : H → H → ℝ`,
-    a domain predicate `dom`, the operator `op`, and its formal adjoint `adj`. This is the abstract
-    data an actual self-adjoint operator would supply; the predicates below are the contract it
-    must satisfy. Nothing here asserts such a bundle exists or is self-adjoint. -/
+/-- **The Hilbert–Pólya operator bundle** — DATA ONLY, no axioms. A carrier `H` with a pairing
+    `inner : H → H → ℝ`, a domain predicate, and maps `op`/`adj`. **CAVEAT: `H` has no vector-space
+    structure and `inner` satisfies no inner-product laws** (no bilinearity, symmetry, or
+    positive-definiteness), so the predicates below are the stated equations, NOT the operator-theoretic
+    notions their names suggest — `zeroBundle_SelfAdjoint` proves `inner ≡ 0` satisfies `SelfAdjoint`.
+    A genuine operator bundle (with those axioms and completeness) is a separate programme this file
+    does not build. -/
 structure HilbertPolyaSpec where
   /-- the carrier (the abstract Hilbert space) -/
   H : Type
@@ -104,10 +107,41 @@ def Closed (K : HilbertPolyaSpec) : Prop :=
     self-adjoint). A conjunction of two obligations; NOT discharged here. -/
 def EssSelfAdjoint (K : HilbertPolyaSpec) : Prop := Symmetric K ∧ Closable K
 
-/-- OBLIGATION — **self-adjointness**: `op` is symmetric, closed, and has `D(op) = D(op*)`. This is
-    the property whose spectrum is real — the Hilbert–Pólya target. A conjunction of three
-    obligations; NOT discharged here. -/
+/-- OBLIGATION — the conjunction `Symmetric ∧ Closed ∧ AdjointDomainEq`. **CAVEAT: this predicate does
+    NOT denote self-adjointness** — the bundle carries no inner-product axioms, so the clauses are the
+    stated equations only, and `zeroBundle_SelfAdjoint` below proves the degenerate `inner ≡ 0` bundle
+    satisfies it. Read it as "these three equations hold", never as "the operator is self-adjoint".
+    The name is retained for the contract slot; the honest content is the caveat. -/
 def SelfAdjoint (K : HilbertPolyaSpec) : Prop := Symmetric K ∧ Closed K ∧ AdjointDomainEq K
+
+-- ===========================================================================
+-- CAVEAT — the predicate names above do NOT denote their operator-theoretic
+-- meaning: on the axiom-free bundle they are vacuous. Kernel-proven witness.
+-- ===========================================================================
+
+/-- A DEGENERATE bundle with `inner ≡ 0`: carrier `Nat`, zero inner product, full domain,
+    `op = adj = id`. It is NOT an inner-product space — positive-definiteness fails (`⟨x,x⟩ = 0` for
+    every `x`) — but the axiom-free `HilbertPolyaSpec` admits it, which is the whole problem. -/
+def zeroBundle : HilbertPolyaSpec where
+  H := Nat
+  inner := fun _ _ => zero
+  dom := fun _ => True
+  op := id
+  adj := id
+
+/-- **THE VACUITY WITNESS — the names do not denote.** The degenerate zero-inner bundle satisfies
+    `SelfAdjoint` (every clause reduces to `Req zero zero`). So `SelfAdjoint` — and likewise
+    `Symmetric`, `Closed`, `AdjointDomainEq`, `EssSelfAdjoint`, `IsDense` — are the STATED EQUATIONS on
+    an axiom-free bundle, NOT the analytic notions their names suggest: `inner ≡ 0` is not an inner
+    product, `op = id` is not a self-adjoint unbounded operator, yet the predicate holds. A genuine
+    contract needs vector-space + inner-product-space AXIOMS on `H` (bilinearity, symmetry,
+    positive-definiteness, completeness) — the separate operator-theory programme — none of which this
+    file builds. This theorem makes that gap kernel-explicit, so no green build can disguise it. -/
+theorem zeroBundle_SelfAdjoint : SelfAdjoint zeroBundle := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro _ _ _ _; exact Req_refl _
+  · intro _ _ _; exact ⟨trivial, fun _ => Req_refl _⟩
+  · intro _; exact ⟨fun _ _ _ => Req_refl _, fun _ => trivial⟩
 
 /-- The **canonical Frobenius system carried by the operator** on a chosen basis: carrier `H`,
     Frobenius/scaling action `op`, base point `basis 0`. This packages `(H, op, basis 0)` as a

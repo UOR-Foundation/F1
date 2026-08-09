@@ -2384,6 +2384,13 @@ open UOR.Bridge.F1Square
 #print axioms Square.transformedSpectrum_onLine
 #print axioms Square.riemannHypothesis_of_zeroInclusion
 #print axioms Square.rh_of_selfadjoint_and_inclusion
+-- HONESTY REPAIR (names must denote their objects): the HP contract predicates are VACUOUS on the
+-- axiom-free bundle. zeroBundle_SelfAdjoint PROVES inner≡0 (not an inner product) satisfies SelfAdjoint
+-- — so the name does NOT denote self-adjointness; a genuine contract needs vector-space/inner-product
+-- axioms (separate programme). zeroInclusion_of_rh PROVES RH→ZeroInclusion, so the bridge's hypothesis
+-- is EQUIVALENT to RH (a repackaging via the Real-typed μ), not an operator-derived reduction. Crux none.
+#print axioms Square.zeroBundle_SelfAdjoint
+#print axioms Square.zeroInclusion_of_rh
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
 -- the finite approximant finiteHP B N satisfies the contract's Symmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/

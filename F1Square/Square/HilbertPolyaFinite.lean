@@ -4,16 +4,21 @@ discharge). This module connects the abstract operator contract (`HilbertPolyaSp
 repository's *proved* finite self-adjoint machinery (`applyN`, `SymKernel`, `applyN_self_adjoint`,
 `innerN`), and discharges **only** the finite symmetry rung of the operator ladder.
 
-WHAT THIS IS. `finiteHP B N` is a concrete `HilbertPolyaSpec` bundle: carrier the coordinate vectors
-`ℕ → ℝ`, inner product the finite `⟨·,·⟩_N`, operator the finite symmetric-matrix action
-`applyN B · N`. For a symmetric kernel `B` it satisfies the contract's `Symmetric` obligation at each
-truncation `N` — that is the theorem `finiteHP_symmetric`, a repackaging of `applyN_self_adjoint`.
+WHAT THIS IS — AND THE NAME'S OVERCLAIM. `finiteHP B N` is a `HilbertPolyaSpec` bundle whose carrier is
+the FULL, INFINITE space `ℕ → ℝ` (NOT finite-dimensional — only the inner product `⟨·,·⟩_N` and the
+operator `applyN B · N` are truncated at `N`), with `adj := op` STIPULATED (not derived). So the name
+`finiteHP` overclaims twice: it is not finite (infinite carrier) and it is not a Hilbert–Pólya operator
+(no self-adjointness is proved, `adj` is assumed). The ONE genuine fact is `finiteHP_symmetric`: a
+prefix-kernel symmetry `⟨applyN B x, y⟩_N = ⟨x, applyN B y⟩_N` at truncation `N` (`applyN_self_adjoint`).
+It is NOT derived from any Atlas structure — `B` is an arbitrary symmetric kernel supplied by the caller.
 
-WHAT THIS IS NOT. A FINITE symmetry/approximation result discharges **only** the finite obligation. It
-does NOT discharge: `IsDense`, `Closable`, `Closed`, `AdjointDomainEq`, `SelfAdjoint` (the `N → ∞` /
-adjoint-domain content), `HasSelfAdjointGenerator` (Stone), `TraceFormula`, or any spectral/zero
-obligation. Those rungs of the ladder remain OPEN. A finite symmetric matrix is not a self-adjoint
-unbounded operator; coordinatewise/finite-`N` symmetry is not essential self-adjointness.
+WHAT THIS IS NOT. A prefix-kernel symmetry at truncation `N` discharges **only** the finite symmetry
+equation. It does NOT discharge: `IsDense`, `Closable`, `Closed`, `AdjointDomainEq`, `SelfAdjoint` (the
+`N → ∞` / adjoint-domain content — and recall `SelfAdjoint` is itself vacuous on this axiom-free bundle,
+`zeroBundle_SelfAdjoint`), `HasSelfAdjointGenerator` (Stone), `TraceFormula`, or any spectral/zero
+obligation. Those rungs remain OPEN. A symmetric kernel truncated at `N`, on an infinite carrier with a
+stipulated adjoint, is not a self-adjoint unbounded operator; finite-`N` symmetry is not essential
+self-adjointness, and none of this is Atlas-derived.
 
 NOTE ON THE FENCE. Unlike `HilbertPolyaSpec` (the ζ-free construction layer), this evidence module
 imports the finite-symmetric machinery, which is file-level ζ-tainted (`SelfAdjoint → … → GenuineLi`).
@@ -31,10 +36,11 @@ namespace UOR.Bridge.F1Square.Square
 
 open UOR.Bridge.F1Square.Analysis
 
-/-- A concrete FINITE Hilbert–Pólya bundle from a kernel `B` truncated at `N`: carrier `ℕ → ℝ`, inner
-    product the finite `⟨x, y⟩_N = Σ_{i<N} xᵢ yᵢ`, operator and formal adjoint the finite matrix
-    action `applyN B · N`. This is the finite APPROXIMANT of a would-be Hilbert–Pólya operator; it
-    realizes only the finite obligations. -/
+/-- A `HilbertPolyaSpec` bundle from a kernel `B` truncated at `N`: carrier the INFINITE `ℕ → ℝ`, inner
+    product the finite `⟨x, y⟩_N = Σ_{i<N} xᵢ yᵢ`, operator the truncated action `applyN B · N`, and
+    adjoint STIPULATED equal to it (`adj := op`). NAME CAVEAT: not finite (infinite carrier), not a
+    Hilbert–Pólya operator (no self-adjointness proved). Its only genuine content is the prefix-kernel
+    symmetry `finiteHP_symmetric`. -/
 def finiteHP (B : Nat → Nat → Real) (N : Nat) : HilbertPolyaSpec where
   H := Nat → Real
   inner := fun x y => innerN x y N

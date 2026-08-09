@@ -58,15 +58,28 @@ theorem transformedSpectrum_onLine (spec : Real → Prop) (rho : Complex)
   obtain ⟨_, _, hmu⟩ := h
   exact hmu.1
 
-/-- CONDITIONAL — **RH from zero inclusion**: if every nontrivial zero is a transformed spectral
-    value (`ZeroInclusion spec`), then every nontrivial zero lies on the critical line — the genuine
-    RH for the constructed ζ. The proof is the composition "each zero is on-line because it is a
-    transformed value, and it is a transformed value by the inclusion hypothesis". The hypothesis is
-    the entire Hilbert–Pólya promise and is NOT discharged here. -/
+/-- **CAVEAT — this is a REPACKAGING, not an operator-derived reduction.** `ZeroInclusion spec` says
+    every zero equals `½ + iμ` for a REAL `μ` — which already places every zero on the critical line.
+    So the hypothesis is equivalent to RH itself (see `zeroInclusion_of_rh` for the reverse), not a
+    weaker spectral premise: the Real typing of `μ` silently does the work a spectral theorem would
+    have to do (self-adjoint ⇒ real spectrum). This "conditional" therefore derives RH from a
+    hypothesis that already contains it. A GENUINE reduction would take `spec` as the spectrum of a
+    PROVEN self-adjoint operator and DERIVE spectral reality; nothing here does, and `spec` mentions
+    no operator. Kept only to record the (trivial) forward implication; the crux does not use it. -/
 theorem riemannHypothesis_of_zeroInclusion (spec : Real → Prop) (hZI : ZeroInclusion spec) :
     RiemannHypothesisStrip := by
   intro Z
   exact transformedSpectrum_onLine spec Z.s (hZI Z)
+
+/-- **THE REPACKAGING, MADE EXPLICIT (reverse direction)**: RH *implies* `ZeroInclusion` for the
+    spectrum-candidate `spec := {the imaginary parts of the zeros}`. Together with
+    `riemannHypothesis_of_zeroInclusion` this shows `(∃ spec, ZeroInclusion spec) ↔ RH` — the
+    "hypothesis" of the bridge is exactly as strong as its conclusion, confirming it is a restatement
+    of the target and not a genuine spectral reduction. -/
+theorem zeroInclusion_of_rh (h : RiemannHypothesisStrip) :
+    ZeroInclusion (fun μ => ∃ Z : NontrivialZero, Req Z.s.im μ) := by
+  intro Z
+  exact ⟨Z.s.im, ⟨Z, Req_refl _⟩, ⟨h Z, Req_refl _⟩⟩
 
 /-- CONDITIONAL — **the inclusion is what carries the argument**: with the "on-line" step abstracted
     to ANY hypothesis `hLine` placing every transformed value on the critical line, zero inclusion
