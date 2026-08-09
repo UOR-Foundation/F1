@@ -2455,6 +2455,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.cvInc_inner
 #print axioms Square.cvInc_id
 #print axioms Square.cvInc_comp
+-- FINITE-SUPPORT DIRECT LIMIT (new Square/FinDirectLimit.lean) — the FIRST real consumer of
+-- finPreHilbert/cvInc: LinIsometry (bundled isometry) + cvIncIso; DLimRaw/DLimEq setoid colimit of the
+-- cvInc system; dlimInner with STAGE/REPRESENTATIVE INDEPENDENCE (dlimInner_eval, dlimInner_wd —
+-- consuming cvInc_inner); inclusions become identity in the limit (dlimMk_cvInc) so dlimInner extends
+-- cInner (dlimInner_mk). Crux none.
+#print axioms Square.DLimEq_refl
+#print axioms Square.DLimEq_symm
+#print axioms Square.DLimEq_trans
+#print axioms Square.dlimInner_eval
+#print axioms Square.dlimInner_wd
+#print axioms Square.dlimMk_cvInc
+#print axioms Square.dlimInner_mk
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
 -- the finite approximant finiteHP B N satisfies the contract's NominalSymmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
