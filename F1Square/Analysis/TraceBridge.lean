@@ -154,4 +154,42 @@ theorem momentList_eq_binom_powerSum (n k : Nat) : ∀ us : List Complex,
         (Ceq_symm (Cnsmul_Cadd (choose n (k + 1)) (Cnpow (Cneg u) (k + 1))
           (powerSumList rest (k + 1))))
 
+/-- `nsmulR (c+1) x ≈ x + nsmulR c x` (the `1`-special-cased `nsmulR` recursion, put in add-front
+    form; both cases close by `Radd_comm`/`Radd_zero`). -/
+private theorem nsmulR_succ_comm :
+    ∀ (c : Nat) (x : Real), Req (nsmulR (c + 1) x) (Radd x (nsmulR c x))
+  | 0, x => Req_symm (Radd_zero x)
+  | (c + 1), x => Radd_comm (nsmulR (c + 1) x) x
+
+/-- The real part of an `n`-fold complex sum is the `n`-fold real sum of the real part:
+    `Re (c · z) = c · Re z` (bridging `Cnsmul` to the arith side's `nsmulR`). -/
+private theorem Cnsmul_re : ∀ (c : Nat) (z : Complex), Req (Cnsmul c z).re (nsmulR c z.re)
+  | 0, _ => Req_refl zero
+  | (c + 1), z =>
+      Req_trans (Radd_congr (Req_refl z.re) (Cnsmul_re c z))
+        (Req_symm (nsmulR_succ_comm c z.re))
+
+/-- **THE ZERO-SUM AS A BINOMIAL TRANSFORM OF THE FIXED REAL SECONDARY CONSTANTS.** Combining
+    `witnessSum_moment_order`, the Keiper–Li factoring `momentList_eq_binom_powerSum`, and the
+    real-part bridges, the Bombieri–Lagarias zero-sum is *literally* the binomial transform of the
+    `n`-independent real secondary constants `Re σ_j = Re (powerSumList us j)`:
+
+      `witnessSum(zeroCayley) n = − Σ_{k=1}^{n} C(n,k) · Re σ_k`.
+
+    Every quantity on the right except the binomial coefficients is `n`-independent. So the ENTIRE
+    trace bridge, at every `n` at once, rests on the fixed real numbers `Re σ_j` — the classical
+    Keiper–Li secondary constants (`Re σ₁ = 1 + γ/2 − ½ log 4π`, the `n = 1` anchor). Evaluating
+    those `Re σ_j` against the built `η`/`ζ`/`γ`/`log 4π` closed forms is exactly the undischarged
+    explicit-formula seam (it needs the symmetric zero enumeration); this theorem localizes the seam
+    to that fixed sequence and is itself pure algebra — no seam, no RH. -/
+theorem witnessSum_eq_binom_powerSum (us : List Complex) (n : Nat) :
+    Req (witnessSum (us.map (fun u => Cadd Cone (Cneg u))) n)
+        (Rneg (RsumN (fun k => nsmulR (choose n (k + 1)) (powerSumList us (k + 1)).re) n)) := by
+  refine Req_trans (witnessSum_moment_order n us) ?_
+  apply Rneg_congr
+  refine Req_trans
+    (CsumN_congr_le (fun k _ => momentList_eq_binom_powerSum n k us)).1 ?_
+  rw [CsumN_re]
+  exact RsumN_congr n (fun k _ => Cnsmul_re (choose n (k + 1)) (powerSumList us (k + 1)))
+
 end UOR.Bridge.F1Square.Analysis
