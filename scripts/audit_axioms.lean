@@ -2391,6 +2391,13 @@ open UOR.Bridge.F1Square
 -- is EQUIVALENT to RH (a repackaging via the Real-typed μ), not an operator-derived reduction. Crux none.
 #print axioms Square.zeroBundle_SelfAdjoint
 #print axioms Square.zeroInclusion_of_rh
+-- HP POSITIVE METRIC (task 4, new Square/HilbertPolyaMetric.lean, ζ-free). posForm c N = Σ_{i<N} c_i²
+-- (the Euclidean/Hurwitz diagonal norm). posForm_nonneg (PSD) + posForm_definite (POSITIVE-DEFINITE:
+-- ‖c‖²_N=0 ⇒ c_i=0 ∀ i<N, PROVED via sum-of-nonnegs-zero + Bishop square-definiteness). A genuine PD
+-- metric — separate from the signed INDEFINITE atlasM observable and the rank-one PSD (not PD) atlasNorm.
+-- Composition (|xy|=|x||y|) and completion are further named obligations. Crux none.
+#print axioms Square.posForm_nonneg
+#print axioms Square.posForm_definite
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
 -- the finite approximant finiteHP B N satisfies the contract's Symmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
