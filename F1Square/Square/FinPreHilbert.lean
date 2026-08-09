@@ -37,6 +37,11 @@ private theorem cmul_czero' (z : Complex) : Ceq (Cmul z Czero) Czero :=
 private theorem czero_cmul' (z : Complex) : Ceq (Cmul Czero z) Czero :=
   Ceq_trans (Cmul_comm Czero z) (cmul_czero' z)
 
+private theorem rneg_zero' : Req (Rneg zero) zero :=
+  Req_of_seq_Qeq (fun _ => by show Qeq (neg (⟨0, 1⟩ : Q)) ⟨0, 1⟩; decide)
+
+private theorem cneg_czero' : Ceq (Cneg Czero) Czero := ⟨rneg_zero', rneg_zero'⟩
+
 -- ===========================================================================
 -- Setoid instances: the actual Lean setoids on scalars and vectors.
 -- ===========================================================================
@@ -253,6 +258,14 @@ theorem cvInc_smul {N M : Nat} (h : N ≤ M) (c : Complex) (x : CVec N) :
   by_cases hi : i.val < N
   · simp only [cvInc, cvSmul, dif_pos hi]; exact Ceq_refl _
   · simp only [cvInc, cvSmul, dif_neg hi]; exact Ceq_symm (cmul_czero' c)
+
+/-- The inclusion commutes with negation. -/
+theorem cvInc_neg {N M : Nat} (h : N ≤ M) (x : CVec N) :
+    CVecEq (cvInc h (cvNeg x)) (cvNeg (cvInc h x)) := by
+  intro i
+  by_cases hi : i.val < N
+  · simp only [cvInc, cvNeg, dif_pos hi]; exact Ceq_refl _
+  · simp only [cvInc, cvNeg, dif_neg hi]; exact Ceq_symm cneg_czero'
 
 /-- **The inclusion preserves the inner product** — it is a genuine isometry:
     `⟨ι x, ι y⟩_M = ⟨x, y⟩_N`. The padded coordinates pair to `0` (`cvecSum_pad`). -/

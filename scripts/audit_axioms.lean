@@ -2455,6 +2455,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.cvInc_inner
 #print axioms Square.cvInc_id
 #print axioms Square.cvInc_comp
+#print axioms Square.cvInc_neg
 -- FINITE-SUPPORT DIRECT LIMIT (new Square/FinDirectLimit.lean) — the FIRST real consumer of
 -- finPreHilbert/cvInc: LinIsometry (bundled isometry) + cvIncIso; DLimRaw/DLimEq setoid colimit of the
 -- cvInc system; dlimInner with STAGE/REPRESENTATIVE INDEPENDENCE (dlimInner_eval, dlimInner_wd —
@@ -2467,6 +2468,30 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimInner_wd
 #print axioms Square.dlimMk_cvInc
 #print axioms Square.dlimInner_mk
+-- The direct limit COMPLETED into a packaged Bishop pre-Hilbert object (dlimPreHilbert : FinPreHilbert):
+-- limit ops (dlimAdd/dlimSmul/dlimNeg/dlimZero) well-defined against DLimEq, the complex-module laws, and
+-- the sesquilinear/Hermitian/positivity/definiteness inner-product laws (inner laws DERIVED from stagewise
+-- finPreHilbert). Crux none.
+#print axioms Square.dlimAdd_incl
+#print axioms Square.dlimNeg_wd
+#print axioms Square.dlimSmul_wd
+#print axioms Square.dlimAdd_wd
+#print axioms Square.dlimAdd_comm
+#print axioms Square.dlimAdd_assoc
+#print axioms Square.dlimAdd_zero
+#print axioms Square.dlimAdd_neg
+#print axioms Square.dlimSmul_dlimAdd
+#print axioms Square.dlimSmul_Cadd
+#print axioms Square.dlimSmul_assoc
+#print axioms Square.dlimSmul_one
+#print axioms Square.dlimZero_smul
+#print axioms Square.dlimSmul_zero
+#print axioms Square.dlimInner_add_right
+#print axioms Square.dlimInner_smul_right
+#print axioms Square.dlimInner_conj
+#print axioms Square.dlimInner_self_im
+#print axioms Square.dlimInner_self_nonneg
+#print axioms Square.dlimInner_self_definite
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
 -- the finite approximant finiteHP B N satisfies the contract's NominalSymmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
