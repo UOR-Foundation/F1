@@ -8397,3 +8397,33 @@ open UOR.Bridge.F1Square
 #print axioms Square.Rlim_approx_eq
 #print axioms Square.genSum_close
 #print axioms Square.improper_schedule_eq
+
+-- The first genuine symmetric Atlas operator on the finite-support pre-Hilbert core (new
+-- Square/FinAtlasOperator.lean, focus item 2 of the Hilbert–Pólya construction). The sourced Atlas
+-- spectral operator M (§5/§6.6, atlasEig/atlasM) realized as a DIAGONAL OBSERVABLE diagOp on CVec N,
+-- self-adjoint w.r.t. the POSITIVE metric cInner — not as the metric. diagOp_congr/_add/_smul: the
+-- operator is setoid-respecting and ℂ-linear. diagOp_herm: HERMITIAN for a real diagonal (self-
+-- adjointness ⟨Ax,y⟩=⟨x,Ay⟩, a real operator prerequisite — not the vacuous nominal one). diagOp_cvInc:
+-- tower compatibility A_M∘ι ≈ ι∘A_N (index-intrinsic diagonal commutes with 0-padding). atlasObsEig
+-- = atlasEig on i<24, 0 beyond (atlasObsEig_sourced/_seam): the −1 tail is NOT an unbounded spectrum;
+-- the unbounded scale-lift is the EXPOSED open seam. atlasObsEig_signature: the observable carries the
+-- genuine indefinite Atlas signature (10,14) on the sourced carrier (indefinite operator on a positive
+-- metric = the HP framing). atlasObsEig_carrier_and_seam: the −1 eigenspace is within [0,24), tail
+-- zeroed. atlasWeight_eq_atlasM_diag: provenance — the weight IS atlasM's diagonal on i<24. dlimAtlas_wd/
+-- _add/_smul/_herm: the operator DESCENDS to the direct-limit pre-Hilbert object dlimPreHilbert as a
+-- symmetric operator (first downstream consumer of the colimit). NO unbounded generator, NO spectral-
+-- reality → zero correspondence, NO ℓ² completion, NO positivity of the crux; crux none.
+#print axioms Square.diagOp_congr
+#print axioms Square.diagOp_add
+#print axioms Square.diagOp_smul
+#print axioms Square.diagOp_herm
+#print axioms Square.diagOp_cvInc
+#print axioms Square.atlasObsEig_sourced
+#print axioms Square.atlasObsEig_seam
+#print axioms Square.atlasObsEig_signature
+#print axioms Square.atlasObsEig_carrier_and_seam
+#print axioms Square.atlasWeight_eq_atlasM_diag
+#print axioms Square.dlimAtlas_wd
+#print axioms Square.dlimAtlas_add
+#print axioms Square.dlimAtlas_smul
+#print axioms Square.dlimAtlas_herm
