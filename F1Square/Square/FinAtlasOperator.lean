@@ -1,46 +1,56 @@
 /-
-F1 square — **the first genuine symmetric Atlas operator on the finite-support pre-Hilbert core**
-(focus item 2 of the Atlas-derived Hilbert–Pólya construction). This is where the operator finally
-CONSUMES the Atlas: the sourced spectral operator `M = (O+2)I − T·Π_T − O·Π_O` (Atlas §5/§6.6,
+F1 square — **the first genuine SYMMETRIC (Hermitian) Atlas operator on the finite-support pre-Hilbert
+core** (focus item 2 of the Atlas-derived Hilbert–Pólya construction). This is where the operator
+first CONSUMES the Atlas: the sourced spectral operator `M = (O+2)I − T·Π_T − O·Π_O` (Atlas §5/§6.6,
 `atlasEig`/`atlasM`) is realized as a DIAGONAL OBSERVABLE `A_N` on the genuine complex inner-product
-space `CVec N`, self-adjoint with respect to the POSITIVE-DEFINITE metric `cInner` (the metric half
-built in `FinInnerProduct`) — NOT as the metric itself.
+space `CVec N`, SYMMETRIC with respect to the POSITIVE-DEFINITE metric `cInner` (the metric half
+built in `FinInnerProduct`) — the Atlas is the observable, NOT the metric.
+
+PRECISE SCOPE — SYMMETRY, NOT SELF-ADJOINTNESS. What is proved here is the symmetry (Hermitian-form)
+identity `⟨Ax,y⟩ = ⟨x,Ay⟩` (`diagOp_herm`). This is NOT self-adjointness in the operator-theoretic
+sense: there is no Hilbert completion, no operator domain, no adjoint, no domain equality
+`D(A) = D(A*)`, and no closure here. Self-adjointness (and essential self-adjointness) are the LATER
+focus items 3–4, and are not claimed by anything in this file. The genuine content is that the Atlas
+observable is a bona fide SYMMETRIC operator on the positive metric — replacing the vacuous nominal
+`NominalSelfAdjoint` predicate with a real (if partial) operator prerequisite.
 
 THE HILBERT–PÓLYA FRAMING (as the operator contract demands). The Atlas signature `Σ = {10,7,2,−1}`
-is INDEFINITE (`atlasM_indefinite`), so `atlasM` cannot BE a Hilbert metric. Here it is treated
-correctly: `cInner` (positive-definite, proved) is the Hilbert metric, and `atlasM` is a self-adjoint
-OPERATOR (observable) on that space. A self-adjoint operator MAY be indefinite — self-adjointness is
-`⟨Ax,y⟩ = ⟨x,Ay⟩` (`diagOp_herm`), a separate property from definiteness. The observable genuinely
-carries the indefinite spectrum: within the sourced 24-carrier it has the Atlas signature `(10,14)`
-(`atlasObsEig_signature` — ten positive, fourteen negative eigendirections), yet it is Hermitian on
-the positive metric. The operator IS the sourced diagonal (`atlasWeight_eq_atlasM_diag`: on `i<24`
-the weight equals `atlasM i i`).
+is INDEFINITE (`atlasM_indefinite`, in `AtlasSpectrum`), so `atlasM` cannot BE a Hilbert metric. Here
+it is treated correctly: `cInner` (positive-definite, proved) is the Hilbert metric, and `atlasM` is a
+SYMMETRIC operator (observable) on that space. A symmetric operator MAY be indefinite — symmetry is a
+property of the form, separate from definiteness. The observable genuinely carries the indefinite
+spectrum: within the sourced 24-carrier it has the Atlas signature `(10,14)` (`atlasObsEig_signature`
+— ten positive, fourteen negative eigendirections), yet it is Hermitian on the positive metric. The
+operator IS the sourced diagonal (`atlasWeight_eq_atlasM_diag`: on `i<24` the weight equals `atlasM
+i i`).
 
-WHAT IS PROVED (a real operator prerequisite, not an interface):
+WHAT IS PROVED (a real, if partial, operator prerequisite — not an interface):
 - `diagOp w N` is a `ℂ`-linear, setoid-respecting operator (`diagOp_congr`/`diagOp_add`/`diagOp_smul`)
-  and, for a REAL diagonal `w`, is HERMITIAN w.r.t. `cInner` (`diagOp_herm`);
+  and, for a REAL diagonal `w`, is SYMMETRIC w.r.t. `cInner` (`diagOp_herm`);
 - it is COMPATIBLE with the inclusion tower — `A_M ∘ ι_{N,M} ≈ ι_{N,M} ∘ A_N` (`diagOp_cvInc`), the
   index-intrinsic diagonal commuting with `0`-padding;
 - hence it DESCENDS to the direct-limit pre-Hilbert object `dlimPreHilbert` as a symmetric operator
-  `dlimAtlas` (well-defined `dlimAtlas_wd`, linear `dlimAtlas_add`/`dlimAtlas_smul`, Hermitian
+  `dlimAtlas` (well-defined `dlimAtlas_wd`, linear `dlimAtlas_add`/`dlimAtlas_smul`, symmetric
   `dlimAtlas_herm`) — the FIRST downstream consumer of `dlimPreHilbert`. Both are packaged as the
   typed `PreHilbertSymOp` (`atlasFinOp`, `atlasDLimOp`).
 
-THE EXPLICIT OPEN SEAM (honest scope, not silently extrapolated). `atlasEig`'s `−1` tail is NOT an
-unbounded Atlas spectrum; it is sourced only for the 24-dimensional carrier. So the observable weight
-`atlasObsEig` is `atlasEig` on `i < 24` and `0` for `i ≥ 24` (`atlasObsEig_sourced`/`atlasObsEig_seam`):
-the operator carries the genuine 24-carrier spectrum and is the ZERO observable beyond, never a
-fabricated `−1` tail. Consequently `dlimAtlas` is a BOUNDED, finite-support diagonal — the genuine
-UNBOUNDED scale-lift (the addressing tower `A_∞`, itself degenerate as a fixture) is the exposed open
-seam, not built here. There is no spectral-reality → zero correspondence and no unbounded generator;
-the crux (RH) stays `none`.
+THE EXPLICIT OPEN SEAM — THIS IS THE FINITE SEED `M₂₄ ⊕ 0`, NOT A SCALE LIFT. `atlasEig`'s `−1` tail is
+NOT an unbounded Atlas spectrum; it is sourced only for the 24-dimensional carrier. So the observable
+weight `atlasObsEig` is `atlasEig` on `i < 24` and `0` for `i ≥ 24`
+(`atlasObsEig_sourced`/`atlasObsEig_seam`): the operator carries the genuine 24-carrier spectrum and
+is the ZERO observable beyond, never a fabricated `−1` tail. It therefore VANISHES off the 24-carrier
+(`atlasObs_vanishes_off_carrier`) — i.e. this is exactly the finite seed `M₂₄ ⊕ 0`, a BOUNDED,
+finite-rank (rank ≤ 24) observable, NOT a plausible HP operator. The genuine UNBOUNDED, refinement-
+sourced Atlas scale-lift (the addressing tower `A_∞`, itself degenerate as a fixture) is the exposed
+open seam, not built here — and completing `M₂₄ ⊕ 0` cannot itself close the HP crux. There is no
+spectral-reality → zero correspondence and no unbounded generator; the crux (RH) stays `none`.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited by
 `scripts/honesty_audit.sh`.
 -/
 
 import F1Square.Square.FinDirectLimit
-import F1Square.Square.AtlasSpectrum
+import F1Square.Square.AtlasSpectralCore
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -78,6 +88,10 @@ def Cofreal (r : Real) : Complex := ⟨r, zero⟩
 private theorem Cconj_Cofreal (r : Real) : Ceq (Cconj (Cofreal r)) (Cofreal r) :=
   ⟨Req_refl _, rneg_zero_loc⟩
 
+/-- The embedding of a real `≈ 0` is the complex zero (`⟨r,0⟩ ≈ ⟨0,0⟩ = Czero`). -/
+private theorem Cofreal_eq_zero {r : Real} (h : Req r zero) : Ceq (Cofreal r) Czero :=
+  ⟨h, Req_refl zero⟩
+
 /-- **The diagonal operator** with an index-intrinsic real weight `w : ℕ → ℝ`: multiplies coordinate
     `i` by the real scalar `w i`. The weight is keyed by the GLOBAL index `i.val`, so the same `w`
     acts coherently across every stage of the inclusion tower. -/
@@ -111,9 +125,10 @@ private theorem herm_term (r : Real) (a b : Complex) :
       (Cmul_congr (Cmul_comm (Cofreal r) (Cconj a)) (Ceq_refl b))
       (Cmul_assoc (Cconj a) (Cofreal r) b))
 
-/-- **The diagonal operator is HERMITIAN** w.r.t. the positive metric `cInner` (self-adjoint as an
-    observable): `⟨A x, y⟩ = ⟨x, A y⟩`. Termwise, `conj(w·xᵢ)·yᵢ ≈ conj(xᵢ)·(w·yᵢ)` because `w` is
-    real. This is the operator-theoretic self-adjointness, PROVED — not the vacuous nominal one. -/
+/-- **The diagonal operator is SYMMETRIC (Hermitian form)** w.r.t. the positive metric `cInner`:
+    `⟨A x, y⟩ = ⟨x, A y⟩`. Termwise, `conj(w·xᵢ)·yᵢ ≈ conj(xᵢ)·(w·yᵢ)` because `w` is real. This is
+    the genuine symmetry identity, PROVED — replacing the vacuous nominal predicate. It is NOT
+    self-adjointness: no domain / adjoint / closure is asserted (those are focus items 3–4). -/
 theorem diagOp_herm (N : Nat) (w : Nat → Real) (x y : CVec N) :
     Ceq (cInner N (diagOp w N x) y) (cInner N x (diagOp w N y)) := by
   show Ceq (cvecSum N (fun i => Cmul (Cconj (Cmul (Cofreal (w i.val)) (x i))) (y i)))
@@ -135,8 +150,9 @@ theorem diagOp_cvInc {N M : Nat} (h : N ≤ M) (w : Nat → Real) (x : CVec N) :
 -- ===========================================================================
 
 /-- A **bundled symmetric operator** on a finite pre-Hilbert space `H`: a setoid-respecting
-    `ℂ`-linear self-adjoint map. The typed object the raw operator lemmas assemble into (the operator
-    analogue of `LinIsometry`). -/
+    `ℂ`-linear map that is SYMMETRIC (`⟨Ax,y⟩ = ⟨x,Ay⟩`, `op_herm`). Symmetry only — this bundles no
+    domain, adjoint, or closure, so it does NOT assert self-adjointness. The operator analogue of
+    `LinIsometry`. -/
 structure PreHilbertSymOp (H : FinPreHilbert) where
   op : H.V → H.V
   op_congr : ∀ {x y}, H.veq x y → H.veq (op x) (op y)
@@ -190,6 +206,24 @@ theorem atlasWeight_eq_atlasM_diag (i : Nat) (h : i < 24) : Req (atlasWeight i) 
   rw [hM, atlasObsEig_sourced i h]
   exact Req_refl _
 
+/-- Off the sourced carrier (`i ≥ 24`) the observable weight is the real `0` — the seam value as a
+    real number (from `atlasObsEig_seam`). -/
+theorem atlasWeight_seam (i : Nat) (h : 24 ≤ i) : Req (atlasWeight i) zero := by
+  show Req (ofQ ⟨atlasObsEig i, 1⟩ Nat.one_pos) zero
+  rw [atlasObsEig_seam i h]
+  exact Req_of_seq_Qeq (fun _ => by show Qeq (⟨0, 1⟩ : Q) ⟨0, 1⟩; decide)
+
+/-- **THE OPERATOR IS THE FINITE SEED `M₂₄ ⊕ 0`**: on every coordinate `i ≥ 24` the Atlas observable
+    output VANISHES (`atlasWeight i · xᵢ ≈ 0`, since the seam weight is `0`). So `A_N` is supported on
+    the first 24 coordinates — a BOUNDED, finite-rank (rank ≤ 24) diagonal, exactly the sourced seed,
+    NOT an unbounded scale-lift. Turns the "finite seed" characterization from documentation into a
+    theorem. -/
+theorem atlasObs_vanishes_off_carrier (N : Nat) (x : CVec N) (i : Fin N) (h : 24 ≤ i.val) :
+    Ceq ((diagOp atlasWeight N x) i) Czero := by
+  show Ceq (Cmul (Cofreal (atlasWeight i.val)) (x i)) Czero
+  refine Ceq_trans (Cmul_congr (Cofreal_eq_zero (atlasWeight_seam i.val h)) (Ceq_refl (x i))) ?_
+  exact Ceq_trans (Cmul_comm Czero (x i)) (cmul_czero_loc (x i))
+
 /-- **The Atlas observable on the finite stage `CVec N`**, packaged as a symmetric operator on
     `finPreHilbert N`. For `N = 24` this is the full sourced spectral operator; the same object at
     every `N` forms the compatible family (`diagOp_cvInc`). -/
@@ -235,10 +269,11 @@ theorem dlimAtlas_smul (c : Complex) (a : DLimRaw) :
     CVecEq_trans (cvInc_id _)
       (CVecEq_trans (diagOp_smul a.stage atlasWeight c a.vec) (CVecEq_symm (cvInc_id _)))⟩
 
-/-- **The colimit operator is HERMITIAN** w.r.t. the colimit metric `dlimInner`: evaluate both
+/-- **The colimit operator is SYMMETRIC** w.r.t. the colimit metric `dlimInner`: evaluate both
     pairings at the common stage `max`, push the operator through the inclusions (`diagOp_cvInc`),
-    and apply the stagewise self-adjointness `diagOp_herm`. This is the FIRST genuine symmetric Atlas
-    operator on the finite-support core, induced on the direct-limit pre-Hilbert object. -/
+    and apply the stagewise symmetry `diagOp_herm`. This is the FIRST genuine symmetric Atlas operator
+    on the finite-support core, induced on the direct-limit pre-Hilbert object (symmetry only — not
+    self-adjointness, which needs the completion and adjoint of focus items 3–4). -/
 theorem dlimAtlas_herm (a b : DLimRaw) :
     Ceq (dlimInner (dlimAtlas a) b) (dlimInner a (dlimAtlas b)) := by
   have haK : a.stage ≤ max a.stage b.stage := Nat.le_max_left _ _
@@ -253,8 +288,9 @@ theorem dlimAtlas_herm (a b : DLimRaw) :
 
 /-- **The Atlas observable on the direct limit**, packaged as a symmetric operator on
     `dlimPreHilbert` — the first downstream mathematical consumer of the packaged colimit pre-Hilbert
-    object. It is `ℂ`-linear and self-adjoint on the POSITIVE colimit metric, and indefinite as an
-    observable (`atlasObsEig_signature`); the unbounded scale-lift remains the exposed open seam. -/
+    object. It is `ℂ`-linear and SYMMETRIC on the POSITIVE colimit metric, and indefinite as an
+    observable (`atlasObsEig_signature`). It is the finite seed `M₂₄ ⊕ 0` (bounded, finite-rank); the
+    unbounded scale-lift and self-adjointness remain the exposed open seams. -/
 def atlasDLimOp : PreHilbertSymOp dlimPreHilbert where
   op := dlimAtlas
   op_congr := fun h => dlimAtlas_wd h

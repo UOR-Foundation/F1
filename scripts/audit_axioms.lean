@@ -8423,6 +8423,8 @@ open UOR.Bridge.F1Square
 #print axioms Square.atlasObsEig_signature
 #print axioms Square.atlasObsEig_carrier_and_seam
 #print axioms Square.atlasWeight_eq_atlasM_diag
+#print axioms Square.atlasWeight_seam
+#print axioms Square.atlasObs_vanishes_off_carrier
 #print axioms Square.dlimAtlas_wd
 #print axioms Square.dlimAtlas_add
 #print axioms Square.dlimAtlas_smul

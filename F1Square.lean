@@ -63,6 +63,7 @@ import F1Square.Square.AtlasRule
 import F1Square.Square.KillTest
 import F1Square.Square.GateA
 import F1Square.Square.E8Seed
+import F1Square.Square.AtlasSpectralCore
 import F1Square.Square.GaugeTower
 import F1Square.Square.StageG
 import F1Square.Square.SonineProjection
