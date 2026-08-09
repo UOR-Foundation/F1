@@ -8401,9 +8401,9 @@ open UOR.Bridge.F1Square
 -- The first genuine symmetric Atlas operator on the finite-support pre-Hilbert core (new
 -- Square/FinAtlasOperator.lean, focus item 2 of the Hilbert–Pólya construction). The sourced Atlas
 -- spectral operator M (§5/§6.6, atlasEig/atlasM) realized as a DIAGONAL OBSERVABLE diagOp on CVec N,
--- self-adjoint w.r.t. the POSITIVE metric cInner — not as the metric. diagOp_congr/_add/_smul: the
--- operator is setoid-respecting and ℂ-linear. diagOp_herm: HERMITIAN for a real diagonal (self-
--- adjointness ⟨Ax,y⟩=⟨x,Ay⟩, a real operator prerequisite — not the vacuous nominal one). diagOp_cvInc:
+-- SYMMETRIC w.r.t. the POSITIVE metric cInner — not as the metric. diagOp_congr/_add/_smul: the
+-- operator is setoid-respecting and ℂ-linear. diagOp_herm: SYMMETRIC for a real diagonal (⟨Ax,y⟩=⟨x,Ay⟩
+-- — genuine symmetry, NOT self-adjointness/domain/closure; not the vacuous nominal predicate). diagOp_cvInc:
 -- tower compatibility A_M∘ι ≈ ι∘A_N (index-intrinsic diagonal commutes with 0-padding). atlasObsEig
 -- = atlasEig on i<24, 0 beyond (atlasObsEig_sourced/_seam): the −1 tail is NOT an unbounded spectrum;
 -- the unbounded scale-lift is the EXPOSED open seam. atlasObsEig_signature: the observable carries the
@@ -8425,6 +8425,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.atlasWeight_eq_atlasM_diag
 #print axioms Square.atlasWeight_seam
 #print axioms Square.atlasObs_vanishes_off_carrier
+-- Fin-24-typed finite seed M₂₄ (reviewer item 1: source boundary enforced by the type Fin 24, tail
+-- unrepresentable) + base restriction to M₂₄ + bounded spectrum. atlasEig_range (AtlasSpectralCore):
+-- every eigenvalue ∈ [−1,10] at every index → the sourced diagonal is BOUNDED (op-norm ≤ 10), the
+-- reason the seed is not the (unbounded) HP operator. atlasSeedWeight_eq_atlasWeight/atlasSeedOp_eq:
+-- the Fin-24 seed agrees with the ℕ-indexed tower operator on the carrier (inherits symmetry).
+-- atlasSeedWeight_eq_atlasM: base restriction — the seed weight IS atlasM's diagonal. atlasSeedOp_herm:
+-- the seed is symmetric on cInner 24 (symmetry, not self-adjointness). atlasSeedEig_bounded: seed
+-- spectrum ⊆ [−1,10]. NO unbounded operator, NO refinement lift, NO completion; crux none.
+#print axioms Square.atlasEig_range
+#print axioms Square.atlasSeedWeight_eq_atlasWeight
+#print axioms Square.atlasSeedOp_eq
+#print axioms Square.atlasSeedWeight_eq_atlasM
+#print axioms Square.atlasSeedOp_herm
+#print axioms Square.atlasSeedEig_bounded
 #print axioms Square.dlimAtlas_wd
 #print axioms Square.dlimAtlas_add
 #print axioms Square.dlimAtlas_smul

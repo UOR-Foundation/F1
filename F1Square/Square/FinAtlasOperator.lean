@@ -35,14 +35,23 @@ WHAT IS PROVED (a real, if partial, operator prerequisite — not an interface):
   typed `PreHilbertSymOp` (`atlasFinOp`, `atlasDLimOp`).
 
 THE EXPLICIT OPEN SEAM — THIS IS THE FINITE SEED `M₂₄ ⊕ 0`, NOT A SCALE LIFT. `atlasEig`'s `−1` tail is
-NOT an unbounded Atlas spectrum; it is sourced only for the 24-dimensional carrier. So the observable
-weight `atlasObsEig` is `atlasEig` on `i < 24` and `0` for `i ≥ 24`
-(`atlasObsEig_sourced`/`atlasObsEig_seam`): the operator carries the genuine 24-carrier spectrum and
-is the ZERO observable beyond, never a fabricated `−1` tail. It therefore VANISHES off the 24-carrier
-(`atlasObs_vanishes_off_carrier`) — i.e. this is exactly the finite seed `M₂₄ ⊕ 0`, a BOUNDED,
-finite-rank (rank ≤ 24) observable, NOT a plausible HP operator. The genuine UNBOUNDED, refinement-
-sourced Atlas scale-lift (the addressing tower `A_∞`, itself degenerate as a fixture) is the exposed
-open seam, not built here — and completing `M₂₄ ⊕ 0` cannot itself close the HP crux. There is no
+NOT an unbounded Atlas spectrum; it is sourced only for the 24-dimensional carrier. The seed is now
+TYPED over `Fin 24` (`atlasSeedEig`/`atlasSeedWeight`/`atlasSeedOp`), so the unsourced tail is
+UNREPRESENTABLE by construction; the `ℕ`-indexed tower weight `atlasObsEig` is `atlasEig` on `i < 24`
+and `0` for `i ≥ 24` (`atlasObsEig_sourced`/`atlasObsEig_seam`), agreeing with the seed on the carrier
+(`atlasSeedOp_eq`) and vanishing beyond (`atlasObs_vanishes_off_carrier`). The seed genuinely restricts
+`M` to the carrier (`atlasSeedWeight_eq_atlasM`) and its spectrum is BOUNDED in `[−1,10]`
+(`atlasSeedEig_bounded`/`atlasEig_range`) — a bounded, finite-rank (≤ 24) observable, NOT a plausible
+HP operator.
+
+WHY NO UNBOUNDED SOURCED LIFT (verified, not assumed). A genuine Hilbert–Pólya operator must be
+UNBOUNDED; the sourced Atlas supplies no such diagonal. The addressing/refinement tower is a finite
+fixture that degenerates (`AtlasAddressing.atlasModulus_degenerate`); there is no unbounded prime
+enumeration `ℕ → ℕ` with primality proofs in the repo (only Euclid's *lemma*); the one sourced
+unbounded object, `Cohomology.orbitShift p k = k·log p`, is a single-prime scalar LENGTH ("not itself a
+Hilbert-space operator") that is not aggregated into a diagonal; and `AtlasGenerator.atlasShiftDiag` is
+an explicitly-INVENTED candidate, disconnected from the spectrum. So the unbounded, refinement-sourced
+scale-lift is the exposed open seam — completing `M₂₄ ⊕ 0` cannot itself close the HP crux. There is no
 spectral-reality → zero correspondence and no unbounded generator; the crux (RH) stays `none`.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited by
@@ -183,7 +192,7 @@ theorem atlasObsEig_seam (i : Nat) (h : 24 ≤ i) : atlasObsEig i = 0 := by
 
 /-- **The observable carries the genuine INDEFINITE Atlas signature `(10,14)`** on the sourced
     carrier: ten positive eigendirections (`λ = 10,7,2`) and fourteen negative (`λ = −1`). So the
-    self-adjoint operator is genuinely indefinite (mirrors `atlasM_signature`), yet Hermitian on the
+    symmetric operator is genuinely indefinite (mirrors `atlasM_signature`), yet Hermitian on the
     POSITIVE metric `cInner` — the Hilbert–Pólya framing. Computed. -/
 theorem atlasObsEig_signature :
     ((List.range 24).filter (fun i => decide (0 < atlasObsEig i))).length = 10
@@ -223,6 +232,59 @@ theorem atlasObs_vanishes_off_carrier (N : Nat) (x : CVec N) (i : Fin N) (h : 24
   show Ceq (Cmul (Cofreal (atlasWeight i.val)) (x i)) Czero
   refine Ceq_trans (Cmul_congr (Cofreal_eq_zero (atlasWeight_seam i.val h)) (Ceq_refl (x i))) ?_
   exact Ceq_trans (Cmul_comm Czero (x i)) (cmul_czero_loc (x i))
+
+-- ===========================================================================
+-- The finite seed `M₂₄`, TYPED over the sourced carrier `Fin 24` — the type itself forbids the
+-- unsourced tail (reviewer's item 1: prevent accidental use of `atlasEig`'s `i ≥ 24` values).
+-- ===========================================================================
+
+/-- The sourced Atlas spectrum **typed over the 24-dimensional carrier `Fin 24`**: the seed eigenvalue
+    at carrier index `i`. Because the domain is `Fin 24`, the unsourced tail (`atlasEig` on `i ≥ 24`)
+    is UNREPRESENTABLE — the source boundary is enforced by the type, not merely guarded. -/
+def atlasSeedEig (i : Fin 24) : Int := atlasEig i.val
+
+/-- The seed observable weight over `Fin 24` (real). -/
+def atlasSeedWeight (i : Fin 24) : Real := ofQ ⟨atlasSeedEig i, 1⟩ Nat.one_pos
+
+/-- **The finite seed operator `M₂₄`, typed over `Fin 24`**: the diagonal Atlas observable on the
+    sourced carrier `CVec 24`, whose weight CANNOT reference the unsourced tail. This is the genuine
+    sourced finite object; the tower operator `diagOp atlasWeight N` agrees with it on the carrier
+    (`atlasSeedOp_eq`) and is `0` beyond (`atlasObs_vanishes_off_carrier`). -/
+def atlasSeedOp (x : CVec 24) : CVec 24 := fun i => Cmul (Cofreal (atlasSeedWeight i)) (x i)
+
+/-- On the carrier the `Fin 24`-typed seed weight equals the `ℕ`-indexed observable weight (both are
+    the sourced `atlasEig i`; the tower's weight goes through `atlasObsEig`, which agrees for `i<24`). -/
+theorem atlasSeedWeight_eq_atlasWeight (i : Fin 24) : Req (atlasSeedWeight i) (atlasWeight i.val) := by
+  show Req (ofQ ⟨atlasSeedEig i, 1⟩ Nat.one_pos) (ofQ ⟨atlasObsEig i.val, 1⟩ Nat.one_pos)
+  rw [show atlasObsEig i.val = atlasEig i.val from atlasObsEig_sourced i.val i.isLt]
+  exact Req_refl _
+
+/-- **The seed agrees with the tower operator on the carrier**: `atlasSeedOp x ≈ (diagOp atlasWeight
+    24) x`. So the `Fin 24`-typed presentation and the `ℕ`-indexed one coincide on `CVec 24`, and the
+    seed inherits linearity/symmetry from `diagOp`. -/
+theorem atlasSeedOp_eq (x : CVec 24) : CVecEq (atlasSeedOp x) (diagOp atlasWeight 24 x) :=
+  fun i => Cmul_congr ⟨atlasSeedWeight_eq_atlasWeight i, Req_refl zero⟩ (Ceq_refl (x i))
+
+/-- **BASE RESTRICTION TO `M₂₄`** (reviewer's item 3, base half): the `Fin 24`-typed seed weight IS the
+    Atlas spectral-operator diagonal `atlasM i i` on the sourced carrier. So `atlasSeedOp` genuinely
+    restricts the sourced `M` (§5/§6.6) to the finite carrier — typed so the tail cannot intrude. -/
+theorem atlasSeedWeight_eq_atlasM (i : Fin 24) : Req (atlasSeedWeight i) (atlasM i.val i.val) :=
+  Req_trans (atlasSeedWeight_eq_atlasWeight i) (atlasWeight_eq_atlasM_diag i.val i.isLt)
+
+/-- **The seed operator is SYMMETRIC** on `cInner 24` — inherited from `diagOp_herm` through the
+    carrier agreement `atlasSeedOp_eq`. (Symmetry only; not self-adjointness.) -/
+theorem atlasSeedOp_herm (x y : CVec 24) :
+    Ceq (cInner 24 (atlasSeedOp x) y) (cInner 24 x (atlasSeedOp y)) :=
+  Ceq_trans (cInner_congr (atlasSeedOp_eq x) (CVecEq_refl y))
+    (Ceq_trans (diagOp_herm 24 atlasWeight x y)
+      (cInner_congr (CVecEq_refl x) (CVecEq_symm (atlasSeedOp_eq y))))
+
+/-- **The seed spectrum is BOUNDED in `[−1, 10]`** (reviewer's defect-2, as a theorem): every seed
+    eigenvalue lies in `[−1, 10]` (`atlasEig_range` on the sourced carrier). So `atlasSeedOp` is a
+    BOUNDED observable (operator norm `≤ 10`), finite-rank on `CVec 24` — it CANNOT be the necessarily
+    unbounded Hilbert–Pólya operator. -/
+theorem atlasSeedEig_bounded (i : Fin 24) : -1 ≤ atlasSeedEig i ∧ atlasSeedEig i ≤ 10 :=
+  atlasEig_range i.val
 
 /-- **The Atlas observable on the finite stage `CVec N`**, packaged as a symmetric operator on
     `finPreHilbert N`. For `N = 24` this is the full sourced spectral operator; the same object at
