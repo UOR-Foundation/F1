@@ -2399,10 +2399,11 @@ open UOR.Bridge.F1Square
 -- Composition (|xy|=|x||y|) and completion are further named obligations. Crux none.
 #print axioms Square.posForm_nonneg
 #print axioms Square.posForm_definite
--- The 3 square-definiteness lemmas exposed from HilbertPolyaMetric for the complex IP space's PD proof.
-#print axioms Square.Rnonneg_Rmul_self_loc
-#print axioms Square.Radd_eq_zero_split
-#print axioms Square.Rmul_self_eq_zero_imp
+-- Zeta-free real square-definiteness kernels (new Analysis/RealSquareDefinite.lean, ROrder/Real/QOrder
+-- cone only), reused by both posForm and the complex IP space's PD proof.
+#print axioms Analysis.Rnonneg_Rmul_self_loc
+#print axioms Analysis.Radd_eq_zero_split
+#print axioms Analysis.Rmul_self_eq_zero_imp
 -- GENUINE FINITE COMPLEX INNER-PRODUCT SPACE (Fin N → ℂ, new Square/FinInnerProduct.lean) — replaces the
 -- quarantined nominal contract with an ACTUAL sesquilinear positive-definite Hermitian inner product.
 -- cInner x y = Σ conj(xᵢ)yᵢ: sesquilinear (add/smul both slots, conj-linear in 1st), Hermitian (cInner_conj),

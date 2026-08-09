@@ -46,6 +46,7 @@ import F1Square.Square.Cohomology
 import F1Square.Square.HilbertPolyaSpec
 import F1Square.Square.HilbertPolyaBridge
 import F1Square.Square.HilbertPolyaFinite
+import F1Square.Analysis.RealSquareDefinite
 import F1Square.Square.HilbertPolyaMetric
 import F1Square.Square.FinInnerProduct
 import F1Square.Square.WeilLattice

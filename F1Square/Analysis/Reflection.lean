@@ -31,6 +31,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 -/
 
 import F1Square.Analysis.ZeroGeometry
+import F1Square.Analysis.ComplexCore
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -98,11 +99,8 @@ theorem onLine_mirror_in_disk (z : Complex) (h : OnCriticalLine z) :
 -- full 4-fold symmetry group `{ρ, ρ̄, 1−ρ, 1−ρ̄}` of the completed-ζ zeros.
 -- ===========================================================================
 
-/-- Complex **conjugation** `ρ ↦ ρ̄` (same real part, negated imaginary part) — the second generator
-    of the ξ-zero symmetry group (`ζ(s̄) = conj ζ(s)`). -/
-def Cconj (z : Complex) : Complex := ⟨z.re, Rneg z.im⟩
-
-/-- **Conjugation preserves the modulus**: `|ρ̄|² = |ρ|²` (`(−i)² = i²`, `Rneg_sq`). -/
+/-- **Conjugation preserves the modulus**: `|ρ̄|² = |ρ|²` (`(−i)² = i²`, `Rneg_sq`). `Cconj` itself is
+    now defined in the zeta-free `ComplexCore`. -/
 theorem cnormSq_Cconj (z : Complex) : Req (cnormSq (Cconj z)) (cnormSq z) :=
   Radd_congr (Req_refl (Rmul z.re z.re)) (Rneg_sq z.im)
 

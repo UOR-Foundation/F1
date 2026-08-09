@@ -13,6 +13,7 @@ import F1Square.Analysis.ComplexExpAdd
 import F1Square.Analysis.ComplexZeta
 import F1Square.Analysis.GammaOne
 import F1Square.Analysis.EtaFunction
+import F1Square.Analysis.ComplexCore
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -24,19 +25,13 @@ namespace UOR.Bridge.F1Square.Analysis
 theorem Rsub_RnegRneg (x y : Real) : Req (Rsub (Rneg x) (Rneg y)) (Rneg (Rsub x y)) :=
   Req_symm (Rneg_Radd x (Rneg y))
 
-/-- ℂ addition respects `≈`. -/
-theorem Cadd_congr {z z' w w' : Complex} (hz : Ceq z z') (hw : Ceq w w') :
-    Ceq (Cadd z w) (Cadd z' w') := ⟨Radd_congr hz.1 hw.1, Radd_congr hz.2 hw.2⟩
+-- `Cadd_congr` now lives in the zeta-free `ComplexCore`.
 
 /-- ℂ negation respects `≈`. -/
 theorem Cneg_congr {z z' : Complex} (h : Ceq z z') : Ceq (Cneg z) (Cneg z') :=
   ⟨Rneg_congr h.1, Rneg_congr h.2⟩
 
-/-- ℂ multiplication respects `≈`. -/
-theorem Cmul_congr {z z' w w' : Complex} (hz : Ceq z z') (hw : Ceq w w') :
-    Ceq (Cmul z w) (Cmul z' w') :=
-  ⟨Rsub_congr (Rmul_congr hz.1 hw.1) (Rmul_congr hz.2 hw.2),
-   Radd_congr (Rmul_congr hz.1 hw.2) (Rmul_congr hz.2 hw.1)⟩
+-- `Cmul_congr` now lives in the zeta-free `ComplexCore`.
 
 /-- ℂ subtraction respects `≈`. -/
 theorem Csub_congr {z z' w w' : Complex} (hz : Ceq z z') (hw : Ceq w w') :

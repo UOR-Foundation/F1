@@ -31,13 +31,44 @@ signed Atlas action is a separate object, built later), keeping the Hilbert metr
 scaling generator. Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free. Crux `none`.
 -/
 
-import F1Square.Square.HilbertPolyaMetric
-import F1Square.Analysis.ComplexConjAlgebra
-import F1Square.Analysis.ComplexArgLower
+import F1Square.Analysis.RealSquareDefinite
+import F1Square.Analysis.ComplexCore
 
 namespace UOR.Bridge.F1Square.Square
 
 open UOR.Bridge.F1Square.Analysis
+
+/-- `−(−x) ≈ x` (local, zeta-free — the public copy lives in `RealPow` whose cone is Pi/ζ-tainted). -/
+private theorem Rneg_neg (x : Real) : Req (Rneg (Rneg x)) x :=
+  Req_of_seq_Qeq (fun n => by
+    show Qeq (neg (neg (x.seq n))) (x.seq n)
+    simp only [Qeq, neg]; push_cast; ring_uor)
+
+/-- `0 ≤ x` (as `Rle`) gives `Rnonneg x` (local, zeta-free copy of the `RealPow` lemma). -/
+private theorem Rnonneg_of_Rle_zero {x : Real} (h : Rle zero x) : Rnonneg x := by
+  intro n
+  refine Qarch_gen (C := 3) (neg_den_pos (Qbound_den_pos n)) (x.den_pos n) (fun m => ?_)
+  have hs2 : Qle (⟨0, 1⟩ : Q) (add (x.seq m) ⟨2, m + 1⟩) := h m
+  have hs1 : Qle (x.seq m) (add (x.seq n) (add (Qbound m) (Qbound n))) :=
+    Qle_add_of_Qabs_sub (x.den_pos m) (x.den_pos n)
+      (add_den_pos (Qbound_den_pos m) (Qbound_den_pos n)) (x.reg m n)
+  have hcomb : Qle (⟨0, 1⟩ : Q)
+      (add (add (x.seq n) (add (Qbound m) (Qbound n))) ⟨2, m + 1⟩) :=
+    Qle_trans (add_den_pos (x.den_pos m) (Nat.succ_pos _)) hs2 (Qadd_le_add hs1 (Qle_refl _))
+  have hfinal := Qadd_le_add hcomb (Qle_refl (neg (Qbound n)))
+  have hLHSeq : Qeq (neg (Qbound n)) (add (⟨0, 1⟩ : Q) (neg (Qbound n))) := by
+    simp only [Qeq, add, neg, Qbound]; push_cast; ring_uor
+  have hRHSeq : Qeq (add (add (add (x.seq n) (add (Qbound m) (Qbound n))) ⟨2, m + 1⟩)
+      (neg (Qbound n))) (add (x.seq n) ⟨3, m + 1⟩) := by
+    simp only [Qeq, add, neg, Qbound]; push_cast; ring_uor
+  refine Qle_trans (add_den_pos (by decide) (neg_den_pos (Qbound_den_pos n))) (Qeq_le hLHSeq) ?_
+  refine Qle_trans (add_den_pos (add_den_pos (add_den_pos (x.den_pos n)
+      (add_den_pos (Qbound_den_pos m) (Qbound_den_pos n))) (Nat.succ_pos _))
+      (neg_den_pos (Qbound_den_pos n))) hfinal (Qeq_le hRHSeq)
+
+/-- `Rnonneg` respects `≈` (local, zeta-free — via the order bridge). -/
+private theorem Rnonneg_congr {x y : Real} (h : Req x y) (hx : Rnonneg x) : Rnonneg y :=
+  Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg hx) (Rle_of_Req h))
 
 /-- The genuine finite complex carrier: `N`-tuples of complex numbers. -/
 abbrev CVec (N : Nat) : Type := Fin N → Complex

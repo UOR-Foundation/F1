@@ -13,6 +13,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 `scripts/honesty_audit.sh`.
 -/
 import F1Square.Analysis.ComplexArgUpperAdd
+import F1Square.Analysis.ComplexCore
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -52,21 +53,7 @@ theorem CargLower_tan (z : Complex) (k : Nat) (hk : Qlt (Qbound k) ((Cconj z).im
   refine Req_trans (Rmul_congr hfac (Req_refl _)) ?_
   exact Rmul_congr (Req_refl _) (Req_symm (Rcos_neg (CargUpper (Cconj z) k hk ρ hρ0 hρd hρlt hb)))
 
-/-- **Conjugate distributes over product** `z̄·w̄ = (zw)‾` (up to `≈`): `Ceq (Cconj (Cmul z w))
-    (Cmul (Cconj z) (Cconj w))`. Componentwise: Re uses `(−Im z)(−Im w) = Im z·Im w`, Im uses
-    `−(Re z·Im w + Im z·Re w) = Re z·(−Im w) + (−Im z)·Re w`. -/
-theorem Cconj_Cmul (z w : Complex) : Ceq (Cconj (Cmul z w)) (Cmul (Cconj z) (Cconj w)) := by
-  have hnn : Req (Rmul (Rneg z.im) (Rneg w.im)) (Rmul z.im w.im) :=
-    Req_trans (Rmul_neg_left z.im (Rneg w.im))
-      (Req_trans (Rneg_congr (Rmul_neg_right z.im w.im)) (Rneg_neg (Rmul z.im w.im)))
-  refine ⟨?_, ?_⟩
-  · show Req (Rsub (Rmul z.re w.re) (Rmul z.im w.im))
-      (Rsub (Rmul z.re w.re) (Rmul (Rneg z.im) (Rneg w.im)))
-    exact Rsub_congr (Req_refl (Rmul z.re w.re)) (Req_symm hnn)
-  · show Req (Rneg (Radd (Rmul z.re w.im) (Rmul z.im w.re)))
-      (Radd (Rmul z.re (Rneg w.im)) (Rmul (Rneg z.im) w.re))
-    refine Req_trans (Rneg_Radd (Rmul z.re w.im) (Rmul z.im w.re)) ?_
-    exact Req_symm (Radd_congr (Rmul_neg_right z.re w.im) (Rmul_neg_left z.im w.re))
+-- `Cconj_Cmul` now lives in the zeta-free `ComplexCore`.
 
 /-- **The upper-sector argument respects `≈`**: `z ≈ w` ⟹ `CargUpper z = CargUpper w`
     (`Rdiv_congr` + `RarctanR_congr` under the `π/2 −` shift). -/
