@@ -126,10 +126,12 @@ private theorem Cnsmul_czero : ∀ c, Ceq (Cnsmul c Czero) Czero
   | 0 => Ceq_refl Czero
   | (c + 1) => Ceq_trans (czero_cadd (Cnsmul c Czero)) (Cnsmul_czero c)
 
-/-- The `n`-INDEPENDENT `k`-th reciprocal power sum `σ_k = Σ_{u∈us} (−u)ᵏ` (`= Σ_ρ (−1/ρ)ᵏ` for the
-    zero moments `u = 1/ρ`). This is the Keiper–Li SECONDARY CONSTANT at order `k`: it carries no
-    `n`, and the level-`n` moments are its binomial multiples (`momentList_eq_binom_powerSum`). Its
-    real part `Re σ_k` is the classical secondary constant (`Re σ₁ = 1 + γ/2 − ½ log 4π`). -/
+/-- The `n`-INDEPENDENT signed `k`-th reciprocal power sum `σ*_k = Σ_{u∈us} (−u)ᵏ`
+    (`= Σ_ρ (−1/ρ)ᵏ` for the zero moments `u = 1/ρ`); it carries no `n`, and the level-`n` moments
+    are its binomial multiples (`momentList_eq_binom_powerSum`). It is `(−1)ᵏ` times the classical
+    Keiper–Li secondary constant `σ_k = Σ_ρ ρ^{−k}`, so — MIND THE SIGN — its real part at `k = 1`
+    is `Re σ*₁ = −Σ_ρ Re(1/ρ) = −(1 + γ/2 − ½ log 4π) ≈ −0.0231`, the NEGATION of the classical
+    `σ₁`; the outer `Rneg` in `witnessSum_eq_binom_powerSum` restores the positive `λ`. -/
 def powerSumList : List Complex → Nat → Complex
   | [], _ => Czero
   | (u :: rest), k => Cadd (Cnpow (Cneg u) k) (powerSumList rest k)
@@ -137,13 +139,14 @@ def powerSumList : List Complex → Nat → Complex
 /-- **THE KEIPER–LI BINOMIAL TRANSFORM** — the level-`n` reciprocal moment factors as the binomial
     coefficient times the `n`-independent secondary constant:
 
-      `M_k = Σ_ρ C(n,k+1)(−1/ρ)^{k+1} = C(n,k+1) · σ_{k+1}`,  `σ_j = Σ_ρ (−1/ρ)ʲ` (`powerSumList`).
+      `M_k = Σ_ρ C(n,k+1)(−1/ρ)^{k+1} = C(n,k+1) · σ*_{k+1}`,  `σ*_j = Σ_ρ (−1/ρ)ʲ` (`powerSumList`).
 
     So ALL the `n`-dependence of the zero side sits in the binomial coefficients `C(n,k+1)`, and the
-    secondary constants `σ_j` are fixed — exactly the structure of the classical Li/Keiper explicit
-    formula (each `λₙ` a binomial transform of the fixed `σ_j`). This is what makes the trace-bridge
-    seam an infinite family of `n`-uniform statements `Re σ_j = (closed form)` rather than a separate
-    fact per `n`. Pure algebra: `Cnsmul` linearity over the list sum. No seam, no RH. -/
+    signed secondary constants `σ*_j = (−1)ʲ σ_j` are fixed — exactly the structure of the classical
+    Li/Keiper explicit formula (each `λₙ` a binomial transform of the fixed `σ*_j`). This is what
+    makes the trace-bridge seam an infinite family of `n`-uniform statements `Re σ*_j = (closed form)`
+    rather than a separate fact per `n`. Pure algebra: `Cnsmul` linearity over the list sum. No seam,
+    no RH. -/
 theorem momentList_eq_binom_powerSum (n k : Nat) : ∀ us : List Complex,
     Ceq (momentList us n k) (Cnsmul (choose n (k + 1)) (powerSumList us (k + 1)))
   | [] => Ceq_symm (Cnsmul_czero (choose n (k + 1)))
@@ -172,16 +175,17 @@ private theorem Cnsmul_re : ∀ (c : Nat) (z : Complex), Req (Cnsmul c z).re (ns
 /-- **THE ZERO-SUM AS A BINOMIAL TRANSFORM OF THE FIXED REAL SECONDARY CONSTANTS.** Combining
     `witnessSum_moment_order`, the Keiper–Li factoring `momentList_eq_binom_powerSum`, and the
     real-part bridges, the Bombieri–Lagarias zero-sum is *literally* the binomial transform of the
-    `n`-independent real secondary constants `Re σ_j = Re (powerSumList us j)`:
+    `n`-independent fixed reals `Re σ*_j = Re (powerSumList us j)`:
 
-      `witnessSum(zeroCayley) n = − Σ_{k=1}^{n} C(n,k) · Re σ_k`.
+      `witnessSum(zeroCayley) n = − Σ_{k=1}^{n} C(n,k) · Re σ*_k`.
 
     Every quantity on the right except the binomial coefficients is `n`-independent. So the ENTIRE
-    trace bridge, at every `n` at once, rests on the fixed real numbers `Re σ_j` — the classical
-    Keiper–Li secondary constants (`Re σ₁ = 1 + γ/2 − ½ log 4π`, the `n = 1` anchor). Evaluating
-    those `Re σ_j` against the built `η`/`ζ`/`γ`/`log 4π` closed forms is exactly the undischarged
-    explicit-formula seam (it needs the symmetric zero enumeration); this theorem localizes the seam
-    to that fixed sequence and is itself pure algebra — no seam, no RH. -/
+    trace bridge, at every `n` at once, rests on the fixed real numbers `Re σ*_j = (−1)ʲ Re σ_j`
+    (`σ_j = Σ_ρ ρ^{−j}` the classical Keiper–Li secondary constants). MIND THE SIGN: at `j = 1`,
+    `Re σ*₁ = −(1 + γ/2 − ½ log 4π) ≈ −0.0231`, and the outer `Rneg` makes `n = 1` land on `+λ₁`
+    (the anchor). Evaluating those `Re σ*_j` against the built `η`/`ζ`/`γ`/`log 4π` closed forms is
+    exactly the undischarged explicit-formula seam (it needs the symmetric zero enumeration); this
+    theorem localizes the seam to that fixed sequence and is itself pure algebra — no seam, no RH. -/
 theorem witnessSum_eq_binom_powerSum (us : List Complex) (n : Nat) :
     Req (witnessSum (us.map (fun u => Cadd Cone (Cneg u))) n)
         (Rneg (RsumN (fun k => nsmulR (choose n (k + 1)) (powerSumList us (k + 1)).re) n)) := by
