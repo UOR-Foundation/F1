@@ -351,4 +351,75 @@ theorem cInner_embed (N : Nat) (x y : CVec N) :
       rw [hx, hy]; exact Ceq_refl _)
   exact Ceq_trans (Cadd_congr hhead hlast) (cadd0 (cInner N x y))
 
+-- ===========================================================================
+-- The setoid `CVecEq` and the complex-module + inner-product congruence laws
+-- (the extensionality/vector-space structure the raw finite form lacked).
+-- ===========================================================================
+
+/-- **Pointwise vector equivalence** on `CVec N` — the setoid the finite space carries: `x ≈ y` iff
+    every coordinate agrees under Bishop `Ceq`. -/
+def CVecEq {N : Nat} (x y : CVec N) : Prop := ∀ i, Ceq (x i) (y i)
+
+/-- Reflexivity of `CVecEq`. -/
+theorem CVecEq_refl {N : Nat} (x : CVec N) : CVecEq x x := fun _ => Ceq_refl _
+
+/-- Symmetry of `CVecEq`. -/
+theorem CVecEq_symm {N : Nat} {x y : CVec N} (h : CVecEq x y) : CVecEq y x := fun i => Ceq_symm (h i)
+
+/-- Transitivity of `CVecEq` (so `(CVec N, CVecEq)` is a setoid). -/
+theorem CVecEq_trans {N : Nat} {x y z : CVec N} (h₁ : CVecEq x y) (h₂ : CVecEq y z) : CVecEq x z :=
+  fun i => Ceq_trans (h₁ i) (h₂ i)
+
+/-- Vector addition respects the setoid. -/
+theorem cvAdd_congr {N : Nat} {x x' y y' : CVec N} (hx : CVecEq x x') (hy : CVecEq y y') :
+    CVecEq (cvAdd x y) (cvAdd x' y') := fun i => Cadd_congr (hx i) (hy i)
+
+/-- Scalar multiplication respects the setoid (in both scalar and vector). -/
+theorem cvSmul_congr {N : Nat} {c c' : Complex} {x x' : CVec N} (hc : Ceq c c') (hx : CVecEq x x') :
+    CVecEq (cvSmul c x) (cvSmul c' x') := fun i => Cmul_congr hc (hx i)
+
+/-- Negation respects the setoid. -/
+theorem cvNeg_congr {N : Nat} {x x' : CVec N} (hx : CVecEq x x') :
+    CVecEq (cvNeg x) (cvNeg x') := fun i => ⟨Rneg_congr (hx i).1, Rneg_congr (hx i).2⟩
+
+/-- Commutativity of vector addition. -/
+theorem cvAdd_comm {N : Nat} (x y : CVec N) : CVecEq (cvAdd x y) (cvAdd y x) :=
+  fun i => Cadd_comm (x i) (y i)
+
+/-- Associativity of vector addition. -/
+theorem cvAdd_assoc {N : Nat} (x y z : CVec N) :
+    CVecEq (cvAdd (cvAdd x y) z) (cvAdd x (cvAdd y z)) := fun i => Cadd_assoc (x i) (y i) (z i)
+
+/-- `0` is a right identity for vector addition. -/
+theorem cvAdd_zero {N : Nat} (x : CVec N) : CVecEq (cvAdd x (cvZero N)) x := fun i => cadd0 (x i)
+
+/-- `−x` is an additive inverse. -/
+theorem cvAdd_neg {N : Nat} (x : CVec N) : CVecEq (cvAdd x (cvNeg x)) (cvZero N) :=
+  fun i => ⟨Radd_neg (x i).re, Radd_neg (x i).im⟩
+
+/-- Scalar multiplication distributes over vector addition. -/
+theorem cvSmul_cvAdd {N : Nat} (c : Complex) (x y : CVec N) :
+    CVecEq (cvSmul c (cvAdd x y)) (cvAdd (cvSmul c x) (cvSmul c y)) :=
+  fun i => Cmul_distrib c (x i) (y i)
+
+/-- Scalar multiplication distributes over scalar addition. -/
+theorem cvSmul_Cadd {N : Nat} (c d : Complex) (x : CVec N) :
+    CVecEq (cvSmul (Cadd c d) x) (cvAdd (cvSmul c x) (cvSmul d x)) :=
+  fun i => cmul_distrib_right c d (x i)
+
+/-- Scalar-multiplication associativity `c·(d·x) = (c·d)·x`. -/
+theorem cvSmul_assoc {N : Nat} (c d : Complex) (x : CVec N) :
+    CVecEq (cvSmul c (cvSmul d x)) (cvSmul (Cmul c d) x) :=
+  fun i => Ceq_symm (Cmul_assoc c d (x i))
+
+/-- `1·x = x`. -/
+theorem cvSmul_one {N : Nat} (x : CVec N) : CVecEq (cvSmul Cone x) x :=
+  fun i => Ceq_trans (Cmul_comm Cone (x i)) (Cmul_one (x i))
+
+/-- **The inner product respects the setoid in both arguments** — so `cInner` descends to the
+    quotient (the extensionality under pointwise `Ceq` the raw finite form lacked). -/
+theorem cInner_congr {N : Nat} {x x' y y' : CVec N} (hx : CVecEq x x') (hy : CVecEq y y') :
+    Ceq (cInner N x y) (cInner N x' y') :=
+  cvecSum_congr N _ _ (fun i => Cmul_congr (Cconj_congr (hx i)) (hy i))
+
 end UOR.Bridge.F1Square.Square

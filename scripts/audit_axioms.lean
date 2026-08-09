@@ -2424,6 +2424,23 @@ open UOR.Bridge.F1Square
 #print axioms Square.cInner_self_re_nonneg
 #print axioms Square.cInner_self_definite
 #print axioms Square.cInner_embed
+-- Setoid CVecEq + complex-module laws + inner-product congruence (the vector-space structure and
+-- extensionality the raw finite form lacked): cInner descends to the quotient (cInner_congr).
+#print axioms Square.CVecEq_refl
+#print axioms Square.CVecEq_symm
+#print axioms Square.CVecEq_trans
+#print axioms Square.cvAdd_congr
+#print axioms Square.cvSmul_congr
+#print axioms Square.cvNeg_congr
+#print axioms Square.cvAdd_comm
+#print axioms Square.cvAdd_assoc
+#print axioms Square.cvAdd_zero
+#print axioms Square.cvAdd_neg
+#print axioms Square.cvSmul_cvAdd
+#print axioms Square.cvSmul_Cadd
+#print axioms Square.cvSmul_assoc
+#print axioms Square.cvSmul_one
+#print axioms Square.cInner_congr
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
 -- the finite approximant finiteHP B N satisfies the contract's NominalSymmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
