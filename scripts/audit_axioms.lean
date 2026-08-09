@@ -8473,3 +8473,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimDiagW_add
 #print axioms Square.dlimDiagW_smul
 #print axioms Square.dlimDiagW_herm
+
+-- The block-ladder rename + constructive spectral-asymmetry rejection (AtlasRefinementOperator.lean,
+-- response to the b664013 review items 4-5). atlasCandWeight_ge_neg_one: every block-ladder diagonal
+-- weight ≥ −1 (block eigenvalue ≥ −1 via atlasEig_range + scale shift ≥ 0). atlasCandWeight_zero_eq_ten:
+-- w₀ = 10 (a weight > 2). atlasCand_gt_neg_ten: w_i + 10 > 0 strictly (Pos) for every i — so −10 lies
+-- strictly below the entire diagonal while 10 is a weight, hence the point spectrum is not closed under
+-- μ↦−μ (fails HP trace-symmetry) — a zero-free spectral rejection of the block-ladder. Renamed to
+-- "block-ladder candidate" (no clean Atlas refinement warrant: AtlasAddressing is crux-contaminated).
+-- Crux none.
+#print axioms Square.atlasCandWeight_ge_neg_one
+#print axioms Square.atlasCandWeight_zero_eq_ten
+#print axioms Square.atlasCand_gt_neg_ten

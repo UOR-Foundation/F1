@@ -27,12 +27,22 @@ WHAT IS PROVED:
   operator `atlasCandDLimOp` (via the generic `dlimDiagW`), the first UNBOUNDED symmetric operator on
   the core.
 
-THE FIRST FAILED BRIDGE (this is a CANDIDATE, not a witness). `atlasCand_scale_gap` proves the
-scale-tower spectrum is an ARITHMETIC PROGRESSION with constant gap `log 5`. The Riemann zeros do NOT
-have constant gaps — their spacing shrinks (density `~ (log T)/2π`). So this candidate's spectral
-geometry is structurally wrong for the HP operator: it is REJECTED at the spectral/zero bridge. That
-rejects THIS construction, not the Atlas program or RH. No spectral→zero correspondence is asserted;
-the crux (RH) stays `none`.
+NAMING — THIS IS A **BLOCK-LADDER CANDIDATE**, NOT A WARRANTED ATLAS REFINEMENT. The address structure
+`(scale, block)` and the `M₂₄ + ℓ·log 5` law are a locally-constructed block-ladder: no derived Atlas
+refinement map / coherence warrant backs them. A genuine warrant would be sourced from the addressing
+tower (`AtlasAddressing`), but that module's cone is itself crux-contaminated (it reaches `ComplexZeta`
+/`WeilPSD`/`Crux`), so it cannot be imported into this zero-free operator — there is no clean Atlas
+refinement warrant available. Hence "block-ladder candidate," per the operator contract's default.
+
+THE FIRST FAILED BRIDGE — A CONSTRUCTIVE SPECTRAL REJECTION. Two theorems reject this ladder as the HP
+operator, zero-free: (1) `atlasCand_scale_gap` — the scale-tower spectrum is an ARITHMETIC PROGRESSION
+(constant gap `log 5`), whereas the Riemann zeros' spacing shrinks; and (2) the SPECTRAL ASYMMETRY —
+every diagonal weight is `≥ −1` (`atlasCandWeight_ge_neg_one`) while `w₀ = 10` (a weight `> 2`), so
+`−10` lies STRICTLY BELOW the entire diagonal (`atlasCand_gt_neg_ten`: `w_i + 10 > 0` for every `i`).
+The HP trace-symmetry requirement needs the point spectrum closed under `μ ↦ −μ`; a diagonal whose
+entries are all `≥ −1` but include `10` cannot be (it would need `−10`, which is below its floor). So
+the candidate is REJECTED. That rejects THIS construction, not the Atlas program or RH. No spectral→zero
+correspondence is asserted; the crux (RH) stays `none`.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; the cone avoids `ComplexZeta`
 and the crux modules. Audited by `scripts/honesty_audit.sh`.
@@ -249,5 +259,61 @@ def atlasCandDLimOp : PreHilbertSymOp dlimPreHilbert where
   op_add := dlimDiagW_add atlasCandWeight
   op_smul := dlimDiagW_smul atlasCandWeight
   op_herm := dlimDiagW_herm atlasCandWeight
+
+-- ===========================================================================
+-- The constructive spectral rejection: the diagonal has floor −1 but peak 10, so
+-- its point spectrum is NOT closed under μ ↦ −μ (fails HP trace-symmetry).
+-- ===========================================================================
+
+/-- `n·x ≥ 0` for `x ≥ 0`. -/
+private theorem Rnonneg_Rnsmul (x : Real) (h : Rnonneg x) : ∀ ℓ, Rnonneg (Rnsmul ℓ x)
+  | 0 => Rnonneg_zero
+  | (ℓ + 1) => Rnonneg_Radd h (Rnonneg_Rnsmul x h ℓ)
+
+/-- The per-scale shift is nonnegative (`ℓ·log 5 ≥ 0`). -/
+private theorem scaleShift_nonneg (ℓ : Nat) : Rnonneg (scaleShift ℓ) :=
+  Rnonneg_Rnsmul (logN 5 (by decide)) (Rnonneg_logN 5 (by decide)) ℓ
+
+/-- `−1` as `ofQ`. -/
+private theorem Rneg_one_eq_ofQ : Req (Rneg one) (ofQ (⟨-1, 1⟩ : Q) (by decide)) :=
+  Req_of_seq_Qeq (fun _ => by show Qeq (neg (⟨1, 1⟩ : Q)) (⟨-1, 1⟩ : Q); decide)
+
+/-- **WEIGHT FLOOR**: every block-ladder diagonal weight is `≥ −1` — the block eigenvalue is `≥ −1`
+    (`atlasEig_range`) and the scale shift is `≥ 0`. The spectral floor that makes the point spectrum
+    asymmetric under negation. -/
+theorem atlasCandWeight_ge_neg_one (i : Nat) : Rle (Rneg one) (atlasCandWeight i) := by
+  rw [atlasCandWeight_val]
+  have hblock : Rle (Rneg one) (ofQ ⟨atlasEig (i % 24), 1⟩ Nat.one_pos) := by
+    refine Rle_trans (Rle_of_Req Rneg_one_eq_ofQ) (Rle_ofQ_ofQ (by decide) Nat.one_pos ?_)
+    have h1 := (atlasEig_range (i % 24)).1
+    simp only [Qle]; push_cast; omega
+  refine Rle_trans (Rle_of_Req (Req_symm (Radd_zero (Rneg one)))) ?_
+  exact Radd_le_add hblock (Rle_zero_of_Rnonneg (scaleShift_nonneg _))
+
+/-- `−1 + 10 = 9`. -/
+private theorem neg_one_add_ten : Req (Radd (Rneg one) (ofQ (⟨10, 1⟩ : Q) Nat.one_pos))
+    (ofQ (⟨9, 1⟩ : Q) Nat.one_pos) :=
+  Req_trans (Radd_congr Rneg_one_eq_ofQ (Req_refl _))
+    (Req_of_seq_Qeq (fun _ => by show Qeq (add (⟨-1, 1⟩ : Q) (⟨10, 1⟩ : Q)) (⟨9, 1⟩ : Q); decide))
+
+/-- **SPECTRAL ASYMMETRY (`−10` below the whole diagonal)**: `w_i + 10 > 0` (strictly, `Pos`) for every
+    `i` — since `w_i ≥ −1`, `w_i + 10 ≥ 9 ≥ 1`. So `−10` lies strictly below EVERY diagonal weight,
+    while `w₀ = 10` IS a weight. A point spectrum with `10` but nothing near `−10` is not closed under
+    `μ ↦ −μ` — the block-ladder fails the HP trace-symmetry requirement. Zero-free rejection. -/
+theorem atlasCand_gt_neg_ten (i : Nat) :
+    Pos (Radd (atlasCandWeight i) (ofQ (⟨10, 1⟩ : Q) Nat.one_pos)) := by
+  have h9 : Rle one (ofQ (⟨9, 1⟩ : Q) Nat.one_pos) :=
+    Rle_ofQ_ofQ (by decide) Nat.one_pos (by decide)
+  have hstep : Rle (ofQ (⟨9, 1⟩ : Q) Nat.one_pos)
+      (Radd (atlasCandWeight i) (ofQ ⟨10, 1⟩ Nat.one_pos)) :=
+    Rle_trans (Rle_of_Req (Req_symm neg_one_add_ten))
+      (Radd_le_add (atlasCandWeight_ge_neg_one i) (Rle_refl _))
+  exact Pos_of_Rle_one (Rle_trans h9 hstep)
+
+/-- **`w₀ = 10`** — a diagonal weight strictly exceeding `2` (the peak witnessing the asymmetry). -/
+theorem atlasCandWeight_zero_eq_ten :
+    Req (atlasCandWeight 0) (ofQ (⟨10, 1⟩ : Q) Nat.one_pos) := by
+  show Req (Radd (ofQ ⟨10, 1⟩ Nat.one_pos) zero) (ofQ ⟨10, 1⟩ Nat.one_pos)
+  exact Radd_zero _
 
 end UOR.Bridge.F1Square.Square
