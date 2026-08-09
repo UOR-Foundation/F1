@@ -1,34 +1,28 @@
 /-
-F1 square — v0.20.0 stage F, brick A1: **the canonical `H¹`-object, named by its universal
-property** — the Frobenius orbit of the fundamental spectral class.
+F1 square — **the free Frobenius-orbit SYNTAX/INDEXING object** (`Cohomology.lean`).
+HONEST-SCOPE REPAIR (operator-frontier checkpoint, task 2): this module builds a *syntax/indexing*
+object, **not** cohomology and **not** a Hilbert carrier.
 
-Companion ROADMAP §F (Group A, brick A1). The crux's geometric face is the Hodge index of the
-`H¹`-bearing pairing of `𝕊` (T4/T5). v0.18.0 carried that `H¹` as INTERFACE data
-(`Square.SpectralSquare`, whose dictionary `⟨Cₙ,Cₙ⟩ = −2λₙ` is a structure FIELD). Group A
-removes the dictionary as an input and *derives* it; this first brick names the object the
-derivation runs on, the same way `Square.Tensor` named `𝕊` itself — by a universal property,
-not by a hand-picked model.
+WHAT IS BUILT (proved): the free Frobenius system on one generator, `H1 = (ℕ, succ, 0)`. A Frobenius
+system `(M, φ, g)` is a carrier with a designated endomorphism `φ` and a base point `g`; `H1` is the
+free one, whose orbit `{φⁿ g}` indexes the primitive spectral classes `{Cₙ₊₁}`. Its universal
+property (`H1_universal`, `H1_isFree`, `freeFrob_unique_upto_iso`) genuinely pins it as THE free such
+object, unique up to unique isomorphism — this is real, and it is the analogue of
+`sq_isCoproduct`/`coproduct_unique_upto_iso` for `𝕊`. The arithmetic tie (`orbit_realizes_pencil`) is
+also genuine: the `k`-th orbit position realizes the pencil log-separation `k·log p = k·Λ(pᵏ)`
+(`pencil_separation_pow_vonMangoldt`) — the Frobenius shift lengths ARE the explicit-formula weights.
 
-THE CANONICAL OBJECT. The genuine `H¹` carries the scaling/Frobenius action with spectrum the
-zeta zeros (T4). What is canonically CONSTRUCTIBLE — and all the dictionary derivation needs —
-is the abstract carrier of that action: the **free Frobenius system on one generator**. A
-Frobenius system `(M, φ, g)` is a carrier with a designated endomorphism `φ` (the scaling
-shift) and a base point `g` (the fundamental class `C₁`); the canonical `H¹` is the free one,
-`(ℕ, succ, 0)`, whose orbit `{φⁿ g}` is the primitive spectral classes `{Cₙ₊₁}`. Its universal
-property (`H1_universal`, `H1_isFree`, `freeFrob_unique_upto_iso`) pins it exactly as
-`Square.sq_isCoproduct`/`coproduct_unique_upto_iso` pinned `𝕊`: it is THE object with the
-property, unique up to unique isomorphism — not a candidate.
+WHAT THIS IS NOT (the honest reclassification): `H1` is **Frobenius-orbit syntax/indexing** — the free
+monoid-action on one generator, canonically `≅ ℕ`. It is **not** a cohomology group, and its carrier
+is **not** a Hilbert space. Its Frobenius map is `succ`, which is **not surjective**
+(`H1_phi_not_surjective`: `succ n ≠ 0`), hence not invertible, hence **cannot generate a unitary
+action**. A genuine `H¹`-carrier for Hilbert–Pólya requires a *reversible* (unitary) scaling flow
+whose self-adjoint generator has spectrum the zeta zeros — a DIFFERENT, unbuilt object, the operator
+contract (`HilbertPolyaSpec`, task 3). Do not read this indexing object as that carrier.
 
-THE ARITHMETIC TIE (the orbit IS the built pencil). At a prime `p` the Frobenius-at-`p` orbit
-realizes as the prime-power pencil `{Γ_{pᵏ}}` of `Square.Pencil`: the `k`-th orbit class sits
-at log-separation `k·log p = k·Λ(pᵏ)` from the diagonal (`orbit_shiftLength`, from the built
-`pencil_separation_pow_vonMangoldt`) — the Connes–Consani closed orbit of length `log p`
-traversed `k` times. So the abstract free system is not free-floating: its action is the
-constructed scaling flow, and its shift lengths are the explicit-formula weights `Λ`.
-
-HONEST SCOPE. This names and characterizes the carrier; it asserts NOTHING about positivity.
-The trace datum that breaks pencil-blindness (A2) and the forced dictionary `⟨Cₙ,Cₙ⟩ = −2λₙ`
-(A3) are the next bricks; the forced signature (= RH) is Group B. The crux fields stay `none`.
+STATUS: the syntax/indexing object and its universal property are PROVED; the unitary Hilbert carrier
+(and the whole spectral claim "spectrum = the zeros") is OPEN. This module asserts NOTHING about a
+Hilbert metric, unitarity, self-adjointness, or positivity; the crux fields stay `none`.
 
 Pure Lean 4 core, no Mathlib, no `sorry`, choice-free; audited by `scripts/honesty_audit.sh`.
 -/
@@ -39,39 +33,47 @@ namespace UOR.Bridge.F1Square.Square
 
 open UOR.Bridge.F1Square.Analysis
 
-/-- A **Frobenius system** `(M, φ, g)`: a carrier `M` with a designated endomorphism `φ` (the
-    scaling/Frobenius shift) and a base point `g` (the fundamental spectral class `C₁`). The
-    canonical `H¹` is the FREE such system on one generator (`H1` below). -/
+/-- A **Frobenius system** `(M, φ, g)`: a carrier `M` with a designated endomorphism `φ` (the shift)
+    and a base point `g`. `H1` below is the FREE such system on one generator — a syntax object, not a
+    Hilbert carrier. -/
 structure FrobSys where
-  /-- the carrier (the spectral classes) -/
+  /-- the carrier (an indexing type for the spectral classes) -/
   carrier : Type
-  /-- the Frobenius/scaling action -/
+  /-- the Frobenius/shift endomorphism (an endomorphism, NOT assumed invertible/unitary) -/
   phi : carrier → carrier
-  /-- the fundamental class `C₁` -/
+  /-- the base point (the fundamental class `C₁`) -/
   g : carrier
 
-/-- The **Frobenius orbit** of the fundamental class: `orbit S n = φⁿ(g)`. The orbit IS the
-    family of primitive spectral classes (`Cₙ₊₁ = orbit n`). -/
+/-- The **Frobenius orbit** of the base point: `orbit S n = φⁿ(g)` — the indexing family
+    `Cₙ₊₁ ↔ orbit n`. -/
 def FrobSys.orbit (S : FrobSys) : Nat → S.carrier
   | 0 => S.g
   | n + 1 => S.phi (S.orbit n)
 
-/-- A **morphism of Frobenius systems**: a map intertwining the actions and preserving the
-    fundamental class (an equivariant pointed map). -/
+/-- A **morphism of Frobenius systems**: an equivariant pointed map (intertwines `φ`, preserves `g`). -/
 structure FrobHom (S T : FrobSys) where
   /-- the underlying map of carriers -/
   map : S.carrier → T.carrier
-  /-- preserves the fundamental class -/
+  /-- preserves the base point -/
   map_g : map S.g = T.g
-  /-- intertwines the Frobenius actions -/
+  /-- intertwines the shift endomorphisms -/
   map_phi : ∀ x, map (S.phi x) = T.phi (map x)
 
-/-- **THE CANONICAL `H¹`-OBJECT**: carrier `ℕ` (the pencil index, `Cₙ₊₁ ↔ n`), Frobenius the
-    shift `n ↦ n+1`, fundamental class `C₁ ↔ 0`. The free Frobenius system on one generator. -/
+/-- **THE FREE FROBENIUS-ORBIT SYNTAX OBJECT**: carrier `ℕ` (the pencil index, `Cₙ₊₁ ↔ n`), shift the
+    successor `n ↦ n+1`, base point `0`. This is *indexing/syntax*, canonically `≅ ℕ`; it is NOT a
+    Hilbert carrier and `succ` is NOT a unitary action (`H1_phi_not_surjective`). -/
 def H1 : FrobSys where
   carrier := Nat
   phi := Nat.succ
   g := 0
+
+/-- **`H1`'s shift `succ` is not surjective** (`succ n ≠ 0` for all `n`), so it is not invertible and
+    cannot be a unitary action. This is the explicit reason `H1` is syntax/indexing, not a Hilbert
+    carrier: a genuine `H¹` needs a reversible (unitary) scaling flow, which `succ` is not. -/
+theorem H1_phi_not_surjective : ∀ n : Nat, H1.phi n ≠ (0 : Nat) := by
+  intro n
+  show Nat.succ n ≠ 0
+  exact Nat.succ_ne_zero n
 
 /-- On `H1` the orbit is the identity: `orbit n = n` (the index IS the orbit position). -/
 theorem H1_orbit (n : Nat) : H1.orbit n = n := by
@@ -85,10 +87,9 @@ def H1.mediate (T : FrobSys) : FrobHom H1 T where
   map_g := rfl
   map_phi := fun _ => rfl
 
-/-- **THE UNIVERSAL PROPERTY** (uniqueness): every Frobenius morphism out of `H1` IS the orbit
-    map — `h.map n = φ_T^n(g_T)`. Together with `H1.mediate` (existence) this is the freeness:
-    `H1` is the free Frobenius system on one generator, so a morphism out of it is exactly a
-    choice of image of the fundamental class, with the orbit determined by equivariance. -/
+/-- **THE UNIVERSAL PROPERTY** (uniqueness): every Frobenius morphism out of `H1` IS the orbit map —
+    `h.map n = φ_T^n(g_T)`. With `H1.mediate` (existence) this is the freeness: a morphism out of `H1`
+    is exactly a choice of image of the base point, the orbit determined by equivariance. -/
 theorem H1_universal (T : FrobSys) (h : FrobHom H1 T) : ∀ n, h.map n = T.orbit n := by
   intro n
   induction n with
@@ -98,17 +99,13 @@ theorem H1_universal (T : FrobSys) (h : FrobHom H1 T) : ∀ n, h.map n = T.orbit
       show h.map (k + 1) = T.phi (T.orbit k)
       rw [show (k + 1 : Nat) = H1.phi k from rfl, hp, ih]
 
-/-- The freeness property, packaged as **initiality**: a Frobenius system is free on one
-    generator iff every Frobenius system receives a UNIQUE morphism from it (a morphism is
-    forced — it must send the fundamental class to the target's and intertwine the actions,
-    which determines it on the whole orbit). This is the exact analog of `IsCoproduct` for
-    the one-generator free object. -/
+/-- Freeness as **initiality**: a Frobenius system is free on one generator iff every system receives
+    a UNIQUE morphism from it. The one-generator-free analogue of `IsCoproduct`. -/
 def IsFreeFrob (T : FrobSys) : Prop :=
   ∀ U : FrobSys, ∃ h : FrobHom T U, ∀ h' : FrobHom T U, ∀ x, h'.map x = h.map x
 
-/-- **`H1` IS THE FREE Frobenius system on one generator** (initial) — its canonicality as a
-    single proposition. Existence is `H1.mediate`; uniqueness is `H1_universal` (any morphism
-    out of `H1` agrees with the orbit map on every `n = orbit n`, hence on every element). -/
+/-- **`H1` IS THE FREE Frobenius system on one generator** (initial) — its canonicality as a syntax
+    object. Existence is `H1.mediate`; uniqueness is `H1_universal`. -/
 theorem H1_isFree : IsFreeFrob H1 := by
   intro U
   refine ⟨H1.mediate U, ?_⟩
@@ -117,10 +114,9 @@ theorem H1_isFree : IsFreeFrob H1 := by
   have e2 : (H1.mediate U).map x = U.orbit x := rfl
   rw [e1, e2]
 
-/-- **UNIQUENESS UP TO CANONICAL ISOMORPHISM**: any Frobenius system `T` whose underlying map
-    `T.orbit` is a bijection of `ℕ` (i.e. a faithful free realization on one generator) is
-    isomorphic to `H1` via the canonical mediating morphisms — so "the" `H¹`-carrier is
-    well-defined. (We exhibit the iso through the orbit map and its inverse hypothesis.) -/
+/-- **UNIQUENESS UP TO CANONICAL ISOMORPHISM**: any `T` whose orbit map is a bijection of `ℕ` (a
+    faithful free realization on one generator) is isomorphic to `H1` via the canonical mediating
+    morphisms — so "the" free syntax object is well-defined. -/
 theorem freeFrob_unique_upto_iso (T : FrobSys)
     (inv : T.carrier → Nat) (hinv1 : ∀ n, inv (T.orbit n) = n)
     (hinv2 : ∀ x, T.orbit (inv x) = x) :
@@ -135,31 +131,28 @@ theorem freeFrob_unique_upto_iso (T : FrobSys)
     exact hinv2 x
 
 -- ===========================================================================
--- The arithmetic tie: the Frobenius orbit IS the built prime-power pencil.
+-- The arithmetic tie: the Frobenius orbit indexes the built prime-power pencil.
 -- ===========================================================================
 
-/-- **The shift-length realization of the canonical `H¹`** at a prime `p`: the orbit position
-    `k` is assigned its log-separation `k·log p` from the diagonal. This is the bridge from the
-    abstract free action to the constructed scaling flow. -/
+/-- **The shift-length realization** at a prime `p`: orbit position `k` is assigned its log-separation
+    `k·log p` from the diagonal — the bridge from the abstract free-shift SYNTAX to the constructed
+    scaling-flow log-lengths. (A real-valued length assignment; not itself a Hilbert-space operator.) -/
 def orbitShift (p : Nat) (hp : 1 ≤ p) (k : Nat) : Real := Rnsmul k (logN p hp)
 
-/-- **The realization is Frobenius-EQUIVARIANT**: one Frobenius step adds exactly `log p`,
-    `orbitShift(k+1) = log p + orbitShift(k)` — the abstract shift `φ : k ↦ k+1` of `H1`
-    realizes as translation by the explicit-formula weight `Λ(p) = log p`. -/
+/-- **Frobenius-equivariance of the shift lengths**: one step adds exactly `log p`,
+    `orbitShift(k+1) = log p + orbitShift(k)` — the shift `φ : k ↦ k+1` realizes as translation by
+    the explicit-formula weight `Λ(pᵏ) = log p`. -/
 theorem orbitShift_succ (p : Nat) (hp : 1 ≤ p) (k : Nat) :
     Req (orbitShift p hp (k + 1)) (Radd (logN p hp) (orbitShift p hp k)) := by
   show Req (Rnsmul (k + 1) (logN p hp)) (Radd (logN p hp) (Rnsmul k (logN p hp)))
   rw [Rnsmul_succ]
   exact Req_refl _
 
-/-- **THE ORBIT REALIZES THE BUILT PENCIL** (the arithmetic content of A1), as ONE structural
-    identification — not a pair of separate facts: the log-separation of the built pencil
-    member `Γ_{pᵏ}` (any point of `graph (pᵏ)`) from the diagonal EQUALS the shift-length
-    realization `orbitShift p (H1.orbit k)` of the `k`-th orbit position (`H1.orbit k = k`
-    feeding the abstract orbit into the geometry). With `orbitShift_succ`, the abstract free
-    `H1`-action IS the constructed scaling flow, shift length `log p = Λ(pᵏ)` per step — the
-    Connes–Consani closed orbit of length `log p` traversed `k` times
-    (`Square.pencil_separation_pow`). -/
+/-- **THE ORBIT INDEXES THE BUILT PENCIL** (the arithmetic content): the log-separation of the built
+    pencil member `Γ_{pᵏ}` from the diagonal EQUALS the shift-length realization
+    `orbitShift p (H1.orbit k)` of the `k`-th orbit position — the Connes–Consani closed orbit of
+    length `log p` traversed `k` times (`pencil_separation_pow`). This ties the SYNTAX index to the
+    constructed prime-power geometry; it makes no unitarity/self-adjointness claim. -/
 theorem orbit_realizes_pencil (p : Nat) (hp2 : 2 ≤ p) (k : Nat) (hpk : 1 ≤ p ^ k)
     (z : SqPt) (hz : graph (p ^ k) z) :
     Req (Rsub (logN z.2.val z.2.property) (logN z.1.val z.1.property))

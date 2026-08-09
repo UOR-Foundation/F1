@@ -43,7 +43,7 @@ theorem orbitShift_one (p : Nat) (hp : 1 ≤ p) : Req (orbitShift p hp 1) (logN 
 theorem atlas_shift_eq_weight : Req (orbitShift 5 (by omega) 1) (vonMangoldt 5) :=
   Req_trans (orbitShift_one 5 (by omega)) (Req_symm atlasPrime_five_vonMangoldt)
 
-/-- **THE ATLAS FEEDS THE RH PROGRAM** at three connected points: (1) the addressing prime skeleton
+/-- **THE ATLAS FEEDS THE RH PROGRAM** at three connected points: (1) the addressing prime FIXTURE
     realizes the explicit-formula weight through the Frobenius orbit; (2) the forced `−1` reflection
     is the crux's indefinite Hodge direction (`atlasM_indefinite`); (3) the crux gate closes on a
     genuine witness (`strictRealizes_closes_crux`) — the connection is live, and honestly gated, so

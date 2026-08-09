@@ -21,7 +21,7 @@ THE FACETS (each a named theorem):
 - §9 positivity — the composition norm (`AtlasComposition`); distinct from the open RH form.
 - §10 connections — modular `e4cube_eq_e6sq_plus_1728delta` (`AtlasModular`), exceptional
   `exceptional_dims` (`AtlasExceptional`), Coxeter `e8_coxeter_web` (`AtlasCoxeter`), Bott
-  `bott_periods` (`AtlasTopology`), prime skeleton `atlas_prime_skeleton` (`AtlasAddressing`).
+  `bott_periods` (`AtlasTopology`), prime FIXTURE `atlas_prime_skeleton` (`AtlasAddressing`, Λ for the finite set {2,3,5}).
 - §11–§15 self-intersection / the crux — `vanCyc_perp_H`, `genuine_crux_arch_coupling`
   (`LefschetzCoupling`), `archimedean_place_status` (`ArchimedeanPlace`), `atlas_crux_localization`
   (`AtlasCruxSynthesis`); the Single Prime Hypothesis `single_generator_emanates` (`SinglePrime`).

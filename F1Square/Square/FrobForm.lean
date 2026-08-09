@@ -58,7 +58,7 @@ theorem orbit_distinct {n m : Nat} (h : n ≠ m) : H1.orbit n ≠ H1.orbit m := 
 -- The full primitive form.
 -- ===========================================================================
 
-/-- **THE FULL PRIMITIVE FORM** on the Frobenius carrier `H1` (= ℕ, orbit `n ↔ Cₙ`): a symmetric
+/-- **THE FULL PRIMITIVE FORM** on the Frobenius-orbit INDEX `H1` (= ℕ syntax, orbit `n ↔ Cₙ`; not a Hilbert carrier): a symmetric
     bilinear kernel `B` on the orbit indices whose DIAGONAL is the genuine spectral diagonal
     `S.cSq`. It extends `SpectralSquare` (diagonal only) with the off-diagonal `⟨Cₙ,Cₘ⟩`. -/
 structure FullForm (S : SpectralSquare) where

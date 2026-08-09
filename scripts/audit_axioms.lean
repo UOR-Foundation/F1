@@ -2366,6 +2366,10 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Pos_RrpowPos_of_base_ge_one
 
 -- v0.20.0 stage F, brick A1 (Square/Cohomology.lean): the canonical H¹-object.
+-- HONEST REPAIR (task 2): H1 = (ℕ,succ,0) reclassified as free Frobenius-orbit SYNTAX/INDEXING, not a
+-- Hilbert carrier. H1_phi_not_surjective: succ n ≠ 0 ⇒ succ not surjective ⇒ not invertible ⇒ not
+-- unitary. The genuine unitary H¹ carrier is the open operator contract. Crux none.
+#print axioms Square.H1_phi_not_surjective
 #print axioms Square.H1_orbit
 #print axioms Square.H1_universal
 #print axioms Square.H1_isFree
@@ -3044,6 +3048,12 @@ open UOR.Bridge.F1Square
 -- v0.21.0 stage G — Atlas addressing (§2/§5/§8/§10/§12): the scale-invariant tower (inverse
 -- system), parametric generation, and the prime skeleton = explicit-formula prime side.
 #print axioms Square.atlasModulus_values
+-- HONEST REPAIR (task 1): AtlasAddressing relabeled as a FINITE FIXTURE. atlasPrime_finite: the
+-- prime table is 4 entries (0 for k≥4); atlasModulus_degenerate: the tower degenerates to 0 from k=5.
+-- So no unbounded prime skeleton / no terminal A_∞; the fixture carries Λ for {2,3,5} only, not "in
+-- full". The unbounded prime side is open. Crux none.
+#print axioms Square.atlasPrime_finite
+#print axioms Square.atlasModulus_degenerate
 #print axioms Square.atlasModulus_zero_factored
 #print axioms Square.atlasModulus_dvd_succ
 #print axioms Square.atlasBoundary_zero

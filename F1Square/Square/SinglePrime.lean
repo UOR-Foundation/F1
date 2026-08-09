@@ -10,7 +10,7 @@ same principle:
   (`single_prime_binary`), the top is `O = 2^T`, the substrate is the `2`-power tower `W_n = ℤ/2ⁿ`
   (`m_0 = 2⁵·3`), and the distinguished prime is `2` (§10). The Atlas's numbers EMANATE from the
   single prime `2`.
-- **One generating object — the free generator.** The canonical `H¹` is FREE ON ONE GENERATOR
+- **One generating object — the free generator.** The free Frobenius-orbit SYNTAX object `H1` is FREE ON ONE GENERATOR
   (`H1_isFree`), and its orbit `orbit n = n` (`H1_orbit`) emanates EVERY class `Cₙ` from that single
   generator. The whole spectral family is one object's emanation.
 
@@ -44,7 +44,7 @@ theorem single_prime_binary :
     ∧ towerDim 0 = 2 ^ 0 ∧ towerDim 1 = 2 ^ 1 ∧ towerDim 2 = 2 ^ 2 ∧ towerDim 3 = 2 ^ 3 := by
   decide
 
-/-- **The single generating object**: the canonical `H¹` is FREE ON ONE GENERATOR (`H1_isFree`), and
+/-- **The single generating object**: the free Frobenius-orbit SYNTAX object `H1` is FREE ON ONE GENERATOR (`H1_isFree`, a syntax/indexing fact — not a Hilbert carrier), and
     its orbit emanates every class — `orbit n = n` for all `n` (`H1_orbit`). All spectral classes
     `Cₙ` are emanations of the one Prime object. -/
 theorem single_generator_emanates : IsFreeFrob H1 ∧ ∀ n, H1.orbit n = n :=
