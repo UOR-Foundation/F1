@@ -2441,6 +2441,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.cvSmul_assoc
 #print axioms Square.cvSmul_one
 #print axioms Square.cInner_congr
+-- PACKAGED finite pre-Hilbert object (new Square/FinPreHilbert.lean): Setoid Complex/CVec instances,
+-- CommRingoid (complex scalar ring, complexRingoid), the FinPreHilbert record instantiated at cInner
+-- (finPreHilbert), zero-action laws, bundled definiteness, and the N≤M linear-isometry directed system
+-- (cvInc + congr/add/smul/inner-preservation/identity/composition). Crux none.
+#print axioms Square.cvSmul_zero
+#print axioms Square.cvZero_smul
+#print axioms Square.cInner_self_definite_vec
+#print axioms Square.cvecSum_pad
+#print axioms Square.cvInc_congr
+#print axioms Square.cvInc_add
+#print axioms Square.cvInc_smul
+#print axioms Square.cvInc_inner
+#print axioms Square.cvInc_id
+#print axioms Square.cvInc_comp
 -- HP FINITE EVIDENCE (task-7 finite discharge, new Square/HilbertPolyaFinite.lean). finiteHP_symmetric:
 -- the finite approximant finiteHP B N satisfies the contract's NominalSymmetric obligation at truncation N
 -- (via applyN_self_adjoint) — discharges ONLY the finite symmetry rung; density/closability/closedness/
