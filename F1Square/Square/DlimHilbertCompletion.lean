@@ -618,4 +618,47 @@ theorem dlimCompletionAdd_congr {X X' Y Y' : DLimCompletionRaw}
     (ofQ_respects _ (Nat.succ_pos k) ?_))
   simp only [Qeq, add, mul]; push_cast; ring_uor
 
+-- ===========================================================================
+-- Cofinal-rescheduling invariance (reviewer gate 2): a member is completion-equivalent
+-- to its odd subsequence `n ↦ X_{2n+1}`. Reusable through the modulus monotonicity.
+-- ===========================================================================
+
+/-- **Modulus MONOTONICITY**: larger indices give a smaller squared modulus, `M(p',q') ≤ M(p,q)` when
+    `p ≤ p'` and `q ≤ q'`. Each `1/(·+1)` is antitone (linear at the ℚ level), the sum is monotone
+    (`Qadd_le_add`), and squaring preserves the order among nonnegatives (`Qmul_le_mul`). -/
+private theorem dlimCauchyMod_mono {p p' q q' : Nat} (hp : p ≤ p') (hq : q ≤ q') :
+    Rle (dlimCauchyModR p' q') (dlimCauchyModR p q) := by
+  unfold dlimCauchyModR
+  refine Rle_ofQ_of_Qle_loc _ _ ?_
+  have hSle : Qle (add (⟨1, p' + 1⟩ : Q) (⟨1, q' + 1⟩ : Q)) (add (⟨1, p + 1⟩ : Q) (⟨1, q + 1⟩ : Q)) :=
+    Qadd_le_add
+      (by show (1 : Int) * ((p + 1 : Nat) : Int) ≤ 1 * ((p' + 1 : Nat) : Int); push_cast; omega)
+      (by show (1 : Int) * ((q + 1 : Nat) : Int) ≤ 1 * ((q' + 1 : Nat) : Int); push_cast; omega)
+  have hden : 0 < (add (⟨1, p' + 1⟩ : Q) (⟨1, q' + 1⟩ : Q)).den :=
+    add_den_pos (Nat.succ_pos p') (Nat.succ_pos q')
+  have hnum : (0 : Int) ≤ (add (⟨1, p' + 1⟩ : Q) (⟨1, q' + 1⟩ : Q)).num := by
+    simp only [add]; push_cast; omega
+  exact Qmul_le_mul hden (add_den_pos (Nat.succ_pos p) (Nat.succ_pos q)) hden hnum hnum hSle hSle
+
+/-- **The odd subsequence** `n ↦ X_{2n+1}` as a completion member: regular because `M(2j+1,2k+1) ≤
+    M(j,k)` (`dlimCauchyMod_mono`). -/
+def dlimReschedOdd (X : DLimCompletionRaw) : DLimCompletionRaw :=
+  ⟨fun n => X.seq (2 * n + 1),
+   fun j k => Rle_trans (X.reg (2 * j + 1) (2 * k + 1))
+     (dlimCauchyMod_mono (by omega) (by omega))⟩
+
+/-- **COFINAL-RESCHEDULING INVARIANCE** (reviewer gate 2): a completion member equals its odd
+    subsequence in the completion, `X ≈ X_{2n+1}`. For `n ≥ 4k+3`, regularity bounds
+    `‖X_n − X_{2n+1}‖² ≤ M(n,2n+1) ≤ M(n,n) ≤ 4/(n+1) ≤ 1/(k+1)` (monotonicity + the diagonal decay). -/
+theorem dlimReschedOdd_eq (X : DLimCompletionRaw) : DLimCompletionEq X (dlimReschedOdd X) := by
+  intro k
+  refine ⟨4 * k + 3, fun n hn => ?_⟩
+  refine Rle_trans (X.reg n (2 * n + 1)) ?_
+  refine Rle_trans (dlimCauchyMod_mono (p := n) (p' := n) (q := n) (q' := 2 * n + 1)
+    (Nat.le_refl n) (by omega)) ?_
+  refine Rle_trans (dlimCauchyMod_diag_decay n) ?_
+  refine Rle_ofQ_of_Qle_loc _ _ ?_
+  show (4 : Int) * ((k + 1 : Nat) : Int) ≤ (1 : Int) * ((n + 1 : Nat) : Int)
+  push_cast; omega
+
 end UOR.Bridge.F1Square.Square

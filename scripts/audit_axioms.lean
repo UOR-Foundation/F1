@@ -8564,3 +8564,7 @@ open UOR.Bridge.F1Square
 -- Still open: scalar multiplication (the |c|²-dependent reschedule) and the completed inner product.
 #print axioms Square.dlimCompletionNeg_congr
 #print axioms Square.dlimCompletionAdd_congr
+-- COFINAL-RESCHEDULING INVARIANCE (reviewer gate 2): dlimReschedOdd_eq (X ≈ its odd subsequence
+-- n↦X_{2n+1}), via the reusable modulus monotonicity dlimCauchyMod_mono (M(p',q')≤M(p,q) for p≤p',q≤q')
+-- + the diagonal decay: ‖X_n−X_{2n+1}‖² ≤ M(n,2n+1) ≤ M(n,n) ≤ 4/(n+1) ≤ 1/(k+1) for n≥4k+3.
+#print axioms Square.dlimReschedOdd_eq
