@@ -18,12 +18,16 @@ WHAT IS BUILT (all axiom-clean):
   acts as the seed `M₂₄` on `CVec 24`.
 - A per-level shift identity `blockLadderEval_scale_succ` / `blockLadder_scale_gap` (each level adds
   exactly `log 5` — a CONSTANT scale gap).
-- Weight unboundedness `blockLadder_unbounded : ∀ B, ∃ i, B ≤ blockLadderWeight i`.
 - Descent to the direct-limit core `dlimBlockLadder` / `blockLadderDLimOp` (via the generic `dlimDiagW`
   from `DiagonalOperatorCore`), an unbounded symmetric operator on `dlimPreHilbert`.
 - The OPERATOR-LEVEL eigenpair `dlimBlockLadder_eigen : dlimBlockLadder eᵢ ≈ wᵢ · eᵢ` on the normalized
   basis (`dlimBasis`/`dlimBasis_normalized` in the core) — tying each weight to `dlimBlockLadder` as a
   genuine eigenvalue.
+
+HP PREREQUISITES PASSED (necessary features, NOT rejections). An HP operator must be UNBOUNDED and
+SYMMETRIC; this candidate satisfies both: `dlimBlockLadder_not_normBounded_real` (unbounded by ANY real
+`C`, via Archimedean domination `exists_nat_ge` + bound monotonicity) and `dlimDiagW_herm` (symmetric).
+Passing these is a prerequisite, not evidence against the candidate.
 
 NAMING — this is a **block-ladder candidate**, NOT a warranted Atlas refinement. The `(scale, block)`
 address and the `M₂₄ + ℓ·log 5` law are locally constructed; no derived refinement map / coherence
@@ -32,15 +36,15 @@ warrant backs the infinite ladder. A genuine warrant SOURCE exists in principle:
 extracted zero-free (`AtlasAddressingCore`, a near-term follow-up). What remains genuinely OPEN is the
 unbounded refinement map, not the `p = 5` identity.
 
-THE FAILED BRIDGES — a CONSTRUCTIVE, zero-free rejection:
-- `blockLadder_scale_gap`: the scale-tower spectrum is an ARITHMETIC PROGRESSION (constant gap `log 5`),
-  whereas the Riemann zeros' spacing shrinks.
-- `blockLadderSpec_not_neg_closed`: the weight spectrum `blockLadderWeightSpec` (= the point spectrum,
-  by `dlimBlockLadder_eigen`) is NOT closed under `μ ↦ −μ` — `10` is a weight but `−10` is not, since
-  every weight `≥ −1` (`blockLadderWeight_ge_neg_one`) so `w_i + 10 > 0` (`blockLadder_gt_neg_ten`).
-  The HP trace-symmetry requirement `NegClosed` therefore FAILS.
-So the block-ladder is rejected — that rejects THIS construction, not the Atlas program or RH. No
-spectral→zero correspondence is asserted; the crux (RH) stays `none`.
+THE REJECTION — a CONSTRUCTIVE, zero-free SPECTRAL ASYMMETRY. `blockLadderSpec_not_neg_closed`: the
+weight spectrum `blockLadderWeightSpec` (each weight is a realized eigenvalue by `dlimBlockLadder_eigen`,
+so weights ⊆ point spectrum) is NOT closed under `μ ↦ −μ` — `10` is a weight but `−10` is not, since
+every weight `≥ −1` (`blockLadderWeight_ge_neg_one`) so `w_i + 10 > 0` (`blockLadder_gt_neg_ten`). The HP
+trace-symmetry requirement `NegClosed` therefore FAILS. (`blockLadder_scale_gap` — the scale-tower
+spectrum is an arithmetic progression, constant gap `log 5`, unlike the zeros' shrinking gaps — is a
+DIAGNOSTIC observation, NOT a formalized zero-spectrum contradiction; the formal rejection is the
+asymmetry.) So the block-ladder is rejected — that rejects THIS construction, not the Atlas program or
+RH. No spectral→zero correspondence is asserted; the crux (RH) stays `none`.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; the cone avoids `ComplexZeta`
 and the crux modules. Audited by `scripts/honesty_audit.sh`.
@@ -67,6 +71,23 @@ private theorem RofNat_succ_loc (n : Nat) : Req (RofNat (n + 1)) (Radd (RofNat n
   Req_of_seq_Qeq (fun _ => by
     show Qeq (⟨((n : Int) + 1), 1⟩) (add (⟨(n : Int), 1⟩) (⟨1, 1⟩))
     simp only [Qeq, add]; push_cast; ring_uor)
+
+/-- **Archimedean domination**: every Bishop real `x` is `≤ RofNat B` for some natural `B` (the
+    canonical bound `xBound x`): `x.seq n ≤ |x.seq n| ≤ xBound x ≤ xBound x + 2/(n+1)`. Upgrades a
+    "not bounded by any nat" statement to "not bounded by any real". -/
+private theorem exists_nat_ge (x : Real) : ∃ B : Nat, Rle x (RofNat B) := by
+  refine ⟨xBound x, fun n => ?_⟩
+  show Qle (x.seq n) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩)
+  have h1 : Qle (x.seq n) (Qabs (x.seq n)) := by
+    show (x.seq n).num * ((Qabs (x.seq n)).den : Int) ≤ (Qabs (x.seq n)).num * ((x.seq n).den : Int)
+    simp only [Qabs]
+    exact Int.mul_le_mul_of_nonneg_right Int.le_natAbs (by omega)
+  have h2 : Qle (Qabs (x.seq n)) (⟨(xBound x : Int), 1⟩ : Q) := canon_bound x n
+  have h3 : Qle (⟨(xBound x : Int), 1⟩ : Q) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩) :=
+    Qle_self_add (by show (0 : Int) ≤ 2; decide)
+  have h23 : Qle (Qabs (x.seq n)) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩) :=
+    Qle_trans (b := (⟨(xBound x : Int), 1⟩ : Q)) (by show (0 : Nat) < 1; decide) h2 h3
+  exact Qle_trans (b := Qabs (x.seq n)) (x.den_pos n) h1 h23
 
 -- ===========================================================================
 -- The per-scale shift `ℓ·log 5` (a Frobenius-orbit length) and the zero-free bound `log 5 ≥ 1`.
@@ -160,8 +181,9 @@ theorem blockLadderEval_scale_succ (ℓ : Nat) (j : Fin 24) :
   exact Req_symm (Radd_assoc _ (blockLadderShift ℓ) (logN 5 (by decide)))
 
 /-- **The scale gap is CONSTANT `= log 5`**: `blockLadderWeight(24(ℓ+1)) = blockLadderWeight(24ℓ) + log 5`.
-    So the scale-tower spectrum is an ARITHMETIC PROGRESSION — the structural feature that rejects this
-    candidate as the HP operator (the Riemann zeros' gaps shrink, they are not constant). -/
+    So the scale-tower spectrum is an ARITHMETIC PROGRESSION — a DIAGNOSTIC observation (the Riemann
+    zeros' gaps shrink, they are not constant), NOT a formalized zero-spectrum contradiction. The formal
+    rejection is the spectral asymmetry `blockLadderSpec_not_neg_closed`. -/
 theorem blockLadder_scale_gap (ℓ : Nat) :
     Req (blockLadderWeight (24 * (ℓ + 1)))
         (Radd (blockLadderWeight (24 * ℓ)) (logN 5 (by decide))) := by
@@ -191,9 +213,9 @@ theorem blockLadderWeight_scale_ge :
       refine Req_trans (Radd_congr (Req_refl _) (RofNat_succ_loc ℓ)) ?_
       exact Req_symm (Radd_assoc _ (RofNat ℓ) one)
 
-/-- **GENUINE UNBOUNDEDNESS**: for every bound `B` there is an index whose diagonal entry exceeds it —
-    `∀ B, ∃ i, RofNat B ≤ blockLadderWeight i`. So the candidate operator is UNBOUNDED and hence
-    NON-finite-rank, unlike the seed `M₂₄ ⊕ 0`. -/
+/-- **WEIGHT UNBOUNDEDNESS**: for every nat `B` there is an index whose diagonal WEIGHT exceeds it —
+    `∀ B, ∃ i, RofNat B ≤ blockLadderWeight i`. The seed-level input to the operator-level unboundedness
+    `dlimBlockLadder_not_normBounded_real`. -/
 theorem blockLadder_unbounded (B : Nat) : ∃ i, Rle (RofNat B) (blockLadderWeight i) := by
   have hcw0 : Rnonneg (blockLadderWeight 0) := by
     rw [blockLadderWeight_val]
@@ -322,12 +344,14 @@ private theorem not_Req_neg_ten (i : Nat) :
         (Radd_neg (ofQ (⟨10, 1⟩ : Q) Nat.one_pos)))
   exact not_Pos_zero_bl (Pos_congr hzero (blockLadder_gt_neg_ten i))
 
-/-- **THE BLOCK-LADDER POINT SPECTRUM IS NOT CLOSED UNDER NEGATION** — the constructive spectral
-    rejection. `blockLadderWeight 0 ≈ 10` is a weight (hence an eigenvalue of `dlimBlockLadder` by
-    `dlimBlockLadder_eigen`), but `−10` is not: every weight `w_i` is apart from `−10`
-    (`not_Req_neg_ten`, i.e. `w_i + 10 > 0`). So a point spectrum containing `10` but nothing equal to
-    `−10` cannot satisfy the HP trace-symmetry closure `NegClosed`. This REJECTS the block-ladder as an
-    HP operator, zero-free; no spectral→zero correspondence is asserted, the crux (RH) stays `none`. -/
+/-- **THE BLOCK-LADDER WEIGHT SPECTRUM IS NOT CLOSED UNDER NEGATION** — the constructive spectral
+    rejection. `blockLadderWeight 0 ≈ 10` is a weight (hence, by `dlimBlockLadder_eigen`, a realized
+    eigenvalue of `dlimBlockLadder`), but `−10` is not a weight: every `w_i` is apart from `−10`
+    (`not_Req_neg_ten`, i.e. `w_i + 10 > 0`). So the weight set — which is ⊆ the point spectrum, since
+    each weight is realized as an eigenvalue (the converse, point spectrum ⊆ weights, is the standard
+    diagonal fact, not formalized here) — cannot satisfy the HP trace-symmetry closure `NegClosed`.
+    This REJECTS the block-ladder as an HP operator, zero-free; no spectral→zero correspondence is
+    asserted, the crux (RH) stays `none`. -/
 theorem blockLadderSpec_not_neg_closed : ¬ NegClosed blockLadderWeightSpec := by
   intro h
   obtain ⟨i, hi⟩ := h (blockLadderWeight 0) ⟨0, Req_refl _⟩
@@ -344,17 +368,12 @@ private theorem RofNat_nonneg (n : Nat) : Rnonneg (RofNat n) := by
   show Rnonneg (ofQ ⟨(n : Int), 1⟩ Nat.one_pos)
   exact Rnonneg_ofQ Nat.one_pos (by show (0 : Int) ≤ (n : Int); omega)
 
-/-- `RofNat (n+1) ≈ RofNat n + 1`. -/
-private theorem RofNat_succ_bl (n : Nat) : Req (RofNat (n + 1)) (Radd (RofNat n) one) :=
-  Req_of_seq_Qeq (fun _ => by
-    show Qeq (⟨((n : Int) + 1), 1⟩) (add (⟨(n : Int), 1⟩) (⟨1, 1⟩))
-    simp only [Qeq, add]; push_cast; ring_uor)
-
-/-- **GENUINE OPERATOR-THEORETIC UNBOUNDEDNESS**: for every nat bound `B`, `dlimBlockLadder` is NOT
+/-- **OPERATOR-THEORETIC UNBOUNDEDNESS (nat bounds)**: for every nat bound `B`, `dlimBlockLadder` is NOT
     norm-bounded by `RofNat B`. On the normalized eigenvector `eⱼ` with `wⱼ ≥ RofNat (B+1)`,
     `⟨A eⱼ, A eⱼ⟩ = wⱼ² ≥ (RofNat (B+1))² > (RofNat B)² = (RofNat B)²·⟨eⱼ,eⱼ⟩`, contradicting the bound.
-    Since `RofNat B → ∞`, the operator is genuinely unbounded (non-finite-rank) — the property the
-    finite seed `M₂₄ ⊕ 0` lacked, now proved at the OPERATOR level via `OpNormBounded`. -/
+    Upgraded to ALL real bounds in `dlimBlockLadder_not_normBounded_real`. This is the HP unboundedness
+    PREREQUISITE (a necessary feature of an HP operator), proved at the OPERATOR level via
+    `OpNormBounded` — not the rejection. -/
 theorem dlimBlockLadder_not_normBounded (B : Nat) : ¬ OpNormBounded dlimBlockLadder (RofNat B) := by
   intro hb
   obtain ⟨i, hi⟩ := blockLadder_unbounded (B + 1)
@@ -378,7 +397,7 @@ theorem dlimBlockLadder_not_normBounded (B : Nat) : ¬ OpNormBounded dlimBlockLa
   -- The gap `RofNat (B+1) − RofNat B ≈ 1 > 0`, but `hcontra` forces `Rnonneg (−gap)` — impossible.
   have gap_eq_one : Req (Rsub (RofNat (B + 1)) (RofNat B)) one := by
     show Req (Radd (RofNat (B + 1)) (Rneg (RofNat B))) one
-    refine Req_trans (Radd_congr (RofNat_succ_bl B) (Req_refl _)) ?_
+    refine Req_trans (Radd_congr (RofNat_succ_loc B) (Req_refl _)) ?_
     refine Req_trans (Radd_congr (Radd_comm (RofNat B) one) (Req_refl _)) ?_
     refine Req_trans (Radd_assoc one (RofNat B) (Rneg (RofNat B))) ?_
     exact Req_trans (Radd_congr (Req_refl _) (Radd_neg (RofNat B))) (Radd_zero one)
@@ -392,5 +411,19 @@ theorem dlimBlockLadder_not_normBounded (B : Nat) : ¬ OpNormBounded dlimBlockLa
   exact not_Pos_of_Rnonneg_neg
     (Rnonneg_congr neg_gap (Rnonneg_Rsub_of_Rle hcontra))
     (Pos_congr (Req_symm gap_eq_one) (Pos_of_Rle_one (Rle_refl one)))
+
+/-- **ALL-REAL operator unboundedness**: `dlimBlockLadder` is not norm-bounded by ANY real `C ≥ 0`.
+    From Archimedean domination (`exists_nat_ge`: `C ≤ RofNat B` for some nat `B`) and monotonicity of
+    the norm-bound predicate in `C` (`C² ≤ (RofNat B)²`, and `⟨a,a⟩.re ≥ 0`), a real bound `C` would
+    give the nat bound `RofNat B`, contradicting `dlimBlockLadder_not_normBounded`. This is the
+    unbounded-spectrum HP PREREQUISITE, PASSED for every real bound — a necessary feature of an HP
+    operator, NOT the rejection (the rejection is the spectral asymmetry `blockLadderSpec_not_neg_closed`). -/
+theorem dlimBlockLadder_not_normBounded_real (C : Real) (hC : Rnonneg C) :
+    ¬ OpNormBounded dlimBlockLadder C := by
+  intro hb
+  obtain ⟨B, hB⟩ := exists_nat_ge C
+  refine dlimBlockLadder_not_normBounded B (fun a => ?_)
+  refine Rle_trans (hb a) (Rmul_le_Rmul_right (dlimInner_self_nonneg a) ?_)
+  exact Rle_trans (Rmul_le_Rmul_left hC hB) (Rmul_le_Rmul_right (RofNat_nonneg B) hB)
 
 end UOR.Bridge.F1Square.Square

@@ -8483,17 +8483,20 @@ open UOR.Bridge.F1Square
 -- blockLadderWeight_ge_neg_one: every weight ≥ −1 (block eigenvalue ≥ −1 via atlasEig_range + scale
 -- shift ≥ 0). blockLadderWeight_zero_eq_ten: w₀ = 10 (a weight > 2). blockLadder_gt_neg_ten: w_i + 10 > 0
 -- strictly (Pos) for every i — so −10 is strictly below the whole diagonal while 10 is a weight.
--- blockLadderSpec_not_neg_closed: the weight spectrum blockLadderWeightSpec (= the point spectrum, by
+-- blockLadderSpec_not_neg_closed: the weight spectrum blockLadderWeightSpec (weights ⊆ point spectrum, by
 -- dlimBlockLadder_eigen) is NOT closed under μ↦−μ (NegClosed) — the HP trace-symmetry requirement FAILS.
 -- A zero-free rejection of the block-ladder as an HP operator; crux none.
 #print axioms Square.blockLadderWeight_ge_neg_one
 #print axioms Square.blockLadderWeight_zero_eq_ten
 #print axioms Square.blockLadder_gt_neg_ten
 #print axioms Square.blockLadderSpec_not_neg_closed
--- Genuine operator-theoretic unboundedness (Square/BlockLadderCandidate.lean, review item 5 capstone):
--- dlimDiagW_eigen_normSq (core): ⟨A e_i, A e_i⟩.re = w_i² (from the eigenpair + normalization);
--- dlimBasis_self_re (core): ⟨e_i,e_i⟩.re = 1. dlimBlockLadder_not_normBounded: ∀ B, dlimBlockLadder is
--- NOT norm-bounded by RofNat B — on e_j with w_j ≥ RofNat(B+1), ⟨A e_j,A e_j⟩ = w_j² > (RofNat B)²,
--- violating OpNormBounded. Since RofNat B → ∞, the operator is genuinely unbounded (non-finite-rank),
--- proved at the OPERATOR level. Crux none.
+-- Operator-theoretic unboundedness — the HP UNBOUNDEDNESS PREREQUISITE, passed (Square/
+-- BlockLadderCandidate.lean). dlimDiagW_eigen_normSq (core): ⟨A e_i, A e_i⟩.re = w_i² (from the
+-- eigenpair + normalization); dlimBasis_self_re (core): ⟨e_i,e_i⟩.re = 1. dlimBlockLadder_not_normBounded:
+-- ∀ nat B, dlimBlockLadder is NOT norm-bounded by RofNat B (on e_j with w_j ≥ RofNat(B+1), ⟨A e_j,A e_j⟩
+-- = w_j² > (RofNat B)², violating OpNormBounded). dlimBlockLadder_not_normBounded_real: upgraded to ALL
+-- real bounds via Archimedean domination (exists_nat_ge: x ≤ RofNat B) + bound monotonicity. This is a
+-- NECESSARY HP feature (unbounded operator), NOT a rejection — the rejection is the spectral asymmetry
+-- (blockLadderSpec_not_neg_closed). Crux none.
 #print axioms Square.dlimBlockLadder_not_normBounded
+#print axioms Square.dlimBlockLadder_not_normBounded_real
