@@ -8510,12 +8510,13 @@ open UOR.Bridge.F1Square
 -- independence over the colimit setoid DLimEq. dlimNormSq_nonneg/dlimDist2_nonneg: nonnegativity (from
 -- dlimInner_self_nonneg). dlimNormSq_zero/dlimDist2_self: ‖0‖²≈0 and ‖a−a‖²≈0. dlimEq_of_sub_zero:
 -- colimit group cancellation a−b≈0⟹a≈b. dlimDist2_zero_iff: THE NORM-NULL EQUIVALENCE ‖a−b‖²≈0 ↔ a≈b
--- (the completion metric's definiteness, via dlimInner_self_definite). DLimCauchyU (def): the squared
+-- (the completion's squared-distance gauge definiteness — NOT a metric — via dlimInner_self_definite). DLimCauchyU (def): the squared
 -- Cauchy relation. THE NEGATION FOUNDATION (gate item 1): dlimInner_neg_right/dlimInner_neg_left
 -- (⟨a,−b⟩≈⟨−a,b⟩≈−⟨a,b⟩, from dlimInner_smul_right through dlimNeg≈(−1)·, a termwise (−1)·z≈−z proved
 -- from the ℝ product laws — NO out-of-cone Cneg_Cmul_left/Cconj_Cneg), dlimNormSq_neg (‖−a‖²≈‖a‖²),
 -- dlimDist2_symm (DISTANCE SYMMETRY ‖a−b‖²≈‖b−a‖² via b−a≈−(a−b)). NO completion limit, NO inner product
--- on the completion, NO operator yet; still open = quasi-triangle + complex CS + the setoid; crux none.
+-- on the completion, NO operator yet; the quasi-triangle, setoid, group laws and squared-norm scaling are
+-- proved in later blocks; still open = full scalar action + the completed inner product; crux none.
 #print axioms Square.dlimNormSq_wd
 #print axioms Square.dlimSub_wd
 #print axioms Square.dlimDist2_wd
@@ -8547,11 +8548,13 @@ open UOR.Bridge.F1Square
 -- DLimCompletionEq = norm-null sequence equivalence (∀k ∃N ∀n≥N ‖Xn−Yn‖² ≤ 1/(k+1); the ∀k absorbs
 -- the quasi-triangle factor so it is a genuine transitive equivalence in the sqrt-free squared setting).
 -- DLimCompletionEq_refl/_symm/_trans (item 5, trans via dlimDist2_quasitriangle at auxiliary level 4k+3),
--- packaged as dlimCompletionSetoid (item 6); DLimCompletionRaw.of = constant embedding + DLimCompletionEq_of
--- (respects DLimEq, item 7). Still open = rescheduled operations (item 8) + the completed inner product.
+-- packaged as the proof-bearing instance dlimCompletionSetoid (item 6); DLimCompletionRaw.of = the
+-- constant-sequence MAP + DLimCompletionEq_of (respects DLimEq, item 7). Rescheduled add/neg operations
+-- and the group laws are proved below; still open = full scalar action + the completed inner product.
 #print axioms Square.DLimCompletionEq_refl
 #print axioms Square.DLimCompletionEq_symm
 #print axioms Square.DLimCompletionEq_trans
+#print axioms Square.dlimCompletionSetoid
 #print axioms Square.DLimCompletionEq_of
 -- EMBEDDING REFLECTION / INJECTIVITY (reviewer gate 1): DLimCompletionEq_of_iff (of a ≈ of b ↔ a ≈ b) —
 -- the constant map `of` is injective mod the two setoids (forward via the Archimedean squeeze
@@ -8573,6 +8576,12 @@ open UOR.Bridge.F1Square
 -- + dlimResched_eq (X ≈ X_{σ_q(n)}; threshold n≥4k+3 independent of q, via mono + diagonal decay).
 #print axioms Square.dlimResched
 #print axioms Square.dlimResched_eq
+-- RAW SQUARED-NORM / SQUARED-DISTANCE SCALING (reviewer gate 3, on the clean cNormSq core):
+-- dlimNormSq_smul (‖c·v‖² ≈ |c|²·‖v‖², via ⟨c·v,c·v⟩ ≈ (c·conj c)·⟨v,v⟩ then the real part) and
+-- dlimDist2_smul (‖c·a−c·b‖² ≈ |c|²·‖a−b‖², via c·a−c·b ≈ c·(a−b)). Both EQUALITIES (no Rmul-monotonicity);
+-- the |c|²·M(σ_q j,σ_q k) ≤ M(j,k) attenuation INEQUALITY and the scalar action are the next commit.
+#print axioms Square.dlimNormSq_smul
+#print axioms Square.dlimDist2_smul
 -- CLEAN COMPLEX-ONLY SQUARED-MODULUS CORE (reviewer gate item 3; new Analysis/ComplexNormSqCore.lean,
 -- Zeta-free cone = ComplexCore + RealSquareDefinite only — NOT the ζ-tainted ZeroGeometry.cnormSq, NOT the
 -- heavy ComplexMod): cNormSq z := re²+im², cNormSq_nonneg (sum of squares ≥ 0), and z·conj z = the real
@@ -8581,13 +8590,20 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.cNormSq_nonneg
 #print axioms Analysis.Cmul_Cconj_re
 #print axioms Analysis.Cmul_Cconj_im
+-- cNormSq now CANONICAL: ZeroGeometry.cnormSq and ComplexMod.CnormSq are redefined as := cNormSq z
+-- (defeq aliases). cNormSq_congr (|·|² respects Ceq); exists_nat_ge_loc (constructive Archimedean
+-- upper bound ∃B:Nat, x ≤ B/1, port of the block-ladder lemma) + cNormSq_nat_bound (|c|² ≤ B) — the
+-- scalar-magnitude bound scalar multiplication's reschedule will consume.
+#print axioms Analysis.cNormSq_congr
+#print axioms Analysis.exists_nat_ge_loc
+#print axioms Analysis.cNormSq_nat_bound
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal
 -- invariance dlimReschedOdd_eq), dlimCompletionAdd_neg (inverse). The `of`-homomorphism laws
 -- DLimCompletionEq_of_add (of(a+b) ≈ of a + of b) and DLimCompletionEq_of_neg (of(−a) ≈ −of a), both
--- stagewise reflexivity. ASSOCIATIVITY is the one remaining group law (its own commit — the 6-term
--- cofinal realignment across differing reschedule depths).
+-- stagewise reflexivity. ASSOCIATIVITY (dlimCompletionAdd_assoc, below) completes the group, proved via
+-- assoc_dist_bound over abstract points (avoiding the whnf blow-up of the nested members).
 #print axioms Square.DLimCompletionEq_of_pointwise
 #print axioms Square.dlimCompletionAdd_comm
 #print axioms Square.dlimCompletionAdd_zero

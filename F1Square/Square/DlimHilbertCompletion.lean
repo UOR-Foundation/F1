@@ -49,6 +49,7 @@ zeta/crux-free cone. Crux `none`.
 -/
 
 import F1Square.Square.FinDirectLimit
+import F1Square.Analysis.ComplexNormSqCore
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -796,5 +797,60 @@ theorem dlimCompletionAdd_assoc (X Y Z : DLimCompletionRaw) :
     (Req_trans (Radd_congr (Radd_ofQ_loc _ _) (Radd_ofQ_loc _ _)) (Radd_ofQ_loc _ _))
     (ofQ_respects _ (Nat.succ_pos k) ?_))
   simp only [Qeq, add, mul]; push_cast; ring_uor
+
+-- ===========================================================================
+-- Raw squared-norm and squared-distance SCALING (reviewer gate 3): ‖c·v‖² ≈ |c|²·‖v‖²
+-- and ‖c·a − c·b‖² ≈ |c|²·‖a − b‖². Both are EQUALITIES (no order/monotonicity needed).
+-- Uses the clean modulus core `cNormSq`.
+-- ===========================================================================
+
+/-- `c · (−b) ≈ −(c · b)` (scalar multiplication commutes with negation). -/
+private theorem smul_neg (c : Complex) (b : DLimRaw) :
+    DLimEq (dlimSmul c (dlimNeg b)) (dlimNeg (dlimSmul c b)) :=
+  DLimEq_trans (dlimSmul_wd (Ceq_refl c) (dlimNeg_eq_smul b))
+    (DLimEq_trans (dlimSmul_assoc c (Cneg Cone) b)
+      (DLimEq_trans (dlimSmul_wd (Cmul_comm c (Cneg Cone)) (DLimEq_refl b))
+        (DLimEq_trans (DLimEq_symm (dlimSmul_assoc (Cneg Cone) c b))
+          (DLimEq_symm (dlimNeg_eq_smul (dlimSmul c b))))))
+
+/-- `c·a − c·b ≈ c·(a − b)` (scalar multiplication is additive on the colimit group). -/
+private theorem dlimSmul_dlimSub (c : Complex) (a b : DLimRaw) :
+    DLimEq (dlimSub (dlimSmul c a) (dlimSmul c b)) (dlimSmul c (dlimSub a b)) :=
+  DLimEq_symm (DLimEq_trans (dlimSmul_dlimAdd c a (dlimNeg b))
+    (dlimAdd_wd (DLimEq_refl (dlimSmul c a)) (smul_neg c b)))
+
+/-- **Squared-norm scaling** (reviewer gate 3): `‖c · v‖² ≈ |c|² · ‖v‖²`. From
+    `⟨c·v, c·v⟩ ≈ (c · conj c) · ⟨v, v⟩` (right-linearity twice + Hermitian symmetry + `Cconj_Cmul`, with
+    `⟨v,v⟩` real so `conj⟨v,v⟩ ≈ ⟨v,v⟩`), whose real part is `|c|²·‖v‖²` (`Cmul_Cconj_re`/`Cmul_Cconj_im`
+    + `dlimInner_self_im`). -/
+theorem dlimNormSq_smul (c : Complex) (v : DLimRaw) :
+    Req (dlimNormSq (dlimSmul c v)) (Rmul (cNormSq c) (dlimNormSq v)) := by
+  have conj_self_v : Ceq (Cconj (dlimInner v v)) (dlimInner v v) :=
+    ⟨Req_refl _, Req_trans (Rneg_congr (dlimInner_self_im v))
+      (Req_trans Rneg_zero_loc (Req_symm (dlimInner_self_im v)))⟩
+  have step2 : Ceq (dlimInner (dlimSmul c v) v) (Cmul (Cconj c) (dlimInner v v)) :=
+    Ceq_trans (dlimInner_conj (dlimSmul c v) v)
+      (Ceq_trans (Cconj_congr (dlimInner_smul_right c v v))
+        (Ceq_trans (Cconj_Cmul c (dlimInner v v))
+          (Cmul_congr (Ceq_refl _) conj_self_v)))
+  have key : Ceq (dlimInner (dlimSmul c v) (dlimSmul c v))
+      (Cmul (Cmul c (Cconj c)) (dlimInner v v)) :=
+    Ceq_trans (dlimInner_smul_right c (dlimSmul c v) v)
+      (Ceq_trans (Cmul_congr (Ceq_refl c) step2)
+        (Ceq_symm (Cmul_assoc c (Cconj c) (dlimInner v v))))
+  refine Req_trans key.1 ?_
+  show Req (Rsub (Rmul (Cmul c (Cconj c)).re (dlimInner v v).re)
+                 (Rmul (Cmul c (Cconj c)).im (dlimInner v v).im))
+           (Rmul (cNormSq c) (dlimInner v v).re)
+  refine Req_trans (Rsub_congr (Rmul_congr (Cmul_Cconj_re c) (Req_refl _))
+    (Rmul_congr (Cmul_Cconj_im c) (dlimInner_self_im v))) ?_
+  exact Req_trans (Rsub_congr (Req_refl _) (Rmul_zero zero))
+    (Rsub_zero (Rmul (cNormSq c) (dlimInner v v).re))
+
+/-- **Squared-distance scaling** (reviewer gate 3): `‖c·a − c·b‖² ≈ |c|² · ‖a − b‖²`, via
+    `c·a − c·b ≈ c·(a − b)` and squared-norm scaling. -/
+theorem dlimDist2_smul (c : Complex) (a b : DLimRaw) :
+    Req (dlimDist2 (dlimSmul c a) (dlimSmul c b)) (Rmul (cNormSq c) (dlimDist2 a b)) :=
+  Req_trans (dlimNormSq_wd (dlimSmul_dlimSub c a b)) (dlimNormSq_smul c (dlimSub a b))
 
 end UOR.Bridge.F1Square.Square

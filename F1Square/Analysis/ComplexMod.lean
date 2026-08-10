@@ -10,11 +10,12 @@ Pure Lean 4, no Mathlib, no `sorry`/`native_decide`, choice-free.
 
 import F1Square.Analysis.ComplexExp
 import F1Square.Analysis.CosSinBound
+import F1Square.Analysis.ComplexNormSqCore
 
 namespace UOR.Bridge.F1Square.Analysis
 
 /-- The **squared modulus** `|z|² = (Re z)² + (Im z)²` of a complex number. -/
-def CnormSq (z : Complex) : Real := Radd (Rmul z.re z.re) (Rmul z.im z.im)
+def CnormSq (z : Complex) : Real := cNormSq z
 
 /-- **The `Cexp` modulus identity**: `|Cexp z|² = (exp(Re z))²`. Since `Cexp z = exp(Re z)·(cos(Im z) +
     i·sin(Im z))`, its squared modulus is `exp(Re z)²·(cos² + sin²) = exp(Re z)²` by `cos²+sin²=1`. -/

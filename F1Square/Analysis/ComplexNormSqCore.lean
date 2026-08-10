@@ -27,6 +27,32 @@ def cNormSq (z : Complex) : Real := Radd (Rmul z.re z.re) (Rmul z.im z.im)
 theorem cNormSq_nonneg (z : Complex) : Rnonneg (cNormSq z) :=
   Rnonneg_Radd (Rnonneg_Rmul_self_loc z.re) (Rnonneg_Rmul_self_loc z.im)
 
+/-- `|·|²` respects complex equality. -/
+theorem cNormSq_congr {z w : Complex} (h : Ceq z w) : Req (cNormSq z) (cNormSq w) :=
+  Radd_congr (Rmul_congr h.1 h.1) (Rmul_congr h.2 h.2)
+
+/-- **Constructive Archimedean upper bound**: every real is `≤ B/1` for a computable `B : Nat`
+    (`B := xBound x`, from `canon_bound`). Ported from the block-ladder Archimedean lemma, retargeted to
+    the `ofQ ⟨B,1⟩` shape (defeq to `RofNat B`). -/
+theorem exists_nat_ge_loc (x : Real) : ∃ B : Nat, Rle x (ofQ (⟨(B : Int), 1⟩ : Q) Nat.one_pos) := by
+  refine ⟨xBound x, fun n => ?_⟩
+  show Qle (x.seq n) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩)
+  have h1 : Qle (x.seq n) (Qabs (x.seq n)) := by
+    show (x.seq n).num * ((Qabs (x.seq n)).den : Int) ≤ (Qabs (x.seq n)).num * ((x.seq n).den : Int)
+    simp only [Qabs]
+    exact Int.mul_le_mul_of_nonneg_right Int.le_natAbs (by omega)
+  have h2 : Qle (Qabs (x.seq n)) (⟨(xBound x : Int), 1⟩ : Q) := canon_bound x n
+  have h3 : Qle (⟨(xBound x : Int), 1⟩ : Q) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩) :=
+    Qle_self_add (by show (0 : Int) ≤ 2; decide)
+  have h23 : Qle (Qabs (x.seq n)) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩) :=
+    Qle_trans (b := (⟨(xBound x : Int), 1⟩ : Q)) (by show (0 : Nat) < 1; decide) h2 h3
+  exact Qle_trans (b := Qabs (x.seq n)) (x.den_pos n) h1 h23
+
+/-- **A constructive natural upper bound for `|c|²`** (reviewer gate 2): `|c|² ≤ B` for a computable
+    `B : Nat` — the scalar-magnitude bound scalar multiplication's reschedule needs. -/
+theorem cNormSq_nat_bound (z : Complex) : ∃ B : Nat, Rle (cNormSq z) (ofQ (⟨(B : Int), 1⟩ : Q) Nat.one_pos) :=
+  exists_nat_ge_loc (cNormSq z)
+
 /-- `Rneg` is an involution (component form), used to collapse the `−(−im²)` from `z · z̄`. -/
 private theorem Rneg_Rneg_core (r : Real) : Req (Rneg (Rneg r)) r :=
   Req_of_seq_Qeq (fun n => by

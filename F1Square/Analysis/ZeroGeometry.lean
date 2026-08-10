@@ -34,6 +34,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`, choice-free; audited by `scripts/hones
 
 import F1Square.Analysis.Complex
 import F1Square.Analysis.RealPow
+import F1Square.Analysis.ComplexNormSqCore
 
 namespace UOR.Bridge.F1Square.Analysis
 
@@ -42,7 +43,7 @@ namespace UOR.Bridge.F1Square.Analysis
 -- ===========================================================================
 
 /-- The squared modulus `|z|² = (Re z)² + (Im z)²`. -/
-def cnormSq (z : Complex) : Real := Radd (Rmul z.re z.re) (Rmul z.im z.im)
+def cnormSq (z : Complex) : Real := cNormSq z
 
 /-- The squared modulus of `z − 1`, `|z−1|² = (Re z − 1)² + (Im z)²` — the numerator of the Li
     growth ratio `|1−1/ρ|² = |ρ−1|²/|ρ|²`. -/
@@ -153,7 +154,7 @@ theorem half_add_half : Req (Radd half half) one := by
     sign is fixed by `Re z` alone. The constructive heart of Lever 1. -/
 theorem liRatio_diff_eq (z : Complex) :
     Req (Rsub (csubOneNormSq z) (cnormSq z)) (Rsub one (Radd z.re z.re)) := by
-  unfold csubOneNormSq cnormSq
+  unfold csubOneNormSq cnormSq cNormSq
   -- cancel the shared `im²` (addC), expand `(re−1)²` (sub_one_sq_expand), regroup (addD)
   refine Req_trans (addC (Rmul (Rsub z.re one) (Rsub z.re one)) (Rmul z.re z.re)
     (Rmul z.im z.im)) ?_
@@ -185,7 +186,7 @@ theorem liRatio_right_of_line (z : Complex) (h : Pos (Rsub z.re half)) :
     Pos (Rsub (cnormSq z) (csubOneNormSq z)) := by
   -- |z|²−|z−1|² ≈ (re+re)−1 ≈ (re+re)−(½+½) ≈ (re−½)+(re−½)
   have hL : Req (Rsub (cnormSq z) (csubOneNormSq z)) (Rsub (Radd z.re z.re) one) := by
-    unfold cnormSq csubOneNormSq
+    unfold cnormSq cNormSq csubOneNormSq
     refine Req_trans (addC (Rmul z.re z.re) (Rmul (Rsub z.re one) (Rsub z.re one))
       (Rmul z.im z.im)) ?_
     refine Req_trans (Rsub_congr (Req_refl (Rmul z.re z.re)) (sub_one_sq_expand z.re)) ?_
