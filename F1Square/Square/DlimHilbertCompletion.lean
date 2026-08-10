@@ -335,4 +335,67 @@ def dlimCauchyModR (j k : Nat) : Real :=
 def DLimCauchyU (x : Nat → DLimRaw) : Prop :=
   ∀ j k : Nat, Rle (dlimDist2 (x j) (x k)) (dlimCauchyModR j k)
 
+-- ===========================================================================
+-- Modulus properties (symmetry / nonnegativity / decay) and the Cauchy predicate's
+-- constant witness and pointwise congruence (gate item 2).
+-- ===========================================================================
+
+/-- `ofQ` of a nonnegative rational is `Rnonneg`. -/
+private theorem Rnonneg_ofQ_loc {q : Q} (hq : 0 < q.den) (hn : 0 ≤ q.num) : Rnonneg (ofQ q hq) := by
+  intro n
+  show (neg (Qbound n)).num * (q.den : Int) ≤ q.num * ((neg (Qbound n)).den : Int)
+  have hd : (0 : Int) ≤ q.num * ((neg (Qbound n)).den : Int) :=
+    Int.mul_nonneg hn (by show (0 : Int) ≤ ((neg (Qbound n)).den : Int); simp only [neg, Qbound]; omega)
+  have hl : (neg (Qbound n)).num * (q.den : Int) ≤ 0 := by simp only [neg, Qbound]; push_cast; omega
+  omega
+
+/-- `ofQ` is monotone: `a ≤ b` (rationals) gives `ofQ a ≤ ofQ b`. -/
+private theorem Rle_ofQ_of_Qle_loc {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) (h : Qle a b) :
+    Rle (ofQ a ha) (ofQ b hb) :=
+  fun n => Qle_trans (b := b) hb h (Qle_self_add (by show (0 : Int) ≤ 2; decide))
+
+/-- **Modulus SYMMETRY**: `M(j,k) ≈ M(k,j)` — the canonical squared modulus is symmetric in `j, k`. -/
+private theorem dlimCauchyMod_symm (j k : Nat) :
+    Req (dlimCauchyModR j k) (dlimCauchyModR k j) := by
+  unfold dlimCauchyModR
+  exact ofQ_respects _ _ (by simp only [Qeq, mul, add]; push_cast; ring_uor)
+
+/-- **Modulus NONNEGATIVITY**: `M(j,k) ≥ 0` (it is a square). -/
+private theorem dlimCauchyMod_nonneg (j k : Nat) : Rnonneg (dlimCauchyModR j k) := by
+  unfold dlimCauchyModR
+  refine Rnonneg_ofQ_loc _ ?_
+  have hX : (0 : Int) ≤ (add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q)).num := by
+    simp only [add]; push_cast; omega
+  exact Int.mul_nonneg hX hX
+
+/-- **Modulus DECAY** (diagonal): `M(n,n) ≤ 4/(n+1)` — the diagonal modulus `(2/(n+1))²` is dominated
+    by the canonical null real `ofQ ⟨4,n+1⟩`, so it vanishes with `n`. Proved by transporting
+    `(2/(n+1))²` to `⟨4,(n+1)²⟩` and the degree-2 bound `4(n+1) ≤ 4(n+1)²`. -/
+private theorem dlimCauchyMod_diag_decay (n : Nat) :
+    Rle (dlimCauchyModR n n) (ofQ (⟨4, n + 1⟩ : Q) (Nat.succ_pos n)) := by
+  unfold dlimCauchyModR
+  apply Rle_ofQ_of_Qle_loc
+  refine Qle_congr_left (a := (⟨4, (n + 1) * (n + 1)⟩ : Q)) ?_ ?_ ?_
+  · exact Nat.mul_pos (Nat.succ_pos n) (Nat.succ_pos n)
+  · simp only [Qeq, mul, add]; push_cast; ring_uor
+  · show (4 : Int) * ((n + 1 : Nat) : Int) ≤ (4 : Int) * (((n + 1) * (n + 1) : Nat) : Int)
+    have hnn : (0 : Int) ≤ (n : Int) * ((n : Int) + 1) := Int.mul_nonneg (by omega) (by omega)
+    have heq : ((n : Int) + 1) * ((n : Int) + 1) = ((n : Int) + 1) + (n : Int) * ((n : Int) + 1) := by
+      ring_uor
+    push_cast
+    omega
+
+/-- **The constant sequence is Cauchy** (gate item 2): `DLimCauchyU (fun _ => a)`, since
+    `‖a − a‖² ≈ 0 ≤ M(j,k)`. -/
+theorem DLimCauchyU_const (a : DLimRaw) : DLimCauchyU (fun _ => a) :=
+  fun j k => Rle_trans (Rle_of_Req (dlimDist2_self a))
+    (Rle_zero_of_Rnonneg (dlimCauchyMod_nonneg j k))
+
+/-- **Pointwise `DLimEq` congruence of the Cauchy predicate** (gate item 2): if `x j ≈ y j` for every
+    `j`, then `x` Cauchy ⟹ `y` Cauchy (the squared distances agree by `dlimDist2_wd`). -/
+theorem DLimCauchyU_congr {x y : Nat → DLimRaw} (h : ∀ j, DLimEq (x j) (y j))
+    (hx : DLimCauchyU x) : DLimCauchyU y :=
+  fun j k => Rle_trans
+    (Rle_of_Req (Req_symm (dlimDist2_wd (h j) (h k)))) (hx j k)
+
 end UOR.Bridge.F1Square.Square

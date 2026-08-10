@@ -8537,3 +8537,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimInner_add_left
 #print axioms Square.dlimNormSq_add
 #print axioms Square.dlimDist2_quasitriangle
+-- THE CAUCHY-PREDICATE STRUCTURAL LEMMAS (gate item 2): DLimCauchyU_const (the constant sequence is
+-- Cauchy, ‖a−a‖²≈0 ≤ M(j,k)) and DLimCauchyU_congr (pointwise DLimEq congruence: x≈y pointwise ⟹
+-- x Cauchy → y Cauchy). Supported by the private modulus facts symmetry/nonnegativity/decay
+-- (M(n,n) ≤ 4/(n+1), the canonical null domination) — all import-only-FinDirectLimit.
+#print axioms Square.DLimCauchyU_const
+#print axioms Square.DLimCauchyU_congr
