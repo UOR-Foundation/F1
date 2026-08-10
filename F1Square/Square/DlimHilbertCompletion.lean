@@ -668,6 +668,34 @@ theorem dlimReschedOdd_eq (X : DLimCompletionRaw) : DLimCompletionEq X (dlimResc
   show (4 : Int) * ((k + 1 : Nat) : Int) ≤ (1 : Int) * ((n + 1 : Nat) : Int)
   push_cast; omega
 
+/-- The affine schedule `σ_q(n) = q(n+1)−1` speeds up: `j ≤ σ_q(j)` for `q ≥ 1`. -/
+private theorem sched_ge {q : Nat} (hq : 1 ≤ q) (j : Nat) : j ≤ q * (j + 1) - 1 := by
+  have hm : j + 1 ≤ q * (j + 1) := Nat.le_mul_of_pos_left (j + 1) hq
+  omega
+
+/-- **The affine reschedule** `σ_q(n) = q(n+1)−1` (`q ≥ 1`) as a completion member — the generalization
+    of the odd reschedule (`q = 2`) that scalar multiplication needs (with a scalar-DEPENDENT `q`).
+    Regular because `M(σ_q j, σ_q k) ≤ M(j,k)` (monotonicity, since `σ_q j ≥ j`). -/
+def dlimResched (q : Nat) (hq : 1 ≤ q) (X : DLimCompletionRaw) : DLimCompletionRaw :=
+  ⟨fun n => X.seq (q * (n + 1) - 1),
+   fun j k => Rle_trans (X.reg (q * (j + 1) - 1) (q * (k + 1) - 1))
+     (dlimCauchyMod_mono (sched_ge hq j) (sched_ge hq k))⟩
+
+/-- **AFFINE COFINAL INVARIANCE** (reviewer gate 2, generalized): `X ≈ X_{σ_q(n)}` for every `q ≥ 1`.
+    For `n ≥ 4k+3`, `‖X_n − X_{σ_q n}‖² ≤ M(n,σ_q n) ≤ M(n,n) ≤ 4/(n+1) ≤ 1/(k+1)` — the threshold does
+    not depend on `q`. -/
+theorem dlimResched_eq (q : Nat) (hq : 1 ≤ q) (X : DLimCompletionRaw) :
+    DLimCompletionEq X (dlimResched q hq X) := by
+  intro k
+  refine ⟨4 * k + 3, fun n hn => ?_⟩
+  refine Rle_trans (X.reg n (q * (n + 1) - 1)) ?_
+  refine Rle_trans (dlimCauchyMod_mono (p := n) (p' := n) (q := n) (q' := q * (n + 1) - 1)
+    (Nat.le_refl n) (sched_ge hq n)) ?_
+  refine Rle_trans (dlimCauchyMod_diag_decay n) ?_
+  refine Rle_ofQ_of_Qle_loc _ _ ?_
+  show (4 : Int) * ((k + 1 : Nat) : Int) ≤ (1 : Int) * ((n + 1 : Nat) : Int)
+  push_cast; omega
+
 -- ===========================================================================
 -- Additive structure on the completion (reviewer gate 3): zero, the group laws
 -- modulo completion equivalence, and the `of`-homomorphism laws `of_add` / `of_neg`.
