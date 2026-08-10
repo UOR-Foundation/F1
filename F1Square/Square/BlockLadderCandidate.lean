@@ -1,9 +1,9 @@
 /-
-F1 square — **the BLOCK-LADDER CANDIDATE: a locally-invented unbounded diagonal, formally REJECTED**
-as a Hilbert–Pólya operator. The finite seed `M₂₄ ⊕ 0` (`FinAtlasOperator`) is bounded and cannot be
-an HP operator (which must be UNBOUNDED). This module builds ONE concrete unbounded diagonal candidate,
-tests it against the HP requirements, and rejects it — the research role of testing a candidate and
-exposing its first failed bridge. It is NOT a warranted Atlas refinement (see NAMING).
+F1 square — **the BLOCK-LADDER CANDIDATE: a locally-invented unbounded diagonal, with a WEIGHT-RANGE
+ASYMMETRY DIAGNOSTIC** (NOT a formal HP-operator rejection — see below). The finite seed `M₂₄ ⊕ 0`
+(`FinAtlasOperator`) is bounded and cannot be an HP operator (which must be UNBOUNDED). This module
+builds ONE concrete unbounded diagonal candidate and tests it against the HP requirements — the research
+role of testing a candidate. It is NOT a warranted Atlas refinement (see NAMING).
 
 THE CANDIDATE. The carrier is indexed `i = 24·ℓ + j` and split as a `BlockLadderAddr = (scale ℓ, block
 j ∈ Fin 24)` — the `T·O = 24` block repeated per level. The weight is
@@ -36,15 +36,20 @@ warrant backs the infinite ladder. A genuine warrant SOURCE exists in principle:
 extracted zero-free (`AtlasAddressingCore`, a near-term follow-up). What remains genuinely OPEN is the
 unbounded refinement map, not the `p = 5` identity.
 
-THE REJECTION — a CONSTRUCTIVE, zero-free SPECTRAL ASYMMETRY. `blockLadderSpec_not_neg_closed`: the
-weight spectrum `blockLadderWeightSpec` (each weight is a realized eigenvalue by `dlimBlockLadder_eigen`,
-so weights ⊆ point spectrum) is NOT closed under `μ ↦ −μ` — `10` is a weight but `−10` is not, since
-every weight `≥ −1` (`blockLadderWeight_ge_neg_one`) so `w_i + 10 > 0` (`blockLadder_gt_neg_ten`). The HP
-trace-symmetry requirement `NegClosed` therefore FAILS. (`blockLadder_scale_gap` — the scale-tower
-spectrum is an arithmetic progression, constant gap `log 5`, unlike the zeros' shrinking gaps — is a
-DIAGNOSTIC observation, NOT a formalized zero-spectrum contradiction; the formal rejection is the
-asymmetry.) So the block-ladder is rejected — that rejects THIS construction, not the Atlas program or
-RH. No spectral→zero correspondence is asserted; the crux (RH) stays `none`.
+THE WEIGHT-RANGE ASYMMETRY DIAGNOSTIC (NOT a formal operator/HP rejection).
+`blockLadderSpec_not_neg_closed`: the WEIGHT IMAGE `blockLadderWeightSpec := {μ : ∃ i, μ ≈ w_i}` is NOT
+closed under `μ ↦ −μ` — `10` is a weight but `−10` is not, since every weight `≥ −1`
+(`blockLadderWeight_ge_neg_one`) so `w_i + 10 > 0` (`blockLadder_gt_neg_ten`). HONEST LIMITATION: this
+is a statement about the weight IMAGE only. Since only `weights ⊆ point spectrum` is formalized (each
+weight is a realized eigenvalue, `dlimBlockLadder_eigen`), a non-closed weight-subset can still sit
+inside a negation-closed point spectrum — so this does NOT prove the operator's point spectrum is
+asymmetric, and it is NOT a formal rejection of the operator as an HP candidate. A genuine operator
+rejection would need the converse (`point spectrum ⊆ weights`) or an explicit exclusion of a `−10`
+eigenvector, neither of which is formalized. Likewise `blockLadder_scale_gap` (constant scale gap
+`log 5`, an arithmetic progression) is a DIAGNOSTIC observation, not a formal zero-spectrum
+contradiction. So the block-ladder is DIAGNOSED as an unlikely HP operator, not formally rejected; no
+spectral→zero correspondence is asserted; the crux (RH) stays `none`. (The candidate is frozen: no
+further block-ladder mathematics; the legitimate frontier is the generic self-adjoint completion layer.)
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; the cone avoids `ComplexZeta`
 and the crux modules. Audited by `scripts/honesty_audit.sh`.
@@ -183,7 +188,7 @@ theorem blockLadderEval_scale_succ (ℓ : Nat) (j : Fin 24) :
 /-- **The scale gap is CONSTANT `= log 5`**: `blockLadderWeight(24(ℓ+1)) = blockLadderWeight(24ℓ) + log 5`.
     So the scale-tower spectrum is an ARITHMETIC PROGRESSION — a DIAGNOSTIC observation (the Riemann
     zeros' gaps shrink, they are not constant), NOT a formalized zero-spectrum contradiction. The formal
-    rejection is the spectral asymmetry `blockLadderSpec_not_neg_closed`. -/
+    weight-range asymmetry diagnostic is `blockLadderSpec_not_neg_closed`. -/
 theorem blockLadder_scale_gap (ℓ : Nat) :
     Req (blockLadderWeight (24 * (ℓ + 1)))
         (Radd (blockLadderWeight (24 * ℓ)) (logN 5 (by decide))) := by
@@ -231,12 +236,14 @@ theorem blockLadder_unbounded (B : Nat) : ∃ i, Rle (RofNat B) (blockLadderWeig
 
 /-- **The block-ladder operator on the direct-limit core** — the descent of the unbounded diagonal
     `blockLadderWeight` via the generic `dlimDiagW`. An unbounded symmetric operator on
-    `dlimPreHilbert`, formally REJECTED below (its point spectrum is not closed under negation). -/
+    `dlimPreHilbert`; a WEIGHT-RANGE asymmetry diagnostic is proved below (the weight image is not
+    negation-closed — NOT a formal operator rejection). -/
 def dlimBlockLadder : DLimRaw → DLimRaw := dlimDiagW blockLadderWeight
 
 /-- **The candidate as a typed symmetric operator on `dlimPreHilbert`** — CANDIDATE, not the HP
-    operator: it is unbounded (`blockLadder_unbounded`) and symmetric, but its spectrum is an arithmetic
-    progression (`blockLadder_scale_gap`), rejected at the spectral/zero bridge. Crux `none`. -/
+    operator: it is unbounded (`blockLadder_unbounded`) and symmetric; its weight image carries a
+    diagnostic negation-asymmetry (`blockLadderSpec_not_neg_closed`), which is NOT a formal HP
+    rejection. Crux `none`. -/
 def blockLadderDLimOp : PreHilbertSymOp dlimPreHilbert where
   op := dlimBlockLadder
   op_congr := fun h => dlimDiagW_wd blockLadderWeight h
@@ -245,8 +252,8 @@ def blockLadderDLimOp : PreHilbertSymOp dlimPreHilbert where
   op_herm := dlimDiagW_herm blockLadderWeight
 
 -- ===========================================================================
--- The constructive spectral rejection: the diagonal has floor −1 but peak 10, so
--- its point spectrum is NOT closed under μ ↦ −μ (fails HP trace-symmetry).
+-- The WEIGHT-RANGE asymmetry diagnostic: the diagonal weights have floor −1 but peak 10, so the
+-- weight IMAGE is NOT closed under μ ↦ −μ (a diagnostic, NOT a formal operator/HP rejection).
 -- ===========================================================================
 
 /-- `n·x ≥ 0` for `x ≥ 0`. -/
@@ -263,8 +270,8 @@ private theorem Rneg_one_eq_ofQ : Req (Rneg one) (ofQ (⟨-1, 1⟩ : Q) (by deci
   Req_of_seq_Qeq (fun _ => by show Qeq (neg (⟨1, 1⟩ : Q)) (⟨-1, 1⟩ : Q); decide)
 
 /-- **WEIGHT FLOOR**: every block-ladder diagonal weight is `≥ −1` — the block eigenvalue is `≥ −1`
-    (`atlasEig_range`) and the scale shift is `≥ 0`. The spectral floor that makes the point spectrum
-    asymmetric under negation. -/
+    (`atlasEig_range`) and the scale shift is `≥ 0`. The floor that makes the weight IMAGE asymmetric
+    under negation (a diagnostic on the weight range). -/
 theorem blockLadderWeight_ge_neg_one (i : Nat) : Rle (Rneg one) (blockLadderWeight i) := by
   rw [blockLadderWeight_val]
   have hblock : Rle (Rneg one) (ofQ ⟨atlasEig (i % 24), 1⟩ Nat.one_pos) := by
@@ -280,10 +287,10 @@ private theorem neg_one_add_ten : Req (Radd (Rneg one) (ofQ (⟨10, 1⟩ : Q) Na
   Req_trans (Radd_congr Rneg_one_eq_ofQ (Req_refl _))
     (Req_of_seq_Qeq (fun _ => by show Qeq (add (⟨-1, 1⟩ : Q) (⟨10, 1⟩ : Q)) (⟨9, 1⟩ : Q); decide))
 
-/-- **SPECTRAL ASYMMETRY (`−10` below the whole diagonal)**: `w_i + 10 > 0` (strictly, `Pos`) for every
-    `i` — since `w_i ≥ −1`, `w_i + 10 ≥ 9 ≥ 1`. So `−10` lies strictly below EVERY diagonal weight,
-    while `w₀ = 10` IS a weight. A point spectrum with `10` but nothing near `−10` is not closed under
-    `μ ↦ −μ` — the block-ladder fails the HP trace-symmetry requirement. Zero-free rejection. -/
+/-- **WEIGHT-RANGE ASYMMETRY (`−10` below the whole diagonal)**: `w_i + 10 > 0` (strictly, `Pos`) for
+    every `i` — since `w_i ≥ −1`, `w_i + 10 ≥ 9 ≥ 1`. So `−10` lies strictly below EVERY diagonal weight,
+    while `w₀ = 10` IS a weight, i.e. the weight IMAGE has `10` but nothing near `−10`. A DIAGNOSTIC on
+    the weight range — NOT a formal operator/HP rejection (only `weights ⊆ point spectrum` is proved). -/
 theorem blockLadder_gt_neg_ten (i : Nat) :
     Pos (Radd (blockLadderWeight i) (ofQ (⟨10, 1⟩ : Q) Nat.one_pos)) := by
   have h9 : Rle one (ofQ (⟨9, 1⟩ : Q) Nat.one_pos) :=
@@ -302,7 +309,7 @@ theorem blockLadderWeight_zero_eq_ten :
 
 -- ===========================================================================
 -- The operator-level eigenpair, the weight spectrum, and the constructive
--- rejection: the point spectrum is NOT closed under μ ↦ −μ.
+-- diagnostic: the WEIGHT IMAGE is NOT closed under μ ↦ −μ (not a formal operator rejection).
 -- ===========================================================================
 
 /-- **The operator-level EIGENPAIR** for the block-ladder operator: `dlimBlockLadder eᵢ ≈ wᵢ · eᵢ`
@@ -313,14 +320,17 @@ theorem dlimBlockLadder_eigen (i : Nat) :
     DLimEq (dlimBlockLadder (dlimBasis i)) (dlimSmul (Cofreal (blockLadderWeight i)) (dlimBasis i)) :=
   dlimDiagW_eigen blockLadderWeight i
 
-/-- The block-ladder weight **spectrum** as a predicate on reals: `μ` is a diagonal weight (hence, by
-    `dlimBlockLadder_eigen` + `dlimBasis_normalized`, a genuine eigenvalue of `dlimBlockLadder`) iff it
-    equals `blockLadderWeight i` for some carrier index `i`. -/
+/-- The block-ladder **weight image** as a predicate on reals: `μ` is a diagonal weight iff it equals
+    `blockLadderWeight i` for some carrier index `i`. Each such `μ` is a realized eigenvalue of
+    `dlimBlockLadder` (`dlimBlockLadder_eigen`), so this weight image is `⊆` the operator's point
+    spectrum — but the converse (`point spectrum ⊆ weights`) is NOT formalized, so this predicate is
+    the weight IMAGE, not a proved characterization of the full point spectrum. -/
 def blockLadderWeightSpec (μ : Real) : Prop := ∃ i, Req μ (blockLadderWeight i)
 
-/-- **Negation-closure** of a real-predicate spectrum `S`: closed under `μ ↦ −μ`. This is the
-    Hilbert–Pólya trace-symmetry requirement on a point spectrum (`μ ∈ σ ⟹ −μ ∈ σ`), stated
-    purely — no operator, no completion. -/
+/-- **Negation-closure** of a real-predicate set `S`: closed under `μ ↦ −μ`. The trace-symmetry shape
+    `μ ∈ S ⟹ −μ ∈ S`, stated purely — no operator, no completion. (Note: this local predicate is
+    deliberately generic; it is NOT wired to the `NominalTraceFormula` contract, which is a separate
+    nominal object.) -/
 def NegClosed (S : Real → Prop) : Prop := ∀ μ, S μ → S (Rneg μ)
 
 /-- `−0 ≈ 0` (local, zeta-free). -/
@@ -344,14 +354,16 @@ private theorem not_Req_neg_ten (i : Nat) :
         (Radd_neg (ofQ (⟨10, 1⟩ : Q) Nat.one_pos)))
   exact not_Pos_zero_bl (Pos_congr hzero (blockLadder_gt_neg_ten i))
 
-/-- **THE BLOCK-LADDER WEIGHT SPECTRUM IS NOT CLOSED UNDER NEGATION** — the constructive spectral
-    rejection. `blockLadderWeight 0 ≈ 10` is a weight (hence, by `dlimBlockLadder_eigen`, a realized
-    eigenvalue of `dlimBlockLadder`), but `−10` is not a weight: every `w_i` is apart from `−10`
-    (`not_Req_neg_ten`, i.e. `w_i + 10 > 0`). So the weight set — which is ⊆ the point spectrum, since
-    each weight is realized as an eigenvalue (the converse, point spectrum ⊆ weights, is the standard
-    diagonal fact, not formalized here) — cannot satisfy the HP trace-symmetry closure `NegClosed`.
-    This REJECTS the block-ladder as an HP operator, zero-free; no spectral→zero correspondence is
-    asserted, the crux (RH) stays `none`. -/
+/-- **THE BLOCK-LADDER WEIGHT IMAGE IS NOT CLOSED UNDER NEGATION** — a WEIGHT-RANGE ASYMMETRY DIAGNOSTIC
+    (NOT a formal operator/HP rejection). `blockLadderWeight 0 ≈ 10` is a weight, but `−10` is not: every
+    `w_i` is apart from `−10` (`not_Req_neg_ten`, i.e. `w_i + 10 > 0`). So the weight IMAGE
+    `blockLadderWeightSpec` fails `NegClosed`.
+    HONEST LIMITATION: this is about the weight IMAGE only. Only `weights ⊆ point spectrum` is formalized
+    (`dlimBlockLadder_eigen`); a non-negation-closed SUBSET can still sit inside a negation-closed
+    superset, so this does NOT prove the operator's point spectrum is asymmetric and is NOT a formal
+    rejection of `dlimBlockLadder` as an HP operator. A genuine operator rejection would require the
+    converse (`point spectrum ⊆ weights`) or an explicit exclusion of a `−10` eigenvector — neither is
+    formalized. Zero-free; no spectral→zero correspondence; the crux (RH) stays `none`. -/
 theorem blockLadderSpec_not_neg_closed : ¬ NegClosed blockLadderWeightSpec := by
   intro h
   obtain ⟨i, hi⟩ := h (blockLadderWeight 0) ⟨0, Req_refl _⟩
@@ -373,7 +385,7 @@ private theorem RofNat_nonneg (n : Nat) : Rnonneg (RofNat n) := by
     `⟨A eⱼ, A eⱼ⟩ = wⱼ² ≥ (RofNat (B+1))² > (RofNat B)² = (RofNat B)²·⟨eⱼ,eⱼ⟩`, contradicting the bound.
     Upgraded to ALL real bounds in `dlimBlockLadder_not_normBounded_real`. This is the HP unboundedness
     PREREQUISITE (a necessary feature of an HP operator), proved at the OPERATOR level via
-    `OpNormBounded` — not the rejection. -/
+    `OpNormBounded` — a passed prerequisite, not a rejection. -/
 theorem dlimBlockLadder_not_normBounded (B : Nat) : ¬ OpNormBounded dlimBlockLadder (RofNat B) := by
   intro hb
   obtain ⟨i, hi⟩ := blockLadder_unbounded (B + 1)
@@ -417,7 +429,7 @@ theorem dlimBlockLadder_not_normBounded (B : Nat) : ¬ OpNormBounded dlimBlockLa
     the norm-bound predicate in `C` (`C² ≤ (RofNat B)²`, and `⟨a,a⟩.re ≥ 0`), a real bound `C` would
     give the nat bound `RofNat B`, contradicting `dlimBlockLadder_not_normBounded`. This is the
     unbounded-spectrum HP PREREQUISITE, PASSED for every real bound — a necessary feature of an HP
-    operator, NOT the rejection (the rejection is the spectral asymmetry `blockLadderSpec_not_neg_closed`). -/
+    operator, NOT a rejection (the weight-range asymmetry diagnostic is `blockLadderSpec_not_neg_closed`). -/
 theorem dlimBlockLadder_not_normBounded_real (C : Real) (hC : Rnonneg C) :
     ¬ OpNormBounded dlimBlockLadder C := by
   intro hb

@@ -8457,7 +8457,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimAtlas_herm
 
 -- The block-ladder candidate (new Square/BlockLadderCandidate.lean): ONE locally-invented unbounded
--- diagonal, built and formally REJECTED as an HP operator. blockLadderEval on the typed carrier
+-- diagonal, built with a WEIGHT-RANGE asymmetry diagnostic (NOT a formal HP rejection). blockLadderEval on the typed carrier
 -- BlockLadderAddr=(scale ℓ, block∈Fin 24): (M₂₄ eigenvalue at block) + ℓ·log5, where ℓ·log5 =
 -- orbitShift 5 ℓ (Frobenius-orbit length, chain prime p=5=atlasPrime0); the M₂₄+ℓ·log5 LAW is invented,
 -- NOT a warranted Atlas refinement. log5_ge_one: log5≥1 zero-free (logN_ge_k_log2 + logN_2_ge_half in
@@ -8479,13 +8479,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.blockLadder_unbounded
 #print axioms Square.dlimBlockLadder_eigen
 
--- The constructive spectral-asymmetry REJECTION (Square/BlockLadderCandidate.lean).
+-- The WEIGHT-RANGE asymmetry DIAGNOSTIC (Square/BlockLadderCandidate.lean) — NOT a formal operator rejection.
 -- blockLadderWeight_ge_neg_one: every weight ≥ −1 (block eigenvalue ≥ −1 via atlasEig_range + scale
 -- shift ≥ 0). blockLadderWeight_zero_eq_ten: w₀ = 10 (a weight > 2). blockLadder_gt_neg_ten: w_i + 10 > 0
 -- strictly (Pos) for every i — so −10 is strictly below the whole diagonal while 10 is a weight.
 -- blockLadderSpec_not_neg_closed: the weight spectrum blockLadderWeightSpec (weights ⊆ point spectrum, by
--- dlimBlockLadder_eigen) is NOT closed under μ↦−μ (NegClosed) — the HP trace-symmetry requirement FAILS.
--- A zero-free rejection of the block-ladder as an HP operator; crux none.
+-- dlimBlockLadder_eigen, weights ⊆ point spectrum ONLY) is NOT closed under μ↦−μ (NegClosed). HONEST
+-- LIMITATION: a non-closed subset can sit inside a negation-closed superset, so this is a weight-range
+-- DIAGNOSTIC, NOT a formal operator/HP rejection (the converse point-spectrum⊆weights is unformalized);
+-- crux none.
 #print axioms Square.blockLadderWeight_ge_neg_one
 #print axioms Square.blockLadderWeight_zero_eq_ten
 #print axioms Square.blockLadder_gt_neg_ten
@@ -8496,7 +8498,7 @@ open UOR.Bridge.F1Square
 -- ∀ nat B, dlimBlockLadder is NOT norm-bounded by RofNat B (on e_j with w_j ≥ RofNat(B+1), ⟨A e_j,A e_j⟩
 -- = w_j² > (RofNat B)², violating OpNormBounded). dlimBlockLadder_not_normBounded_real: upgraded to ALL
 -- real bounds via Archimedean domination (exists_nat_ge: x ≤ RofNat B) + bound monotonicity. This is a
--- NECESSARY HP feature (unbounded operator), NOT a rejection — the rejection is the spectral asymmetry
--- (blockLadderSpec_not_neg_closed). Crux none.
+-- NECESSARY HP feature (unbounded operator) — a PASSED prerequisite, not a rejection. (The weight-range
+-- asymmetry blockLadderSpec_not_neg_closed is a diagnostic, not a formal operator rejection.) Crux none.
 #print axioms Square.dlimBlockLadder_not_normBounded
 #print axioms Square.dlimBlockLadder_not_normBounded_real
