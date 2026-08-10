@@ -8635,6 +8635,25 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.cNormSq_congr
 #print axioms Analysis.exists_nat_ge_loc
 #print axioms Analysis.cNormSq_nat_bound
+-- SHARED ζ-FREE REAL MULTIPLICATION/ORDER CORE (reviewer debt: new Analysis/RealOrderCore.lean). The
+-- ~190 lines of generic Bishop-real mul/order theory previously copied PRIVATELY into DlimHilbertCompletion
+-- are now ONE reusable public module (Zeta-free cone = RealSquareDefinite), so the completed-inner-product
+-- work imports them instead of re-duplicating. `_loc` suffix = globally-unique leaf names (distinct from
+-- RealPow's Zeta-reaching Rnonneg_Rmul / Rmul_le_Rmul_left / …), required by the coverage gate.
+#print axioms Analysis.Rnonneg_ofQ_loc
+#print axioms Analysis.Rle_ofQ_of_Qle_loc
+#print axioms Analysis.Radd_ofQ_loc
+#print axioms Analysis.Rmul_ofQ_ofQ_loc
+#print axioms Analysis.Radd_le_add_loc
+#print axioms Analysis.Qneg_le_neg_loc
+#print axioms Analysis.mul_lo_core_loc
+#print axioms Analysis.Rnonneg_Rmul_loc
+#print axioms Analysis.Rnonneg_of_Rle_zero_loc
+#print axioms Analysis.Rnonneg_congr_loc
+#print axioms Analysis.Rnonneg_Rsub_of_Rle_loc
+#print axioms Analysis.Rle_of_Rnonneg_Rsub_loc
+#print axioms Analysis.Rmul_le_Rmul_left_loc
+#print axioms Analysis.Rmul_le_Rmul_right_loc
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal
