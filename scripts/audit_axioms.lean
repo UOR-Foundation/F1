@@ -8582,6 +8582,13 @@ open UOR.Bridge.F1Square
 -- the |c|²·M(σ_q j,σ_q k) ≤ M(j,k) attenuation INEQUALITY and the scalar action are the next commit.
 #print axioms Square.dlimNormSq_smul
 #print axioms Square.dlimDist2_smul
+-- THE q⁻² AFFINE-MODULUS ATTENUATION (reviewer gate 4): dlimCauchyMod_atten — for x ≤ q (q≥1),
+-- x·M(σ_q j,σ_q k) ≤ M(j,k) with σ_q(n)=q(n+1)−1. Since M(σ_q)=M/q², x≤q leaves x·M(σ_q)≤q·M/q²=M/q≤M.
+-- Needs Real-mult MONOTONICITY, absent in-cone — reproduced as private `_loc` ports of RealPow's
+-- Rmul_le_Rmul_left/right (whose module reaches Zeta), verbatim from the in-cone Q/Real primitives
+-- (mul_lo_core, Rnonneg_Rmul, the order⇄Bishop bridges, Rmul_ofQ_ofQ, Qneg_le_neg). This is the
+-- scalar-multiplication regularity bridge the scalar action (next) consumes.
+#print axioms Square.dlimCauchyMod_atten
 -- CLEAN COMPLEX-ONLY SQUARED-MODULUS CORE (reviewer gate item 3; new Analysis/ComplexNormSqCore.lean,
 -- Zeta-free cone = ComplexCore + RealSquareDefinite only — NOT the ζ-tainted ZeroGeometry.cnormSq, NOT the
 -- heavy ComplexMod): cNormSq z := re²+im², cNormSq_nonneg (sum of squares ≥ 0), and z·conj z = the real

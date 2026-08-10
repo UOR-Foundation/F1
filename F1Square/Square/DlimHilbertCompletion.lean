@@ -853,4 +853,242 @@ theorem dlimDist2_smul (c : Complex) (a b : DLimRaw) :
     Req (dlimDist2 (dlimSmul c a) (dlimSmul c b)) (Rmul (cNormSq c) (dlimDist2 a b)) :=
   Req_trans (dlimNormSq_wd (dlimSmul_dlimSub c a b)) (dlimNormSq_smul c (dlimSub a b))
 
+-- ===========================================================================
+-- Local ports of Real-multiplication MONOTONICITY (reviewer gate 4). The public
+-- Rmul_le_Rmul_left/right live in RealPow, whose cone reaches Analysis.Zeta; these
+-- private `_loc` ports reproduce them VERBATIM from the in-cone Q/Real primitives, so
+-- the completion's scalar-modulus bound stays ζ/crux-free.
+-- ===========================================================================
+
+/-- `ofQ a · ofQ b ≈ ofQ (a·b)` (ported; both sides are the constant sequence `a·b`). -/
+private theorem Rmul_ofQ_ofQ_loc {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) :
+    Req (Rmul (ofQ a ha) (ofQ b hb)) (ofQ (mul a b) (Qmul_den_pos ha hb)) :=
+  Req_of_seq_Qeq (fun _ => Qeq_refl _)
+
+/-- `a ≤ b ⟹ −b ≤ −a` at the ℚ level (ported; `Qneg_le_neg` lives in the out-of-cone `Pi`). -/
+private theorem Qneg_le_neg_loc {a b : Q} (h : Qle a b) : Qle (neg b) (neg a) := by
+  simp only [Qle, neg] at h ⊢
+  have e1 : (-b.num) * (a.den : Int) = -(b.num * (a.den : Int)) := by ring_uor
+  have e2 : (-a.num) * (b.den : Int) = -(a.num * (b.den : Int)) := by ring_uor
+  rw [e1, e2]; omega
+
+private theorem mul_lo_core_loc {A B dA dB K m : Int}
+    (hdA : 0 < dA) (hdB : 0 < dB) (hK : 0 < K) (_hm : 0 < m)
+    (h1 : -dA ≤ A * (2 * K * m)) (h2 : -dB ≤ B * (2 * K * m))
+    (h3 : A ≤ K * dA) (h4 : B ≤ K * dB) : -(dA * dB) ≤ A * B * m := by
+  -- The shared "one factor non-negative" argument: if `0 ≤ G`, `−dF ≤ F·(2Km)`, `G ≤ K·dG`, then
+  -- `−(dF·dG) ≤ F·G·m`. (Used with `(F,G,dF,dG) = (A,B,dA,dB)` and `= (B,A,dB,dA)`.)
+  have posarg : ∀ F G dF dG : Int, 0 ≤ G → 0 ≤ dF → 0 < dG →
+      -dF ≤ F * (2 * K * m) → G ≤ K * dG → -(dF * dG) ≤ F * G * m := by
+    intro F G dF dG hG hdF hdG hbnd hGle
+    have s1 := Int.mul_le_mul_of_nonneg_right hbnd hG
+    have s2 := Int.mul_le_mul_of_nonneg_left hGle hdF
+    have e1 : F * (2 * K * m) * G = 2 * K * (F * G * m) := by ring_uor
+    have e2 : (-dF) * G = -(dF * G) := by ring_uor
+    have e3 : dF * (K * dG) = K * (dF * dG) := by ring_uor
+    rw [e1, e2] at s1
+    rw [e3] at s2
+    have s3 : -(K * (dF * dG)) ≤ -(dF * G) := by omega
+    have s4 := Int.le_trans s3 s1
+    have e4 : -(K * (dF * dG)) = K * (-(dF * dG)) := by ring_uor
+    have e5 : 2 * K * (F * G * m) = K * (2 * (F * G * m)) := by ring_uor
+    rw [e4, e5] at s4
+    have hfin : -(dF * dG) ≤ 2 * (F * G * m) := Int.le_of_mul_le_mul_left s4 hK
+    have hY : 0 ≤ dF * dG := Int.mul_nonneg hdF (Int.le_of_lt hdG)
+    omega
+  by_cases hB : 0 ≤ B
+  · exact posarg A B dA dB hB (Int.le_of_lt hdA) hdB h1 h4
+  · by_cases hA : 0 ≤ A
+    · have hsymm := posarg B A dB dA hA (Int.le_of_lt hdB) hdA h2 h3
+      have e : B * A * m = A * B * m := by ring_uor
+      have e' : dB * dA = dA * dB := by ring_uor
+      rw [e, e'] at hsymm; exact hsymm
+    · -- both negative ⇒ `A·B ≥ 0`
+      have hAB : 0 ≤ A * B := by
+        have h := Int.mul_nonneg (by omega : 0 ≤ -A) (by omega : 0 ≤ -B)
+        have e : (-A) * (-B) = A * B := by ring_uor
+        rw [e] at h; exact h
+      have hABm : 0 ≤ A * B * m := Int.mul_nonneg hAB (Int.le_of_lt _hm)
+      have hY : 0 ≤ dA * dB := Int.mul_nonneg (Int.le_of_lt hdA) (Int.le_of_lt hdB)
+      omega
+
+private theorem Rnonneg_Rmul_loc {x y : Real} (hx : Rnonneg x) (hy : Rnonneg y) : Rnonneg (Rmul x y) := by
+  intro n
+  show Qle (neg (Qbound n)) (mul (x.seq (Ridx x y n)) (y.seq (Ridx x y n)))
+  -- abbreviations (no `set`: Mathlib-only)
+  have hIeq : (Ridx x y n + 1 : Nat) = 2 * RmulK x y * (n + 1) := Ridx_succ x y n
+  -- the four integer bounds at index `I = Ridx x y n`
+  have h1 : -((x.seq (Ridx x y n)).den : Int)
+      ≤ (x.seq (Ridx x y n)).num * (2 * (RmulK x y : Int) * ((n + 1 : Nat) : Int)) := by
+    have hh := hx (Ridx x y n)
+    simp only [Qle, neg, Qbound] at hh
+    rw [hIeq] at hh
+    push_cast at hh ⊢
+    omega
+  have h2 : -((y.seq (Ridx x y n)).den : Int)
+      ≤ (y.seq (Ridx x y n)).num * (2 * (RmulK x y : Int) * ((n + 1 : Nat) : Int)) := by
+    have hh := hy (Ridx x y n)
+    simp only [Qle, neg, Qbound] at hh
+    rw [hIeq] at hh
+    push_cast at hh ⊢
+    omega
+  have h3 : (x.seq (Ridx x y n)).num ≤ (RmulK x y : Int) * (x.seq (Ridx x y n)).den := by
+    have hh : Qle (x.seq (Ridx x y n)) ⟨(RmulK x y : Int), 1⟩ :=
+      Qle_trans (Qabs_den_pos (x.den_pos _)) (Qle_self_Qabs _)
+        (canon_bound_le (Nat.le_max_left _ _) _)
+    simp only [Qle] at hh
+    push_cast at hh ⊢
+    omega
+  have h4 : (y.seq (Ridx x y n)).num ≤ (RmulK x y : Int) * (y.seq (Ridx x y n)).den := by
+    have hh : Qle (y.seq (Ridx x y n)) ⟨(RmulK x y : Int), 1⟩ :=
+      Qle_trans (Qabs_den_pos (y.den_pos _)) (Qle_self_Qabs _)
+        (canon_bound_le (Nat.le_max_right _ _) _)
+    simp only [Qle] at hh
+    push_cast at hh ⊢
+    omega
+  have hcore := mul_lo_core_loc (A := (x.seq (Ridx x y n)).num) (B := (y.seq (Ridx x y n)).num)
+    (dA := ((x.seq (Ridx x y n)).den : Int)) (dB := ((y.seq (Ridx x y n)).den : Int))
+    (K := (RmulK x y : Int)) (m := ((n + 1 : Nat) : Int))
+    (by exact_mod_cast x.den_pos _) (by exact_mod_cast y.den_pos _)
+    (by exact_mod_cast RmulK_pos x y) (by exact_mod_cast Nat.succ_pos n) h1 h2 h3 h4
+  simp only [Qle, neg, Qbound, mul]
+  push_cast at hcore ⊢
+  omega
+
+private theorem Rnonneg_of_Rle_zero_loc {x : Real} (h : Rle zero x) : Rnonneg x := by
+  intro n
+  refine Qarch_gen (C := 3) (neg_den_pos (Qbound_den_pos n)) (x.den_pos n) (fun m => ?_)
+  have hs2 : Qle (⟨0, 1⟩ : Q) (add (x.seq m) ⟨2, m + 1⟩) := h m
+  have hs1 : Qle (x.seq m) (add (x.seq n) (add (Qbound m) (Qbound n))) :=
+    Qle_add_of_Qabs_sub (x.den_pos m) (x.den_pos n)
+      (add_den_pos (Qbound_den_pos m) (Qbound_den_pos n)) (x.reg m n)
+  have hcomb : Qle (⟨0, 1⟩ : Q)
+      (add (add (x.seq n) (add (Qbound m) (Qbound n))) ⟨2, m + 1⟩) :=
+    Qle_trans (add_den_pos (x.den_pos m) (Nat.succ_pos _)) hs2 (Qadd_le_add hs1 (Qle_refl _))
+  have hfinal := Qadd_le_add hcomb (Qle_refl (neg (Qbound n)))
+  have hLHSeq : Qeq (neg (Qbound n)) (add (⟨0, 1⟩ : Q) (neg (Qbound n))) := by
+    simp only [Qeq, add, neg, Qbound]; push_cast; ring_uor
+  have hRHSeq : Qeq (add (add (add (x.seq n) (add (Qbound m) (Qbound n))) ⟨2, m + 1⟩)
+      (neg (Qbound n))) (add (x.seq n) ⟨3, m + 1⟩) := by
+    simp only [Qeq, add, neg, Qbound]; push_cast; ring_uor
+  refine Qle_trans (add_den_pos (by decide) (neg_den_pos (Qbound_den_pos n))) (Qeq_le hLHSeq) ?_
+  refine Qle_trans (add_den_pos (add_den_pos (add_den_pos (x.den_pos n)
+      (add_den_pos (Qbound_den_pos m) (Qbound_den_pos n))) (Nat.succ_pos _))
+      (neg_den_pos (Qbound_den_pos n))) hfinal (Qeq_le hRHSeq)
+
+/-- **`Rnonneg` respects `≈`** — via the order bridge (`Rle` transfers across `≈` cleanly). -/
+private theorem Rnonneg_congr_loc {x y : Real} (h : Req x y) (hx : Rnonneg x) : Rnonneg y :=
+  Rnonneg_of_Rle_zero_loc (Rle_trans (Rle_zero_of_Rnonneg hx) (Rle_of_Req h))
+
+private theorem Rnonneg_Rsub_of_Rle_loc {a b : Real} (h : Rle a b) : Rnonneg (Rsub b a) := by
+  intro n
+  show Qle (neg (Qbound n)) (add (b.seq (2 * n + 1)) (neg (a.seq (2 * n + 1))))
+  have hab : Qle (a.seq (2 * n + 1)) (add (b.seq (2 * n + 1)) ⟨2, (2 * n + 1) + 1⟩) := h (2 * n + 1)
+  have hsub : Qle (Qsub (a.seq (2 * n + 1)) (b.seq (2 * n + 1))) (⟨2, (2 * n + 1) + 1⟩ : Q) :=
+    Qsub_le_of_le_add (b.den_pos _) (Nat.succ_pos _) hab
+  have heq1 : Qeq (neg (Qbound n)) (neg (⟨2, (2 * n + 1) + 1⟩ : Q)) := by
+    simp only [Qeq, neg, Qbound]; push_cast; ring_uor
+  have heq2 : Qeq (neg (Qsub (a.seq (2 * n + 1)) (b.seq (2 * n + 1))))
+      (add (b.seq (2 * n + 1)) (neg (a.seq (2 * n + 1)))) := by
+    simp only [Qeq, neg, Qsub, add]; push_cast; ring_uor
+  exact Qle_trans (neg_den_pos (Nat.succ_pos _)) (Qeq_le heq1)
+    (Qle_trans (neg_den_pos (Qsub_den_pos (a.den_pos _) (b.den_pos _))) (Qneg_le_neg_loc hsub)
+      (Qeq_le heq2))
+
+private theorem Rle_of_Rnonneg_Rsub_loc {a b : Real} (h : Rnonneg (Rsub b a)) : Rle a b := by
+  intro n
+  refine Qarch_gen (C := 2) (a.den_pos n) (add_den_pos (b.den_pos n) (Nat.succ_pos _)) (fun m => ?_)
+  -- a.seq(2m+1) ≤ b.seq(2m+1) + 1/(m+1)
+  have hh : Qle (neg (Qbound m)) (add (b.seq (2 * m + 1)) (neg (a.seq (2 * m + 1)))) := h m
+  have hba : Qle (a.seq (2 * m + 1)) (add (b.seq (2 * m + 1)) (Qbound m)) := by
+    have h1 := Qadd_le_add (Qle_refl (a.seq (2 * m + 1))) hh
+    have heL : Qeq (add (a.seq (2 * m + 1)) (neg (Qbound m)))
+        (add (a.seq (2 * m + 1)) (neg (Qbound m))) := Qeq_refl _
+    have heR : Qeq (add (a.seq (2 * m + 1)) (add (b.seq (2 * m + 1)) (neg (a.seq (2 * m + 1)))))
+        (b.seq (2 * m + 1)) := by simp only [Qeq, add, neg]; push_cast; ring_uor
+    have h2 : Qle (add (a.seq (2 * m + 1)) (neg (Qbound m))) (b.seq (2 * m + 1)) :=
+      Qle_congr_right (add_den_pos (a.den_pos _)
+        (add_den_pos (b.den_pos _) (neg_den_pos (a.den_pos _)))) heR h1
+    have h3 := Qadd_le_add h2 (Qle_refl (Qbound m))
+    refine Qle_trans (add_den_pos (add_den_pos (a.den_pos _) (neg_den_pos (Qbound_den_pos m)))
+      (Qbound_den_pos m)) (Qeq_le ?_) h3
+    simp only [Qeq, add, neg, Qbound]; push_cast; ring_uor
+  have hregA : Qle (a.seq n) (add (a.seq (2 * m + 1)) (add (Qbound n) (Qbound (2 * m + 1)))) :=
+    Qle_add_of_Qabs_sub (a.den_pos n) (a.den_pos _)
+      (add_den_pos (Qbound_den_pos n) (Qbound_den_pos _)) (a.reg n (2 * m + 1))
+  have hregB : Qle (b.seq (2 * m + 1)) (add (b.seq n) (add (Qbound (2 * m + 1)) (Qbound n))) :=
+    Qle_add_of_Qabs_sub (b.den_pos _) (b.den_pos n)
+      (add_den_pos (Qbound_den_pos _) (Qbound_den_pos n)) (b.reg (2 * m + 1) n)
+  -- chain a.seq n ≤ a(2m+1)+ (1/(n+1)+1/(2m+2)) ≤ (b(2m+1)+1/(m+1)) + … ≤ b.seq n + 2/(n+1) + 2/(m+1)
+  have c1 : Qle (a.seq n) (add (add (b.seq (2 * m + 1)) (Qbound m)) (add (Qbound n) (Qbound (2 * m + 1)))) :=
+    Qle_trans (add_den_pos (a.den_pos _) (add_den_pos (Qbound_den_pos n) (Qbound_den_pos _)))
+      hregA (Qadd_le_add hba (Qle_refl _))
+  have c2 : Qle (a.seq n)
+      (add (add (add (b.seq n) (add (Qbound (2 * m + 1)) (Qbound n))) (Qbound m))
+        (add (Qbound n) (Qbound (2 * m + 1)))) :=
+    Qle_trans (add_den_pos (add_den_pos (b.den_pos _) (Qbound_den_pos m))
+        (add_den_pos (Qbound_den_pos n) (Qbound_den_pos _)))
+      c1 (Qadd_le_add (Qadd_le_add hregB (Qle_refl _)) (Qle_refl _))
+  refine Qle_trans (add_den_pos (add_den_pos (add_den_pos (b.den_pos n)
+      (add_den_pos (Qbound_den_pos _) (Qbound_den_pos n))) (Qbound_den_pos m))
+      (add_den_pos (Qbound_den_pos n) (Qbound_den_pos _))) c2 (Qeq_le ?_)
+  simp only [Qeq, add, Qbound]; push_cast; ring_uor
+
+private theorem Rmul_le_Rmul_left_loc {c a b : Real} (hc : Rnonneg c) (h : Rle a b) :
+    Rle (Rmul c a) (Rmul c b) :=
+  Rle_of_Rnonneg_Rsub_loc (Rnonneg_congr_loc (Rmul_sub_distrib c b a)
+    (Rnonneg_Rmul_loc hc (Rnonneg_Rsub_of_Rle_loc h)))
+
+private theorem Rmul_le_Rmul_right_loc {c a b : Real} (hc : Rnonneg c) (h : Rle a b) :
+    Rle (Rmul a c) (Rmul b c) :=
+  Rle_trans (Rle_of_Req (Rmul_comm a c))
+    (Rle_trans (Rmul_le_Rmul_left_loc hc h) (Rle_of_Req (Rmul_comm c b)))
+
+-- ===========================================================================
+-- The exact q⁻² affine-modulus ATTENUATION (reviewer gate 4): a scalar `x ≤ q` scales the
+-- affine-rescheduled modulus back under the canonical one — `x · M(σ_q j, σ_q k) ≤ M(j,k)`.
+-- ===========================================================================
+
+/-- Abstract core of `M/q ≤ M` for nonnegative `N, D` and `q ≥ 1`: `(1·N)·D ≤ N·(q·D)`. -/
+private theorem div_q_le (N D q : Int) (hN : 0 ≤ N) (hD : 0 ≤ D) (hq : 1 ≤ q) :
+    (1 * N) * D ≤ N * (q * D) := by
+  have h0 : (0 : Int) ≤ N * D := Int.mul_nonneg hN hD
+  have hk := Int.mul_le_mul_of_nonneg_left hq h0
+  have e1 : (1 * N) * D = N * D * 1 := by ring_uor
+  have e2 : N * (q * D) = N * D * q := by ring_uor
+  rw [e1, e2]; exact hk
+
+/-- **The q⁻² attenuation** (reviewer gate 4): for a real `x` with `x ≤ q` and `q ≥ 1`,
+    `x · M(σ_q j, σ_q k) ≤ M(j, k)`  where `σ_q(n) = q(n+1)−1`. Since `M(σ_q j, σ_q k) = M(j,k)/q²`, the
+    bound `x ≤ q` leaves `x·M(σ_q) ≤ q·(M/q²) = M/q ≤ M`. The `q³·X ≤ q⁴·X` core is exposed by the ℚ
+    identity `q·M(σ_q j,σ_q k) ≈ M(j,k)/q` (`ring_uor` after the reschedule denominator `(q(j+1)−1)+1 =
+    q(j+1)`), leaving `M/q ≤ M` (`div_q_le`). This is the scalar-multiplication regularity bridge. -/
+theorem dlimCauchyMod_atten {x : Real} {q : Nat} (hq : 1 ≤ q)
+    (hxq : Rle x (ofQ (⟨(q : Int), 1⟩ : Q) Nat.one_pos)) (j k : Nat) :
+    Rle (Rmul x (dlimCauchyModR (q * (j + 1) - 1) (q * (k + 1) - 1))) (dlimCauchyModR j k) := by
+  refine Rle_trans (Rmul_le_Rmul_right_loc (dlimCauchyMod_nonneg _ _) hxq) ?_
+  unfold dlimCauchyModR
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ_loc _ _)) (Rle_ofQ_of_Qle_loc _ _ ?_)
+  have hdj : (q * (j + 1) - 1) + 1 = q * (j + 1) := by
+    have h : 0 < q * (j + 1) := Nat.mul_pos (by omega) (by omega); omega
+  have hdk : (q * (k + 1) - 1) + 1 = q * (k + 1) := by
+    have h : 0 < q * (k + 1) := Nat.mul_pos (by omega) (by omega); omega
+  refine Qle_trans (b := mul (⟨1, q⟩ : Q)
+      (mul (add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q)) (add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q))))
+    ?hbden ?hqeq ?hle
+  · exact Qmul_den_pos (Nat.lt_of_lt_of_le Nat.zero_lt_one hq)
+      (Qmul_den_pos (add_den_pos (Nat.succ_pos j) (Nat.succ_pos k))
+        (add_den_pos (Nat.succ_pos j) (Nat.succ_pos k)))
+  · exact Qeq_le (by simp only [Qeq, mul, add, hdj, hdk]; push_cast; ring_uor)
+  · simp only [Qle, mul]; push_cast
+    have hSn : (0 : Int) ≤ (1 : Int) * ((k + 1 : Nat) : Int) + 1 * ((j + 1 : Nat) : Int) := by omega
+    have hNN : (0 : Int) ≤ ((1 : Int) * ((k + 1 : Nat) : Int) + 1 * ((j + 1 : Nat) : Int))
+        * ((1 : Int) * ((k + 1 : Nat) : Int) + 1 * ((j + 1 : Nat) : Int)) := Int.mul_nonneg hSn hSn
+    have hAB : (0 : Int) ≤ ((j + 1 : Nat) : Int) * ((k + 1 : Nat) : Int) :=
+      Int.mul_nonneg (by omega) (by omega)
+    have hDD : (0 : Int) ≤ (((j + 1 : Nat) : Int) * ((k + 1 : Nat) : Int))
+        * (((j + 1 : Nat) : Int) * ((k + 1 : Nat) : Int)) := Int.mul_nonneg hAB hAB
+    have hq' : (1 : Int) ≤ (q : Int) := by exact_mod_cast hq
+    exact div_q_le _ _ _ hNN hDD hq'
+
 end UOR.Bridge.F1Square.Square
