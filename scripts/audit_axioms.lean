@@ -8654,6 +8654,20 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.Rle_of_Rnonneg_Rsub_loc
 #print axioms Analysis.Rmul_le_Rmul_left_loc
 #print axioms Analysis.Rmul_le_Rmul_right_loc
+-- COORDINATEWISE COMPLEX-LIMIT CORE (reviewer's named prerequisite for the completed inner product; new
+-- Analysis/ComplexLimitCore.lean, Zeta-free cone = Complete + Complex). Lifts the real completeness engine
+-- (RReg/Rlim/Rlim_tendsTo/RTendsTo_unique) to ℂ coordinatewise. `…Core` suffix keeps leaf names UNIQUE vs
+-- the existing Zeta-tainted Analysis.ComplexLimit (Clim/CReg/…, imports RlimProps→…→Zeta). CRegCore (both
+-- coords regular), ClimCore (pair of real limits), ClimCore_re/ClimCore_im (coordinate projections = rfl),
+-- CTendsToCore, ClimCore_tendsTo (completeness of ℂ), CTendsToCore_unique (limit unique up to Ceq). The
+-- completed inner product ⟨X,Y⟩ := lim ⟨X_n,Y_n⟩ will stand on this.
+#print axioms Analysis.CRegCore
+#print axioms Analysis.ClimCore
+#print axioms Analysis.ClimCore_re
+#print axioms Analysis.ClimCore_im
+#print axioms Analysis.CTendsToCore
+#print axioms Analysis.ClimCore_tendsTo
+#print axioms Analysis.CTendsToCore_unique
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal
