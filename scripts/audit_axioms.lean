@@ -8589,6 +8589,19 @@ open UOR.Bridge.F1Square
 -- (mul_lo_core, Rnonneg_Rmul, the order⇄Bishop bridges, Rmul_ofQ_ofQ, Qneg_le_neg). This is the
 -- scalar-multiplication regularity bridge the scalar action (next) consumes.
 #print axioms Square.dlimCauchyMod_atten
+-- SCALAR MULTIPLICATION (reviewer gate 5): scalarSchedule c := xBound|c|² (choice-free Nat, not the
+-- ∃-witness of cNormSq_nat_bound — it can index a sequence); one_le_scalarSchedule (≥1);
+-- cNormSq_le_scalarSchedule (|c|² ≤ scalarSchedule c, the ∃-free bound). dlimCompletionSmul (the proof-
+-- bearing scalar action, reg via dlimDist2_smul + Rmul_le_Rmul_left_loc + dlimCauchyMod_atten — DIRECTLY
+-- axiom-audited per step 7). sched_comp (σ_r(σ_q(n))=σ_{rq}(n), the common-refinement tool).
+-- dlimCompletionSmul_congr_vec (X≈Y ⟹ c·X≈c·Y). Still open: scalar congruence (c≈c', different schedules)
+-- + the complex-module laws + of_smul.
+#print axioms Square.scalarSchedule
+#print axioms Square.one_le_scalarSchedule
+#print axioms Square.cNormSq_le_scalarSchedule
+#print axioms Square.dlimCompletionSmul
+#print axioms Square.sched_comp
+#print axioms Square.dlimCompletionSmul_congr_vec
 -- CLEAN COMPLEX-ONLY SQUARED-MODULUS CORE (reviewer gate item 3; new Analysis/ComplexNormSqCore.lean,
 -- Zeta-free cone = ComplexCore + RealSquareDefinite only — NOT the ζ-tainted ZeroGeometry.cnormSq, NOT the
 -- heavy ComplexMod): cNormSq z := re²+im², cNormSq_nonneg (sum of squares ≥ 0), and z·conj z = the real

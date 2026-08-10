@@ -1091,4 +1091,81 @@ theorem dlimCauchyMod_atten {x : Real} {q : Nat} (hq : 1 ≤ q)
     have hq' : (1 : Int) ≤ (q : Int) := by exact_mod_cast hq
     exact div_q_le _ _ _ hNN hDD hq'
 
+-- ===========================================================================
+-- SCALAR MULTIPLICATION on completion members (reviewer gate 5). The reschedule factor
+-- is the choice-free `scalarSchedule c := xBound |c|²`; regularity chains distance-scaling,
+-- `X.reg`, and the q⁻² attenuation.
+-- ===========================================================================
+
+/-- **The choice-free scalar reschedule factor** for `c`: `xBound |c|²` (always `≥ 1`). Being a concrete
+    `Nat`-valued function of `c` (not an existential witness), it can index a completion sequence. -/
+def scalarSchedule (c : Complex) : Nat := xBound (cNormSq c)
+
+/-- `scalarSchedule c ≥ 1` (`xBound` is always positive). -/
+theorem one_le_scalarSchedule (c : Complex) : 1 ≤ scalarSchedule c := xBound_pos (cNormSq c)
+
+/-- `|c|² ≤ scalarSchedule c` — the choice-free scalar-magnitude bound (the `∃`-free companion of
+    `cNormSq_nat_bound`, with the witness `xBound |c|²` exposed). -/
+theorem cNormSq_le_scalarSchedule (c : Complex) :
+    Rle (cNormSq c) (ofQ (⟨(scalarSchedule c : Int), 1⟩ : Q) Nat.one_pos) := by
+  intro n
+  show Qle ((cNormSq c).seq n) (add (⟨(scalarSchedule c : Int), 1⟩ : Q) ⟨2, n + 1⟩)
+  have h1 : Qle ((cNormSq c).seq n) (Qabs ((cNormSq c).seq n)) := by
+    show ((cNormSq c).seq n).num * ((Qabs ((cNormSq c).seq n)).den : Int)
+      ≤ (Qabs ((cNormSq c).seq n)).num * (((cNormSq c).seq n).den : Int)
+    simp only [Qabs]
+    exact Int.mul_le_mul_of_nonneg_right Int.le_natAbs (by omega)
+  have h2 : Qle (Qabs ((cNormSq c).seq n)) (⟨(scalarSchedule c : Int), 1⟩ : Q) :=
+    canon_bound (cNormSq c) n
+  have h3 : Qle (⟨(scalarSchedule c : Int), 1⟩ : Q)
+      (add (⟨(scalarSchedule c : Int), 1⟩ : Q) ⟨2, n + 1⟩) :=
+    Qle_self_add (by show (0 : Int) ≤ 2; decide)
+  have h23 := Qle_trans (b := (⟨(scalarSchedule c : Int), 1⟩ : Q))
+    (by show (0 : Nat) < 1; decide) h2 h3
+  exact Qle_trans (b := Qabs ((cNormSq c).seq n)) ((cNormSq c).den_pos n) h1 h23
+
+/-- **SCALAR MULTIPLICATION** of a completion member (reviewer gate 5): `c · X`, rescheduled by
+    `σ_{scalarSchedule c}` so the `|c|²`-inflation is attenuated back under the canonical modulus.
+    Regular because `‖c·X_{σj} − c·X_{σk}‖² = |c|²·‖X_{σj} − X_{σk}‖² ≤ |c|²·M(σj,σk) ≤ M(j,k)`
+    (distance scaling + `X.reg` + `dlimCauchyMod_atten`, with `|c|² ≤ scalarSchedule c`). -/
+def dlimCompletionSmul (c : Complex) (X : DLimCompletionRaw) : DLimCompletionRaw :=
+  ⟨fun n => dlimSmul c (X.seq (scalarSchedule c * (n + 1) - 1)),
+   fun j k =>
+     Rle_trans (Rle_of_Req (dlimDist2_smul c (X.seq (scalarSchedule c * (j + 1) - 1))
+       (X.seq (scalarSchedule c * (k + 1) - 1))))
+       (Rle_trans (Rmul_le_Rmul_left_loc (cNormSq_nonneg c)
+         (X.reg (scalarSchedule c * (j + 1) - 1) (scalarSchedule c * (k + 1) - 1)))
+         (dlimCauchyMod_atten (one_le_scalarSchedule c) (cNormSq_le_scalarSchedule c) j k))⟩
+
+/-- **Schedule composition** (reviewer gate 5): `σ_r(σ_q(n)) = σ_{r·q}(n)` — composing affine reschedules
+    multiplies their factors. The tool for the common-refinement congruence. -/
+theorem sched_comp (q r n : Nat) (hq : 1 ≤ q) :
+    r * ((q * (n + 1) - 1) + 1) - 1 = (r * q) * (n + 1) - 1 := by
+  have h1 : (q * (n + 1) - 1) + 1 = q * (n + 1) := by
+    have : 0 < q * (n + 1) := Nat.mul_pos (by omega) (by omega); omega
+  rw [h1, Nat.mul_assoc]
+
+/-- **Vector congruence** of scalar multiplication (reviewer gate 6): `X ≈ Y ⟹ c·X ≈ c·Y`. Same
+    reschedule, so `‖c·X_σn − c·Y_σn‖² = |c|²·‖X_σn − Y_σn‖² ≤ (scalarSchedule c)·‖X_σn − Y_σn‖²`, and
+    driving `‖X_σn − Y_σn‖² ≤ 1/(B(k+1))` (level `B(k+1)−1`, `B = scalarSchedule c`) collapses the `B`. -/
+theorem dlimCompletionSmul_congr_vec {c : Complex} {X Y : DLimCompletionRaw}
+    (h : DLimCompletionEq X Y) :
+    DLimCompletionEq (dlimCompletionSmul c X) (dlimCompletionSmul c Y) := by
+  intro k
+  obtain ⟨N, hN⟩ := h (scalarSchedule c * (k + 1) - 1)
+  refine ⟨N, fun n hn => ?_⟩
+  have hσ : N ≤ scalarSchedule c * (n + 1) - 1 :=
+    Nat.le_trans hn (sched_ge (one_le_scalarSchedule c) n)
+  refine Rle_trans (Rle_of_Req (dlimDist2_smul c (X.seq (scalarSchedule c * (n + 1) - 1))
+    (Y.seq (scalarSchedule c * (n + 1) - 1)))) ?_
+  refine Rle_trans (Rmul_le_Rmul_right_loc (dlimDist2_nonneg _ _) (cNormSq_le_scalarSchedule c)) ?_
+  refine Rle_trans (Rmul_le_Rmul_left_loc
+    (Rnonneg_ofQ_loc Nat.one_pos (by show (0 : Int) ≤ (scalarSchedule c : Int); omega))
+    (hN (scalarSchedule c * (n + 1) - 1) hσ)) ?_
+  refine Rle_trans (Rle_of_Req (Rmul_ofQ_ofQ_loc _ _)) (Rle_ofQ_of_Qle_loc _ _ ?_)
+  have h1 : (scalarSchedule c * (k + 1) - 1) + 1 = scalarSchedule c * (k + 1) := by
+    have : 0 < scalarSchedule c * (k + 1) :=
+      Nat.mul_pos (one_le_scalarSchedule c) (by omega); omega
+  exact Qeq_le (by simp only [Qeq, mul, h1]; push_cast; ring_uor)
+
 end UOR.Bridge.F1Square.Square
