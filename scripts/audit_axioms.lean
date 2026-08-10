@@ -8573,6 +8573,14 @@ open UOR.Bridge.F1Square
 -- + dlimResched_eq (X ≈ X_{σ_q(n)}; threshold n≥4k+3 independent of q, via mono + diagonal decay).
 #print axioms Square.dlimResched
 #print axioms Square.dlimResched_eq
+-- CLEAN COMPLEX-ONLY SQUARED-MODULUS CORE (reviewer gate item 3; new Analysis/ComplexNormSqCore.lean,
+-- Zeta-free cone = ComplexCore + RealSquareDefinite only — NOT the ζ-tainted ZeroGeometry.cnormSq, NOT the
+-- heavy ComplexMod): cNormSq z := re²+im², cNormSq_nonneg (sum of squares ≥ 0), and z·conj z = the real
+-- scalar |z|²: Cmul_Cconj_re (Re = |z|²) + Cmul_Cconj_im (Im = 0). Feeds the scalar-mult ‖c·v‖²≈|c|²‖v‖².
+#print axioms Analysis.cNormSq
+#print axioms Analysis.cNormSq_nonneg
+#print axioms Analysis.Cmul_Cconj_re
+#print axioms Analysis.Cmul_Cconj_im
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal
