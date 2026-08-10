@@ -8553,6 +8553,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.DLimCompletionEq_symm
 #print axioms Square.DLimCompletionEq_trans
 #print axioms Square.DLimCompletionEq_of
+-- EMBEDDING REFLECTION / INJECTIVITY (reviewer gate 1): DLimCompletionEq_of_iff (of a ≈ of b ↔ a ≈ b) —
+-- the constant map `of` is injective mod the two setoids (forward via the Archimedean squeeze
+-- Req_zero_of_nonneg_of_small + the norm-null equivalence dlimDist2_zero_iff). Isometry/density remain
+-- separate & OPEN; `of` is downgraded in-source from "isometric dense embedding" to injective map.
+#print axioms Square.DLimCompletionEq_of_iff
 -- RESCHEDULED OPERATIONS (gate item 8, first two): dlimCompletionNeg/_congr (negation preserves the
 -- modulus outright) and dlimCompletionAdd/_congr (RESCHEDULED n↦2n+1 so the quasi-triangle's factor-4 is
 -- cancelled by dlimCauchyMod_halve : 4·M(2j+1,2k+1) ≈ M(j,k)); both preserve regularity AND equivalence.

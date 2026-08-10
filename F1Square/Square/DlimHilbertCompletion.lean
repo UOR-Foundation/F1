@@ -2,7 +2,7 @@
 F1 square — **the ℓ² completion of the finite-support direct limit: the analytic substrate**
 (`DlimHilbertCompletion.lean`, phase 1). This is the CANDIDATE-INDEPENDENT genuine-completion layer the
 operator contract demands: it consumes ONLY `FinDirectLimit` (the finite-support direct-limit pre-Hilbert
-carrier `DLimRaw`/`dlimInner`) and builds the metric substrate on which the ℓ² completion, the maximal
+carrier `DLimRaw`/`dlimInner`) and builds the squared-distance substrate on which the ℓ² completion, the maximal
 weighted domain, and the self-adjoint diagonal operator will stand. It imports NO block-ladder, NO Atlas
 candidate, NO nominal HP predicate, NO zeta/crux module.
 
@@ -14,7 +14,7 @@ WHAT IS BUILT HERE (the analytic substrate — genuine, representative-independe
 - NONNEGATIVITY (`dlimNormSq_nonneg`/`dlimDist2_nonneg`, from `dlimInner_self_nonneg`) and the
   SELF-DISTANCE `dlimDist2_self` (`‖a − a‖² ≈ 0`).
 - The NORM-NULL EQUIVALENCE `dlimDist2_zero_iff` : `‖a − b‖² ≈ 0 ↔ a ≈ b` — the definiteness that makes
-  the completion metric genuine (via `dlimInner_self_definite` and a colimit group-cancellation
+  the completion's squared-distance gauge definite (via `dlimInner_self_definite` and a colimit group-cancellation
   `dlimEq_of_sub_zero`).
 - The (squared) CAUCHY relation `DLimCauchyU` : a sequence is Cauchy when `‖x_j − x_k‖²` is bounded by
   the squared canonical modulus `(1/(j+1) + 1/(k+1))²` — the ψ-free squared-Cauchy shape the completion
@@ -108,7 +108,8 @@ theorem dlimEq_of_sub_zero {a b : DLimRaw} (h : DLimEq (dlimSub a b) dlimZero) :
       (DLimEq_trans (DLimEq_symm (dlimAdd_assoc a (dlimNeg b) b))
         (DLimEq_trans (dlimAdd_wd h (DLimEq_refl b)) (dlimZero_add b))))
 
-/-- **THE NORM-NULL EQUIVALENCE** — the definiteness of the completion metric: `‖a − b‖² ≈ 0 ↔ a ≈ b`.
+/-- **THE NORM-NULL EQUIVALENCE** — the definiteness of the completion's squared-distance gauge (NOT a
+    metric — `dlimDist2` is squared, only a quasi-triangle holds): `‖a − b‖² ≈ 0 ↔ a ≈ b`.
     Forward: a vanishing squared norm gives `⟨a−b, a−b⟩ ≈ 0` (real part `0` + imaginary part `0`), then
     `dlimInner_self_definite` gives `a − b ≈ 0`, then group cancellation gives `a ≈ b`. Backward:
     `dlimDist2_wd` + `dlimDist2_self`. -/
@@ -400,7 +401,7 @@ theorem DLimCauchyU_congr {x y : Nat → DLimRaw} (h : ∀ j, DLimEq (x j) (y j)
 
 -- ===========================================================================
 -- The completion raw carrier, its norm-null equivalence, the Setoid, and the
--- constant embedding (gate items 4–7).
+-- constant-sequence map + its injective reflection (gate items 4–7).
 -- ===========================================================================
 
 /-- **The completion raw carrier** (gate item 4): a Cauchy sequence of finite-support vectors together
@@ -461,17 +462,45 @@ instance dlimCompletionSetoid : Setoid DLimCompletionRaw where
   iseqv := ⟨DLimCompletionEq_refl, fun h => DLimCompletionEq_symm h,
     fun h₁ h₂ => DLimCompletionEq_trans h₁ h₂⟩
 
-/-- **The constant (isometric dense) embedding** `DLimRaw ↪ completion` (gate item 7): a finite-support
-    vector as the constant Cauchy sequence. -/
+/-- **The constant-sequence map** `DLimRaw → completion` (gate item 7): a finite-support vector as the
+    constant Cauchy sequence. This is the underlying MAP only. Its INJECTIVITY (equality reflection) is
+    `DLimCompletionEq_of_iff` below; the completed-distance ISOMETRY and DENSITY are separate theorems,
+    still OPEN (they need the completed inner product). So this is **not yet** an isometric dense
+    embedding — it is a well-defined, injective (mod the setoids) map into the completion carrier. -/
 def DLimCompletionRaw.of (a : DLimRaw) : DLimCompletionRaw :=
   ⟨fun _ => a, DLimCauchyU_const a⟩
 
-/-- The embedding respects the colimit setoid: `a ≈ b ⟹ of a ≈ of b`. -/
+/-- The map respects the colimit setoid: `a ≈ b ⟹ of a ≈ of b` (the forward/`←` half of reflection). -/
 theorem DLimCompletionEq_of {a b : DLimRaw} (h : DLimEq a b) :
     DLimCompletionEq (DLimCompletionRaw.of a) (DLimCompletionRaw.of b) :=
   fun k => ⟨0, fun n _ => Rle_trans
     (Rle_of_Req (Req_trans (dlimDist2_wd (DLimEq_refl a) (DLimEq_symm h)) (dlimDist2_self a)))
     (Rle_zero_of_Rnonneg (Rnonneg_ofQ_loc (Nat.succ_pos k) (by show (0 : Int) ≤ 1; decide)))⟩
+
+/-- **Archimedean squeeze**: a nonnegative real that is `≤ 1/(k+1)` for every `k` is `≈ 0`. Proved by
+    antisymmetry — `x ≥ 0` from nonnegativity, and `x ≤ 0` because `x ≤ 1/(k+1) + 2/(n+1)` for all `k` at
+    each index `n`, and `Qarch_gen` kills the `1/(k+1)` tail. -/
+private theorem Req_zero_of_nonneg_of_small {x : Real} (hnn : Rnonneg x)
+    (hall : ∀ k : Nat, Rle x (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))) : Req x zero := by
+  refine Rle_antisymm ?_ (Rle_zero_of_Rnonneg hnn)
+  intro n
+  refine Qarch_gen (C := 1) (x.den_pos n) (add_den_pos (zero.den_pos n) (Nat.succ_pos n)) (fun k => ?_)
+  have hb : Qle (x.seq n) (add (⟨1, k + 1⟩ : Q) (⟨2, n + 1⟩ : Q)) := hall k n
+  refine Qle_congr_right (add_den_pos (Nat.succ_pos k) (Nat.succ_pos n)) ?_ hb
+  simp only [Qeq, add, zero_seq]; push_cast; ring_uor
+
+/-- **EMBEDDING REFLECTION / INJECTIVITY** (reviewer gate 1): `of a ≈ of b ↔ a ≈ b`. The map `of` is
+    therefore injective modulo the two setoids. Forward: `of a ≈ of b` bounds the (constant) squared
+    distance `‖a − b‖²` below every `1/(k+1)`, so it is `≈ 0` (the Archimedean squeeze), whence `a ≈ b`
+    by the norm-null equivalence `dlimDist2_zero_iff`. Backward: `DLimCompletionEq_of`. -/
+theorem DLimCompletionEq_of_iff (a b : DLimRaw) :
+    DLimCompletionEq (DLimCompletionRaw.of a) (DLimCompletionRaw.of b) ↔ DLimEq a b := by
+  refine ⟨fun h => ?_, DLimCompletionEq_of⟩
+  have hall : ∀ k : Nat, Rle (dlimDist2 a b) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k)) := by
+    intro k
+    obtain ⟨N, hN⟩ := h k
+    exact hN N (Nat.le_refl N)
+  exact (dlimDist2_zero_iff a b).mp (Req_zero_of_nonneg_of_small (dlimDist2_nonneg a b) hall)
 
 -- ===========================================================================
 -- Rescheduled operations on completion members (gate item 8): NEGATION and ADDITION.
