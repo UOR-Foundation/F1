@@ -1195,4 +1195,166 @@ theorem dlimCompletionSmul_congr_scalar {c c' : Complex} {X : DLimCompletionRaw}
   rw [hAB]
   exact dlimSmul_wd hc (DLimEq_refl _)
 
+/-- **Combined (two-argument) congruence** of scalar multiplication: `c ≈ c'` and `X ≈ Y` together give
+    `c·X ≈ c'·Y`. Compose the vector congruence (`c·X ≈ c·Y`) with the scalar congruence (`c·Y ≈ c'·Y`). -/
+theorem dlimCompletionSmul_congr {c c' : Complex} {X Y : DLimCompletionRaw}
+    (hc : Ceq c c') (hXY : DLimCompletionEq X Y) :
+    DLimCompletionEq (dlimCompletionSmul c X) (dlimCompletionSmul c' Y) :=
+  DLimCompletionEq_trans (dlimCompletionSmul_congr_vec hXY) (dlimCompletionSmul_congr_scalar hc)
+
+-- ===========================================================================
+-- COMPLEX-MODULE LAWS on the completion (reviewer gate 6). Each law bridges its two sides — which carry
+-- DIFFERENT reschedule factors — by a common affine refinement, applying the raw colimit scalar law
+-- (`dlimSmul_one` / `dlimZero_smul` / `dlimSmul_zero` / `dlimSmul_dlimAdd` / `dlimSmul_Cadd` /
+-- `dlimSmul_assoc`) stagewise at the aligned index. No completed-inner-product estimates are used.
+-- ===========================================================================
+
+/-- **The reschedule-alignment combinator**: to prove `Z1 ≈ Z2` it suffices to give affine factors `α,β ≥ 1`
+    and a stagewise `DLimEq` between `Z1` rescheduled by `α` and `Z2` rescheduled by `β` — cofinal
+    invariance (`dlimResched_eq`) bridges each side to its reschedule. This is the workhorse for the module
+    laws whose two sides only agree after a common refinement of their scalar schedules. -/
+private theorem completion_eq_via_resched {Z1 Z2 : DLimCompletionRaw} {α β : Nat}
+    (hα : 1 ≤ α) (hβ : 1 ≤ β)
+    (h : ∀ n, DLimEq (Z1.seq (α * (n + 1) - 1)) (Z2.seq (β * (n + 1) - 1))) :
+    DLimCompletionEq Z1 Z2 :=
+  DLimCompletionEq_trans (dlimResched_eq α hα Z1)
+    (DLimCompletionEq_trans
+      (DLimCompletionEq_of_pointwise (X := dlimResched α hα Z1) (Y := dlimResched β hβ Z2) h)
+      (DLimCompletionEq_symm (dlimResched_eq β hβ Z2)))
+
+/-- **`1·X ≈ X`** (`one_smul`). Stagewise `dlimSmul_one` gives `Cone·X ≈ X_{σ_B}`; cofinal invariance closes. -/
+theorem dlimCompletionSmul_one (X : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionSmul Cone X) X :=
+  DLimCompletionEq_trans (Y := dlimResched (scalarSchedule Cone) (one_le_scalarSchedule Cone) X)
+    (DLimCompletionEq_of_pointwise
+      (fun n => dlimSmul_one (X.seq (scalarSchedule Cone * (n + 1) - 1))))
+    (DLimCompletionEq_symm (dlimResched_eq (scalarSchedule Cone) (one_le_scalarSchedule Cone) X))
+
+/-- **`0·X ≈ 0`** (`zero_smul`). Stagewise `dlimZero_smul`; the completion zero is the constant `0`. -/
+theorem dlimCompletionZero_smul (X : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionSmul Czero X) dlimCompletionZero :=
+  DLimCompletionEq_of_pointwise
+    (fun n => dlimZero_smul (X.seq (scalarSchedule Czero * (n + 1) - 1)))
+
+/-- **`c·0 ≈ 0`** (`smul_zero`). Stagewise `dlimSmul_zero` (the reschedule of the constant `0` is `0`). -/
+theorem dlimCompletionSmul_zero (c : Complex) :
+    DLimCompletionEq (dlimCompletionSmul c dlimCompletionZero) dlimCompletionZero :=
+  DLimCompletionEq_of_pointwise (fun _ => dlimSmul_zero c)
+
+/-- **`of` commutes with scalar multiplication** (`of_smul`): `c · (of a) ≈ of (c·a)`. Both sides are the
+    constant sequence `c·a` (a reschedule of a constant is itself), so this is stagewise reflexivity. -/
+theorem DLimCompletionEq_of_smul (c : Complex) (a : DLimRaw) :
+    DLimCompletionEq (dlimCompletionSmul c (DLimCompletionRaw.of a))
+      (DLimCompletionRaw.of (dlimSmul c a)) :=
+  DLimCompletionEq_of_pointwise (fun _ => DLimEq_refl (dlimSmul c a))
+
+/-- **`c·(X + Y) ≈ c·X + c·Y`** (`smul_add`). Both sides are stagewise equal at index `n` after matching the
+    two composed schedules `σ_2 ∘ σ_{B_c}` and `σ_{B_c} ∘ σ_2` (which share the factor `2·B_c`), then applying
+    the raw distributivity `dlimSmul_dlimAdd`. -/
+theorem dlimCompletionSmul_add (c : Complex) (X Y : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionSmul c (dlimCompletionAdd X Y))
+      (dlimCompletionAdd (dlimCompletionSmul c X) (dlimCompletionSmul c Y)) :=
+  DLimCompletionEq_of_pointwise (fun n => by
+    show DLimEq
+      (dlimSmul c (dlimAdd (X.seq (2 * (scalarSchedule c * (n + 1) - 1) + 1))
+        (Y.seq (2 * (scalarSchedule c * (n + 1) - 1) + 1))))
+      (dlimAdd (dlimSmul c (X.seq (scalarSchedule c * ((2 * n + 1) + 1) - 1)))
+        (dlimSmul c (Y.seq (scalarSchedule c * ((2 * n + 1) + 1) - 1))))
+    have hpos : 0 < scalarSchedule c * (n + 1) :=
+      Nat.mul_pos (one_le_scalarSchedule c) (Nat.succ_pos n)
+    have e0 : (2 * n + 1) + 1 = 2 * (n + 1) := by omega
+    have e1 : scalarSchedule c * ((2 * n + 1) + 1) = 2 * (scalarSchedule c * (n + 1)) := by
+      rw [e0, Nat.mul_left_comm]
+    have key : 2 * (scalarSchedule c * (n + 1) - 1) + 1 = scalarSchedule c * ((2 * n + 1) + 1) - 1 := by
+      rw [e1]; omega
+    rw [key]
+    exact dlimSmul_dlimAdd c (X.seq (scalarSchedule c * ((2 * n + 1) + 1) - 1))
+      (Y.seq (scalarSchedule c * ((2 * n + 1) + 1) - 1)))
+
+/-- **`(c + d)·X ≈ c·X + d·X`** (`add_smul`). The two summands `c·X`, `d·X` carry different factors `B_c`,
+    `B_d`; reschedule each so both use `B_c·B_d` (`dlimCompletionAdd_congr` + cofinal invariance), landing
+    their colimit vectors at a COMMON index, where the raw `dlimSmul_Cadd` recombines `c·v + d·v` into
+    `(c+d)·v`. A final common refinement (`completion_eq_via_resched`) matches that against `(c+d)·X`. -/
+theorem dlimCompletionSmul_Cadd (c d : Complex) (X : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionSmul (Cadd c d) X)
+      (dlimCompletionAdd (dlimCompletionSmul c X) (dlimCompletionSmul d X)) := by
+  have hq_c : 1 ≤ scalarSchedule c := one_le_scalarSchedule c
+  have hq_d : 1 ≤ scalarSchedule d := one_le_scalarSchedule d
+  have hq_s : 1 ≤ scalarSchedule (Cadd c d) := one_le_scalarSchedule (Cadd c d)
+  refine DLimCompletionEq_trans ?_
+    (DLimCompletionEq_symm (dlimCompletionAdd_congr
+      (dlimResched_eq (scalarSchedule d) hq_d (dlimCompletionSmul c X))
+      (dlimResched_eq (scalarSchedule c) hq_c (dlimCompletionSmul d X))))
+  refine completion_eq_via_resched (α := 2 * (scalarSchedule c * scalarSchedule d))
+    (β := scalarSchedule (Cadd c d))
+    (Nat.mul_pos (by omega) (Nat.mul_pos hq_c hq_d)) hq_s (fun n => ?_)
+  dsimp only [dlimCompletionSmul, dlimCompletionAdd, dlimResched, DLimCompletionRaw.seq]
+  have hP : 0 < scalarSchedule (Cadd c d) * (n + 1) := Nat.mul_pos hq_s (Nat.succ_pos n)
+  have e1 : 2 * (scalarSchedule (Cadd c d) * (n + 1) - 1) + 1 + 1
+      = 2 * (scalarSchedule (Cadd c d) * (n + 1)) := by omega
+  have e3 : 2 * (scalarSchedule c * scalarSchedule d) * (n + 1) - 1 + 1
+      = 2 * (scalarSchedule c * scalarSchedule d) * (n + 1) := by
+    have : 0 < 2 * (scalarSchedule c * scalarSchedule d) * (n + 1) :=
+      Nat.mul_pos (Nat.mul_pos (by omega) (Nat.mul_pos hq_c hq_d)) (Nat.succ_pos n)
+    omega
+  have hA : scalarSchedule c *
+        (scalarSchedule d * (2 * (scalarSchedule (Cadd c d) * (n + 1) - 1) + 1 + 1) - 1 + 1) - 1
+      = scalarSchedule (Cadd c d) *
+        (2 * (scalarSchedule c * scalarSchedule d) * (n + 1) - 1 + 1) - 1 := by
+    rw [e1]
+    have e2 : scalarSchedule d * (2 * (scalarSchedule (Cadd c d) * (n + 1))) - 1 + 1
+        = scalarSchedule d * (2 * (scalarSchedule (Cadd c d) * (n + 1))) := by
+      have : 0 < scalarSchedule d * (2 * (scalarSchedule (Cadd c d) * (n + 1))) :=
+        Nat.mul_pos hq_d (Nat.mul_pos (by omega) hP)
+      omega
+    rw [e2, e3,
+      show scalarSchedule c * (scalarSchedule d * (2 * (scalarSchedule (Cadd c d) * (n + 1))))
+         = scalarSchedule (Cadd c d) * (2 * (scalarSchedule c * scalarSchedule d) * (n + 1)) from by
+        ac_rfl]
+  have hB : scalarSchedule d *
+        (scalarSchedule c * (2 * (scalarSchedule (Cadd c d) * (n + 1) - 1) + 1 + 1) - 1 + 1) - 1
+      = scalarSchedule (Cadd c d) *
+        (2 * (scalarSchedule c * scalarSchedule d) * (n + 1) - 1 + 1) - 1 := by
+    rw [e1]
+    have e2 : scalarSchedule c * (2 * (scalarSchedule (Cadd c d) * (n + 1))) - 1 + 1
+        = scalarSchedule c * (2 * (scalarSchedule (Cadd c d) * (n + 1))) := by
+      have : 0 < scalarSchedule c * (2 * (scalarSchedule (Cadd c d) * (n + 1))) :=
+        Nat.mul_pos hq_c (Nat.mul_pos (by omega) hP)
+      omega
+    rw [e2, e3,
+      show scalarSchedule d * (scalarSchedule c * (2 * (scalarSchedule (Cadd c d) * (n + 1))))
+         = scalarSchedule (Cadd c d) * (2 * (scalarSchedule c * scalarSchedule d) * (n + 1)) from by
+        ac_rfl]
+  rw [hA, hB]
+  exact dlimSmul_Cadd c d (X.seq (scalarSchedule (Cadd c d) *
+    (2 * (scalarSchedule c * scalarSchedule d) * (n + 1) - 1 + 1) - 1))
+
+/-- **`c·(d·X) ≈ (c·d)·X`** (`smul_assoc`). After a common refinement of the three factors `B_c`, `B_d`,
+    `B_{cd}`, the raw `dlimSmul_assoc` collapses the nested scaling `c·(d·v)` to `(c·d)·v` at the aligned
+    colimit vector; `sched_comp` + `ac_rfl` match the composed schedules. -/
+theorem dlimCompletionSmul_assoc (c d : Complex) (X : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionSmul c (dlimCompletionSmul d X))
+      (dlimCompletionSmul (Cmul c d) X) := by
+  have hq_c : 1 ≤ scalarSchedule c := one_le_scalarSchedule c
+  have hq_e : 1 ≤ scalarSchedule (Cmul c d) := one_le_scalarSchedule (Cmul c d)
+  have hβ : 1 ≤ scalarSchedule d * scalarSchedule c :=
+    Nat.mul_pos (one_le_scalarSchedule d) hq_c
+  refine completion_eq_via_resched (α := scalarSchedule (Cmul c d))
+    (β := scalarSchedule d * scalarSchedule c) hq_e hβ (fun n => ?_)
+  refine DLimEq_trans (dlimSmul_assoc c d
+    (X.seq (scalarSchedule d * ((scalarSchedule c *
+      ((scalarSchedule (Cmul c d) * (n + 1) - 1) + 1) - 1) + 1) - 1))) ?_
+  have hidx : scalarSchedule d * ((scalarSchedule c *
+        ((scalarSchedule (Cmul c d) * (n + 1) - 1) + 1) - 1) + 1) - 1
+      = scalarSchedule (Cmul c d) *
+        (((scalarSchedule d * scalarSchedule c) * (n + 1) - 1) + 1) - 1 := by
+    rw [sched_comp (scalarSchedule (Cmul c d)) (scalarSchedule c) n hq_e,
+        sched_comp (scalarSchedule c * scalarSchedule (Cmul c d)) (scalarSchedule d) n
+          (Nat.mul_pos hq_c hq_e),
+        sched_comp (scalarSchedule d * scalarSchedule c) (scalarSchedule (Cmul c d)) n hβ,
+        show scalarSchedule d * (scalarSchedule c * scalarSchedule (Cmul c d))
+           = scalarSchedule (Cmul c d) * (scalarSchedule d * scalarSchedule c) from by ac_rfl]
+  rw [hidx]
+  exact DLimEq_refl _
+
 end UOR.Bridge.F1Square.Square

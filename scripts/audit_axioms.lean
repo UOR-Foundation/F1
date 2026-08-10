@@ -8598,7 +8598,13 @@ open UOR.Bridge.F1Square
 -- the reschedule/common-refinement route: reschedule c·X by scalarSchedule c' and c'·X by scalarSchedule c,
 -- align both at σ_{qr} via sched_comp + Nat.mul_comm, close stagewise with dlimSmul_wd hc; NO scalar-diff
 -- estimate). Together vec+scalar congruence = dlimCompletionSmul is a WELL-DEFINED complex-scalar-setoid
--- action. Still open: the complex-module laws + of_smul.
+-- action. dlimCompletionSmul_congr (combined two-argument congruence c≈c' ∧ X≈Y ⟹ c·X≈c'·Y).
+-- COMPLEX-MODULE LAWS (reviewer gate 6, all via the common-refinement combinator + the raw colimit scalar
+-- laws applied stagewise): dlimCompletionSmul_one (1·X≈X), dlimCompletionZero_smul (0·X≈0),
+-- dlimCompletionSmul_zero (c·0≈0), DLimCompletionEq_of_smul (of-homomorphism c·of a ≈ of(c·a)),
+-- dlimCompletionSmul_add (c·(X+Y)≈c·X+c·Y), dlimCompletionSmul_Cadd ((c+d)·X≈c·X+d·X),
+-- dlimCompletionSmul_assoc (c·(d·X)≈(cd)·X). With these seven laws closed, the completion carrier is a
+-- complex-module modulo the completion setoid. Still downstream: the completed inner product / completeness.
 #print axioms Square.scalarSchedule
 #print axioms Square.one_le_scalarSchedule
 #print axioms Square.cNormSq_le_scalarSchedule
@@ -8606,6 +8612,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.sched_comp
 #print axioms Square.dlimCompletionSmul_congr_vec
 #print axioms Square.dlimCompletionSmul_congr_scalar
+#print axioms Square.dlimCompletionSmul_congr
+#print axioms Square.dlimCompletionSmul_one
+#print axioms Square.dlimCompletionZero_smul
+#print axioms Square.dlimCompletionSmul_zero
+#print axioms Square.DLimCompletionEq_of_smul
+#print axioms Square.dlimCompletionSmul_add
+#print axioms Square.dlimCompletionSmul_Cadd
+#print axioms Square.dlimCompletionSmul_assoc
 -- CLEAN COMPLEX-ONLY SQUARED-MODULUS CORE (reviewer gate item 3; new Analysis/ComplexNormSqCore.lean,
 -- Zeta-free cone = ComplexCore + RealSquareDefinite only — NOT the ζ-tainted ZeroGeometry.cnormSq, NOT the
 -- heavy ComplexMod): cNormSq z := re²+im², cNormSq_nonneg (sum of squares ≥ 0), and z·conj z = the real
