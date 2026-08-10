@@ -473,4 +473,120 @@ theorem DLimCompletionEq_of {a b : DLimRaw} (h : DLimEq a b) :
     (Rle_of_Req (Req_trans (dlimDist2_wd (DLimEq_refl a) (DLimEq_symm h)) (dlimDist2_self a)))
     (Rle_zero_of_Rnonneg (Rnonneg_ofQ_loc (Nat.succ_pos k) (by show (0 : Int) ≤ 1; decide)))⟩
 
+-- ===========================================================================
+-- Rescheduled operations on completion members (gate item 8): NEGATION and ADDITION.
+-- Negation preserves the modulus outright; addition RESCHEDULES `n ↦ 2n+1` so the
+-- factor-4 of the quasi-triangle is cancelled by `M(2j+1,2k+1) = ¼·M(j,k)`.
+-- ===========================================================================
+
+/-- Group cancellation `(a+c) − (b+c) ≈ a − b`. -/
+private theorem dlimAdd_sub_cancel_right (a b c : DLimRaw) :
+    DLimEq (dlimSub (dlimAdd a c) (dlimAdd b c)) (dlimSub a b) :=
+  DLimEq_trans (dlimAdd_wd (DLimEq_refl (dlimAdd a c)) (dlimNeg_dlimAdd b c))
+    (DLimEq_trans (dlimAdd_assoc a c (dlimAdd (dlimNeg b) (dlimNeg c)))
+      (dlimAdd_wd (DLimEq_refl a)
+        (DLimEq_trans (dlimAdd_wd (DLimEq_refl c) (dlimAdd_comm (dlimNeg b) (dlimNeg c)))
+          (DLimEq_trans (DLimEq_symm (dlimAdd_assoc c (dlimNeg c) (dlimNeg b)))
+            (DLimEq_trans (dlimAdd_wd (dlimAdd_neg c) (DLimEq_refl (dlimNeg b)))
+              (dlimZero_add (dlimNeg b)))))))
+
+/-- Group cancellation `(c+a) − (c+b) ≈ a − b`. -/
+private theorem dlimAdd_sub_cancel_left (a b c : DLimRaw) :
+    DLimEq (dlimSub (dlimAdd c a) (dlimAdd c b)) (dlimSub a b) :=
+  DLimEq_trans (dlimSub_wd (dlimAdd_comm c a) (dlimAdd_comm c b)) (dlimAdd_sub_cancel_right a b c)
+
+/-- `‖(−a) − (−b)‖² ≈ ‖a − b‖²`. -/
+private theorem dlimDist2_neg_neg (a b : DLimRaw) :
+    Req (dlimDist2 (dlimNeg a) (dlimNeg b)) (dlimDist2 a b) :=
+  Req_trans (dlimNormSq_wd
+      (DLimEq_trans (dlimAdd_wd (DLimEq_refl (dlimNeg a)) (dlimNeg_dlimNeg b))
+        (dlimAdd_comm (dlimNeg a) b)))
+    (dlimDist2_symm b a)
+
+/-- `‖(a+c) − (b+c)‖² ≈ ‖a − b‖²` and `‖(c+a) − (c+b)‖² ≈ ‖a − b‖²`. -/
+private theorem dlimDist2_add_right (a b c : DLimRaw) :
+    Req (dlimDist2 (dlimAdd a c) (dlimAdd b c)) (dlimDist2 a b) :=
+  dlimNormSq_wd (dlimAdd_sub_cancel_right a b c)
+
+private theorem dlimDist2_add_left (a b c : DLimRaw) :
+    Req (dlimDist2 (dlimAdd c a) (dlimAdd c b)) (dlimDist2 a b) :=
+  dlimNormSq_wd (dlimAdd_sub_cancel_left a b c)
+
+/-- **NEGATION** of a completion member (no rescheduling: negation preserves the squared modulus). -/
+def dlimCompletionNeg (X : DLimCompletionRaw) : DLimCompletionRaw :=
+  ⟨fun n => dlimNeg (X.seq n),
+   fun j k => Rle_trans (Rle_of_Req (dlimDist2_neg_neg (X.seq j) (X.seq k))) (X.reg j k)⟩
+
+/-- Negation preserves the completion equivalence. -/
+theorem dlimCompletionNeg_congr {X Y : DLimCompletionRaw} (h : DLimCompletionEq X Y) :
+    DLimCompletionEq (dlimCompletionNeg X) (dlimCompletionNeg Y) := by
+  intro k
+  obtain ⟨N, hN⟩ := h k
+  exact ⟨N, fun n hn => Rle_trans (Rle_of_Req (dlimDist2_neg_neg (X.seq n) (Y.seq n))) (hN n hn)⟩
+
+/-- **The modulus HALVES under doubling**: `4·M(2j+1,2k+1) ≈ M(j,k)` — the exact identity that makes the
+    `n ↦ 2n+1` reschedule restore the canonical modulus after the quasi-triangle's factor-4. -/
+private theorem dlimCauchyMod_halve (j k : Nat) :
+    Req (Radd (Radd (dlimCauchyModR (2 * j + 1) (2 * k + 1)) (dlimCauchyModR (2 * j + 1) (2 * k + 1)))
+             (Radd (dlimCauchyModR (2 * j + 1) (2 * k + 1)) (dlimCauchyModR (2 * j + 1) (2 * k + 1))))
+        (dlimCauchyModR j k) := by
+  unfold dlimCauchyModR
+  refine Req_trans
+    (Req_trans (Radd_congr (Radd_ofQ_loc _ _) (Radd_ofQ_loc _ _)) (Radd_ofQ_loc _ _))
+    (ofQ_respects _ _ ?_)
+  simp only [Qeq, add, mul]; push_cast; ring_uor
+
+/-- **ADDITION** of completion members, RESCHEDULED by `n ↦ 2n+1`: this restores the canonical squared
+    modulus, since the quasi-triangle gives `4·M(2j+1,2k+1)` which equals `M(j,k)` (`dlimCauchyMod_halve`).
+    The midpoint `X_{2k+1}+Y_{2j+1}` splits the coupled difference into a pure-`X` and a pure-`Y` part. -/
+def dlimCompletionAdd (X Y : DLimCompletionRaw) : DLimCompletionRaw :=
+  ⟨fun n => dlimAdd (X.seq (2 * n + 1)) (Y.seq (2 * n + 1)),
+   fun j k => by
+     refine Rle_trans (dlimDist2_quasitriangle
+       (dlimAdd (X.seq (2 * j + 1)) (Y.seq (2 * j + 1)))
+       (dlimAdd (X.seq (2 * k + 1)) (Y.seq (2 * j + 1)))
+       (dlimAdd (X.seq (2 * k + 1)) (Y.seq (2 * k + 1)))) ?_
+     refine Rle_trans (Radd_le_add_loc
+       (Radd_le_add_loc
+         (Rle_trans (Rle_of_Req (dlimDist2_add_right (X.seq (2 * j + 1)) (X.seq (2 * k + 1))
+           (Y.seq (2 * j + 1)))) (X.reg (2 * j + 1) (2 * k + 1)))
+         (Rle_trans (Rle_of_Req (dlimDist2_add_right (X.seq (2 * j + 1)) (X.seq (2 * k + 1))
+           (Y.seq (2 * j + 1)))) (X.reg (2 * j + 1) (2 * k + 1))))
+       (Radd_le_add_loc
+         (Rle_trans (Rle_of_Req (dlimDist2_add_left (Y.seq (2 * j + 1)) (Y.seq (2 * k + 1))
+           (X.seq (2 * k + 1)))) (Y.reg (2 * j + 1) (2 * k + 1)))
+         (Rle_trans (Rle_of_Req (dlimDist2_add_left (Y.seq (2 * j + 1)) (Y.seq (2 * k + 1))
+           (X.seq (2 * k + 1)))) (Y.reg (2 * j + 1) (2 * k + 1))))) ?_
+     exact Rle_of_Req (dlimCauchyMod_halve j k)⟩
+
+/-- Addition preserves the completion equivalence (the reschedule keeps `2n+1 ≥ N` once `n ≥ N`). -/
+theorem dlimCompletionAdd_congr {X X' Y Y' : DLimCompletionRaw}
+    (hX : DLimCompletionEq X X') (hY : DLimCompletionEq Y Y') :
+    DLimCompletionEq (dlimCompletionAdd X Y) (dlimCompletionAdd X' Y') := by
+  intro k
+  obtain ⟨N1, hN1⟩ := hX (4 * k + 3)
+  obtain ⟨N2, hN2⟩ := hY (4 * k + 3)
+  refine ⟨max N1 N2, fun n hn => ?_⟩
+  have hn1 : N1 ≤ 2 * n + 1 := Nat.le_trans (Nat.le_trans (Nat.le_max_left _ _) hn) (by omega)
+  have hn2 : N2 ≤ 2 * n + 1 := Nat.le_trans (Nat.le_trans (Nat.le_max_right _ _) hn) (by omega)
+  refine Rle_trans (dlimDist2_quasitriangle
+    (dlimAdd (X.seq (2 * n + 1)) (Y.seq (2 * n + 1)))
+    (dlimAdd (X'.seq (2 * n + 1)) (Y.seq (2 * n + 1)))
+    (dlimAdd (X'.seq (2 * n + 1)) (Y'.seq (2 * n + 1)))) ?_
+  refine Rle_trans (Radd_le_add_loc
+    (Radd_le_add_loc
+      (Rle_trans (Rle_of_Req (dlimDist2_add_right (X.seq (2 * n + 1)) (X'.seq (2 * n + 1))
+        (Y.seq (2 * n + 1)))) (hN1 _ hn1))
+      (Rle_trans (Rle_of_Req (dlimDist2_add_right (X.seq (2 * n + 1)) (X'.seq (2 * n + 1))
+        (Y.seq (2 * n + 1)))) (hN1 _ hn1)))
+    (Radd_le_add_loc
+      (Rle_trans (Rle_of_Req (dlimDist2_add_left (Y.seq (2 * n + 1)) (Y'.seq (2 * n + 1))
+        (X'.seq (2 * n + 1)))) (hN2 _ hn2))
+      (Rle_trans (Rle_of_Req (dlimDist2_add_left (Y.seq (2 * n + 1)) (Y'.seq (2 * n + 1))
+        (X'.seq (2 * n + 1)))) (hN2 _ hn2)))) ?_
+  refine Rle_of_Req (Req_trans
+    (Req_trans (Radd_congr (Radd_ofQ_loc _ _) (Radd_ofQ_loc _ _)) (Radd_ofQ_loc _ _))
+    (ofQ_respects _ (Nat.succ_pos k) ?_))
+  simp only [Qeq, add, mul]; push_cast; ring_uor
+
 end UOR.Bridge.F1Square.Square

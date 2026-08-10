@@ -8553,3 +8553,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.DLimCompletionEq_symm
 #print axioms Square.DLimCompletionEq_trans
 #print axioms Square.DLimCompletionEq_of
+-- RESCHEDULED OPERATIONS (gate item 8, first two): dlimCompletionNeg/_congr (negation preserves the
+-- modulus outright) and dlimCompletionAdd/_congr (RESCHEDULED n↦2n+1 so the quasi-triangle's factor-4 is
+-- cancelled by dlimCauchyMod_halve : 4·M(2j+1,2k+1) ≈ M(j,k)); both preserve regularity AND equivalence.
+-- Still open: scalar multiplication (the |c|²-dependent reschedule) and the completed inner product.
+#print axioms Square.dlimCompletionNeg_congr
+#print axioms Square.dlimCompletionAdd_congr
