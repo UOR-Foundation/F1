@@ -54,6 +54,7 @@ import F1Square.Square.FinDirectLimit
 import F1Square.Square.DiagonalOperatorCore
 import F1Square.Square.FinAtlasOperator
 import F1Square.Square.BlockLadderCandidate
+import F1Square.Square.DlimHilbertCompletion
 import F1Square.Square.WeilLattice
 import F1Square.Square.Forced
 import F1Square.Square.WeilPSD

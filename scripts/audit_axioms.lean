@@ -8502,3 +8502,22 @@ open UOR.Bridge.F1Square
 -- asymmetry blockLadderSpec_not_neg_closed is a diagnostic, not a formal operator rejection.) Crux none.
 #print axioms Square.dlimBlockLadder_not_normBounded
 #print axioms Square.dlimBlockLadder_not_normBounded_real
+
+-- The ℓ² completion of the finite-support direct limit: the ANALYTIC SUBSTRATE (new
+-- Square/DlimHilbertCompletion.lean, phase 1; imports ONLY FinDirectLimit — candidate-independent, no
+-- block-ladder/Atlas/nominal/zero modules). Squared norm dlimNormSq:=⟨a,a⟩.re, squared distance
+-- dlimDist2:=‖a−b‖² (kept SQUARED, no Rsqrt). dlimNormSq_wd/dlimSub_wd/dlimDist2_wd: representative
+-- independence over the colimit setoid DLimEq. dlimNormSq_nonneg/dlimDist2_nonneg: nonnegativity (from
+-- dlimInner_self_nonneg). dlimNormSq_zero/dlimDist2_self: ‖0‖²≈0 and ‖a−a‖²≈0. dlimEq_of_sub_zero:
+-- colimit group cancellation a−b≈0⟹a≈b. dlimDist2_zero_iff: THE NORM-NULL EQUIVALENCE ‖a−b‖²≈0 ↔ a≈b
+-- (the completion metric's definiteness, via dlimInner_self_definite). DLimCauchyU (def): the squared
+-- Cauchy relation. NO completion limit, NO inner product on the completion, NO operator yet; crux none.
+#print axioms Square.dlimNormSq_wd
+#print axioms Square.dlimSub_wd
+#print axioms Square.dlimDist2_wd
+#print axioms Square.dlimNormSq_nonneg
+#print axioms Square.dlimDist2_nonneg
+#print axioms Square.dlimNormSq_zero
+#print axioms Square.dlimDist2_self
+#print axioms Square.dlimEq_of_sub_zero
+#print axioms Square.dlimDist2_zero_iff
