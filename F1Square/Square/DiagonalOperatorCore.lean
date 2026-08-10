@@ -251,4 +251,31 @@ theorem dlimDiagW_eigen (w : Nat → Real) (i : Nat) :
 def OpNormBounded (T : DLimRaw → DLimRaw) (C : Real) : Prop :=
   ∀ a, Rle (dlimInner (T a) (T a)).re (Rmul (Rmul C C) (dlimInner a a).re)
 
+/-- **The squared norm of `A eᵢ` is `wᵢ²`**: from the eigenpair `A eᵢ ≈ wᵢ·eᵢ` and the normalization
+    `⟨eᵢ,eᵢ⟩≈1`, `⟨A eᵢ, A eᵢ⟩ = conj(wᵢ)·wᵢ·⟨eᵢ,eᵢ⟩ = wᵢ²` (`wᵢ` real). The quantitative bridge from
+    the operator's action on the unit vector `eᵢ` to the weight. -/
+theorem dlimDiagW_eigen_normSq (w : Nat → Real) (i : Nat) :
+    Req (dlimInner (dlimDiagW w (dlimBasis i)) (dlimDiagW w (dlimBasis i))).re
+        (Rmul (w i) (w i)) := by
+  have key : Ceq (dlimInner (dlimDiagW w (dlimBasis i)) (dlimDiagW w (dlimBasis i)))
+                 (Cmul (Cofreal (w i)) (Cofreal (w i))) := by
+    refine Ceq_trans (dlimInner_wd (dlimDiagW_eigen w i) (dlimDiagW_eigen w i)) ?_
+    refine Ceq_trans (dlimInner_smul_right (Cofreal (w i))
+      (dlimSmul (Cofreal (w i)) (dlimBasis i)) (dlimBasis i)) ?_
+    refine Cmul_congr (Ceq_refl (Cofreal (w i))) ?_
+    refine Ceq_trans (dlimInner_conj (dlimSmul (Cofreal (w i)) (dlimBasis i)) (dlimBasis i)) ?_
+    refine Ceq_trans (Cconj_congr
+      (dlimInner_smul_right (Cofreal (w i)) (dlimBasis i) (dlimBasis i))) ?_
+    refine Ceq_trans (Cconj_Cmul (Cofreal (w i)) (dlimInner (dlimBasis i) (dlimBasis i))) ?_
+    refine Ceq_trans (Cmul_congr (Cconj_Cofreal (w i))
+      (Ceq_trans (Cconj_congr (dlimBasis_normalized i)) Cconj_Cone_loc)) ?_
+    exact Cmul_one (Cofreal (w i))
+  refine Req_trans key.1 ?_
+  show Req (Rsub (Rmul (w i) (w i)) (Rmul zero zero)) (Rmul (w i) (w i))
+  exact Req_trans (Rsub_congr (Req_refl _) (Rmul_zero zero)) (Rsub_zero _)
+
+/-- **The basis vector's squared norm is `1`** (the real part of `⟨eᵢ,eᵢ⟩≈1`). -/
+theorem dlimBasis_self_re (i : Nat) : Req (dlimInner (dlimBasis i) (dlimBasis i)).re one :=
+  (dlimBasis_normalized i).1
+
 end UOR.Bridge.F1Square.Square

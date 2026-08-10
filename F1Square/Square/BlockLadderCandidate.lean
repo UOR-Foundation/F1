@@ -334,4 +334,63 @@ theorem blockLadderSpec_not_neg_closed : ¬ NegClosed blockLadderWeightSpec := b
   exact not_Req_neg_ten i
     (Req_trans (Req_symm hi) (Rneg_congr blockLadderWeight_zero_eq_ten))
 
+-- ===========================================================================
+-- Genuine OPERATOR-THEORETIC unboundedness: the operator norm on the normalized
+-- eigenvectors exceeds every nat bound, so `dlimBlockLadder` is not norm-bounded.
+-- ===========================================================================
+
+/-- `RofNat n ≥ 0`. -/
+private theorem RofNat_nonneg (n : Nat) : Rnonneg (RofNat n) := by
+  show Rnonneg (ofQ ⟨(n : Int), 1⟩ Nat.one_pos)
+  exact Rnonneg_ofQ Nat.one_pos (by show (0 : Int) ≤ (n : Int); omega)
+
+/-- `RofNat (n+1) ≈ RofNat n + 1`. -/
+private theorem RofNat_succ_bl (n : Nat) : Req (RofNat (n + 1)) (Radd (RofNat n) one) :=
+  Req_of_seq_Qeq (fun _ => by
+    show Qeq (⟨((n : Int) + 1), 1⟩) (add (⟨(n : Int), 1⟩) (⟨1, 1⟩))
+    simp only [Qeq, add]; push_cast; ring_uor)
+
+/-- **GENUINE OPERATOR-THEORETIC UNBOUNDEDNESS**: for every nat bound `B`, `dlimBlockLadder` is NOT
+    norm-bounded by `RofNat B`. On the normalized eigenvector `eⱼ` with `wⱼ ≥ RofNat (B+1)`,
+    `⟨A eⱼ, A eⱼ⟩ = wⱼ² ≥ (RofNat (B+1))² > (RofNat B)² = (RofNat B)²·⟨eⱼ,eⱼ⟩`, contradicting the bound.
+    Since `RofNat B → ∞`, the operator is genuinely unbounded (non-finite-rank) — the property the
+    finite seed `M₂₄ ⊕ 0` lacked, now proved at the OPERATOR level via `OpNormBounded`. -/
+theorem dlimBlockLadder_not_normBounded (B : Nat) : ¬ OpNormBounded dlimBlockLadder (RofNat B) := by
+  intro hb
+  obtain ⟨i, hi⟩ := blockLadder_unbounded (B + 1)
+  have hbnd := hb (dlimBasis i)
+  have hval : Req (dlimInner (dlimBlockLadder (dlimBasis i)) (dlimBlockLadder (dlimBasis i))).re
+                  (Rmul (blockLadderWeight i) (blockLadderWeight i)) :=
+    dlimDiagW_eigen_normSq blockLadderWeight i
+  have hself : Req (dlimInner (dlimBasis i) (dlimBasis i)).re one := dlimBasis_self_re i
+  have hsq_le : Rle (Rmul (blockLadderWeight i) (blockLadderWeight i))
+                    (Rmul (RofNat B) (RofNat B)) :=
+    Rle_trans (Rle_of_Req (Req_symm hval))
+      (Rle_trans hbnd (Rle_of_Req (Req_trans (Rmul_congr (Req_refl _) hself) (Rmul_one _))))
+  have hB1nn : Rnonneg (RofNat (B + 1)) := RofNat_nonneg (B + 1)
+  have hwnn : Rnonneg (blockLadderWeight i) :=
+    Rnonneg_of_Rle_zero (Rle_trans (Rle_zero_of_Rnonneg hB1nn) hi)
+  have hsq_mono : Rle (Rmul (RofNat (B + 1)) (RofNat (B + 1)))
+                      (Rmul (blockLadderWeight i) (blockLadderWeight i)) :=
+    Rle_trans (Rmul_le_Rmul_left hB1nn hi) (Rmul_le_Rmul_right hwnn hi)
+  have hcontra : Rle (RofNat (B + 1)) (RofNat B) :=
+    Rle_of_Rmul_self_le (RofNat_nonneg B) (Rle_trans hsq_mono hsq_le)
+  -- The gap `RofNat (B+1) − RofNat B ≈ 1 > 0`, but `hcontra` forces `Rnonneg (−gap)` — impossible.
+  have gap_eq_one : Req (Rsub (RofNat (B + 1)) (RofNat B)) one := by
+    show Req (Radd (RofNat (B + 1)) (Rneg (RofNat B))) one
+    refine Req_trans (Radd_congr (RofNat_succ_bl B) (Req_refl _)) ?_
+    refine Req_trans (Radd_congr (Radd_comm (RofNat B) one) (Req_refl _)) ?_
+    refine Req_trans (Radd_assoc one (RofNat B) (Rneg (RofNat B))) ?_
+    exact Req_trans (Radd_congr (Req_refl _) (Radd_neg (RofNat B))) (Radd_zero one)
+  have neg_gap : Req (Rsub (RofNat B) (RofNat (B + 1)))
+                     (Rneg (Rsub (RofNat (B + 1)) (RofNat B))) := by
+    show Req (Radd (RofNat B) (Rneg (RofNat (B + 1))))
+             (Rneg (Radd (RofNat (B + 1)) (Rneg (RofNat B))))
+    refine Req_symm (Req_trans (Rneg_Radd (RofNat (B + 1)) (Rneg (RofNat B))) ?_)
+    refine Req_trans (Radd_congr (Req_refl _) (Rneg_neg (RofNat B))) ?_
+    exact Radd_comm (Rneg (RofNat (B + 1))) (RofNat B)
+  exact not_Pos_of_Rnonneg_neg
+    (Rnonneg_congr neg_gap (Rnonneg_Rsub_of_Rle hcontra))
+    (Pos_congr (Req_symm gap_eq_one) (Pos_of_Rle_one (Rle_refl one)))
+
 end UOR.Bridge.F1Square.Square

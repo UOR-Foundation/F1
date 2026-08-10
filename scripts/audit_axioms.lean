@@ -8418,6 +8418,8 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimDiagW_herm
 #print axioms Square.dlimBasis_normalized
 #print axioms Square.dlimDiagW_eigen
+#print axioms Square.dlimDiagW_eigen_normSq
+#print axioms Square.dlimBasis_self_re
 
 -- The Atlas seed operator (Square/FinAtlasOperator.lean): the sourced spectral operator M (§5/§6.6,
 -- atlasEig/atlasM) realized as a DIAGONAL OBSERVABLE via the generic diagOp/dlimDiagW, SYMMETRIC w.r.t.
@@ -8488,3 +8490,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.blockLadderWeight_zero_eq_ten
 #print axioms Square.blockLadder_gt_neg_ten
 #print axioms Square.blockLadderSpec_not_neg_closed
+-- Genuine operator-theoretic unboundedness (Square/BlockLadderCandidate.lean, review item 5 capstone):
+-- dlimDiagW_eigen_normSq (core): ⟨A e_i, A e_i⟩.re = w_i² (from the eigenpair + normalization);
+-- dlimBasis_self_re (core): ⟨e_i,e_i⟩.re = 1. dlimBlockLadder_not_normBounded: ∀ B, dlimBlockLadder is
+-- NOT norm-bounded by RofNat B — on e_j with w_j ≥ RofNat(B+1), ⟨A e_j,A e_j⟩ = w_j² > (RofNat B)²,
+-- violating OpNormBounded. Since RofNat B → ∞, the operator is genuinely unbounded (non-finite-rank),
+-- proved at the OPERATOR level. Crux none.
+#print axioms Square.dlimBlockLadder_not_normBounded
