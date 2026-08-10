@@ -8529,3 +8529,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimInner_neg_left
 #print axioms Square.dlimNormSq_neg
 #print axioms Square.dlimDist2_symm
+-- THE PARALLELOGRAM + SQUARED QUASI-TRIANGLE (gate item 1, second half): dlimInner_add_left
+-- (⟨a+b,c⟩≈⟨a,c⟩+⟨b,c⟩, left-additivity from right-additivity + Hermitian symmetry), dlimNormSq_add
+-- (the parallelogram expansion ‖x+y‖²≈‖x‖²+(⟨y,x⟩.re+⟨x,y⟩.re)+‖y‖²), dlimDist2_quasitriangle
+-- (d²(a,c) ≤ 2·d²(a,b)+2·d²(b,c) — the sqrt-free replacement for the ordinary triangle law, via the
+-- cross-term cancellation quasi_arith and ‖u−v‖²≥0; Radd_le_add ported LOCAL to hold the import fence).
+#print axioms Square.dlimInner_add_left
+#print axioms Square.dlimNormSq_add
+#print axioms Square.dlimDist2_quasitriangle

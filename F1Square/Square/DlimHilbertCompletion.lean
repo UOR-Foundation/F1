@@ -217,6 +217,109 @@ theorem dlimDist2_symm (a b : DLimRaw) : Req (dlimDist2 a b) (dlimDist2 b a) :=
   Req_symm (Req_trans (dlimNormSq_wd (dlimSub_neg_comm a b)) (dlimNormSq_neg (dlimSub a b)))
 
 -- ===========================================================================
+-- The parallelogram expansion and the squared QUASI-TRIANGLE.
+-- ===========================================================================
+
+/-- ℝ addition is monotone (ported verbatim from the clean `Pi.Radd_le_add`; kept local to preserve the
+    import-only-`FinDirectLimit` fence). Both sides reindex to `2n+1`, so the sum bound lands pointwise. -/
+private theorem Radd_le_add_loc {a a' b b' : Real} (ha : Rle a a') (hb : Rle b b') :
+    Rle (Radd a b) (Radd a' b') := by
+  intro n
+  show Qle (add (a.seq (2 * n + 1)) (b.seq (2 * n + 1)))
+    (add (add (a'.seq (2 * n + 1)) (b'.seq (2 * n + 1))) ⟨2, n + 1⟩)
+  have hsum := Qadd_le_add (ha (2 * n + 1)) (hb (2 * n + 1))
+  refine Qle_congr_right ?_ ?_ hsum
+  · exact add_den_pos (add_den_pos (a'.den_pos (2 * n + 1)) (Nat.succ_pos _))
+      (add_den_pos (b'.den_pos (2 * n + 1)) (Nat.succ_pos _))
+  · simp only [Qeq, add]; push_cast; ring_uor
+
+/-- Adding a nonnegative real on the right can only increase: `x ≤ x + w` when `w ≥ 0`. -/
+private theorem Rle_add_nonneg_right (x : Real) {w : Real} (hw : Rnonneg w) : Rle x (Radd x w) :=
+  Rle_trans (Rle_of_Req (Req_symm (Radd_zero x)))
+    (Radd_le_add_loc (Rle_refl x) (Rle_zero_of_Rnonneg hw))
+
+/-- The 8-term cancellation `(P+s)+(r+Q)  ⊕  (P+(−s))+((−r)+Q)  ≈  (P+P)+(Q+Q)`. The cross terms
+    `s, r` cancel against their negatives; proved by the shape-aware middle-four swap `Radd_swap`
+    (which correctly tracks the Bishop reindexing across the balanced tree) plus `Radd_neg`/`Radd_zero`. -/
+private theorem quasi_arith (P Q s r : Real) :
+    Req (Radd (Radd (Radd P s) (Radd r Q)) (Radd (Radd P (Rneg s)) (Radd (Rneg r) Q)))
+        (Radd (Radd P P) (Radd Q Q)) :=
+  have hAC : Req (Radd (Radd P s) (Radd P (Rneg s))) (Radd P P) :=
+    Req_trans (Radd_swap P s P (Rneg s))
+      (Req_trans (Radd_congr (Req_refl (Radd P P)) (Radd_neg s)) (Radd_zero (Radd P P)))
+  have hBD : Req (Radd (Radd r Q) (Radd (Rneg r) Q)) (Radd Q Q) :=
+    Req_trans (Radd_swap r Q (Rneg r) Q)
+      (Req_trans (Radd_congr (Radd_neg r) (Req_refl (Radd Q Q)))
+        (Req_trans (Radd_comm zero (Radd Q Q)) (Radd_zero (Radd Q Q))))
+  Req_trans (Radd_swap (Radd P s) (Radd r Q) (Radd P (Rneg s)) (Radd (Rneg r) Q))
+    (Radd_congr hAC hBD)
+
+/-- **Additivity in the LEFT slot**: `⟨a + b, c⟩ ≈ ⟨a, c⟩ + ⟨b, c⟩` (from right additivity through
+    Hermitian symmetry `⟨·,·⟩ = conj⟨·,·⟩` and `Cconj_Cadd`). -/
+theorem dlimInner_add_left (a b c : DLimRaw) :
+    Ceq (dlimInner (dlimAdd a b) c) (Cadd (dlimInner a c) (dlimInner b c)) :=
+  Ceq_trans (dlimInner_conj (dlimAdd a b) c)
+    (Ceq_trans (Cconj_congr (dlimInner_add_right c a b))
+      (Ceq_trans (Cconj_Cadd (dlimInner c a) (dlimInner c b))
+        (Cadd_congr (Ceq_symm (dlimInner_conj a c)) (Ceq_symm (dlimInner_conj b c)))))
+
+/-- **The parallelogram expansion**: `‖x + y‖² ≈ ‖x‖² + (⟨y,x⟩.re + ⟨x,y⟩.re) + ‖y‖²`. Purely the
+    sesquilinear expansion of `⟨x+y, x+y⟩` (right- then left-additivity) read on the real part; the
+    real part of a `Cadd` is the `Radd` of real parts definitionally. -/
+theorem dlimNormSq_add (x y : DLimRaw) :
+    Req (dlimNormSq (dlimAdd x y))
+      (Radd (Radd (dlimNormSq x) (dlimInner y x).re)
+            (Radd (dlimInner x y).re (dlimNormSq y))) :=
+  (Ceq_trans (dlimInner_add_right (dlimAdd x y) x y)
+    (Cadd_congr (dlimInner_add_left x y x) (dlimInner_add_left x y y))).1
+
+/-- `(a − b) + (b − c) ≈ a − c` in the colimit group (`b` telescopes). -/
+private theorem dlimAdd_sub_sub (a b c : DLimRaw) :
+    DLimEq (dlimAdd (dlimSub a b) (dlimSub b c)) (dlimSub a c) :=
+  DLimEq_trans (dlimAdd_assoc a (dlimNeg b) (dlimAdd b (dlimNeg c)))
+    (DLimEq_trans (dlimAdd_wd (DLimEq_refl a)
+        (DLimEq_symm (dlimAdd_assoc (dlimNeg b) b (dlimNeg c))))
+      (DLimEq_trans (dlimAdd_wd (DLimEq_refl a)
+          (dlimAdd_wd (dlimNeg_add_self b) (DLimEq_refl (dlimNeg c))))
+        (dlimAdd_wd (DLimEq_refl a) (dlimZero_add (dlimNeg c)))))
+
+/-- **THE SQUARED QUASI-TRIANGLE** (gate item 1): `d²(a,c) ≤ 2·d²(a,b) + 2·d²(b,c)`. This is the
+    sqrt-free replacement for the ordinary triangle inequality — the squared distance is NOT a metric,
+    but this quasi-triangle is exactly what the completion's Cauchy/limit arguments require. Proof:
+    with `u := a−b`, `v := b−c`, `a−c ≈ u+v`, so `d²(a,c) ≈ ‖u+v‖²`; the parallelogram expansions of
+    `‖u+v‖²` and `‖u−v‖²` share the cross term with opposite sign, and `‖u+v‖² + ‖u−v‖² ≈ 2‖u‖²+2‖v‖²`
+    (`quasi_arith`), while `‖u−v‖² ≥ 0`, so `‖u+v‖² ≤ ‖u+v‖² + ‖u−v‖² ≈ 2‖u‖²+2‖v‖²`. -/
+theorem dlimDist2_quasitriangle (a b c : DLimRaw) :
+    Rle (dlimDist2 a c)
+      (Radd (Radd (dlimDist2 a b) (dlimDist2 a b))
+            (Radd (dlimDist2 b c) (dlimDist2 b c))) := by
+  -- Abbreviations: u = a−b, v = b−c.
+  have hEQplus : Req (dlimNormSq (dlimAdd (dlimSub a b) (dlimSub b c)))
+      (Radd (Radd (dlimDist2 a b) (dlimInner (dlimSub b c) (dlimSub a b)).re)
+            (Radd (dlimInner (dlimSub a b) (dlimSub b c)).re (dlimDist2 b c))) :=
+    dlimNormSq_add (dlimSub a b) (dlimSub b c)
+  have hEQminus : Req (dlimNormSq (dlimSub (dlimSub a b) (dlimSub b c)))
+      (Radd (Radd (dlimDist2 a b) (Rneg (dlimInner (dlimSub b c) (dlimSub a b)).re))
+            (Radd (Rneg (dlimInner (dlimSub a b) (dlimSub b c)).re) (dlimDist2 b c))) :=
+    Req_trans (dlimNormSq_add (dlimSub a b) (dlimNeg (dlimSub b c)))
+      (Radd_congr
+        (Radd_congr (Req_refl (dlimDist2 a b)) (dlimInner_neg_left (dlimSub b c) (dlimSub a b)).1)
+        (Radd_congr (dlimInner_neg_right (dlimSub a b) (dlimSub b c)).1
+          (dlimNormSq_neg (dlimSub b c))))
+  -- ‖u+v‖² ≤ ‖u+v‖² + ‖u−v‖² ≈ 2·d²(a,b) + 2·d²(b,c).
+  have hstep : Rle (dlimNormSq (dlimAdd (dlimSub a b) (dlimSub b c)))
+      (Radd (Radd (dlimDist2 a b) (dlimDist2 a b)) (Radd (dlimDist2 b c) (dlimDist2 b c))) :=
+    Rle_trans
+      (Rle_add_nonneg_right _ (dlimNormSq_nonneg (dlimSub (dlimSub a b) (dlimSub b c))))
+      (Rle_of_Req (Req_trans (Radd_congr hEQplus hEQminus)
+        (quasi_arith (dlimDist2 a b) (dlimDist2 b c)
+          (dlimInner (dlimSub b c) (dlimSub a b)).re
+          (dlimInner (dlimSub a b) (dlimSub b c)).re)))
+  -- Transport d²(a,c) ≈ ‖u+v‖² along a−c ≈ u+v.
+  exact Rle_trans
+    (Rle_of_Req (dlimNormSq_wd (DLimEq_symm (dlimAdd_sub_sub a b c)))) hstep
+
+-- ===========================================================================
 -- The squared Cauchy relation (the completion members' shape).
 -- ===========================================================================
 
