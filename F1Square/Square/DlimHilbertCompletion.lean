@@ -661,4 +661,54 @@ theorem dlimReschedOdd_eq (X : DLimCompletionRaw) : DLimCompletionEq X (dlimResc
   show (4 : Int) * ((k + 1 : Nat) : Int) ≤ (1 : Int) * ((n + 1 : Nat) : Int)
   push_cast; omega
 
+-- ===========================================================================
+-- Additive structure on the completion (reviewer gate 3): zero, the group laws
+-- modulo completion equivalence, and the `of`-homomorphism laws `of_add` / `of_neg`.
+-- ===========================================================================
+
+/-- **Pointwise-`DLimEq` sufficiency**: if `X n ≈ Y n` in the colimit for every `n`, then `X ≈ Y` in
+    the completion (the squared distances are `≈ 0` at every index). The workhorse for the group laws
+    whose two sides agree stagewise (possibly after a reschedule). -/
+theorem DLimCompletionEq_of_pointwise {X Y : DLimCompletionRaw} (h : ∀ n, DLimEq (X.seq n) (Y.seq n)) :
+    DLimCompletionEq X Y :=
+  fun k => ⟨0, fun n _ => Rle_trans
+    (Rle_of_Req (Req_trans (dlimDist2_wd (DLimEq_refl (X.seq n)) (DLimEq_symm (h n)))
+      (dlimDist2_self (X.seq n))))
+    (Rle_zero_of_Rnonneg (Rnonneg_ofQ_loc (Nat.succ_pos k) (by show (0 : Int) ≤ 1; decide)))⟩
+
+/-- The completion zero (the constant `0` sequence). -/
+def dlimCompletionZero : DLimCompletionRaw := DLimCompletionRaw.of dlimZero
+
+/-- **Commutativity** of completion addition (stagewise `dlimAdd_comm` at the reschedule index). -/
+theorem dlimCompletionAdd_comm (X Y : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionAdd X Y) (dlimCompletionAdd Y X) :=
+  DLimCompletionEq_of_pointwise (fun n => dlimAdd_comm (X.seq (2 * n + 1)) (Y.seq (2 * n + 1)))
+
+/-- **Right unit**: `X + 0 ≈ X`. Stagewise `X_{2n+1} + 0 ≈ X_{2n+1}` gives `X + 0 ≈ X_{2n+1}`, then the
+    cofinal invariance `dlimReschedOdd_eq` closes `X_{2n+1} ≈ X`. -/
+theorem dlimCompletionAdd_zero (X : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionAdd X dlimCompletionZero) X :=
+  DLimCompletionEq_trans (Y := dlimReschedOdd X)
+    (DLimCompletionEq_of_pointwise (fun n => dlimAdd_zero (X.seq (2 * n + 1))))
+    (DLimCompletionEq_symm (dlimReschedOdd_eq X))
+
+/-- **Additive inverse**: `X + (−X) ≈ 0` (stagewise `dlimAdd_neg` at the reschedule index; no realign
+    needed since negation does not reschedule). -/
+theorem dlimCompletionAdd_neg (X : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionAdd X (dlimCompletionNeg X)) dlimCompletionZero :=
+  DLimCompletionEq_of_pointwise (fun n => dlimAdd_neg (X.seq (2 * n + 1)))
+
+/-- **`of` is additive** (`of_add`): `of (a + b) ≈ (of a) + (of b)`. Both sides are the constant
+    sequence `a + b` (the reschedule of a constant sequence is itself), so this is stagewise reflexivity. -/
+theorem DLimCompletionEq_of_add (a b : DLimRaw) :
+    DLimCompletionEq (DLimCompletionRaw.of (dlimAdd a b))
+      (dlimCompletionAdd (DLimCompletionRaw.of a) (DLimCompletionRaw.of b)) :=
+  DLimCompletionEq_of_pointwise (fun _ => DLimEq_refl _)
+
+/-- **`of` respects negation** (`of_neg`): `of (−a) ≈ −(of a)`, stagewise reflexivity. -/
+theorem DLimCompletionEq_of_neg (a : DLimRaw) :
+    DLimCompletionEq (DLimCompletionRaw.of (dlimNeg a))
+      (dlimCompletionNeg (DLimCompletionRaw.of a)) :=
+  DLimCompletionEq_of_pointwise (fun _ => DLimEq_refl _)
+
 end UOR.Bridge.F1Square.Square

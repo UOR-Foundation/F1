@@ -8568,3 +8568,16 @@ open UOR.Bridge.F1Square
 -- n↦X_{2n+1}), via the reusable modulus monotonicity dlimCauchyMod_mono (M(p',q')≤M(p,q) for p≤p',q≤q')
 -- + the diagonal decay: ‖X_n−X_{2n+1}‖² ≤ M(n,2n+1) ≤ M(n,n) ≤ 4/(n+1) ≤ 1/(k+1) for n≥4k+3.
 #print axioms Square.dlimReschedOdd_eq
+-- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
+-- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
+-- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal
+-- invariance dlimReschedOdd_eq), dlimCompletionAdd_neg (inverse). The `of`-homomorphism laws
+-- DLimCompletionEq_of_add (of(a+b) ≈ of a + of b) and DLimCompletionEq_of_neg (of(−a) ≈ −of a), both
+-- stagewise reflexivity. ASSOCIATIVITY is the one remaining group law (its own commit — the 6-term
+-- cofinal realignment across differing reschedule depths).
+#print axioms Square.DLimCompletionEq_of_pointwise
+#print axioms Square.dlimCompletionAdd_comm
+#print axioms Square.dlimCompletionAdd_zero
+#print axioms Square.dlimCompletionAdd_neg
+#print axioms Square.DLimCompletionEq_of_add
+#print axioms Square.DLimCompletionEq_of_neg
