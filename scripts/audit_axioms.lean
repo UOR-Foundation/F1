@@ -8543,3 +8543,13 @@ open UOR.Bridge.F1Square
 -- (M(n,n) ≤ 4/(n+1), the canonical null domination) — all import-only-FinDirectLimit.
 #print axioms Square.DLimCauchyU_const
 #print axioms Square.DLimCauchyU_congr
+-- THE COMPLETION SETOID (gate items 4–7): DLimCompletionRaw (Cauchy seq + regularity proof, item 4);
+-- DLimCompletionEq = norm-null sequence equivalence (∀k ∃N ∀n≥N ‖Xn−Yn‖² ≤ 1/(k+1); the ∀k absorbs
+-- the quasi-triangle factor so it is a genuine transitive equivalence in the sqrt-free squared setting).
+-- DLimCompletionEq_refl/_symm/_trans (item 5, trans via dlimDist2_quasitriangle at auxiliary level 4k+3),
+-- packaged as dlimCompletionSetoid (item 6); DLimCompletionRaw.of = constant embedding + DLimCompletionEq_of
+-- (respects DLimEq, item 7). Still open = rescheduled operations (item 8) + the completed inner product.
+#print axioms Square.DLimCompletionEq_refl
+#print axioms Square.DLimCompletionEq_symm
+#print axioms Square.DLimCompletionEq_trans
+#print axioms Square.DLimCompletionEq_of

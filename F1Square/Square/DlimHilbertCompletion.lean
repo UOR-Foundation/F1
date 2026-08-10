@@ -398,4 +398,79 @@ theorem DLimCauchyU_congr {x y : Nat → DLimRaw} (h : ∀ j, DLimEq (x j) (y j)
   fun j k => Rle_trans
     (Rle_of_Req (Req_symm (dlimDist2_wd (h j) (h k)))) (hx j k)
 
+-- ===========================================================================
+-- The completion raw carrier, its norm-null equivalence, the Setoid, and the
+-- constant embedding (gate items 4–7).
+-- ===========================================================================
+
+/-- **The completion raw carrier** (gate item 4): a Cauchy sequence of finite-support vectors together
+    with its regularity proof (`DLimCauchyU`, the fixed canonical squared modulus). A completion member
+    is such a sequence up to `DLimCompletionEq`. -/
+structure DLimCompletionRaw where
+  seq : Nat → DLimRaw
+  reg : DLimCauchyU seq
+
+/-- `⊕`-sum of two ℝ constants is the ℝ of their ℚ-sum. -/
+private theorem Radd_ofQ_loc {a b : Q} (ha : 0 < a.den) (hb : 0 < b.den) :
+    Req (Radd (ofQ a ha) (ofQ b hb)) (ofQ (add a b) (add_den_pos ha hb)) :=
+  Req_of_seq_Qeq (fun _ => Qeq_refl (add a b))
+
+/-- **The norm-null sequence equivalence** (gate item 5): `X ≈ Y` iff the squared distance
+    `‖X n − Y n‖²` is eventually below every `1/(k+1)`. The `∀k` quantifier ABSORBS the factor-2 of the
+    squared quasi-triangle (which the fixed-modulus relation could not), so this is a genuine transitive
+    equivalence in the sqrt-free setting — the sound replacement for a metric-space equality. -/
+def DLimCompletionEq (X Y : DLimCompletionRaw) : Prop :=
+  ∀ k : Nat, ∃ N : Nat, ∀ n : Nat, N ≤ n →
+    Rle (dlimDist2 (X.seq n) (Y.seq n)) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))
+
+/-- Reflexivity: `‖X n − X n‖² ≈ 0 ≤ 1/(k+1)`. -/
+theorem DLimCompletionEq_refl (X : DLimCompletionRaw) : DLimCompletionEq X X :=
+  fun k => ⟨0, fun n _ => Rle_trans (Rle_of_Req (dlimDist2_self (X.seq n)))
+    (Rle_zero_of_Rnonneg (Rnonneg_ofQ_loc (Nat.succ_pos k) (by show (0 : Int) ≤ 1; decide)))⟩
+
+/-- Symmetry: the squared distance is symmetric (`dlimDist2_symm`). -/
+theorem DLimCompletionEq_symm {X Y : DLimCompletionRaw} (h : DLimCompletionEq X Y) :
+    DLimCompletionEq Y X := by
+  intro k
+  obtain ⟨N, hN⟩ := h k
+  exact ⟨N, fun n hn => Rle_trans (Rle_of_Req (dlimDist2_symm (Y.seq n) (X.seq n))) (hN n hn)⟩
+
+/-- Transitivity: the squared quasi-triangle `d²(Xn,Zn) ≤ 2·d²(Xn,Yn)+2·d²(Yn,Zn)`, with both middle
+    distances driven below `1/(4(k+1))` (the auxiliary level `4k+3`), sums to `4/(4(k+1)) = 1/(k+1)`.
+    The factor-4 is absorbed EXACTLY by refining the auxiliary index. -/
+theorem DLimCompletionEq_trans {X Y Z : DLimCompletionRaw}
+    (hXY : DLimCompletionEq X Y) (hYZ : DLimCompletionEq Y Z) : DLimCompletionEq X Z := by
+  intro k
+  obtain ⟨N1, hN1⟩ := hXY (4 * k + 3)
+  obtain ⟨N2, hN2⟩ := hYZ (4 * k + 3)
+  refine ⟨max N1 N2, fun n hn => ?_⟩
+  have hn1 : N1 ≤ n := Nat.le_trans (Nat.le_max_left _ _) hn
+  have hn2 : N2 ≤ n := Nat.le_trans (Nat.le_max_right _ _) hn
+  refine Rle_trans (dlimDist2_quasitriangle (X.seq n) (Y.seq n) (Z.seq n)) ?_
+  refine Rle_trans
+    (Radd_le_add_loc (Radd_le_add_loc (hN1 n hn1) (hN1 n hn1))
+      (Radd_le_add_loc (hN2 n hn2) (hN2 n hn2))) ?_
+  refine Rle_of_Req (Req_trans
+    (Req_trans (Radd_congr (Radd_ofQ_loc _ _) (Radd_ofQ_loc _ _)) (Radd_ofQ_loc _ _))
+    (ofQ_respects _ (Nat.succ_pos k) ?_))
+  simp only [Qeq, add, mul]; push_cast; ring_uor
+
+/-- The completion setoid (gate item 6). -/
+instance dlimCompletionSetoid : Setoid DLimCompletionRaw where
+  r := DLimCompletionEq
+  iseqv := ⟨DLimCompletionEq_refl, fun h => DLimCompletionEq_symm h,
+    fun h₁ h₂ => DLimCompletionEq_trans h₁ h₂⟩
+
+/-- **The constant (isometric dense) embedding** `DLimRaw ↪ completion` (gate item 7): a finite-support
+    vector as the constant Cauchy sequence. -/
+def DLimCompletionRaw.of (a : DLimRaw) : DLimCompletionRaw :=
+  ⟨fun _ => a, DLimCauchyU_const a⟩
+
+/-- The embedding respects the colimit setoid: `a ≈ b ⟹ of a ≈ of b`. -/
+theorem DLimCompletionEq_of {a b : DLimRaw} (h : DLimEq a b) :
+    DLimCompletionEq (DLimCompletionRaw.of a) (DLimCompletionRaw.of b) :=
+  fun k => ⟨0, fun n _ => Rle_trans
+    (Rle_of_Req (Req_trans (dlimDist2_wd (DLimEq_refl a) (DLimEq_symm h)) (dlimDist2_self a)))
+    (Rle_zero_of_Rnonneg (Rnonneg_ofQ_loc (Nat.succ_pos k) (by show (0 : Int) ≤ 1; decide)))⟩
+
 end UOR.Bridge.F1Square.Square
