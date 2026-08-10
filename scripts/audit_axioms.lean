@@ -8398,26 +8398,36 @@ open UOR.Bridge.F1Square
 #print axioms Square.genSum_close
 #print axioms Square.improper_schedule_eq
 
--- The first genuine symmetric Atlas operator on the finite-support pre-Hilbert core (new
--- Square/FinAtlasOperator.lean, focus item 2 of the Hilbert–Pólya construction). The sourced Atlas
--- spectral operator M (§5/§6.6, atlasEig/atlasM) realized as a DIAGONAL OBSERVABLE diagOp on CVec N,
--- SYMMETRIC w.r.t. the POSITIVE metric cInner — not as the metric. diagOp_congr/_add/_smul: the
--- operator is setoid-respecting and ℂ-linear. diagOp_herm: SYMMETRIC for a real diagonal (⟨Ax,y⟩=⟨x,Ay⟩
--- — genuine symmetry, NOT self-adjointness/domain/closure; not the vacuous nominal predicate). diagOp_cvInc:
--- tower compatibility A_M∘ι ≈ ι∘A_N (index-intrinsic diagonal commutes with 0-padding). atlasObsEig
--- = atlasEig on i<24, 0 beyond (atlasObsEig_sourced/_seam): the −1 tail is NOT an unbounded spectrum;
--- the unbounded scale-lift is the EXPOSED open seam. atlasObsEig_signature: the observable carries the
--- genuine indefinite Atlas signature (10,14) on the sourced carrier (indefinite operator on a positive
--- metric = the HP framing). atlasObsEig_carrier_and_seam: the −1 eigenspace is within [0,24), tail
--- zeroed. atlasWeight_eq_atlasM_diag: provenance — the weight IS atlasM's diagonal on i<24. dlimAtlas_wd/
--- _add/_smul/_herm: the operator DESCENDS to the direct-limit pre-Hilbert object dlimPreHilbert as a
--- symmetric operator (first downstream consumer of the colimit). NO unbounded generator, NO spectral-
--- reality → zero correspondence, NO ℓ² completion, NO positivity of the crux; crux none.
+-- Generic diagonal-operator theory (new Square/DiagonalOperatorCore.lean): weight-agnostic machinery
+-- factored out of FinAtlasOperator/BlockLadderCandidate so the reusable operator theory does NOT depend
+-- on any concrete diagonal (Atlas seed, block-ladder, or otherwise). diagOp w N: real-diagonal operator
+-- on CVec N; diagOp_congr/_add/_smul: setoid-respecting + ℂ-linear; diagOp_herm: SYMMETRIC for a real
+-- weight (⟨Ax,y⟩=⟨x,Ay⟩ — symmetry, NOT self-adjointness); diagOp_cvInc: tower compatibility A_M∘ι≈ι∘A_N.
+-- dlimDiagW + dlimDiagW_wd/_add/_smul/_herm: generic descent of any real diagonal to the colimit
+-- dlimPreHilbert. dlimBasis_normalized: normalized coordinate basis ⟨e_i,e_i⟩≈1; dlimDiagW_eigen: the
+-- EIGENPAIR A e_i ≈ w_i·e_i (each weight is an eigenvalue on the normalized point spectrum). No spectrum,
+-- no Atlas, no crux; crux none.
 #print axioms Square.diagOp_congr
 #print axioms Square.diagOp_add
 #print axioms Square.diagOp_smul
 #print axioms Square.diagOp_herm
 #print axioms Square.diagOp_cvInc
+#print axioms Square.dlimDiagW_wd
+#print axioms Square.dlimDiagW_add
+#print axioms Square.dlimDiagW_smul
+#print axioms Square.dlimDiagW_herm
+#print axioms Square.dlimBasis_normalized
+#print axioms Square.dlimDiagW_eigen
+
+-- The Atlas seed operator (Square/FinAtlasOperator.lean): the sourced spectral operator M (§5/§6.6,
+-- atlasEig/atlasM) realized as a DIAGONAL OBSERVABLE via the generic diagOp/dlimDiagW, SYMMETRIC w.r.t.
+-- the POSITIVE metric cInner (not the metric). atlasObsEig = atlasEig on i<24, 0 beyond
+-- (atlasObsEig_sourced/_seam): the −1 tail is NOT an unbounded spectrum; the unbounded scale-lift is the
+-- EXPOSED open seam. atlasObsEig_signature: indefinite Atlas signature (10,14) on the sourced carrier.
+-- atlasObsEig_carrier_and_seam: −1 eigenspace within [0,24), tail zeroed. atlasWeight_eq_atlasM_diag:
+-- provenance — the weight IS atlasM's diagonal on i<24. dlimAtlas_wd/_add/_smul/_herm: the seed descends
+-- to dlimPreHilbert as a symmetric operator (thin wrappers over dlimDiagW_*). Finite seed M₂₄⊕0,
+-- bounded; crux none.
 #print axioms Square.atlasObsEig_sourced
 #print axioms Square.atlasObsEig_seam
 #print axioms Square.atlasObsEig_signature
@@ -8444,44 +8454,37 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimAtlas_smul
 #print axioms Square.dlimAtlas_herm
 
--- The Atlas refinement operator: a CANDIDATE unbounded symmetric operator on the direct-limit core
--- (new Square/AtlasRefinementOperator.lean). Extrapolates the strongest zero-free UOR-native unbounded
--- candidate from the Atlas refinement structure and TESTS it. atlasCandEval on the typed carrier
--- AtlasAddr=(scale ℓ, block∈Fin 24): (M₂₄ eigenvalue at block) + ℓ·log5, where ℓ·log5 = orbitShift 5
--- (sourced Frobenius-orbit length, p=5=atlasPrime0). log5_ge_one: log5≥1 zero-free (logN_ge_k_log2 +
--- logN_2_ge_half in the ComplexZeta-free RealPow). atlasCandWeight_val/_mul24: raw-index form.
--- atlasCandWeight_base + atlasCandOp_base_action: base-ACTION agreement with atlasSeedOp on CVec 24
--- (the candidate extends M₂₄). atlasCandEval_scale_succ + atlasCand_scale_gap: refinement intertwining
--- (each scale level adds exactly log5). atlasCand_scale_step + atlasCandWeight_scale_ge +
--- atlasCand_unbounded: GENUINE unboundedness (∀B ∃i, B≤weight i) — non-finite-rank, unlike M₂₄⊕0.
--- dlimDiagW_wd/_add/_smul/_herm: generic real-diagonal descent to the colimit; dlimCand/atlasCandDLimOp
--- (defs) package the candidate as a symmetric operator on dlimPreHilbert. THE FAILED BRIDGE:
--- atlasCand_scale_gap proves the scale-tower spectrum is an ARITHMETIC PROGRESSION (constant gap log5)
--- — the zeros' gaps shrink, so the candidate is REJECTED at the spectral/zero bridge. NO spectral→zero
--- correspondence asserted; crux none.
+-- The block-ladder candidate (new Square/BlockLadderCandidate.lean): ONE locally-invented unbounded
+-- diagonal, built and formally REJECTED as an HP operator. blockLadderEval on the typed carrier
+-- BlockLadderAddr=(scale ℓ, block∈Fin 24): (M₂₄ eigenvalue at block) + ℓ·log5, where ℓ·log5 =
+-- orbitShift 5 ℓ (Frobenius-orbit length, chain prime p=5=atlasPrime0); the M₂₄+ℓ·log5 LAW is invented,
+-- NOT a warranted Atlas refinement. log5_ge_one: log5≥1 zero-free (logN_ge_k_log2 + logN_2_ge_half in
+-- the ComplexZeta-free RealPow). blockLadderWeight_val/_mul24: raw-index form. blockLadderWeight_base +
+-- blockLadderOp_base_action: base-ACTION agreement with atlasSeedOp on CVec 24. blockLadderEval_scale_succ
+-- + blockLadder_scale_gap: each level adds exactly log5 (a CONSTANT scale gap). blockLadder_scale_step +
+-- blockLadderWeight_scale_ge + blockLadder_unbounded: weight unboundedness (∀B ∃i, B≤weight i).
+-- dlimBlockLadder_eigen: the OPERATOR-level eigenpair dlimBlockLadder e_i ≈ w_i·e_i (ties each weight to
+-- the operator via the core's normalized basis). Crux none.
 #print axioms Square.log5_ge_one
-#print axioms Square.atlasCandWeight_val
-#print axioms Square.atlasCandWeight_mul24
-#print axioms Square.atlasCandWeight_base
-#print axioms Square.atlasCandOp_base_action
-#print axioms Square.atlasCandEval_scale_succ
-#print axioms Square.atlasCand_scale_gap
-#print axioms Square.atlasCand_scale_step
-#print axioms Square.atlasCandWeight_scale_ge
-#print axioms Square.atlasCand_unbounded
-#print axioms Square.dlimDiagW_wd
-#print axioms Square.dlimDiagW_add
-#print axioms Square.dlimDiagW_smul
-#print axioms Square.dlimDiagW_herm
+#print axioms Square.blockLadderWeight_val
+#print axioms Square.blockLadderWeight_mul24
+#print axioms Square.blockLadderWeight_base
+#print axioms Square.blockLadderOp_base_action
+#print axioms Square.blockLadderEval_scale_succ
+#print axioms Square.blockLadder_scale_gap
+#print axioms Square.blockLadder_scale_step
+#print axioms Square.blockLadderWeight_scale_ge
+#print axioms Square.blockLadder_unbounded
+#print axioms Square.dlimBlockLadder_eigen
 
--- The block-ladder rename + constructive spectral-asymmetry rejection (AtlasRefinementOperator.lean,
--- response to the b664013 review items 4-5). atlasCandWeight_ge_neg_one: every block-ladder diagonal
--- weight ≥ −1 (block eigenvalue ≥ −1 via atlasEig_range + scale shift ≥ 0). atlasCandWeight_zero_eq_ten:
--- w₀ = 10 (a weight > 2). atlasCand_gt_neg_ten: w_i + 10 > 0 strictly (Pos) for every i — so −10 lies
--- strictly below the entire diagonal while 10 is a weight, hence the point spectrum is not closed under
--- μ↦−μ (fails HP trace-symmetry) — a zero-free spectral rejection of the block-ladder. Renamed to
--- "block-ladder candidate" (no clean Atlas refinement warrant: AtlasAddressing is crux-contaminated).
--- Crux none.
-#print axioms Square.atlasCandWeight_ge_neg_one
-#print axioms Square.atlasCandWeight_zero_eq_ten
-#print axioms Square.atlasCand_gt_neg_ten
+-- The constructive spectral-asymmetry REJECTION (Square/BlockLadderCandidate.lean).
+-- blockLadderWeight_ge_neg_one: every weight ≥ −1 (block eigenvalue ≥ −1 via atlasEig_range + scale
+-- shift ≥ 0). blockLadderWeight_zero_eq_ten: w₀ = 10 (a weight > 2). blockLadder_gt_neg_ten: w_i + 10 > 0
+-- strictly (Pos) for every i — so −10 is strictly below the whole diagonal while 10 is a weight.
+-- blockLadderSpec_not_neg_closed: the weight spectrum blockLadderWeightSpec (= the point spectrum, by
+-- dlimBlockLadder_eigen) is NOT closed under μ↦−μ (NegClosed) — the HP trace-symmetry requirement FAILS.
+-- A zero-free rejection of the block-ladder as an HP operator; crux none.
+#print axioms Square.blockLadderWeight_ge_neg_one
+#print axioms Square.blockLadderWeight_zero_eq_ten
+#print axioms Square.blockLadder_gt_neg_ten
+#print axioms Square.blockLadderSpec_not_neg_closed

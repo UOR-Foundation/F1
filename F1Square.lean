@@ -51,8 +51,9 @@ import F1Square.Square.HilbertPolyaMetric
 import F1Square.Square.FinInnerProduct
 import F1Square.Square.FinPreHilbert
 import F1Square.Square.FinDirectLimit
+import F1Square.Square.DiagonalOperatorCore
 import F1Square.Square.FinAtlasOperator
-import F1Square.Square.AtlasRefinementOperator
+import F1Square.Square.BlockLadderCandidate
 import F1Square.Square.WeilLattice
 import F1Square.Square.Forced
 import F1Square.Square.WeilPSD

@@ -61,6 +61,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited b
 -/
 
 import F1Square.Square.FinDirectLimit
+import F1Square.Square.DiagonalOperatorCore
 import F1Square.Square.AtlasSpectralCore
 
 namespace UOR.Bridge.F1Square.Square
@@ -70,106 +71,19 @@ open UOR.Bridge.F1Square.Analysis
 set_option maxHeartbeats 1000000
 
 -- ===========================================================================
--- Local zeta-free trivialities (private; public copies live in Pi/ζ-tainted modules).
+-- Local zeta-free trivialities retained for the atlas-specific results below (the generic
+-- `Cofreal` / `diagOp` / `PreHilbertSymOp` / `dlimDiagW` machinery now lives in
+-- `DiagonalOperatorCore`, imported above).
 -- ===========================================================================
 
-/-- `−0 ≈ 0` (local, zeta-free). -/
-private theorem rneg_zero_loc : Req (Rneg zero) zero :=
-  Req_of_seq_Qeq (fun _ => by show Qeq (neg (⟨0, 1⟩ : Q)) ⟨0, 1⟩; decide)
-
-/-- `z · 0 ≈ 0` (local copy; the public `cmul_czero` is in `FinInnerProduct`, private). -/
+/-- `z · 0 ≈ 0` (local; used by `atlasObs_vanishes_off_carrier`). -/
 private theorem cmul_czero_loc (z : Complex) : Ceq (Cmul z Czero) Czero :=
   ⟨Req_trans (Radd_congr (Rmul_zero z.re) (Rneg_congr (Rmul_zero z.im))) (Radd_neg zero),
    Req_trans (Radd_congr (Rmul_zero z.re) (Rmul_zero z.im)) (Radd_zero zero)⟩
 
-/-- Left-commutativity `a·(c·b) ≈ c·(a·b)` (local copy). -/
-private theorem cmul_left_comm_loc (a c b : Complex) :
-    Ceq (Cmul a (Cmul c b)) (Cmul c (Cmul a b)) :=
-  Ceq_trans (Ceq_symm (Cmul_assoc a c b))
-    (Ceq_trans (Cmul_congr (Cmul_comm a c) (Ceq_refl b)) (Cmul_assoc c a b))
-
--- ===========================================================================
--- The real-scalar embedding and the diagonal operator `diagOp` (generic real weight).
--- ===========================================================================
-
-/-- The embedding of a real scalar into `ℂ` as `⟨r, 0⟩`. -/
-def Cofreal (r : Real) : Complex := ⟨r, zero⟩
-
-/-- The conjugate of a real embedding is itself (`conj ⟨r,0⟩ = ⟨r,−0⟩ ≈ ⟨r,0⟩`). -/
-private theorem Cconj_Cofreal (r : Real) : Ceq (Cconj (Cofreal r)) (Cofreal r) :=
-  ⟨Req_refl _, rneg_zero_loc⟩
-
 /-- The embedding of a real `≈ 0` is the complex zero (`⟨r,0⟩ ≈ ⟨0,0⟩ = Czero`). -/
 private theorem Cofreal_eq_zero {r : Real} (h : Req r zero) : Ceq (Cofreal r) Czero :=
   ⟨h, Req_refl zero⟩
-
-/-- **The diagonal operator** with an index-intrinsic real weight `w : ℕ → ℝ`: multiplies coordinate
-    `i` by the real scalar `w i`. The weight is keyed by the GLOBAL index `i.val`, so the same `w`
-    acts coherently across every stage of the inclusion tower. -/
-def diagOp (w : Nat → Real) (N : Nat) (x : CVec N) : CVec N :=
-  fun i => Cmul (Cofreal (w i.val)) (x i)
-
-/-- The diagonal operator respects the vector setoid. -/
-theorem diagOp_congr (N : Nat) (w : Nat → Real) {x y : CVec N} (h : CVecEq x y) :
-    CVecEq (diagOp w N x) (diagOp w N y) := fun i => Cmul_congr (Ceq_refl _) (h i)
-
-/-- The diagonal operator is additive (linearity, part 1). -/
-theorem diagOp_add (N : Nat) (w : Nat → Real) (x y : CVec N) :
-    CVecEq (diagOp w N (cvAdd x y)) (cvAdd (diagOp w N x) (diagOp w N y)) :=
-  fun i => Cmul_distrib (Cofreal (w i.val)) (x i) (y i)
-
-/-- The diagonal operator commutes with scalar multiplication (linearity, part 2). -/
-theorem diagOp_smul (N : Nat) (w : Nat → Real) (c : Complex) (x : CVec N) :
-    CVecEq (diagOp w N (cvSmul c x)) (cvSmul c (diagOp w N x)) :=
-  fun i => cmul_left_comm_loc (Cofreal (w i.val)) c (x i)
-
-/-- The Hermitian diagonal summand identity: `conj(w·a)·b ≈ conj(a)·(w·b)` for a REAL weight `w`
-    (the conjugate of the real embedding is itself). -/
-private theorem herm_term (r : Real) (a b : Complex) :
-    Ceq (Cmul (Cconj (Cmul (Cofreal r) a)) b) (Cmul (Cconj a) (Cmul (Cofreal r) b)) :=
-  Ceq_trans
-    (Cmul_congr
-      (Ceq_trans (Cconj_Cmul (Cofreal r) a)
-        (Cmul_congr (Cconj_Cofreal r) (Ceq_refl (Cconj a))))
-      (Ceq_refl b))
-    (Ceq_trans
-      (Cmul_congr (Cmul_comm (Cofreal r) (Cconj a)) (Ceq_refl b))
-      (Cmul_assoc (Cconj a) (Cofreal r) b))
-
-/-- **The diagonal operator is SYMMETRIC (Hermitian form)** w.r.t. the positive metric `cInner`:
-    `⟨A x, y⟩ = ⟨x, A y⟩`. Termwise, `conj(w·xᵢ)·yᵢ ≈ conj(xᵢ)·(w·yᵢ)` because `w` is real. This is
-    the genuine symmetry identity, PROVED — replacing the vacuous nominal predicate. It is NOT
-    self-adjointness: no domain / adjoint / closure is asserted (those are focus items 3–4). -/
-theorem diagOp_herm (N : Nat) (w : Nat → Real) (x y : CVec N) :
-    Ceq (cInner N (diagOp w N x) y) (cInner N x (diagOp w N y)) := by
-  show Ceq (cvecSum N (fun i => Cmul (Cconj (Cmul (Cofreal (w i.val)) (x i))) (y i)))
-           (cvecSum N (fun i => Cmul (Cconj (x i)) (Cmul (Cofreal (w i.val)) (y i))))
-  exact cvecSum_congr N _ _ (fun i => herm_term (w i.val) (x i) (y i))
-
-/-- **Tower compatibility** `A_M ∘ ι_{N,M} ≈ ι_{N,M} ∘ A_N`: the index-intrinsic diagonal commutes
-    with the `0`-padding inclusion (on the padded coordinates it multiplies `0`). So the `diagOp`
-    family is a morphism of the directed system — the property that lets it descend to the colimit. -/
-theorem diagOp_cvInc {N M : Nat} (h : N ≤ M) (w : Nat → Real) (x : CVec N) :
-    CVecEq (diagOp w M (cvInc h x)) (cvInc h (diagOp w N x)) := by
-  intro i
-  by_cases hi : i.val < N
-  · simp only [diagOp, cvInc, dif_pos hi]; exact Ceq_refl _
-  · simp only [diagOp, cvInc, dif_neg hi]; exact cmul_czero_loc _
-
--- ===========================================================================
--- The typed symmetric-operator object on a `FinPreHilbert`.
--- ===========================================================================
-
-/-- A **bundled symmetric operator** on a finite pre-Hilbert space `H`: a setoid-respecting
-    `ℂ`-linear map that is SYMMETRIC (`⟨Ax,y⟩ = ⟨x,Ay⟩`, `op_herm`). Symmetry only — this bundles no
-    domain, adjoint, or closure, so it does NOT assert self-adjointness. The operator analogue of
-    `LinIsometry`. -/
-structure PreHilbertSymOp (H : FinPreHilbert) where
-  op : H.V → H.V
-  op_congr : ∀ {x y}, H.veq x y → H.veq (op x) (op y)
-  op_add : ∀ x y, H.veq (op (H.add x y)) (H.add (op x) (op y))
-  op_smul : ∀ c x, H.veq (op (H.smul c x)) (H.smul c (op x))
-  op_herm : ∀ x y, Ceq (H.inner (op x) y) (H.inner x (op y))
 
 -- ===========================================================================
 -- The sourced Atlas weight (with the explicit open seam) and its operator.
@@ -304,52 +218,30 @@ def atlasFinOp (N : Nat) : PreHilbertSymOp (finPreHilbert N) where
 -- `dlimPreHilbert` — the first downstream consumer of the colimit.
 -- ===========================================================================
 
-/-- The Atlas observable on the direct limit: act on the representative at its own stage. Well-defined
-    (`dlimAtlas_wd`) because `diagOp` is tower-compatible. -/
-def dlimAtlas (a : DLimRaw) : DLimRaw := ⟨a.stage, diagOp atlasWeight a.stage a.vec⟩
+/-- The Atlas observable on the direct limit — the descent of `atlasWeight` via the generic
+    `dlimDiagW` (from `DiagonalOperatorCore`). -/
+def dlimAtlas (a : DLimRaw) : DLimRaw := dlimDiagW atlasWeight a
 
-/-- The colimit operator is well-defined against `DLimEq`: representatives agreeing at a common stage
-    map to representatives agreeing there (tower compatibility + `diagOp_congr`). -/
-theorem dlimAtlas_wd {a a' : DLimRaw} (h : DLimEq a a') : DLimEq (dlimAtlas a) (dlimAtlas a') := by
-  obtain ⟨K, haK, ha'K, hAA⟩ := h
-  refine ⟨K, haK, ha'K, ?_⟩
-  exact CVecEq_trans (CVecEq_symm (diagOp_cvInc haK atlasWeight a.vec))
-    (CVecEq_trans (diagOp_congr K atlasWeight hAA)
-      (diagOp_cvInc ha'K atlasWeight a'.vec))
+/-- The colimit operator is well-defined against `DLimEq` (from `dlimDiagW_wd`). -/
+theorem dlimAtlas_wd {a a' : DLimRaw} (h : DLimEq a a') : DLimEq (dlimAtlas a) (dlimAtlas a') :=
+  dlimDiagW_wd atlasWeight h
 
-/-- The colimit operator is additive. -/
+/-- The colimit operator is additive (from `dlimDiagW_add`). -/
 theorem dlimAtlas_add (a b : DLimRaw) :
-    DLimEq (dlimAtlas (dlimAdd a b)) (dlimAdd (dlimAtlas a) (dlimAtlas b)) := by
-  have ha : a.stage ≤ max a.stage b.stage := Nat.le_max_left _ _
-  have hb : b.stage ≤ max a.stage b.stage := Nat.le_max_right _ _
-  refine ⟨max a.stage b.stage, Nat.le_refl _, Nat.le_refl _, ?_⟩
-  refine CVecEq_trans (cvInc_id _) (CVecEq_trans ?_ (CVecEq_symm (cvInc_id _)))
-  refine CVecEq_trans (diagOp_add (max a.stage b.stage) atlasWeight _ _) ?_
-  exact cvAdd_congr (diagOp_cvInc ha atlasWeight a.vec) (diagOp_cvInc hb atlasWeight b.vec)
+    DLimEq (dlimAtlas (dlimAdd a b)) (dlimAdd (dlimAtlas a) (dlimAtlas b)) :=
+  dlimDiagW_add atlasWeight a b
 
-/-- The colimit operator commutes with scalar multiplication. -/
+/-- The colimit operator commutes with scalar multiplication (from `dlimDiagW_smul`). -/
 theorem dlimAtlas_smul (c : Complex) (a : DLimRaw) :
     DLimEq (dlimAtlas (dlimSmul c a)) (dlimSmul c (dlimAtlas a)) :=
-  ⟨a.stage, Nat.le_refl _, Nat.le_refl _,
-    CVecEq_trans (cvInc_id _)
-      (CVecEq_trans (diagOp_smul a.stage atlasWeight c a.vec) (CVecEq_symm (cvInc_id _)))⟩
+  dlimDiagW_smul atlasWeight c a
 
-/-- **The colimit operator is SYMMETRIC** w.r.t. the colimit metric `dlimInner`: evaluate both
-    pairings at the common stage `max`, push the operator through the inclusions (`diagOp_cvInc`),
-    and apply the stagewise symmetry `diagOp_herm`. This is the FIRST genuine symmetric Atlas operator
-    on the finite-support core, induced on the direct-limit pre-Hilbert object (symmetry only — not
-    self-adjointness, which needs the completion and adjoint of focus items 3–4). -/
+/-- **The colimit operator is SYMMETRIC** w.r.t. the colimit metric `dlimInner` (from
+    `dlimDiagW_herm`). This is a genuine symmetric Atlas operator induced on the direct-limit
+    pre-Hilbert object — symmetry only, not self-adjointness. -/
 theorem dlimAtlas_herm (a b : DLimRaw) :
-    Ceq (dlimInner (dlimAtlas a) b) (dlimInner a (dlimAtlas b)) := by
-  have haK : a.stage ≤ max a.stage b.stage := Nat.le_max_left _ _
-  have hbK : b.stage ≤ max a.stage b.stage := Nat.le_max_right _ _
-  refine Ceq_trans (Ceq_symm (dlimInner_eval (dlimAtlas a) b haK hbK)) ?_
-  refine Ceq_trans (cInner_congr (CVecEq_symm (diagOp_cvInc haK atlasWeight a.vec))
-    (CVecEq_refl _)) ?_
-  refine Ceq_trans (diagOp_herm (max a.stage b.stage) atlasWeight
-    (cvInc haK a.vec) (cvInc hbK b.vec)) ?_
-  refine Ceq_trans (cInner_congr (CVecEq_refl _) (diagOp_cvInc hbK atlasWeight b.vec)) ?_
-  exact dlimInner_eval a (dlimAtlas b) haK hbK
+    Ceq (dlimInner (dlimAtlas a) b) (dlimInner a (dlimAtlas b)) :=
+  dlimDiagW_herm atlasWeight a b
 
 /-- **The Atlas observable on the direct limit**, packaged as a symmetric operator on
     `dlimPreHilbert` — the first downstream mathematical consumer of the packaged colimit pre-Hilbert
