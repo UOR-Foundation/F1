@@ -8581,3 +8581,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimCompletionAdd_neg
 #print axioms Square.DLimCompletionEq_of_add
 #print axioms Square.DLimCompletionEq_of_neg
+-- ASSOCIATIVITY (the last group law, now proved — the completion addition is an abelian group mod ≈):
+-- dlimCompletionAdd_assoc, via assoc_dist_bound over ABSTRACT points (no completion nesting → no whnf
+-- blow-up; the nesting is touched once at the boundary), reducing d²((X+Y)+Z,X+(Y+Z)) to 2d²(X₄,X₂)+
+-- 2d²(Z₂,Z₄) and collapsing 4·(1/(4(k+1)))=1/(k+1) for n≥8k+7.
+#print axioms Square.dlimCompletionAdd_assoc
+-- PROOF-BEARING DEFINITIONS (their `.reg`/regularity fields carry inline proofs not otherwise audited;
+-- audited directly so no sorry can hide in a definition's proof component): the constant map, zero, and
+-- the three completion members (negation, rescheduled addition, odd reschedule).
+#print axioms Square.DLimCompletionRaw.of
+#print axioms Square.dlimCompletionZero
+#print axioms Square.dlimCompletionNeg
+#print axioms Square.dlimCompletionAdd
+#print axioms Square.dlimReschedOdd

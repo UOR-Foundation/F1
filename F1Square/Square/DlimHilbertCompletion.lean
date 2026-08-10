@@ -25,17 +25,24 @@ WHAT IS BUILT HERE (the analytic substrate — genuine, representative-independe
   `dlimInner_smul_right` through `dlimNeg ≈ (−1)·` (a termwise `(−1)·z ≈ −z`), and `dlimNormSq_neg`
   (`‖−a‖² ≈ ‖a‖²`) collapses the two signs. Symmetry follows from `b − a ≈ −(a − b)`.
 
-STILL OPEN (next phases, flagged honestly): the squared QUASI-TRIANGLE `d²(a,c) ≤ 2·d²(a,b)+2·d²(b,c)`
-(the sqrt-free replacement for the ordinary triangle inequality, via the parallelogram expansion of
-`‖u+v‖²`); the sqrt-free COMPLEX Cauchy–Schwarz on `cInner` (`CnormSq⟨x,y⟩ ≤ 2⟨x,x⟩⟨y,y⟩`); then the
-completion members' regularity, the norm-null sequence equivalence and completion `Setoid`, the
-constant-sequence embedding, the rescheduled operations, and only then the completed inner product as a
-constructive limit (built from a clean `ComplexLimitCore`, NOT the `Analysis.ComplexLimit` that
-transitively reaches `Analysis.Zeta`), positive-definiteness/pre-Hilbert laws, the explicit completeness
-proof, the isometric dense embedding with approximation modulus, continuous coordinate reads, and finally
-the maximal weighted domain `D(M_w)` and its self-adjointness. This module is deliberately the substrate
-ONLY; it does not name or assert a completed Hilbert space yet, and it does NOT extend any operator by
-continuity.
+ALSO BUILT (the completion layer, on the substrate above): the squared QUASI-TRIANGLE
+`d²(a,c) ≤ 2·d²(a,b)+2·d²(b,c)` (parallelogram expansion of `‖u+v‖²`); the Cauchy-modulus properties
+(symmetry/nonnegativity/decay) and monotonicity; the completion carrier `DLimCompletionRaw`, its
+NORM-NULL sequence equivalence (`∀k ∃N ∀n≥N ‖Xn−Yn‖²≤1/(k+1)`, the `∀k` absorbing the quasi-triangle
+factor) with a genuine transitive `Setoid`; the constant-sequence MAP `of` with equality reflection
+`of a ≈ of b ↔ a ≈ b` (INJECTIVE mod the setoids — NOT yet isometric or dense); the cofinal-rescheduling
+invariance `X ≈ X_{2n+1}`; the rescheduled operations ADDITION (`n ↦ 2n+1`) and NEGATION with their
+regularity and congruence; and the additive-group laws modulo completion equivalence — commutativity,
+ASSOCIATIVITY, right unit, inverse, and the `of`-homomorphism laws `of_add`/`of_neg`.
+
+STILL OPEN (next phases, flagged honestly): SCALAR MULTIPLICATION (a scalar-dependent affine reschedule
+`n ↦ q(n+1)−1`) with the complex-module laws and `of_smul`, on a CLEAN Complex-only squared-modulus core;
+and only then the completed inner product as a constructive limit (from a clean `ComplexLimitCore`, NOT
+the `Analysis.ComplexLimit`/`ComplexMod` that transitively reach `Analysis.Zeta`), the
+pre-Hilbert/positive-definiteness laws, the explicit completeness proof, the ACTUAL isometry and density
+of `of`, continuous coordinate reads, and finally the maximal weighted domain `D(M_w)` and its
+self-adjointness. This module is deliberately the completion layer ONLY; it does NOT name or assert a
+completed Hilbert space, an operator, or self-adjointness, and it does NOT extend any operator by continuity.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; the cone is `FinDirectLimit`'s
 zeta/crux-free cone. Crux `none`.
@@ -710,5 +717,56 @@ theorem DLimCompletionEq_of_neg (a : DLimRaw) :
     DLimCompletionEq (DLimCompletionRaw.of (dlimNeg a))
       (dlimCompletionNeg (DLimCompletionRaw.of a)) :=
   DLimCompletionEq_of_pointwise (fun _ => DLimEq_refl _)
+
+/-- **The associativity distance bound, over ABSTRACT points** (no completion nesting, so no whnf
+    blow-up): `‖((a₄+y)+z₂) − (a₂+(y+z₄))‖² ≤ 2·‖a₄−a₂‖² + 2·‖z₂−z₄‖²`. With midpoint `(a₂+y)+z₂`, the
+    point quasi-triangle plus the two `+`-cancellations (`dlimDist2_add_right`/`_add_left`) split the
+    coupled difference into the pure-`a` and pure-`z` shifts; `y` cancels. -/
+private theorem assoc_dist_bound (a4 a2 y z2 z4 : DLimRaw) :
+    Rle (dlimDist2 (dlimAdd (dlimAdd a4 y) z2) (dlimAdd a2 (dlimAdd y z4)))
+      (Radd (Radd (dlimDist2 a4 a2) (dlimDist2 a4 a2))
+            (Radd (dlimDist2 z2 z4) (dlimDist2 z2 z4))) := by
+  refine Rle_trans (Rle_of_Req (dlimDist2_wd (DLimEq_refl _)
+    (DLimEq_symm (dlimAdd_assoc a2 y z4)))) ?_
+  refine Rle_trans (dlimDist2_quasitriangle _ (dlimAdd (dlimAdd a2 y) z2) _) ?_
+  exact Radd_le_add_loc
+    (Radd_le_add_loc
+      (Rle_of_Req (Req_trans (dlimDist2_add_right (dlimAdd a4 y) (dlimAdd a2 y) z2)
+        (dlimDist2_add_right a4 a2 y)))
+      (Rle_of_Req (Req_trans (dlimDist2_add_right (dlimAdd a4 y) (dlimAdd a2 y) z2)
+        (dlimDist2_add_right a4 a2 y))))
+    (Radd_le_add_loc
+      (Rle_of_Req (dlimDist2_add_left z2 z4 (dlimAdd a2 y)))
+      (Rle_of_Req (dlimDist2_add_left z2 z4 (dlimAdd a2 y))))
+
+/-- **ASSOCIATIVITY** of completion addition (the last group law): `(X + Y) + Z ≈ X + (Y + Z)`. The two
+    sides read `X` at `2(2n+1)+1` vs `2n+1` and `Z` at `2n+1` vs `2(2n+1)+1`; `assoc_dist_bound` reduces
+    the distance to `2·d²(X₄,X₂) + 2·d²(Z₂,Z₄)`, each below `1/(4(k+1))` (regularity + monotonicity to the
+    diagonal + decay, `n ≥ 8k+7`), collapsing to `1/(k+1)`. The completion nesting is touched only once
+    (the boundary unification with `assoc_dist_bound`). -/
+theorem dlimCompletionAdd_assoc (X Y Z : DLimCompletionRaw) :
+    DLimCompletionEq (dlimCompletionAdd (dlimCompletionAdd X Y) Z)
+      (dlimCompletionAdd X (dlimCompletionAdd Y Z)) := by
+  intro k
+  refine ⟨8 * k + 7, fun n hn => ?_⟩
+  have hbnd : ∀ (W : DLimCompletionRaw) (p q : Nat), 2 * n + 1 ≤ p → 2 * n + 1 ≤ q →
+      Rle (dlimDist2 (W.seq p) (W.seq q)) (ofQ (⟨1, (4 * k + 3) + 1⟩ : Q) (Nat.succ_pos _)) :=
+    fun W p q hp hq => Rle_trans (W.reg p q)
+      (Rle_trans (dlimCauchyMod_mono (p := 2 * n + 1) (p' := p) (q := 2 * n + 1) (q' := q) hp hq)
+        (Rle_trans (dlimCauchyMod_diag_decay (2 * n + 1))
+          (Rle_ofQ_of_Qle_loc _ _ (by
+            show (4 : Int) * (((4 * k + 3) + 1 : Nat) : Int) ≤ (1 : Int) * (((2 * n + 1) + 1 : Nat) : Int)
+            push_cast; omega))))
+  refine Rle_trans (assoc_dist_bound (X.seq (2 * (2 * n + 1) + 1)) (X.seq (2 * n + 1))
+    (Y.seq (2 * (2 * n + 1) + 1)) (Z.seq (2 * n + 1)) (Z.seq (2 * (2 * n + 1) + 1))) ?_
+  refine Rle_trans (Radd_le_add_loc
+    (Radd_le_add_loc (hbnd X (2 * (2 * n + 1) + 1) (2 * n + 1) (by omega) (by omega))
+      (hbnd X (2 * (2 * n + 1) + 1) (2 * n + 1) (by omega) (by omega)))
+    (Radd_le_add_loc (hbnd Z (2 * n + 1) (2 * (2 * n + 1) + 1) (by omega) (by omega))
+      (hbnd Z (2 * n + 1) (2 * (2 * n + 1) + 1) (by omega) (by omega)))) ?_
+  refine Rle_of_Req (Req_trans
+    (Req_trans (Radd_congr (Radd_ofQ_loc _ _) (Radd_ofQ_loc _ _)) (Radd_ofQ_loc _ _))
+    (ofQ_respects _ (Nat.succ_pos k) ?_))
+  simp only [Qeq, add, mul]; push_cast; ring_uor
 
 end UOR.Bridge.F1Square.Square
