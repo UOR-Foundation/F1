@@ -8594,14 +8594,18 @@ open UOR.Bridge.F1Square
 -- cNormSq_le_scalarSchedule (|c|² ≤ scalarSchedule c, the ∃-free bound). dlimCompletionSmul (the proof-
 -- bearing scalar action, reg via dlimDist2_smul + Rmul_le_Rmul_left_loc + dlimCauchyMod_atten — DIRECTLY
 -- axiom-audited per step 7). sched_comp (σ_r(σ_q(n))=σ_{rq}(n), the common-refinement tool).
--- dlimCompletionSmul_congr_vec (X≈Y ⟹ c·X≈c·Y). Still open: scalar congruence (c≈c', different schedules)
--- + the complex-module laws + of_smul.
+-- dlimCompletionSmul_congr_vec (X≈Y ⟹ c·X≈c·Y). dlimCompletionSmul_congr_scalar (c≈c' ⟹ c·X≈c'·X —
+-- the reschedule/common-refinement route: reschedule c·X by scalarSchedule c' and c'·X by scalarSchedule c,
+-- align both at σ_{qr} via sched_comp + Nat.mul_comm, close stagewise with dlimSmul_wd hc; NO scalar-diff
+-- estimate). Together vec+scalar congruence = dlimCompletionSmul is a WELL-DEFINED complex-scalar-setoid
+-- action. Still open: the complex-module laws + of_smul.
 #print axioms Square.scalarSchedule
 #print axioms Square.one_le_scalarSchedule
 #print axioms Square.cNormSq_le_scalarSchedule
 #print axioms Square.dlimCompletionSmul
 #print axioms Square.sched_comp
 #print axioms Square.dlimCompletionSmul_congr_vec
+#print axioms Square.dlimCompletionSmul_congr_scalar
 -- CLEAN COMPLEX-ONLY SQUARED-MODULUS CORE (reviewer gate item 3; new Analysis/ComplexNormSqCore.lean,
 -- Zeta-free cone = ComplexCore + RealSquareDefinite only — NOT the ζ-tainted ZeroGeometry.cnormSq, NOT the
 -- heavy ComplexMod): cNormSq z := re²+im², cNormSq_nonneg (sum of squares ≥ 0), and z·conj z = the real

@@ -1168,4 +1168,31 @@ theorem dlimCompletionSmul_congr_vec {c : Complex} {X Y : DLimCompletionRaw}
       Nat.mul_pos (one_le_scalarSchedule c) (by omega); omega
   exact Qeq_le (by simp only [Qeq, mul, h1]; push_cast; ring_uor)
 
+/-- **Scalar congruence** of scalar multiplication (reviewer gate 6): `Ceq c c' ⟹ c·X ≈ c'·X`.
+    This is what makes `dlimCompletionSmul` a well-defined action of the complex-scalar setoid.
+    Because `c` and `c'` carry DIFFERENT reschedule factors `q = scalarSchedule c`, `r = scalarSchedule c'`,
+    the two sides are aligned by a COMMON REFINEMENT: reschedule `c·X` by `r` and `c'·X` by `q`, landing
+    both at index `σ_{qr}(n)` (`sched_comp` collapses the composed affine schedules, `Nat.mul_comm` matches
+    `qr = rq`). There the SAME colimit vector `X_{σ_{qr}(n)}` is scaled by `c` on one side and `c'` on the
+    other, so raw `dlimSmul_wd hc` closes it stagewise; cofinal invariance (`dlimResched_eq`) bridges each
+    side to its unrescheduled form. NO scalar-difference estimate or uniform-norm bound is needed. -/
+theorem dlimCompletionSmul_congr_scalar {c c' : Complex} {X : DLimCompletionRaw} (hc : Ceq c c') :
+    DLimCompletionEq (dlimCompletionSmul c X) (dlimCompletionSmul c' X) := by
+  have hq : 1 ≤ scalarSchedule c := one_le_scalarSchedule c
+  have hr : 1 ≤ scalarSchedule c' := one_le_scalarSchedule c'
+  refine DLimCompletionEq_trans
+    (dlimResched_eq (scalarSchedule c') hr (dlimCompletionSmul c X)) ?_
+  refine DLimCompletionEq_trans ?_
+    (DLimCompletionEq_symm (dlimResched_eq (scalarSchedule c) hq (dlimCompletionSmul c' X)))
+  refine DLimCompletionEq_of_pointwise (fun n => ?_)
+  show DLimEq (dlimSmul c (X.seq (scalarSchedule c * ((scalarSchedule c' * (n + 1) - 1) + 1) - 1)))
+    (dlimSmul c' (X.seq (scalarSchedule c' * ((scalarSchedule c * (n + 1) - 1) + 1) - 1)))
+  have hAB : scalarSchedule c * ((scalarSchedule c' * (n + 1) - 1) + 1) - 1
+      = scalarSchedule c' * ((scalarSchedule c * (n + 1) - 1) + 1) - 1 := by
+    rw [sched_comp (scalarSchedule c') (scalarSchedule c) n hr,
+      sched_comp (scalarSchedule c) (scalarSchedule c') n hq,
+      Nat.mul_comm (scalarSchedule c') (scalarSchedule c)]
+  rw [hAB]
+  exact dlimSmul_wd hc (DLimEq_refl _)
+
 end UOR.Bridge.F1Square.Square
