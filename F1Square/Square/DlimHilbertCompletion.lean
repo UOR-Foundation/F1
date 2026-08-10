@@ -20,13 +20,22 @@ WHAT IS BUILT HERE (the analytic substrate — genuine, representative-independe
   the squared canonical modulus `(1/(j+1) + 1/(k+1))²` — the ψ-free squared-Cauchy shape the completion
   members will carry.
 
-STILL OPEN (next phases, flagged honestly): distance SYMMETRY `‖a−b‖²=‖b−a‖²`; the sqrt-free COMPLEX
-Cauchy–Schwarz on `cInner` (`CnormSq⟨x,y⟩ ≤ 2⟨x,x⟩⟨y,y⟩`, the one genuinely-new brick); then the
-completed inner product as a constructive limit (`Clim`), positive-definiteness/pre-Hilbert laws of the
-completion, the explicit completeness proof, the isometric dense embedding of `DLimRaw` with an
-approximation modulus, continuous coordinate reads against `dlimBasis`, and only then the maximal
-weighted domain `D(M_w)` and its self-adjointness. This module is deliberately the substrate ONLY; it
-does not name or assert a completed Hilbert space yet, and it does NOT extend any operator by continuity.
+- The NEGATION foundation and DISTANCE SYMMETRY `‖a−b‖² ≈ ‖b−a‖²`. The sesquilinear negation laws
+  `dlimInner_neg_left`/`dlimInner_neg_right` (`⟨−a,b⟩ ≈ ⟨a,−b⟩ ≈ −⟨a,b⟩`) are derived from
+  `dlimInner_smul_right` through `dlimNeg ≈ (−1)·` (a termwise `(−1)·z ≈ −z`), and `dlimNormSq_neg`
+  (`‖−a‖² ≈ ‖a‖²`) collapses the two signs. Symmetry follows from `b − a ≈ −(a − b)`.
+
+STILL OPEN (next phases, flagged honestly): the squared QUASI-TRIANGLE `d²(a,c) ≤ 2·d²(a,b)+2·d²(b,c)`
+(the sqrt-free replacement for the ordinary triangle inequality, via the parallelogram expansion of
+`‖u+v‖²`); the sqrt-free COMPLEX Cauchy–Schwarz on `cInner` (`CnormSq⟨x,y⟩ ≤ 2⟨x,x⟩⟨y,y⟩`); then the
+completion members' regularity, the norm-null sequence equivalence and completion `Setoid`, the
+constant-sequence embedding, the rescheduled operations, and only then the completed inner product as a
+constructive limit (built from a clean `ComplexLimitCore`, NOT the `Analysis.ComplexLimit` that
+transitively reaches `Analysis.Zeta`), positive-definiteness/pre-Hilbert laws, the explicit completeness
+proof, the isometric dense embedding with approximation modulus, continuous coordinate reads, and finally
+the maximal weighted domain `D(M_w)` and its self-adjointness. This module is deliberately the substrate
+ONLY; it does not name or assert a completed Hilbert space yet, and it does NOT extend any operator by
+continuity.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; the cone is `FinDirectLimit`'s
 zeta/crux-free cone. Crux `none`.
@@ -111,6 +120,101 @@ theorem dlimDist2_zero_iff (a b : DLimRaw) : Req (dlimDist2 a b) zero ↔ DLimEq
     exact dlimEq_of_sub_zero (dlimInner_self_definite (dlimSub a b) hcz)
   · intro h
     exact Req_trans (dlimDist2_wd (DLimEq_refl a) (DLimEq_symm h)) (dlimDist2_self a)
+
+-- ===========================================================================
+-- The negation foundation: `⟨−a, b⟩ ≈ ⟨a, −b⟩ ≈ −⟨a, b⟩` and `‖−a‖² ≈ ‖a‖²`.
+-- ===========================================================================
+
+/-- `Rneg` is an involution (component form), used to collapse a double complex negation. -/
+private theorem Rneg_Rneg_loc (r : Real) : Req (Rneg (Rneg r)) r :=
+  Req_of_seq_Qeq (fun n => by
+    show Qeq (neg (neg (r.seq n))) (r.seq n)
+    simp only [Qeq, neg]; push_cast; ring_uor)
+
+/-- Complex negation respects `Ceq`. -/
+private theorem Cneg_congr_loc {z w : Complex} (h : Ceq z w) : Ceq (Cneg z) (Cneg w) :=
+  ⟨Rneg_congr h.1, Rneg_congr h.2⟩
+
+/-- Complex negation is an involution. -/
+private theorem Cneg_Cneg_loc (z : Complex) : Ceq (Cneg (Cneg z)) z :=
+  ⟨Rneg_Rneg_loc z.re, Rneg_Rneg_loc z.im⟩
+
+/-- `−0 ≈ 0`. -/
+private theorem Rneg_zero_loc : Req (Rneg zero) zero :=
+  Req_of_seq_Qeq (fun n => by
+    show Qeq (neg (zero.seq n)) (zero.seq n)
+    simp only [zero_seq, Qeq, neg]; decide)
+
+/-- `Cconj (−z) ≈ −(Cconj z)` — holds definitionally (both are `⟨−z.re, −(−z.im)⟩`). -/
+private theorem Cconj_Cneg_loc (z : Complex) : Ceq (Cconj (Cneg z)) (Cneg (Cconj z)) :=
+  ⟨Req_refl _, Req_refl _⟩
+
+/-- `(−1)·z ≈ −z` (the bridge turning colimit negation into `(−1)·`), from the `ℝ` product laws:
+    real part `(−1)·a − (−0)·b ≈ −a`, imaginary part `(−1)·b + (−0)·a ≈ −b`. -/
+private theorem neg_one_Cmul_loc (z : Complex) : Ceq (Cmul (Cneg Cone) z) (Cneg z) :=
+  have hone : ∀ w : Real, Req (Rmul (Rneg one) w) (Rneg w) := fun w =>
+    Req_trans (Rmul_neg_left one w) (Rneg_congr (Req_trans (Rmul_comm one w) (Rmul_one w)))
+  have hzero : ∀ w : Real, Req (Rmul (Rneg zero) w) zero := fun w =>
+    Req_trans (Rmul_neg_left zero w)
+      (Req_trans (Rneg_congr (Req_trans (Rmul_comm zero w) (Rmul_zero w))) Rneg_zero_loc)
+  ⟨Req_trans (Rsub_congr (hone z.re) (hzero z.im)) (Rsub_zero (Rneg z.re)),
+   Req_trans (Radd_congr (hone z.im) (hzero z.re)) (Radd_zero (Rneg z.im))⟩
+
+/-- Colimit negation is `(−1)·` scaling (up to `DLimEq`). -/
+private theorem dlimNeg_eq_smul (a : DLimRaw) :
+    DLimEq (dlimNeg a) (dlimSmul (Cneg Cone) a) :=
+  ⟨a.stage, Nat.le_refl _, Nat.le_refl _,
+    CVecEq_trans (cvInc_id _)
+      (CVecEq_trans (fun i => Ceq_symm (neg_one_Cmul_loc (a.vec i)))
+        (CVecEq_symm (cvInc_id _)))⟩
+
+/-- Colimit negation is an involution. -/
+private theorem dlimNeg_dlimNeg (a : DLimRaw) : DLimEq (dlimNeg (dlimNeg a)) a :=
+  ⟨a.stage, Nat.le_refl _, Nat.le_refl _,
+    CVecEq_trans (cvInc_id _)
+      (CVecEq_trans (fun i => Cneg_Cneg_loc (a.vec i)) (CVecEq_symm (cvInc_id _)))⟩
+
+/-- Colimit negation distributes over addition: `−(a + b) ≈ (−a) + (−b)` — through `(−1)·` scaling. -/
+private theorem dlimNeg_dlimAdd (a b : DLimRaw) :
+    DLimEq (dlimNeg (dlimAdd a b)) (dlimAdd (dlimNeg a) (dlimNeg b)) :=
+  DLimEq_trans (dlimNeg_eq_smul (dlimAdd a b))
+    (DLimEq_trans (dlimSmul_dlimAdd (Cneg Cone) a b)
+      (dlimAdd_wd (DLimEq_symm (dlimNeg_eq_smul a)) (DLimEq_symm (dlimNeg_eq_smul b))))
+
+/-- **Right negation**: `⟨a, −b⟩ ≈ −⟨a, b⟩` (from `dlimInner_smul_right` at `(−1)`). -/
+theorem dlimInner_neg_right (a b : DLimRaw) :
+    Ceq (dlimInner a (dlimNeg b)) (Cneg (dlimInner a b)) :=
+  Ceq_trans (dlimInner_wd (DLimEq_refl a) (dlimNeg_eq_smul b))
+    (Ceq_trans (dlimInner_smul_right (Cneg Cone) a b)
+      (neg_one_Cmul_loc (dlimInner a b)))
+
+/-- **Left negation**: `⟨−a, b⟩ ≈ −⟨a, b⟩` (from right negation through Hermitian symmetry). -/
+theorem dlimInner_neg_left (a b : DLimRaw) :
+    Ceq (dlimInner (dlimNeg a) b) (Cneg (dlimInner a b)) :=
+  Ceq_trans (dlimInner_conj (dlimNeg a) b)
+    (Ceq_trans (Cconj_congr (dlimInner_neg_right b a))
+      (Ceq_trans (Cconj_Cneg_loc (dlimInner b a))
+        (Cneg_congr_loc (Ceq_symm (dlimInner_conj a b)))))
+
+/-- **The squared norm is negation-invariant**: `‖−a‖² ≈ ‖a‖²` (the two signs cancel). -/
+theorem dlimNormSq_neg (a : DLimRaw) : Req (dlimNormSq (dlimNeg a)) (dlimNormSq a) :=
+  (Ceq_trans (dlimInner_neg_left a (dlimNeg a))
+    (Ceq_trans (Cneg_congr_loc (dlimInner_neg_right a a))
+      (Cneg_Cneg_loc (dlimInner a a)))).1
+
+/-- `b − a ≈ −(a − b)` in the colimit group. -/
+private theorem dlimSub_neg_comm (a b : DLimRaw) :
+    DLimEq (dlimSub b a) (dlimNeg (dlimSub a b)) :=
+  DLimEq_symm
+    (DLimEq_trans (dlimNeg_dlimAdd a (dlimNeg b))
+      (DLimEq_trans (dlimAdd_wd (DLimEq_refl (dlimNeg a)) (dlimNeg_dlimNeg b))
+        (dlimAdd_comm (dlimNeg a) b)))
+
+/-- **DISTANCE SYMMETRY** (gate item 1): `‖a − b‖² ≈ ‖b − a‖²`, via `b − a ≈ −(a − b)` and
+    negation-invariance of the squared norm. The squared distance is a genuine symmetric gauge (though
+    not itself an ordinary metric — the triangle law is replaced by the squared quasi-triangle). -/
+theorem dlimDist2_symm (a b : DLimRaw) : Req (dlimDist2 a b) (dlimDist2 b a) :=
+  Req_symm (Req_trans (dlimNormSq_wd (dlimSub_neg_comm a b)) (dlimNormSq_neg (dlimSub a b)))
 
 -- ===========================================================================
 -- The squared Cauchy relation (the completion members' shape).

@@ -8511,7 +8511,11 @@ open UOR.Bridge.F1Square
 -- dlimInner_self_nonneg). dlimNormSq_zero/dlimDist2_self: ‖0‖²≈0 and ‖a−a‖²≈0. dlimEq_of_sub_zero:
 -- colimit group cancellation a−b≈0⟹a≈b. dlimDist2_zero_iff: THE NORM-NULL EQUIVALENCE ‖a−b‖²≈0 ↔ a≈b
 -- (the completion metric's definiteness, via dlimInner_self_definite). DLimCauchyU (def): the squared
--- Cauchy relation. NO completion limit, NO inner product on the completion, NO operator yet; crux none.
+-- Cauchy relation. THE NEGATION FOUNDATION (gate item 1): dlimInner_neg_right/dlimInner_neg_left
+-- (⟨a,−b⟩≈⟨−a,b⟩≈−⟨a,b⟩, from dlimInner_smul_right through dlimNeg≈(−1)·, a termwise (−1)·z≈−z proved
+-- from the ℝ product laws — NO out-of-cone Cneg_Cmul_left/Cconj_Cneg), dlimNormSq_neg (‖−a‖²≈‖a‖²),
+-- dlimDist2_symm (DISTANCE SYMMETRY ‖a−b‖²≈‖b−a‖² via b−a≈−(a−b)). NO completion limit, NO inner product
+-- on the completion, NO operator yet; still open = quasi-triangle + complex CS + the setoid; crux none.
 #print axioms Square.dlimNormSq_wd
 #print axioms Square.dlimSub_wd
 #print axioms Square.dlimDist2_wd
@@ -8521,3 +8525,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimDist2_self
 #print axioms Square.dlimEq_of_sub_zero
 #print axioms Square.dlimDist2_zero_iff
+#print axioms Square.dlimInner_neg_right
+#print axioms Square.dlimInner_neg_left
+#print axioms Square.dlimNormSq_neg
+#print axioms Square.dlimDist2_symm
