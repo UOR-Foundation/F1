@@ -588,4 +588,138 @@ theorem completedInner_conj (X Y : DLimCompletionRaw) :
     rw [show Fsched Y X * (n + 1) - 1 = Fsched X Y * (n + 1) - 1 from by rw [Fsched_comm]]
     exact (dlimInner_conj (X.seq (Fsched X Y * (n + 1) - 1)) (Y.seq (Fsched X Y * (n + 1) - 1))).2
 
+
+-- ============================================================================
+-- STEP 1 — reusable helper: eventual smallness of a regular sequence whose
+-- limit is 0.  (No positivity needed — the one-sided upper bound suffices.)
+-- ============================================================================
+
+/-- If a regular real sequence `W` has Bishop limit `≈ 0`, then for every `k` the terms `W j`
+    are eventually `≤ 1/(k+1)`.  Route through a large index `m` (where `W j` is close to its
+    limit) with the Archimedean lemma. -/
+private theorem Rnonneg_lim_zero_small {W : Nat → Real} (hW : RReg W)
+    (hlim : Req (Rlim W hW) zero) :
+    ∀ k : Nat, ∃ N : Nat, ∀ j : Nat, N ≤ j →
+      Rle (W j) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k)) := by
+  intro k
+  refine ⟨2 * (k + 1), fun j hj => ?_⟩
+  intro n
+  show Qle ((W j).seq n) (add (⟨1, k + 1⟩ : Q) (⟨2, n + 1⟩ : Q))
+  refine Qarch_gen (C := 5) ((W j).den_pos n)
+    (add_den_pos (Nat.succ_pos k) (Nat.succ_pos n)) ?_
+  intro m
+  show Qle ((W j).seq n)
+    (add (add (⟨1, k + 1⟩ : Q) (⟨2, n + 1⟩ : Q)) (⟨5, m + 1⟩ : Q))
+  -- denominator-positivity helpers
+  have dQn : 0 < (Qbound n).den := Qbound_den_pos n
+  have dQm : 0 < (Qbound m).den := Qbound_den_pos m
+  have dWm : 0 < ((W j).seq m).den := (W j).den_pos m
+  have dRm : 0 < ((Rlim W hW).seq m).den := (Rlim W hW).den_pos m
+  have dZm : 0 < (zero.seq m).den := zero.den_pos m
+  have djp : 0 < (⟨2, j + 1⟩ : Q).den := Nat.succ_pos j
+  have dmp : 0 < (⟨2, m + 1⟩ : Q).den := Nat.succ_pos m
+  -- three one-sided bounds: regularity of W j, convergence, hlim
+  have hA : Qle ((W j).seq n) (add ((W j).seq m) (add (Qbound n) (Qbound m))) :=
+    Qle_add_of_Qabs_sub ((W j).den_pos n) dWm (add_den_pos dQn dQm) ((W j).reg n m)
+  have hB : Qle ((W j).seq m)
+      (add ((Rlim W hW).seq m) (add (⟨2, j + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) :=
+    Qle_add_of_Qabs_sub dWm dRm (add_den_pos djp dmp) (Rlim_tendsTo W hW j m)
+  have hC : Qle ((Rlim W hW).seq m) (add (zero.seq m) (⟨2, m + 1⟩ : Q)) :=
+    Qle_add_of_Qabs_sub dRm dZm (Nat.succ_pos m) (hlim m)
+  -- combine
+  have hAB : Qle ((W j).seq n)
+      (add (add ((Rlim W hW).seq m) (add (⟨2, j + 1⟩ : Q) (⟨2, m + 1⟩ : Q)))
+           (add (Qbound n) (Qbound m))) :=
+    Qle_trans (add_den_pos dWm (add_den_pos dQn dQm)) hA
+      (Qadd_le_add hB (Qle_refl (add (Qbound n) (Qbound m))))
+  have hAB3 : Qle ((W j).seq n)
+      (add (add (add (zero.seq m) (⟨2, m + 1⟩ : Q)) (add (⟨2, j + 1⟩ : Q) (⟨2, m + 1⟩ : Q)))
+           (add (Qbound n) (Qbound m))) :=
+    Qle_trans (add_den_pos (add_den_pos dRm (add_den_pos djp dmp)) (add_den_pos dQn dQm)) hAB
+      (Qadd_le_add (Qadd_le_add hC (Qle_refl (add (⟨2, j + 1⟩ : Q) (⟨2, m + 1⟩ : Q))))
+        (Qle_refl (add (Qbound n) (Qbound m))))
+  -- BigLHS ≈ midQ, then midQ ≤ RHS
+  have hEq : Qeq
+      (add (add (add (zero.seq m) (⟨2, m + 1⟩ : Q)) (add (⟨2, j + 1⟩ : Q) (⟨2, m + 1⟩ : Q)))
+           (add (Qbound n) (Qbound m)))
+      (add (add (⟨2, j + 1⟩ : Q) (⟨1, n + 1⟩ : Q)) (⟨5, m + 1⟩ : Q)) := by
+    simp only [Qeq, add, Qbound, zero_seq]; push_cast; ring_uor
+  have qJ : Qle (⟨2, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q) := by
+    simp only [Qle]; push_cast; omega
+  have qN : Qle (⟨1, n + 1⟩ : Q) (⟨2, n + 1⟩ : Q) := by
+    simp only [Qle]; push_cast; omega
+  have qFinal : Qle (add (add (⟨2, j + 1⟩ : Q) (⟨1, n + 1⟩ : Q)) (⟨5, m + 1⟩ : Q))
+      (add (add (⟨1, k + 1⟩ : Q) (⟨2, n + 1⟩ : Q)) (⟨5, m + 1⟩ : Q)) :=
+    Qadd_le_add (Qadd_le_add qJ qN) (Qle_refl (⟨5, m + 1⟩ : Q))
+  exact Qle_trans
+    (add_den_pos (add_den_pos (add_den_pos dZm dmp) (add_den_pos djp dmp)) (add_den_pos dQn dQm))
+    hAB3
+    (Qle_trans (add_den_pos (add_den_pos (Nat.succ_pos j) (Nat.succ_pos n)) (Nat.succ_pos m))
+      (Qeq_le hEq) qFinal)
+
+-- ============================================================================
+-- THE TARGET — definiteness of the completed inner product.
+-- ============================================================================
+
+/-- **Definiteness of the completed inner product**: if `⟨X,X⟩ ≈ 0` (as a complex number) then
+    `X ≈ 0` in the completion.  Via the quasi-triangle through a rescheduled representative
+    `X_{σN}` whose squared norm is small (STEP 1) and whose distance to `X_n` is small (Cauchy). -/
+theorem completedInner_self_definite {X : DLimCompletionRaw}
+    (h : Ceq (completedInner X X) Czero) : DLimCompletionEq X dlimCompletionZero := by
+  have hlim : Req (Rlim (fun n => (dlimInner (X.seq (Fsched X X * (n + 1) - 1))
+      (X.seq (Fsched X X * (n + 1) - 1))).re) (innerSeq_CRegCore X X).1) zero := h.1
+  intro k
+  obtain ⟨N0, hN0⟩ := Rnonneg_lim_zero_small (innerSeq_CRegCore X X).1 hlim (4 * k + 3)
+  let N := max N0 (4 * k + 3)
+  refine ⟨N, fun n hn => ?_⟩
+  show Rle (dlimDist2 (X.seq n) dlimZero) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))
+  have hFs : 1 ≤ Fsched X X := one_le_Fsched X X
+  have hN0N : N0 ≤ N := Nat.le_max_left N0 (4 * k + 3)
+  have hnN : 4 * k + 3 ≤ n := Nat.le_trans (Nat.le_max_right N0 (4 * k + 3)) hn
+  have hmpos : 0 < 2 * (k + 1) := by omega
+  have hi : 2 * (2 * (k + 1)) ≤ n + 1 := by omega
+  have hs1 : Fsched X X * (N + 1) - 1 + 1 = Fsched X X * (N + 1) := by
+    have : 0 < Fsched X X * (N + 1) := Nat.mul_pos hFs (Nat.succ_pos N); omega
+  have hle : N + 1 ≤ Fsched X X * (N + 1) := Nat.le_mul_of_pos_left (N + 1) hFs
+  have hj : 2 * (2 * (k + 1)) ≤ Fsched X X * (N + 1) - 1 + 1 := by
+    rw [hs1]
+    have hb : 2 * (2 * (k + 1)) ≤ N + 1 := by
+      have hkN : 4 * k + 3 ≤ N := Nat.le_max_right N0 (4 * k + 3)
+      omega
+    exact Nat.le_trans hb hle
+  -- 1/m² ≤ 1/(4(k+1)) with m = 2(k+1)
+  have hnat : (4 * k + 3) + 1 ≤ (2 * (k + 1)) * (2 * (k + 1)) := by
+    have h2 := Nat.mul_le_mul (show 2 ≤ 2 * (k + 1) from by omega) (Nat.le_refl (2 * (k + 1)))
+    omega
+  have qMbound : Qle (mul (⟨1, 2 * (k + 1)⟩ : Q) (⟨1, 2 * (k + 1)⟩ : Q))
+      (⟨1, (4 * k + 3) + 1⟩ : Q) := by
+    have hc : (((4 * k + 3) + 1 : Nat) : Int) ≤ (((2 * (k + 1)) * (2 * (k + 1)) : Nat) : Int) := by
+      exact_mod_cast hnat
+    simp only [Qle, mul]; omega
+  -- each distance-to-representative bounded by 1/(4(k+1))
+  have leM' : Rle (dlimDist2 (X.seq n) (X.seq (Fsched X X * (N + 1) - 1)))
+      (ofQ (⟨1, (4 * k + 3) + 1⟩ : Q) (Nat.succ_pos (4 * k + 3))) :=
+    Rle_trans (X.reg n (Fsched X X * (N + 1) - 1))
+      (Rle_trans (dlimCauchyMod_le_inv_sq n (Fsched X X * (N + 1) - 1) (2 * (k + 1)) hmpos hi hj)
+        (Rle_ofQ_of_Qle_loc _ _ qMbound))
+  have leZ' : Rle (dlimDist2 (X.seq (Fsched X X * (N + 1) - 1)) dlimZero)
+      (ofQ (⟨1, (4 * k + 3) + 1⟩ : Q) (Nat.succ_pos (4 * k + 3))) :=
+    Rle_trans (Rle_of_Req (dlimDist2_zero_eq (X.seq (Fsched X X * (N + 1) - 1))))
+      (hN0 N hN0N)
+  -- four half-bounds sum (exactly) to 1/(k+1)
+  have sum_eq : Req
+      (Radd (Radd (ofQ (⟨1, (4 * k + 3) + 1⟩ : Q) (Nat.succ_pos (4 * k + 3)))
+                  (ofQ (⟨1, (4 * k + 3) + 1⟩ : Q) (Nat.succ_pos (4 * k + 3))))
+            (Radd (ofQ (⟨1, (4 * k + 3) + 1⟩ : Q) (Nat.succ_pos (4 * k + 3)))
+                  (ofQ (⟨1, (4 * k + 3) + 1⟩ : Q) (Nat.succ_pos (4 * k + 3)))))
+      (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k)) :=
+    Req_trans
+      (Req_trans (Radd_congr (Radd_ofQ_loc _ _) (Radd_ofQ_loc _ _)) (Radd_ofQ_loc _ _))
+      (ofQ_respects _ (Nat.succ_pos k) (by simp only [Qeq, add]; push_cast; ring_uor))
+  -- assemble via the squared quasi-triangle through X_{σN}
+  refine Rle_trans (dlimDist2_quasitriangle (X.seq n)
+    (X.seq (Fsched X X * (N + 1) - 1)) dlimZero) ?_
+  refine Rle_trans (Radd_le_add_loc (Radd_le_add_loc leM' leM') (Radd_le_add_loc leZ' leZ')) ?_
+  exact Rle_of_Req sum_eq
+
 end UOR.Bridge.F1Square.Square

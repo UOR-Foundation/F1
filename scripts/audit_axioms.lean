@@ -8701,6 +8701,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.Rle_ofQ_xBound
 #print axioms Square.normBound_spec
 #print axioms Square.dlimNormSq_uniform_bound
+#print axioms Square.dlimDist2_zero_eq
 #print axioms Square.dlimInner_re_termBound
 #print axioms Square.dlimInner_im_eq_re
 #print axioms Square.dlimNormSq_smul_negI
@@ -8735,6 +8736,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.completedInner_self_nonneg
 #print axioms Square.completedInner_self_im
 #print axioms Square.completedInner_conj
+-- DEFINITENESS (the load-bearing FinPreHilbert inner law): completedInner_self_definite —
+-- <X,X> ~ 0 implies X ~ 0 in the completion setoid (quasi-triangle through a rescheduled
+-- representative whose squared norm -> 0 via the eventually-small extraction from Rlim ~ 0).
+#print axioms Square.completedInner_self_definite
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal

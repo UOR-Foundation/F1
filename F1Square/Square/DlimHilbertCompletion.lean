@@ -1291,8 +1291,9 @@ theorem Rmul_le_cancel_ofQ {c cinv : Q} (hc : 0 < c.den) (hci : 0 < cinv.den)
 private theorem dlimNeg_zero_eq : DLimEq (dlimNeg dlimZero) dlimZero :=
   ⟨0, Nat.le_refl _, Nat.le_refl _, fun i => i.elim0⟩
 
-/-- `‖a − 0‖² ≈ ‖a‖²` — the squared distance to the colimit zero is the squared norm. -/
-private theorem dlimDist2_zero_eq (a : DLimRaw) :
+/-- `‖a − 0‖² ≈ ‖a‖²` — the squared distance to the colimit zero is the squared norm (public: the
+    definiteness proof `completedInner_self_definite` reads `⟨X,X⟩` back as `d²(X, 0)`). -/
+theorem dlimDist2_zero_eq (a : DLimRaw) :
     Req (dlimDist2 a dlimZero) (dlimNormSq a) :=
   dlimNormSq_wd (DLimEq_trans (dlimAdd_wd (DLimEq_refl a) dlimNeg_zero_eq) (dlimAdd_zero a))
 
