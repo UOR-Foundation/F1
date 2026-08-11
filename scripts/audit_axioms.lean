@@ -8668,6 +8668,43 @@ open UOR.Bridge.F1Square
 #print axioms Analysis.CTendsToCore
 #print axioms Analysis.ClimCore_tendsTo
 #print axioms Analysis.CTendsToCore_unique
+-- RReg BRIDGE (ζ-free ports of ComplexZeta.seq_diff_le / RReg_of_real_bound, renamed `_core` for
+-- leaf-uniqueness): from a real pairwise-difference bound `X_j − X_k ≤ c_jk ≤ 1/(j+1)+1/(k+1)` conclude the
+-- coordinate sequence is RReg — the exact glue feeding each inner-product coordinate into CRegCore.
+#print axioms Analysis.seq_diff_le_core
+#print axioms Analysis.RReg_of_real_bound_core
+-- TOWARD THE COMPLETED INNER PRODUCT (in DlimHilbertCompletion): the four analytic foundations —
+-- dlimInner_sub_left/right (subtraction bilinearity for the difference split), dlimInner_re_amgm (the
+-- sqrt-free AM-GM/polarization complex Cauchy–Schwarz seed 2λ·Re⟨u,v⟩ ≤ ‖u‖²+λ²‖v‖²), Rmul_le_cancel_ofQ
+-- (positive-rational left-cancellation — divide the AM-GM by 2λ, no Pos-chain/sqrt), Rle_ofQ_xBound +
+-- normBound_spec + dlimNormSq_uniform_bound (choice-free uniform squared-norm bound). Then the reusable
+-- single-term bound dlimInner_re_termBound (Re⟨u,v⟩ ≤ e·(1+B)/2) and the Im-coordinate reduction
+-- dlimInner_im_eq_re / dlimNormSq_smul_negI (the −i twist, so the same bound covers the imaginary part).
+#print axioms Square.dlimInner_sub_left
+#print axioms Square.dlimInner_sub_right
+#print axioms Square.dlimInner_re_amgm
+#print axioms Square.Rmul_le_cancel_ofQ
+#print axioms Square.Rle_ofQ_xBound
+#print axioms Square.normBound_spec
+#print axioms Square.dlimNormSq_uniform_bound
+#print axioms Square.dlimInner_re_termBound
+#print axioms Square.dlimInner_im_eq_re
+#print axioms Square.dlimNormSq_smul_negI
+-- THE COMPLETED INNER PRODUCT (DlimCompletedInner.lean — consumes BOTH DlimHilbertCompletion and
+-- ComplexLimitCore): modulus_bound (the reschedule inequality, reduces to 2+BX+BY ≤ 2F);
+-- innerSeq_re_split/im_split (the difference split ⟨aj,bj⟩−⟨ak,bk⟩ = ⟨aj−ak,bj⟩+⟨ak,bj−bk⟩);
+-- one_le_Fsched (reschedule factor ≥ 1); innerSeq_re_bound/im_bound (each coordinate's pairwise difference
+-- ≤ 1/(j+1)+1/(k+1)); innerSeq_CRegCore (REGULARITY of n ↦ ⟨X_{σn},Y_{σn}⟩, reviewer gate step 3);
+-- completedInner (the def ⟨X,Y⟩ := ClimCore, reviewer gate step-5 definition). Pre-Hilbert laws + rep
+-- independence are the NEXT gate — not claimed here.
+#print axioms Square.modulus_bound
+#print axioms Square.innerSeq_re_split
+#print axioms Square.innerSeq_im_split
+#print axioms Square.one_le_Fsched
+#print axioms Square.innerSeq_re_bound
+#print axioms Square.innerSeq_im_bound
+#print axioms Square.innerSeq_CRegCore
+#print axioms Square.completedInner
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal

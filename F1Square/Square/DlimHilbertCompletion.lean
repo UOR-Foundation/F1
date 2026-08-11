@@ -1,10 +1,12 @@
 /-
 F1 square — **the ℓ² completion of the finite-support direct limit: the analytic substrate**
 (`DlimHilbertCompletion.lean`, phase 1). This is the CANDIDATE-INDEPENDENT genuine-completion layer the
-operator contract demands: it consumes ONLY `FinDirectLimit` (the finite-support direct-limit pre-Hilbert
-carrier `DLimRaw`/`dlimInner`) and builds the squared-distance substrate on which the ℓ² completion, the maximal
-weighted domain, and the self-adjoint diagonal operator will stand. It imports NO block-ladder, NO Atlas
-candidate, NO nominal HP predicate, NO zeta/crux module.
+operator contract demands: it consumes `FinDirectLimit` (the finite-support direct-limit pre-Hilbert
+carrier `DLimRaw`/`dlimInner`) together with the two ζ-free cores it splits off — `ComplexNormSqCore`
+(the clean Complex squared modulus `cNormSq`) and `RealOrderCore` (the generic Bishop-real mul/order
+lemmas) — and builds the squared-distance substrate on which the ℓ² completion, the maximal weighted
+domain, and the self-adjoint diagonal operator will stand. Its whole import cone stays Zeta-free: NO
+block-ladder, NO Atlas candidate, NO nominal HP predicate, NO zeta/crux module.
 
 WHAT IS BUILT HERE (the analytic substrate — genuine, representative-independent, sqrt-free):
 - The SQUARED norm and distance `dlimNormSq a := ⟨a,a⟩.re`, `dlimDist2 a b := ‖a − b‖²`. Everything is
@@ -35,14 +37,23 @@ invariance `X ≈ X_{2n+1}`; the rescheduled operations ADDITION (`n ↦ 2n+1`) 
 regularity and congruence; and the additive-group laws modulo completion equivalence — commutativity,
 ASSOCIATIVITY, right unit, inverse, and the `of`-homomorphism laws `of_add`/`of_neg`.
 
-STILL OPEN (next phases, flagged honestly): SCALAR MULTIPLICATION (a scalar-dependent affine reschedule
-`n ↦ q(n+1)−1`) with the complex-module laws and `of_smul`, on a CLEAN Complex-only squared-modulus core;
-and only then the completed inner product as a constructive limit (from a clean `ComplexLimitCore`, NOT
-the `Analysis.ComplexLimit`/`ComplexMod` that transitively reach `Analysis.Zeta`), the
-pre-Hilbert/positive-definiteness laws, the explicit completeness proof, the ACTUAL isometry and density
-of `of`, continuous coordinate reads, and finally the maximal weighted domain `D(M_w)` and its
-self-adjointness. This module is deliberately the completion layer ONLY; it does NOT name or assert a
-completed Hilbert space, an operator, or self-adjointness, and it does NOT extend any operator by continuity.
+ALSO BUILT (the scalar action, complete): SCALAR MULTIPLICATION `dlimCompletionSmul c X` via the
+choice-free scalar-dependent affine reschedule `n ↦ scalarSchedule(c)·(n+1)−1` (`scalarSchedule c :=
+xBound |c|²`), with regularity from the exact q⁻² modulus attenuation; its vector, scalar, and combined
+congruences (so it is a well-defined action of the complex-scalar setoid); the SEVEN complex-module laws
+modulo completion equivalence — `one_smul`, `zero_smul`, `smul_zero`, `smul_add`, `add_smul`,
+`smul_assoc` — and the `of`-homomorphism law `of_smul`. The completion carrier is therefore a
+complex-module modulo `DLimCompletionEq`.
+
+STILL OPEN (next phases, flagged honestly): the completed INNER PRODUCT as a constructive limit
+`⟨X,Y⟩ := ClimCore (n ↦ ⟨X_n,Y_n⟩)` (from the clean ζ-free `ComplexLimitCore`, NOT the
+`Analysis.ComplexLimit`/`ComplexMod` that transitively reach `Analysis.Zeta`) — which first needs a
+constructive complex Cauchy–Schwarz for `dlimInner` and uniform squared-norm bounds to prove the
+inner-product sequence regular; the pre-Hilbert/positive-definiteness laws, the explicit completeness
+proof, the ACTUAL isometry and density of `of`, continuous coordinate reads, and finally the maximal
+weighted domain `D(M_w)` and its self-adjointness. This module is deliberately the completion layer ONLY;
+it does NOT name or assert a completed Hilbert space, an operator, or self-adjointness, and it does NOT
+extend any operator by continuity.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; the cone is `FinDirectLimit`'s
 zeta/crux-free cone. Crux `none`.
@@ -1146,5 +1157,355 @@ theorem dlimCompletionSmul_assoc (c d : Complex) (X : DLimCompletionRaw) :
            = scalarSchedule (Cmul c d) * (scalarSchedule d * scalarSchedule c) from by ac_rfl]
   rw [hidx]
   exact DLimEq_refl _
+
+-- ===========================================================================
+-- TOWARD THE COMPLETED INNER PRODUCT (reviewer gate: the completed inner product
+-- `⟨X,Y⟩ := ClimCore (n ↦ ⟨Xₙ,Yₙ⟩)`). This section builds the four analytic foundations the
+-- inner-product-sequence REGULARITY needs — all ζ-free, sqrt-free:
+--   • subtraction bilinearity of `dlimInner` (for the difference split);
+--   • the AM-GM/polarization core `2λ·Re⟨u,v⟩ ≤ ‖u‖² + λ²‖v‖²` (the constructive complex
+--     Cauchy–Schwarz seed — NO sqrt, NO discriminant);
+--   • the positive-rational left-cancellation for `Rle` (isolates the first-order term by dividing
+--     through by `2λ`, done by multiplying by the rational inverse — NO `Pos`-chain, NO sqrt-monotone);
+--   • the choice-free uniform squared-norm bound `‖Xₙ‖² ≤ normBound X` for a completion representative.
+-- ===========================================================================
+
+/-- **Subtraction bilinearity (left slot)**: `⟨a − b, c⟩ ≈ ⟨a,c⟩ − ⟨b,c⟩`. -/
+theorem dlimInner_sub_left (a b c : DLimRaw) :
+    Ceq (dlimInner (dlimSub a b) c) (Cadd (dlimInner a c) (Cneg (dlimInner b c))) :=
+  Ceq_trans (dlimInner_add_left a (dlimNeg b) c)
+    (Cadd_congr (Ceq_refl (dlimInner a c)) (dlimInner_neg_left b c))
+
+/-- **Subtraction bilinearity (right slot)**: `⟨a, b − c⟩ ≈ ⟨a,b⟩ − ⟨a,c⟩`. -/
+theorem dlimInner_sub_right (a b c : DLimRaw) :
+    Ceq (dlimInner a (dlimSub b c)) (Cadd (dlimInner a b) (Cneg (dlimInner a c))) :=
+  Ceq_trans (dlimInner_add_right a b (dlimNeg c))
+    (Cadd_congr (Ceq_refl (dlimInner a b)) (dlimInner_neg_right a c))
+
+/-- **The AM-GM / polarization core** — the constructive, sqrt-free complex Cauchy–Schwarz seed: for any
+    rational scalar `lam`, `2·lam·Re⟨u,v⟩ ≤ ‖u‖² + lam²·‖v‖²`. Proof is `‖u − lam·v‖² ≥ 0`
+    (`dlimNormSq_nonneg`) expanded by the sesquilinear/parallelogram laws (`dlimNormSq_add`,
+    `dlimNormSq_smul`). Holds for EVERY `lam` (no sign hypothesis) — the polarization identity is unsigned. -/
+theorem dlimInner_re_amgm {lam : Q} (hlam : 0 < lam.den) (u v : DLimRaw) :
+    Rle (Rmul (Radd (ofQ lam hlam) (ofQ lam hlam)) (dlimInner u v).re)
+        (Radd (dlimNormSq u) (Rmul (Rmul (ofQ lam hlam) (ofQ lam hlam)) (dlimNormSq v))) := by
+  have hz : Req (Rmul zero (dlimInner u v).im) zero :=
+    Req_trans (Rmul_comm zero (dlimInner u v).im) (Rmul_zero (dlimInner u v).im)
+  have hcmulre :
+      Req (Cmul (⟨ofQ lam hlam, zero⟩ : Complex) (dlimInner u v)).re
+          (Rmul (ofQ lam hlam) (dlimInner u v).re) := by
+    show Req (Rsub (Rmul (ofQ lam hlam) (dlimInner u v).re) (Rmul zero (dlimInner u v).im))
+             (Rmul (ofQ lam hlam) (dlimInner u v).re)
+    exact Req_trans (Rsub_congr (Req_refl _) hz) (Rsub_zero _)
+  have haInneruX :
+      Req (dlimInner u (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v)).re
+          (Rmul (ofQ lam hlam) (dlimInner u v).re) :=
+    Req_trans (dlimInner_smul_right (⟨ofQ lam hlam, zero⟩ : Complex) u v).1 hcmulre
+  have haInnerXu :
+      Req (dlimInner (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v) u).re
+          (Rmul (ofQ lam hlam) (dlimInner u v).re) :=
+    Req_trans (dlimInner_conj (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v) u).1 haInneruX
+  have haA :
+      Req (dlimInner (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v)) u).re
+          (Rneg (Rmul (ofQ lam hlam) (dlimInner u v).re)) :=
+    Req_trans (dlimInner_neg_left (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v) u).1
+      (Rneg_congr haInnerXu)
+  have haB :
+      Req (dlimInner u (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v))).re
+          (Rneg (Rmul (ofQ lam hlam) (dlimInner u v).re)) :=
+    Req_trans (dlimInner_neg_right u (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v)).1
+      (Rneg_congr haInneruX)
+  have hcnsq :
+      Req (cNormSq (⟨ofQ lam hlam, zero⟩ : Complex))
+          (Rmul (ofQ lam hlam) (ofQ lam hlam)) := by
+    show Req (Radd (Rmul (ofQ lam hlam) (ofQ lam hlam)) (Rmul zero zero))
+             (Rmul (ofQ lam hlam) (ofQ lam hlam))
+    exact Req_trans (Radd_congr (Req_refl _) (Rmul_zero zero)) (Radd_zero _)
+  have haC :
+      Req (dlimNormSq (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v)))
+          (Rmul (Rmul (ofQ lam hlam) (ofQ lam hlam)) (dlimNormSq v)) :=
+    Req_trans (dlimNormSq_neg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v))
+      (Req_trans (dlimNormSq_smul (⟨ofQ lam hlam, zero⟩ : Complex) v)
+        (Rmul_congr hcnsq (Req_refl (dlimNormSq v))))
+  have expand :
+      Req (dlimNormSq (dlimAdd u (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v))))
+          (Radd (Radd (dlimNormSq u)
+                  (dlimInner (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v)) u).re)
+                (Radd (dlimInner u (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v))).re
+                  (dlimNormSq (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v))))) :=
+    dlimNormSq_add u (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v))
+  have hbig :
+      Req (dlimNormSq (dlimAdd u (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v))))
+          (Radd (Radd (dlimNormSq u) (Rneg (Rmul (ofQ lam hlam) (dlimInner u v).re)))
+                (Radd (Rneg (Rmul (ofQ lam hlam) (dlimInner u v).re))
+                  (Rmul (Rmul (ofQ lam hlam) (ofQ lam hlam)) (dlimNormSq v)))) :=
+    Req_trans expand
+      (Radd_congr (Radd_congr (Req_refl (dlimNormSq u)) haA) (Radd_congr haB haC))
+  have hdist :
+      Req (Rmul (Radd (ofQ lam hlam) (ofQ lam hlam)) (dlimInner u v).re)
+          (Radd (Rmul (ofQ lam hlam) (dlimInner u v).re)
+                (Rmul (ofQ lam hlam) (dlimInner u v).re)) :=
+    Rmul_distrib_right (ofQ lam hlam) (ofQ lam hlam) (dlimInner u v).re
+  have hfinal :
+      Req (Radd (Radd (dlimNormSq u) (Rneg (Rmul (ofQ lam hlam) (dlimInner u v).re)))
+                (Radd (Rneg (Rmul (ofQ lam hlam) (dlimInner u v).re))
+                  (Rmul (Rmul (ofQ lam hlam) (ofQ lam hlam)) (dlimNormSq v))))
+          (Rsub (Radd (dlimNormSq u)
+                  (Rmul (Rmul (ofQ lam hlam) (ofQ lam hlam)) (dlimNormSq v)))
+                (Rmul (Radd (ofQ lam hlam) (ofQ lam hlam)) (dlimInner u v).re)) :=
+    Req_trans
+      (Radd_congr (Req_refl _)
+        (Radd_comm (Rneg (Rmul (ofQ lam hlam) (dlimInner u v).re))
+          (Rmul (Rmul (ofQ lam hlam) (ofQ lam hlam)) (dlimNormSq v))))
+      (Req_trans
+        (Req_symm (Rsub_Radd_Radd (dlimNormSq u)
+          (Rmul (Rmul (ofQ lam hlam) (ofQ lam hlam)) (dlimNormSq v))
+          (Rmul (ofQ lam hlam) (dlimInner u v).re)
+          (Rmul (ofQ lam hlam) (dlimInner u v).re)))
+        (Rsub_congr (Req_refl _) (Req_symm hdist)))
+  have hnn : Rnonneg (dlimNormSq (dlimAdd u (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v)))) :=
+    dlimNormSq_nonneg (dlimAdd u (dlimNeg (dlimSmul (⟨ofQ lam hlam, zero⟩ : Complex) v)))
+  exact Rle_of_Rnonneg_Rsub_loc (Rnonneg_congr_loc (Req_trans hbig hfinal) hnn)
+
+/-- `ofQ cinv · (ofQ c · X) ≈ X` when `cinv · c = 1` (`one` is `ofQ ⟨1,1⟩`, so the bridge is by `rfl`
+    on the constant sequence). -/
+private theorem cancel_simp {c cinv : Q} (hc : 0 < c.den) (hci : 0 < cinv.den)
+    (hprod : Qeq (mul cinv c) (⟨1, 1⟩ : Q)) (X : Real) :
+    Req (Rmul (ofQ cinv hci) (Rmul (ofQ c hc) X)) X :=
+  Req_trans (Req_symm (Rmul_assoc (ofQ cinv hci) (ofQ c hc) X))
+    (Req_trans (Rmul_congr (Rmul_ofQ_ofQ_loc hci hc) (Req_refl X))
+      (Req_trans (Rmul_congr (Req_of_seq_Qeq (y := one) (fun _ => hprod)) (Req_refl X))
+        (Req_trans (Rmul_comm one X) (Rmul_one X))))
+
+/-- **Positive-rational left-cancellation for `Rle`**: a common positive rational factor `c` may be
+    cancelled by its inverse `cinv` (with `cinv · c = 1`). The sqrt-free "divide the AM-GM by `2λ`" step —
+    it multiplies through by the rational inverse, using only `Rmul` monotonicity, NO `Pos`/√ machinery. -/
+theorem Rmul_le_cancel_ofQ {c cinv : Q} (hc : 0 < c.den) (hci : 0 < cinv.den)
+    (hcinv_nn : 0 ≤ cinv.num) (hprod : Qeq (mul cinv c) (⟨1, 1⟩ : Q))
+    {A B : Real} (h : Rle (Rmul (ofQ c hc) A) (Rmul (ofQ c hc) B)) : Rle A B :=
+  Rle_trans (Rle_of_Req (Req_symm (cancel_simp hc hci hprod A)))
+    (Rle_trans (Rmul_le_Rmul_left_loc (Rnonneg_ofQ_loc hci hcinv_nn) h)
+      (Rle_of_Req (cancel_simp hc hci hprod B)))
+
+/-- `−0 ≈ 0` in the colimit (both are the empty-stage zero vector). -/
+private theorem dlimNeg_zero_eq : DLimEq (dlimNeg dlimZero) dlimZero :=
+  ⟨0, Nat.le_refl _, Nat.le_refl _, fun i => i.elim0⟩
+
+/-- `‖a − 0‖² ≈ ‖a‖²` — the squared distance to the colimit zero is the squared norm. -/
+private theorem dlimDist2_zero_eq (a : DLimRaw) :
+    Req (dlimDist2 a dlimZero) (dlimNormSq a) :=
+  dlimNormSq_wd (DLimEq_trans (dlimAdd_wd (DLimEq_refl a) dlimNeg_zero_eq) (dlimAdd_zero a))
+
+/-- `M(n,0) = (1/(n+1)+1)² ≤ 4`. -/
+private theorem dlimCauchyMod_n0_bound (n : Nat) :
+    Rle (dlimCauchyModR n 0) (ofQ (⟨4, 1⟩ : Q) Nat.one_pos) := by
+  unfold dlimCauchyModR
+  apply Rle_ofQ_of_Qle_loc _ Nat.one_pos
+  refine Qle_congr_left
+    (a := (⟨((n : Int) + 2) * ((n : Int) + 2), (n + 1) * (n + 1)⟩ : Q)) ?_ ?_ ?_
+  · exact Nat.mul_pos (Nat.succ_pos n) (Nat.succ_pos n)
+  · simp only [Qeq, mul, add]; push_cast; ring_uor
+  · show ((n : Int) + 2) * ((n : Int) + 2) * ((1 : Nat) : Int)
+        ≤ (4 : Int) * (((n + 1) * (n + 1) : Nat) : Int)
+    push_cast
+    have hkey : (0 : Int) ≤ 4 * (((n : Int) + 1) * ((n : Int) + 1))
+        - ((n : Int) + 2) * ((n : Int) + 2) := by
+      have e : 4 * (((n : Int) + 1) * ((n : Int) + 1))
+          - ((n : Int) + 2) * ((n : Int) + 2) = (n : Int) * (3 * (n : Int) + 4) := by ring_uor
+      rw [e]; exact Int.mul_nonneg (by omega) (by omega)
+    omega
+
+/-- `x ≤ xBound x` (the explicit choice-free Archimedean bound — the witness of `exists_nat_ge_loc`,
+    exposed so the uniform norm factor can be a computable function of the representative). -/
+theorem Rle_ofQ_xBound (x : Real) : Rle x (ofQ (⟨(xBound x : Int), 1⟩ : Q) Nat.one_pos) := by
+  intro n
+  show Qle (x.seq n) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩)
+  have h1 : Qle (x.seq n) (Qabs (x.seq n)) := by
+    show (x.seq n).num * ((Qabs (x.seq n)).den : Int) ≤ (Qabs (x.seq n)).num * ((x.seq n).den : Int)
+    simp only [Qabs]
+    exact Int.mul_le_mul_of_nonneg_right Int.le_natAbs (by omega)
+  have h2 : Qle (Qabs (x.seq n)) (⟨(xBound x : Int), 1⟩ : Q) := canon_bound x n
+  have h3 : Qle (⟨(xBound x : Int), 1⟩ : Q) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩) :=
+    Qle_self_add (by show (0 : Int) ≤ 2; decide)
+  have h23 : Qle (Qabs (x.seq n)) (add (⟨(xBound x : Int), 1⟩ : Q) ⟨2, n + 1⟩) :=
+    Qle_trans (b := (⟨(xBound x : Int), 1⟩ : Q)) (by show (0 : Nat) < 1; decide) h2 h3
+  exact Qle_trans (b := Qabs (x.seq n)) (x.den_pos n) h1 h23
+
+/-- **The choice-free uniform squared-norm bound factor** for a completion representative:
+    `8 + 2·xBound ‖X₀‖²`. Being a computable `Nat`-valued function of `X` (not an `∃`-witness), it can
+    parametrize the inner-product-sequence reschedule. -/
+def normBound (X : DLimCompletionRaw) : Nat := 8 + 2 * xBound (dlimNormSq (X.seq 0))
+
+/-- **Uniform squared-norm bound**: `‖Xₙ‖² ≤ normBound X` for every `n`. Quasi-triangle:
+    `‖Xₙ‖² = ‖Xₙ − 0‖² ≤ 2‖Xₙ − X₀‖² + 2‖X₀ − 0‖² ≤ 2·M(n,0) + 2‖X₀‖² ≤ 8 + 2·xBound‖X₀‖²`. -/
+theorem normBound_spec (X : DLimCompletionRaw) (n : Nat) :
+    Rle (dlimNormSq (X.seq n)) (ofQ (⟨(normBound X : Int), 1⟩ : Q) Nat.one_pos) := by
+  have hd_n0 : Rle (dlimDist2 (X.seq n) (X.seq 0)) (ofQ (⟨4, 1⟩ : Q) Nat.one_pos) :=
+    Rle_trans (X.reg n 0) (dlimCauchyMod_n0_bound n)
+  have hd_0z : Rle (dlimDist2 (X.seq 0) dlimZero)
+      (ofQ (⟨(xBound (dlimNormSq (X.seq 0)) : Int), 1⟩ : Q) Nat.one_pos) :=
+    Rle_trans (Rle_of_Req (dlimDist2_zero_eq (X.seq 0))) (Rle_ofQ_xBound (dlimNormSq (X.seq 0)))
+  have hsumle :
+      Rle (Radd (Radd (dlimDist2 (X.seq n) (X.seq 0)) (dlimDist2 (X.seq n) (X.seq 0)))
+                (Radd (dlimDist2 (X.seq 0) dlimZero) (dlimDist2 (X.seq 0) dlimZero)))
+          (Radd (Radd (ofQ (⟨4, 1⟩ : Q) Nat.one_pos) (ofQ (⟨4, 1⟩ : Q) Nat.one_pos))
+                (Radd (ofQ (⟨(xBound (dlimNormSq (X.seq 0)) : Int), 1⟩ : Q) Nat.one_pos)
+                      (ofQ (⟨(xBound (dlimNormSq (X.seq 0)) : Int), 1⟩ : Q) Nat.one_pos))) :=
+    Radd_le_add_loc (Radd_le_add_loc hd_n0 hd_n0) (Radd_le_add_loc hd_0z hd_0z)
+  have hqeq : Qeq (add (add (⟨4, 1⟩ : Q) (⟨4, 1⟩ : Q))
+                       (add (⟨(xBound (dlimNormSq (X.seq 0)) : Int), 1⟩ : Q)
+                            (⟨(xBound (dlimNormSq (X.seq 0)) : Int), 1⟩ : Q)))
+                  (⟨(normBound X : Int), 1⟩ : Q) := by
+    simp only [normBound, Qeq, add]; push_cast; ring_uor
+  have hsum_eq :
+      Req (Radd (Radd (ofQ (⟨4, 1⟩ : Q) Nat.one_pos) (ofQ (⟨4, 1⟩ : Q) Nat.one_pos))
+                (Radd (ofQ (⟨(xBound (dlimNormSq (X.seq 0)) : Int), 1⟩ : Q) Nat.one_pos)
+                      (ofQ (⟨(xBound (dlimNormSq (X.seq 0)) : Int), 1⟩ : Q) Nat.one_pos)))
+          (ofQ (⟨(normBound X : Int), 1⟩ : Q) Nat.one_pos) :=
+    Req_trans
+      (Radd_congr (Radd_ofQ_loc Nat.one_pos Nat.one_pos) (Radd_ofQ_loc Nat.one_pos Nat.one_pos))
+      (Req_trans (Radd_ofQ_loc (add_den_pos Nat.one_pos Nat.one_pos)
+                               (add_den_pos Nat.one_pos Nat.one_pos))
+        (ofQ_respects _ Nat.one_pos hqeq))
+  refine Rle_trans (Rle_of_Req (Req_symm (dlimDist2_zero_eq (X.seq n)))) ?_
+  refine Rle_trans (dlimDist2_quasitriangle (X.seq n) (X.seq 0) dlimZero) ?_
+  exact Rle_trans hsumle (Rle_of_Req hsum_eq)
+
+/-- **Uniform squared-norm bound (`∃` form)**: `∃ B, ∀ n, ‖Xₙ‖² ≤ B` — the choice-free `normBound`
+    witnesses it. -/
+theorem dlimNormSq_uniform_bound (X : DLimCompletionRaw) :
+    ∃ B : Nat, ∀ n : Nat, Rle (dlimNormSq (X.seq n)) (ofQ (⟨(B : Int), 1⟩ : Q) Nat.one_pos) :=
+  ⟨normBound X, normBound_spec X⟩
+
+-- ===========================================================================
+-- THE SINGLE-TERM CAUCHY–SCHWARZ BOUND (reused once per split term, four times total across the two
+-- coordinates): if `‖u‖² ≤ e²` and `‖v‖² ≤ B` then `Re⟨u,v⟩ ≤ e·(1+B)/2`. Assembled from the AM-GM
+-- core (`dlimInner_re_amgm`) — divide by `2e` via the rational-inverse cancellation. The perfect-square
+-- modulus `M(j,k) = (1/(j+1)+1/(k+1))²` means `‖u‖² ≤ M(σj,σk)` IS the hypothesis `‖u‖² ≤ e²` with
+-- `e = 1/(σj+1)+1/(σk+1)`, so no `√` is ever taken.
+-- ===========================================================================
+
+/-- `(1/a)·a = 1` as a ℚ-value equality for `a` with positive numerator (the inverse written inline as its
+    definitional form `⟨a.den, a.num.toNat⟩`, i.e. `Qinv a`). -/
+private theorem Qinv_mul_self {a : Q} (ha : 0 < a.num) :
+    Qeq (mul (⟨(a.den : Int), a.num.toNat⟩ : Q) a) (⟨1, 1⟩ : Q) := by
+  have ht : (a.num.toNat : Int) = a.num := Int.toNat_of_nonneg (by omega)
+  simp only [Qeq, mul]
+  push_cast
+  rw [ht, Int.mul_one, Int.one_mul, Int.mul_comm]
+
+/-- **The single-term Cauchy–Schwarz bound** — the reusable heart of inner-product regularity:
+    if `‖u‖² ≤ e²` and `‖v‖² ≤ B` (positive rational `e`, `Nat` `B`), then `Re⟨u,v⟩ ≤ e·(1+B)/2`.
+    Sqrt-free: AM-GM gives `2e·Re⟨u,v⟩ ≤ ‖u‖² + e²‖v‖² ≤ e²(1+B)`, then divide by `2e`
+    (`Rmul_le_cancel_ofQ`). NO discriminant, NO sqrt-monotonicity. -/
+theorem dlimInner_re_termBound {e : Q} (hed : 0 < e.den) (hen : 0 < e.num) (B : Nat)
+    (u v : DLimRaw)
+    (hu : Rle (dlimNormSq u) (ofQ (mul e e) (Qmul_den_pos hed hed)))
+    (hv : Rle (dlimNormSq v) (ofQ (⟨(B : Int), 1⟩ : Q) Nat.one_pos)) :
+    Rle (dlimInner u v).re
+      (ofQ (⟨e.num * (1 + (B : Int)), e.den * 2⟩ : Q) (Nat.mul_pos hed (by decide))) := by
+  have heed : 0 < (mul e e).den := Qmul_den_pos hed hed
+  have hEBd : 0 < (mul (mul e e) (⟨(B : Int), 1⟩ : Q)).den := Qmul_den_pos heed Nat.one_pos
+  have hDd : 0 < (add (mul e e) (mul (mul e e) (⟨(B : Int), 1⟩ : Q))).den :=
+    add_den_pos heed hEBd
+  have hcd : 0 < (add e e).den := add_den_pos hed hed
+  have hbd : 0 < (⟨e.num * (1 + (B : Int)), e.den * 2⟩ : Q).den := Nat.mul_pos hed (by decide)
+  have hee_nn : (0 : Int) ≤ (mul e e).num :=
+    Int.mul_nonneg (by omega) (by omega)
+  have amgm := dlimInner_re_amgm hed u v
+  have term2bound :
+      Rle (Rmul (Rmul (ofQ e hed) (ofQ e hed)) (dlimNormSq v))
+          (ofQ (mul (mul e e) (⟨(B : Int), 1⟩ : Q)) hEBd) :=
+    Rle_trans
+      (Rle_of_Req (Rmul_congr (Rmul_ofQ_ofQ_loc hed hed) (Req_refl (dlimNormSq v))))
+      (Rle_trans
+        (Rmul_le_Rmul_left_loc (Rnonneg_ofQ_loc heed hee_nn) hv)
+        (Rle_of_Req (Rmul_ofQ_ofQ_loc heed Nat.one_pos)))
+  have rhsbound :
+      Rle (Radd (dlimNormSq u) (Rmul (Rmul (ofQ e hed) (ofQ e hed)) (dlimNormSq v)))
+          (ofQ (add (mul e e) (mul (mul e e) (⟨(B : Int), 1⟩ : Q))) hDd) :=
+    Rle_trans (Radd_le_add_loc hu term2bound) (Rle_of_Req (Radd_ofQ_loc heed hEBd))
+  have amgmChain :
+      Rle (Rmul (Radd (ofQ e hed) (ofQ e hed)) (dlimInner u v).re)
+          (ofQ (add (mul e e) (mul (mul e e) (⟨(B : Int), 1⟩ : Q))) hDd) :=
+    Rle_trans amgm rhsbound
+  have step3 :
+      Rle (Rmul (ofQ (add e e) hcd) (dlimInner u v).re)
+          (ofQ (add (mul e e) (mul (mul e e) (⟨(B : Int), 1⟩ : Q))) hDd) :=
+    Rle_trans
+      (Rle_of_Req (Req_symm (Rmul_congr (Radd_ofQ_loc hed hed)
+        (Req_refl (dlimInner u v).re))))
+      amgmChain
+  have hqeq :
+      Qeq (add (mul e e) (mul (mul e e) (⟨(B : Int), 1⟩ : Q)))
+          (mul (add e e) (⟨e.num * (1 + (B : Int)), e.den * 2⟩ : Q)) := by
+    simp only [Qeq, mul, add]; push_cast; ring_uor
+  have hDeq :
+      Req (ofQ (add (mul e e) (mul (mul e e) (⟨(B : Int), 1⟩ : Q))) hDd)
+          (Rmul (ofQ (add e e) hcd)
+                (ofQ (⟨e.num * (1 + (B : Int)), e.den * 2⟩ : Q) hbd)) :=
+    Req_trans (ofQ_respects hDd (Qmul_den_pos hcd hbd) hqeq)
+      (Req_symm (Rmul_ofQ_ofQ_loc hcd hbd))
+  have step4 :
+      Rle (Rmul (ofQ (add e e) hcd) (dlimInner u v).re)
+          (Rmul (ofQ (add e e) hcd)
+                (ofQ (⟨e.num * (1 + (B : Int)), e.den * 2⟩ : Q) hbd)) :=
+    Rle_trans step3 (Rle_of_Req hDeq)
+  have hdI : (0 : Int) < (e.den : Int) := by exact_mod_cast hed
+  have hcnum : 0 < (add e e).num := by
+    show 0 < e.num * (e.den : Int) + e.num * (e.den : Int)
+    have hp : 0 < e.num * (e.den : Int) := Int.mul_pos hen hdI
+    omega
+  have hcid : 0 < (⟨((add e e).den : Int), (add e e).num.toNat⟩ : Q).den := by
+    show 0 < (add e e).num.toNat
+    omega
+  have hcinv_nn : (0 : Int) ≤ (⟨((add e e).den : Int), (add e e).num.toNat⟩ : Q).num := by
+    show (0 : Int) ≤ ((add e e).den : Int)
+    omega
+  exact Rmul_le_cancel_ofQ hcd hcid hcinv_nn (Qinv_mul_self hcnum) step4
+
+-- ===========================================================================
+-- IMAGINARY-COORDINATE REDUCTION: `Im⟨u,v⟩ = Re⟨u, (−i)·v⟩` and `‖(−i)·v‖² = ‖v‖²`, so the single-term
+-- bound above covers the imaginary coordinate of the inner-product sequence verbatim (apply it with `v`
+-- replaced by `(−i)·v`).
+-- ===========================================================================
+
+/-- The scalar `−i` as a `Complex` literal. -/
+def NEGI : Complex := ⟨zero, Rneg one⟩
+
+/-- `0 + x ≈ x`. -/
+private theorem zero_Radd_loc (x : Real) : Req (Radd zero x) x :=
+  Req_trans (Radd_comm zero x) (Radd_zero x)
+
+/-- **`Im⟨u,v⟩ = Re⟨u, (−i)·v⟩`** — the imaginary part is a real part after the `−i` twist. -/
+theorem dlimInner_im_eq_re (u v : DLimRaw) :
+    Req (dlimInner u v).im (dlimInner u (dlimSmul NEGI v)).re := by
+  have h1 := (dlimInner_smul_right NEGI u v).1
+  have stepA : Req (Rmul zero (dlimInner u v).re) zero :=
+    Req_trans (Rmul_comm zero (dlimInner u v).re) (Rmul_zero (dlimInner u v).re)
+  have stepB : Req (Rmul (Rneg one) (dlimInner u v).im) (Rneg (dlimInner u v).im) :=
+    Req_trans (Rmul_neg_left one (dlimInner u v).im)
+      (Rneg_congr (Req_trans (Rmul_comm one (dlimInner u v).im) (Rmul_one (dlimInner u v).im)))
+  have key : Req (Cmul NEGI (dlimInner u v)).re (dlimInner u v).im := by
+    show Req (Rsub (Rmul zero (dlimInner u v).re) (Rmul (Rneg one) (dlimInner u v).im))
+              (dlimInner u v).im
+    refine Req_trans (Rsub_congr stepA stepB) ?_
+    exact Req_trans (Radd_congr (Req_refl zero) (Rneg_Rneg_loc (dlimInner u v).im))
+      (zero_Radd_loc (dlimInner u v).im)
+  exact Req_symm (Req_trans h1 key)
+
+/-- **`‖(−i)·v‖² = ‖v‖²`** (`|−i|² = 1`), so the `−i` twist preserves the norm bound. -/
+theorem dlimNormSq_smul_negI (v : DLimRaw) :
+    Req (dlimNormSq (dlimSmul NEGI v)) (dlimNormSq v) := by
+  have hsq : Req (Rmul (Rneg one) (Rneg one)) one :=
+    Req_trans (Rmul_neg_left one (Rneg one))
+      (Req_trans (Rneg_congr (Req_trans (Rmul_comm one (Rneg one)) (Rmul_one (Rneg one))))
+        (Rneg_Rneg_loc one))
+  have hcn : Req (cNormSq NEGI) one := by
+    show Req (Radd (Rmul zero zero) (Rmul (Rneg one) (Rneg one))) one
+    exact Req_trans (Radd_congr (Rmul_zero zero) hsq) (zero_Radd_loc one)
+  exact Req_trans (dlimNormSq_smul NEGI v)
+    (Req_trans (Rmul_congr hcn (Req_refl (dlimNormSq v)))
+      (Req_trans (Rmul_comm one (dlimNormSq v)) (Rmul_one (dlimNormSq v))))
 
 end UOR.Bridge.F1Square.Square
