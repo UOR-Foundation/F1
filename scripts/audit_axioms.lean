@@ -8766,3 +8766,26 @@ open UOR.Bridge.F1Square
 #print axioms Square.dlimCompletionNeg
 #print axioms Square.dlimCompletionAdd
 #print axioms Square.dlimReschedOdd
+
+-- ===========================================================================
+-- FINPREHILBERT COMPLETION PACKAGE (this phase): the completed inner product's two remaining
+-- sesquilinearity laws (add_right / smul_right), the reusable dominating-schedule refinement infra
+-- (genInner regularity + alignInner master alignment), the limit-linearity workhorses (RReg of a
+-- pointwise sum/scale is FALSE at the canonical modulus, so these take combined-seq regularity as a
+-- hypothesis), and the packaged instance dlimCompletionPreHilbert : FinPreHilbert. All choice-free.
+-- ===========================================================================
+#print axioms Analysis.Rlim_add_of_approx_core
+#print axioms Analysis.Rlim_add_core
+#print axioms Analysis.Rlim_smul_ofQ_of_approx
+#print axioms Analysis.Rlim_smul_ofQ
+#print axioms Square.cauchyMod_le_rhoMod_ar
+#print axioms Square.genInner_re_bound_ar
+#print axioms Square.genInner_im_bound_ar
+#print axioms Square.genInner_CRegCore_ar
+#print axioms Square.alignInner_ar
+#print axioms Square.completedInner_add_right
+#print axioms Square.Rmul_diag_gap_sr
+#print axioms Square.Rlim_lincomb2_add_sr
+#print axioms Square.ClimCore_Cmul_approx_sr
+#print axioms Square.completedInner_smul_right
+#print axioms Square.dlimCompletionPreHilbert

@@ -722,4 +722,527 @@ theorem completedInner_self_definite {X : DLimCompletionRaw}
   refine Rle_trans (Radd_le_add_loc (Radd_le_add_loc leM' leM') (Radd_le_add_loc leZ' leZ')) ?_
   exact Rle_of_Req sum_eq
 
+
+-- ===========================================================================
+-- RIGHT-ADDITIVITY (FinPreHilbert inner law): completedInner_add_right.  The summands of
+-- <X, Y+Z> at its own schedule Fsched X (Y+Z) are NOT provably regular (Fsched is not
+-- monotone under the completion +), so we FIRST refine to a DOMINATING schedule
+-- rho = Fsched X (Y+Z) + Fsched X Y + Fsched X Z (genInner_CRegCore_ar / alignInner_ar), at
+-- which both mixed summands ARE regular, then split the limit via Rlim_add_of_approx_core.
+-- ===========================================================================
+-- re-created private helpers (leaf names end in _ar)
+
+private theorem sched_succ_ar (F n : Nat) (hF : 1 ≤ F) : F * (n + 1) - 1 + 1 = F * (n + 1) := by
+  have : 0 < F * (n + 1) := Nat.mul_pos hF (Nat.succ_pos n); omega
+
+private theorem Rle_of_Rsub_le_ar {p q c : Real} (h : Rle (Rsub p q) c) : Rle p (Radd q c) := by
+  have e1 : Req (Radd (Rsub p q) q) p :=
+    Req_trans (Radd_assoc p (Rneg q) q)
+      (Req_trans (Radd_congr (Req_refl p) (Req_trans (Radd_comm (Rneg q) q) (Radd_neg q)))
+        (Radd_zero p))
+  have h1 : Rle (Radd (Rsub p q) q) (Radd c q) := Radd_le_add_loc h (Rle_refl q)
+  exact Rle_trans (Rle_of_Req (Req_symm e1)) (Rle_trans h1 (Rle_of_Req (Radd_comm c q)))
+
+private theorem halfBound_le_ar (nX m k : Nat)
+    (hbound : (1 + nX) * (4 * (k + 1)) ≤ m * 2) :
+    Qle (halfBound (⟨1, m⟩ : Q) nX) (⟨1, 4 * (k + 1)⟩ : Q) := by
+  simp only [Qle, halfBound]
+  push_cast
+  refine Int.le_of_sub_nonneg ?_
+  have hb : (0 : Int) ≤ (m : Int) * 2 - (1 + (nX : Int)) * (4 * ((k : Int) + 1)) := by
+    have hI : ((1 + nX) * (4 * (k + 1)) : Int) ≤ ((m * 2 : Nat) : Int) := by exact_mod_cast hbound
+    push_cast at hI
+    omega
+  have hid : (1 : Int) * ((m : Int) * 2) - (1 * (1 + (nX : Int))) * (4 * ((k : Int) + 1))
+      = (m : Int) * 2 - (1 + (nX : Int)) * (4 * ((k : Int) + 1)) := by ring_uor
+  rw [hid]; exact hb
+
+/-- Two quarter-tolerances sum below `1/(k+1)`. -/
+private theorem twoQuarter_le_ar (k : Nat) :
+    Qle (add (⟨1, 4 * (k + 1)⟩ : Q) (⟨1, 4 * (k + 1)⟩ : Q)) (⟨1, k + 1⟩ : Q) :=
+  Qle_trans (b := (⟨1, 2 * (k + 1)⟩ : Q)) (Nat.mul_pos (by decide) (Nat.succ_pos k))
+    (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+    (by simp only [Qle]; push_cast; omega)
+
+-- ===========================================================================
+-- The cofinal-schedule Cauchy-modulus bound at the ρ-modulus (for regularity).
+-- ===========================================================================
+
+/-- With `ρ ≥ 1` and both indices at least `ρ*(·+1)-1`, the canonical squared modulus at those
+    indices is below the ρ-modulus square `(1/(ρ(j+1)) + 1/(ρ(k+1)))²`. -/
+theorem cauchyMod_le_rhoMod_ar (ρ j k a b : Nat) (hρ1 : 1 ≤ ρ)
+    (ha : ρ * (j + 1) - 1 ≤ a) (hb : ρ * (k + 1) - 1 ≤ b) :
+    Rle (dlimCauchyModR a b)
+        (ofQ (mul (add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q))
+                  (add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q)))
+          (Qmul_den_pos
+            (add_den_pos (Nat.mul_pos hρ1 (Nat.succ_pos j)) (Nat.mul_pos hρ1 (Nat.succ_pos k)))
+            (add_den_pos (Nat.mul_pos hρ1 (Nat.succ_pos j)) (Nat.mul_pos hρ1 (Nat.succ_pos k))))) := by
+  unfold dlimCauchyModR
+  refine Rle_ofQ_of_Qle_loc _ _ ?_
+  have hMj : ρ * (j + 1) ≤ a + 1 := by
+    have h1 : 1 ≤ ρ * (j + 1) := Nat.mul_pos hρ1 (Nat.succ_pos j); omega
+  have hMk : ρ * (k + 1) ≤ b + 1 := by
+    have h1 : 1 ≤ ρ * (k + 1) := Nat.mul_pos hρ1 (Nat.succ_pos k); omega
+  have hja : Qle (⟨1, a + 1⟩ : Q) (⟨1, ρ * (j + 1)⟩ : Q) := by
+    show (1 : Int) * ((ρ * (j + 1) : Nat) : Int) ≤ (1 : Int) * ((a + 1 : Nat) : Int)
+    have : ((ρ * (j + 1) : Nat) : Int) ≤ ((a + 1 : Nat) : Int) := by exact_mod_cast hMj
+    omega
+  have hkb : Qle (⟨1, b + 1⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q) := by
+    show (1 : Int) * ((ρ * (k + 1) : Nat) : Int) ≤ (1 : Int) * ((b + 1 : Nat) : Int)
+    have : ((ρ * (k + 1) : Nat) : Int) ≤ ((b + 1 : Nat) : Int) := by exact_mod_cast hMk
+    omega
+  have hSE : Qle (add (⟨1, a + 1⟩ : Q) (⟨1, b + 1⟩ : Q))
+      (add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q)) := Qadd_le_add hja hkb
+  have hSnum : (0 : Int) ≤ (add (⟨1, a + 1⟩ : Q) (⟨1, b + 1⟩ : Q)).num := by
+    show (0 : Int) ≤ (1 : Int) * ((b + 1 : Nat) : Int) + (1 : Int) * ((a + 1 : Nat) : Int)
+    push_cast; omega
+  exact Qmul_le_mul (add_den_pos (Nat.succ_pos a) (Nat.succ_pos b))
+    (add_den_pos (Nat.mul_pos hρ1 (Nat.succ_pos j)) (Nat.mul_pos hρ1 (Nat.succ_pos k)))
+    (add_den_pos (Nat.succ_pos a) (Nat.succ_pos b)) hSnum hSnum hSE hSE
+
+-- ===========================================================================
+-- General two-schedule regularity: X read at sA, Y read at sB, both ≥ ρ*(·+1)-1
+-- with ρ ≥ Fsched A B.  The modulus bookkeeping isolated into these two lemmas.
+-- ===========================================================================
+
+theorem genInner_re_bound_ar (A B : DLimCompletionRaw) (ρ : Nat) (hρ : Fsched A B ≤ ρ)
+    (sA sB : Nat → Nat) (hsA : ∀ n, ρ * (n + 1) - 1 ≤ sA n) (hsB : ∀ n, ρ * (n + 1) - 1 ≤ sB n)
+    (j k : Nat) :
+    Rle (Rsub (dlimInner (A.seq (sA j)) (B.seq (sB j))).re
+              (dlimInner (A.seq (sA k)) (B.seq (sB k))).re)
+        (ofQ (add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q))
+             (add_den_pos (Nat.succ_pos j) (Nat.succ_pos k))) := by
+  have hρ1 : 1 ≤ ρ := Nat.le_trans (one_le_Fsched A B) hρ
+  have hEd : 0 < (add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q)).den :=
+    add_den_pos (Nat.mul_pos hρ1 (Nat.succ_pos j)) (Nat.mul_pos hρ1 (Nat.succ_pos k))
+  have hEn : 0 < (add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q)).num := by
+    show 0 < (1 : Int) * ((ρ * (k + 1) : Nat) : Int) + (1 : Int) * ((ρ * (j + 1) : Nat) : Int)
+    have h1 : (0 : Int) < ((ρ * (j + 1) : Nat) : Int) := by
+      have hh : 0 < ρ * (j + 1) := Nat.mul_pos hρ1 (Nat.succ_pos j); exact_mod_cast hh
+    have h2 : (0 : Int) < ((ρ * (k + 1) : Nat) : Int) := by
+      have hh : 0 < ρ * (k + 1) := Nat.mul_pos hρ1 (Nat.succ_pos k); exact_mod_cast hh
+    omega
+  have hAA := cauchyMod_le_rhoMod_ar ρ j k (sA j) (sA k) hρ1 (hsA j) (hsA k)
+  have hBB := cauchyMod_le_rhoMod_ar ρ j k (sB j) (sB k) hρ1 (hsB j) (hsB k)
+  have hmain := dlimInner_re_diff_le
+      (ea := add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q))
+      (eb := add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q))
+      hEd hEn hEd hEn (normBound A) (normBound B)
+      (A.seq (sA j)) (A.seq (sA k)) (B.seq (sB j)) (B.seq (sB k))
+      (Rle_trans (A.reg (sA j) (sA k)) hAA)
+      (normBound_spec B (sB j))
+      (normBound_spec A (sA k))
+      (Rle_trans (B.reg (sB j) (sB k)) hBB)
+  refine Rle_trans hmain ?_
+  refine Rle_trans (Rle_of_Req (Radd_ofQ_loc _ _)) ?_
+  refine Rle_ofQ_of_Qle_loc _ _ ?_
+  exact modulus_bound ρ (j + 1) (k + 1) (normBound A) (normBound B)
+    (Nat.succ_pos j) (Nat.succ_pos k) hρ1 (by unfold Fsched at hρ; omega)
+
+theorem genInner_im_bound_ar (A B : DLimCompletionRaw) (ρ : Nat) (hρ : Fsched A B ≤ ρ)
+    (sA sB : Nat → Nat) (hsA : ∀ n, ρ * (n + 1) - 1 ≤ sA n) (hsB : ∀ n, ρ * (n + 1) - 1 ≤ sB n)
+    (j k : Nat) :
+    Rle (Rsub (dlimInner (A.seq (sA j)) (B.seq (sB j))).im
+              (dlimInner (A.seq (sA k)) (B.seq (sB k))).im)
+        (ofQ (add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q))
+             (add_den_pos (Nat.succ_pos j) (Nat.succ_pos k))) := by
+  have hρ1 : 1 ≤ ρ := Nat.le_trans (one_le_Fsched A B) hρ
+  have hEd : 0 < (add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q)).den :=
+    add_den_pos (Nat.mul_pos hρ1 (Nat.succ_pos j)) (Nat.mul_pos hρ1 (Nat.succ_pos k))
+  have hEn : 0 < (add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q)).num := by
+    show 0 < (1 : Int) * ((ρ * (k + 1) : Nat) : Int) + (1 : Int) * ((ρ * (j + 1) : Nat) : Int)
+    have h1 : (0 : Int) < ((ρ * (j + 1) : Nat) : Int) := by
+      have hh : 0 < ρ * (j + 1) := Nat.mul_pos hρ1 (Nat.succ_pos j); exact_mod_cast hh
+    have h2 : (0 : Int) < ((ρ * (k + 1) : Nat) : Int) := by
+      have hh : 0 < ρ * (k + 1) := Nat.mul_pos hρ1 (Nat.succ_pos k); exact_mod_cast hh
+    omega
+  have hAA := cauchyMod_le_rhoMod_ar ρ j k (sA j) (sA k) hρ1 (hsA j) (hsA k)
+  have hBB := cauchyMod_le_rhoMod_ar ρ j k (sB j) (sB k) hρ1 (hsB j) (hsB k)
+  have hmain := dlimInner_im_diff_le
+      (ea := add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q))
+      (eb := add (⟨1, ρ * (j + 1)⟩ : Q) (⟨1, ρ * (k + 1)⟩ : Q))
+      hEd hEn hEd hEn (normBound A) (normBound B)
+      (A.seq (sA j)) (A.seq (sA k)) (B.seq (sB j)) (B.seq (sB k))
+      (Rle_trans (A.reg (sA j) (sA k)) hAA)
+      (normBound_spec B (sB j))
+      (normBound_spec A (sA k))
+      (Rle_trans (B.reg (sB j) (sB k)) hBB)
+  refine Rle_trans hmain ?_
+  refine Rle_trans (Rle_of_Req (Radd_ofQ_loc _ _)) ?_
+  refine Rle_ofQ_of_Qle_loc _ _ ?_
+  exact modulus_bound ρ (j + 1) (k + 1) (normBound A) (normBound B)
+    (Nat.succ_pos j) (Nat.succ_pos k) hρ1 (by unfold Fsched at hρ; omega)
+
+-- ===========================================================================
+-- Alignment closeness: two cofinal schedule-pairs read on the SAME representatives A,B
+-- yield inner products eventually within 1/(k+1) (one coordinate, one direction).
+-- Only cofinality (n ≤ s n) is needed — the tolerance comes from dlimCauchyMod_le_inv_sq.
+-- ===========================================================================
+
+private theorem alignClose_ar
+    (proj : Complex → Real)
+    (diffLe : ∀ (ea eb : Q) (hea : 0 < ea.den) (heaN : 0 < ea.num)
+       (heb : 0 < eb.den) (hebN : 0 < eb.num) (Ba Bb : Nat) (a a' b b' : DLimRaw),
+       Rle (dlimNormSq (dlimSub a a')) (ofQ (mul ea ea) (Qmul_den_pos hea hea)) →
+       Rle (dlimNormSq b) (ofQ (⟨(Bb : Int), 1⟩ : Q) Nat.one_pos) →
+       Rle (dlimNormSq a') (ofQ (⟨(Ba : Int), 1⟩ : Q) Nat.one_pos) →
+       Rle (dlimNormSq (dlimSub b b')) (ofQ (mul eb eb) (Qmul_den_pos heb heb)) →
+       Rle (Rsub (proj (dlimInner a b)) (proj (dlimInner a' b')))
+           (Radd (ofQ (halfBound ea Bb) (Nat.mul_pos hea (by decide)))
+                 (ofQ (halfBound eb Ba) (Nat.mul_pos heb (by decide)))))
+    (A B : DLimCompletionRaw) (s1 s2 t1 t2 : Nat → Nat)
+    (hs1 : ∀ n, n ≤ s1 n) (hs2 : ∀ n, n ≤ s2 n) (ht1 : ∀ n, n ≤ t1 n) (ht2 : ∀ n, n ≤ t2 n)
+    (k : Nat) :
+    ∃ N : Nat, ∀ n : Nat, N ≤ n →
+      Rle (proj (dlimInner (A.seq (s1 n)) (B.seq (t1 n))))
+          (Radd (proj (dlimInner (A.seq (s2 n)) (B.seq (t2 n))))
+                (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))) := by
+  refine ⟨2 * congrM k (normBound B) (normBound A) 0, fun n hn => ?_⟩
+  have h4 : 0 < 4 * (k + 1) := Nat.mul_pos (by decide) (Nat.succ_pos k)
+  have hmpos : 0 < congrM k (normBound B) (normBound A) 0 := congrM_pos k (normBound B) (normBound A) 0
+  have hn2m : 2 * congrM k (normBound B) (normBound A) 0 ≤ n := hn
+  have hi_s1 : 2 * congrM k (normBound B) (normBound A) 0 ≤ s1 n + 1 :=
+    Nat.le_trans hn2m (Nat.le_trans (Nat.le_succ n) (Nat.succ_le_succ (hs1 n)))
+  have hi_s2 : 2 * congrM k (normBound B) (normBound A) 0 ≤ s2 n + 1 :=
+    Nat.le_trans hn2m (Nat.le_trans (Nat.le_succ n) (Nat.succ_le_succ (hs2 n)))
+  have hi_t1 : 2 * congrM k (normBound B) (normBound A) 0 ≤ t1 n + 1 :=
+    Nat.le_trans hn2m (Nat.le_trans (Nat.le_succ n) (Nat.succ_le_succ (ht1 n)))
+  have hi_t2 : 2 * congrM k (normBound B) (normBound A) 0 ≤ t2 n + 1 :=
+    Nat.le_trans hn2m (Nat.le_trans (Nat.le_succ n) (Nat.succ_le_succ (ht2 n)))
+  have hAA : Rle (dlimNormSq (dlimSub (A.seq (s1 n)) (A.seq (s2 n))))
+      (ofQ (mul (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q)
+                (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q))
+        (Qmul_den_pos hmpos hmpos)) :=
+    Rle_trans (A.reg (s1 n) (s2 n))
+      (dlimCauchyMod_le_inv_sq (s1 n) (s2 n) _ hmpos hi_s1 hi_s2)
+  have hBB : Rle (dlimNormSq (dlimSub (B.seq (t1 n)) (B.seq (t2 n))))
+      (ofQ (mul (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q)
+                (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q))
+        (Qmul_den_pos hmpos hmpos)) :=
+    Rle_trans (B.reg (t1 n) (t2 n))
+      (dlimCauchyMod_le_inv_sq (t1 n) (t2 n) _ hmpos hi_t1 hi_t2)
+  have hmain := diffLe (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q)
+    (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q) hmpos (by decide : (0:Int) < 1)
+    hmpos (by decide : (0:Int) < 1) (normBound A) (normBound B)
+    (A.seq (s1 n)) (A.seq (s2 n)) (B.seq (t1 n)) (B.seq (t2 n))
+    hAA (normBound_spec B (t1 n)) (normBound_spec A (s2 n)) hBB
+  refine Rle_of_Rsub_le_ar ?_
+  refine Rle_trans hmain ?_
+  have leB : Rle (ofQ (halfBound (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q) (normBound B))
+        (Nat.mul_pos hmpos (by decide)))
+      (ofQ (⟨1, 4 * (k + 1)⟩ : Q) h4) :=
+    Rle_ofQ_of_Qle_loc _ _ (halfBound_le_ar (normBound B)
+      (congrM k (normBound B) (normBound A) 0) k
+      (congrM_halfBound k (normBound B) (normBound A) 0 (normBound B) (by omega)))
+  have leA : Rle (ofQ (halfBound (⟨1, congrM k (normBound B) (normBound A) 0⟩ : Q) (normBound A))
+        (Nat.mul_pos hmpos (by decide)))
+      (ofQ (⟨1, 4 * (k + 1)⟩ : Q) h4) :=
+    Rle_ofQ_of_Qle_loc _ _ (halfBound_le_ar (normBound A)
+      (congrM k (normBound B) (normBound A) 0) k
+      (congrM_halfBound k (normBound B) (normBound A) 0 (normBound A) (by omega)))
+  refine Rle_trans (Radd_le_add_loc leB leA) ?_
+  refine Rle_trans (Rle_of_Req (Radd_ofQ_loc h4 h4)) ?_
+  exact Rle_ofQ_of_Qle_loc _ _ (twoQuarter_le_ar k)
+
+/-- Both coordinate sequences of the general two-schedule inner-product sequence are regular. -/
+theorem genInner_CRegCore_ar (A B : DLimCompletionRaw) (ρ : Nat) (hρ : Fsched A B ≤ ρ)
+    (sA sB : Nat → Nat) (hsA : ∀ n, ρ * (n + 1) - 1 ≤ sA n) (hsB : ∀ n, ρ * (n + 1) - 1 ≤ sB n) :
+    CRegCore (fun n => dlimInner (A.seq (sA n)) (B.seq (sB n))) :=
+  ⟨RReg_of_real_bound_core _ (fun j k => add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q))
+      (fun j k => add_den_pos (Nat.succ_pos j) (Nat.succ_pos k))
+      (fun _ _ => Qle_refl _) (fun j k => genInner_re_bound_ar A B ρ hρ sA sB hsA hsB j k),
+   RReg_of_real_bound_core _ (fun j k => add (⟨1, j + 1⟩ : Q) (⟨1, k + 1⟩ : Q))
+      (fun j k => add_den_pos (Nat.succ_pos j) (Nat.succ_pos k))
+      (fun _ _ => Qle_refl _) (fun j k => genInner_im_bound_ar A B ρ hρ sA sB hsA hsB j k)⟩
+
+-- ===========================================================================
+-- MASTER ALIGNMENT: a two-schedule inner-product limit (both schedules ≥ ρ*(·+1)-1,
+-- ρ ≥ Fsched A B) equals the completed inner product ⟨A,B⟩.
+-- ===========================================================================
+
+theorem alignInner_ar (A B : DLimCompletionRaw) (ρ : Nat) (hρ : Fsched A B ≤ ρ)
+    (sA sB : Nat → Nat) (hsA : ∀ n, ρ * (n + 1) - 1 ≤ sA n) (hsB : ∀ n, ρ * (n + 1) - 1 ≤ sB n) :
+    Ceq (ClimCore (fun n => dlimInner (A.seq (sA n)) (B.seq (sB n)))
+          (genInner_CRegCore_ar A B ρ hρ sA sB hsA hsB))
+        (completedInner A B) := by
+  have hρ1 : 1 ≤ ρ := Nat.le_trans (one_le_Fsched A B) hρ
+  have cofr : ∀ n, n ≤ ρ * (n + 1) - 1 := fun n => by
+    have hle : n + 1 ≤ ρ * (n + 1) := Nat.le_mul_of_pos_left (n + 1) hρ1
+    omega
+  have cofA : ∀ n, n ≤ sA n := fun n => Nat.le_trans (cofr n) (hsA n)
+  have cofB : ∀ n, n ≤ sB n := fun n => Nat.le_trans (cofr n) (hsB n)
+  have cofσ : ∀ n, n ≤ Fsched A B * (n + 1) - 1 := fun n => by
+    have hle : n + 1 ≤ Fsched A B * (n + 1) := Nat.le_mul_of_pos_left (n + 1) (one_le_Fsched A B)
+    omega
+  refine ClimCore_eq_of_close (genInner_CRegCore_ar A B ρ hρ sA sB hsA hsB)
+    (innerSeq_CRegCore A B) ?_ ?_ ?_ ?_
+  · exact fun k => alignClose_ar (fun z => z.re) (@dlimInner_re_diff_le) A B
+      sA (fun n => Fsched A B * (n + 1) - 1) sB (fun n => Fsched A B * (n + 1) - 1)
+      cofA cofσ cofB cofσ k
+  · exact fun k => alignClose_ar (fun z => z.re) (@dlimInner_re_diff_le) A B
+      (fun n => Fsched A B * (n + 1) - 1) sA (fun n => Fsched A B * (n + 1) - 1) sB
+      cofσ cofA cofσ cofB k
+  · exact fun k => alignClose_ar (fun z => z.im) (@dlimInner_im_diff_le) A B
+      sA (fun n => Fsched A B * (n + 1) - 1) sB (fun n => Fsched A B * (n + 1) - 1)
+      cofA cofσ cofB cofσ k
+  · exact fun k => alignClose_ar (fun z => z.im) (@dlimInner_im_diff_le) A B
+      (fun n => Fsched A B * (n + 1) - 1) sA (fun n => Fsched A B * (n + 1) - 1) sB
+      cofσ cofA cofσ cofB k
+
+-- ===========================================================================
+-- THE TARGET: right-additivity of the completed inner product.
+-- ===========================================================================
+
+theorem completedInner_add_right (X Y Z : DLimCompletionRaw) :
+    Ceq (completedInner X (dlimCompletionAdd Y Z))
+        (Cadd (completedInner X Y) (completedInner X Z)) := by
+  -- the common dominating schedule factor
+  have hρW : Fsched X (dlimCompletionAdd Y Z)
+      ≤ Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z := by omega
+  have hρY : Fsched X Y ≤ Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z := by omega
+  have hρZ : Fsched X Z ≤ Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z := by omega
+  have h_idx : ∀ n,
+      (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1
+        ≤ (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1 :=
+    fun _ => Nat.le_refl _
+  have h_idx2 : ∀ n,
+      (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1
+        ≤ 2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1 :=
+    fun _ => by omega
+  -- regularity witnesses at the dominating schedule
+  have hRW := genInner_CRegCore_ar X (dlimCompletionAdd Y Z)
+    (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) hρW
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    h_idx h_idx
+  have hRY := genInner_CRegCore_ar X Y
+    (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) hρY
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    (fun n => 2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1)
+    h_idx h_idx2
+  have hRZ := genInner_CRegCore_ar X Z
+    (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) hρZ
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    (fun n => 2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1)
+    h_idx h_idx2
+  -- alignment of the three limits to the completed inner products
+  have alW := alignInner_ar X (dlimCompletionAdd Y Z)
+    (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) hρW
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    h_idx h_idx
+  have alY := alignInner_ar X Y
+    (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) hρY
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    (fun n => 2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1)
+    h_idx h_idx2
+  have alZ := alignInner_ar X Z
+    (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) hρZ
+    (fun n => (Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1)
+    (fun n => 2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1)
+    h_idx h_idx2
+  -- the pointwise decomposition (dlimInner_add_right) at each schedule point
+  refine ⟨?_, ?_⟩
+  · -- real coordinate
+    have splitRe := Rlim_add_of_approx_core
+      (fun n => (dlimInner (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))
+                  ((dlimCompletionAdd Y Z).seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))).re)
+      (fun n => (dlimInner (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))
+                  (Y.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1))).re)
+      (fun n => (dlimInner (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))
+                  (Z.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1))).re)
+      hRY.1 hRZ.1 hRW.1
+      (fun j => (dlimInner_add_right
+        (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (j + 1) - 1))
+        (Y.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (j + 1) - 1) + 1))
+        (Z.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (j + 1) - 1) + 1))).1)
+    exact Req_trans (Req_symm alW.1)
+      (Req_trans splitRe (Radd_congr alY.1 alZ.1))
+  · -- imaginary coordinate
+    have splitIm := Rlim_add_of_approx_core
+      (fun n => (dlimInner (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))
+                  ((dlimCompletionAdd Y Z).seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))).im)
+      (fun n => (dlimInner (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))
+                  (Y.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1))).im)
+      (fun n => (dlimInner (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1))
+                  (Z.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (n + 1) - 1) + 1))).im)
+      hRY.2 hRZ.2 hRW.2
+      (fun j => (dlimInner_add_right
+        (X.seq ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (j + 1) - 1))
+        (Y.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (j + 1) - 1) + 1))
+        (Z.seq (2 * ((Fsched X (dlimCompletionAdd Y Z) + Fsched X Y + Fsched X Z) * (j + 1) - 1) + 1))).2)
+    exact Req_trans (Req_symm alW.2)
+      (Req_trans splitIm (Radd_congr alY.2 alZ.2))
+
+
+-- ===========================================================================
+-- RIGHT-SCALAR-MULTIPLICATIVITY (FinPreHilbert inner law): completedInner_smul_right.
+-- Same dominating-schedule refinement as add_right (rho = Fsched X (c.Y) + Fsched X Y,
+-- reusing alignInner_ar twice), then dlimInner_smul_right gives the term = Cmul c (P n)
+-- pointwise.  ClimCore_Cmul_approx_sr moves the constant out: a COMBINED two-term real-
+-- scalar limit law (Rlim_lincomb2_add_sr) is required because RReg of a |c|-SCALED summand
+-- is false at the canonical modulus, so the given regular rho-sequence must carry convergence.
+-- ===========================================================================
+-- ===========================================================================
+-- SUB-LEMMA: the per-diagonal product gap for a REAL scalar `d` times a regular
+-- family `A`, comparing the outer-diagonal read `(d·A_{4n+3})_{2(4n+3)+1}` to the
+-- limit read `(d·(lim A))_{2n+1}`.  Bounded by `L·8/(n+1)` (`L = max K_d K_{lim A}`)
+-- via the product-gap engine `Rmul_gap`: the `d`-factor is uniformly `≤ K_d`, the
+-- limit-factor is uniformly `≤ K_{lim A}`, and both value gaps are `O(1/(n+1))`.
+-- ===========================================================================
+
+theorem Rmul_diag_gap_sr (d : Real) (A : Nat → Real) (hA : RReg A) (n : Nat) :
+    Qle (Qabs (Qsub ((Rmul d (A (4 * n + 3))).seq (2 * (4 * n + 3) + 1))
+                     ((Rmul d (Rlim A hA)).seq (2 * n + 1))))
+        (⟨(max (xBound d) (xBound (Rlim A hA)) * 8 : Nat), n + 1⟩ : Q) := by
+  let ra := Ridx d (A (4 * n + 3)) (2 * (4 * n + 3) + 1)
+  let rb := Ridx d (Rlim A hA) (2 * n + 1)
+  have hge_ra : 2 * (4 * n + 3) + 1 ≤ ra := Ridx_ge d (A (4 * n + 3)) (2 * (4 * n + 3) + 1)
+  have hge_rb : 2 * n + 1 ≤ rb := Ridx_ge d (Rlim A hA) (2 * n + 1)
+  have hra : n ≤ ra := by omega
+  have hrb : n ≤ rb := by omega
+  have hrb4 : n ≤ 4 * rb + 3 := by omega
+  have hn43 : n ≤ 4 * n + 3 := by omega
+  -- the A-value gap
+  have hyd : Qle (Qabs (Qsub ((A (4 * n + 3)).seq ra) ((Rlim A hA).seq rb))) (⟨6, n + 1⟩ : Q) := by
+    show Qle (Qabs (Qsub ((A (4 * n + 3)).seq ra) ((A (4 * rb + 3)).seq (4 * rb + 3)))) (⟨6, n + 1⟩ : Q)
+    have hbra : Qle (Qbound ra) (⟨1, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hra
+    have hb4rb : Qle (Qbound (4 * rb + 3)) (⟨1, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hrb4
+    have h1 : Qle (⟨1, 4 * n + 3 + 1⟩ : Q) (⟨1, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hn43
+    have h2 : Qle (⟨1, 4 * rb + 3 + 1⟩ : Q) (⟨1, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hrb4
+    have h3 : Qle (⟨2, 4 * rb + 3 + 1⟩ : Q) (⟨2, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hrb4
+    refine Qle_trans
+      (add_den_pos (Qabs_den_pos (Qsub_den_pos ((A (4 * n + 3)).den_pos ra) ((A (4 * n + 3)).den_pos (4 * rb + 3))))
+        (Qabs_den_pos (Qsub_den_pos ((A (4 * n + 3)).den_pos (4 * rb + 3)) ((A (4 * rb + 3)).den_pos (4 * rb + 3)))))
+      (Qabs_sub_triangle ((A (4 * n + 3)).den_pos ra) ((A (4 * n + 3)).den_pos (4 * rb + 3))
+        ((A (4 * rb + 3)).den_pos (4 * rb + 3))) ?_
+    refine Qle_trans
+      (add_den_pos (add_den_pos (Qbound_den_pos ra) (Qbound_den_pos (4 * rb + 3)))
+        (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Nat.succ_pos _)))
+      (Qadd_le_add ((A (4 * n + 3)).reg ra (4 * rb + 3)) (hA (4 * n + 3) (4 * rb + 3) (4 * rb + 3))) ?_
+    refine Qle_trans
+      (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))
+        (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Nat.succ_pos _)))
+      (Qadd_le_add (Qadd_le_add hbra hb4rb) (Qadd_le_add (Qadd_le_add h1 h2) h3)) ?_
+    exact Qeq_le (by simp only [Qeq, add, Qbound]; push_cast; ring_uor)
+  -- the d-value gap
+  have hxd : Qle (Qabs (Qsub (d.seq ra) (d.seq rb))) (⟨2, n + 1⟩ : Q) := by
+    have hbra : Qle (Qbound ra) (⟨1, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hra
+    have hbrb : Qle (Qbound rb) (⟨1, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hrb
+    refine Qle_trans (add_den_pos (Qbound_den_pos ra) (Qbound_den_pos rb)) (d.reg ra rb) ?_
+    refine Qle_trans (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Qadd_le_add hbra hbrb) ?_
+    exact Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor)
+  exact Rmul_gap (L := max (xBound d) (xBound (Rlim A hA))) (s := 6) (t := 2)
+    (d.den_pos ra) ((A (4 * n + 3)).den_pos ra) (d.den_pos rb) ((Rlim A hA).den_pos rb)
+    (canon_bound_le (Nat.le_max_left _ _) ra) (canon_bound_le (Nat.le_max_right _ _) rb) hyd hxd
+
+-- ===========================================================================
+-- THE COMBINED TWO-TERM REAL-SCALAR LIMIT LAW (the one new analytic ingredient):
+--   lim W ≈ d₁·(lim A) + d₂·(lim B)   when   W ≈ d₁·A + d₂·B  pointwise,
+-- with the regular sequence `W` carrying convergence (RReg of a scaled/summed
+-- sequence is FALSE at the canonical modulus, hence the approximation form).
+-- ===========================================================================
+
+theorem Rlim_lincomb2_add_sr (d1 d2 : Real) (W A B : Nat → Real)
+    (hA : RReg A) (hB : RReg B) (hW : RReg W)
+    (happ : ∀ j, Req (W j) (Radd (Rmul d1 (A j)) (Rmul d2 (B j)))) :
+    Req (Rlim W hW) (Radd (Rmul d1 (Rlim A hA)) (Rmul d2 (Rlim B hB))) := by
+  refine Req_of_lin_bound
+    (C := 2 + max (xBound d1) (xBound (Rlim A hA)) * 8 + max (xBound d2) (xBound (Rlim B hB)) * 8)
+    (fun n => ?_)
+  have da := (W (4 * n + 3)).den_pos (4 * n + 3)
+  have dq1 := (Rmul d1 (A (4 * n + 3))).den_pos (2 * (4 * n + 3) + 1)
+  have dq2 := (Rmul d2 (B (4 * n + 3))).den_pos (2 * (4 * n + 3) + 1)
+  have dp1 := (Rmul d1 (Rlim A hA)).den_pos (2 * n + 1)
+  have dp2 := (Rmul d2 (Rlim B hB)).den_pos (2 * n + 1)
+  have hn43 : n ≤ 4 * n + 3 := by omega
+  refine Qle_trans
+    (add_den_pos (Qabs_den_pos (Qsub_den_pos da (add_den_pos dq1 dq2)))
+      (Qabs_den_pos (Qsub_den_pos (add_den_pos dq1 dq2) (add_den_pos dp1 dp2))))
+    (Qabs_sub_triangle da (add_den_pos dq1 dq2) (add_den_pos dp1 dp2)) ?_
+  refine Qle_trans
+    (add_den_pos (Nat.succ_pos _) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+    (Qadd_le_add (happ (4 * n + 3) (4 * n + 3))
+      (Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos dq1 dp1))
+          (Qabs_den_pos (Qsub_den_pos dq2 dp2)))
+        (Qabs_sub_add4 dq1 dq2 dp1 dp2)
+        (Qadd_le_add (Rmul_diag_gap_sr d1 A hA n) (Rmul_diag_gap_sr d2 B hB n)))) ?_
+  have h2s : Qle (⟨2, 4 * n + 3 + 1⟩ : Q) (⟨2, n + 1⟩ : Q) := Qscale_le (by decide) (by decide) hn43
+  refine Qle_trans
+    (add_den_pos (Nat.succ_pos _) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+    (Qadd_le_add h2s (Qle_refl _)) ?_
+  exact Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor)
+
+-- ===========================================================================
+-- SCALAR-MULTIPLICATION CONTINUITY of the coordinatewise complex limit
+-- (approximation form: the given regular `W` approximates `c·Z`).
+-- ===========================================================================
+
+theorem ClimCore_Cmul_approx_sr (c : Complex) (W Z : Nat → Complex)
+    (hZ : CRegCore Z) (hW : CRegCore W) (happ : ∀ n, Ceq (W n) (Cmul c (Z n))) :
+    Ceq (ClimCore W hW) (Cmul c (ClimCore Z hZ)) :=
+  ⟨Req_trans
+     (Rlim_lincomb2_add_sr c.re (Rneg c.im)
+       (fun n => (W n).re) (fun n => (Z n).re) (fun n => (Z n).im)
+       hZ.1 hZ.2 hW.1
+       (fun j => Req_trans (happ j).1
+         (Radd_congr (Req_refl _) (Req_symm (Rmul_neg_left c.im ((Z j).im))))))
+     (Radd_congr (Req_refl _) (Rmul_neg_left c.im (Rlim (fun n => (Z n).im) hZ.2))),
+   Rlim_lincomb2_add_sr c.re c.im
+     (fun n => (W n).im) (fun n => (Z n).im) (fun n => (Z n).re)
+     hZ.2 hZ.1 hW.2
+     (fun j => (happ j).2)⟩
+
+-- ===========================================================================
+-- THE TARGET: right-scalar-multiplicativity of the completed inner product.
+-- ===========================================================================
+
+theorem completedInner_smul_right (c : Complex) (X Y : DLimCompletionRaw) :
+    Ceq (completedInner X (dlimCompletionSmul c Y)) (Cmul c (completedInner X Y)) := by
+  let ρ := Fsched X (dlimCompletionSmul c Y) + Fsched X Y
+  have hρ1 : Fsched X (dlimCompletionSmul c Y) ≤ ρ := Nat.le_add_right _ _
+  have hρ2 : Fsched X Y ≤ ρ := Nat.le_add_left _ _
+  have hρpos : 1 ≤ ρ :=
+    Nat.le_trans (one_le_Fsched X (dlimCompletionSmul c Y)) (Nat.le_add_right _ _)
+  -- the two schedules
+  have hid : ∀ n, ρ * (n + 1) - 1 ≤ ρ * (n + 1) - 1 := fun _ => Nat.le_refl _
+  have hsB : ∀ n, ρ * (n + 1) - 1 ≤ (scalarSchedule c * ρ) * (n + 1) - 1 := by
+    intro n
+    have h1 : ρ ≤ scalarSchedule c * ρ := Nat.le_mul_of_pos_left ρ (by have := one_le_scalarSchedule c; omega)
+    have h2 : ρ * (n + 1) ≤ (scalarSchedule c * ρ) * (n + 1) := Nat.mul_le_mul h1 (Nat.le_refl _)
+    omega
+  -- regularity witnesses + alignments
+  have hZrho : CRegCore (fun n => dlimInner (X.seq (ρ * (n + 1) - 1))
+      ((dlimCompletionSmul c Y).seq (ρ * (n + 1) - 1))) :=
+    genInner_CRegCore_ar X (dlimCompletionSmul c Y) ρ hρ1
+      (fun n => ρ * (n + 1) - 1) (fun n => ρ * (n + 1) - 1) hid hid
+  have hP : CRegCore (fun n => dlimInner (X.seq (ρ * (n + 1) - 1))
+      (Y.seq ((scalarSchedule c * ρ) * (n + 1) - 1))) :=
+    genInner_CRegCore_ar X Y ρ hρ2
+      (fun n => ρ * (n + 1) - 1) (fun n => (scalarSchedule c * ρ) * (n + 1) - 1) hid hsB
+  have alignZrho := alignInner_ar X (dlimCompletionSmul c Y) ρ hρ1
+      (fun n => ρ * (n + 1) - 1) (fun n => ρ * (n + 1) - 1) hid hid
+  have alignP := alignInner_ar X Y ρ hρ2
+      (fun n => ρ * (n + 1) - 1) (fun n => (scalarSchedule c * ρ) * (n + 1) - 1) hid hsB
+  -- pointwise smul-right identity
+  have hpt : ∀ n, Ceq (dlimInner (X.seq (ρ * (n + 1) - 1))
+        ((dlimCompletionSmul c Y).seq (ρ * (n + 1) - 1)))
+      (Cmul c (dlimInner (X.seq (ρ * (n + 1) - 1))
+        (Y.seq ((scalarSchedule c * ρ) * (n + 1) - 1)))) := by
+    intro n
+    have hidx : scalarSchedule c * ((ρ * (n + 1) - 1) + 1) - 1 = (scalarSchedule c * ρ) * (n + 1) - 1 :=
+      sched_comp ρ (scalarSchedule c) n hρpos
+    show Ceq (dlimInner (X.seq (ρ * (n + 1) - 1))
+          (dlimSmul c (Y.seq (scalarSchedule c * ((ρ * (n + 1) - 1) + 1) - 1))))
+        (Cmul c (dlimInner (X.seq (ρ * (n + 1) - 1))
+          (Y.seq ((scalarSchedule c * ρ) * (n + 1) - 1))))
+    rw [hidx]
+    exact dlimInner_smul_right c (X.seq (ρ * (n + 1) - 1))
+      (Y.seq ((scalarSchedule c * ρ) * (n + 1) - 1))
+  -- assemble
+  exact Ceq_trans (Ceq_symm alignZrho)
+    (Ceq_trans (ClimCore_Cmul_approx_sr c _ _ hP hZrho hpt)
+      (Cmul_congr (Ceq_refl c) alignP))
+
 end UOR.Bridge.F1Square.Square

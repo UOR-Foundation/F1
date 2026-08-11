@@ -421,4 +421,209 @@ theorem Rlim_neg_core {X : Nat → Real} (hX : RReg X) :
     (Rlim_tendsTo (fun n => Rneg (X n)) (RReg_neg_core hX))
     (RTendsTo_neg_core (Rlim_tendsTo X hX))
 
+
+-- LIMIT LINEARITY (add / rational-scalar), of-approx workhorses — consumed by the
+-- completed-inner-product sesquilinearity laws (add_right / smul_right).  RReg of a
+-- pointwise SUM/SCALE is FALSE at the canonical modulus (RlimProps' documented wall),
+-- so the combined-sequence regularity is an explicit hypothesis, exactly as consumed.
+set_option maxHeartbeats 1000000 in
+/-- **Limit additivity, up to an approximation** `lim W ≈ lim X + lim Y` when `W ≈ X + Y` pointwise.
+    Does NOT require the (non-derivable) regularity of `X + Y`: the GIVEN regular sequence `W` carries
+    the convergence, and `W ≈ X + Y` pointwise (`happ`). Both diagonals land at the same sequence
+    position `8n+7`; the bound is the `happ` error `2/(4n+4)` plus the meta-regularity gap `10/(8n+8)`,
+    total `14/(8n+8) ≤ 2/(n+1)`. ζ-free port of `RlimProps.Rlim_add_of_approx_core`. -/
+theorem Rlim_add_of_approx_core (W X Y : Nat → Real) (hX : RReg X) (hY : RReg Y) (hW : RReg W)
+    (happ : ∀ j, Req (W j) (Radd (X j) (Y j))) :
+    Req (Rlim W hW) (Radd (Rlim X hX) (Rlim Y hY)) := by
+  refine Req_of_lin_bound (C := 2) (fun n => ?_)
+  have hpe : 4 * (2 * n + 1) + 3 = 2 * (4 * n + 3) + 1 := by omega
+  show Qle (Qabs (Qsub
+      ((W (4 * n + 3)).seq (4 * n + 3))
+      (add ((X (4 * (2 * n + 1) + 3)).seq (4 * (2 * n + 1) + 3))
+           ((Y (4 * (2 * n + 1) + 3)).seq (4 * (2 * n + 1) + 3)))))
+    (⟨2, n + 1⟩ : Q)
+  rw [hpe]
+  have hw0 : (0 : Nat) < ((W (4 * n + 3)).seq (4 * n + 3)).den := (W (4 * n + 3)).den_pos _
+  have ha : (0 : Nat) < ((X (4 * n + 3)).seq (2 * (4 * n + 3) + 1)).den := (X (4 * n + 3)).den_pos _
+  have hb : (0 : Nat) < ((Y (4 * n + 3)).seq (2 * (4 * n + 3) + 1)).den := (Y (4 * n + 3)).den_pos _
+  have hc : (0 : Nat) < ((X (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1)).den :=
+    (X (2 * (4 * n + 3) + 1)).den_pos _
+  have hd : (0 : Nat) < ((Y (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1)).den :=
+    (Y (2 * (4 * n + 3) + 1)).den_pos _
+  have hregroup : Qeq
+      (Qsub (add ((X (4 * n + 3)).seq (2 * (4 * n + 3) + 1))
+                 ((Y (4 * n + 3)).seq (2 * (4 * n + 3) + 1)))
+            (add ((X (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1))
+                 ((Y (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1))))
+      (add (Qsub ((X (4 * n + 3)).seq (2 * (4 * n + 3) + 1))
+                 ((X (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1)))
+           (Qsub ((Y (4 * n + 3)).seq (2 * (4 * n + 3) + 1))
+                 ((Y (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1)))) := by
+    simp only [Qeq, Qsub, add, neg]; push_cast; ring_uor
+  have hXbd := hX (4 * n + 3) (2 * (4 * n + 3) + 1) (2 * (4 * n + 3) + 1)
+  have hYbd := hY (4 * n + 3) (2 * (4 * n + 3) + 1) (2 * (4 * n + 3) + 1)
+  have heq : Qeq (add (add (add (⟨1, (4 * n + 3) + 1⟩ : Q) ⟨1, (2 * (4 * n + 3) + 1) + 1⟩)
+                          ⟨2, (2 * (4 * n + 3) + 1) + 1⟩)
+                     (add (add (⟨1, (4 * n + 3) + 1⟩ : Q) ⟨1, (2 * (4 * n + 3) + 1) + 1⟩)
+                          ⟨2, (2 * (4 * n + 3) + 1) + 1⟩))
+      (⟨10, 8 * n + 8⟩ : Q) := by
+    simp only [Qeq, add]; push_cast; ring_uor
+  have hinner : Qle (Qabs (Qsub
+        (add ((X (4 * n + 3)).seq (2 * (4 * n + 3) + 1))
+             ((Y (4 * n + 3)).seq (2 * (4 * n + 3) + 1)))
+        (add ((X (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1))
+             ((Y (2 * (4 * n + 3) + 1)).seq (2 * (4 * n + 3) + 1)))))
+      (⟨10, 8 * n + 8⟩ : Q) := by
+    refine Qle_trans (Qabs_den_pos (add_den_pos (Qsub_den_pos ha hc) (Qsub_den_pos hb hd)))
+      (Qeq_le (Qabs_Qeq hregroup)) ?_
+    refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos ha hc))
+        (Qabs_den_pos (Qsub_den_pos hb hd)))
+      (Qabs_add_le _ _) ?_
+    exact Qle_trans
+      (add_den_pos
+        (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Nat.succ_pos _))
+        (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Nat.succ_pos _)))
+      (Qadd_le_add hXbd hYbd) (Qeq_le heq)
+  have happn := happ (4 * n + 3) (4 * n + 3)
+  have hfinal : Qle (add (⟨2, (4 * n + 3) + 1⟩ : Q) ⟨10, 8 * n + 8⟩) (⟨2, n + 1⟩ : Q) := by
+    have heqf : Qeq (add (⟨2, (4 * n + 3) + 1⟩ : Q) ⟨10, 8 * n + 8⟩) (⟨14, 8 * n + 8⟩ : Q) := by
+      simp only [Qeq, add]; push_cast; ring_uor
+    refine Qle_trans (Nat.succ_pos _) (Qeq_le heqf) ?_
+    show (14 : Int) * ((n + 1 : Nat) : Int) ≤ (2 : Int) * ((8 * n + 8 : Nat) : Int)
+    push_cast; omega
+  refine Qle_trans
+    (add_den_pos (Qabs_den_pos (Qsub_den_pos hw0 (add_den_pos ha hb)))
+      (Qabs_den_pos (Qsub_den_pos (add_den_pos ha hb) (add_den_pos hc hd))))
+    (Qabs_sub_triangle hw0 (add_den_pos ha hb) (add_den_pos hc hd)) ?_
+  exact Qle_trans (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))
+    (Qadd_le_add happn hinner) hfinal
+
+/-- **Limit additivity** (the task's `Rlim_add_core`, honest form): `lim (A + B) ≈ lim A + lim B`, with the
+    regularity of the pointwise sum supplied as a hypothesis `hAB` (it is NOT derivable from `hA`, `hB`
+    at the canonical modulus — see the header). The `W = A + B` case of `Rlim_add_of_approx_core`. -/
+theorem Rlim_add_core {A B : Nat → Real} (hA : RReg A) (hB : RReg B)
+    (hAB : RReg (fun n => Radd (A n) (B n))) :
+    Req (Rlim (fun n => Radd (A n) (B n)) hAB) (Radd (Rlim A hA) (Rlim B hB)) :=
+  Rlim_add_of_approx_core (fun n => Radd (A n) (B n)) A B hA hB hAB (fun _ => Req_refl _)
+
+set_option maxHeartbeats 1000000 in
+/-- **Scalar-multiple limit, up to an approximation** `lim W ≈ c·lim X` when `W ≈ c·X` pointwise, for
+    a rational constant `c`. `W`'s regularity is GIVEN, sidestepping the non-derivable `RReg(c·X)` when
+    `|c| > 1`. The core bound on `|c·X_diag − c·lim X|` is `|c.num|/(n+1)`; one `happ`-triangle (error
+    `2/(4n+4)`) adds on top, `C = |c.num| + 2`. ζ-free port of `RlimProps.Rlim_ofQ_mul_of_approx`. -/
+theorem Rlim_smul_ofQ_of_approx (c : Q) (hc : 0 < c.den) (W X : Nat → Real) (hX : RReg X)
+    (hW : RReg W) (happ : ∀ j, Req (W j) (Rmul (ofQ c hc) (X j))) :
+    Req (Rlim W hW) (Rmul (ofQ c hc) (Rlim X hX)) := by
+  refine Req_of_lin_bound (C := c.num.natAbs + 2) (fun n => ?_)
+  have hcore : Qle (Qabs (Qsub
+      (mul c ((X (4 * n + 3)).seq (Ridx (ofQ c hc) (X (4 * n + 3)) (4 * n + 3))))
+      (mul c ((X (4 * Ridx (ofQ c hc) (Rlim X hX) n + 3)).seq
+              (4 * Ridx (ofQ c hc) (Rlim X hX) n + 3)))))
+      (⟨(c.num.natAbs : Int), n + 1⟩ : Q) := by
+    generalize hj1def : Ridx (ofQ c hc) (X (4 * n + 3)) (4 * n + 3) = j1
+    generalize hj2def : Ridx (ofQ c hc) (Rlim X hX) n = j2
+    have ha : (0 : Nat) < ((X (4 * n + 3)).seq j1).den := (X (4 * n + 3)).den_pos _
+    have hmid : (0 : Nat) < ((X (4 * n + 3)).seq (4 * j2 + 3)).den := (X (4 * n + 3)).den_pos _
+    have hb : (0 : Nat) < ((X (4 * j2 + 3)).seq (4 * j2 + 3)).den := (X (4 * j2 + 3)).den_pos _
+    have hj1ge : 8 * (n + 1) ≤ j1 + 1 := by
+      rw [← hj1def, Ridx_succ]
+      have hk1 : 1 ≤ RmulK (ofQ c hc) (X (4 * n + 3)) := RmulK_pos _ _
+      have hge : 2 * 1 * (4 * n + 3 + 1) ≤ 2 * RmulK (ofQ c hc) (X (4 * n + 3)) * (4 * n + 3 + 1) :=
+        Nat.mul_le_mul (Nat.mul_le_mul (Nat.le_refl 2) hk1) (Nat.le_refl _)
+      omega
+    have hj2ge : 8 * (n + 1) ≤ 4 * j2 + 4 := by
+      have hs : j2 + 1 = 2 * RmulK (ofQ c hc) (Rlim X hX) * (n + 1) := by
+        rw [← hj2def]; exact Ridx_succ _ _ _
+      have hk2 : 1 ≤ RmulK (ofQ c hc) (Rlim X hX) := RmulK_pos _ _
+      have hge : 2 * 1 * (n + 1) ≤ 2 * RmulK (ofQ c hc) (Rlim X hX) * (n + 1) :=
+        Nat.mul_le_mul (Nat.mul_le_mul (Nat.le_refl 2) hk2) (Nat.le_refl _)
+      omega
+    have hQj1 : Qle (⟨1, j1 + 1⟩ : Q) (⟨1, 8 * n + 8⟩ : Q) := by
+      show (1 : Int) * ((8 * n + 8 : Nat) : Int) ≤ (1 : Int) * ((j1 + 1 : Nat) : Int)
+      push_cast; omega
+    have hQ4j2 : Qle (⟨1, 4 * j2 + 3 + 1⟩ : Q) (⟨1, 8 * n + 8⟩ : Q) := by
+      show (1 : Int) * ((8 * n + 8 : Nat) : Int) ≤ (1 : Int) * ((4 * j2 + 3 + 1 : Nat) : Int)
+      push_cast; omega
+    have hQ4j2' : Qle (⟨2, 4 * j2 + 3 + 1⟩ : Q) (⟨2, 8 * n + 8⟩ : Q) := by
+      show (2 : Int) * ((8 * n + 8 : Nat) : Int) ≤ (2 : Int) * ((4 * j2 + 3 + 1 : Nat) : Int)
+      push_cast; omega
+    have hQ4n : Qle (⟨1, 4 * n + 3 + 1⟩ : Q) (⟨2, 8 * n + 8⟩ : Q) := by
+      show (1 : Int) * ((8 * n + 8 : Nat) : Int) ≤ (2 : Int) * ((4 * n + 3 + 1 : Nat) : Int)
+      push_cast; omega
+    have hXdiff : Qle (Qabs (Qsub ((X (4 * n + 3)).seq j1) ((X (4 * j2 + 3)).seq (4 * j2 + 3))))
+        (⟨7, 8 * n + 8⟩ : Q) := by
+      refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos ha hmid))
+          (Qabs_den_pos (Qsub_den_pos hmid hb)))
+        (Qabs_sub_triangle ha hmid hb) ?_
+      refine Qle_trans (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))
+          (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Nat.succ_pos _)))
+        (Qadd_le_add ((X (4 * n + 3)).reg j1 (4 * j2 + 3))
+          (hX (4 * n + 3) (4 * j2 + 3) (4 * j2 + 3))) ?_
+      refine Qle_trans (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))
+          (add_den_pos (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Nat.succ_pos _)))
+        (Qadd_le_add (Qadd_le_add hQj1 hQ4j2) (Qadd_le_add (Qadd_le_add hQ4n hQ4j2) hQ4j2')) ?_
+      apply Qeq_le; simp only [Qeq, add]; push_cast; ring_uor
+    have hdist : Qeq (Qsub (mul c ((X (4 * n + 3)).seq j1)) (mul c ((X (4 * j2 + 3)).seq (4 * j2 + 3))))
+        (mul c (Qsub ((X (4 * n + 3)).seq j1) ((X (4 * j2 + 3)).seq (4 * j2 + 3)))) := by
+      simp only [Qeq, Qsub, mul, add, neg]; push_cast; ring_uor
+    have hfeq : Qeq (Qabs (Qsub (mul c ((X (4 * n + 3)).seq j1))
+          (mul c ((X (4 * j2 + 3)).seq (4 * j2 + 3)))))
+        (mul (Qabs c) (Qabs (Qsub ((X (4 * n + 3)).seq j1) ((X (4 * j2 + 3)).seq (4 * j2 + 3))))) := by
+      rw [← Qabs_mul]; exact Qabs_Qeq hdist
+    refine Qle_trans (Qmul_den_pos (Qabs_den_pos hc) (Qabs_den_pos (Qsub_den_pos ha hb)))
+      (Qeq_le hfeq) ?_
+    have h78 : Qle (⟨7, 8 * n + 8⟩ : Q) (⟨1, n + 1⟩ : Q) := by
+      show (7 : Int) * ((n + 1 : Nat) : Int) ≤ (1 : Int) * ((8 * n + 8 : Nat) : Int)
+      push_cast; omega
+    refine Qle_trans (Qmul_den_pos (Qabs_den_pos hc) (Nat.succ_pos n))
+      (Qle_trans (Qmul_den_pos (Qabs_den_pos hc) (Nat.succ_pos _))
+        (Qmul_le_mul_left (Qabs_num_nonneg c) hXdiff)
+        (Qmul_le_mul_left (Qabs_num_nonneg c) h78)) ?_
+    show ((Qabs c).num * 1) * ((n + 1 : Nat) : Int)
+        ≤ (c.num.natAbs : Int) * ((Qabs c).den * (n + 1 : Nat) : Int)
+    have hqn : (Qabs c).num = (c.num.natAbs : Int) := rfl
+    have hqd : (Qabs c).den = c.den := rfl
+    rw [hqn, hqd]
+    have hA : (0 : Int) ≤ (c.num.natAbs : Int) := Int.ofNat_nonneg _
+    have hD : (1 : Int) ≤ (c.den : Int) := by exact_mod_cast hc
+    have hN : (0 : Int) ≤ ((n + 1 : Nat) : Int) := Int.ofNat_nonneg _
+    calc ((c.num.natAbs : Int) * 1) * ((n + 1 : Nat) : Int)
+        = (c.num.natAbs : Int) * (1 * ((n + 1 : Nat) : Int)) := by rw [Int.mul_assoc]
+      _ ≤ (c.num.natAbs : Int) * ((c.den : Int) * ((n + 1 : Nat) : Int)) :=
+          Int.mul_le_mul_of_nonneg_left
+            (Int.mul_le_mul_of_nonneg_right hD hN) hA
+      _ = (c.num.natAbs : Int) * (((c.den : Int)) * ((n + 1 : Nat) : Int)) := rfl
+  have happn := happ (4 * n + 3) (4 * n + 3)
+  show Qle (Qabs (Qsub ((W (4 * n + 3)).seq (4 * n + 3))
+      (mul c ((X (4 * Ridx (ofQ c hc) (Rlim X hX) n + 3)).seq
+              (4 * Ridx (ofQ c hc) (Rlim X hX) n + 3)))))
+    (⟨(c.num.natAbs : Int) + 2, n + 1⟩ : Q)
+  have hwd : (0 : Nat) < ((W (4 * n + 3)).seq (4 * n + 3)).den := (W (4 * n + 3)).den_pos _
+  have hqa : (0 : Nat) <
+      (mul c ((X (4 * n + 3)).seq (Ridx (ofQ c hc) (X (4 * n + 3)) (4 * n + 3)))).den :=
+    Qmul_den_pos hc ((X (4 * n + 3)).den_pos _)
+  have hqc : (0 : Nat) < (mul c ((X (4 * Ridx (ofQ c hc) (Rlim X hX) n + 3)).seq
+        (4 * Ridx (ofQ c hc) (Rlim X hX) n + 3))).den :=
+    Qmul_den_pos hc ((X (4 * Ridx (ofQ c hc) (Rlim X hX) n + 3)).den_pos _)
+  refine Qle_trans (add_den_pos (Qabs_den_pos (Qsub_den_pos hwd hqa))
+      (Qabs_den_pos (Qsub_den_pos hqa hqc)))
+    (Qabs_sub_triangle hwd hqa hqc) ?_
+  refine Qle_trans (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))
+    (Qadd_le_add happn hcore) ?_
+  have hfin : Qeq (add (⟨2, n + 1⟩ : Q) ⟨(c.num.natAbs : Int), n + 1⟩)
+      (⟨(c.num.natAbs : Int) + 2, n + 1⟩ : Q) := by
+    simp only [Qeq, add]; push_cast; ring_uor
+  refine Qle_trans (Nat.succ_pos _)
+    (Qadd_le_add (show Qle (⟨2, (4 * n + 3) + 1⟩ : Q) (⟨2, n + 1⟩ : Q) by
+        show (2 : Int) * ((n + 1 : Nat) : Int) ≤ (2 : Int) * (((4 * n + 3) + 1 : Nat) : Int)
+        push_cast; omega) (Qle_refl _)) (Qeq_le hfin)
+
+/-- **Rational-scalar limit** (the task's `Rlim_smul_ofQ`, honest form): `lim (c·A) ≈ c·lim A`, with
+    the regularity of `c·A` supplied as a hypothesis `hcA` (NOT derivable from `hA` when `|c| > 1` —
+    see the header). The `W = c·A` case of `Rlim_smul_ofQ_of_approx`. -/
+theorem Rlim_smul_ofQ (c : Q) (hc : 0 < c.den) {A : Nat → Real} (hA : RReg A)
+    (hcA : RReg (fun n => Rmul (ofQ c hc) (A n))) :
+    Req (Rlim (fun n => Rmul (ofQ c hc) (A n)) hcA) (Rmul (ofQ c hc) (Rlim A hA)) :=
+  Rlim_smul_ofQ_of_approx c hc (fun n => Rmul (ofQ c hc) (A n)) A hA hcA (fun _ => Req_refl _)
+
 end UOR.Bridge.F1Square.Analysis
