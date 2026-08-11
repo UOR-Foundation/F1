@@ -299,4 +299,126 @@ theorem ClimCore_eq_of_close {Z W : Nat → Complex} (hZ : CRegCore Z) (hW : CRe
     Ceq (ClimCore Z hZ) (ClimCore W hW) :=
   ⟨Rlim_eq_of_close hZ.1 hW.1 hre hre', Rlim_eq_of_close hZ.2 hW.2 him him'⟩
 
+-- ===========================================================================
+-- CLEAN LIMIT LAWS (consumed by the completed-inner-product pre-Hilbert laws): Rlim respects pointwise
+-- equality (Rlim_congr_core), the constant limit (Rlim_const_core), the zero limit (Rlim_zero_core), monotone/nonneg
+-- (Rlim_nonneg_core), and negation (RReg_neg_core, RTendsTo_neg_core, Rlim_neg_core). Several reduce to the null-difference
+-- theorem Rlim_eq_of_close; Rlim_nonneg_core reads the nonnegativity at the diagonal index 4n+3.
+-- ===========================================================================
+
+-- ============================================================================
+-- Private helpers (all facts re-proved inside the ζ-free import cone of
+-- `ComplexLimitCore` = Complete + Complex + ROrder + Real; the out-of-cone
+-- `Rnonneg_ofQ` / `Rle_self_Radd_right` are replicated here).
+-- ============================================================================
+
+/-- The constant sequence of reals is `RReg` (its pairwise gap is `|c−c| = 0`). -/
+private theorem RReg_const (c : Real) : RReg (fun _ => c) := by
+  intro j k n
+  show Qle (Qabs (Qsub (c.seq n) (c.seq n))) (add (add (⟨1, j + 1⟩ : Q) ⟨1, k + 1⟩) ⟨2, n + 1⟩)
+  unfold Qle Qabs
+  rw [Qsub_self_num]
+  simp only [Int.natAbs_zero, Int.ofNat_zero, Int.zero_mul]
+  have hden : (0 : Int) ≤ ((Qsub (c.seq n) (c.seq n)).den : Int) := Int.ofNat_nonneg _
+  have hnum : (0 : Int) ≤ (add (add (⟨1, j + 1⟩ : Q) ⟨1, k + 1⟩) ⟨2, n + 1⟩).num := by
+    simp only [add]
+    exact Int.add_nonneg (Int.mul_nonneg (by omega) (by omega))
+      (Int.mul_nonneg (by omega) (by omega))
+  exact Int.mul_nonneg hnum hden
+
+/-- `ofQ` of a non-negative rational is `Rnonneg` (local copy of the out-of-cone `Rnonneg_ofQ`). -/
+private theorem Rnonneg_ofQ_h {q : Q} (hq : 0 < q.den) (hn : 0 ≤ q.num) : Rnonneg (ofQ q hq) := by
+  intro n
+  show (neg (Qbound n)).num * (q.den : Int) ≤ q.num * ((neg (Qbound n)).den : Int)
+  have hd : (0 : Int) ≤ q.num * ((neg (Qbound n)).den : Int) :=
+    Int.mul_nonneg hn (by show (0 : Int) ≤ ((neg (Qbound n)).den : Int); simp only [neg, Qbound]; omega)
+  have hl : (neg (Qbound n)).num * (q.den : Int) ≤ 0 := by simp only [neg, Qbound]; push_cast; omega
+  omega
+
+/-- `a ≤ a + b` when `b ≥ 0` (local copy of the out-of-cone `Rle_self_Radd_right`). -/
+private theorem Rle_self_Radd_right_h {a b : Real} (hb : Rnonneg b) : Rle a (Radd a b) := by
+  intro n
+  show Qle (a.seq n) (add (add (a.seq (2 * n + 1)) (b.seq (2 * n + 1))) ⟨2, n + 1⟩)
+  have s1 : Qle (a.seq n) (add (a.seq (2 * n + 1)) (add (Qbound n) (Qbound (2 * n + 1)))) :=
+    Qle_add_of_Qabs_sub (a.den_pos n) (a.den_pos (2 * n + 1))
+      (add_den_pos (Qbound_den_pos n) (Qbound_den_pos (2 * n + 1))) (a.reg n (2 * n + 1))
+  refine Qle_trans (add_den_pos (a.den_pos (2 * n + 1))
+      (add_den_pos (Qbound_den_pos n) (Qbound_den_pos (2 * n + 1)))) s1 ?_
+  refine Qle_trans (b := add (a.seq (2 * n + 1)) (add (b.seq (2 * n + 1)) ⟨2, n + 1⟩))
+    (add_den_pos (a.den_pos (2 * n + 1)) (add_den_pos (b.den_pos (2 * n + 1)) (Nat.succ_pos _)))
+    ?_ (Qeq_le (by simp only [Qeq, add]; push_cast; ring_uor))
+  refine Qadd_le_add (Qle_refl _) ?_
+  exact Qle_trans (b := add (neg (Qbound (2 * n + 1))) ⟨2, n + 1⟩)
+    (add_den_pos (neg_den_pos (Qbound_den_pos _)) (Nat.succ_pos _))
+    (Qeq_le (by simp only [Qeq, add, Qbound, neg]; push_cast; ring_uor))
+    (Qadd_le_add (hb (2 * n + 1)) (Qle_refl _))
+
+/-- `y ≤ y + 1/(k+1)` (the eventual-closeness witness feeding `Rlim_eq_of_close`). -/
+private theorem Rle_self_add_ofQ (y : Real) (k : Nat) :
+    Rle y (Radd y (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))) :=
+  Rle_self_Radd_right_h (Rnonneg_ofQ_h (Nat.succ_pos k) (by show (0 : Int) ≤ 1; decide))
+
+-- ============================================================================
+-- The three target theorems.
+-- ============================================================================
+
+/-- **Limit respects `≈`**: pointwise-equal regular sequences have equal diagonal limits. -/
+theorem Rlim_congr_core {X X' : Nat → Real} (hX : RReg X) (hX' : RReg X')
+    (h : ∀ n, Req (X n) (X' n)) : Req (Rlim X hX) (Rlim X' hX') :=
+  Rlim_eq_of_close hX hX'
+    (fun k => ⟨0, fun n _ => Rle_trans (Rle_of_Req (h n)) (Rle_self_add_ofQ (X' n) k)⟩)
+    (fun k => ⟨0, fun n _ => Rle_trans (Rle_of_Req (Req_symm (h n))) (Rle_self_add_ofQ (X n) k)⟩)
+
+/-- **Limit of a constant** sequence is that constant. -/
+theorem Rlim_const_core (c : Real) (hc : RReg (fun _ => c)) : Req (Rlim (fun _ => c) hc) c := by
+  intro n
+  simp only [Rlim_seq]
+  -- goal: Qle (Qabs (Qsub (c.seq (4*n+3)) (c.seq n))) ⟨2, n+1⟩
+  have h1 : Qle (Qbound (4 * n + 3)) (Qbound n) := by
+    show (1 : Int) * ((n + 1 : Nat) : Int) ≤ 1 * ((4 * n + 3 + 1 : Nat) : Int)
+    push_cast; omega
+  have hbnd : Qle (add (Qbound (4 * n + 3)) (Qbound n)) (⟨2, n + 1⟩ : Q) := by
+    refine Qle_trans (add_den_pos (Qbound_den_pos n) (Qbound_den_pos n))
+      (Qadd_le_add h1 (Qle_refl (Qbound n))) ?_
+    apply Qeq_le
+    simp only [Qeq, add, Qbound]; push_cast; ring_uor
+  exact Qle_trans (add_den_pos (Qbound_den_pos _) (Qbound_den_pos _)) (c.reg (4 * n + 3) n) hbnd
+
+/-- **Limit of a sequence that is pointwise `0`** is `0`. -/
+theorem Rlim_zero_core {X : Nat → Real} (hX : RReg X) (h : ∀ n, Req (X n) zero) :
+    Req (Rlim X hX) zero :=
+  Req_trans (Rlim_congr_core hX (RReg_const zero) h) (Rlim_const_core zero (RReg_const zero))
+
+theorem RReg_neg_core {X : Nat → Real} (hX : RReg X) : RReg (fun n => Rneg (X n)) := by
+  intro j k n
+  show Qle (Qabs (Qsub (neg ((X j).seq n)) (neg ((X k).seq n))))
+    (add (add ⟨1, j + 1⟩ ⟨1, k + 1⟩) ⟨2, n + 1⟩)
+  rw [Qabs_Qsub_neg]
+  exact hX j k n
+
+theorem RTendsTo_neg_core {X : Nat → Real} {L : Real} (hT : RTendsTo X L) :
+    RTendsTo (fun n => Rneg (X n)) (Rneg L) := by
+  intro k n
+  show Qle (Qabs (Qsub (neg ((X k).seq n)) (neg (L.seq n))))
+    (add ⟨2, k + 1⟩ ⟨2, n + 1⟩)
+  rw [Qabs_Qsub_neg]
+  exact hT k n
+
+theorem Rlim_nonneg_core {X : Nat → Real} (hX : RReg X) (h : ∀ n, Rnonneg (X n)) :
+    Rnonneg (Rlim X hX) := by
+  intro n
+  rw [show (Rlim X hX).seq n = (X (4 * n + 3)).seq (4 * n + 3) from rfl]
+  have hbase : Qle (neg (Qbound (4 * n + 3))) ((X (4 * n + 3)).seq (4 * n + 3)) :=
+    h (4 * n + 3) (4 * n + 3)
+  have hstep : Qle (neg (Qbound n)) (neg (Qbound (4 * n + 3))) := by
+    show ((-1 : Int)) * ((4 * n + 3 + 1 : Nat) : Int) ≤ (-1 : Int) * ((n + 1 : Nat) : Int)
+    push_cast; omega
+  exact Qle_trans (neg_den_pos (Qbound_den_pos _)) hstep hbase
+
+theorem Rlim_neg_core {X : Nat → Real} (hX : RReg X) :
+    Req (Rlim (fun n => Rneg (X n)) (RReg_neg_core hX)) (Rneg (Rlim X hX)) :=
+  RTendsTo_unique
+    (Rlim_tendsTo (fun n => Rneg (X n)) (RReg_neg_core hX))
+    (RTendsTo_neg_core (Rlim_tendsTo X hX))
+
 end UOR.Bridge.F1Square.Analysis

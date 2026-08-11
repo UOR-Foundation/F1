@@ -8678,6 +8678,15 @@ open UOR.Bridge.F1Square
 -- coordinatewise to ℂ (ClimCore_eq_of_close). Built by the Qarch_gen constant-tolerating technique.
 #print axioms Analysis.Rlim_eq_of_close
 #print axioms Analysis.ClimCore_eq_of_close
+-- CLEAN LIMIT LAWS (consumed by the completed-inner-product Hermitian/positivity laws), named _core for
+-- leaf-uniqueness vs RlimProps/ComplexDigammaConj:
+#print axioms Analysis.Rlim_congr_core
+#print axioms Analysis.Rlim_const_core
+#print axioms Analysis.Rlim_zero_core
+#print axioms Analysis.RReg_neg_core
+#print axioms Analysis.RTendsTo_neg_core
+#print axioms Analysis.Rlim_nonneg_core
+#print axioms Analysis.Rlim_neg_core
 -- TOWARD THE COMPLETED INNER PRODUCT (in DlimHilbertCompletion): the four analytic foundations —
 -- dlimInner_sub_left/right (subtraction bilinearity for the difference split), dlimInner_re_amgm (the
 -- sqrt-free AM-GM/polarization complex Cauchy–Schwarz seed 2λ·Re⟨u,v⟩ ≤ ‖u‖²+λ²‖v‖²), Rmul_le_cancel_ofQ
@@ -8722,6 +8731,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.congrM_halfBound
 #print axioms Square.dlimCauchyMod_le_inv_sq
 #print axioms Square.completedInner_congr
+-- INNER SELF/HERMITIAN LAWS (3 of 6 FinPreHilbert inner laws): self_nonneg, self_im, conj.
+#print axioms Square.completedInner_self_nonneg
+#print axioms Square.completedInner_self_im
+#print axioms Square.completedInner_conj
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal

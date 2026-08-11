@@ -550,4 +550,42 @@ theorem completedInner_congr {X X' Y Y' : DLimCompletionRaw}
   · exact fun k => coord_close (fun z => z.im) (@dlimInner_im_diff_le)
       (DLimCompletionEq_symm hX) (DLimCompletionEq_symm hY) k
 
+
+-- ===========================================================================
+-- INNER-PRODUCT SELF/HERMITIAN LAWS (three of the six FinPreHilbert inner laws): positive-semidefinite
+-- diagonal, imaginary part of the diagonal vanishes, and Hermitian symmetry — each a one-/few-line
+-- consequence of the clean limit laws (Rlim_nonneg_core / Rlim_zero_core / Rlim_congr_core + Rlim_neg_core) applied to the
+-- pointwise finite inner-product facts (dlimInner_self_nonneg / dlimInner_self_im / dlimInner_conj).
+-- ===========================================================================
+
+/-- **Positive-semidefinite diagonal**: `Re⟨X,X⟩ ≥ 0` (the limit of the nonnegative `‖X_{σn}‖²`). -/
+theorem completedInner_self_nonneg (X : DLimCompletionRaw) : Rnonneg (completedInner X X).re :=
+  Rlim_nonneg_core (innerSeq_CRegCore X X).1
+    (fun n => dlimInner_self_nonneg (X.seq (Fsched X X * (n + 1) - 1)))
+
+/-- **The diagonal is real**: `Im⟨X,X⟩ ≈ 0` (the limit of the `≈0` imaginary parts). -/
+theorem completedInner_self_im (X : DLimCompletionRaw) : Req (completedInner X X).im zero :=
+  Rlim_zero_core (innerSeq_CRegCore X X).2
+    (fun n => dlimInner_self_im (X.seq (Fsched X X * (n + 1) - 1)))
+
+/-- `Fsched` is symmetric (its defining sum is commutative) — so `⟨X,Y⟩` and `⟨Y,X⟩` share the schedule. -/
+private theorem Fsched_comm (X Y : DLimCompletionRaw) : Fsched Y X = Fsched X Y := by
+  unfold Fsched; omega
+
+/-- **Hermitian symmetry**: `⟨X,Y⟩ ≈ conj⟨Y,X⟩`. Since `Fsched X Y = Fsched Y X` the two sequences share
+    the schedule, so `⟨Y_{σn},X_{σn}⟩ = conj⟨X_{σn},Y_{σn}⟩` pointwise (`dlimInner_conj`); the real parts
+    match (`Rlim_congr_core`) and the imaginary parts negate (`Rlim_congr_core` + `Rlim_neg_core`). -/
+theorem completedInner_conj (X Y : DLimCompletionRaw) :
+    Ceq (completedInner X Y) (Cconj (completedInner Y X)) := by
+  refine ⟨?_, ?_⟩
+  · refine Rlim_congr_core (innerSeq_CRegCore X Y).1 (innerSeq_CRegCore Y X).1 (fun n => ?_)
+    dsimp only
+    rw [show Fsched Y X * (n + 1) - 1 = Fsched X Y * (n + 1) - 1 from by rw [Fsched_comm]]
+    exact (dlimInner_conj (X.seq (Fsched X Y * (n + 1) - 1)) (Y.seq (Fsched X Y * (n + 1) - 1))).1
+  · refine Req_trans ?_ (Rlim_neg_core (innerSeq_CRegCore Y X).2)
+    refine Rlim_congr_core (innerSeq_CRegCore X Y).2 (RReg_neg_core (innerSeq_CRegCore Y X).2) (fun n => ?_)
+    dsimp only
+    rw [show Fsched Y X * (n + 1) - 1 = Fsched X Y * (n + 1) - 1 from by rw [Fsched_comm]]
+    exact (dlimInner_conj (X.seq (Fsched X Y * (n + 1) - 1)) (Y.seq (Fsched X Y * (n + 1) - 1))).2
+
 end UOR.Bridge.F1Square.Square
