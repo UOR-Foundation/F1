@@ -8710,6 +8710,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.innerSeq_im_bound
 #print axioms Square.innerSeq_CRegCore
 #print axioms Square.completedInner
+-- REPRESENTATIVE INDEPENDENCE (reviewer's non-negotiable gate): completedInner_congr — X≈X' ∧ Y≈Y' ⟹
+-- ⟨X,Y⟩≈⟨X',Y'⟩, so the completed inner product descends to the completion setoid. Supporting: the general
+-- single-difference bounds dlimInner_re_diff_le/im_diff_le (Re⟨a,b⟩−Re⟨a',b'⟩ ≤ eₐ(1+Bb)/2+e_b(1+Ba)/2);
+-- the unified schedule/tolerance constant congrM + congrM_pos/congrM_halfBound; dlimCauchyMod_le_inv_sq
+-- (M(i,j)≤1/m² for indices ≥2m, the Term-B Cauchy bound). Aligns the two representative-dependent Fsched
+-- schedules by a mid-point triangle, unified e=1/m, fed into ClimCore_eq_of_close.
+#print axioms Square.dlimInner_re_diff_le
+#print axioms Square.dlimInner_im_diff_le
+#print axioms Square.congrM_pos
+#print axioms Square.congrM_halfBound
+#print axioms Square.dlimCauchyMod_le_inv_sq
+#print axioms Square.completedInner_congr
 -- ADDITIVE STRUCTURE ON THE COMPLETION (reviewer gate 3): DLimCompletionEq_of_pointwise (pointwise
 -- DLimEq ⟹ completion eq — the workhorse), dlimCompletionZero (constant 0), and the group laws mod
 -- completion equivalence: dlimCompletionAdd_comm, dlimCompletionAdd_zero (right unit, via the cofinal
