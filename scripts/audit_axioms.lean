@@ -8673,6 +8673,11 @@ open UOR.Bridge.F1Square
 -- coordinate sequence is RReg — the exact glue feeding each inner-product coordinate into CRegCore.
 #print axioms Analysis.seq_diff_le_core
 #print axioms Analysis.RReg_of_real_bound_core
+-- NULL-DIFFERENCE LIMIT THEOREM (the completedInner_congr foundation the reviewer named): two regular
+-- sequences eventually within 1/(k+1) of each other have EQUAL Bishop limits (Rlim_eq_of_close), lifted
+-- coordinatewise to ℂ (ClimCore_eq_of_close). Built by the Qarch_gen constant-tolerating technique.
+#print axioms Analysis.Rlim_eq_of_close
+#print axioms Analysis.ClimCore_eq_of_close
 -- TOWARD THE COMPLETED INNER PRODUCT (in DlimHilbertCompletion): the four analytic foundations —
 -- dlimInner_sub_left/right (subtraction bilinearity for the difference split), dlimInner_re_amgm (the
 -- sqrt-free AM-GM/polarization complex Cauchy–Schwarz seed 2λ·Re⟨u,v⟩ ≤ ‖u‖²+λ²‖v‖²), Rmul_le_cancel_ofQ

@@ -125,4 +125,178 @@ theorem RReg_of_real_bound_core (X : Nat → Real) (c : Nat → Nat → Q) (hcd 
     exact Qle_trans (add_den_pos (hcd k j) (Nat.succ_pos _)) hkj
       (Qadd_le_add hcb' (Qle_refl _))
 
+-- ===========================================================================
+-- NULL-DIFFERENCE LIMIT THEOREM (the completedInner_congr foundation): two regular sequences that are
+-- eventually within 1/(k+1) of each other have EQUAL Bishop limits. The reusable engine for
+-- representative independence of the completed inner product and the pre-Hilbert limit laws. Built by
+-- the Qarch_gen constant-tolerating technique (same as RTendsTo_unique / seq_diff_le_core).
+-- ===========================================================================
+
+/-- **Real-≤ to same-index-ℚ-≤ bridge across `Radd`+`ofQ`** (the ζ-free companion of `seq_diff_le_core`):
+    if `a ≤ b + c` as reals (`c` a rational), then at every index `i` the ℚ-gap satisfies
+    `aᵢ ≤ bᵢ + c + 2/(i+1)`. The hypothesis reads `b` at the reindex `2m+1`; regularity of `a` and `b`
+    moves the comparison back to `i`, and the generalized Archimedean lemma kills the `4/(m+1)` tail. -/
+private theorem seq_le_of_Rle_Radd_ofQ (a b : Real) (c : Q) (hcd : 0 < c.den)
+    (h : Rle a (Radd b (ofQ c hcd))) (i : Nat) :
+    Qle (a.seq i) (add (b.seq i) (add c ⟨2, i + 1⟩)) := by
+  apply Qarch_gen (C := 4) (a.den_pos i)
+    (add_den_pos (b.den_pos i) (add_den_pos hcd (Nat.succ_pos _)))
+  intro m
+  -- hypothesis at index m: aₘ ≤ (b_{2m+1} + c) + 2/(m+1)
+  have hm : Qle (a.seq m) (add (add (b.seq (2 * m + 1)) c) ⟨2, m + 1⟩) := h m
+  -- regularity of a: aᵢ ≤ aₘ + (1/(i+1) + 1/(m+1))
+  have s1 : Qle (a.seq i) (add (a.seq m) (add (Qbound i) (Qbound m))) :=
+    Qle_add_of_Qabs_sub (a.den_pos i) (a.den_pos m)
+      (add_den_pos (Qbound_den_pos i) (Qbound_den_pos m)) (a.reg i m)
+  -- regularity of b (weakened 2m+1 → m): b_{2m+1} ≤ bᵢ + (1/(m+1) + 1/(i+1))
+  have hbnd : Qle (Qbound (2 * m + 1)) (Qbound m) := by simp only [Qle, Qbound]; push_cast; omega
+  have s3 : Qle (b.seq (2 * m + 1)) (add (b.seq i) (add (Qbound (2 * m + 1)) (Qbound i))) :=
+    Qle_add_of_Qabs_sub (b.den_pos (2 * m + 1)) (b.den_pos i)
+      (add_den_pos (Qbound_den_pos _) (Qbound_den_pos i)) (b.reg (2 * m + 1) i)
+  have s3' : Qle (b.seq (2 * m + 1)) (add (b.seq i) (add (Qbound m) (Qbound i))) :=
+    Qle_trans (add_den_pos (b.den_pos i) (add_den_pos (Qbound_den_pos _) (Qbound_den_pos i)))
+      s3 (Qadd_le_add (Qle_refl (b.seq i)) (Qadd_le_add hbnd (Qle_refl (Qbound i))))
+  -- chain
+  have c1 : Qle (a.seq i)
+      (add (add (add (b.seq (2 * m + 1)) c) ⟨2, m + 1⟩) (add (Qbound i) (Qbound m))) :=
+    Qle_trans (add_den_pos (a.den_pos m) (add_den_pos (Qbound_den_pos i) (Qbound_den_pos m)))
+      s1 (Qadd_le_add hm (Qle_refl _))
+  have c2 : Qle (a.seq i)
+      (add (add (add (add (b.seq i) (add (Qbound m) (Qbound i))) c) ⟨2, m + 1⟩)
+        (add (Qbound i) (Qbound m))) :=
+    Qle_trans
+      (add_den_pos (add_den_pos (add_den_pos (b.den_pos _) hcd) (Nat.succ_pos _))
+        (add_den_pos (Qbound_den_pos i) (Qbound_den_pos m)))
+      c1
+      (Qadd_le_add (Qadd_le_add (Qadd_le_add s3' (Qle_refl c)) (Qle_refl _)) (Qle_refl _))
+  refine Qle_trans ?_ c2 (Qeq_le ?_)
+  · exact add_den_pos (add_den_pos (add_den_pos
+      (add_den_pos (b.den_pos i) (add_den_pos (Qbound_den_pos m) (Qbound_den_pos i))) hcd)
+      (Nat.succ_pos _)) (add_den_pos (Qbound_den_pos i) (Qbound_den_pos m))
+  · simp only [Qeq, add, Qbound]; push_cast; ring_uor
+
+set_option maxHeartbeats 4000000 in
+/-- **The per-`m` Archimedean slice** of the one-sided limit comparison, with the comparison index `j`
+    (any `j ≥ m` for which the closeness `A j ≤ B j + 1/(m+1)` holds) passed explicitly. Route: regularity
+    moves `lim A`/`lim B` from `n` to `j` (two `1/(n+1)`, summing to the `2/(n+1)` slack), `Rlim_tendsTo`
+    swaps in `A j`/`B j` at `j`, the closeness gives `A j ≤ B j + 1/(m+1)`; all `1/(j+1)` pieces are `≤
+    ·/(m+1)` since `j ≥ m`, so the residual tail is exactly `13/(m+1)`. -/
+private theorem Rle_lim_step (A B : Nat → Real) (hA : RReg A) (hB : RReg B) (n m j : Nat)
+    (hjm : m ≤ j)
+    (hclose : Rle (A j) (Radd (B j) (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m)))) :
+    Qle ((Rlim A hA).seq n)
+        (add (add ((Rlim B hB).seq n) (⟨2, n + 1⟩ : Q)) (⟨13, m + 1⟩ : Q)) := by
+  have hAt := Rlim_tendsTo A hA
+  have hBt := Rlim_tendsTo B hB
+  have hbj : Qle (Qbound j) (Qbound m) := by simp only [Qle, Qbound]; push_cast; omega
+  have h2j : Qle (⟨2, j + 1⟩ : Q) (⟨2, m + 1⟩ : Q) := by simp only [Qle]; push_cast; omega
+  -- s1' : (Rlim A hA)ₙ ≤ LA_j + (1/(n+1) + 1/(m+1))
+  have s1 : Qle ((Rlim A hA).seq n) (add ((Rlim A hA).seq j) (add (Qbound n) (Qbound j))) :=
+    Qle_add_of_Qabs_sub ((Rlim A hA).den_pos n) ((Rlim A hA).den_pos j)
+      (add_den_pos (Qbound_den_pos n) (Qbound_den_pos j)) ((Rlim A hA).reg n j)
+  have s1' : Qle ((Rlim A hA).seq n) (add ((Rlim A hA).seq j) (add (Qbound n) (Qbound m))) :=
+    Qle_trans (add_den_pos ((Rlim A hA).den_pos j) (add_den_pos (Qbound_den_pos n) (Qbound_den_pos j)))
+      s1 (Qadd_le_add (Qle_refl ((Rlim A hA).seq j)) (Qadd_le_add (Qle_refl (Qbound n)) hbj))
+  -- s2' : LA_j ≤ A_j,j + (2/(m+1) + 2/(m+1))
+  have s2raw : Qle ((Rlim A hA).seq j) (add ((A j).seq j) (add (⟨2, j + 1⟩ : Q) (⟨2, j + 1⟩ : Q))) := by
+    have hcomm : Qle (Qabs (Qsub ((Rlim A hA).seq j) ((A j).seq j))) (add (⟨2, j + 1⟩ : Q) (⟨2, j + 1⟩ : Q)) := by
+      rw [Qabs_Qsub_comm]; exact hAt j j
+    exact Qle_add_of_Qabs_sub ((Rlim A hA).den_pos j) ((A j).den_pos j)
+      (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) hcomm
+  have s2' : Qle ((Rlim A hA).seq j) (add ((A j).seq j) (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) :=
+    Qle_trans (add_den_pos ((A j).den_pos j) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+      s2raw (Qadd_le_add (Qle_refl ((A j).seq j)) (Qadd_le_add h2j h2j))
+  -- s3' : A_j,j ≤ B_j,j + (1/(m+1) + 2/(m+1))
+  have s3raw : Qle ((A j).seq j) (add ((B j).seq j) (add (⟨1, m + 1⟩ : Q) (⟨2, j + 1⟩ : Q))) :=
+    seq_le_of_Rle_Radd_ofQ (A j) (B j) (⟨1, m + 1⟩ : Q) (Nat.succ_pos m) hclose j
+  have s3' : Qle ((A j).seq j) (add ((B j).seq j) (add (⟨1, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) :=
+    Qle_trans (add_den_pos ((B j).den_pos j) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+      s3raw (Qadd_le_add (Qle_refl ((B j).seq j)) (Qadd_le_add (Qle_refl (⟨1, m + 1⟩ : Q)) h2j))
+  -- s4' : B_j,j ≤ LB_j + (2/(m+1) + 2/(m+1))
+  have s4raw : Qle ((B j).seq j) (add ((Rlim B hB).seq j) (add (⟨2, j + 1⟩ : Q) (⟨2, j + 1⟩ : Q))) :=
+    Qle_add_of_Qabs_sub ((B j).den_pos j) ((Rlim B hB).den_pos j)
+      (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)) (hBt j j)
+  have s4' : Qle ((B j).seq j) (add ((Rlim B hB).seq j) (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) :=
+    Qle_trans (add_den_pos ((Rlim B hB).den_pos j) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+      s4raw (Qadd_le_add (Qle_refl ((Rlim B hB).seq j)) (Qadd_le_add h2j h2j))
+  -- s5' : LB_j ≤ (Rlim B hB)ₙ + (1/(m+1) + 1/(n+1))
+  have s5 : Qle ((Rlim B hB).seq j) (add ((Rlim B hB).seq n) (add (Qbound j) (Qbound n))) :=
+    Qle_add_of_Qabs_sub ((Rlim B hB).den_pos j) ((Rlim B hB).den_pos n)
+      (add_den_pos (Qbound_den_pos j) (Qbound_den_pos n)) ((Rlim B hB).reg j n)
+  have s5' : Qle ((Rlim B hB).seq j) (add ((Rlim B hB).seq n) (add (Qbound m) (Qbound n))) :=
+    Qle_trans (add_den_pos ((Rlim B hB).den_pos n) (add_den_pos (Qbound_den_pos j) (Qbound_den_pos n)))
+      s5 (Qadd_le_add (Qle_refl ((Rlim B hB).seq n)) (Qadd_le_add hbj (Qle_refl (Qbound n))))
+  -- chain: substitute one carrier at a time
+  have c1 : Qle ((Rlim A hA).seq n)
+      (add (add ((A j).seq j) (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) (add (Qbound n) (Qbound m))) :=
+    Qle_trans (add_den_pos ((Rlim A hA).den_pos j) (add_den_pos (Qbound_den_pos n) (Qbound_den_pos m)))
+      s1' (Qadd_le_add s2' (Qle_refl _))
+  have c2 : Qle ((Rlim A hA).seq n)
+      (add (add (add ((B j).seq j) (add (⟨1, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q)))
+        (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) (add (Qbound n) (Qbound m))) :=
+    Qle_trans (add_den_pos (add_den_pos ((A j).den_pos j)
+        (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))) (add_den_pos (Qbound_den_pos n) (Qbound_den_pos m)))
+      c1 (Qadd_le_add (Qadd_le_add s3' (Qle_refl _)) (Qle_refl _))
+  have c3 : Qle ((Rlim A hA).seq n)
+      (add (add (add (add ((Rlim B hB).seq j) (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q)))
+        (add (⟨1, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q)))
+        (add (Qbound n) (Qbound m))) :=
+    Qle_trans (add_den_pos (add_den_pos (add_den_pos ((B j).den_pos j)
+        (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+        (add_den_pos (Qbound_den_pos n) (Qbound_den_pos m)))
+      c2 (Qadd_le_add (Qadd_le_add (Qadd_le_add s4' (Qle_refl _)) (Qle_refl _)) (Qle_refl _))
+  have c4 : Qle ((Rlim A hA).seq n)
+      (add (add (add (add (add ((Rlim B hB).seq n) (add (Qbound m) (Qbound n)))
+        (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) (add (⟨1, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q)))
+        (add (⟨2, m + 1⟩ : Q) (⟨2, m + 1⟩ : Q))) (add (Qbound n) (Qbound m))) :=
+    Qle_trans (add_den_pos (add_den_pos (add_den_pos (add_den_pos ((Rlim B hB).den_pos j)
+        (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))) (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+        (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _))) (add_den_pos (Qbound_den_pos n) (Qbound_den_pos m)))
+      c3 (Qadd_le_add (Qadd_le_add (Qadd_le_add (Qadd_le_add s5' (Qle_refl _)) (Qle_refl _)) (Qle_refl _))
+        (Qle_refl _))
+  refine Qle_trans ?_ c4 (Qeq_le ?_)
+  · exact add_den_pos (add_den_pos (add_den_pos (add_den_pos
+      (add_den_pos ((Rlim B hB).den_pos n) (add_den_pos (Qbound_den_pos m) (Qbound_den_pos n)))
+      (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+      (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+      (add_den_pos (Nat.succ_pos _) (Nat.succ_pos _)))
+      (add_den_pos (Qbound_den_pos n) (Qbound_den_pos m))
+  · simp only [Qeq, add, Qbound]; push_cast; ring_uor
+
+/-- **One-sided limit comparison**: if `A n ≤ B n + 1/(k+1)` eventually (for every `k`), then the Bishop
+    limits satisfy `lim A ≤ lim B`. Unfold `Rle`, apply the Archimedean lemma at each index `n`, and feed
+    the per-`m` slice `Rle_lim_step` with `j := N + m` (so `j ≥ m` and the closeness `A j ≤ B j + 1/(m+1)`
+    holds by `hN`). -/
+private theorem Rle_lim_of_close_one_side {A B : Nat → Real} (hA : RReg A) (hB : RReg B)
+    (hAB : ∀ k : Nat, ∃ N : Nat, ∀ n : Nat, N ≤ n →
+            Rle (A n) (Radd (B n) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k)))) :
+    Rle (Rlim A hA) (Rlim B hB) := by
+  intro n
+  apply Qarch_gen (C := 13) ((Rlim A hA).den_pos n)
+    (add_den_pos ((Rlim B hB).den_pos n) (Nat.succ_pos _))
+  intro m
+  obtain ⟨N, hN⟩ := hAB m
+  exact Rle_lim_step A B hA hB n m (N + m) (Nat.le_add_left m N) (hN (N + m) (Nat.le_add_right N m))
+
+/-- **Null-difference limit theorem** (reals): if two regular real sequences are eventually within
+    `1/(k+1)` of each other (two-sided, for every `k`), their Bishop limits are equal. -/
+theorem Rlim_eq_of_close {A B : Nat → Real} (hA : RReg A) (hB : RReg B)
+    (hAB : ∀ k : Nat, ∃ N : Nat, ∀ n : Nat, N ≤ n →
+            Rle (A n) (Radd (B n) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))))
+    (hBA : ∀ k : Nat, ∃ N : Nat, ∀ n : Nat, N ≤ n →
+            Rle (B n) (Radd (A n) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k)))) :
+    Req (Rlim A hA) (Rlim B hB) :=
+  Rle_antisymm (Rle_lim_of_close_one_side hA hB hAB) (Rle_lim_of_close_one_side hB hA hBA)
+
+/-- **Complex lift**: two regular complex sequences eventually close in each coordinate have equal
+    `ClimCore` limits. Coordinatewise reduction to `Rlim_eq_of_close` on the real and imaginary parts. -/
+theorem ClimCore_eq_of_close {Z W : Nat → Complex} (hZ : CRegCore Z) (hW : CRegCore W)
+    (hre : ∀ k : Nat, ∃ N : Nat, ∀ n : Nat, N ≤ n →
+            Rle (Z n).re (Radd (W n).re (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))))
+    (hre' : ∀ k, ∃ N, ∀ n, N ≤ n → Rle (W n).re (Radd (Z n).re (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))))
+    (him : ∀ k, ∃ N, ∀ n, N ≤ n → Rle (Z n).im (Radd (W n).im (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))))
+    (him' : ∀ k, ∃ N, ∀ n, N ≤ n → Rle (W n).im (Radd (Z n).im (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k)))) :
+    Ceq (ClimCore Z hZ) (ClimCore W hW) :=
+  ⟨Rlim_eq_of_close hZ.1 hW.1 hre hre', Rlim_eq_of_close hZ.2 hW.2 him him'⟩
+
 end UOR.Bridge.F1Square.Analysis
