@@ -8838,3 +8838,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.tree_collapse2_cpl
 #print axioms Square.completionLim
 #print axioms Square.completion_complete
+
+-- PACKAGED Bishop-complete pre-Hilbert space (reviewer step 1): the squared-distance metric laws
+-- (congruence/definiteness/self via completedInner_* black boxes) + the bundled record + instance.
+-- SQUARED distance, factor-2 quasi-triangle — honestly NOT a Hilbert space.
+#print axioms Square.dlimCompletionEq_of_sub_zero
+#print axioms Square.completedDist2_congr
+#print axioms Square.completedDist2_self
+#print axioms Square.completedDist2_definite
+#print axioms Square.dlimCompletionSpace

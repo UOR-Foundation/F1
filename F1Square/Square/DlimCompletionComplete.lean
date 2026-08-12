@@ -2,7 +2,7 @@
 # The direct-limit completion: isometric embedding, density, and completeness
 
 Building on the `FinPreHilbert` package (`DlimCompletionPreHilbert`), this file establishes the three
-properties that make `(DLimCompletionRaw / DLimCompletionEq, completedInner)` a genuine metric completion
+properties that make `(DLimCompletionRaw / DLimCompletionEq, completedInner)` a constructive squared-distance Bishop completion
 of the finite-support direct limit:
 
 * **isometric embedding** — `completedInner_of` (`⟨of a, of b⟩ ≈ ⟨a,b⟩`) bundled as `ofHom`, a

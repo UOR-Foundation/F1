@@ -1,10 +1,10 @@
 /-
 # Completeness of the direct-limit completion
 
-Every completion-Cauchy sequence of completion members converges to a completion member — the metric
-completeness that, with the isometric embedding (`ofHom`) and density (`completion_dense`), makes
-`(DLimCompletionRaw / DLimCompletionEq, completedInner)` a genuine completion of the finite-support
-direct limit.
+Every completion-Cauchy sequence of completion members converges to a completion member — the
+fixed-modulus (SQUARED-distance) completeness that, with the isometric embedding (`ofHom`) and density
+(`completion_dense`), makes `(DLimCompletionRaw / DLimCompletionEq, completedInner)` a constructive
+Bishop completion of the finite-support direct limit (NOT a Hilbert space — no √-norm, factor-2 quasi-triangle).
 
 * `CompletionCauchyU Z` — `Z : ℕ → DLimCompletionRaw` is Cauchy: `d²(Z j, Z k) ≤ M(j,k)`.
 * `completionLim Z hZ` — the DIAGONAL limit member (`.seq m = (Z_{8m+7})_{2(9(m+1)²+1)}`; the reschedule
