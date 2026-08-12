@@ -8923,3 +8923,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.inner_fixed_tendsto_scs
 #print axioms Square.MulGraph_closed_cl
 #print axioms Square.MulDom_congr_mcl
+
+-- PARSEVAL (inner = limit of finite coordinate sums) + genuine inner-product SYMMETRY of the real-weight
+-- multiplier on its maximal domain (reviewer gate item 5).
+#print axioms Square.finCoordSum
+#print axioms Square.completedInner_finrank_sy
+#print axioms Square.completedInner_finProj_tendsto_sy
+#print axioms Square.completedInner_parseval_sy
+#print axioms Square.finCoordSum_symm_weight_sy
+#print axioms Square.mult_symm_sy

@@ -70,6 +70,7 @@ import F1Square.Square.DlimCompletionCS
 import F1Square.Square.DlimCompletionLimit
 import F1Square.Square.DlimMultiplier
 import F1Square.Square.DlimMultiplierClosed
+import F1Square.Square.DlimMultiplierSymm
 import F1Square.Square.DlimCompletionProj
 import F1Square.Square.DlimProjHardening
 import F1Square.Square.WeilLattice
