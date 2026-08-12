@@ -8887,3 +8887,14 @@ open UOR.Bridge.F1Square
 #print axioms Square.rawProj_eq
 #print axioms Square.finProj_of_eq_pj
 #print axioms Square.finProj_converges_pj
+
+-- PROJECTION HARDENING + GENERAL division-free Cauchy-Schwarz (resolves zeta-fence deferral) + fixed-vector continuity.
+#print axioms Square.finProj_pythagoras_hd
+#print axioms Square.finProj_congr_hd
+#print axioms Square.finProj_add_hd
+#print axioms Square.finProj_smul_hd
+#print axioms Square.finProj_idem_hd
+#print axioms Square.coord_separation_hd
+#print axioms Square.finProj_converges_pkg_hd
+#print axioms Square.completedInner_re_cs_gen
+#print axioms Square.inner_fixed_continuity_cs
