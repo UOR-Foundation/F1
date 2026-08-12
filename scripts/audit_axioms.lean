@@ -8872,3 +8872,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.completedNormSq_smul_negI
 #print axioms Square.coord_im_continuity
 #print axioms Square.coord_modulus_continuity
+
+-- FINITE COORDINATE PROJECTIONS + residual Pythagoras/contraction + P_N X -> X via density (reviewer items 4-5).
+#print axioms Square.finProj
+#print axioms Square.coord_finProj_ge_pj
+#print axioms Square.coord_finProj_lt_pj
+#print axioms Square.finProj_ortho_residual
+#print axioms Square.finProj_contraction_pj
+#print axioms Square.finProj_best_approx_pj
+#print axioms Square.rawProj
+#print axioms Square.rawProj_stage_le
+#print axioms Square.finProj_of_eq_rawProj
+#print axioms Square.dlim_ext_coords
+#print axioms Square.rawProj_eq
+#print axioms Square.finProj_of_eq_pj
+#print axioms Square.finProj_converges_pj

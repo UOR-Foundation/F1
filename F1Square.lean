@@ -66,6 +66,7 @@ import F1Square.Square.DlimCompletionDense
 import F1Square.Square.DlimCompletionCauchy
 import F1Square.Square.DlimCompletionSpace
 import F1Square.Square.DlimCompletionCoord
+import F1Square.Square.DlimCompletionProj
 import F1Square.Square.WeilLattice
 import F1Square.Square.Forced
 import F1Square.Square.WeilPSD
