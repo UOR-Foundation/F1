@@ -8853,3 +8853,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.bishopCauchy
 #print axioms Square.CompletionOf
 #print axioms Square.dlimIsCompletion
+
+-- COORDINATE READS (reviewer items 4-5): coord i X := <of e_i, X> + congr/add/smul/recovery-on-of
+-- + coord_re_continuity (real coord 1-Lipschitz in d2) via completion AM-GM + normalized-vector CS.
+#print axioms Square.coord
+#print axioms Square.coord_congr
+#print axioms Square.coord_add
+#print axioms Square.coord_smul
+#print axioms Square.coord_of
+#print axioms Square.completedNormSq_smul_real
+#print axioms Square.completedInner_re_amgm
+#print axioms Square.completedInner_re_cs_unit
+#print axioms Square.coord_re_continuity
