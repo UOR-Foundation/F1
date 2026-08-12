@@ -8789,3 +8789,52 @@ open UOR.Bridge.F1Square
 #print axioms Square.ClimCore_Cmul_approx_sr
 #print axioms Square.completedInner_smul_right
 #print axioms Square.dlimCompletionPreHilbert
+
+-- ===========================================================================
+-- COMPLETION: isometric embedding + density + completeness (this phase). The completion
+-- (DLimCompletionRaw/DLimCompletionEq, completedInner) is a genuine metric completion of the
+-- finite-support direct limit: ofHom (linear isometry), completion_dense (density with modulus),
+-- completionLim + completion_complete (Cauchy sequences converge). All choice-free.
+-- ===========================================================================
+#print axioms Analysis.Rle_Rlim_ofQ_eventual_core
+#print axioms Square.completedInner_of
+#print axioms Square.FinPreHilbertHom
+#print axioms Square.ofHom
+#print axioms Square.completedNormSq
+#print axioms Square.dlimCompletionSub
+#print axioms Square.completedDist2
+#print axioms Square.completedNormSq_nonneg
+#print axioms Square.completedDist2_nonneg
+#print axioms Square.Rle_Rlim_ofQ_eventual_dns
+#print axioms Square.completedDist2_reduce_dns
+#print axioms Square.completion_dense
+#print axioms Square.le_of_eq_cpl
+#print axioms Square.Rneg_Rneg_cpl
+#print axioms Square.Cadd_zero_cpl
+#print axioms Square.Cneg_Cneg_cpl
+#print axioms Square.Cneg_congr_cpl
+#print axioms Square.Cconj_Cneg_cpl
+#print axioms Square.Ceq_zero_of_eq_add_self_cpl
+#print axioms Square.Ceq_neg_of_add_eq_zero_cpl
+#print axioms Square.completedInner_add_left_cpl
+#print axioms Square.completedInner_zero_right_cpl
+#print axioms Square.completedInner_neg_right_cpl
+#print axioms Square.completedInner_neg_left_cpl
+#print axioms Square.completedNormSq_congr_cpl
+#print axioms Square.completedNormSq_neg_cpl
+#print axioms Square.completedNormSq_add_expand_cpl
+#print axioms Square.zeroAdd_cpl
+#print axioms Square.negAddSelf_cpl
+#print axioms Square.telescope_cpl
+#print axioms Square.completedDist2_of_cpl
+#print axioms Square.dist2_polar_cpl
+#print axioms Square.completedDist2_symm_cpl
+#print axioms Square.completedDist2_quasitriangle_cpl
+#print axioms Square.completion_dense_at_cpl
+#print axioms Square.sumbound_key_cpl
+#print axioms Square.tree_collapse_cpl
+#print axioms Square.CompletionCauchyU
+#print axioms Square.hcauchy_cpl
+#print axioms Square.tree_collapse2_cpl
+#print axioms Square.completionLim
+#print axioms Square.completion_complete

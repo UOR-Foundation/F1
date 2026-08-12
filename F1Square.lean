@@ -60,6 +60,9 @@ import F1Square.Square.BlockLadderCandidate
 import F1Square.Square.DlimHilbertCompletion
 import F1Square.Square.DlimCompletedInner
 import F1Square.Square.DlimCompletionPreHilbert
+import F1Square.Square.DlimCompletionComplete
+import F1Square.Square.DlimCompletionDense
+import F1Square.Square.DlimCompletionCauchy
 import F1Square.Square.WeilLattice
 import F1Square.Square.Forced
 import F1Square.Square.WeilPSD

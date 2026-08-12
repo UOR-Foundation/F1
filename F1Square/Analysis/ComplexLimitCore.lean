@@ -288,6 +288,7 @@ theorem Rlim_eq_of_close {A B : Nat → Real} (hA : RReg A) (hB : RReg B)
     Req (Rlim A hA) (Rlim B hB) :=
   Rle_antisymm (Rle_lim_of_close_one_side hA hB hAB) (Rle_lim_of_close_one_side hB hA hBA)
 
+
 /-- **Complex lift**: two regular complex sequences eventually close in each coordinate have equal
     `ClimCore` limits. Coordinatewise reduction to `Rlim_eq_of_close` on the real and imaginary parts. -/
 theorem ClimCore_eq_of_close {Z W : Nat → Complex} (hZ : CRegCore Z) (hW : CRegCore W)
@@ -383,6 +384,19 @@ theorem Rlim_const_core (c : Real) (hc : RReg (fun _ => c)) : Req (Rlim (fun _ =
     apply Qeq_le
     simp only [Qeq, add, Qbound]; push_cast; ring_uor
   exact Qle_trans (add_den_pos (Qbound_den_pos _) (Qbound_den_pos _)) (c.reg (4 * n + 3) n) hbnd
+
+
+/-- **One-sided eventual `Rlim` upper bound**: if a regular sequence is eventually `≤ c + 1/(t+1)` for
+    every tolerance `t`, its Bishop limit is `≤ c` (`c` rational). The one-sided companion of
+    `Rlim_eq_of_close`, obtained by comparing against the constant sequence `c`. Consumed by the
+    completion's density and completeness proofs. -/
+theorem Rle_Rlim_ofQ_eventual_core {A : Nat → Real} (hA : RReg A) (c : Q) (hc : 0 < c.den)
+    (hev : ∀ t : Nat, ∃ N : Nat, ∀ n : Nat, N ≤ n →
+            Rle (A n) (Radd (ofQ c hc) (ofQ (⟨1, t + 1⟩ : Q) (Nat.succ_pos t)))) :
+    Rle (Rlim A hA) (ofQ c hc) :=
+  Rle_trans
+    (Rle_lim_of_close_one_side hA (RReg_const (ofQ c hc)) hev)
+    (Rle_of_Req (Rlim_const_core (ofQ c hc) (RReg_const (ofQ c hc))))
 
 /-- **Limit of a sequence that is pointwise `0`** is `0`. -/
 theorem Rlim_zero_core {X : Nat → Real} (hX : RReg X) (h : ∀ n, Req (X n) zero) :
