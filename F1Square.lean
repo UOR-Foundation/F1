@@ -67,6 +67,7 @@ import F1Square.Square.DlimCompletionCauchy
 import F1Square.Square.DlimCompletionSpace
 import F1Square.Square.DlimCompletionCoord
 import F1Square.Square.DlimCompletionCS
+import F1Square.Square.DlimMultiplier
 import F1Square.Square.DlimCompletionProj
 import F1Square.Square.DlimProjHardening
 import F1Square.Square.WeilLattice

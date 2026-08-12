@@ -8898,3 +8898,16 @@ open UOR.Bridge.F1Square
 #print axioms Square.finProj_converges_pkg_hd
 #print axioms Square.completedInner_re_cs_gen
 #print axioms Square.inner_fixed_continuity_cs
+
+-- REAL-WEIGHT MULTIPLIER as a constructive GRAPH/DOMAIN (reviewer gate items 2-3): MulGraph/MulDom (no
+-- choice-based output) + setoid congruence, output uniqueness, graph linearity, finite-support domain density.
+#print axioms Square.MulGraph
+#print axioms Square.MulDom
+#print axioms Square.MulGraph_congr_mp
+#print axioms Square.MulGraph_unique_mp
+#print axioms Square.MulGraph_add_mp
+#print axioms Square.MulGraph_smul_mp
+#print axioms Square.MulDom_of_mp
+#print axioms Square.MulDom_dense_mp
+#print axioms Square.MulDom_add_mp
+#print axioms Square.MulDom_smul_mp
