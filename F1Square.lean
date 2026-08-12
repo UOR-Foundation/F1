@@ -54,6 +54,7 @@ import F1Square.Square.HilbertPolyaMetric
 import F1Square.Square.FinInnerProduct
 import F1Square.Square.FinPreHilbert
 import F1Square.Square.FinDirectLimit
+import F1Square.Square.DlimBasisCore
 import F1Square.Square.DiagonalOperatorCore
 import F1Square.Square.FinAtlasOperator
 import F1Square.Square.BlockLadderCandidate

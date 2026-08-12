@@ -26,6 +26,7 @@ choice-free; the cone is `FinDirectLimit`'s zeta-free cone. Crux `none`.
 -/
 
 import F1Square.Square.FinDirectLimit
+import F1Square.Square.DlimBasisCore
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -180,51 +181,8 @@ theorem dlimDiagW_herm (w : Nat → Real) (a b : DLimRaw) :
 -- normalized point spectrum.
 -- ===========================================================================
 
-/-- The standard basis vector in `CVec N`: `1` at coordinate `j`, `0` elsewhere. -/
-def stdBasisVec (N : Nat) (j : Fin N) : CVec N :=
-  fun k => if k.val = j.val then Cone else Czero
-
-/-- The `i`-th coordinate basis vector in the direct limit — presented at stage `i+1` with its spike
-    at the LAST coordinate `i` (so the finite-sum head over coords `0..i-1` is entirely `0`). -/
-def dlimBasis (i : Nat) : DLimRaw := ⟨i + 1, stdBasisVec (i + 1) ⟨i, Nat.lt_succ_self i⟩⟩
-
 /-- `conj 1 ≈ 1`. -/
 private theorem Cconj_Cone_loc : Ceq (Cconj Cone) Cone := ⟨Req_refl _, rneg_zero_loc⟩
-
-/-- `z + 0 ≈ z`. -/
-private theorem cadd_czero_r (z : Complex) : Ceq (Cadd z Czero) z :=
-  ⟨Radd_zero z.re, Radd_zero z.im⟩
-
-/-- A finite sum of entries each `≈ 0` is `≈ 0`. -/
-private theorem cvecSum_eq_zero : ∀ (N : Nat) (g : CVec N), (∀ k, Ceq (g k) Czero) →
-    Ceq (cvecSum N g) Czero
-  | 0, _, _ => Ceq_refl _
-  | (N + 1), g, h => by
-      refine Ceq_trans (Cadd_congr
-        (cvecSum_eq_zero N _ (fun k => h ⟨k.val, Nat.lt_succ_of_lt k.isLt⟩))
-        (h ⟨N, Nat.lt_succ_self N⟩)) ?_
-      exact cadd_czero_r Czero
-
-/-- **The basis vector is normalized**: `⟨eᵢ, eᵢ⟩ ≈ 1`. The spike (last coordinate) contributes
-    `conj(1)·1 ≈ 1`; every other coordinate contributes `conj(0)·0 ≈ 0`. -/
-theorem dlimBasis_normalized (i : Nat) : Ceq (dlimInner (dlimBasis i) (dlimBasis i)) Cone := by
-  refine Ceq_trans (dlimInner_mk (i + 1) _ _) ?_
-  show Ceq (Cadd
-      (cvecSum i (fun k => Cmul (Cconj (if k.val = i then Cone else Czero))
-                                (if k.val = i then Cone else Czero)))
-      (Cmul (Cconj (if (i : Nat) = i then Cone else Czero)) (if (i : Nat) = i then Cone else Czero)))
-    Cone
-  have hhead : Ceq (cvecSum i (fun k => Cmul (Cconj (if k.val = i then Cone else Czero))
-                                             (if k.val = i then Cone else Czero))) Czero := by
-    refine cvecSum_eq_zero i _ (fun k => ?_)
-    rw [if_neg (Nat.ne_of_lt k.isLt)]
-    exact cmul_czero_loc _
-  have hlast : Ceq (Cmul (Cconj (if (i : Nat) = i then Cone else Czero))
-                         (if (i : Nat) = i then Cone else Czero)) Cone := by
-    rw [if_pos rfl]
-    exact Ceq_trans (Cmul_congr Cconj_Cone_loc (Ceq_refl Cone)) (Cmul_one Cone)
-  refine Ceq_trans (Cadd_congr hhead hlast) ?_
-  exact Ceq_trans (Cadd_comm Czero Cone) (cadd_czero_r Cone)
 
 /-- **THE EIGENPAIR** `A eᵢ ≈ wᵢ · eᵢ`: the generic real-diagonal operator `dlimDiagW w` sends the
     `i`-th basis vector to `wᵢ` times itself. At the spike both sides are `w·1`; off it both sides are
@@ -273,9 +231,5 @@ theorem dlimDiagW_eigen_normSq (w : Nat → Real) (i : Nat) :
   refine Req_trans key.1 ?_
   show Req (Rsub (Rmul (w i) (w i)) (Rmul zero zero)) (Rmul (w i) (w i))
   exact Req_trans (Rsub_congr (Req_refl _) (Rmul_zero zero)) (Rsub_zero _)
-
-/-- **The basis vector's squared norm is `1`** (the real part of `⟨eᵢ,eᵢ⟩≈1`). -/
-theorem dlimBasis_self_re (i : Nat) : Req (dlimInner (dlimBasis i) (dlimBasis i)).re one :=
-  (dlimBasis_normalized i).1
 
 end UOR.Bridge.F1Square.Square

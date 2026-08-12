@@ -8865,3 +8865,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.completedInner_re_amgm
 #print axioms Square.completedInner_re_cs_unit
 #print axioms Square.coord_re_continuity
+
+-- BASIS ORTHONORMALITY + coefficient recovery (item 2) + FULL COMPLEX coordinate continuity (item 3).
+#print axioms Square.dlimBasis_coord_bo
+#print axioms Square.dlimBasis_ortho_bo
+#print axioms Square.completedNormSq_smul_negI
+#print axioms Square.coord_im_continuity
+#print axioms Square.coord_modulus_continuity
