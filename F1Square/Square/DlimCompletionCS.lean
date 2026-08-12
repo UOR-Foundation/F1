@@ -147,11 +147,13 @@ theorem completedInner_re_cs_gen (U V : DLimCompletionRaw) :
 --   `‖V‖²·(Re⟨V,X⟩ − Re⟨V,Y⟩)² ≤ ‖V‖²·‖V‖²·d²(X,Y)`.
 -- ===========================================================================
 
-/-- **Fixed-vector inner-product continuity** in the division-free form: the real functional
-    `Re⟨V,·⟩` is Lipschitz up to the `‖V‖²` factor,
-    `‖V‖²·(Re⟨V,X⟩ − Re⟨V,Y⟩)² ≤ ‖V‖²·‖V‖²·d²(X,Y)`.  Instantiate `completedInner_re_cs_gen` at
-    `U := X⊖Y`, using `Re⟨X⊖Y,V⟩ = Re⟨V,X⟩ − Re⟨V,Y⟩` and `‖X⊖Y‖² = d²(X,Y)`.  `hV` is documentary
-    (the nonnegativity of `‖V‖²`); the bound holds unconditionally. -/
+/-- **Raw division-free CS bound with an UNCANCELLED `‖V‖²` factor** (real part):
+    `‖V‖²·(Re⟨V,X⟩ − Re⟨V,Y⟩)² ≤ ‖V‖²·‖V‖²·d²(X,Y)`, instantiating `completedInner_re_cs_gen` at
+    `U := X⊖Y`.  NOTE: this is NOT genuine fixed-vector continuity — the common `‖V‖²` cannot be
+    cancelled without apartness and the statement is vacuous at `‖V‖²≈0`, with no imaginary part.  The
+    GENUINE, unconditional, full-complex fixed-vector limit continuity is `inner_fixed_tendsto_scs`
+    (`DlimCompletionLimit`), built on the SHARP CS `completedInner_re_cs_sharp`. Kept only as the raw
+    intermediate bound. -/
 theorem inner_fixed_continuity_cs (V : DLimCompletionRaw) (hV : Rnonneg (completedNormSq V))
     (X Y : DLimCompletionRaw) :
     Rle (Rmul (completedNormSq V)

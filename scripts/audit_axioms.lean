@@ -8911,3 +8911,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.MulDom_dense_mp
 #print axioms Square.MulDom_add_mp
 #print axioms Square.MulDom_smul_mp
+
+-- SHARP (uncancelled) Cauchy-Schwarz + GENUINE full-complex fixed-vector LIMIT continuity (supersedes the
+-- raw inner_fixed_continuity_cs) + graph CLOSEDNESS + MulDom congruence (reviewer refined gate items 2,3,4).
+#print axioms Square.completedInner_re_cs_sharp
+#print axioms Square.inner_re_diff_sq_le_scs
+#print axioms Square.inner_im_diff_sq_le_scs
+#print axioms Square.CompletionTendsTo
+#print axioms Square.ComplexTendsTo
+#print axioms Square.tendsto_of_le_dist2_scs
+#print axioms Square.inner_fixed_tendsto_scs
+#print axioms Square.MulGraph_closed_cl
+#print axioms Square.MulDom_congr_mcl
