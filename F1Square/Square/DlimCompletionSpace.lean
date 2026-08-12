@@ -53,16 +53,25 @@ theorem completedDist2_definite {X Y : DLimCompletionRaw}
     completedInner_self_im _
   exact dlimCompletionEq_of_sub_zero (completedInner_self_definite ⟨hre, him⟩)
 
-/-- **A Bishop-complete pre-Hilbert space** (with SQUARED distance).  Bundles a `FinPreHilbert` with a
-    squared-distance function `dist2` (setoid-respecting, positive-definite, symmetric, satisfying the
-    factor-2 **quasi**-triangle `d²(x,z) ≤ 2d²(x,y)+2d²(y,z)`) and a completeness operation: every
-    fixed-modulus Bishop-Cauchy sequence has a limit member with an explicit convergence modulus.
+/-- The **canonical fixed-modulus Bishop-Cauchy predicate** derived FROM the squared distance `d²` of a
+    `FinPreHilbert`-with-`dist2`: `‖Z_j − Z_k‖² ≤ M(j,k)`. This ties "Cauchy" to `dist2` (no free choice),
+    closing the vacuity hole where a generic instance could pick `cauchy := False`. -/
+def bishopCauchy {V : Type} (dist2 : V → V → Real) (Z : Nat → V) : Prop :=
+  ∀ j k : Nat, Rle (dist2 (Z j) (Z k)) (dlimCauchyModR j k)
 
-    HONESTY: `dist2` is the SQUARED distance and the triangle law is the factor-2 quasi-triangle — this is
-    NOT a genuine metric (no `√`, no ordinary triangle inequality) and NOT a Hilbert space; it is the
-    constructive, sqrt-free, fixed-modulus notion the whole development is built on. -/
+/-- **A Bishop-complete pre-Hilbert space** (with SQUARED distance).  Bundles a `FinPreHilbert` with a
+    squared-distance function `dist2` that IS the inner product's squared distance (`dist2_eq_inner`,
+    tying `dist2` to the inherited inner product — no free choice), together with its metric laws and a
+    completeness operation for the CANONICAL `bishopCauchy dist2` predicate (tying Cauchy to `dist2`).
+
+    HONESTY: `dist2` is the SQUARED distance and the triangle law is the factor-2 quasi-triangle
+    `d²(x,z) ≤ 2d²(x,y)+2d²(y,z)` — NOT a genuine metric (no `√`, no ordinary triangle inequality) and
+    NOT a Hilbert space; it is the constructive, sqrt-free, fixed-modulus notion the development uses. -/
 structure BishopCompleteFinPreHilbert extends FinPreHilbert where
   dist2 : V → V → Real
+  /-- **`dist2` IS the inner product's squared distance**: `d²(x,y) = Re⟨x−y, x−y⟩`. Forbids a `dist2`
+      disconnected from the bundled inner product. -/
+  dist2_eq_inner : ∀ x y, Req (dist2 x y) (inner (add x (vneg y)) (add x (vneg y))).re
   dist2_congr : ∀ {x x' y y'}, veq x x' → veq y y' → Req (dist2 x y) (dist2 x' y')
   dist2_nonneg : ∀ x y, Rnonneg (dist2 x y)
   dist2_self : ∀ x, Req (dist2 x x) zero
@@ -70,26 +79,48 @@ structure BishopCompleteFinPreHilbert extends FinPreHilbert where
   dist2_symm : ∀ x y, Req (dist2 x y) (dist2 y x)
   dist2_quasitriangle : ∀ x y z,
     Rle (dist2 x z) (Radd (Radd (dist2 x y) (dist2 x y)) (Radd (dist2 y z) (dist2 y z)))
-  cauchy : (Nat → V) → Prop
-  lim : ∀ Z : Nat → V, cauchy Z → V
-  complete : ∀ (Z : Nat → V) (hZ : cauchy Z) (k : Nat), ∃ N : Nat, ∀ m : Nat, N ≤ m →
+  /-- The limit of a `bishopCauchy dist2` sequence — the CANONICAL predicate, so completeness cannot be
+      made vacuous by a degenerate `cauchy`. -/
+  lim : ∀ Z : Nat → V, bishopCauchy dist2 Z → V
+  complete : ∀ (Z : Nat → V) (hZ : bishopCauchy dist2 Z) (k : Nat), ∃ N : Nat, ∀ m : Nat, N ≤ m →
     Rle (dist2 (Z m) (lim Z hZ)) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))
 
 /-- **The direct-limit completion as a Bishop-complete pre-Hilbert space.** Packages
-    `dlimCompletionPreHilbert` (the inner product) with `completedDist2` (squared distance) and
-    `completionLim`/`completion_complete` (Bishop completeness). -/
+    `dlimCompletionPreHilbert` (the inner product) with `completedDist2` (squared distance, DEFINITIONALLY
+    `Re⟨X−Y, X−Y⟩` so `dist2_eq_inner` is `rfl`) and `completionLim`/`completion_complete` (Bishop
+    completeness). `CompletionCauchyU` IS `bishopCauchy completedDist2` (definitionally). -/
 def dlimCompletionSpace : BishopCompleteFinPreHilbert where
   toFinPreHilbert := dlimCompletionPreHilbert
   dist2 := completedDist2
+  dist2_eq_inner := fun _ _ => Req_refl _
   dist2_congr := completedDist2_congr
   dist2_nonneg := completedDist2_nonneg
   dist2_self := completedDist2_self
   dist2_definite := fun _ _ h => completedDist2_definite h
   dist2_symm := completedDist2_symm_cpl
   dist2_quasitriangle := completedDist2_quasitriangle_cpl
-  cauchy := CompletionCauchyU
   lim := completionLim
   complete := completion_complete
+
+/-- **The completion RELATIONSHIP**: `target` is a Bishop-complete space, `embed` an inner-preserving
+    linear map from the `source` pre-Hilbert, `reflect` says `embed` reflects equality (injective up to
+    the setoids), and `dense` says the `embed`-image is dense (with explicit squared-distance modulus).
+    This packages "`target` is a completion of `source`" — not just an abstract complete space. -/
+structure CompletionOf (source : FinPreHilbert) where
+  target : BishopCompleteFinPreHilbert
+  embed : FinPreHilbertHom source target.toFinPreHilbert
+  reflect : ∀ a b, target.veq (embed.toFun a) (embed.toFun b) → source.veq a b
+  dense : ∀ (X : target.V) (k : Nat), ∃ a : source.V,
+    Rle (target.dist2 X (embed.toFun a)) (ofQ (⟨1, k + 1⟩ : Q) (Nat.succ_pos k))
+
+/-- **The finite-support direct limit's completion, as a completion relationship.** `embed = ofHom`
+    (inner-preserving), reflection is `DLimCompletionEq_of_iff`, density is `completion_dense` with
+    representative `a := X.seq N`. -/
+def dlimIsCompletion : CompletionOf dlimPreHilbert where
+  target := dlimCompletionSpace
+  embed := ofHom
+  reflect := fun a b h => (DLimCompletionEq_of_iff a b).mp h
+  dense := fun X k => by obtain ⟨N, hN⟩ := completion_dense X k; exact ⟨X.seq N, hN⟩
 
 end UOR.Bridge.F1Square.Square
 

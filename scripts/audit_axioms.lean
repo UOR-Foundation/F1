@@ -8847,3 +8847,9 @@ open UOR.Bridge.F1Square
 #print axioms Square.completedDist2_self
 #print axioms Square.completedDist2_definite
 #print axioms Square.dlimCompletionSpace
+
+-- CONTRACT REPAIR (reviewer): tie dist2↔inner (dist2_eq_inner) + cauchy↔dist2 (canonical bishopCauchy);
+-- + the completion RELATIONSHIP bundle (source/embed/reflect/dense/complete-target).
+#print axioms Square.bishopCauchy
+#print axioms Square.CompletionOf
+#print axioms Square.dlimIsCompletion
