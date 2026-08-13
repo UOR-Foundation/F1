@@ -8985,3 +8985,38 @@ open UOR.Bridge.F1Square
 #print axioms Square.autocorrL2_low_vanish
 #print axioms Square.autocorrWeilTest_apply
 #print axioms Square.weilPrimeShiftFold_autocorr
+-- WeilPrimeShift/Bridge: canonical autocorr = in-band autocorrL2 (connects the clamped consumer object to the canonical cone).
+#print axioms Square.autocorr_eq_autocorrL2
+-- WeilPrimeShift/RecipAutocorr: the pivotal autocorr reciprocal self-duality h(n)≈h(1/n) via the honest Haar CoV.
+#print axioms Square.haarIntegral_congr_Q
+#print axioms Square.haarIntegral_split_at
+#print axioms Square.haarIntegral_congr_window
+#print axioms Square.Ps_ofQ
+#print axioms Square.mul_n_Qinv_mul_n
+#print axioms Square.dilDN_pt_zero
+#print axioms Square.P1n_pt_zero
+#print axioms Square.left_DN_window_vanish
+#print axioms Square.right_I1n_window_vanish
+#print axioms Square.Qsub_num_pos_of_lt
+#print axioms Square.Qsub_num_nonneg_of_le
+#print axioms Square.n_mul_inv_n
+#print axioms Square.inv_n_mul_le
+#print axioms Square.w1_num_pos
+#print axioms Square.CoreStrict
+#print axioms Square.core_integrand_agree
+#print axioms Square.autocorr_recip_core
+#print axioms Square.autocorr_recip
+-- WeilPrimeShift/Sonine: F_normalization on the real autocorr (proven hsym) + the Sonine local-defect telescope consuming the autocorr.
+#print axioms Square.acPt_pos
+#print axioms Square.autocorr_recip_all
+#print axioms Square.ac_CC_normalization
+#print axioms Square.acPlaceSym_collapse
+#print axioms Square.oneLeSucc
+#print axioms Square.acNormFold_collapse
+#print axioms Square.weilQuad_primeGram_telescope
+#print axioms Square.localDefect_nonneg
+#print axioms Square.weilPrimeGram_telescope
+#print axioms Square.weilPrimeGram_localDefect_nonneg
+#print axioms Square.weilPrimeGram_vFrom_telescope
+#print axioms Square.weilPrimeGram_vFrom_localDefect_nonneg
+#print axioms Square.placeVal_autocorrWeilTest_eq_acPt
