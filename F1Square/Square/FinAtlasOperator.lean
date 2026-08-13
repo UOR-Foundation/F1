@@ -56,6 +56,23 @@ an explicitly-INVENTED candidate, disconnected from the spectrum. So the unbound
 scale-lift is the exposed open seam — completing `M₂₄ ⊕ 0` cannot itself close the HP crux. There is no
 spectral-reality → zero correspondence and no unbounded generator; the crux (RH) stays `none`.
 
+THE EXTERNAL REGISTERED UOR SOURCE, AUDITED (verified 2026-08-13, not assumed). The pinned dependency
+`UOR-Framework v0.5.2` (vendored at `.lake/packages/uor/lean4/UOR/`) is the only *registered* UOR
+source. It DOES carry an infinite typed level object — `WittLevel` (`⟨wittLength : Nat⟩`, "open-world:
+any W_n valid", `new (n : Nat)`) whose named levels even coincide numerically with the Atlas fixture
+constants (`W24`, `W96`, `W128`, `W12288` = stride `T·O`, `m₀`, context `2^(O−1)`, boundary `B₀`) — plus
+lift-chain / tower-completeness CERTIFICATE machinery (`LiftChainCertificate.targetLevel : Nat`,
+`TowerCompletenessResolver`, φ-maps/ψ-pipeline). But it supplies NO real-valued evaluator: its only
+non-`Nat` data are per-individual `Float` annotations (entropy/Landauer/pressure/grounding), not a
+level-indexed `Nat → Real` diagonal; the `WittLevel` "evaluator" `bitsWidth = wittLength` is the `Nat`
+index itself (multiples of 8, not the eigenvalue diagonal). And it is NOT wired into this layer: F1 imports
+NO `UOR.{Pipeline,Enums,Enforcement,Structures,Individuals}` module and references no `WittLevel`/lift
+chain — it reuses only the `UOR.Bridge.F1Square` NAMESPACE. `atlasEig` is `blockEig` over `(T,O)=(3,8)`,
+independent of any UOR evaluator. So even the registered source provides only a Witt-level/certificate
+skeleton with NO derived real evaluator restricting to `atlasSeedWeight`; the typed parent/child
+refinement relation whose derived real evaluator restricts to the seed and grows cofinally is the FORMAL
+BLOCKER — it exists in neither the local repo nor the registered source, and is not filled by invention.
+
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free; audited by
 `scripts/honesty_audit.sh`.
 -/

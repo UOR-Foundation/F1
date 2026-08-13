@@ -6,6 +6,31 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The sourced-weight WARRANT gate — audited, verified FORMAL BLOCKER (no invention).** The generic
+  self-adjoint multiplier `multiplier_selfAdjoint w` is proved for an *arbitrary* real weight; the
+  reviewer's next gate is a *sourced* unbounded weight — a typed parent/child UOR refinement relation
+  whose DERIVED real evaluator `w : Nat → Real` (a) is zero/RH-free, (b) restricts on its first 24 levels
+  to `atlasSeedWeight : Fin 24 → Real`, and (c) grows cofinally. An exhaustive read-only audit of every
+  Atlas/UOR/Cohomology/E8 source in the repo **and** of the external registered dependency
+  (`UOR-Framework v0.5.2`, vendored at `.lake/packages/uor/`) finds **no such source exists**, and records
+  the precise reasons rather than inventing one:
+  * The only tower-shaped *sourced* object degenerates: `AtlasAddressing.atlasModulus_degenerate`
+    (`atlasModulus (k+5) = 0`), `atlasPrime_finite`. The `Fin 24` spectral seed is a SEPARATE fact —
+    `atlasEig = blockEig` over `(T,O)=(3,8)`, provably unconnected to the addressing tower (no theorem
+    ties them into one seed-refining operator tower).
+  * The seed is bounded (`atlasSeedEig_bounded`, values in `[−1,10]`) and finite-rank `M₂₄ ⊕ 0`
+    (`atlasObs_vanishes_off_carrier`, `atlasObsEig_seam`) — not cofinal.
+  * Every unbounded real weight in the repo is a SELF-DECLARED invention (`atlasShiftDiag`,
+    `blockLadderEval`) — fails the "derived from the relation" clause; both stay frozen.
+  * The external registered source carries an infinite `WittLevel` ladder (whose constants even coincide
+    with the Atlas fixture numbers 24/96/128/12288) and lift-chain/tower CERTIFICATE machinery, but NO
+    real-valued evaluator (only per-individual `Float` annotations), and F1 does not import its refinement
+    modules at all.
+  The verified boundary is recorded in `FinAtlasOperator.lean`'s "WHY NO UNBOUNDED SOURCED LIFT /
+  EXTERNAL REGISTERED UOR SOURCE, AUDITED" docstring. **The missing typed refinement source is the formal
+  blocker**; no weight is instantiated, `BlockLadder`/`atlasShiftDiag` stay frozen, HP-crux delta stays
+  ZERO.
+
 - **The real-weight diagonal multiplier is a genuine SELF-ADJOINT operator — generic gate complete**
   (`Square/DlimMultiplier*.lean`, culminating in `Square/DlimMultiplierAdjoint.lean`). For an ARBITRARY
   real weight `w : Nat → Real`, the diagonal multiplier `M_w` on the completed pre-Hilbert space is
