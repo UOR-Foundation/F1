@@ -8932,3 +8932,20 @@ open UOR.Bridge.F1Square
 #print axioms Square.completedInner_parseval_sy
 #print axioms Square.finCoordSum_symm_weight_sy
 #print axioms Square.mult_symm_sy
+
+-- GENUINE ADJOINT (inner-product universal property) + both domain inclusions + Dom(A*)=Dom(A) + actual
+-- graph-level SELF-ADJOINTNESS of the real-weight multiplier (reviewer gate items 6-7 - the culmination).
+#print axioms Square.AdjGraph
+#print axioms Square.AdjDom
+#print axioms Square.adj_of_dom_adj
+#print axioms Square.AdjDom_of_dom_adj
+#print axioms Square.dom_of_adj_adj
+#print axioms Square.dom_of_adj_dom_adj
+#print axioms Square.dom_eq_adj
+#print axioms Square.selfadjoint_adj
+
+-- Adjoint congruence + adjoint-witness UNIQUENESS + PACKAGED self-adjointness (density+closed-graph+graph-eq+dom-eq).
+#print axioms Square.AdjGraph_congr_adj
+#print axioms Square.adj_unique_adj
+#print axioms Square.MultiplierSelfAdjoint
+#print axioms Square.multiplier_selfAdjoint
