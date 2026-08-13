@@ -502,6 +502,7 @@ import F1Square.Square.WeilPrimeShiftAutocorr
 import F1Square.Square.WeilPrimeShiftBridge
 import F1Square.Square.WeilPrimeShiftRecipAutocorr
 import F1Square.Square.WeilPrimeShiftSonine
+import F1Square.Square.WeilPrimeShiftCrux
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare

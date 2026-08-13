@@ -9006,17 +9006,27 @@ open UOR.Bridge.F1Square
 #print axioms Square.core_integrand_agree
 #print axioms Square.autocorr_recip_core
 #print axioms Square.autocorr_recip
--- WeilPrimeShift/Sonine: F_normalization on the real autocorr (proven hsym) + the Sonine local-defect telescope consuming the autocorr.
+-- WeilPrimeShift/Sonine: the CC √-normalization on the real autocorr (proven hsym), analytic content.
 #print axioms Square.acPt_pos
 #print axioms Square.autocorr_recip_all
 #print axioms Square.ac_CC_normalization
 #print axioms Square.acPlaceSym_collapse
 #print axioms Square.oneLeSucc
 #print axioms Square.acNormFold_collapse
-#print axioms Square.weilQuad_primeGram_telescope
-#print axioms Square.localDefect_nonneg
-#print axioms Square.weilPrimeGram_telescope
-#print axioms Square.weilPrimeGram_localDefect_nonneg
-#print axioms Square.weilPrimeGram_vFrom_telescope
-#print axioms Square.weilPrimeGram_vFrom_localDefect_nonneg
-#print axioms Square.placeVal_autocorrWeilTest_eq_acPt
+-- WeilPrimeShift/Crux: the GENUINE connection — normalized-autocorr WeilTest, weilPrimePart = acNormFold
+-- (non-Gram, no vFrom), and the arch-MINUS-prime weilValue at that slot; positivity = RH left open.
+#print axioms Square.acbase_eq_acPt
+#print axioms Square.toNat_ge_one
+#print axioms Square.oneLe_ofQ_den
+#print axioms Square.intWeight_ofNat
+#print axioms Square.recipWeight_val
+#print axioms Square.normWeight_hi
+#print axioms Square.normWeight_lo
+#print axioms Square.normAutocorr_f_hi
+#print axioms Square.normAutocorr_f_lo
+#print axioms Square.recip_bridge
+#print axioms Square.placeVal_eq_acPlaceSym
+#print axioms Square.weilPrimePart_normAutocorr
+#print axioms Square.weilValue_normAutocorr
+#print axioms Square.normAutocorr_nonzero
+#print axioms Square.normAutocorr_weil_psd_iff_hodge

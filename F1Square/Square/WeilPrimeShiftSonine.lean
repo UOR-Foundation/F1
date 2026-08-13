@@ -1,30 +1,17 @@
 /-
-F1 square — the Sonine local-defect telescope consuming the autocorrelation (`WeilPrimeShiftSonine.lean`).
-Sonine / local-defect TELESCOPE.
+F1 square — **the CC √-normalization on the real autocorrelation** (`WeilPrimeShiftSonine.lean`).
 
-LEG 3 (included verbatim below, unchanged) delivered the reciprocally-symmetric autocorrelation
-point value `acPt`, its proven reflection symmetry `autocorr_recip_all`, the CC symmetric
-normalization `ac_CC_normalization`, and the Λ-weighted normalized fold `acNormFold`.
+Analytic-normalization content (self-contained; imports no `CoupledWeil*`): the reciprocally-symmetric
+autocorrelation point value `acPt`, its PROVEN reflection symmetry `autocorr_recip_all`
+(`h(n) ≈ h(1/n)` for all `n`, by cases — the reciprocal CoV regime plus the support-vanishing regime,
+no assumed symmetry), the CC symmetric normalization `ac_CC_normalization` (`F_normalization`
+instantiated on the actual autocorrelation), the per-place symmetric value `acPlaceSym`
+(`= F(n)+n⁻¹F(1/n)`, `F(q)=q^{-1/2}·acPt`) with its `acPlaceSym_collapse` (`= 2·n^{-1/2}·h(n)`), and the
+Λ-weighted normalized fold `acNormFold` (`acNormFold_collapse`).
 
-LEG 4 consumes that autocorrelation place-value data IMMEDIATELY inside the coupled Weil kernel's
-prime-Gram Sonine structure and proves the LOCAL-DEFECT TELESCOPE: extending the prime side by one
-prime power `M → M+1` adds exactly one MANIFEST NONNEG SQUARE local defect
-`|D_M|² = Λ(M+1)·(Σ_i c_i·placeVal(g_i, M))² ≥ 0`.
-
-(4a) `localDefect` — the per-place defect `w(M)·(Σ_{i<N} c_i·v(M,i))²`.
-(4b) `weilQuad_primeGram_telescope` — `weilQuad(primeGram w v (M+1)) c N =
-       weilQuad(primeGram w v M) c N + localDefect w v c N M`  (via `weilQuad_primeGram_split`).
-(4c) `localDefect_nonneg` — the increment is `Rnonneg` when `w(M) ≥ 0`
-       (`Rnonneg_Rmul` × `Rnonneg_Rmul_self`).
-(4d) `weilPrimeGram_telescope` / `weilPrimeGram_localDefect_nonneg` — on the GENUINE von Mangoldt
-       weight the increment is UNCONDITIONALLY `Rnonneg` (`vonMangoldt_nonneg`); each prime power adds a
-       genuine `≥0` square, no RH input.
-(4e) `weilPrimeGram_vFrom_telescope` / `_nonneg` — the same on the coupled kernel's genuine
-       place-value interface `v = vFrom g`, so the defect is built from REAL test place-values.
-(4f) `placeVal_autocorrWeilTest_eq_acPt` — THE CONSUMPTION: the interface datum
-       `placeVal (autocorrWeilTest g …) m` equals LEG 3's reciprocally-symmetric autocorrelation
-       point values `acPt`, so the Sonine local defect at each place is assembled out of leg-3's
-       normalized autocorrelation values.
+The genuine downstream CONSUMER of `acNormFold` — the normalized autocorrelation as a real `WeilTest`
+whose `weilPrimePart` equals `acNormFold`, and the arch-MINUS-prime `weilValue` at that slot — lives in
+`WeilPrimeShiftCrux.lean` (the point-value prime side, NOT the coupled-kernel prime-Gram, NOT `vFrom`).
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
@@ -32,8 +19,6 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 import F1Square.Square.WeilPrimeShiftBridge
 import F1Square.Square.WeilPrimeShiftRecipAutocorr
 import F1Square.Square.WeilPrimeShiftNorm
-import F1Square.Square.CoupledWeilKernel
-import F1Square.Square.CoupledWeilPlaceValue
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -239,128 +224,5 @@ theorem acNormFold_collapse (g : L2Test) (S : Q) (hSd : 0 < S.den) (hSn : 0 ≤ 
     Rmul_congr (Req_refl _)
       (acPlaceSym_collapse g S hSd hSn a han had w hw hwn b hbd hbn (m + 1) (Nat.succ_pos m)
         (oneLeSucc m) hgh hgl hfit (hnS m hm)))
-
--- ===========================================================================
--- ===========================================================================
--- LEG 4 — the Sonine / local-defect telescope consuming the autocorrelation prime side.
--- ===========================================================================
--- ===========================================================================
-
--- ---------------------------------------------------------------------------
--- (4a) The per-place local defect square.
--- ---------------------------------------------------------------------------
-
-/-- **The local per-place defect** `|D_M|² = w(M)·(Σ_{i<N} c_i·v(M,i))²` — the manifest weighted
-    square contributed by the prime power at place `M`.  This is exactly the `M`-th summand of the
-    prime-Gram square-split (`weilQuad_primeGram_split`). -/
-def localDefect (w : Nat → Real) (v : Nat → Nat → Real) (c : Nat → Real) (N M : Nat) : Real :=
-  Rmul (w M) (Rmul (RsumN (fun i => Rmul (c i) (v M i)) N)
-                   (RsumN (fun i => Rmul (c i) (v M i)) N))
-
--- ---------------------------------------------------------------------------
--- (4b) The telescope: one extra prime power adds exactly one local defect.
--- ---------------------------------------------------------------------------
-
-/-- **★ THE SONINE LOCAL-DEFECT TELESCOPE**: extending the prime side by one prime power adds exactly
-    one square local defect —
-        `weilQuad(primeGram w v (M+1)) c N = weilQuad(primeGram w v M) c N + localDefect w v c N M`.
-    Proof: the prime-Gram quadratic form is a weighted sum of squares over prime powers
-    (`weilQuad_primeGram_split`), and `Σ_{m<M+1} = Σ_{m<M} + [term at M]` by the fold's successor
-    (definitional `RsumN`). -/
-theorem weilQuad_primeGram_telescope (w : Nat → Real) (v : Nat → Nat → Real)
-    (c : Nat → Real) (N M : Nat) :
-    Req (weilQuad (primeGram w v (M + 1)) c N)
-        (Radd (weilQuad (primeGram w v M) c N) (localDefect w v c N M)) :=
-  Req_trans (weilQuad_primeGram_split w v c N (M + 1))
-    (Radd_congr (Req_symm (weilQuad_primeGram_split w v c N M)) (Req_refl _))
-
--- ---------------------------------------------------------------------------
--- (4c) The increment is a manifest nonneg square (generic weight).
--- ---------------------------------------------------------------------------
-
-/-- **The local defect is `Rnonneg` when the weight is `≥ 0`** — a nonnegative weight times a manifest
-    square (`Rnonneg_Rmul` × `Rnonneg_Rmul_self`), NO sqrt. -/
-theorem localDefect_nonneg (w : Nat → Real) (v : Nat → Nat → Real) (c : Nat → Real) (N M : Nat)
-    (hw : Rnonneg (w M)) : Rnonneg (localDefect w v c N M) :=
-  Rnonneg_Rmul hw (Rnonneg_Rmul_self (RsumN (fun i => Rmul (c i) (v M i)) N))
-
--- ---------------------------------------------------------------------------
--- (4d) The genuine von Mangoldt weight: the increment is UNCONDITIONALLY nonneg.
--- ---------------------------------------------------------------------------
-
-/-- **The telescope on the genuine von Mangoldt prime Gram** — `weilPrimeGram v M =
-    primeGram (Λ∘succ) v M` (definitional), so the same one-place-adds-one-square telescope holds. -/
-theorem weilPrimeGram_telescope (v : Nat → Nat → Real) (c : Nat → Real) (N M : Nat) :
-    Req (weilQuad (weilPrimeGram v (M + 1)) c N)
-        (Radd (weilQuad (weilPrimeGram v M) c N)
-              (localDefect (fun m => vonMangoldt (m + 1)) v c N M)) :=
-  weilQuad_primeGram_telescope (fun m => vonMangoldt (m + 1)) v c N M
-
-/-- **The genuine local defect is UNCONDITIONALLY `Rnonneg`** — the von Mangoldt weight is `≥ 0`
-    (`vonMangoldt_nonneg`), so every prime power adds a genuine nonnegative square, NO RH input. -/
-theorem weilPrimeGram_localDefect_nonneg (v : Nat → Nat → Real) (c : Nat → Real) (N M : Nat) :
-    Rnonneg (localDefect (fun m => vonMangoldt (m + 1)) v c N M) :=
-  localDefect_nonneg (fun m => vonMangoldt (m + 1)) v c N M (vonMangoldt_nonneg (M + 1))
-
--- ---------------------------------------------------------------------------
--- (4e) On the coupled kernel's genuine place-value interface `v = vFrom g`.
--- ---------------------------------------------------------------------------
-
-/-- **The telescope on real test place-values** `v = vFrom g` (`vFrom g m i = placeVal (g i) m`):
-    each prime power adds the genuine square `Λ(M+1)·(Σ_i c_i·placeVal(g_i, M))²`. -/
-theorem weilPrimeGram_vFrom_telescope (g : Nat → WeilTest) (c : Nat → Real) (N M : Nat) :
-    Req (weilQuad (weilPrimeGram (vFrom g) (M + 1)) c N)
-        (Radd (weilQuad (weilPrimeGram (vFrom g) M) c N)
-              (localDefect (fun m => vonMangoldt (m + 1)) (vFrom g) c N M)) :=
-  weilPrimeGram_telescope (vFrom g) c N M
-
-/-- **The genuine place-value local defect is UNCONDITIONALLY `Rnonneg`** — `Λ(M+1) ≥ 0` times the
-    manifest square of the real place-value combination. -/
-theorem weilPrimeGram_vFrom_localDefect_nonneg (g : Nat → WeilTest) (c : Nat → Real) (N M : Nat) :
-    Rnonneg (localDefect (fun m => vonMangoldt (m + 1)) (vFrom g) c N M) :=
-  weilPrimeGram_localDefect_nonneg (vFrom g) c N M
-
--- ---------------------------------------------------------------------------
--- (4f) THE CONSUMPTION: the interface datum is LEG 3's autocorrelation point values.
--- ---------------------------------------------------------------------------
-
-/-- **★ THE CONSUMPTION OF LEG 3**: the coupled kernel's per-place interface datum
-    `placeVal (autocorrWeilTest g …) m` — the `v` feeding the Sonine local defect at place `m` —
-    is exactly LEG 3's reciprocally-symmetric autocorrelation point value
-    `h(m+1) + (m+1)⁻¹·h(1/(m+1))` built from `acPt` (window `lo = a`).  So each Sonine local defect
-    `localDefect (Λ∘succ) (vFrom (autocorr family)) c N M` is assembled out of leg-3's normalized
-    autocorrelation values, whose reflection symmetry `autocorr_recip_all` is PROVEN, not assumed. -/
-theorem placeVal_autocorrWeilTest_eq_acPt (g : L2Test) (S : Q) (hSd : 0 < S.den) (hSn : 0 ≤ S.num)
-    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
-    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
-    (X : Nat) (hX : 1 ≤ X)
-    (b : Q) (hbd : 0 < b.den) (hbn : 0 ≤ b.num)
-    (hTS : Qle (⟨((X + 1 : Nat) : Int), 1⟩ : Q) S) (hS1 : Qle (⟨1, 1⟩ : Q) S)
-    (hband_hi : Qle (add a w) (mul (⟨((X + 1 : Nat) : Int), 1⟩ : Q) a))
-    (hband_lo : Qle (⟨1, 1⟩ : Q) (mul (mul (⟨((X + 1 : Nat) : Int), 1⟩ : Q) b) a))
-    (hgh : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (g.f y) zero)
-    (hgl : ∀ y, Rle y (ofQ b hbd) → Req (g.f y) zero) (m : Nat) :
-    Req (placeVal (autocorrWeilTest g S hSd hSn a han had a w had hw hwn X hX (Qle_refl a) b hbd hbn
-            hTS hS1 hband_hi hband_lo hgh hgl) m)
-        (Radd (acPt g S hSd hSn a han had w hw hwn (⟨((m + 1 : Nat) : Int), 1⟩ : Q))
-          (Rmul (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
-            (acPt g S hSd hSn a han had w hw hwn (⟨1, m + 1⟩ : Q)))) := by
-  show Req (Radd ((autocorrWeilTest g S hSd hSn a han had a w had hw hwn X hX (Qle_refl a) b hbd hbn
-            hTS hS1 hband_hi hband_lo hgh hgl).f (⟨((m + 1 : Nat) : Int), 1⟩ : Q))
-        (Rmul (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
-          ((autocorrWeilTest g S hSd hSn a han had a w had hw hwn X hX (Qle_refl a) b hbd hbn
-            hTS hS1 hband_hi hband_lo hgh hgl).f (⟨1, m + 1⟩ : Q))))
-      (Radd (acPt g S hSd hSn a han had w hw hwn (⟨((m + 1 : Nat) : Int), 1⟩ : Q))
-        (Rmul (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
-          (acPt g S hSd hSn a han had w hw hwn (⟨1, m + 1⟩ : Q))))
-  refine Radd_congr ?_ (Rmul_congr (Req_refl _) ?_)
-  · exact Req_trans
-      (autocorrWeilTest_apply g S hSd hSn a han had a w had hw hwn X hX (Qle_refl a) b hbd hbn
-        hTS hS1 hband_hi hband_lo hgh hgl (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos)
-      (Req_symm (acPt_pos g S hSd hSn a han had w hw hwn (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos))
-  · exact Req_trans
-      (autocorrWeilTest_apply g S hSd hSn a han had a w had hw hwn X hX (Qle_refl a) b hbd hbn
-        hTS hS1 hband_hi hband_lo hgh hgl (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
-      (Req_symm (acPt_pos g S hSd hSn a han had w hw hwn (⟨1, m + 1⟩ : Q) (Nat.succ_pos m)))
 
 end UOR.Bridge.F1Square.Square
