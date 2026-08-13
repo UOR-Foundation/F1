@@ -7,8 +7,8 @@ This is the first proof-bearing brick of the operator-valued finite-place Weil/S
 The prime-power generator acts by the genuine multiplicative dilation `dilateTest` (whose log-line
 form is the additive shift `logPull_dilate_shift`, dilation-by-`n` = shift-by-`log n`); the local
 term carries the von Mangoldt weight `Λ(n)` on the UNSYMMETRIZED Connes–Consani place value
-`f(n) + n⁻¹·f(1/n)` (rational weights — the `n^{-1/2}` symmetric normalization is a DIFFERENT
-printing; the bridge between them is proved, not assumed — see `weilPrimeShift_norm_bridge`).
+`f(n) + n⁻¹·f(1/n)` (rational weights — the `n^{-1/2}` symmetric Burnol normalization is a DIFFERENT
+printing; the bridge between them is the OPEN next-commit item, not yet built here).
 
 SPINE (this section): the multiplicative dilation/shift REALIZES the point value the Weil term
 consumes — `logPull (dilateTest (n+1) φ) 0 ≈ φ(n+1)` (`dilateShift_realize_pos`), the log-line
@@ -138,11 +138,12 @@ theorem weilPrimeShift_stable (φ : L2Test) (X : Nat) (hX : 1 ≤ X)
   refine Req_trans (weilPrimePart_stable (weilTestOfL2 φ X hX hsh hsl) d) ?_
   exact Req_symm (weilPrimeShiftFold φ X hX hsh hsl)
 
-/-- **ORDER INDEPENDENCE — the local dilation actions COMMUTE.** Composing the prime-power
-    dilations by `m` then `n` equals composing by `n` then `m` (on the log line, both are the same
-    additive shift `log m + log n = log n + log m`). This is the "commuting local actions" that makes
-    the finite fold independent of the order the places are refined in — the operator-level content
-    behind the scalar sum's reorderability. Proved from `logPull_dilate_shift_comp` + `Radd_comm`. -/
+/-- **The local dilation actions COMMUTE (pairwise).** Composing the prime-power dilations by `m`
+    then `n` equals composing by `n` then `m` (on the log line, both are the same additive shift
+    `log m + log n = log n + log m`). HONEST SCOPE: this is PAIRWISE commutation of two dilation
+    actions — the algebraic prerequisite for order-independence — NOT itself permutation invariance
+    of the finite refinement fold (that is a separate theorem over `RsumN`, not proved here). Proved
+    from `logPull_dilate_shift_comp` + `Radd_comm`. -/
 theorem dilateShift_comm (m n : Nat) (hm : 1 ≤ m) (hn : 1 ≤ n) (φ : L2Test) (u : Real) :
     Req (logPull (dilateTest (⟨(m : Int), 1⟩ : Q) (qint_num_pos m hm) Nat.one_pos
             (dilateTest (⟨(n : Int), 1⟩ : Q) (qint_num_pos n hn) Nat.one_pos φ)) u)

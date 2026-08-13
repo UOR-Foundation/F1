@@ -8958,3 +8958,30 @@ open UOR.Bridge.F1Square
 #print axioms Square.weilPrimeShiftFold
 #print axioms Square.weilPrimeShift_stable
 #print axioms Square.dilateShift_comm
+
+-- WeilPrimeShift/Recip: window-aware reciprocal covariance (log-line reflection ↦ reciprocal place value).
+#print axioms Square.logPull_reflect_at_logN_eq_recip
+#print axioms Square.logPull_reflect_dilate_origin_eq_direct
+-- WeilPrimeShift/Norm: the q^{-1/2} normalization bridge (unsymmetrized CC ↔ symmetric Burnol).
+#print axioms Square.ofQn_wit
+#print axioms Square.qInvSqrt_scale
+#print axioms Square.qInvSqrt_sq
+#print axioms Square.qInvSqrt_nonneg
+#print axioms Square.n_mul_qInvSqrt
+#print axioms Square.F_reflect
+#print axioms Square.F_normalization
+-- WeilPrimeShift/Autocorr: support-stabilization + autocorrWeilTest + weilPrimeShiftFold_autocorr (first consumer).
+#print axioms Square.riemannIntegral_le_pts
+#print axioms Square.riemannIntegral_pts_zero
+#print axioms Square.riemannIntegralI_pts_zero
+#print axioms Square.haarIntegral_window_vanish
+#print axioms Square.qnum_pos_of_le
+#print axioms Square.qinv_scale_le
+#print axioms Square.qlow_engine
+#print axioms Square.qBandQ_ge_ofQ
+#print axioms Square.autocorrL2_f_haar
+#print axioms Square.mulConvR_ofQ_vanish
+#print axioms Square.autocorrL2_high_vanish
+#print axioms Square.autocorrL2_low_vanish
+#print axioms Square.autocorrWeilTest_apply
+#print axioms Square.weilPrimeShiftFold_autocorr
