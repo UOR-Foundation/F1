@@ -22,14 +22,19 @@ All notable changes to this project are documented here. The format is based on
     (`atlasObs_vanishes_off_carrier`, `atlasObsEig_seam`) — not cofinal.
   * Every unbounded real weight in the repo is a SELF-DECLARED invention (`atlasShiftDiag`,
     `blockLadderEval`) — fails the "derived from the relation" clause; both stay frozen.
-  * The external registered source carries an infinite `WittLevel` ladder (whose constants even coincide
-    with the Atlas fixture numbers 24/96/128/12288) and lift-chain/tower CERTIFICATE machinery, but NO
-    real-valued evaluator (only per-individual `Float` annotations), and F1 does not import its refinement
-    modules at all.
+  * The external registered source (`UOR-Framework v0.5.2`, a resolved git dependency pinned in
+    `lake-manifest.json`) carries an infinite typed level object `WittLevel` (wraps every `Nat`; its
+    named constants coincide with the Atlas fixture numbers 24/96/128/12288) and lift-chain/tower
+    CERTIFICATE machinery, but NO real-valued evaluator (only per-individual `Float` annotations, and the
+    `WittLevel` readout is the `Nat` level index, not a real diagonal). The F1 root DOES import six UOR
+    ontology modules (`UOR.Structures` + `UOR.Individuals.{Op,Schema,Convergence,Division,Homology}`), but
+    none defines a `Nat → Real` evaluator, and F1 imports none of the Witt-level/lift-chain machinery
+    (`UOR.Enums`/`Pipeline`/`Enforcement`); `atlasEig = blockEig` over `(T,O)=(3,8)`, independent of any
+    imported UOR evaluator.
   The verified boundary is recorded in `FinAtlasOperator.lean`'s "WHY NO UNBOUNDED SOURCED LIFT /
   EXTERNAL REGISTERED UOR SOURCE, AUDITED" docstring. **The missing typed refinement source is the formal
-  blocker**; no weight is instantiated, `BlockLadder`/`atlasShiftDiag` stay frozen, HP-crux delta stays
-  ZERO.
+  blocker** (an audit conclusion in prose, not a mechanized Lean theorem); no weight is instantiated,
+  `BlockLadder`/`atlasShiftDiag` stay frozen, HP-crux delta stays ZERO.
 
 - **The real-weight diagonal multiplier is a genuine SELF-ADJOINT operator — generic gate complete**
   (`Square/DlimMultiplier*.lean`, culminating in `Square/DlimMultiplierAdjoint.lean`). For an ARBITRARY
