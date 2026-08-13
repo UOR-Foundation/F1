@@ -8949,3 +8949,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.adj_unique_adj
 #print axioms Square.MultiplierSelfAdjoint
 #print axioms Square.multiplier_selfAdjoint
+
+-- WeilPrimeShift SPINE: the finite-place Weil prime side as a fold of genuine multiplicative
+-- dilation/shift local terms, proved = weilPrimePart (POINT-VALUE, not the Mellin-Gram shortcut).
+#print axioms Square.dilateShift_realize_pos
+#print axioms Square.dilateShift_realize
+#print axioms Square.weilPrimeShiftTerm_eq
+#print axioms Square.weilPrimeShiftFold
+#print axioms Square.weilPrimeShift_stable
+#print axioms Square.dilateShift_comm
