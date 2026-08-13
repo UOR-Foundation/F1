@@ -6,6 +6,37 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+- **The real-weight diagonal multiplier is a genuine SELF-ADJOINT operator — generic gate complete**
+  (`Square/DlimMultiplier*.lean`, culminating in `Square/DlimMultiplierAdjoint.lean`). For an ARBITRARY
+  real weight `w : Nat → Real`, the diagonal multiplier `M_w` on the completed pre-Hilbert space is
+  built as a choice-free RELATION (its graph `MulGraph`, domain `MulDom`) and shown to be a genuine
+  self-adjoint operator — not symmetry, not a coordinatewise statement, not a nominal predicate:
+  * `AdjGraph` — the adjoint by the inner-product UNIVERSAL PROPERTY: `(Y,Z) ∈ Γ(M_w*)` iff
+    `⟨M_w X, Y⟩ = ⟨X, Z⟩` for every domain pair `(X, M_w X)`. `AdjGraph_congr_adj` (setoid descent),
+    `adj_unique_adj` (adjoint-output uniqueness via basis testing + coordinate separation).
+  * `adj_of_dom_adj` — the easy inclusion `D(M_w) ⊆ D(M_w*)` from the symmetry `mult_symm_sy`;
+    `dom_of_adj_adj` — the HARD MAXIMALITY `D(M_w*) ⊆ D(M_w)` (what upgrades symmetric to
+    self-adjoint), proved by testing the adjoint relation against the dense coordinate basis `of e_i`
+    and separating coordinates; `dom_eq_adj` — `Dom(M_w*) = Dom(M_w)`.
+  * `selfadjoint_adj` — graph-level self-adjointness `Γ(M_w*) = Γ(M_w)`; `MultiplierSelfAdjoint` /
+    `multiplier_selfAdjoint` — the packaged predicate bundling DENSITY (`MulDom_dense_mp`), sequential
+    CLOSEDNESS (`MulGraph_closed_cl`), graph self-adjointness, and domain equality.
+  Enabling analysis, ζ-free, cleared along the way: the SHARP (uncancelled) Cauchy–Schwarz via
+  apartness (`completedInner_re_cs_sharp`) and the genuine, unconditional, full-complex fixed-vector
+  LIMIT continuity (`inner_fixed_tendsto_scs`), plus Parseval (`completedInner_parseval_sy`).
+  **HONEST SCOPE — "self-adjoint," NOT "unbounded."** The theorem holds for EVERY real weight,
+  including `w ≡ 0` and every bounded weight; it proves densely-defined + closed + self-adjoint, hence
+  only *possibly* unbounded. Actual unboundedness is a SEPARATE claim needing a growth hypothesis on `w`
+  and its transfer to the operator norm — not established here (the `628f21f` commit message overstated
+  it as "unbounded"; the accurate reading is "densely-defined, closed, possibly-unbounded self-adjoint
+  multiplier"). **HP-crux delta is ZERO**: this is a GENERIC theorem over an arbitrary `w`; no Atlas
+  weight is instantiated. Instantiating a *sourced* unbounded weight is the open warrant gate, and the
+  Atlas refinement tower is already proven to degenerate past the `Fin 24` seed
+  (`AtlasAddressing.atlasModulus_degenerate`, `atlasPrime_finite`; `FinAtlasOperator` "no unbounded
+  sourced lift"), so no such weight is available without a genuinely new source. `BlockLadder` and
+  `atlasShiftDiag` remain frozen. Strictly ζ-free, sqrt-free, division-free, choice-free
+  `[propext, Quot.sound]`; audit coverage 5546, no-smuggling PASS.
+
 - **The real-scale Mellin dilation covariance with the rational covariance DERIVED** (new
   `Square/MellinHatDilateCovarianceRealDerived.lean`): the real-scale covariance
   `cⁿ⁺¹·mellinHat(dilateTestR c φ) = mellinHat φ` (`mellinHat_dilate_covariance_real_derived`), with the

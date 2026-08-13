@@ -200,7 +200,18 @@ theorem adj_unique_adj (w : Nat → Real) {Y Z Z' : DLimCompletionRaw}
     predicate bundling: the domain is DENSE, the graph is CLOSED under completion convergence, the adjoint
     graph EQUALS the operator graph (self-adjointness `M_w* = M_w`), and `Dom(M_w*) = Dom(M_w)`. Every field
     is an already-proven theorem — density (`MulDom_dense_mp`), closedness (`MulGraph_closed_cl`),
-    graph self-adjointness (`selfadjoint_adj`), domain equality (`dom_eq_adj`). -/
+    graph self-adjointness (`selfadjoint_adj`), domain equality (`dom_eq_adj`).
+
+    HONEST SCOPE — this theorem does NOT prove unboundedness. It holds for EVERY real weight `w`,
+    including `w ≡ 0` and every bounded weight; what it establishes is densely-defined + closed +
+    self-adjoint, hence only *possibly* unbounded. Actual unboundedness is a SEPARATE claim requiring a
+    growth hypothesis on `w` (e.g. `∀ B, ∃ i, RofNat B ≤ w i`) together with its transfer to the operator
+    norm — none of which is proved here. The accurate one-line reading is: "every real weight defines a
+    densely-defined, closed, possibly-unbounded self-adjoint multiplier." (The `628f21f` commit message
+    overstated this as "unbounded"; corrected here.) Instantiating `w` with a SOURCED Atlas weight that
+    is genuinely unbounded is the open warrant gate — and the Atlas refinement tower is already proven to
+    degenerate past the `Fin 24` seed (`AtlasAddressing.atlasModulus_degenerate`,
+    `FinAtlasOperator` "no unbounded sourced lift"), so no such weight is available without a new source. -/
 structure MultiplierSelfAdjoint (w : Nat → Real) : Prop where
   dense : ∀ (X : DLimCompletionRaw) (k : Nat), ∃ a : DLimRaw,
     MulDom w (DLimCompletionRaw.of a) ∧
