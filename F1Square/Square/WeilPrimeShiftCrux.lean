@@ -66,6 +66,10 @@ structure NormCtx where
   hS1 : Qle (⟨1, 1⟩ : Q) S
   hband_hi : Qle (add a w) (mul (⟨((X + 1 : Nat) : Int), 1⟩ : Q) a)
   hband_lo : Qle (⟨1, 1⟩ : Q) (mul (mul (⟨((X + 1 : Nat) : Int), 1⟩ : Q) b) a)
+  /-- strict lower support edge `b > 0` (needed by the CC √-normalization collapse) -/
+  hbnpos : 0 < b.num
+  /-- the compact-support fit `1/b ≤ a+w` (the window contains the reflected support) -/
+  hfit : Qle (Qinv b) (add a w)
   hgh : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (g.f y) zero
   hgl : ∀ y, Rle y (ofQ b hbd) → Req (g.f y) zero
 
@@ -97,74 +101,89 @@ theorem acbase_eq_acPt (C : NormCtx) (q : Q) (hq : 0 < q.den) :
     (Req_symm (acPt_pos C.g C.S C.hSd C.hSn C.a C.han C.had C.w C.hw C.hwn q hq))
 
 -- ===========================================================================
--- The `q^{-1/2}` weight, as a total function of the rational point.
---   integer scale  q = ⟨n,1⟩ :  n^{-1/2} = qInvSqrt n
---   recip scale    q = ⟨1,n⟩ :  n^{1/2}  = √n = RsqrtReal (ofQ ⟨n,1⟩)   (= (1/n)^{-1/2})
+-- **The genuine total `q^{-1/2}` weight** `q ↦ √(1/q) = Rsqrt (Qinv q)` — an ACTUAL function of the
+-- rational VALUE, representation-invariant on the positive cone `q.num > 0` (where `x^{-1/2}` is
+-- defined and where the autocorrelation window lives).  Junk `0` off the positive cone (`x^{-1/2}`
+-- has no value there, and the window is never read there).  This is the admissible replacement for
+-- the previous selected-point weight (which gave `1/2` and `2/4` DIFFERENT weights).
+--   integer scale  q = ⟨n,1⟩ :  Rsqrt (Qinv ⟨n,1⟩) = Rsqrt ⟨1,n⟩ = n^{-1/2}     = qInvSqrt n
+--   recip scale    q = ⟨1,n⟩ :  Rsqrt (Qinv ⟨1,n⟩) = Rsqrt ⟨n,1⟩ = √n = (1/n)^{-1/2} = RsqrtReal(ofQ⟨n,1⟩)
 -- ===========================================================================
 
-/-- `1 ≤ i` (Int) upgrades to `1 ≤ i.toNat`. -/
-theorem toNat_ge_one {i : Int} (h : 1 ≤ i) : 1 ≤ i.toNat := by omega
+/-- **`Rsqrt` is `Qeq`-congruent**: equal rational radicands have equal square roots (two-sided
+    `Rsqrt_mono` + `Rle_antisymm`). -/
+theorem Rsqrt_congr {q q' : Q} (hqd : 0 < q.den) (hq'd : 0 < q'.den)
+    (hq : Qle (⟨0, 1⟩ : Q) q) (hq' : Qle (⟨0, 1⟩ : Q) q') (h : Qeq q q') :
+    Req (Rsqrt q hqd hq) (Rsqrt q' hq'd hq') :=
+  Rle_antisymm
+    (Rsqrt_mono hqd hq'd hq hq' (Qeq_le h))
+    (Rsqrt_mono hq'd hqd hq' hq (Qeq_le (Qeq_symm h)))
 
-/-- `1 ≤ d` gives `1 ≤ ofQ ⟨d,1⟩` (mirror of `oneLeSucc` for a general denominator). -/
-theorem oneLe_ofQ_den (d : Nat) (hd : 1 ≤ d) :
-    Rle one (ofQ (⟨(d : Int), 1⟩ : Q) Nat.one_pos) := by
-  have hle : Qle (⟨1, 1⟩ : Q) (⟨(d : Int), 1⟩ : Q) := by
-    simp only [Qle]; push_cast; omega
-  exact Rle_ofQ_ofQ (by decide) Nat.one_pos hle
+/-- **`Qinv` is `Qeq`-congruent** on the positive-numerator cone (`1/q` depends only on `q`'s value). -/
+theorem Qinv_congr {q q' : Q} (hqn : 0 < q.num) (hq'n : 0 < q'.num) (h : Qeq q q') :
+    Qeq (Qinv q) (Qinv q') := by
+  show (q.den : Int) * ((q'.num.toNat : Nat) : Int) = (q'.den : Int) * ((q.num.toNat : Nat) : Int)
+  rw [Int.toNat_of_nonneg (Int.le_of_lt hqn), Int.toNat_of_nonneg (Int.le_of_lt hq'n)]
+  have h' : q.num * (q'.den : Int) = q'.num * (q.den : Int) := h
+  calc (q.den : Int) * q'.num
+      = q'.num * (q.den : Int) := Int.mul_comm _ _
+    _ = q.num * (q'.den : Int) := h'.symm
+    _ = (q'.den : Int) * q.num := Int.mul_comm _ _
 
-/-- The integer-scale weight `n^{-1/2}` (guarded; junk `0` off the integer scales). -/
-def intWeight (i : Int) : Real :=
-  if h : 1 ≤ i then qInvSqrt i.toNat (toNat_ge_one h) else zero
+/-- `0 ≤ Qinv q` (its numerator is `q.den ≥ 0`) — the nonneg radicand certificate. -/
+theorem qinv_num_nonneg (q : Q) : Qle (⟨0, 1⟩ : Q) (Qinv q) := by
+  show (0 : Int) * ((Qinv q).den : Int) ≤ (q.den : Int) * ((1 : Nat) : Int)
+  have : (0 : Int) ≤ (q.den : Int) := Int.ofNat_nonneg _
+  omega
 
-/-- The reciprocal-scale weight `√d = (1/d)^{-1/2}` (guarded; junk `0` when `d = 0`). -/
-def recipWeight (d : Nat) : Real :=
-  if h : 1 ≤ d then RsqrtReal (ofQ (⟨(d : Int), 1⟩ : Q) Nat.one_pos) (oneLe_ofQ_den d h) else zero
-
-/-- **The `q^{-1/2}` weight**: `n^{-1/2}` at integer scales `⟨n,1⟩`, `√d` at reciprocal
-    scales `⟨1,d⟩` (`den ≠ 1`), junk elsewhere (never read). -/
+/-- **THE `q^{-1/2}` WEIGHT**, a genuine total function of the rational point: `√(1/q) = Rsqrt (Qinv q)`
+    on the positive cone `q.num > 0` (where `x^{-1/2}` is defined and where the autocorrelation lives),
+    junk `0` off it.  Representation-invariant (`normWeight_congr`). -/
 def normWeight (q : Q) : Real :=
-  if q.den = 1 then intWeight q.num else recipWeight q.den
+  if h : 0 < q.num then Rsqrt (Qinv q) (Qinv_den_pos h) (qinv_num_nonneg q) else zero
 
-theorem intWeight_ofNat (n : Nat) (hn : 1 ≤ n) :
-    Req (intWeight ((n : Int))) (qInvSqrt n hn) := by
-  have hi : (1 : Int) ≤ (n : Int) := by exact_mod_cast hn
-  show Req (if h : 1 ≤ ((n : Int)) then qInvSqrt ((n : Int)).toNat (toNat_ge_one h) else zero)
-        (qInvSqrt n hn)
-  rw [dif_pos hi]
+/-- On the positive cone the weight is `Rsqrt (Qinv q)` (the guard fires). -/
+theorem normWeight_pos_eq {q : Q} (hqn : 0 < q.num) :
+    Req (normWeight q) (Rsqrt (Qinv q) (Qinv_den_pos hqn) (qinv_num_nonneg q)) := by
+  show Req (if h : 0 < q.num then Rsqrt (Qinv q) (Qinv_den_pos h) (qinv_num_nonneg q) else zero)
+        (Rsqrt (Qinv q) (Qinv_den_pos hqn) (qinv_num_nonneg q))
+  rw [dif_pos hqn]
   exact Req_refl _
 
-theorem recipWeight_val (d : Nat) (hd : 1 ≤ d) :
-    Req (recipWeight d) (RsqrtReal (ofQ (⟨(d : Int), 1⟩ : Q) Nat.one_pos) (oneLe_ofQ_den d hd)) := by
-  show Req (if h : 1 ≤ d then RsqrtReal (ofQ (⟨(d : Int), 1⟩ : Q) Nat.one_pos) (oneLe_ofQ_den d h)
-              else zero)
-        (RsqrtReal (ofQ (⟨(d : Int), 1⟩ : Q) Nat.one_pos) (oneLe_ofQ_den d hd))
-  rw [dif_pos hd]
-  exact Req_refl _
+/-- **THE ADMISSIBILITY / RATIONAL-CONGRUENCE OF THE WEIGHT**: on the positive cone the weight depends
+    only on the rational's VALUE, not its representative — `1/2` and `2/4` both receive `√2`.  This is
+    exactly the invariance whose ABSENCE made the previous `normWeight` selected-point data. -/
+theorem normWeight_congr {q q' : Q} (hqn : 0 < q.num) (hq'n : 0 < q'.num) (h : Qeq q q') :
+    Req (normWeight q) (normWeight q') :=
+  Req_trans (normWeight_pos_eq hqn)
+    (Req_trans
+      (Rsqrt_congr (Qinv_den_pos hqn) (Qinv_den_pos hq'n) (qinv_num_nonneg q) (qinv_num_nonneg q')
+        (Qinv_congr hqn hq'n h))
+      (Req_symm (normWeight_pos_eq hq'n)))
 
-/-- The weight at an integer scale `⟨m+1,1⟩` is `(m+1)^{-1/2} = qInvSqrt (m+1)`. -/
+/-- The weight at an integer scale `⟨m+1,1⟩` is `(m+1)^{-1/2} = qInvSqrt (m+1)`:
+    `√(1/(m+1)) = Rsqrt ⟨1,m+1⟩`, matched to `qInvSqrt` by unique-nonneg-root (`Rsqrt_unique`). -/
 theorem normWeight_hi (m : Nat) :
     Req (normWeight (⟨((m + 1 : Nat) : Int), 1⟩ : Q)) (qInvSqrt (m + 1) (Nat.succ_pos m)) := by
-  show Req (if (⟨((m + 1 : Nat) : Int), 1⟩ : Q).den = 1
-              then intWeight (⟨((m + 1 : Nat) : Int), 1⟩ : Q).num
-              else recipWeight (⟨((m + 1 : Nat) : Int), 1⟩ : Q).den)
-        (qInvSqrt (m + 1) (Nat.succ_pos m))
-  rw [if_pos (rfl : (⟨((m + 1 : Nat) : Int), 1⟩ : Q).den = 1)]
-  exact intWeight_ofNat (m + 1) (Nat.succ_pos m)
+  have hnum : 0 < (⟨((m + 1 : Nat) : Int), 1⟩ : Q).num := by
+    show (0 : Int) < ((m + 1 : Nat) : Int); exact_mod_cast Nat.succ_pos m
+  refine Req_trans (normWeight_pos_eq hnum) ?_
+  refine Req_symm (Rsqrt_unique (Qinv_den_pos hnum) (qinv_num_nonneg _)
+    (qInvSqrt_nonneg (m + 1) (Nat.succ_pos m)) ?_)
+  exact Req_trans (qInvSqrt_sq (m + 1) (Nat.succ_pos m))
+    (Rinv_ofQ Nat.one_pos hnum (ofQn_wit (m + 1) (Nat.succ_pos m)))
 
-/-- The weight at a reciprocal scale `⟨1,m+1⟩` (`m ≥ 1`) is `(m+1)^{1/2} = √(m+1)`. -/
+/-- The weight at a reciprocal scale `⟨1,m+1⟩` is `(m+1)^{1/2} = √(m+1) = RsqrtReal (ofQ ⟨m+1,1⟩)`:
+    `√(m+1) = Rsqrt ⟨m+1,1⟩`, matched to `RsqrtReal` by unique-nonneg-root (`Rsqrt_unique`). -/
 theorem normWeight_lo (m : Nat) (hm : 1 ≤ m) :
     Req (normWeight (⟨1, m + 1⟩ : Q))
         (RsqrtReal (ofQ (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos) (oneLeSucc m)) := by
-  have hne : ¬ ((⟨1, m + 1⟩ : Q).den = 1) := by
-    have hd : (⟨1, m + 1⟩ : Q).den = m + 1 := rfl
-    omega
-  show Req (if (⟨1, m + 1⟩ : Q).den = 1
-              then intWeight (⟨1, m + 1⟩ : Q).num
-              else recipWeight (⟨1, m + 1⟩ : Q).den)
-        (RsqrtReal (ofQ (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos) (oneLeSucc m))
-  rw [if_neg hne]
-  refine Req_trans (recipWeight_val (m + 1) (Nat.succ_pos m)) ?_
-  exact Req_refl _
+  have hnum : 0 < (⟨1, m + 1⟩ : Q).num := by show (0 : Int) < 1; decide
+  refine Req_trans (normWeight_pos_eq hnum) ?_
+  refine Req_symm (Rsqrt_unique (Qinv_den_pos hnum) (qinv_num_nonneg _)
+    (RsqrtReal_nonneg _ (oneLeSucc m)) ?_)
+  refine Req_trans (RsqrtReal_sq (ofQ (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos) (oneLeSucc m)) ?_
+  exact ofQ_congr Nat.one_pos (Qinv_den_pos hnum) (Qeq_refl _)
 
 -- ===========================================================================
 -- (1)  `normAutocorrTest` — the genuine `q^{-1/2}·acPt` `WeilTest`.
@@ -200,6 +219,24 @@ theorem normAutocorr_f_lo (C : NormCtx) (m : Nat) (hm : 1 ≤ m) :
         (Rmul (RsqrtReal (ofQ (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos) (oneLeSucc m))
               (acPtC C (⟨1, m + 1⟩ : Q)))
   exact Rmul_congr (normWeight_lo m hm) (acbase_eq_acPt C (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
+
+/-- The bundled autocorrelation value `(acT C).f` respects rational equality (`Qeq`-congruence):
+    it is `acPt` under `acbase_eq_acPt`, and `acPt` is congruent (`acPt_congr`). -/
+theorem acT_congr (C : NormCtx) {q q' : Q} (hqd : 0 < q.den) (hq'd : 0 < q'.den) (h : Qeq q q') :
+    Req ((acT C).f q) ((acT C).f q') :=
+  Req_trans (acbase_eq_acPt C q hqd)
+    (Req_trans
+      (acPt_congr C.g C.S C.hSd C.hSn C.a C.han C.had C.w C.hw C.hwn q q' hqd hq'd h)
+      (Req_symm (acbase_eq_acPt C q' hq'd)))
+
+/-- **THE NORMALIZED AUTOCORRELATION IS A GENUINE ADMISSIBLE FUNCTION**: its point value
+    `q^{-1/2}·acPt(q)` depends only on the rational's VALUE on the positive cone, not its representative
+    — `normWeight_congr` (weight) times `acT_congr` (autocorrelation).  So `normAutocorrTest` is a real
+    function of the multiplicative point, NOT selected-point data: `1/2` and `2/4` map to the same value. -/
+theorem normAutocorrTest_congr (C : NormCtx) {q q' : Q}
+    (hqn : 0 < q.num) (hq'n : 0 < q'.num) (hqd : 0 < q.den) (hq'd : 0 < q'.den) (h : Qeq q q') :
+    Req ((normAutocorrTest C).f q) ((normAutocorrTest C).f q') :=
+  Rmul_congr (normWeight_congr hqn hq'n h) (acT_congr C hqd hq'd h)
 
 -- ===========================================================================
 -- (2)  The prime-side recovery: `weilPrimePart normAutocorrTest = acNormFold`.
@@ -270,6 +307,31 @@ theorem weilPrimePart_normAutocorr (C : NormCtx) :
         (Rmul (vonMangoldt (m + 1)) (acPlaceSymC C (m + 1) (Nat.succ_pos m) (oneLeSucc m)))
     exact Rmul_congr (Req_refl _) (placeVal_eq_acPlaceSym C m hpos)
 
+/-- The per-place band hypothesis of `acNormFold_collapse`, derived from the cutoff `C.hTS`:
+    for `m < X`, `⟨m+1,1⟩ ≤ ⟨X+1,1⟩ ≤ S`. -/
+theorem normCtx_hnS (C : NormCtx) (m : Nat) (hm : m < C.X) :
+    Qle (⟨((m + 1 : Nat) : Int), 1⟩ : Q) C.S := by
+  have hab : Qle (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (⟨((C.X + 1 : Nat) : Int), 1⟩ : Q) := by
+    show ((m + 1 : Nat) : Int) * ((1 : Nat) : Int) ≤ ((C.X + 1 : Nat) : Int) * ((1 : Nat) : Int)
+    push_cast; omega
+  exact Qle_trans Nat.one_pos hab C.hTS
+
+/-- **★ THE COLLAPSED BURNOL-NORMALIZED PRIME SIDE**: the finite-place Weil prime side of the
+    normalized-autocorrelation test collapses to the genuine `Σ_{m<X} 2·Λ(m+1)·(m+1)^{-1/2}·h(m+1)` —
+    the Burnol √-normalized prime sum `Σ 2Λ(n) n^{-1/2} h(n)`.  Chains the prime-side recovery
+    (`weilPrimePart_normAutocorr`) with the CC symmetric collapse (`acNormFold_collapse`, previously
+    orphaned) using the STRENGTHENED `NormCtx` support data (`hbnpos`, `hfit`) and the derived per-place
+    band (`normCtx_hnS`).  The reflection symmetry consumed is the PROVEN `autocorr_recip_all`. -/
+theorem weilPrimePart_normAutocorr_collapsed (C : NormCtx) :
+    Req (weilPrimePart (normAutocorrTest C))
+        (RsumN (fun m => Rmul (vonMangoldt (m + 1))
+          (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide))
+            (Rmul (qInvSqrt (m + 1) (Nat.succ_pos m))
+              (acPtC C (⟨((m + 1 : Nat) : Int), 1⟩ : Q))))) C.X) :=
+  Req_trans (weilPrimePart_normAutocorr C)
+    (acNormFold_collapse C.g C.S C.hSd C.hSn C.a C.han C.had C.w C.hw C.hwn
+      C.b C.hbd C.hbnpos C.X C.hgh C.hgl C.hfit (fun m hm => normCtx_hnS C m hm))
+
 -- ===========================================================================
 -- (3)  The assembled arch-MINUS-prime functional at the normalized-autocorr slot.
 -- ===========================================================================
@@ -321,15 +383,17 @@ theorem normAutocorr_nonzero (C : NormCtx) (m : Nat)
 -- (5)  Tie to the crux (positivity = RH — NOT proved).
 -- ===========================================================================
 
-/-- **TIE TO THE CRUX (positivity = RH, NEVER proved here).**  Feeding the family
-    `W n = weilValue (normAutocorrSlot Cₙ poles archTail)` (the arch-MINUS-prime functional of
-    the normalized autocorrelation, deliverable 3) into `weil_psd_iff_hodge` shows that PSD
-    of the pairing family is EQUIVALENT to Hodge-index negativity of the induced spectral
-    square (`weilSpectralSquare W`); through the standing chain (Hodge index ⟺ Li
-    non-negativity ⟺ dominance, and `hodgeIndex_iff_RH`) the property `∀ n>0, Rnonneg (W n)`
-    — Weil positivity of the genuine normalized-autocorrelation functional — is RH.  That
-    positivity is the OPEN content and is asserted NOWHERE in this file; here we only expose
-    the equivalence, which is elementary and two-sided. -/
+/-- **THE DEFINITIONAL PSD ⟺ HODGE RESTATEMENT (content-free; NOT an RH tie).**  For an ARBITRARY
+    family `W`, `weilSpectralSquare W` is BUILT from `W`, so `(∀ n>0, Rnonneg (W n)) ⟺ Hodge-index
+    negativity of `weilSpectralSquare W`` is a purely definitional two-sided restatement (`weil_psd_iff_hodge`).
+
+    IMPORTANT — this lemma establishes NOTHING about RH for the constructed normalized-autocorrelation
+    functional.  It does not mention `NormCtx`, `weilValue`, or `genuineSpectralSquare`, and
+    `weilSpectralSquare W` is NOT identified with the genuine spectral/Li square for the constructed
+    `W`.  The genuine RH tie requires the classical explicit-formula identity `W n ≈ genuineLamSeq E.eta n`
+    (constructed arch-MINUS-prime functional = the genuine Li coefficients), which is PROVED NOWHERE.
+    The honest conditional form — assuming exactly that identity as an explicit hypothesis — is
+    `WeilPrimeShiftRH.normAutocorr_positivity_iff_RH`.  Positivity itself (= RH) is asserted nowhere. -/
 theorem normAutocorr_weil_psd_iff_hodge (W : Nat → Real) :
     (∀ n : Nat, 0 < n → Rnonneg (W n)) ↔ SpectralHodgeNeg (weilSpectralSquare W) :=
   weil_psd_iff_hodge W

@@ -49,6 +49,23 @@ theorem acPt_pos (g : L2Test) (S : Q) (hSd : 0 < S.den) (hSn : 0 ≤ S.num)
   rw [dif_pos hq]
   exact Req_refl _
 
+/-- **`acPt` respects rational equality** (`Qeq`-congruence, the rational-representation invariance /
+    admissibility property): the autocorrelation point value depends only on the VALUE of the rational,
+    not on its chosen representative.  It is the `L2Test.hfc` congruence field of the underlying
+    `autocorrL2` pulled back along `ofQ_congr`.  So `acPt` is a genuine function of the rational point,
+    not selected-point data — `1/2` and `2/4` receive the same value. -/
+theorem acPt_congr (g : L2Test) (S : Q) (hSd : 0 < S.den) (hSn : 0 ≤ S.num)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
+    (q q' : Q) (hqd : 0 < q.den) (hq'd : 0 < q'.den) (h : Qeq q q') :
+    Req (acPt g S hSd hSn a han had w hw hwn q)
+        (acPt g S hSd hSn a han had w hw hwn q') :=
+  Req_trans (acPt_pos g S hSd hSn a han had w hw hwn q hqd)
+    (Req_trans
+      ((autocorrL2 g S hSd hSn a han had a w had hw hwn).hfc (ofQ q hqd) (ofQ q' hq'd)
+        (ofQ_congr hqd hq'd h))
+      (Req_symm (acPt_pos g S hSd hSn a han had w hw hwn q' hq'd)))
+
 -- ===========================================================================
 -- (a)  The autocorrelation reciprocal self-duality for ALL n ≥ 1.   [LEG 3]
 -- ===========================================================================

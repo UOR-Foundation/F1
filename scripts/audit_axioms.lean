@@ -9008,6 +9008,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.autocorr_recip
 -- WeilPrimeShift/Sonine: the CC √-normalization on the real autocorr (proven hsym), analytic content.
 #print axioms Square.acPt_pos
+#print axioms Square.acPt_congr
 #print axioms Square.autocorr_recip_all
 #print axioms Square.ac_CC_normalization
 #print axioms Square.acPlaceSym_collapse
@@ -9016,17 +9017,25 @@ open UOR.Bridge.F1Square
 -- WeilPrimeShift/Crux: the GENUINE connection — normalized-autocorr WeilTest, weilPrimePart = acNormFold
 -- (non-Gram, no vFrom), and the arch-MINUS-prime weilValue at that slot; positivity = RH left open.
 #print axioms Square.acbase_eq_acPt
-#print axioms Square.toNat_ge_one
-#print axioms Square.oneLe_ofQ_den
-#print axioms Square.intWeight_ofNat
-#print axioms Square.recipWeight_val
+#print axioms Square.Rsqrt_congr
+#print axioms Square.Qinv_congr
+#print axioms Square.qinv_num_nonneg
+#print axioms Square.normWeight_pos_eq
+#print axioms Square.normWeight_congr
 #print axioms Square.normWeight_hi
 #print axioms Square.normWeight_lo
 #print axioms Square.normAutocorr_f_hi
 #print axioms Square.normAutocorr_f_lo
+#print axioms Square.acT_congr
+#print axioms Square.normAutocorrTest_congr
 #print axioms Square.recip_bridge
 #print axioms Square.placeVal_eq_acPlaceSym
 #print axioms Square.weilPrimePart_normAutocorr
+#print axioms Square.normCtx_hnS
+#print axioms Square.weilPrimePart_normAutocorr_collapsed
 #print axioms Square.weilValue_normAutocorr
 #print axioms Square.normAutocorr_nonzero
 #print axioms Square.normAutocorr_weil_psd_iff_hodge
+-- WeilPrimeShift/RH: the HONEST RH reduction — positivity of the constructed functional ⟺ RH GIVEN the
+-- classical explicit-formula identity W ≈ genuineLamSeq (explicit hypothesis; positivity & identity open).
+#print axioms Square.normAutocorr_positivity_iff_RH
