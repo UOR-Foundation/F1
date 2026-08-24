@@ -9039,3 +9039,13 @@ open UOR.Bridge.F1Square
 -- WeilPrimeShift/RH: the HONEST RH reduction — positivity of the constructed functional ⟺ RH GIVEN the
 -- classical explicit-formula identity W ≈ genuineLamSeq (explicit hypothesis; positivity & identity open).
 #print axioms Square.normAutocorr_positivity_iff_RH
+-- WeilPrimeShift/Operator: the direct point-value operator route — N(q) Haar-core normalized dilation,
+-- the correctly-weighted adjoint law N(1/n)=n·N(n) (proved on the actual autocorr), and primePlaceOp
+-- whose finite quadratic readback = weilPrimePart_normAutocorr_collapsed. No primeGram/vFrom/vHat, no PSD.
+#print axioms Square.Nop_hi
+#print axioms Square.Nop_lo
+#print axioms Square.Nop_adjoint
+#print axioms Square.Nop_adjoint_ac
+#print axioms Square.primePlaceOp_eq_weilPrimeTerm
+#print axioms Square.primePlaceOp_readback
+#print axioms Square.primePlaceOp_readback_collapsed
