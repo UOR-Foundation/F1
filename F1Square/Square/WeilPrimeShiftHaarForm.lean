@@ -443,9 +443,11 @@ theorem HForm_recip_core (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.d
   show Req (haarIntegral PnF a han had a w had hw hwn) (haarIntegral P1nF a han had a w had hw hwn)
   exact Req_trans stepA (Req_trans stepB (Req_trans stepC (Req_symm stepD)))
 
-/-- **The two-test reciprocal / adjoint law** `H_n(f,g) = H_{1/n}(g,f)` on independent
-    compactly-supported tests (`n ≥ 2` — the range of the prime powers, `Λ(n) ≠ 0`; `n = 1` is
-    vacuous in the fold since `Λ(1) = 0`).  Alias of `HForm_recip_core`. -/
+/-- **The two-test reciprocal / adjoint law (strict-core regime)** `H_n(f,g) = H_{1/n}(g,f)` on
+    independent compactly-supported tests, for `n ≥ 2` in the overlapping-core regime `n·a < a+w`
+    (`hcore`).  The all-scale version WITHOUT `hcore` is `HForm_recip_all`.  (In the fold only places with
+    `Λ(n) ≠ 0` contribute, and `Λ(n) ≠ 0 ⟹ n ≥ 2`; `n = 1` is vacuous since `Λ(1) = 0`.)  Alias of
+    `HForm_recip_core`. -/
 theorem HForm_recip (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
     (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
     (b : Q) (hbd : 0 < b.den) (hbn : 0 < b.num)
@@ -457,6 +459,110 @@ theorem HForm_recip (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
     Req (HForm f g (⟨(n : Int), 1⟩ : Q) (Int.ofNat_pos.mpr hn0) Nat.one_pos a han had w hw hwn)
         (HForm g f (⟨1, n⟩ : Q) (show (0 : Int) < 1 by decide) hn0 a han had w hw hwn) :=
   HForm_recip_core f g a han had w hw hwn b hbd hbn n hn0 hn2 hgh_f hgl_g hfit hcore
+
+-- ===========================================================================
+-- The DEGENERATE regime (a+w ≤ n·a): both two-test forms vanish, giving all-scale reciprocity.
+-- ===========================================================================
+
+/-- **Degenerate high-side pointwise vanishing** (`qp ≤ n·a`): the `H_n(f,g)` integrand
+    `(reflect(dilate_n f))·(reflect g)` vanishes at `ofQ qp` — its first factor is `f(n/qp)` with
+    `n/qp ≥ 1/a`, so `hgh_f` fires. -/
+theorem Pn_pt_zero_degen (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (n : Nat) (hn0 : 0 < n)
+    (hgh_f : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (f.f y) zero)
+    (qp : Q) (hqpd : 0 < qp.den) (hqpn : 0 < qp.num) (haqp : Qle a qp)
+    (hqp_le_na : Qle qp (mul (⟨(n : Int), 1⟩ : Q) a)) :
+    Req ((productTest (reflectTest a han had
+           (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0 : Int) < (n : Int); exact_mod_cast hn0) Nat.one_pos f))
+           (reflectTest a han had g)).f (ofQ qp hqpd)) zero := by
+  have hna_num : 0 < (mul (⟨(n : Int), 1⟩ : Q) a).num :=
+    Int.mul_pos (by show (0 : Int) < (n : Int); exact_mod_cast hn0) han
+  have e2 := Ps_ofQ2 f g a han had (⟨(n : Int), 1⟩ : Q)
+    (by show (0 : Int) < (n : Int); exact_mod_cast hn0) Nat.one_pos qp hqpd hqpn haqp
+  have hfle : Qle (Qinv a) (mul (⟨(n : Int), 1⟩ : Q) (Qinv qp)) := by
+    have s1 : Qle (Qinv (mul (⟨(n : Int), 1⟩ : Q) a)) (Qinv qp) :=
+      Qinv_antitone hna_num hqpn hqp_le_na
+    have s2 : Qle (mul (⟨(n : Int), 1⟩ : Q) (Qinv (mul (⟨(n : Int), 1⟩ : Q) a)))
+                  (mul (⟨(n : Int), 1⟩ : Q) (Qinv qp)) :=
+      Qmul_le_mul_left (by show (0 : Int) ≤ (n : Int); exact Int.ofNat_nonneg n) s1
+    exact Qle_trans (Qmul_den_pos Nat.one_pos (Qinv_den_pos hna_num))
+      (Qeq_le (Qeq_symm (mul_n_Qinv_mul_n n a han))) s2
+  have hfz : Req (f.f (ofQ (mul (⟨(n : Int), 1⟩ : Q) (Qinv qp))
+        (Qmul_den_pos Nat.one_pos (Qinv_den_pos hqpn)))) zero :=
+    hgh_f _ (Rle_ofQ_ofQ (Qinv_den_pos han) (Qmul_den_pos Nat.one_pos (Qinv_den_pos hqpn)) hfle)
+  refine Req_trans e2 ?_
+  exact Req_trans (Rmul_congr hfz (Req_refl _)) (Req_trans (Rmul_comm zero _) (Rmul_zero _))
+
+/-- **The `H_n(f,g)` form vanishes on the window when `a+w ≤ n·a`** — every sample `qp ≤ a+w ≤ n·a`, so
+    `Pn_pt_zero_degen` fires. -/
+theorem Pn_window_vanish_degen (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (n : Nat) (hn0 : 0 < n)
+    (hgh_f : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (f.f y) zero)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
+    (Hdeg : Qle (add a w) (mul (⟨(n : Int), 1⟩ : Q) a)) :
+    Req (haarIntegral (productTest (reflectTest a han had
+           (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0 : Int) < (n : Int); exact_mod_cast hn0) Nat.one_pos f))
+           (reflectTest a han had g)) a han had a w had hw hwn) zero := by
+  refine haarIntegral_window_vanish _ a han had a w had hw hwn ?_
+  intro N i hi
+  have hqid : (0 : Nat) < N + 1 := Nat.succ_pos N
+  have hmul_nn : (0 : Int) ≤ (mul w (⟨(i : Int), N + 1⟩ : Q)).num := by
+    show (0 : Int) ≤ w.num * (i : Int); exact Int.mul_nonneg hwn (Int.ofNat_nonneg i)
+  have hqpd : 0 < (add a (mul w (⟨(i : Int), N + 1⟩ : Q))).den :=
+    add_den_pos had (Qmul_den_pos hw hqid)
+  have hlo_qp : Qle a (add a (mul w (⟨(i : Int), N + 1⟩ : Q))) := Qle_self_add hmul_nn
+  have hqpn : 0 < (add a (mul w (⟨(i : Int), N + 1⟩ : Q))).num := qnum_pos_of_le han hqpd hlo_qp
+  have step1 : Req (affineMap a w had hw (ofQ (⟨(i : Int), N + 1⟩ : Q) hqid))
+      (ofQ (add a (mul w (⟨(i : Int), N + 1⟩ : Q))) hqpd) :=
+    Req_trans (Radd_congr (Req_refl (ofQ a had)) (Rmul_ofQ_ofQ hw hqid))
+      (Radd_ofQ_ofQ had (Qmul_den_pos hw hqid))
+  have hqi_le1 : Qle (⟨(i : Int), N + 1⟩ : Q) (⟨1, 1⟩ : Q) := by
+    simp only [Qle]; push_cast; omega
+  have hmul_le : Qle (mul w (⟨(i : Int), N + 1⟩ : Q)) w :=
+    Qle_trans (Qmul_den_pos hw (by decide)) (Qmul_le_mul_left hwn hqi_le1)
+      (Qeq_le (by simp only [Qeq, mul]; push_cast; ring_uor))
+  have hqp_le_na : Qle (add a (mul w (⟨(i : Int), N + 1⟩ : Q))) (mul (⟨(n : Int), 1⟩ : Q) a) :=
+    Qle_trans (add_den_pos had hw) (Qadd_le_add (Qle_refl a) hmul_le) Hdeg
+  exact Req_trans
+    ((productTest (reflectTest a han had
+        (dilateTest (⟨(n : Int), 1⟩ : Q) (by show (0 : Int) < (n : Int); exact_mod_cast hn0) Nat.one_pos f))
+        (reflectTest a han had g)).hfc _ _ step1)
+    (Pn_pt_zero_degen f g a han had n hn0 hgh_f (add a (mul w (⟨(i : Int), N + 1⟩ : Q)))
+      hqpd hqpn hlo_qp hqp_le_na)
+
+/-- **★ ALL-SCALE TWO-TEST RECIPROCITY** `H_n(f,g) = H_{1/n}(g,f)` for EVERY place `n ≥ 2` — NO overlap
+    (`hcore`) hypothesis.  Splits on `Qle_or_Qlt (a+w) (n·a)`: the strict-core regime is
+    `HForm_recip_core`; the degenerate regime `a+w ≤ n·a` makes BOTH sides `0` — `H_n(f,g)` by the
+    high-support vanishing of `f` (`Pn_window_vanish_degen`), and `H_{1/n}(g,f)` by the low-support
+    vanishing of `g` together with `hfit` (`right_I1n_window_vanish2`, floor `a`, `1 ≤ n·b·a`). -/
+theorem HForm_recip_all (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
+    (b : Q) (hbd : 0 < b.den) (hbn : 0 < b.num)
+    (n : Nat) (hn0 : 0 < n) (hn2 : 2 ≤ n)
+    (hgh_f : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (f.f y) zero)
+    (hgl_g : ∀ y, Rle y (ofQ b hbd) → Req (g.f y) zero)
+    (hfit : Qle (Qinv b) (add a w)) :
+    Req (HForm f g (⟨(n : Int), 1⟩ : Q) (Int.ofNat_pos.mpr hn0) Nat.one_pos a han had w hw hwn)
+        (HForm g f (⟨1, n⟩ : Q) (show (0 : Int) < 1 by decide) hn0 a han had w hw hwn) := by
+  rcases Qle_or_Qlt (add a w) (mul (⟨(n : Int), 1⟩ : Q) a) with hdeg | hcore
+  · -- degenerate: both sides are 0
+    have hL : Req (HForm f g (⟨(n : Int), 1⟩ : Q) (Int.ofNat_pos.mpr hn0) Nat.one_pos a han had w hw hwn)
+        zero := Pn_window_vanish_degen f g a han had n hn0 hgh_f w hw hwn hdeg
+    have QC2 : Qle (⟨1, 1⟩ : Q) (mul b (add a w)) :=
+      Qle_trans (Qmul_den_pos hbd (Qinv_den_pos hbn)) (Qeq_le (Qeq_symm (Qmul_Qinv hbn)))
+        (Qmul_le_mul_left (Int.le_of_lt hbn) hfit)
+    have step : Qle (mul b (add a w)) (mul (mul (⟨(n : Int), 1⟩ : Q) b) a) :=
+      Qle_trans (Qmul_den_pos hbd (Qmul_den_pos Nat.one_pos had))
+        (Qmul_le_mul_left (Int.le_of_lt hbn) hdeg)
+        (Qeq_le (by simp only [Qeq, mul]; push_cast; ring_uor))
+    have Hbig : Qle (⟨1, 1⟩ : Q) (mul (mul (⟨(n : Int), 1⟩ : Q) b) a) :=
+      Qle_trans (Qmul_den_pos hbd (add_den_pos had hw)) QC2 step
+    have hR : Req (HForm g f (⟨1, n⟩ : Q) (show (0 : Int) < 1 by decide) hn0 a han had w hw hwn)
+        zero :=
+      right_I1n_window_vanish2 f g a han had n hn0 b hbd hbn hgl_g a w had hw hwn han
+        (Qle_refl a) Hbig
+    exact Req_trans hL (Req_symm hR)
+  · exact HForm_recip_core f g a han had w hw hwn b hbd hbn n hn0 hn2 hgh_f hgl_g hfit hcore
 
 -- ===========================================================================
 -- The q^{-1/2} normalization B_q(f,g) = q^{-1/2}·H_q(f,g) and its adjoint law.
@@ -499,17 +605,16 @@ def BForm (f g : L2Test) (q : Q) (hqn : 0 < q.num) (hqd : 0 < q.den)
     (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) : Real :=
   Rmul (normWeight q) (HForm f g q hqn hqd a han had w hw hwn)
 
-/-- **★ THE CORRECT ADJOINT LAW** `B_{m+1}(f,g) = (m+1)^{-1}·B_{1/(m+1)}(g,f)` (i.e. `N_q* = q^{-1}N_{1/q}`).
-    From `HForm_recip` (`H_{m+1}(f,g) = H_{1/(m+1)}(g,f)`) and the weight identity
-    `(m+1)^{-1/2} = (m+1)^{-1}·√(m+1)`.  No PSD claimed. -/
-theorem BForm_adjoint (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+/-- **★ THE CORRECT ADJOINT LAW (all-scale, no overlap hypothesis)** `B_{m+1}(f,g) = (m+1)^{-1}·B_{1/(m+1)}(g,f)`
+    (i.e. `N_q* = q^{-1}N_{1/q}`).  From `HForm_recip_all` (`H_{m+1}(f,g) = H_{1/(m+1)}(g,f)`, EVERY place)
+    and the weight identity `(m+1)^{-1/2} = (m+1)^{-1}·√(m+1)`.  No `hcore`; no PSD. -/
+theorem BForm_adjoint_all (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
     (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
     (b : Q) (hbd : 0 < b.den) (hbn : 0 < b.num)
     (m : Nat) (hm : 1 ≤ m)
     (hgh_f : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (f.f y) zero)
     (hgl_g : ∀ y, Rle y (ofQ b hbd) → Req (g.f y) zero)
-    (hfit : Qle (Qinv b) (add a w))
-    (hcore : Qlt (mul (⟨((m + 1 : Nat) : Int), 1⟩ : Q) a) (add a w)) :
+    (hfit : Qle (Qinv b) (add a w)) :
     Req (BForm f g (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (Int.ofNat_pos.mpr (Nat.succ_pos m)) Nat.one_pos
           a han had w hw hwn)
         (Rmul (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
@@ -523,21 +628,20 @@ theorem BForm_adjoint (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
                 (HForm g f (⟨1, m + 1⟩ : Q) (show (0 : Int) < 1 by decide) (Nat.succ_pos m)
                   a han had w hw hwn)))
   refine Req_trans (Rmul_congr (Req_refl _)
-      (HForm_recip f g a han had w hw hwn b hbd hbn (m + 1) (Nat.succ_pos m) (by omega)
-        hgh_f hgl_g hfit hcore)) ?_
+      (HForm_recip_all f g a han had w hw hwn b hbd hbn (m + 1) (Nat.succ_pos m) (by omega)
+        hgh_f hgl_g hfit)) ?_
   refine Req_trans (Rmul_congr (normWeight_recip_hi m hm) (Req_refl _)) ?_
   exact Rmul_assoc _ _ _
 
-/-- **The swapped-scale adjoint law** `B_{1/(m+1)}(f,g) = (m+1)·B_{m+1}(g,f)`.  From `HForm_recip` in the
-    other order (`H_{1/(m+1)}(f,g) = H_{m+1}(g,f)`) and `√(m+1) = (m+1)·(m+1)^{-1/2}`. -/
-theorem BForm_adjoint_swap (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+/-- **The swapped-scale adjoint law (all-scale)** `B_{1/(m+1)}(f,g) = (m+1)·B_{m+1}(g,f)`.  From
+    `HForm_recip_all` in the other order (`H_{1/(m+1)}(f,g) = H_{m+1}(g,f)`) and `√(m+1) = (m+1)·(m+1)^{-1/2}`. -/
+theorem BForm_adjoint_swap_all (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
     (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
     (b : Q) (hbd : 0 < b.den) (hbn : 0 < b.num)
     (m : Nat) (hm : 1 ≤ m)
     (hgh_g : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (g.f y) zero)
     (hgl_f : ∀ y, Rle y (ofQ b hbd) → Req (f.f y) zero)
-    (hfit : Qle (Qinv b) (add a w))
-    (hcore : Qlt (mul (⟨((m + 1 : Nat) : Int), 1⟩ : Q) a) (add a w)) :
+    (hfit : Qle (Qinv b) (add a w)) :
     Req (BForm f g (⟨1, m + 1⟩ : Q) (show (0 : Int) < 1 by decide) (Nat.succ_pos m)
           a han had w hw hwn)
         (Rmul (ofQ (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos)
@@ -551,8 +655,8 @@ theorem BForm_adjoint_swap (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a
                 (HForm g f (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (Int.ofNat_pos.mpr (Nat.succ_pos m)) Nat.one_pos
                   a han had w hw hwn)))
   refine Req_trans (Rmul_congr (Req_refl _)
-      (Req_symm (HForm_recip g f a han had w hw hwn b hbd hbn (m + 1) (Nat.succ_pos m) (by omega)
-        hgh_g hgl_f hfit hcore))) ?_
+      (Req_symm (HForm_recip_all g f a han had w hw hwn b hbd hbn (m + 1) (Nat.succ_pos m) (by omega)
+        hgh_g hgl_f hfit))) ?_
   refine Req_trans (Rmul_congr (normWeight_recip_lo m hm) (Req_refl _)) ?_
   exact Rmul_assoc _ _ _
 
@@ -572,18 +676,18 @@ def PForm (m : Nat) (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
                   a han had w hw hwn)))
 
 set_option maxHeartbeats 1000000 in
-/-- **★ (Requirement 1) THE TWO-INPUT SYMMETRY** `P_m(f,g) = P_m(g,f)` on independent compactly-supported
-    tests, from the adjoint law in both scale directions (`BForm_adjoint`, `BForm_adjoint_swap`) and
-    `Radd_comm`.  `m = 0` (`Λ(1) = 0`) is vacuous.  NOT derived from any diagonal assumption; NOT PSD. -/
-theorem PForm_symm (m : Nat) (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+/-- **★ (Requirement 1) THE TWO-INPUT SYMMETRY (all-scale, no overlap hypothesis)** `P_m(f,g) = P_m(g,f)`
+    on independent compactly-supported tests, from the all-scale adjoint law in both scale directions
+    (`BForm_adjoint_all`, `BForm_adjoint_swap_all`) and `Radd_comm`.  `m = 0` (`Λ(1) = 0`) is vacuous.
+    NO `hcore`; NOT derived from any diagonal assumption; NOT PSD. -/
+theorem PForm_symm_all (m : Nat) (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
     (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
     (b : Q) (hbd : 0 < b.den) (hbn : 0 < b.num)
     (hgh_f : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (f.f y) zero)
     (hgl_f : ∀ y, Rle y (ofQ b hbd) → Req (f.f y) zero)
     (hgh_g : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (g.f y) zero)
     (hgl_g : ∀ y, Rle y (ofQ b hbd) → Req (g.f y) zero)
-    (hfit : Qle (Qinv b) (add a w))
-    (hcore : Qlt (mul (⟨((m + 1 : Nat) : Int), 1⟩ : Q) a) (add a w)) :
+    (hfit : Qle (Qinv b) (add a w)) :
     Req (PForm m f g a han had w hw hwn) (PForm m g f a han had w hw hwn) := by
   rcases Nat.eq_zero_or_pos m with h0 | hpos
   · subst h0
@@ -601,14 +705,14 @@ theorem PForm_symm (m : Nat) (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 <
                     (Rmul (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
                       (BForm g f (⟨1, m + 1⟩ : Q) (show (0 : Int) < 1 by decide) (Nat.succ_pos m)
                         a han had w hw hwn)) :=
-      BForm_adjoint f g a han had w hw hwn b hbd hbn m hm hgh_f hgl_g hfit hcore
+      BForm_adjoint_all f g a han had w hw hwn b hbd hbn m hm hgh_f hgl_g hfit
     have adj2 : Req (Rmul (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
                       (BForm f g (⟨1, m + 1⟩ : Q) (show (0 : Int) < 1 by decide) (Nat.succ_pos m)
                         a han had w hw hwn))
                     (BForm g f (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (Int.ofNat_pos.mpr (Nat.succ_pos m))
                       Nat.one_pos a han had w hw hwn) := by
       refine Req_trans (Rmul_congr (Req_refl _)
-        (BForm_adjoint_swap f g a han had w hw hwn b hbd hbn m hm hgh_g hgl_f hfit hcore)) ?_
+        (BForm_adjoint_swap_all f g a han had w hw hwn b hbd hbn m hm hgh_g hgl_f hfit)) ?_
       refine Req_trans (Req_symm (Rmul_assoc (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
           (ofQ (⟨((m + 1 : Nat) : Int), 1⟩ : Q) Nat.one_pos)
           (BForm g f (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (Int.ofNat_pos.mpr (Nat.succ_pos m)) Nat.one_pos
@@ -617,8 +721,33 @@ theorem PForm_symm (m : Nat) (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 <
     exact Req_trans (Radd_congr adj1 adj2) (Radd_comm _ _)
 
 -- ===========================================================================
--- The diagonal readback: P_m(g,g) IS the existing primePlaceOp diagonal, and the
--- finite fold IS primePlaceOp_readback_collapsed.
+-- The off-diagonal finite fold PrimeForm_X(f,g) = Σ_{m<X} P_m(f,g), symmetric over the FULL cutoff.
+-- ===========================================================================
+
+/-- **The off-diagonal finite prime fold** `PrimeForm_X(f,g) = Σ_{m<X} P_m(f,g)` over the complete
+    cutoff `X` — a genuine two-input finite fold on independent tests. -/
+def PrimeForm (X : Nat) (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) : Real :=
+  RsumN (fun m => PForm m f g a han had w hw hwn) X
+
+/-- **★ (Requirement 3) SYMMETRY OF THE FULL OFF-DIAGONAL FOLD** `PrimeForm_X(f,g) = PrimeForm_X(g,f)`
+    over the COMPLETE cutoff `X`, with NO overlap hypothesis — `RsumN_congr` over the all-scale
+    per-place symmetry `PForm_symm_all` (each place, including `m = 0` via `Λ(1) = 0`). -/
+theorem PrimeForm_symm (X : Nat) (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num)
+    (b : Q) (hbd : 0 < b.den) (hbn : 0 < b.num)
+    (hgh_f : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (f.f y) zero)
+    (hgl_f : ∀ y, Rle y (ofQ b hbd) → Req (f.f y) zero)
+    (hgh_g : ∀ y, Rle (ofQ (Qinv a) (Qinv_den_pos han)) y → Req (g.f y) zero)
+    (hgl_g : ∀ y, Rle y (ofQ b hbd) → Req (g.f y) zero)
+    (hfit : Qle (Qinv b) (add a w)) :
+    Req (PrimeForm X f g a han had w hw hwn) (PrimeForm X g f a han had w hw hwn) :=
+  RsumN_congr X (fun m _ =>
+    PForm_symm_all m f g a han had w hw hwn b hbd hbn hgh_f hgl_f hgh_g hgl_g hfit)
+
+-- ===========================================================================
+-- The diagonal readback: PrimeForm_X(g,g) IS both weilPrimePart(normAutocorrTest) and the
+-- collapsed Burnol sum (the existing primePlaceOp readbacks).
 -- ===========================================================================
 
 /-- **The diagonal Haar form is the autocorrelation point value**: `H_q(C.g,C.g) = autocorr C.g q ≈ acPtC C q`
@@ -655,12 +784,19 @@ theorem PForm_diag (C : NormCtx) (m : Nat) (hmS : Qle (⟨((m + 1 : Nat) : Int),
           (HForm_diag_acPtC C (⟨1, m + 1⟩ : Q) (show (0 : Int) < 1 by decide) (Nat.succ_pos m)
             hq0lo hqSlo))))
 
-/-- **★ (Requirement 3) THE FINITE DIAGONAL FOLD IS `primePlaceOp_readback_collapsed`**: the fold of the
-    two-test per-place form on the diagonal over places `1..X` equals the collapsed Burnol-normalized
-    prime sum `Σ_{m<X} 2·Λ(m+1)·(m+1)^{-1/2}·h(m+1)`.  `RsumN_congr` over `PForm_diag` (band from
-    `normCtx_hnS`) then `primePlaceOp_readback_collapsed`. -/
-theorem PForm_readback_collapsed (C : NormCtx) :
-    Req (RsumN (fun m => PForm m C.g C.g C.a C.han C.had C.w C.hw C.hwn) C.X)
+/-- **★ (Requirement 6a) THE DIAGONAL FOLD IS `weilPrimePart (normAutocorrTest C)`**: `PrimeForm_X(C.g,C.g)`
+    equals the finite-place Weil prime side of the normalized-autocorrelation test.  `RsumN_congr` over
+    `PForm_diag` (band from `normCtx_hnS`) then `primePlaceOp_readback`. -/
+theorem PrimeForm_diag_weilPrimePart (C : NormCtx) :
+    Req (PrimeForm C.X C.g C.g C.a C.han C.had C.w C.hw C.hwn)
+        (weilPrimePart (normAutocorrTest C)) :=
+  Req_trans (RsumN_congr C.X (fun m hm => PForm_diag C m (normCtx_hnS C m hm)))
+    (primePlaceOp_readback C)
+
+/-- **★ (Requirement 6b) THE DIAGONAL FOLD IS THE COLLAPSED BURNOL SUM**: `PrimeForm_X(C.g,C.g)` equals
+    `Σ_{m<X} 2·Λ(m+1)·(m+1)^{-1/2}·h(m+1)` (`primePlaceOp_readback_collapsed`). -/
+theorem PrimeForm_diag_collapsed (C : NormCtx) :
+    Req (PrimeForm C.X C.g C.g C.a C.han C.had C.w C.hw C.hwn)
         (RsumN (fun m => Rmul (vonMangoldt (m + 1))
           (Rmul (ofQ (⟨2, 1⟩ : Q) (by decide))
             (Rmul (qInvSqrt (m + 1) (Nat.succ_pos m))
