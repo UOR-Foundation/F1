@@ -20,6 +20,11 @@ WHAT IS BUILT:
     (`FTest_high_vanish`) — the decay the improper integrals consume.
   • `FTest_add_left/right` — BIADDITIVITY of the values in each test argument.
 
+CAVEAT (honest): the weight `invSqrtTest` is clamped below `1` (it equals `1` there, NOT `x^{-1/2}`), so
+`FTest` is the HIGH-SIDE object on `x ≥ 1` only — every integral of the closed form lives there.  The
+reciprocal-transpose law `F_{f,g}(1/x) = x·F_{g,f}(x)` is NOT claimed and is generally FALSE for this
+bundled object; a two-sided positive-band correlation (separate low-side object) is required for it.
+
 NO `primeGram`/`vFrom`/`vHat`, NO PSD, NO RH input.  Pure Lean 4 core, no Mathlib, choice-free.
 -/
 
@@ -381,5 +386,8 @@ theorem FTest_add_right (B : Q) (hBd : 0 < B.den) (hB1 : Qle (⟨1, 1⟩ : Q) B)
   refine Req_trans (Rmul_congr (Req_refl _)
     (HcrossTest_add_right f g₁ g₂ S hSd hSn a han had w hw hwn x)) ?_
   exact Rmul_distrib _ _ _
+
+-- Seal the deep definitional towers (elaborator whnf economy; in-file defeq uses are above).
+attribute [irreducible] HcrossTest FTest
 
 end UOR.Bridge.F1Square.Square

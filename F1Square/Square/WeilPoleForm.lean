@@ -1,25 +1,30 @@
 /-
-F1 square — **the genuine two-input pole form** `PoleForm(f,g) = ∫₁^∞ (F_{f,g}+F_{g,f})(1+x⁻¹) dx`
+F1 square — **the two-input pole integral** `PoleForm(f,g) = ∫₁^∞ (F_{f,g}+F_{g,f})(1+x⁻¹) dx`
 (`WeilPoleForm.lean`) — a CONSTRUCTED improper integral (`improperIntegral1`), not a parameter.
 
-`f̃(1)+f̃(0) = ∫₀^∞ F(x)dx + ∫₀^∞ F(x)dx/x` folds to `[1,∞)` through the reciprocal self-duality
-`F(1/x) = x·F^t(x)`: substituting `x ↦ 1/x` on `(0,1]` turns each Mellin pole integral into its
-mirrored piece, and the sum of all four pieces is `∫₁^∞ (F_{f,g}(x)+F_{g,f}(x))·(1+1/x) dx` — the
-two-input pole form.  Here it is BUILT as a certified `improperIntegral1` of the bundled integrand
-`(FTest f g + FTest g f)·(1 + 1/max(x,1))` (all clamps inert on `[1,∞)`), with the decay hypothesis
-DISCHARGED from the compact support of the cross-correlation: blocks past the support bound `Bd`
-vanish identically (`FTest_high_vanish` at the rational block samples), and the finitely many earlier
-blocks are bounded by width·sup (`riemannIntegralI_abs_le_window`) under a computed rational `K`.
+STATUS (honest). This is the CANDIDATE FOLDED INTEGRAL: classically the pole terms
+`f̃(1)+f̃(0) = ∫₀^∞ F dx + ∫₀^∞ F dx/x` fold to `[1,∞)` through the reciprocal self-duality
+`F(1/x) = x·F^t(x)`, giving exactly the integrand `(F_{f,g}+F_{g,f})(1+1/x)` above.  That fold is
+NOT proved here, and it CANNOT be proved for the bundled high-side object `FTest`: its weight
+`invSqrtF` is clamped below `1` (it equals `1` there, not `x^{-1/2}`), so `FTest` is the HIGH-SIDE
+`x ≥ 1` object only.  Identifying `PoleForm` with the classical one-input pole quantity (a `PoleForm_diag`
+against an independently defined pole term) requires a two-sided positive-band correlation and the
+Mellin low/high folding identity — NOT built here.
 
-THE TYPED DOMAIN (the maintainer's "typed-domain bridge", folded in here):
-  • `ClosedGeom` — ONE fixed nondegenerate geometry: window `[a, a+w]`, scale band `[0,S]`, weight
-    band `[1,B]` with scale witness `N`, support bound `Bd` with the closure `a+w ≤ Bd·a` and the
-    adequacy `Bd ≤ S`, `Bd ≤ B` — chosen INDEPENDENTLY of any tested vector.
-  • `CoreTest G f` — `f` compactly supported in `[G.b, 1/G.a]` RELATIVE to the fixed geometry.
-  • `FTestG G f g` — the normalized cross-correlation over `G`.
+WHAT IS BUILT: the integrand `(FTest f g + FTest g f)·(1 + 1/max(x,1))` bundled (clamps inert on
+`[1,∞)`), and the improper integral with the decay hypothesis DISCHARGED from compact support: blocks
+past the support bound `Bd` vanish identically (`FTest_high_vanish` at the rational block samples), the
+finitely many earlier blocks are width·sup bounded (`riemannIntegralI_abs_le_window`) under a computed
+rational `K`.
 
-`PoleForm_symm` (two-input symmetry) and `PoleForm_add_left/right` (biadditivity) are proved by
-termwise integrand congruence/addition lifted through `genSum` and the Bishop limit.
+THE TYPED DOMAIN (folded in): `ClosedGeom` — one fixed nondegenerate geometry (window `[a,a+w]`,
+scale band `[0,S]`, weight band `[1,B]` with witness `N`, support bound `Bd` with closure `a+w ≤ Bd·a`
+and adequacy `Bd ≤ S`, `Bd ≤ B`); `CoreTest G f` — `f` supported in `[G.b, 1/G.a]` relative to `G`.
+`ClosedWeilBilin.lean` derives the geometry CANONICALLY from a `NormCtx`.
+
+NOT YET PROVED (stated plainly): `PoleForm` symmetry and biadditivity (the block schedules of
+`improperIntegral1` depend on the test-dependent `K`; the intended route is finite evaluation past
+the support bound), and the identification with the classical pole term.
 
 NO free `Real` parameters, NO assumed convergence (the decay is proved), NO PSD, NO RH input.
 Pure Lean 4 core, no Mathlib, choice-free.
@@ -256,11 +261,44 @@ theorem poleDecay (G : ClosedGeom) (f g : L2Test) (hf : CoreTest G f) (hg : Core
 -- (3) The pole form, its symmetry, and its biadditivity.
 -- ===========================================================================
 
-/-- **★ THE GENUINE TWO-INPUT POLE FORM** `PoleForm(f,g) = ∫₁^∞ (F_{f,g}+F_{g,f})(1+1/x) dx` — a
-    CONSTRUCTED `improperIntegral1` with the decay DISCHARGED from compact support.  No free `Real`. -/
+/-- **★ THE TWO-INPUT POLE INTEGRAL (candidate folded form)**
+    `PoleForm(f,g) = ∫₁^∞ (F_{f,g}+F_{g,f})(1+1/x) dx` — a CONSTRUCTED `improperIntegral1` with the
+    decay DISCHARGED from compact support.  No free `Real`.  Its identification with the classical
+    pole term is NOT proved (see the header). -/
 def PoleForm (G : ClosedGeom) (f g : L2Test) (hf : CoreTest G f) (hg : CoreTest G g) : Real :=
   improperIntegral1 (poleIntegrand G f g).hLd (poleIntegrand G f g).hLn
     (poleIntegrand G f g).hlip (poleIntegrand G f g).hfc
     (poleK_den G f g) (poleK_num G f g) (poleDecay G f g hf hg)
+
+/-- The value-at-1 symmetry over the fixed geometry (pre-seal wrapper of `FTest_one_symm`). -/
+theorem FTestG_one_symm (G : ClosedGeom) (f g : L2Test) :
+    Req ((FTestG G f g).f one) ((FTestG G g f).f one) :=
+  FTest_one_symm G.B G.hBd G.hB1 G.N G.hN G.hBN f g G.S G.hSd G.hSn
+    G.a G.han G.had G.w G.hw G.hwn G.hS1
+
+/-- The in-band rational readback over the fixed geometry (pre-seal wrapper of `FTest_ofQ`). -/
+theorem FTestG_ofQ (G : ClosedGeom) (f g : L2Test)
+    (q : Q) (hqd : 0 < q.den) (hq1 : Qle (⟨1, 1⟩ : Q) q) (hqB : Qle q G.B) (hqS : Qle q G.S) :
+    Req ((FTestG G f g).f (ofQ q hqd))
+        (BForm f g q (qnum_pos_of_one_le hqd hq1) hqd G.a G.han G.had G.w G.hw G.hwn) :=
+  FTest_ofQ G.B G.hBd G.hB1 G.N G.hN G.hBN f g G.S G.hSd G.hSn
+    G.a G.han G.had G.w G.hw G.hwn q hqd hq1 hqB hqS
+
+/-- Value-level biadditivity over the fixed geometry, first slot (pre-seal wrapper). -/
+theorem FTestG_add_left (G : ClosedGeom) (f₁ f₂ g : L2Test) (x : Real) :
+    Req ((FTestG G (L2Test.add f₁ f₂) g).f x)
+        (Radd ((FTestG G f₁ g).f x) ((FTestG G f₂ g).f x)) :=
+  FTest_add_left G.B G.hBd G.hB1 G.N G.hN G.hBN f₁ f₂ g G.S G.hSd G.hSn
+    G.a G.han G.had G.w G.hw G.hwn x
+
+/-- Value-level biadditivity over the fixed geometry, second slot (pre-seal wrapper). -/
+theorem FTestG_add_right (G : ClosedGeom) (f g₁ g₂ : L2Test) (x : Real) :
+    Req ((FTestG G f (L2Test.add g₁ g₂)).f x)
+        (Radd ((FTestG G f g₁).f x) ((FTestG G f g₂).f x)) :=
+  FTest_add_right G.B G.hBd G.hB1 G.N G.hN G.hBN f g₁ g₂ G.S G.hSd G.hSn
+    G.a G.han G.had G.w G.hw G.hwn x
+
+-- Seal the deep definitional towers (elaborator whnf economy; in-file defeq uses are above).
+attribute [irreducible] FTestG poleIntegrand poleDens poleK PoleForm
 
 end UOR.Bridge.F1Square.Square

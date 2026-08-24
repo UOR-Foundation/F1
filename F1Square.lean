@@ -509,6 +509,10 @@ import F1Square.Square.WeilPrimeShiftHaarForm
 import F1Square.Square.WeilInvSqrt
 import F1Square.Square.WeilCrossF
 import F1Square.Square.WeilPoleForm
+import F1Square.Square.WeilArchNum
+import F1Square.Square.WeilArchTailFar
+import F1Square.Square.WeilArchNear
+import F1Square.Square.ClosedWeilBilin
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare

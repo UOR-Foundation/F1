@@ -9142,3 +9142,68 @@ open UOR.Bridge.F1Square
 #print axioms Square.poleK_num
 #print axioms Square.poleK_early
 #print axioms Square.poleDecay
+-- WeilPoleForm pre-seal wrappers over the fixed geometry.
+#print axioms Square.FTestG_one_symm
+#print axioms Square.FTestG_ofQ
+#print axioms Square.FTestG_add_left
+#print axioms Square.FTestG_add_right
+-- WeilArchNum: the archimedean-tail numerator N = F+F♯−2F(1)/x (endpoint vanishing + rate,
+-- retained-tail form past the support bound) and the split kernels.
+#print axioms Square.sub_shift_iso
+#print axioms Square.add_shift_iso
+#print axioms Square.Rle_self_qClampQ
+#print axioms Square.clampedInv_le_ofQ_inv_of_ge
+#print axioms Square.twoFone_bound
+#print axioms Square.archNum_f
+#print axioms Square.archNum_one_zero
+#print axioms Square.archNum_abs_le_dist_one
+#print axioms Square.archNum_past
+-- WeilArchTailFar: the regular/far improper parts with PROVED decay (early width·sup, late
+-- retained-tail product bound under the computed K = M·Bd² + 2M_F).
+#print axioms Square.K_early_general
+#print axioms Square.archKl_den
+#print axioms Square.archKl_num
+#print axioms Square.archK_den
+#print axioms Square.archK_num
+#print axioms Square.archK_early
+#print axioms Square.archK_late
+#print axioms Square.blockPoint_ge
+#print axioms Square.blockPoint_succ_ge
+#print axioms Square.archNum_late_bound
+#print axioms Square.archRegDecay
+#print axioms Square.archFarDecay
+-- WeilArchNear: the x=1 lower-end improper limit — strip identity, quotient cap N.L, geometric
+-- telescope, Bishop regularity, ArchNearPart = Rlim of the honest truncations.
+#print axioms Square.dyQ_den
+#print axioms Square.dyQ_num
+#print axioms Square.nearLo_den
+#print axioms Square.nearW_den
+#print axioms Square.nearW_num
+#print axioms Square.nearIntegrand_cap
+#print axioms Square.sub_one_ge_of_ge_add
+#print axioms Square.affine_ge_lo
+#print axioms Square.dyQ_succ_le
+#print axioms Square.dyQ_le_nearW
+#print axioms Square.nearW_sub_num
+#print axioms Square.nearLo_step_eq
+#print axioms Square.nearW_step_eq
+#print axioms Square.nearIntegrand_step_agree
+#print axioms Square.nearRest_eq
+#print axioms Square.Radd_sub_cancel_right
+#print axioms Square.nearJ_split
+#print axioms Square.nearJ_succ_diff
+#print axioms Square.nearCN_ge
+#print axioms Square.nearJ_succ_bound
+#print axioms Square.Rabs_sub_le_tri
+#print axioms Square.dy_halve
+#print axioms Square.nearJ_tel
+#print axioms Square.nearJ_diff_le
+#print axioms Square.nearC_den
+#print axioms Square.nearC_addend_le
+#print axioms Square.nearC_le
+#print axioms Square.nearX_bound
+#print axioms Square.nearX_RReg
+-- ClosedWeilBilin: the COMPLETE closed Weil form (ArchTailForm assembly, ClosedNormCtx, the
+-- constructed slot with NO free poles/archTail) and THE ACCEPTANCE THEOREM closedWeilBilin_diag.
+#print axioms Square.normCtx_core
+#print axioms Square.closedWeilBilin_diag
