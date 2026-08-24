@@ -31,6 +31,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
 import F1Square.Square.WeilPrimeShiftOperator
+import F1Square.Square.IntervalAddTest
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -803,5 +804,215 @@ theorem PrimeForm_diag_collapsed (C : NormCtx) :
               (acPtC C (⟨((m + 1 : Nat) : Int), 1⟩ : Q))))) C.X) :=
   Req_trans (RsumN_congr C.X (fun m hm => PForm_diag C m (normCtx_hnS C m hm)))
     (primePlaceOp_readback_collapsed C)
+
+-- ===========================================================================
+-- (Requirement 4) BIADDITIVITY through `L2Test.add` — the form is symmetric BIADDITIVE.
+-- ===========================================================================
+
+/-- **The Haar integral is additive over `L2Test.add`**: `∫(ψ₁+ψ₂)·(dx/x) = ∫ψ₁ + ∫ψ₂` — the integrand
+    of the sum distributes (`Rmul_distrib_right`), then `riemannIntegralI_addTest`. -/
+theorem haarIntegral_L2add (ψ₁ ψ₂ : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (lo w : Q) (hlo : 0 < lo.den) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (haarIntegral (L2Test.add ψ₁ ψ₂) a han had lo w hlo hw hwn)
+        (Radd (haarIntegral ψ₁ a han had lo w hlo hw hwn)
+              (haarIntegral ψ₂ a han had lo w hlo hw hwn)) := by
+  refine Req_trans
+    (riemannIntegralI_congr_unit_mod
+      (l2L_den (L2Test.add ψ₁ ψ₂) (recipTest a han had))
+      (l2L_num (L2Test.add ψ₁ ψ₂) (recipTest a han had))
+      (l2lip (L2Test.add ψ₁ ψ₂) (recipTest a han had))
+      (l2fc (L2Test.add ψ₁ ψ₂) (recipTest a han had))
+      (L2Test.add (productTest ψ₁ (recipTest a han had)) (productTest ψ₂ (recipTest a han had))).hLd
+      (L2Test.add (productTest ψ₁ (recipTest a han had)) (productTest ψ₂ (recipTest a han had))).hLn
+      (L2Test.add (productTest ψ₁ (recipTest a han had)) (productTest ψ₂ (recipTest a han had))).hlip
+      (L2Test.add (productTest ψ₁ (recipTest a han had)) (productTest ψ₂ (recipTest a han had))).hfc
+      lo w hlo hw hwn
+      (fun x _ _ =>
+        Rmul_distrib_right (ψ₁.f (affineMap lo w hlo hw x)) (ψ₂.f (affineMap lo w hlo hw x))
+          ((recipTest a han had).f (affineMap lo w hlo hw x))))
+    (riemannIntegralI_addTest (productTest ψ₁ (recipTest a han had))
+      (productTest ψ₂ (recipTest a han had)) lo w hlo hw hwn)
+
+/-- **Additivity in the FIRST test argument** `H_q(f₁+f₂,g) = H_q(f₁,g) + H_q(f₂,g)` — the dilated
+    reflection of the sum splits (`Rmul_distrib_right` under the integrand), then `haarIntegral_L2add`. -/
+theorem HForm_add_left (f₁ f₂ g : L2Test) (q : Q) (hqn : 0 < q.num) (hqd : 0 < q.den)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (HForm (L2Test.add f₁ f₂) g q hqn hqd a han had w hw hwn)
+        (Radd (HForm f₁ g q hqn hqd a han had w hw hwn)
+              (HForm f₂ g q hqn hqd a han had w hw hwn)) := by
+  refine Req_trans
+    (haarIntegral_congr_window
+      (productTest (reflectTest a han had (dilateTest q hqn hqd (L2Test.add f₁ f₂)))
+        (reflectTest a han had g))
+      (L2Test.add (productTest (reflectTest a han had (dilateTest q hqn hqd f₁)) (reflectTest a han had g))
+                  (productTest (reflectTest a han had (dilateTest q hqn hqd f₂)) (reflectTest a han had g)))
+      a a han had han had a w had hw hwn
+      (fun x _ _ => Rmul_congr (Rmul_distrib_right _ _ _) (Req_refl _)))
+    (haarIntegral_L2add
+      (productTest (reflectTest a han had (dilateTest q hqn hqd f₁)) (reflectTest a han had g))
+      (productTest (reflectTest a han had (dilateTest q hqn hqd f₂)) (reflectTest a han had g))
+      a han had a w had hw hwn)
+
+/-- **Additivity in the SECOND test argument** `H_q(f,g₁+g₂) = H_q(f,g₁) + H_q(f,g₂)` — the reflection
+    of the sum splits (`Rmul_distrib` under the integrand), then `haarIntegral_L2add`. -/
+theorem HForm_add_right (f g₁ g₂ : L2Test) (q : Q) (hqn : 0 < q.num) (hqd : 0 < q.den)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (HForm f (L2Test.add g₁ g₂) q hqn hqd a han had w hw hwn)
+        (Radd (HForm f g₁ q hqn hqd a han had w hw hwn)
+              (HForm f g₂ q hqn hqd a han had w hw hwn)) := by
+  refine Req_trans
+    (haarIntegral_congr_window
+      (productTest (reflectTest a han had (dilateTest q hqn hqd f))
+        (reflectTest a han had (L2Test.add g₁ g₂)))
+      (L2Test.add (productTest (reflectTest a han had (dilateTest q hqn hqd f)) (reflectTest a han had g₁))
+                  (productTest (reflectTest a han had (dilateTest q hqn hqd f)) (reflectTest a han had g₂)))
+      a a han had han had a w had hw hwn
+      (fun x _ _ => Rmul_congr (Rmul_distrib _ _ _) (Req_refl _)))
+    (haarIntegral_L2add
+      (productTest (reflectTest a han had (dilateTest q hqn hqd f)) (reflectTest a han had g₁))
+      (productTest (reflectTest a han had (dilateTest q hqn hqd f)) (reflectTest a han had g₂))
+      a han had a w had hw hwn)
+
+/-- The four-term additive interchange `(a+b)+(c+d) = (a+c)+(b+d)`. -/
+theorem Radd_add_add_comm (a b c d : Real) :
+    Req (Radd (Radd a b) (Radd c d)) (Radd (Radd a c) (Radd b d)) :=
+  Req_trans (Radd_assoc a b (Radd c d))
+    (Req_trans (Radd_congr (Req_refl a) (Req_symm (Radd_assoc b c d)))
+      (Req_trans (Radd_congr (Req_refl a) (Radd_congr (Radd_comm b c) (Req_refl d)))
+        (Req_trans (Radd_congr (Req_refl a) (Radd_assoc c b d))
+          (Req_symm (Radd_assoc a c (Radd b d))))))
+
+/-- `B_q(·,g)` is additive in the first argument (`normWeight`·`HForm_add_left`, `Rmul_distrib`). -/
+theorem BForm_add_left (f₁ f₂ g : L2Test) (q : Q) (hqn : 0 < q.num) (hqd : 0 < q.den)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (BForm (L2Test.add f₁ f₂) g q hqn hqd a han had w hw hwn)
+        (Radd (BForm f₁ g q hqn hqd a han had w hw hwn)
+              (BForm f₂ g q hqn hqd a han had w hw hwn)) :=
+  Req_trans (Rmul_congr (Req_refl _) (HForm_add_left f₁ f₂ g q hqn hqd a han had w hw hwn))
+    (Rmul_distrib (normWeight q) _ _)
+
+/-- `B_q(f,·)` is additive in the second argument. -/
+theorem BForm_add_right (f g₁ g₂ : L2Test) (q : Q) (hqn : 0 < q.num) (hqd : 0 < q.den)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (BForm f (L2Test.add g₁ g₂) q hqn hqd a han had w hw hwn)
+        (Radd (BForm f g₁ q hqn hqd a han had w hw hwn)
+              (BForm f g₂ q hqn hqd a han had w hw hwn)) :=
+  Req_trans (Rmul_congr (Req_refl _) (HForm_add_right f g₁ g₂ q hqn hqd a han had w hw hwn))
+    (Rmul_distrib (normWeight q) _ _)
+
+/-- `P_m(·,g)` is additive in the first argument (both scale terms split, then the interchange). -/
+theorem PForm_add_left (m : Nat) (f₁ f₂ g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (PForm m (L2Test.add f₁ f₂) g a han had w hw hwn)
+        (Radd (PForm m f₁ g a han had w hw hwn) (PForm m f₂ g a han had w hw hwn)) := by
+  refine Req_trans (Rmul_congr (Req_refl _) ?inner) (Rmul_distrib (vonMangoldt (m + 1)) _ _)
+  exact
+    Req_trans
+      (Radd_congr
+        (BForm_add_left f₁ f₂ g (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (Int.ofNat_pos.mpr (Nat.succ_pos m))
+          Nat.one_pos a han had w hw hwn)
+        (Req_trans
+          (Rmul_congr (Req_refl _)
+            (BForm_add_left f₁ f₂ g (⟨1, m + 1⟩ : Q) (show (0 : Int) < 1 by decide) (Nat.succ_pos m)
+              a han had w hw hwn))
+          (Rmul_distrib (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m)) _ _)))
+      (Radd_add_add_comm _ _ _ _)
+
+/-- `P_m(f,·)` is additive in the second argument. -/
+theorem PForm_add_right (m : Nat) (f g₁ g₂ : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (PForm m f (L2Test.add g₁ g₂) a han had w hw hwn)
+        (Radd (PForm m f g₁ a han had w hw hwn) (PForm m f g₂ a han had w hw hwn)) := by
+  refine Req_trans (Rmul_congr (Req_refl _) ?inner) (Rmul_distrib (vonMangoldt (m + 1)) _ _)
+  exact
+    Req_trans
+      (Radd_congr
+        (BForm_add_right f g₁ g₂ (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (Int.ofNat_pos.mpr (Nat.succ_pos m))
+          Nat.one_pos a han had w hw hwn)
+        (Req_trans
+          (Rmul_congr (Req_refl _)
+            (BForm_add_right f g₁ g₂ (⟨1, m + 1⟩ : Q) (show (0 : Int) < 1 by decide) (Nat.succ_pos m)
+              a han had w hw hwn))
+          (Rmul_distrib (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m)) _ _)))
+      (Radd_add_add_comm _ _ _ _)
+
+/-- **★ (Requirement 4) BIADDITIVITY: additivity of the finite fold in the FIRST argument**
+    `PrimeForm_X(f₁+f₂,g) = PrimeForm_X(f₁,g) + PrimeForm_X(f₂,g)` — `RsumN_congr` over `PForm_add_left`
+    then `RsumN_Radd`.  With `PrimeForm_symm` this makes `PrimeForm` a SYMMETRIC BIADDITIVE form (NOT
+    yet a bilinear operator: scalar closure is not formalized). -/
+theorem PrimeForm_add_left (X : Nat) (f₁ f₂ g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (PrimeForm X (L2Test.add f₁ f₂) g a han had w hw hwn)
+        (Radd (PrimeForm X f₁ g a han had w hw hwn) (PrimeForm X f₂ g a han had w hw hwn)) :=
+  Req_trans
+    (RsumN_congr X (fun m _ => PForm_add_left m f₁ f₂ g a han had w hw hwn))
+    (RsumN_Radd (fun m => PForm m f₁ g a han had w hw hwn)
+      (fun m => PForm m f₂ g a han had w hw hwn) X)
+
+/-- **★ (Requirement 4) BIADDITIVITY: additivity of the finite fold in the SECOND argument**
+    `PrimeForm_X(f,g₁+g₂) = PrimeForm_X(f,g₁) + PrimeForm_X(f,g₂)`. -/
+theorem PrimeForm_add_right (X : Nat) (f g₁ g₂ : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (PrimeForm X f (L2Test.add g₁ g₂) a han had w hw hwn)
+        (Radd (PrimeForm X f g₁ a han had w hw hwn) (PrimeForm X f g₂ a han had w hw hwn)) :=
+  Req_trans
+    (RsumN_congr X (fun m _ => PForm_add_right m f g₁ g₂ a han had w hw hwn))
+    (RsumN_Radd (fun m => PForm m f g₁ a han had w hw hwn)
+      (fun m => PForm m f g₂ a han had w hw hwn) X)
+
+-- ===========================================================================
+-- (Requirement 5) ONE FIXED SUPPORT/WINDOW GEOMETRY, independent of the tested vectors.
+-- ===========================================================================
+
+/-- **A fixed Haar geometry** — the window `[a, a+w]` (floor `a > 0`), the support band lower edge
+    `b > 0`, and the fit `1/b ≤ a+w`, bundled so the form is defined over ONE geometry rather than
+    free-floating window parameters.  Chosen INDEPENDENTLY of any tested vector. -/
+structure HaarGeom where
+  a : Q
+  han : 0 < a.num
+  had : 0 < a.den
+  w : Q
+  hw : 0 < w.den
+  hwn : 0 ≤ w.num
+  b : Q
+  hbd : 0 < b.den
+  hbn : 0 < b.num
+  hfit : Qle (Qinv b) (add a w)
+
+/-- **`f` is compactly supported inside the band `[G.b, 1/G.a]` of the FIXED geometry `G`** — the
+    admissibility of a tested vector RELATIVE to the fixed geometry (never the reverse). -/
+structure GSupported (G : HaarGeom) (f : L2Test) : Prop where
+  hgh : ∀ y, Rle (ofQ (Qinv G.a) (Qinv_den_pos G.han)) y → Req (f.f y) zero
+  hgl : ∀ y, Rle y (ofQ G.b G.hbd) → Req (f.f y) zero
+
+/-- The off-diagonal finite prime fold over a FIXED geometry `G`: `PrimeForm_X(f,g)` with the window
+    and band supplied by `G` (not by `f` or `g`). -/
+def PrimeFormG (G : HaarGeom) (X : Nat) (f g : L2Test) : Real :=
+  PrimeForm X f g G.a G.han G.had G.w G.hw G.hwn
+
+/-- **★ (Requirement 5) SYMMETRY OVER THE FIXED GEOMETRY** `PrimeForm_X^G(f,g) = PrimeForm_X^G(g,f)` for
+    tests supported relative to the SAME fixed `G` — geometry is fixed and independent of `f, g`. -/
+theorem PrimeFormG_symm (G : HaarGeom) (X : Nat) (f g : L2Test)
+    (hf : GSupported G f) (hg : GSupported G g) :
+    Req (PrimeFormG G X f g) (PrimeFormG G X g f) :=
+  PrimeForm_symm X f g G.a G.han G.had G.w G.hw G.hwn G.b G.hbd G.hbn
+    hf.hgh hf.hgl hg.hgh hg.hgl G.hfit
+
+/-- **★ (Requirement 5) BIADDITIVITY OVER THE FIXED GEOMETRY, first argument** (additivity needs no
+    support hypothesis). -/
+theorem PrimeFormG_add_left (G : HaarGeom) (X : Nat) (f₁ f₂ g : L2Test) :
+    Req (PrimeFormG G X (L2Test.add f₁ f₂) g)
+        (Radd (PrimeFormG G X f₁ g) (PrimeFormG G X f₂ g)) :=
+  PrimeForm_add_left X f₁ f₂ g G.a G.han G.had G.w G.hw G.hwn
+
+/-- **★ (Requirement 5) BIADDITIVITY OVER THE FIXED GEOMETRY, second argument**. -/
+theorem PrimeFormG_add_right (G : HaarGeom) (X : Nat) (f g₁ g₂ : L2Test) :
+    Req (PrimeFormG G X f (L2Test.add g₁ g₂))
+        (Radd (PrimeFormG G X f g₁) (PrimeFormG G X f g₂)) :=
+  PrimeForm_add_right X f g₁ g₂ G.a G.han G.had G.w G.hw G.hwn
 
 end UOR.Bridge.F1Square.Square

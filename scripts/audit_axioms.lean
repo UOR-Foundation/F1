@@ -9076,3 +9076,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.PForm_diag
 #print axioms Square.PrimeForm_diag_weilPrimePart
 #print axioms Square.PrimeForm_diag_collapsed
+-- WeilPrimeShift/HaarForm biadditivity + fixed geometry: haarIntegral additive over L2Test.add,
+-- HForm/BForm/PForm/PrimeForm biadditive in both arguments; PrimeFormG over a fixed HaarGeom.
+#print axioms Square.haarIntegral_L2add
+#print axioms Square.HForm_add_left
+#print axioms Square.HForm_add_right
+#print axioms Square.Radd_add_add_comm
+#print axioms Square.BForm_add_left
+#print axioms Square.BForm_add_right
+#print axioms Square.PForm_add_left
+#print axioms Square.PForm_add_right
+#print axioms Square.PrimeForm_add_left
+#print axioms Square.PrimeForm_add_right
+#print axioms Square.PrimeFormG_symm
+#print axioms Square.PrimeFormG_add_left
+#print axioms Square.PrimeFormG_add_right
