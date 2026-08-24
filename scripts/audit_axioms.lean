@@ -9091,3 +9091,10 @@ open UOR.Bridge.F1Square
 #print axioms Square.PrimeFormG_symm
 #print axioms Square.PrimeFormG_add_left
 #print axioms Square.PrimeFormG_add_right
+-- WeilPrimeShift/HaarForm: n=1 reciprocity + the CONSTRUCTED two-input Archimedean CONSTANT term
+-- (constructed from Rlog4pic/Rgamma_h, symmetric + biadditive, diagonal = weilArchConst).
+#print axioms Square.HForm_recip_one
+#print axioms Square.ArchConstForm_symm
+#print axioms Square.ArchConstForm_add_left
+#print axioms Square.ArchConstForm_add_right
+#print axioms Square.ArchConstForm_diag

@@ -1,5 +1,5 @@
 /-
-F1 square — **the genuine two-test finite-prime Haar bilinear form** (`WeilPrimeShiftHaarForm.lean`).
+F1 square — **the genuine two-test finite-prime Haar form: a SYMMETRIC BIADDITIVE form** (`WeilPrimeShiftHaarForm.lean`).
 
 Replaces the scalar façade (`Nop`/`primePlaceOp` were weighted point evaluation) with a real
 two-input Haar form on TWO independent compactly-supported tests `f, g`:
@@ -17,7 +17,7 @@ support-free pieces → match on the core). The core integrand identity is
 density cancellation `n·(1/max(nt,a)) = 1/max(t,a)`:
 
     H_q(f,g) = H_{1/q}(g,f)          (`HForm_recip`)
-    B_q(f,g) = q^{-1}·B_{1/q}(g,f)   (`BForm_adjoint`, the CORRECT operator law N_q* = q^{-1} N_{1/q})
+    B_q(f,g) = q^{-1}·B_{1/q}(g,f)   (`BForm_adjoint_all`, the CORRECT adjoint law N_q* = q^{-1} N_{1/q})
 
 Both are TWO-INPUT identities on independent vectors — NOT diagonal reciprocity of a single `h`.
 
@@ -281,7 +281,7 @@ theorem core_integrand_agree2 (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 
   exact Rmul_congr hinner hdens
 
 -- ===========================================================================
--- The two-test Haar bilinear form and its reciprocal law.
+-- The two-test Haar form and its reciprocal law.
 -- ===========================================================================
 
 /-- **The two-test finite-prime Haar form** `H_q(f,g) = ∫ f(q/t)·g(1/t) d^×t = mulConv f (reflect g) q`,
@@ -763,7 +763,7 @@ theorem HForm_diag_acPtC (C : NormCtx) (q : Q) (hqn : 0 < q.num) (hqd : 0 < q.de
 
 set_option maxHeartbeats 800000 in
 /-- **★ (Requirement 2) THE DIAGONAL IS THE EXISTING `primePlaceOp`**: `P_m(C.g,C.g) = primePlaceOp (acPtC C) m`
-    — the two-test per-place form on the diagonal is exactly the scalar per-place operator of the
+    — the two-test per-place form on the diagonal is exactly the scalar per-place VALUE of the
     normalized autocorrelation.  `BForm C.g C.g q = normWeight(q)·autocorr C.g q ≈ normWeight(q)·acPtC q
     = Nop (acPtC C) q` via `HForm_diag_acPtC`. -/
 theorem PForm_diag (C : NormCtx) (m : Nat) (hmS : Qle (⟨((m + 1 : Nat) : Int), 1⟩ : Q) C.S) :
@@ -1014,5 +1014,76 @@ theorem PrimeFormG_add_right (G : HaarGeom) (X : Nat) (f g₁ g₂ : L2Test) :
     Req (PrimeFormG G X f (L2Test.add g₁ g₂))
         (Radd (PrimeFormG G X f g₁) (PrimeFormG G X f g₂)) :=
   PrimeForm_add_right X f g₁ g₂ G.a G.han G.had G.w G.hw G.hwn
+
+-- ===========================================================================
+-- The n=1 reciprocity and the CONSTRUCTED two-input Archimedean CONSTANT term.
+-- ===========================================================================
+
+/-- **`n = 1` two-test reciprocity** `H_1(f,g) = H_1(g,f)` — pure integrand commutation (`dilate`-by-1
+    is the identity up to `≈`, then `Rmul_comm`), completing `HForm_recip` at all `n ≥ 1`. -/
+theorem HForm_recip_one (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (HForm f g (⟨1, 1⟩ : Q) (by decide) (by decide) a han had w hw hwn)
+        (HForm g f (⟨1, 1⟩ : Q) (by decide) (by decide) a han had w hw hwn) := by
+  refine haarIntegral_congr_window
+    (productTest (reflectTest a han had (dilateTest (⟨1, 1⟩ : Q) (by decide) (by decide) f))
+      (reflectTest a han had g))
+    (productTest (reflectTest a han had (dilateTest (⟨1, 1⟩ : Q) (by decide) (by decide) g))
+      (reflectTest a han had f))
+    a a han had han had a w had hw hwn ?_
+  intro x _ _
+  refine Rmul_congr ?_ (Req_refl _)
+  have hone : Req (Rmul (ofQ (⟨1, 1⟩ : Q) (by decide))
+        (clampedInv a han had (affineMap a w had hw x)))
+      (clampedInv a han had (affineMap a w had hw x)) :=
+    Req_trans (Rmul_congr (Req_of_seq_Qeq (fun _ => Qeq_refl _)) (Req_refl _)) (Rone_mul _)
+  exact Req_trans (Rmul_congr (f.hfc _ _ hone) (Req_refl _))
+    (Req_trans (Rmul_comm _ _) (Rmul_congr (g.hfc _ _ (Req_symm hone)) (Req_refl _)))
+
+/-- **THE CONSTRUCTED two-input Archimedean CONSTANT term** `ArchConstForm(f,g) = (log 4π + γ)·B_1(f,g)`
+    — the CC archimedean constant `(log 4π + γ)·f(1)` in two-input form (`B_1 = q^{-1/2}·H_q` at `q = 1`).
+    CONSTRUCTED from the built `Rlog4pic`, `Rgamma_h` and `BForm` — NOT a free `Real` parameter. -/
+def ArchConstForm (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) : Real :=
+  Rmul (Radd Rlog4pic Rgamma_h)
+    (BForm f g (⟨1, 1⟩ : Q) (by decide) (by decide) a han had w hw hwn)
+
+/-- The archimedean constant is symmetric (from `HForm_recip_one`). -/
+theorem ArchConstForm_symm (f g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (ArchConstForm f g a han had w hw hwn) (ArchConstForm g f a han had w hw hwn) :=
+  Rmul_congr (Req_refl _)
+    (Rmul_congr (Req_refl _) (HForm_recip_one f g a han had w hw hwn))
+
+/-- The archimedean constant is additive in the first argument. -/
+theorem ArchConstForm_add_left (f₁ f₂ g : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (ArchConstForm (L2Test.add f₁ f₂) g a han had w hw hwn)
+        (Radd (ArchConstForm f₁ g a han had w hw hwn) (ArchConstForm f₂ g a han had w hw hwn)) :=
+  Req_trans
+    (Rmul_congr (Req_refl _)
+      (BForm_add_left f₁ f₂ g (⟨1, 1⟩ : Q) (by decide) (by decide) a han had w hw hwn))
+    (Rmul_distrib (Radd Rlog4pic Rgamma_h) _ _)
+
+/-- The archimedean constant is additive in the second argument. -/
+theorem ArchConstForm_add_right (f g₁ g₂ : L2Test) (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) :
+    Req (ArchConstForm f (L2Test.add g₁ g₂) a han had w hw hwn)
+        (Radd (ArchConstForm f g₁ a han had w hw hwn) (ArchConstForm f g₂ a han had w hw hwn)) :=
+  Req_trans
+    (Rmul_congr (Req_refl _)
+      (BForm_add_right f g₁ g₂ (⟨1, 1⟩ : Q) (by decide) (by decide) a han had w hw hwn))
+    (Rmul_distrib (Radd Rlog4pic Rgamma_h) _ _)
+
+/-- **★ THE ARCHIMEDEAN CONSTANT'S DIAGONAL IS `weilArchConst`**: `ArchConstForm(C.g,C.g) = weilArchConst
+    (normAutocorrTest C)` — the constructed two-input constant recovers the built archimedean constant
+    of the normalized-autocorrelation test on the diagonal (via `HForm_diag_acPtC` at `q = 1`). -/
+theorem ArchConstForm_diag (C : NormCtx) :
+    Req (ArchConstForm C.g C.g C.a C.han C.had C.w C.hw C.hwn)
+        (weilArchConst (normAutocorrTest C)) := by
+  have hq0 : Qle (⟨0, 1⟩ : Q) (⟨1, 1⟩ : Q) := by decide
+  refine Rmul_congr (Req_refl _) (Rmul_congr (Req_refl _) ?_)
+  exact Req_trans (HForm_diag_acPtC C (⟨1, 1⟩ : Q) (by decide) (by decide) hq0 C.hS1)
+    (Req_symm (acbase_eq_acPt C (⟨1, 1⟩ : Q) (by decide)))
 
 end UOR.Bridge.F1Square.Square
