@@ -1,24 +1,27 @@
 /-
-F1 square — **the direct point-value operator route**: the Haar-core normalized dilation `N(q)`, its
-correctly-weighted adjoint law `N(1/q) = q·N(q)`, and the per-place operator `primePlaceOp` whose
-finite quadratic readback is EXACTLY `weilPrimePart_normAutocorr_collapsed` (`WeilPrimeShiftOperator.lean`).
+F1 square — **the SCALAR point-value skeleton of the finite-prime side** (`WeilPrimeShiftOperator.lean`).
 
-This is the operator layer over the proved point-value facts, built WITHOUT the rejected shortcuts:
-NO `primeGram`, NO `vFrom`, NO `vHat`, and NO PSD claim about the operator.
+SCOPE / HONEST LABELLING.  `Nop` here is a SCALAR object — WEIGHTED POINT EVALUATION `q ↦ q^{-1/2}·h(q)`
+of point-value data `h : Q → Real`, NOT an operator on `L2Test` and NOT a completion.  It is the
+DIAGONAL shadow of the genuine two-test Haar bilinear form `HForm`/`BForm` (`WeilPrimeShiftHaarForm.lean`),
+which is where the real operator content lives:
+  • the genuine two-input reciprocal / adjoint law `H_q(f,g) = H_{1/q}(g,f)` (`HForm_recip`), and
+  • the CORRECT adjoint law `B_q(f,g) = q^{-1}·B_{1/q}(g,f)`  (`BForm_adjoint`), i.e. `N_q* = q^{-1}·N_{1/q}`
+    for `N_q = q^{-1/2}·U_q` — NOT `N_q* = N_{1/q}`.
+This file only records the scalar diagonal skeleton and its readback to the collapsed prime sum.
 
-WHAT IS BUILT (point-value operator form — the Haar-integral readback of the dilation):
-  1. `Nop h q = q^{-1/2}·h(q) = normWeight(q)·h(q)` — the **Haar-core normalized dilation** acting on the
-     autocorrelation point-value data `h`.  `Nop_hi`/`Nop_lo` read it back at integer/reciprocal scales.
-  2. `Nop_adjoint` — **the correctly-weighted adjoint law** `N(1/n) = n·N(n)` (`N(q)† = N(1/q)` in
-     point-value form): the reciprocal dilation is the forward dilation scaled by `n`, whenever the data
-     has reciprocal self-duality `h(n) ≈ h(1/n)`.  Proved from the reflection identity `F_reflect`.
-  3. `Nop_adjoint_ac` — the adjoint law PROVED on the ACTUAL autocorrelation, feeding the reciprocal
-     self-duality from the PROVEN `autocorr_recip_all` (not assumed).
-  4. `primePlaceOp h n = Λ(n+1)·(N(n+1)h + (n+1)⁻¹·N(1/(n+1))h)` — the per-place operator.
-  5. `primePlaceOp_readback` / `primePlaceOp_readback_collapsed` — **THE FINITE QUADRATIC READBACK**:
-     the fold of `primePlaceOp` over the autocorrelation point value equals `weilPrimePart
-     (normAutocorrTest)`, hence (through `weilPrimePart_normAutocorr_collapsed`) the collapsed
-     Burnol-normalized prime sum `Σ 2·Λ(n)·n^{-1/2}·h(n)`.  No `primeGram`, no `vFrom`, no PSD.
+WHAT IS BUILT (scalar, point-value):
+  1. `Nop h q = q^{-1/2}·h(q) = normWeight(q)·h(q)` — weighted point evaluation.  `Nop_hi`/`Nop_lo`
+     read it back at integer/reciprocal scales.
+  2. `Nop_adjoint` / `Nop_adjoint_ac` — the DIAGONAL weight relation `(1/n)·N(1/n)h = N(n)h` on data with
+     reciprocal self-duality `h(n) ≈ h(1/n)` (`autocorr_recip_all` on the actual autocorrelation).  This
+     is a diagonal consequence of reciprocity, NOT the operator adjoint law (that is `BForm_adjoint`,
+     `N_q* = q^{-1}·N_{1/q}`, on the genuine two-test form).
+  3. `primePlaceOp h n = Λ(n+1)·(N(n+1)h + (n+1)⁻¹·N(1/(n+1))h)` — the per-place SCALAR.  Its diagonal
+     value equals the diagonal of the genuine two-test `PForm` (`PForm_diag` in `WeilPrimeShiftHaarForm`).
+  4. `primePlaceOp_readback` / `primePlaceOp_readback_collapsed` — the fold of `primePlaceOp` over the
+     autocorrelation equals `weilPrimePart (normAutocorrTest)`, hence the collapsed Burnol-normalized
+     prime sum `Σ 2·Λ(n)·n^{-1/2}·h(n)`.  No `primeGram`, no `vFrom`, no `vHat`, no PSD.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
@@ -33,9 +36,9 @@ open UOR.Bridge.F1Square.Analysis
 -- (1)  N(q): the Haar-core normalized dilation operator (point-value form).
 -- ===========================================================================
 
-/-- **N(q): the Haar-core normalized dilation operator, point-value form.**  Acting on autocorrelation
-    point-value data `h`, `N(q)h = q^{-1/2}·h(q) = normWeight(q)·h(q)` — the `q^{-1/2}`-normalized
-    dilation-by-`q` read at the base point (the Haar-integral readback of the dilation). -/
+/-- **N(q): WEIGHTED POINT EVALUATION** (scalar, NOT an operator): on point-value data `h`,
+    `N(q)h = q^{-1/2}·h(q) = normWeight(q)·h(q)`.  The genuine operator lives in the two-test Haar form
+    `HForm`/`BForm` (`WeilPrimeShiftHaarForm.lean`); this is its diagonal shadow at the base point. -/
 def Nop (h : Q → Real) (q : Q) : Real := Rmul (normWeight q) (h q)
 
 /-- Integer-scale readback: `N(n+1)h = (n+1)^{-1/2}·h(n+1)`. -/
@@ -55,10 +58,11 @@ theorem Nop_lo (h : Q → Real) (m : Nat) (hm : 1 ≤ m) :
 -- (2)  The correctly-weighted adjoint law  N(1/n) = n·N(n).
 -- ===========================================================================
 
-/-- **THE CORRECTLY-WEIGHTED ADJOINT LAW** `N(1/n) = n·N(n)` (the point-value form of `N(q)† = N(1/q)`):
-    the reciprocal normalized dilation equals the forward normalized dilation scaled by `n`, for any
-    data `h` with reciprocal self-duality `hsym : h(n) ≈ h(1/n)`.  Proved from the reflection identity
-    `F_reflect` (`√n·h(1/n) = n·(n^{-1/2}·h(n))`), bridged by the `Nop` readbacks.  No PSD is claimed. -/
+/-- **THE DIAGONAL WEIGHT RELATION** `N(1/n) = n·N(n)` on data `h` with reciprocal self-duality
+    `hsym : h(n) ≈ h(1/n)`.  This is a DIAGONAL consequence of reciprocity, NOT the operator adjoint law
+    (the correct adjoint is `N_q* = q^{-1}·N_{1/q}`, proved on the genuine two-test form as
+    `WeilPrimeShiftHaarForm.BForm_adjoint`).  Proved from the reflection identity `F_reflect`
+    (`√n·h(1/n) = n·(n^{-1/2}·h(n))`), bridged by the `Nop` readbacks.  No PSD is claimed. -/
 theorem Nop_adjoint (h : Q → Real) (m : Nat) (hm : 1 ≤ m)
     (hsym : Req (h (⟨((m + 1 : Nat) : Int), 1⟩ : Q)) (h (⟨1, m + 1⟩ : Q))) :
     Req (Nop h (⟨1, m + 1⟩ : Q))
@@ -68,9 +72,10 @@ theorem Nop_adjoint (h : Q → Real) (m : Nat) (hm : 1 ≤ m)
     (Req_trans (F_reflect (m + 1) (Nat.succ_pos m) (oneLeSucc m) h hsym)
       (Rmul_congr (Req_refl _) (Req_symm (Nop_hi h m))))
 
-/-- **THE ADJOINT LAW ON THE ACTUAL AUTOCORRELATION** (reciprocal self-duality NOT assumed): feeding
-    the PROVEN `autocorr_recip_all` as the `hsym` of `Nop_adjoint`, `N(1/(m+1)) = (m+1)·N(m+1)` holds on
-    the genuine autocorrelation point value `acPtC C` (for `m ≥ 1`, place `m+1 ≤ S`). -/
+/-- **THE DIAGONAL WEIGHT RELATION ON THE ACTUAL AUTOCORRELATION** (reciprocal self-duality NOT assumed):
+    feeding the PROVEN `autocorr_recip_all` as the `hsym` of `Nop_adjoint`, `N(1/(m+1)) = (m+1)·N(m+1)`
+    holds on the genuine autocorrelation point value `acPtC C` (for `m ≥ 1`, place `m+1 ≤ S`).  Diagonal
+    relation, not the operator adjoint — see `WeilPrimeShiftHaarForm.BForm_adjoint`. -/
 theorem Nop_adjoint_ac (C : NormCtx) (m : Nat) (hm : 1 ≤ m)
     (hmS : Qle (⟨((m + 1 : Nat) : Int), 1⟩ : Q) C.S) :
     Req (Nop (acPtC C) (⟨1, m + 1⟩ : Q))

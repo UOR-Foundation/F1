@@ -9049,3 +9049,25 @@ open UOR.Bridge.F1Square
 #print axioms Square.primePlaceOp_eq_weilPrimeTerm
 #print axioms Square.primePlaceOp_readback
 #print axioms Square.primePlaceOp_readback_collapsed
+-- WeilPrimeShift/HaarForm: the GENUINE two-test finite-prime Haar bilinear form. H_q(f,g)=∫f(q/t)g(1/t)d×t,
+-- H_q(g,g)=autocorr; the two-test reciprocal/adjoint law H_q(f,g)=H_{1/q}(g,f) (generalizing autocorr_recip
+-- to two tests); B_q(f,g)=q^{-1}B_{1/q}(g,f); P_m(f,g)=P_m(g,f) two-input symmetry; diagonal = primePlaceOp;
+-- fold = primePlaceOp_readback_collapsed. No primeGram/vFrom/vHat, no PSD.
+#print axioms Square.Ps_ofQ2
+#print axioms Square.dilDN_pt_zero2
+#print axioms Square.P1n_pt_zero2
+#print axioms Square.left_DN_window_vanish2
+#print axioms Square.right_I1n_window_vanish2
+#print axioms Square.core_integrand_agree2
+#print axioms Square.HForm_diag
+#print axioms Square.HForm_recip_core
+#print axioms Square.HForm_recip
+#print axioms Square.ofQ_recip_one
+#print axioms Square.normWeight_recip_lo
+#print axioms Square.normWeight_recip_hi
+#print axioms Square.BForm_adjoint
+#print axioms Square.BForm_adjoint_swap
+#print axioms Square.PForm_symm
+#print axioms Square.HForm_diag_acPtC
+#print axioms Square.PForm_diag
+#print axioms Square.PForm_readback_collapsed
