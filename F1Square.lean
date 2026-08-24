@@ -506,6 +506,9 @@ import F1Square.Square.WeilPrimeShiftCrux
 import F1Square.Square.WeilPrimeShiftRH
 import F1Square.Square.WeilPrimeShiftOperator
 import F1Square.Square.WeilPrimeShiftHaarForm
+import F1Square.Square.WeilInvSqrt
+import F1Square.Square.WeilCrossF
+import F1Square.Square.WeilPoleForm
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare

@@ -9098,3 +9098,47 @@ open UOR.Bridge.F1Square
 #print axioms Square.ArchConstForm_add_left
 #print axioms Square.ArchConstForm_add_right
 #print axioms Square.ArchConstForm_diag
+-- WeilInvSqrt: the certified x^{-1/2} weight test (RsqrtRealPos unique root, radicand bounds,
+-- N/2-Lipschitz via difference-of-squares, rational readback to normWeight).
+#print axioms Square.RsqrtRealPos_unique
+#print axioms Square.isqRad_congr
+#print axioms Square.qnum_pos_of_one_le
+#print axioms Square.isqU_seq_le
+#print axioms Square.isqU_le_B
+#print axioms Square.isqRad_le_one
+#print axioms Square.isqRad_ge_invB
+#print axioms Square.one_le_N_invB
+#print axioms Square.one_le_N_isqRad
+#print axioms Square.isqRad_scale
+#print axioms Square.invSqrtF_sq
+#print axioms Square.invSqrtF_nonneg
+#print axioms Square.invSqrtF_le_one
+#print axioms Square.invSqrtF_ge_invN
+#print axioms Square.invSqrtF_congr
+#print axioms Square.invSqrtF_lipschitz
+#print axioms Square.invSqrtF_ofQ
+#print axioms Square.invSqrtF_one
+-- WeilCrossF: the continuous normalized cross-correlation F_{f,g}=x^{-1/2}H_{f,g} — bridge to HForm,
+-- readback to BForm, value-at-1 symmetry, real-x compact support, biadditive values.
+#print axioms Square.HcrossTest_diag
+#print axioms Square.HForm_eq_HcrossTest
+#print axioms Square.FTest_ofQ
+#print axioms Square.FTest_one_symm
+#print axioms Square.qBandQ_ge_real
+#print axioms Square.crossIntegrand_pt_zero
+#print axioms Square.HcrossTest_high_vanish
+#print axioms Square.FTest_high_vanish
+#print axioms Square.HcrossTest_add_left
+#print axioms Square.HcrossTest_add_right
+#print axioms Square.FTest_add_left
+#print axioms Square.FTest_add_right
+-- WeilPoleForm: ClosedGeom/CoreTest typed domain + the CONSTRUCTED improper PoleForm with proved
+-- block decay (vanishing past the support bound, width·sup before it).
+#print axioms Square.coreTest_add
+#print axioms Square.closedGeom_Bd0
+#print axioms Square.FTestG_high_vanish
+#print axioms Square.poleIntegrand_high_vanish
+#print axioms Square.poleK_den
+#print axioms Square.poleK_num
+#print axioms Square.poleK_early
+#print axioms Square.poleDecay
