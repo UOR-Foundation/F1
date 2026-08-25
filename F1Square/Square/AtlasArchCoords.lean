@@ -500,4 +500,78 @@ theorem Dc_high_eq_neg_rOne_Vc (C : NormCtx) (f : L2Test) (hf : CoreTest C.geom 
   refine Req_trans (Rsub_congr (Uc_high_zero C f hf x t hx ht) (Req_refl _)) ?_
   exact Req_trans (Radd_comm _ _) (Radd_zero _)
 
+-- ===========================================================================
+-- (6) THE COMMON-SCALE BRIDGE: the prime evaluations are rational-scale samples of the ONE field `U`.
+-- ===========================================================================
+
+/-- **★ `U_q(f,t) = q^{-1/2}·u_q(f)(t)`** at every rational scale `q` of the canonical band (`c ≤ q ≤ B`,
+    `q ≤ S`): the pole/tail field `Uc` restricted to a rational scale IS the normalized prime evaluation
+    (`invSqrtTwoF_ofQ`, inert band clamp, rational dilation). -/
+theorem Uc_ofQ_eq_normWeight_uEv (C : NormCtx) (pd : PlaceDatum)
+    (hcq : Qle (canonC C) pd.q) (hqB : Qle pd.q (canonB C)) (hqS : Qle pd.q C.S) (f : L2Test) (t : Real) :
+    Req (Uc C (ofQ pd.q pd.hqd) f t) (Rmul (normWeight pd.q) (uEv C pd f t)) := by
+  have hq0 : Qle (⟨0, 1⟩ : Q) pd.q := by
+    have h := pd.hqn
+    show (0 : Int) * (pd.q.den : Int) ≤ pd.q.num * ((1 : Nat) : Int)
+    push_cast; omega
+  unfold Uc invSq dilRef uEv
+  refine Rmul_congr (invSqrtTwoF_ofQ _ _ _ _ _ _ _ _ _ _ pd.q pd.hqd hcq hqB) ?_
+  show Req (f.f (Rmul (xBand C (ofQ pd.q pd.hqd)) (clampedInv C.a C.han C.had t)))
+           (f.f (Rmul (ofQ pd.q pd.hqd) (clampedInv C.a C.han C.had t)))
+  exact f.hfc _ _ (Rmul_congr (qBandQ_eq_of_band (Rle_ofQ_ofQ _ _ hq0) (Rle_ofQ_ofQ _ _ hqS)) (Req_refl _))
+
+/-- The active prime scales `m+1` and `1/(m+1)` (`m < X`) lie in the canonical band and below `S`. -/
+theorem placeData_in_band (C : NormCtx) (m : Nat) (hm : m < C.X) : ∀ side,
+    Qle (canonC C) (placeData C m side).q ∧ Qle (placeData C m side).q (canonB C) ∧ Qle (placeData C m side).q C.S
+  | 0 => by
+      have hqB : Qle (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (canonB C) := by
+        show ((m + 1 : Nat) : Int) * ((1 : Nat) : Int) ≤ ((C.X + 1 : Nat) : Int) * ((1 : Nat) : Int)
+        push_cast; omega
+      have hq1 : Qle (⟨1, 1⟩ : Q) (⟨((m + 1 : Nat) : Int), 1⟩ : Q) := by
+        show (1 : Int) * ((1 : Nat) : Int) ≤ ((m + 1 : Nat) : Int) * ((1 : Nat) : Int)
+        push_cast; omega
+      exact ⟨Qle_trans (by decide) (canonC_le_one C) hq1, hqB, Qle_trans (canonB_den C) hqB C.hTS⟩
+  | (_ + 1) => by
+      have hmB : Qle (⟨((m + 1 : Nat) : Int), 1⟩ : Q) (canonB C) := by
+        show ((m + 1 : Nat) : Int) * ((1 : Nat) : Int) ≤ ((C.X + 1 : Nat) : Int) * ((1 : Nat) : Int)
+        push_cast; omega
+      have hq1 : Qle (⟨1, m + 1⟩ : Q) (⟨1, 1⟩ : Q) := by
+        show (1 : Int) * ((1 : Nat) : Int) ≤ 1 * ((m + 1 : Nat) : Int)
+        push_cast; omega
+      refine ⟨?_, Qle_trans (by decide) hq1 (canonB_one C), Qle_trans (by decide) hq1 C.hS1⟩
+      exact Qinv_antitone (canonB_num C) (Int.ofNat_pos.mpr (Nat.succ_pos m)) hmB
+
+/-- **★ Every active prime evaluation is the rational-scale restriction of the one field**:
+    `U_{q_{m,side}}(f,t) = q^{-1/2}·u_{m,side}(f)(t)`. -/
+theorem Uc_placeData (C : NormCtx) (m side : Nat) (hm : m < C.X) (f : L2Test) (t : Real) :
+    Req (Uc C (ofQ (placeData C m side).q (placeData C m side).hqd) f t)
+        (Rmul (normWeight (placeData C m side).q) (uEv C (placeData C m side) f t)) :=
+  Uc_ofQ_eq_normWeight_uEv C (placeData C m side) (placeData_in_band C m hm side).1
+    (placeData_in_band C m hm side).2.1 (placeData_in_band C m hm side).2.2 f t
+
+/-- The Λ-weight of a place/side without the `q^{-1/2}`: `Λ(m+1)`, resp. `Λ(m+1)·(m+1)^{-1}`. -/
+def lamW (m : Nat) : Nat → Real
+  | 0 => vonMangoldt (m + 1)
+  | (_ + 1) => Rmul (vonMangoldt (m + 1)) (ofQ (⟨1, m + 1⟩ : Q) (Nat.succ_pos m))
+
+theorem placeKappa_eq_lamW (C : NormCtx) (m : Nat) : ∀ side,
+    placeKappa C m side = Rmul (lamW m side) (normWeight (placeData C m side).q)
+  | 0 => rfl
+  | (_ + 1) => rfl
+
+/-- **The prime term in the coherent scale field**: `κ·(u_f v_g + v_f u_g) = Λ·(U_q(f)V(g) + V(f)U_q(g))`. -/
+theorem prime_coherent (C : NormCtx) (m side : Nat) (hm : m < C.X) (f g : L2Test) (t : Real) :
+    Req (Rmul (placeKappa C m side)
+          (Radd (Rmul (uEv C (placeData C m side) f t) (vEv C g t)) (Rmul (vEv C f t) (uEv C (placeData C m side) g t))))
+        (Rmul (lamW m side)
+          (Radd (Rmul (Uc C (ofQ (placeData C m side).q (placeData C m side).hqd) f t) (Vc C g t))
+                (Rmul (Vc C f t) (Uc C (ofQ (placeData C m side).q (placeData C m side).hqd) g t)))) := by
+  rw [placeKappa_eq_lamW]
+  refine Req_trans (Rmul_assoc _ _ _) (Rmul_congr (Req_refl _) ?_)
+  refine Req_trans (Rmul_distrib _ _ _) (Radd_congr ?_ ?_)
+  · refine Req_trans (Req_symm (Rmul_assoc _ _ _)) (Rmul_congr (Req_symm (Uc_placeData C m side hm f t)) (Req_refl _))
+  · refine Req_trans (Req_symm (Rmul_assoc _ _ _)) ?_
+    refine Req_trans (Rmul_congr (Rmul_comm _ _) (Req_refl _)) (Req_trans (Rmul_assoc _ _ _) ?_)
+    exact Rmul_congr (Req_refl _) (Req_symm (Uc_placeData C m side hm g t))
+
 end UOR.Bridge.F1Square.Square

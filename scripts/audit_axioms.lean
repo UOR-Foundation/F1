@@ -10101,3 +10101,38 @@ open UOR.Bridge.F1Square
 #print axioms Square.restPart_mass_witness
 #print axioms Square.shear_no_go
 #print axioms Square.shear_no_go_transfer
+-- AtlasArchCoords (AC-21): THE COMMON-SCALE BRIDGE Uc_ofQ_eq_normWeight_uEv / Uc_placeData — every active prime evaluation is the
+-- rational-scale restriction of the one normalized field U (invSqrtTwoF_ofQ + inert band clamp + rational dilation); prime_coherent.
+#print axioms Square.Uc_ofQ_eq_normWeight_uEv
+#print axioms Square.placeData_in_band
+#print axioms Square.Uc_placeData
+#print axioms Square.placeKappa_eq_lamW
+#print axioms Square.prime_coherent
+-- AtlasTailSplit: the EXACT split archTrunc k = compactTail k − farTailGram k (k ≥ 1, core tests): compact domain [1+2^{-k}, B]
+-- (improper_split_shift at the exact rational gap), far part identified termwise beyond B (F⁺ vanishes, the retained −2F⁺(1)/x
+-- survives), farCoef = ∫_B^∞ K_k(x)/x dx certified (decay 1/((m+1)m)) and ≥ 0, farTailGram = 2·farCoef·w·∫VV/max(t,a) ≥ 0 on the
+-- diagonal = 2·farCoef·F⁺(1); improper_Rsmul_terms (real scalar through an improper integral, schedules reconciled).
+#print axioms Square.tailGap_den
+#print axioms Square.two_le_two_pow
+#print axioms Square.tailGap_num_pos
+#print axioms Square.tailGap_num_nonneg
+#print axioms Square.kerRec_f
+#print axioms Square.farShift_den
+#print axioms Square.farShift_num_nonneg
+#print axioms Square.one_add_farShift
+#print axioms Square.one_le_farShift
+#print axioms Square.farKer_f
+#print axioms Square.farKer_nonneg
+#print axioms Square.rOne_le_inv
+#print axioms Square.affineMap_ge_a
+#print axioms Square.inv_m_inv_succ
+#print axioms Square.farKer_decay
+#print axioms Square.farCoef_nonneg
+#print axioms Square.farTailGram_diag_nonneg
+#print axioms Square.farTailGram_eq_F1
+#print axioms Square.decay_weaken
+#print axioms Square.improper_Rsmul_terms
+#print axioms Square.integralTerm_smul_real
+#print axioms Square.far_term_eq
+#print axioms Square.far_window_bound
+#print axioms Square.archTrunc_split

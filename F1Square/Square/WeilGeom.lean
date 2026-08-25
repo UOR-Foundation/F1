@@ -1,7 +1,9 @@
 /-
 F1 square — **the fixed core of a context** (`WeilGeom.lean`): `ClosedCore C = {f // CoreTest C.geom f}`,
 split out of `WeilDominance` so that constructions on the core (the Atlas fibers, carriers and transfer)
-do not import the dominance predicate or `CoupledForm` into their dependency cone.
+do not import the dominance predicate or `CoupledForm` into their dependency cone.  NOT target-free: this
+file still imports `ClosedWeilBilin` (for `NormCtx.geom`), so `closedWeilBilin` remains reachable; only
+`CurrentArchDominatesPrime` and `CoupledForm` are excluded.
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 

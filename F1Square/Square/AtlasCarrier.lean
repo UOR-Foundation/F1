@@ -2,7 +2,9 @@
 F1 square — **finite weighted carriers with disjoint tags, and the transfer gate** (`AtlasCarrier.lean`).
 
 A STAGE `σ` fixes the quadrature: `Nt+1` Haar points `t_i = a + w·i/(Nt+1)` and `Nx+1` scale points
-`x_j = 1 + (B−1)·j/(Nx+1)` (so `x_0 = 1`), with the SOURCE-EXACT tail kernel floor `dyQ k = 2^{-k}` of `archTrunc`.  Every summand of the
+`x_j = 1 + (B−1)·j/(Nx+1)` (so `x_0 = 1`), with the source-exact KERNEL FLOOR `dyQ k = 2^{-k}` of `archTrunc`
+(only the floor is source-exact here: this grid samples `[1, B]`, while `archTrunc k` integrates
+`[1 + 2^{-k}, ∞)`; the exact split of `archTrunc` is `AtlasTailSplit.lean`).  Every summand of the
 coupled form gets its own DISJOINT tag (`Site`): `prime (m, side, i)`, `pole (j, i)`, `cst i`,
 `tail (j, i)`.  The 24 Atlas address is only an internal gauge of each fiber; the tags are external,
 so no cross terms between summands exist.  Each site carries
@@ -27,15 +29,19 @@ column into the prime, constant and tail coordinates.  The NECESSARY KERNEL COND
 
 THE CONTRACTION TEST.  `atlasTransferStage_not_contract` is only a WEAK REVERSE MASS BOUND: for the pulse
 `c₀` at the single site `pole 0 i₀` and a fine enough scale quadrature, `cutMass σ c₀ ≤ cycleMass σ (K c₀)`.
-It is not a proof of `¬ Contractive`, and the pulse lies OUTSIDE `range cutStage` (no test has a
-single nonzero cut coordinate), so it only falsifies THIS endpoint-copying extension of the transfer
-off the range.  THE GENERIC NO-GO (`shear_no_go`, `shear_no_go_transfer`) retires the whole family: any
-transfer of shear form `(Tc)_p = c_p + L(c)` on a positive-weight prime site `p`, with `L` blind to the
-prime axis at `p` and injecting a nonzero anchor into `p`, is NOT contractive on the full disjoint
-carrier — the witness `c_M = Mβ·e_p + a` has `cycleMass(T c_M) ≥ cutMass(c_M) + 4·w_p·β²` for every
-`M` with `cutMass a ≤ 8M·w_p·β²` (excess strictly positive when `w_p·β² > 0`).  This covers replacing
-the `x = 1` anchor by any weighted pole–tail average.  Contractivity restricted to `range cutStage`
-is not addressed here — it is the coupling sign itself.  Nothing here asserts `CurrentArchDominatesPrime`.
+It is not a proof of `¬ Contractive`; the pulse lies outside `range cutStage` only when `α ≠ 0`, and
+that non-membership is NOT proved here — it only falsifies this endpoint-copying extension off the
+range.  THE GENERIC NO-GO (`shear_no_go`, `shear_no_go_transfer`) is CONDITIONAL: for any transfer of
+shear form `(Tc)_p = c_p + L(c)` at a prime site `p`, with `L` additive, blind to the prime axis at `p`,
+and injecting an anchor `a` as `L(a)_p = β`, the witness `c_M = Mβ·e_p + a` satisfies
+`cycleMass(T c_M) ≥ cutMass(c_M) + 4·w_p·β²` for every `M` with `cutMass a ≤ 8M·w_p·β²`.  The existence
+of such an `M` (Archimedean, when `w_p·β² > 0`) and the positivity `w_p·β² > 0` needed for a STRICT
+excess are hypotheses, so this does not formally establish `¬ Contractive`; it excludes the additive
+prime-blind shear architecture quantitatively, including weighted pole–tail averages in place of the
+`x = 1` anchor.  Contractivity restricted to `range cutStage` is not addressed — it is the coupling
+sign itself.  AMBIENT TYPE: `Site → Real` is an infinite seminormed ambient space; the carrier is
+finite only through the finite site ranges of `siteSum` (`m < X`, `side < 2`, `i ≤ Nt`, `j ≤ Nx`).
+Nothing here asserts `CurrentArchDominatesPrime`.
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
@@ -688,8 +694,9 @@ theorem restPart_mass_witness (C : NormCtx) (σ : Stage) (m₀ side₀ i₀ : Na
     `p = (m₀, side₀, i₀)`: `(Tc)_p = c_p + L(c)_p`, with `L` additive at `p`, blind to the prime axis at
     `p`, and injecting the anchor `a` (zero on the prime axis) as `L(a)_p = β`.  Then for every `M` with
     `cutMass a ≤ M·8·w_p·β²`, the witness `c_M = (Mβ)·e_p + a` satisfies
-    `cutMass c_M + 4·w_p·β² ≤ cycleMass (T c_M)` — `T` is not contractive on the full carrier (the excess is
-    strictly positive whenever `w_p·β² > 0`).  No property of `T` off the site `p` is used. -/
+    `cutMass c_M + 4·w_p·β² ≤ cycleMass (T c_M)`.  CONDITIONAL: the existence of such an `M` and the
+    positivity `w_p·β² > 0` (for a strict excess) are hypotheses, so this is not a formal `¬ Contractive`;
+    it excludes the shear architecture quantitatively.  No property of `T` off the site `p` is used. -/
 theorem shear_no_go (C : NormCtx) (σ : Stage) (T L : (Site → Real) → Site → Real)
     (m₀ side₀ i₀ : Nat) (hm : m₀ < C.X) (hs : side₀ < 2) (hi : i₀ < σ.Nt + 1)
     (hT : ∀ c, Req (T c (.prime m₀ side₀ i₀)) (Radd (c (.prime m₀ side₀ i₀)) (L c (.prime m₀ side₀ i₀))))

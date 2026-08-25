@@ -550,6 +550,7 @@ import F1Square.Square.AtlasPrimeDirect
 import F1Square.Square.AtlasArchCoords
 import F1Square.Square.AtlasFibers
 import F1Square.Square.AtlasCarrier
+import F1Square.Square.AtlasTailSplit
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
