@@ -24,7 +24,8 @@ THE SPLIT AND THE SIGNS.  `⟨Φ_f, MΦ_g⟩ = ⟨BΦ_f, BΦ_g⟩ − ⟨Φ_f, �
     `atlasPrimeDirect = atlasPrimeCut − atlasPrimeCycle`   (`atlasPrimeDirect_split`),
 
 with `atlasPrimeCut(f,f) ≥ 0` and `atlasPrimeCycle(f,f) ≥ 0` (`atlasPrimeCut_nonneg`, `atlasPrimeCycle_nonneg`):
-BOTH masses are genuine positive semidefinite direct integrals; the prime form is their DIFFERENCE:
+what is formalized is DIAGONAL nonnegativity of each mass (separately finite), not yet a bundled bilinear
+PSD direct-integral space; the prime form is their DIFFERENCE:
 
     `atlasPrimeDirect(f,g) = −½·(PrimeForm_X(f,g) + PrimeForm_X(g,f))`   (all tests, `atlasPrimeDirect_eq`),
     `atlasPrimeDirect(f,g) = −PrimeForm_X(f,g)`   on `ClosedCore C`   (`atlasPrimeDirect_eq_neg_PrimeForm`).
@@ -298,8 +299,10 @@ def primeCut (C : NormCtx) (m side : Nat) (f g : L2Test) : Real :=
 def primeCycle (C : NormCtx) (m side : Nat) (f g : L2Test) : Real :=
   riemannIntegral (cycL_den C m side f g) (cycL_num C m side f g) (cycInt_lip C m side f g) (cycInt_fc C m side f g)
 
-/-- **The dyadic stages of the cut integral are the Riemann sums of the ONE field** (definitional):
-    `D_k = 2^{-k} Σ_i w·μ(t_i)·4A_f(t_i)A_g(t_i)`. -/
+/-- The dyadic stages of the cut integral are the Riemann sums of the ONE field sampled at the dyadic
+    points (definitional): `D_k = 2^{-k} Σ_i w·μ(t_i)·4A_f(t_i)A_g(t_i)`.  This is a SCALAR Riemann sum
+    containing `cutInt` — not a vector carrier and not an explicit cut projection (those are the
+    finite weighted carriers of `AtlasCarrier.lean`). -/
 theorem primeCutDyadic_field (C : NormCtx) (m side : Nat) (f g : L2Test) (k : Nat) :
     dyadicR (cutInt C m side f g) k
       = Rmul (ofQ (⟨1, 2 ^ k - 1 + 1⟩ : Q) (Nat.succ_pos _))

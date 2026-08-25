@@ -9986,3 +9986,91 @@ open UOR.Bridge.F1Square
 #print axioms Square.swap_w_ac
 #print axioms Square.two_w_ac
 #print axioms Square.archNumC_endpoint_defect
+-- AtlasArchCoords (AC-19): the raw endpoint/tail estimates Uc_one_eq_Vc, Dc_one_zero, Dc_abs_le_dist_one (uniform in the
+-- Haar variable, modulus DcL sourced from the certified x^{-1/2} and the test's own certificates), Uc_high_zero, Dc_high_eq_neg_rOne_Vc.
+#print axioms Square.invSq_one
+#print axioms Square.xBand_one
+#print axioms Square.rOne_one
+#print axioms Square.Uc_congr_x
+#print axioms Square.Uc_one_eq_Vc
+#print axioms Square.Dc_one_zero
+#print axioms Square.invSqL_den
+#print axioms Square.invSqL_num
+#print axioms Square.invSq_lip
+#print axioms Square.invSq_bd
+#print axioms Square.dilL_den
+#print axioms Square.dilL_num
+#print axioms Square.dil_lip
+#print axioms Square.dil_bd
+#print axioms Square.UcL_den
+#print axioms Square.Uc_lip_x
+#print axioms Square.rVL_den
+#print axioms Square.rV_lip_x
+#print axioms Square.DcL_den
+#print axioms Square.Dc_lip_x
+#print axioms Square.Dc_abs_le_dist_one
+#print axioms Square.inv_a_le_B_inv_aw
+#print axioms Square.Uc_high_zero
+#print axioms Square.Dc_high_eq_neg_rOne_Vc
+-- AtlasFibers: the pole fiber posFiber(U_x,V) with density 2(1+1/max(x,1))·w·r, the constant fiber negFiber(V,V) with density
+-- (log4π+γ)·w·r, and the tail fiber negFiber(Z_x,W_x), Z_x = x·K(x)·D_x, W_x = (1/max(x,1))·V, density 2·w·r (mandatory factor 2);
+-- POINTWISE readbacks density·⟨Φ_f,MΦ_g⟩ = the respective scalar integrand; all densities nonnegative.  No limit, no form value.
+#print axioms Square.archAddr_valid
+#print axioms Square.poleDensity_nonneg
+#print axioms Square.two_half_pd
+#print axioms Square.poleFiber_readback
+#print axioms Square.archConst_nonneg
+#print axioms Square.constDensity_nonneg
+#print axioms Square.constFiber_readback
+#print axioms Square.tailDensity_nonneg
+#print axioms Square.Zc_mul_Wc
+#print axioms Square.Wc_mul_Zc
+#print axioms Square.tailFiber_readback
+-- AtlasCarrier: finite weighted carriers with DISJOINT tags (prime/pole/cst/tail × quadrature sites), nonnegative site weights,
+-- cut/cycle coordinates, stagePair_split; THE TRANSFER GATE: the explicit atlasTransferStage (cycle = cut + the x=1 pole column),
+-- mixedCycleStage_factor for EVERY test (via cut_pole_zero: A(pole 0 i) = V/2 from U_1 = V), the necessary kernel condition
+-- atlasTransfer_kernel, linearity; and the HONEST contraction test atlasTransferStage_not_contract: on the full cut carrier the
+-- x=1 pole pulse has cutMass ≤ cycleMass (K pulse) — the transfer is not contractive off the range of cutStage.  No dominance claim.
+#print axioms Square.canonBm1_den
+#print axioms Square.canonBm1_num
+#print axioms Square.xPt_zero
+#print axioms Square.cellT_nonneg
+#print axioms Square.cellX_nonneg
+#print axioms Square.siteWeight_nonneg
+#print axioms Square.siteAddr_valid
+#print axioms Square.siteFiber_prime
+#print axioms Square.siteFiber_pole
+#print axioms Square.siteFiber_cst
+#print axioms Square.siteFiber_tail
+#print axioms Square.siteFiber_split
+#print axioms Square.siteSum_congr
+#print axioms Square.siteSum_sub
+#print axioms Square.siteSum_nonneg
+#print axioms Square.stagePair_split
+#print axioms Square.cutPair_diag_eq_mass
+#print axioms Square.cyclePair_diag_eq_mass
+#print axioms Square.cutMass_nonneg
+#print axioms Square.cycleMass_nonneg
+#print axioms Square.b_eq_a_add_half
+#print axioms Square.b_eq_a_sub_half
+#print axioms Square.cut_pole_zero
+#print axioms Square.mixedCycleStage_factor
+#print axioms Square.atlasTransferStage_zero
+#print axioms Square.atlasTransfer_kernel
+#print axioms Square.atlasTransferStage_add
+#print axioms Square.polePulse_prime
+#print axioms Square.polePulse_cst
+#print axioms Square.polePulse_tail
+#print axioms Square.polePulse_pole_succ
+#print axioms Square.polePulse_pole_zero
+#print axioms Square.mass_zero_term
+#print axioms Square.RsumN_zero_terms
+#print axioms Square.indicator_term
+#print axioms Square.indicator_mass
+#print axioms Square.cutMass_polePulse
+#print axioms Square.Rle_add_nonneg_left
+#print axioms Square.Rle_add_nonneg_right
+#print axioms Square.cycleMass_transfer_pulse_ge
+#print axioms Square.pole_w_rearr
+#print axioms Square.poleWeight_le_cstWeight
+#print axioms Square.atlasTransferStage_not_contract

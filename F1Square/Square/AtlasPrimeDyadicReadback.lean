@@ -17,8 +17,9 @@ partition `2^0`), stage `s+1` carries the signed fine/coarse atoms of the telesc
 `dyadicR(·, s+1) − dyadicR(·, s)` (fine atoms with `+κ`, coarse atoms with `−κ`).  The partial sums
 below are taken at COMPLETE-STAGE endpoints only: this is a prescribed block telescoping of scalar
 values, NOT convergence of an atom-by-atom series, and NOT a completed Atlas vector (the cut and
-cycle masses of the individual atoms are not summable — e.g. at `Λ(1) = 0` each atom has cut and
-cycle mass `1/16·(u+v)²` with zero net energy).  The positive-measure direct-integral realization
+cycle masses of the individual atoms are not summable — e.g. at `Λ(1) = 0` the coefficient is `c = 0`,
+so `A = −v/4`, `B = v/4`, and each atom has cut mass `4A² = v²/4` and cycle mass `4B² = v²/4` with zero net
+energy).  The positive-measure direct-integral realization
 of the prime form with a single weight-free field is `AtlasPrimeDirect.lean`.
 THE RESULTS.
  * `gammaPartial_readback` — THE EXACT ALL-PAIRS PARTIAL-SUM READBACK: for every pair of tests

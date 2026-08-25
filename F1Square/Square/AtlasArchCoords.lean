@@ -28,6 +28,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 
 import F1Square.Square.AtlasPrimeDirect
 import F1Square.Square.WeilArchNumC
+import F1Square.Analysis.ClampedInvLower
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -320,5 +321,183 @@ theorem archNumC_endpoint_defect (C : NormCtx) (f g : L2Test) (x : Real) :
   unfold defectIntegral
   exact riemannIntegral_congr (asmL_den C x f g) (asmL_num C x f g) (asmInt_lip C x f g) (asmInt_fc C x f g)
     (defInt_lip C x f g) (defInt_fc C x f g) (asmInt_eq_defInt C x f g)
+
+-- ===========================================================================
+-- (5) THE RAW ENDPOINT AND TAIL ESTIMATES.
+-- ===========================================================================
+
+/-- `1^{-1/2} = 1` for the certified two-sided weight. -/
+theorem invSq_one (C : NormCtx) : Req (invSq C one) one :=
+  Req_trans (invSqrtTwoF_ofQ (canonC C) (canonB C) (canonC_num C) (canonC_den C) (canonB_den C) (canonB_one C)
+    (canonC_le_B C) (C.X + 1) (Nat.succ_pos C.X) (canonB_le_N C) (⟨1, 1⟩ : Q) Nat.one_pos (canonC_le_one C) (canonB_one C))
+    (Req_trans (normWeight_pos_eq (show (0 : Int) < 1 by decide)) Rsqrt_one)
+
+/-- The scale band is inert at `x = 1` (`1 ≤ S`). -/
+theorem xBand_one (C : NormCtx) : Req (xBand C one) one :=
+  qBandQ_eq_of_band (Rle_ofQ_ofQ (by decide) (by decide) (by decide)) (Rle_ofQ_ofQ (by decide) C.hSd C.hS1)
+
+/-- `1/max(1,1) = 1`. -/
+theorem rOne_one : Req (rOne one) one :=
+  clampedInv_ofQ (a := (⟨1, 1⟩ : Q)) (q := (⟨1, 1⟩ : Q)) (by decide) (by decide) (by decide) (by decide) (Qle_refl _)
+
+/-- `U_x` respects `≈` in the scale. -/
+theorem Uc_congr_x (C : NormCtx) {x y : Real} (h : Req x y) (f : L2Test) (t : Real) :
+    Req (Uc C x f t) (Uc C y f t) := by
+  unfold Uc invSq dilRef
+  refine Rmul_congr (invSqrtTwoF_congr _ _ _ _ _ _ _ _ _ _ h) ?_
+  show Req (f.f (Rmul (xBand C x) (clampedInv C.a C.han C.had t))) (f.f (Rmul (xBand C y) (clampedInv C.a C.han C.had t)))
+  exact f.hfc _ _ (Rmul_congr (qBandQ_congr _ _ _ _ h) (Req_refl _))
+
+/-- **★ `U_1(f,t) = V(f,t)`**: the raw coordinate at the endpoint is the reflection evaluation. -/
+theorem Uc_one_eq_Vc (C : NormCtx) (f : L2Test) (t : Real) : Req (Uc C one f t) (Vc C f t) := by
+  unfold Uc Vc vEv dilRef
+  show Req (Rmul (invSq C one) (f.f (Rmul (xBand C one) (clampedInv C.a C.han C.had t))))
+           (f.f (clampedInv C.a C.han C.had t))
+  refine Req_trans (Rmul_congr (invSq_one C) (f.hfc _ _ (Rmul_congr (xBand_one C) (Req_refl _)))) ?_
+  exact Req_trans (Rone_mul _) (f.hfc _ _ (Rone_mul _))
+
+/-- **★ `D_1(f,t) = 0`**: the endpoint defect vanishes exactly. -/
+theorem Dc_one_zero (C : NormCtx) (f : L2Test) (t : Real) : Req (Dc C one f t) zero := by
+  unfold Dc
+  refine Req_trans (Rsub_congr (Uc_one_eq_Vc C f t) (Req_trans (Rmul_congr rOne_one (Req_refl _)) (Rone_mul _))) ?_
+  exact Radd_neg _
+
+-- --- the uniform-in-`t` Lipschitz modulus of `x ↦ D_x(f,t)` ---
+
+/-- The modulus of `x ↦ x^{-1/2}` (the two-sided certified weight). -/
+def invSqL (C : NormCtx) : Q :=
+  mul (⟨((C.X + 1 : Nat) : Int), 2⟩ : Q) (mul (Qinv (canonC C)) (Qinv (canonC C)))
+theorem invSqL_den (C : NormCtx) : 0 < (invSqL C).den :=
+  Qmul_den_pos (Nat.succ_pos 1) (Qmul_den_pos (Qinv_den_pos (canonC_num C)) (Qinv_den_pos (canonC_num C)))
+theorem invSqL_num (C : NormCtx) : 0 ≤ (invSqL C).num :=
+  Int.mul_nonneg (Int.ofNat_nonneg _)
+    (Int.mul_nonneg (Int.le_of_lt (Qinv_num_pos (canonC_den C))) (Int.le_of_lt (Qinv_num_pos (canonC_den C))))
+
+theorem invSq_lip (C : NormCtx) : ∀ x y,
+    Rle (Rabs (Rsub (invSq C x) (invSq C y))) (Rmul (ofQ (invSqL C) (invSqL_den C)) (Rabs (Rsub x y))) :=
+  invSqrtTwoF_lipschitz (canonC C) (canonB C) (canonC_num C) (canonC_den C) (canonB_den C) (canonB_one C)
+    (canonC_le_B C) (C.X + 1) (Nat.succ_pos C.X) (canonB_le_N C)
+theorem invSq_bd (C : NormCtx) : ∀ x, Rle (Rabs (invSq C x)) (ofQ (Qinv (canonC C)) (Qinv_den_pos (canonC_num C))) :=
+  (invSqrtTwoTest (canonC C) (canonB C) (canonC_num C) (canonC_den C) (canonB_den C) (canonB_one C)
+    (canonC_le_B C) (canonC_le_one C) (C.X + 1) (Nat.succ_pos C.X) (canonB_le_N C)).hbd
+
+/-- The modulus of `x ↦ f(x/max(t,a))` (uniform in `t`): `L_f·(1/a)`. -/
+def dilL (C : NormCtx) (f : L2Test) : Q := mul f.L (Qinv C.a)
+theorem dilL_den (C : NormCtx) (f : L2Test) : 0 < (dilL C f).den := Qmul_den_pos f.hLd (Qinv_den_pos C.han)
+theorem dilL_num (C : NormCtx) (f : L2Test) : 0 ≤ (dilL C f).num :=
+  Int.mul_nonneg f.hLn (Int.le_of_lt (Qinv_num_pos C.had))
+
+theorem dil_lip (C : NormCtx) (f : L2Test) (t : Real) : ∀ x y,
+    Rle (Rabs (Rsub ((dilRef C x f).f t) ((dilRef C y f).f t))) (Rmul (ofQ (dilL C f) (dilL_den C f)) (Rabs (Rsub x y))) := by
+  intro x y
+  show Rle (Rabs (Rsub (f.f (Rmul (xBand C x) (clampedInv C.a C.han C.had t)))
+                       (f.f (Rmul (xBand C y) (clampedInv C.a C.han C.had t))))) _
+  refine Rle_trans (f.hlip _ _) ?_
+  have h1 : Req (Rabs (Rsub (Rmul (xBand C x) (clampedInv C.a C.han C.had t)) (Rmul (xBand C y) (clampedInv C.a C.han C.had t))))
+      (Rmul (Rabs (Rsub (xBand C x) (xBand C y))) (Rabs (clampedInv C.a C.han C.had t))) :=
+    Req_trans (Rabs_congr (Req_symm (Rsub_mul_ac _ _ _))) (Rabs_Rmul _ _)
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ f.hLd f.hLn) (Rle_of_Req h1)) ?_
+  refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ f.hLd f.hLn)
+    (Rmul_le_Rmul_both (Rnonneg_Rabs _) (Rnonneg_ofQ (Qinv_den_pos C.han) (Int.le_of_lt (Qinv_num_pos C.had)))
+      (qBandQ_lipschitz _ _ _ _ x y) ((recipTest C.a C.han C.had).hbd t))) ?_
+  refine Rle_of_Req ?_
+  refine Req_trans (Rmul_congr (Req_refl (ofQ f.L f.hLd)) (Rmul_comm (Rabs (Rsub x y)) _)) ?_
+  refine Req_trans (Req_symm (Rmul_assoc (ofQ f.L f.hLd) _ (Rabs (Rsub x y)))) ?_
+  exact Rmul_congr (Rmul_ofQ_ofQ f.hLd (Qinv_den_pos C.han)) (Req_refl _)
+
+theorem dil_bd (C : NormCtx) (f : L2Test) (t : Real) : ∀ x, Rle (Rabs ((dilRef C x f).f t)) (ofQ f.M f.hMd) :=
+  fun x => f.hbd _
+
+/-- The modulus of `x ↦ U_x(f,t)`, uniform in `t`: `(1/c)·(L_f/a) + M_f·L_{√}`. -/
+def UcL (C : NormCtx) (f : L2Test) : Q :=
+  add (mul (Qinv (canonC C)) (dilL C f)) (mul f.M (invSqL C))
+theorem UcL_den (C : NormCtx) (f : L2Test) : 0 < (UcL C f).den :=
+  add_den_pos (Qmul_den_pos (Qinv_den_pos (canonC_num C)) (dilL_den C f)) (Qmul_den_pos f.hMd (invSqL_den C))
+
+theorem Uc_lip_x (C : NormCtx) (f : L2Test) (t : Real) : ∀ x y,
+    Rle (Rabs (Rsub (Uc C x f t) (Uc C y f t))) (Rmul (ofQ (UcL C f) (UcL_den C f)) (Rabs (Rsub x y))) :=
+  fun x y => Rmul_lipschitz (invSqL_den C) (dilL_den C f) (Qinv_den_pos (canonC_num C)) f.hMd
+    (invSqL_num C) (dilL_num C f) (Int.le_of_lt (Qinv_num_pos (canonC_den C))) f.hMn
+    (invSq_lip C) (dil_lip C f t) (invSq_bd C) (dil_bd C f t) x y
+
+/-- The modulus of `x ↦ (1/max(x,1))·V(f,t)`: `M_f·1` (the unit clamp is `1`-Lipschitz). -/
+def rVL (f : L2Test) : Q :=
+  add (mul (Qinv (⟨1, 1⟩ : Q)) (⟨0, 1⟩ : Q)) (mul f.M (mul (Qinv (⟨1, 1⟩ : Q)) (Qinv (⟨1, 1⟩ : Q))))
+theorem rVL_den (f : L2Test) : 0 < (rVL f).den :=
+  add_den_pos (Qmul_den_pos (by decide) Nat.one_pos) (Qmul_den_pos f.hMd (Qmul_den_pos (by decide) (by decide)))
+
+theorem rV_lip_x (C : NormCtx) (f : L2Test) (t : Real) : ∀ x y,
+    Rle (Rabs (Rsub (Rmul (rOne x) (Vc C f t)) (Rmul (rOne y) (Vc C f t)))) (Rmul (ofQ (rVL f) (rVL_den f)) (Rabs (Rsub x y))) :=
+  fun x y => Rmul_lipschitz (f := rOne) (g := fun _ => Vc C f t)
+    (Lf := mul (Qinv (⟨1, 1⟩ : Q)) (Qinv (⟨1, 1⟩ : Q))) (Lg := (⟨0, 1⟩ : Q)) (Mf := Qinv (⟨1, 1⟩ : Q)) (Mg := f.M)
+    (by decide) Nat.one_pos (by decide) f.hMd
+    (by decide) (by decide) (by decide) f.hMn
+    (clampedInv_lipschitz (⟨1, 1⟩ : Q) (by decide) (by decide)) (const_lip0 (Vc C f t))
+    (recipTest (⟨1, 1⟩ : Q) (by decide) (by decide)).hbd (fun _ => f.hbd _) x y
+
+/-- **The uniform modulus of `x ↦ D_x(f,t)`**: `L_D(f) = L_U + L_{rV}`, independent of `t`. -/
+def DcL (C : NormCtx) (f : L2Test) : Q := add (UcL C f) (rVL f)
+theorem DcL_den (C : NormCtx) (f : L2Test) : 0 < (DcL C f).den := add_den_pos (UcL_den C f) (rVL_den f)
+
+theorem Dc_lip_x (C : NormCtx) (f : L2Test) (t : Real) : ∀ x y,
+    Rle (Rabs (Rsub (Dc C x f t) (Dc C y f t))) (Rmul (ofQ (DcL C f) (DcL_den C f)) (Rabs (Rsub x y))) :=
+  fun x y => lip_add_fl (f := fun x => Uc C x f t) (g := fun x => Rneg (Rmul (rOne x) (Vc C f t)))
+    (UcL_den C f) (rVL_den f) (Uc_lip_x C f t) (lip_neg_pd (rVL_den f) (rV_lip_x C f t)) x y
+
+/-- **★ `|D_x(f,t)| ≤ L_D(f)·|x − 1|`, uniformly in the Haar variable `t`.** -/
+theorem Dc_abs_le_dist_one (C : NormCtx) (f : L2Test) (x t : Real) :
+    Rle (Rabs (Dc C x f t)) (Rmul (ofQ (DcL C f) (DcL_den C f)) (Rabs (Rsub x one))) := by
+  have h0 : Req (Dc C x f t) (Rsub (Dc C x f t) (Dc C one f t)) :=
+    Req_symm (Req_trans (Rsub_congr (Req_refl _) (Dc_one_zero C f t)) (Rsub_zero _))
+  exact Rle_trans (Rle_of_Req (Rabs_congr h0)) (Dc_lip_x C f t x one)
+
+-- --- the high side ---
+
+/-- `1/a ≤ B·(1/(a+w))` — the rational support threshold (`a + w ≤ B·a`, `B = X+1`). -/
+theorem inv_a_le_B_inv_aw (C : NormCtx) :
+    Qle (Qinv C.a) (mul (canonB C) (Qinv (add C.a C.w))) := by
+  have hawn : 0 < (add C.a C.w).num := qnum_pos_of_le C.han (add_den_pos C.had C.hw) (Qle_self_add C.hwn)
+  have hb := C.hband_hi
+  show ((C.a.den : Int)) * ((((canonB C).den) * (add C.a C.w).num.toNat : Nat) : Int)
+      ≤ ((canonB C).num * ((add C.a C.w).den : Int)) * ((C.a.num.toNat : Nat) : Int)
+  show ((C.a.den : Int)) * (((1 : Nat) * (add C.a C.w).num.toNat : Nat) : Int)
+      ≤ (((C.X + 1 : Nat) : Int) * ((add C.a C.w).den : Int)) * ((C.a.num.toNat : Nat) : Int)
+  simp only [Qle, mul] at hb
+  push_cast [Int.toNat_of_nonneg (Int.le_of_lt hawn), Int.toNat_of_nonneg (Int.le_of_lt C.han)] at *
+  -- hb : (a+w).num * (1 * a.den) ≤ (X+1) * a.num * (a+w).den
+  have e1 : (C.a.den : Int) * (1 * (add C.a C.w).num) = (add C.a C.w).num * (1 * (C.a.den : Int)) := by ring_uor
+  have e2 : ((C.X : Int) + 1) * ((add C.a C.w).den : Int) * C.a.num
+      = ((C.X : Int) + 1) * C.a.num * ((add C.a C.w).den : Int) := by ring_uor
+  omega
+
+/-- **★ `U_x(f,t) = 0` for `x ≥ B` and `t ≤ a + w`** (core test): the dilated argument exceeds `1/a`. -/
+theorem Uc_high_zero (C : NormCtx) (f : L2Test) (hf : CoreTest C.geom f) (x t : Real)
+    (hx : Rle (ofQ (canonB C) (canonB_den C)) x) (ht : Rle t (ofQ (add C.a C.w) (add_den_pos C.had C.hw))) :
+    Req (Uc C x f t) zero := by
+  have hawn : 0 < (add C.a C.w).num := qnum_pos_of_le C.han (add_den_pos C.had C.hw) (Qle_self_add C.hwn)
+  have hB0 : Qle (⟨0, 1⟩ : Q) (canonB C) := Qle_trans (by decide) (by decide) (canonB_one C)
+  have hXge : Rle (ofQ (canonB C) (canonB_den C)) (xBand C x) :=
+    qBandQ_ge_real C.S C.hSd (canonB C) (canonB_den C) hB0 C.hTS x hx
+  have hcinv : Rle (ofQ (Qinv (add C.a C.w)) (Qinv_den_pos hawn)) (clampedInv C.a C.han C.had t) :=
+    ofQ_inv_le_clampedInv C.han C.had (add_den_pos C.had C.hw) hawn ht (Qle_self_add C.hwn)
+  have hprod : Rle (Rmul (ofQ (canonB C) (canonB_den C)) (ofQ (Qinv (add C.a C.w)) (Qinv_den_pos hawn)))
+      (Rmul (xBand C x) (clampedInv C.a C.han C.had t)) :=
+    Rmul_le_Rmul_both (Rnonneg_ofQ (canonB_den C) (Int.le_of_lt (canonB_num C)))
+      (Rnonneg_clampedInv C.a C.han C.had t) hXge hcinv
+  have harg : Rle (ofQ (Qinv C.a) (Qinv_den_pos C.han)) (Rmul (xBand C x) (clampedInv C.a C.han C.had t)) :=
+    Rle_trans (Rle_ofQ_ofQ (Qinv_den_pos C.han) (Qmul_den_pos (canonB_den C) (Qinv_den_pos hawn)) (inv_a_le_B_inv_aw C))
+      (Rle_trans (Rle_of_Req (Req_symm (Rmul_ofQ_ofQ (canonB_den C) (Qinv_den_pos hawn)))) hprod)
+  unfold Uc dilRef
+  show Req (Rmul (invSq C x) (f.f (Rmul (xBand C x) (clampedInv C.a C.han C.had t)))) zero
+  exact Req_trans (Rmul_congr (Req_refl _) (hf.hgh _ harg)) (Rmul_zero _)
+
+/-- **★ On the high side the defect is the retained tail**: `D_x(f,t) = −(1/max(x,1))·V(f,t)` for
+    `x ≥ B`, `t ≤ a + w` (core test). -/
+theorem Dc_high_eq_neg_rOne_Vc (C : NormCtx) (f : L2Test) (hf : CoreTest C.geom f) (x t : Real)
+    (hx : Rle (ofQ (canonB C) (canonB_den C)) x) (ht : Rle t (ofQ (add C.a C.w) (add_den_pos C.had C.hw))) :
+    Req (Dc C x f t) (Rneg (Rmul (rOne x) (Vc C f t))) := by
+  unfold Dc
+  refine Req_trans (Rsub_congr (Uc_high_zero C f hf x t hx ht) (Req_refl _)) ?_
+  exact Req_trans (Radd_comm _ _) (Radd_zero _)
 
 end UOR.Bridge.F1Square.Square
