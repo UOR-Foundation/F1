@@ -522,6 +522,8 @@ import F1Square.Square.WeilRecipCanon
 import F1Square.Square.IntegralCell
 import F1Square.Square.IntegralInversionGeom
 import F1Square.Square.IntegralInversion
+import F1Square.Square.ImproperFinite
+import F1Square.Square.WeilMellinPole
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue

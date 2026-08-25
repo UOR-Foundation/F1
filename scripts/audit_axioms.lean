@@ -9384,6 +9384,48 @@ open UOR.Bridge.F1Square
 #print axioms Square.psi_window_congr
 #print axioms Square.phi_window_congr
 #print axioms Square.riemannIntegralI_inversion
+-- ImproperFinite: the improper integral of an integrand vanishing past M is the finite window [1, M+1]
+-- (partial sums stabilize; Bishop limit of an eventually constant sequence; integer-partition split).
+#print axioms Square.genSum_stable
+#print axioms Square.riemannIntegralI_window_zero
+#print axioms Square.integralTerm_vanish
+#print axioms Square.intPt_den
+#print axioms Square.intPt_zero_lt
+#print axioms Square.intPt_step_le
+#print axioms Square.intPt_step_sub
+#print axioms Square.intPt_top_sub
+#print axioms Square.intPt_zero_eq
+#print axioms Square.intPt_cell_eq
+#print axioms Square.intPt_window_eq
+#print axioms Square.window_eq_genSum_terms
+#print axioms Square.RReg_const_fin
+#print axioms Square.improperIntegral1_eq_finite
+-- WeilMellinPole: THE INDEPENDENTLY DEFINED MELLIN POLE TERM ∫₀^∞ F⁺(x)(1+1/x)dx = low [1/B,1] + high [1,B]
+-- windows, THE FOLDING THEOREM MellinPole_eq_PoleForm (inversion + real transpose + finite collapse),
+-- the SUBSTANTIVE PoleForm_diag, and the slot with the independent pole field (closedWeilBilin_diag_mellin).
+#print axioms Square.canonB_gt_one
+#print axioms Square.lowInt_f
+#print axioms Square.highInt_f
+#print axioms Square.poleDens_f
+#print axioms Square.FCanon_low_vanish
+#print axioms Square.FCanon_high_vanish
+#print axioms Square.Rinv_ge_ofQ_inv
+#print axioms Square.Rinv_Rinv_eq
+#print axioms Square.clampedInv_recip_eq
+#print axioms Square.Rmul_clampedInv_one
+#print axioms Square.fold_pointwise
+#print axioms Square.affine_one_lo
+#print axioms Square.affine_one_hi
+#print axioms Square.MellinLow_fold
+#print axioms Square.poleIntegrand_f
+#print axioms Square.FTestG_geom_f
+#print axioms Square.MellinHigh_sum
+#print axioms Square.poleIntegrand_term_vanish
+#print axioms Square.PoleForm_eq_finite
+#print axioms Square.pole_window_congr
+#print axioms Square.MellinPole_eq_PoleForm
+#print axioms Square.PoleForm_diag
+#print axioms Square.closedWeilBilin_diag_mellin
 -- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
 -- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
 #print axioms Square.Hcross_recip_lip
