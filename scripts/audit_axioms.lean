@@ -9237,3 +9237,68 @@ open UOR.Bridge.F1Square
 #print axioms Square.HcrossTest_low_vanish
 #print axioms Square.FTwo_low_vanish
 #print axioms Square.FTwo_recip_int
+-- WeilDensity: |x − ofQ (x.seq n)| ≤ 1/(n+1); real-level linear bound ⟹ Req; THE DENSITY PRINCIPLE
+-- (rational-Lipschitz functions agreeing on the rationals of a band agree on the band).
+#print axioms Square.Rabs_sub_ofQ_seq_le
+#print axioms Square.Qneg_Qsub_eq
+#print axioms Square.Req_of_Rabs_le_lin
+#print axioms Square.Rabs_sub_tri
+#print axioms Square.Qle_num_cap
+#print axioms Square.Req_of_lipschitz_dense
+-- WeilRecipQ: two-test reciprocity H_q(f,g) = H_{1/q}(g,f) at EVERY RATIONAL scale q ≥ 1 (no overlap
+-- hypothesis): rational-scale helpers, pointwise/window vanishing, the Route-D core, scale congruence.
+#print axioms Square.Qmul_Qinv_mul_gen
+#print axioms Square.q_mul_inv_q
+#print axioms Square.inv_q_mul_le
+#print axioms Square.qnum_gt_den_of_one_lt
+#print axioms Square.w1_num_pos_gen
+#print axioms Square.CoreStrict_gen
+#print axioms Square.qlow_engine_gen
+#print axioms Square.Qle_of_one_lt
+#print axioms Square.dilDN_pt_zero_Q
+#print axioms Square.P1n_pt_zero_Q
+#print axioms Square.Pn_pt_zero_degen_Q
+#print axioms Square.left_DN_window_vanish_Q
+#print axioms Square.right_I1n_window_vanish_Q
+#print axioms Square.Pn_window_vanish_degen_Q
+#print axioms Square.core_integrand_agree_Q
+#print axioms Square.HForm_recip_core_Q
+#print axioms Square.HForm_congr_scale
+#print axioms Square.HForm_recip_all_Q
+-- WeilRecipReal: the REAL-scale cross-correlation law H_{f,g}(x) ≈ H_{g,f}(1/x) by density, the real
+-- radicand/weight identities at 1/x, and the real reciprocal transpose x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x).
+#print axioms Square.Hcross_recip_lip
+#print axioms Square.Hcross_recip_real
+#print axioms Square.twoRad_recip
+#print axioms Square.invSqrtTwoF_recip
+#print axioms Square.FTwo_recip_real
+-- WeilRecipCanon: the rational layer (normWeight(q⁻¹)=q·normWeight(q) INDEPENDENTLY proved; B_{1/q}(f,g)
+-- = q·B_q(g,f) and q⁻¹·F⁺_{f,g}(q⁻¹)=F⁺_{g,f}(q) at EVERY rational q ≥ 1) and the CANONICAL band from
+-- NormCtx alone (B = X+1, c = 1/B with c·B = 1 exactly, c ≤ b·a from hband_lo): FCanon_recip_real.
+#print axioms Square.qinv_qinv
+#print axioms Square.qinv_le_one
+#print axioms Square.qsq_mul_qinv
+#print axioms Square.normWeight_recip_Q
+#print axioms Square.BForm_adjoint_swap_all_Q
+#print axioms Square.FTwo_recip_Q
+#print axioms Square.canonB_den
+#print axioms Square.canonB_num
+#print axioms Square.canonB_one
+#print axioms Square.canonC_num
+#print axioms Square.canonC_den
+#print axioms Square.canonC_mul_B
+#print axioms Square.canonC_mul_B_le
+#print axioms Square.canonC_le_one
+#print axioms Square.canonC_le_B
+#print axioms Square.canonB_le_N
+#print axioms Square.canonB_le_S
+#print axioms Square.canonC_le_ba
+#print axioms Square.FCanon_recip_Q
+#print axioms Square.FCanon_recip_real
+-- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
+-- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
+#print axioms Square.Hcross_recip_lip
+#print axioms Square.Hcross_recip_real
+#print axioms Square.twoRad_recip
+#print axioms Square.invSqrtTwoF_recip
+#print axioms Square.FTwo_recip_real

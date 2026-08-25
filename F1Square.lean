@@ -515,6 +515,11 @@ import F1Square.Square.WeilArchNear
 import F1Square.Square.ClosedWeilBilin
 import F1Square.Square.WeilInvSqrtTwo
 import F1Square.Square.WeilCrossFTwo
+import F1Square.Square.WeilDensity
+import F1Square.Square.WeilRecipQ
+import F1Square.Square.WeilRecipReal
+import F1Square.Square.WeilRecipCanon
+import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare
