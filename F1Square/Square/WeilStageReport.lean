@@ -80,8 +80,11 @@ theorem prime_component_positive :
     (Req_trans (Radd_comm _ _) (Radd_zero _)))) ?_
   exact PForm_one_tent_pos
 
-/-- **THE FALSIFICATION**: no cut-space stage (`Σa = 0`) reads back the prime component `−PrimeForm`
-    on `(C₀, tent)` — every such stage form is `≥ 0` while the term is `< 0`. -/
+/-- **What is proved** (exactly): there are no `a, b` with `Σa = 0` whose cut-slice quadratic value
+    `Q_M(a⊕b)` equals `−PrimeForm C₀.X tent tent` — because that value is `≥ 0` while the term is `< 0`.
+    This is a statement about ONE cut-slice value; it does not quantify over coefficient maps, stages,
+    path independence, or a `CoupledForm` readback, and it does not exclude a mixed cut/cycle-valued
+    stage in which the prime contribution enters through the `−I` (cycle) term. -/
 theorem no_cut_stage_reads_prime :
     ¬ ∃ (a b : Nat → Real), Req (RsumN a 3) zero ∧
       Req (Qform (cutVec a b))

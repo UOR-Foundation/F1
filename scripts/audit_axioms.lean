@@ -9722,6 +9722,36 @@ open UOR.Bridge.F1Square
 #print axioms Square.PForm_one_tent_pos
 #print axioms Square.prime_component_positive
 #print axioms Square.no_cut_stage_reads_prime
+-- AtlasBundle: the canonical cut/cycle decomposition a_v = row/8 − total/24, b_v = col/3, P_cut, R_cyc (∈ ker B),
+-- orthogonality, additivity of M, the bilinear cut formula, and THE BUNDLED ALL-PAIRS READBACK
+-- ⟨v, Mw⟩ = 56Σa_v a_w + 6Σb_v b_w + 3(Σb_v)(Σb_w) − ⟨R_cyc v, R_cyc w⟩ (atlas_bilinear_readback).
+#print axioms Square.pairF_congr
+#print axioms Square.pairF_comm
+#print axioms Square.pairF_add_right
+#print axioms Square.pairF_neg_right
+#print axioms Square.totalF_cols
+#print axioms Square.aOf_sum_zero
+#print axioms Square.bOf_sum
+#print axioms Square.decomp_pt
+#print axioms Square.eight_aOf
+#print axioms Square.three_bOf
+#print axioms Square.Rcyc_row_zero
+#print axioms Square.Rcyc_col_zero
+#print axioms Square.Rcyc_isCycle
+#print axioms Square.pairF_cut_cycle
+#print axioms Square.rowSum_add
+#print axioms Square.colSum_add
+#print axioms Square.atlasOp_add
+#print axioms Square.rowSum_congr
+#print axioms Square.colSum_congr
+#print axioms Square.atlasOp_congr
+#print axioms Square.x_mul_lin2
+#print axioms Square.cut_term_expand2
+#print axioms Square.cut_inner_sum2
+#print axioms Square.cut_outer_sum2
+#print axioms Square.pairF_cut_Mcut
+#print axioms Square.atlasOp_cut_is_cut
+#print axioms Square.atlas_bilinear_readback
 -- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
 -- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
 #print axioms Square.Hcross_recip_lip

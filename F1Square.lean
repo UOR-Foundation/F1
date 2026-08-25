@@ -540,6 +540,7 @@ import F1Square.Square.WeilDominance
 import F1Square.Square.AtlasIncidence
 import F1Square.Square.WeilStageFalsify
 import F1Square.Square.WeilStageReport
+import F1Square.Square.AtlasBundle
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
