@@ -9595,6 +9595,61 @@ open UOR.Bridge.F1Square
 -- and closedWeilBilin_diag_semantic with NO component-level reflexivity for either hard field.
 #print axioms Square.ArchTailForm_diag
 #print axioms Square.closedWeilBilin_diag_semantic
+-- WeilFormLaws: the improper bricks improper_congr_sched / improper_add_sched (block-wise congruent/additive
+-- integrands at DIFFERENT sealed constants and moduli) and PoleForm_symm / add_left / add_right.
+#print axioms Square.improper_congr_sched
+#print axioms Square.improper_add_sched
+#print axioms Square.poleIntegrand_symm_pt
+#print axioms Square.poleIntegrand_add_left_pt
+#print axioms Square.poleIntegrand_add_right_pt
+#print axioms Square.poleDecayAt
+#print axioms Square.integralTerm_congr_all
+#print axioms Square.PoleForm_symm
+#print axioms Square.PoleForm_add_left
+#print axioms Square.PoleForm_add_right
+-- WeilArchTailLaws: archNum pointwise symmetry/biadditivity, Reg/Far laws (improper bricks), Near laws through the
+-- CN/2ᵏ rates (different nearCN schedules reconciled), ArchTailForm_symm / add_left / add_right.
+#print axioms Square.archNum_symm_pt
+#print axioms Square.archNum_add_alg
+#print axioms Square.archNum_add_left_pt
+#print axioms Square.archNum_add_right_pt
+#print axioms Square.archRegIntegrand_f
+#print axioms Square.archFarIntegrand_f
+#print axioms Square.archRegDecayAt
+#print axioms Square.archFarDecayAt
+#print axioms Square.ArchRegPart_symm
+#print axioms Square.ArchFarPart_symm
+#print axioms Square.ArchRegPart_add_left
+#print axioms Square.ArchRegPart_add_right
+#print axioms Square.ArchFarPart_add_left
+#print axioms Square.ArchFarPart_add_right
+#print axioms Square.nearIntegrand_f
+#print axioms Square.nearJ_symm
+#print axioms Square.nearJ_add_left
+#print axioms Square.nearJ_add_right
+#print axioms Square.rate_two_pow_to_lin
+#print axioms Square.ArchNearPart_symm
+#print axioms Square.near_add_tri
+#print axioms Square.ArchNearPart_add_left
+#print axioms Square.ArchNearPart_add_right
+#print axioms Square.tail_add_alg
+#print axioms Square.ArchTailForm_symm
+#print axioms Square.ArchTailForm_add_left
+#print axioms Square.ArchTailForm_add_right
+-- WeilCoupledForm (AC-09–AC-13): ArchForm = PoleForm − (ArchConstForm + ArchTailForm), CoupledForm = ArchForm − PrimeForm,
+-- their symmetry/biadditivity, THE EXACT IDENTITY CoupledForm = closedWeilBilin, the diagonal semantic readback.
+#print axioms Square.ArchForm_symm
+#print axioms Square.arch_add_alg
+#print axioms Square.ArchForm_add_left
+#print axioms Square.ArchForm_add_right
+#print axioms Square.CoupledForm_symm
+#print axioms Square.coupled_add_alg
+#print axioms Square.CoupledForm_add_left
+#print axioms Square.CoupledForm_add_right
+#print axioms Square.coupled_ident_alg
+#print axioms Square.CoupledForm_eq_closedWeilBilin
+#print axioms Square.CoupledForm_diag_semantic
+#print axioms Square.CoupledForm_diag_components
 -- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
 -- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
 #print axioms Square.Hcross_recip_lip

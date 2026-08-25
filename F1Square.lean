@@ -533,6 +533,9 @@ import F1Square.Square.WeilArchReconcile
 import F1Square.Square.WeilArchRegSplit
 import F1Square.Square.WeilArchIdent
 import F1Square.Square.WeilArchSemantic
+import F1Square.Square.WeilFormLaws
+import F1Square.Square.WeilArchTailLaws
+import F1Square.Square.WeilCoupledForm
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
