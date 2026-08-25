@@ -1,15 +1,17 @@
 /-
-F1 square — **THE EXACT UNCANCELLED TERM of any stagewise cut-space factorization**
-(`WeilStageReport.lean`).  On the explicit context `C₀` (`a = 1/2, b = 2/3, X = 2`) and its explicit
-core test (the tent), the prime component of the coupled form is CERTIFIED strictly positive:
+F1 square — **a certified sign of the prime component on an explicit context** (`WeilStageReport.lean`).
+On the explicit context `C₀` (`a = 1/2, b = 2/3, X = 2`) and its explicit core test (the tent), the
+prime component of the coupled form is CERTIFIED strictly positive:
 
     `PrimeForm C₀.X tent tent > 0`   (`prime_component_positive`; indeed `≥ 2·log 2·2^{-1/2}·(1/176)`),
 
 so its contribution `−PrimeForm` to `CoupledForm = ArchForm − PrimeForm` is strictly negative there.
-Since every cut-space stage form `Q_M(a⊕b)` with `Σa = 0` is a sum of squares (`Qform_cut_nonneg`),
-NO stage of a path-independent Atlas coefficient map can read back the prime component alone
-(`no_cut_stage_reads_prime`): a stagewise factorization must cancel this term against the
-archimedean components INSIDE the same stage — which is exactly the open coupling sign.
+The finite consequence `no_cut_stage_reads_prime` says exactly this: no single cut-slice value
+`Q_M(a⊕b)` with `Σa = 0` (a sum of squares, `Qform_cut_nonneg`) equals `−PrimeForm C₀.X tent tent`.
+It is a statement about ONE cut-slice value.  It says nothing about coefficient maps, stages, path
+independence, or a `CoupledForm` readback, and it does not exclude a mixed cut/cycle-valued family —
+indeed `AtlasPrimeDyadicReadback` builds one whose Bishop limit IS `−PrimeForm` (the negative sign
+enters through the `−I` cycle term of the same mixed expression).
 HONEST SCOPE: a certified number and a finite consequence; no factorization, no positivity claim.
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
