@@ -2,14 +2,13 @@
 F1 square — **the two-input pole integral** `PoleForm(f,g) = ∫₁^∞ (F_{f,g}+F_{g,f})(1+x⁻¹) dx`
 (`WeilPoleForm.lean`) — a CONSTRUCTED improper integral (`improperIntegral1`), not a parameter.
 
-STATUS (honest). This is the CANDIDATE FOLDED INTEGRAL: classically the pole terms
-`f̃(1)+f̃(0) = ∫₀^∞ F dx + ∫₀^∞ F dx/x` fold to `[1,∞)` through the reciprocal self-duality
-`F(1/x) = x·F^t(x)`, giving exactly the integrand `(F_{f,g}+F_{g,f})(1+1/x)` above.  That fold is
-NOT proved here, and it CANNOT be proved for the bundled high-side object `FTest`: its weight
-`invSqrtF` is clamped below `1` (it equals `1` there, not `x^{-1/2}`), so `FTest` is the HIGH-SIDE
-`x ≥ 1` object only.  Identifying `PoleForm` with the classical one-input pole quantity (a `PoleForm_diag`
-against an independently defined pole term) requires a two-sided positive-band correlation and the
-Mellin low/high folding identity — NOT built here.
+STATUS (superseded, now PROVED downstream). This file constructs the folded integral over `[1,∞)`
+of the high-side object `FTest` (whose weight `invSqrtF` is clamped below `1`).  The identification
+with the independently defined pole term — the two full Mellin windows of the TWO-SIDED correlation
+`F⁺ = FCanon` — is PROVED in `WeilMellinPole.lean`: `MellinPole_eq_PoleForm` (low window inverted by
+`riemannIntegralI_inversion` and transposed by `FCanon_recip_real`, high windows summed, the improper
+integral collapsed to `[1,B]`), hence the substantive `PoleForm_diag`.  Symmetry and biadditivity of
+`PoleForm` are PROVED in `WeilFormLaws.lean` (`PoleForm_symm/add_left/add_right`).
 
 WHAT IS BUILT: the integrand `(FTest f g + FTest g f)·(1 + 1/max(x,1))` bundled (clamps inert on
 `[1,∞)`), and the improper integral with the decay hypothesis DISCHARGED from compact support: blocks
@@ -261,10 +260,11 @@ theorem poleDecay (G : ClosedGeom) (f g : L2Test) (hf : CoreTest G f) (hg : Core
 -- (3) The pole form, its symmetry, and its biadditivity.
 -- ===========================================================================
 
-/-- **★ THE TWO-INPUT POLE INTEGRAL (candidate folded form)**
+/-- **★ THE TWO-INPUT POLE INTEGRAL (folded form)**
     `PoleForm(f,g) = ∫₁^∞ (F_{f,g}+F_{g,f})(1+1/x) dx` — a CONSTRUCTED `improperIntegral1` with the
-    decay DISCHARGED from compact support.  No free `Real`.  Its identification with the classical
-    pole term is NOT proved (see the header). -/
+    decay DISCHARGED from compact support.  No free `Real`.  Its identification with the independently
+    defined Mellin pole term is PROVED in `WeilMellinPole.lean` (`MellinPole_eq_PoleForm`,
+    `PoleForm_diag`); its symmetry/biadditivity in `WeilFormLaws.lean`. -/
 def PoleForm (G : ClosedGeom) (f g : L2Test) (hf : CoreTest G f) (hg : CoreTest G g) : Real :=
   improperIntegral1 (poleIntegrand G f g).hLd (poleIntegrand G f g).hLn
     (poleIntegrand G f g).hlip (poleIntegrand G f g).hfc

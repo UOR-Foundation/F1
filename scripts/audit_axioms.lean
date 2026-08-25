@@ -9650,6 +9650,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.CoupledForm_eq_closedWeilBilin
 #print axioms Square.CoupledForm_diag_semantic
 #print axioms Square.CoupledForm_diag_components
+-- WeilDominance: the fixed core ClosedCore C, the DEFINED (not proved) predicate CurrentArchDominatesPrime, and
+-- the algebraic sign equivalences PrimeForm ≤ ArchForm ⟺ 0 ≤ CoupledForm ⟺ 0 ≤ closedWeilBilin (no PSD claim).
+#print axioms Square.dominance_iff_coupled_nonneg
+#print axioms Square.CurrentArchDominatesPrime_iff
+#print axioms Square.CurrentArchDominatesPrime_iff_closed
 -- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
 -- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
 #print axioms Square.Hcross_recip_lip

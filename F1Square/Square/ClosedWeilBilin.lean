@@ -19,14 +19,14 @@ context's own test is a core test (its support data, never vacuous by fiat).
 `normAutocorrSlotConstructed C` is a `WeilSlot` whose `poles` and `archTail` are the CONSTRUCTED
 `PoleForm`/`ArchTailForm` diagonals — NO free `Real` inputs.
 
-**`closedWeilBilin_diag`** — the ACCEPTANCE THEOREM: on the diagonal `(C.g, C.g)` the closed form
-equals `weilValue (normAutocorrSlotConstructed C)`, combining the diagonal readbacks
-`PrimeForm_diag_weilPrimePart` (finite-prime side = `weilPrimePart (normAutocorrTest)`) and
-`ArchConstForm_diag` (archimedean constant = `weilArchConst (normAutocorrTest)`) with the constructed
-pole/tail fields.  HONEST SCOPE: the pole/tail fields are the constructed integrals themselves (so
-their readback is definitional), and `PoleForm` is the CANDIDATE folded integral (its identification
-with the classical pole term, `PoleForm_diag` against an independent one-input pole quantity, is NOT
-proved — see `WeilPoleForm.lean`).  Positivity of the closed form (= RH) is asserted NOWHERE.
+**`closedWeilBilin_diag`** — the ASSEMBLY (packaging) lemma: on the diagonal `(C.g, C.g)` the closed
+form equals `weilValue (normAutocorrSlotConstructed C)`, whose pole/tail fields are the constructed
+integrals themselves (their readback is definitional).  The SEMANTIC acceptance theorem — both hard
+fields independent — is `closedWeilBilin_diag_semantic` (`WeilArchSemantic.lean`): pole field
+`MellinPole` via `PoleForm_diag` (`WeilMellinPole.lean`), tail field `ArchIntegral` via
+`ArchTailForm_diag` (`WeilArchIdent.lean`/`WeilArchSemantic.lean`).  The exact off-diagonal identity
+with the coupled form is `CoupledForm_eq_closedWeilBilin` (`WeilCoupledForm.lean`).  Positivity of the
+closed form (= RH) is asserted NOWHERE.
 
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
@@ -119,7 +119,8 @@ def normAutocorrSlotConstructed (C : NormCtx) : WeilSlot where
   poles := PoleForm C.geom C.g C.g (normCtx_core C) (normCtx_core C)
   archTail := ArchTailForm C.geom C.g C.g (normCtx_core C) (normCtx_core C)
 
-/-- **★★ THE ACCEPTANCE THEOREM**: on the diagonal, the closed Weil bilinear form IS the Weil
+/-- **THE ASSEMBLY (PACKAGING) LEMMA** — superseded as an acceptance theorem by
+    `closedWeilBilin_diag_semantic`: on the diagonal, the closed Weil bilinear form IS the Weil
     functional of the constructed slot —
 
       `closedWeilBilin C.geom C.X C.g C.g ≈ weilValue (normAutocorrSlotConstructed C)`
@@ -127,8 +128,8 @@ def normAutocorrSlotConstructed (C : NormCtx) : WeilSlot where
     for EVERY `NormCtx` (geometry canonical, no free data): the finite-prime side is
     `weilPrimePart (normAutocorrTest)` (`PrimeForm_diag_weilPrimePart`), the archimedean constant is
     `weilArchConst (normAutocorrTest)` (`ArchConstForm_diag`), and the pole/tail fields are the
-    constructed integrals themselves.  The slot has NO free `poles`/`archTail`.  `PoleForm` remains
-    the candidate folded integral (classical identification not proved).  Positivity of either side
+    constructed integrals themselves (definitional readback — see `closedWeilBilin_diag_semantic`
+    for the substantive one).  The slot has NO free `poles`/`archTail`.  Positivity of either side
     (= RH) is asserted NOWHERE. -/
 theorem closedWeilBilin_diag (C : NormCtx) :
     Req (closedWeilBilin C.geom C.X C.g C.g (normCtx_core C) (normCtx_core C))

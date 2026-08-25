@@ -7,9 +7,10 @@ is content-free: for an arbitrary `W` the square is BUILT from `W`, so it establ
 for the constructed functional.  The genuine tie to RH requires identifying the constructed
 arch-MINUS-prime family with the genuine Li coefficients — the classical EXPLICIT FORMULA
 `W n ≈ genuineLamSeq E.eta n` (constructed prime−archimedean pairing = `λₙ`).  That identity is NOT
-proved anywhere in this repository (it needs the certified archimedean/pole integrals of the
-normalized autocorrelation — see `WeilPrimeShiftCrux`'s `poles`/`archTail` interface inputs, still
-open).
+proved anywhere in this repository.  (Update: the certified pole and archimedean integrals of the
+normalized autocorrelation now EXIST and are identified semantically — `MellinPole`/`PoleForm_diag`,
+`ArchIntegral`/`ArchTailForm_diag`, `CoupledForm_diag_semantic`; what remains unbuilt is the explicit
+formula itself, i.e. the equality of that constructed functional with the zero side / `λₙ`.)
 
 This module states the reduction HONESTLY, with that identity as an EXPLICIT, audit-visible hypothesis
 `hid`.  `normAutocorr_positivity_iff_RH` shows: IF the constructed family equals the genuine Li
@@ -42,8 +43,9 @@ open UOR.Bridge.F1Square.Li
     `LiNonneg (genuineLamSeq E.eta)`; `spectral_bridge_nonneg` turns that into the Hodge-index
     non-negativity of `genuineSpectralSquare E`; `hodgeIndex_iff_RH` turns that into `AllZerosOnLine`.
 
-    `hid` is the CLASSICAL EXPLICIT FORMULA and is asserted NOWHERE (it needs the certified
-    archimedean/pole integrals of the normalized autocorrelation, still open `poles`/`archTail`).
+    `hid` is the CLASSICAL EXPLICIT FORMULA and is asserted NOWHERE (the certified pole/archimedean
+    integrals now exist — `MellinPole`, `ArchIntegral` — but their equality with the zero side / `λₙ`
+    is the unbuilt local–global seam).
     Positivity `∀ n>0, Rnonneg (W n)` is the OPEN content and is asserted NOWHERE.  This theorem only
     exposes the reduction, localizing the entire remaining gap to `hid`.  Crux fields stay `none`. -/
 theorem normAutocorr_positivity_iff_RH
