@@ -524,6 +524,15 @@ import F1Square.Square.IntegralInversionGeom
 import F1Square.Square.IntegralInversion
 import F1Square.Square.ImproperFinite
 import F1Square.Square.WeilMellinPole
+import F1Square.Square.WeilArchKern
+import F1Square.Square.WeilArchNumC
+import F1Square.Square.WeilShiftTest
+import F1Square.Square.WeilArchTrunc
+import F1Square.Square.WeilArchLimit
+import F1Square.Square.WeilArchReconcile
+import F1Square.Square.WeilArchRegSplit
+import F1Square.Square.WeilArchIdent
+import F1Square.Square.WeilArchSemantic
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue

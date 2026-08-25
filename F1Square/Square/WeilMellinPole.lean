@@ -267,7 +267,7 @@ theorem poleIntegrand_term_vanish (C : NormCtx) (f g : L2Test) (hf : CoreTest C.
   push_cast
   omega
 
-/-- `PoleForm = ∫_{[1, X]} poleIntegrand` (as a window of width `X − 1 + 1`). -/
+/-- `PoleForm = ∫_{[1, X+1]} poleIntegrand` (start `1`, width `X − 1 + 1 = X`). -/
 theorem PoleForm_eq_finite (C : NormCtx) (f g : L2Test) (hf : CoreTest C.geom f) (hg : CoreTest C.geom g) :
     Req (PoleForm C.geom f g hf hg)
         (riemannIntegralI (poleIntegrand C.geom f g).hLd (poleIntegrand C.geom f g).hLn
@@ -276,7 +276,7 @@ theorem PoleForm_eq_finite (C : NormCtx) (f g : L2Test) (hf : CoreTest C.geom f)
   unfold PoleForm
   exact improperIntegral1_eq_finite _ _ _ _ _ _ _ (C.X - 1) (poleIntegrand_term_vanish C f g hf hg)
 
-/-- The window `[1, X]` is `[1, B − 1]`. -/
+/-- The window `[1, X+1]` (width `X`) is `[1, B]` (width `B − 1`). -/
 theorem pole_window_congr (C : NormCtx) (f g : L2Test) :
     Req (riemannIntegralI (poleIntegrand C.geom f g).hLd (poleIntegrand C.geom f g).hLn
           (poleIntegrand C.geom f g).hlip (poleIntegrand C.geom f g).hfc

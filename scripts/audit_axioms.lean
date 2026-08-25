@@ -9426,6 +9426,175 @@ open UOR.Bridge.F1Square
 #print axioms Square.MellinPole_eq_PoleForm
 #print axioms Square.PoleForm_diag
 #print axioms Square.closedWeilBilin_diag_mellin
+-- WeilArchKern: the UNSPLIT kernel 1/max(x − x⁻¹, c) as an L2Test, inertness/caps, and THE PARTIAL-FRACTION
+-- IDENTITY 1/(x − x⁻¹) = ½(1/(x−1) + 1/(x+1)) proved directly on x − 1 ≥ c.
+#print axioms Square.innerXm_congr
+#print axioms Square.innerXm_lip
+#print axioms Square.archKernFull_f
+#print axioms Square.sub_one_le_innerXm
+#print axioms Square.innerXm_ge_c
+#print axioms Square.archKernFull_cap
+#print axioms Square.archKernFull_le_inv
+#print axioms Square.innerXm_mul
+#print axioms Square.inv_sum_mul_two
+#print axioms Square.inv_eq_half_of
+#print axioms Square.archKernFull_partial
+-- WeilArchNumC: the numerator N⁺ from the two-sided F⁺ and its agreement with archNum on ALL x ≥ 1.
+#print axioms Square.Rle_ofQ_qBandQ
+#print axioms Square.twoRad_eq_isqRad_ge_one
+#print axioms Square.invSqrtTwoF_eq_ge_one
+#print axioms Square.FCanon_eq_FTestG_ge_one
+#print axioms Square.twoFoneC_bound
+#print axioms Square.archNumC_f
+#print axioms Square.archNumC_eq_archNum
+#print axioms Square.archNumC_one_zero
+#print axioms Square.archNumC_abs_le_dist_one
+#print axioms Square.archNumC_late_bound
+-- WeilShiftTest: translation of tests and THE WINDOW TRANSLATION ∫_{[a,w]} φ(·+δ) = ∫_{[a+δ,w]} φ.
+#print axioms Square.add_shift_iso_gen
+#print axioms Square.shiftTest_f
+#print axioms Square.affineMap_add_shift
+#print axioms Square.shift_window
+#print axioms Square.shiftTest_comp
+#print axioms Square.shiftTest_congr_shift
+#print axioms Square.integralTerm_shift_one
+-- WeilArchTrunc: the shifted full-kernel family, its UNIFORM block decay (constant independent of k and δ),
+-- and the honest truncation archTrunc k = ∫_{1+2⁻ᵏ}^{∞} N⁺/(x − x⁻¹) (improper).
+#print axioms Square.fullInt_f
+#print axioms Square.truncInt_f
+#print axioms Square.archKC_den
+#print axioms Square.archKC_num
+#print axioms Square.archKC_early
+#print axioms Square.archKC_late
+#print axioms Square.qinv_nat_le_one
+#print axioms Square.late_product_eq
+#print axioms Square.truncDecay
+-- WeilArchLimit: certificate irrelevance, THE SAME-CONSTANT IMPROPER SPLIT, the far-window rate, the step
+-- identity, the Cauchy rate CNC/2ᵏ, and THE INDEPENDENT UNSPLIT ArchIntegral (lower-end Bishop limit).
+#print axioms Square.improperIntegral1_certif_irrel
+#print axioms Square.archKernFull_inert_pair
+#print axioms Square.genSum_terms_eq_window
+#print axioms Square.q_one_add_nat
+#print axioms Square.q_addsub_left
+#print axioms Square.q_addsub_right
+#print axioms Square.split_partial_identity
+#print axioms Square.rate_le_of_ge
+#print axioms Square.improper_split_shift
+#print axioms Square.improperIntegral1_congr_terms
+#print axioms Square.integralTerm_congr_ge
+#print axioms Square.fullInt_cap
+#print axioms Square.le_Bd_num_of_lt
+#print axioms Square.archCF_ge_Kl
+#print axioms Square.archCF_ge_MB
+#print axioms Square.qinv_block_le
+#print axioms Square.qCF_mul_inv
+#print axioms Square.truncFar
+#print axioms Square.dyQ_add_le
+#print axioms Square.dyQ_le_one
+#print axioms Square.dyQ_sub_num_pos
+#print axioms Square.dyQ_sub_le
+#print axioms Square.shifted_pt_facts
+#print axioms Square.archTrunc_step
+#print axioms Square.archCNC_ge
+#print axioms Square.archTrunc_diff_le
+#print axioms Square.archC_den
+#print axioms Square.archC_addend_le
+#print axioms Square.archC_le
+#print axioms Square.archX_bound
+#print axioms Square.archX_RReg
+-- WeilArchReconcile: decay monotone in K / block-wise congruent / integer shift, SCHEDULE INDEPENDENCE of the
+-- improper integral (telescoped tail), the half-scaling certificate.
+#print axioms Square.decay_mono
+#print axioms Square.decay_of_terms_congr
+#print axioms Square.q_block_shift_le
+#print axioms Square.decay_shift_one
+#print axioms Square.digammaTailQ_le_inv
+#print axioms Square.genSum_sched_close
+#print axioms Square.Radd_Rsub_cancel_arch
+#print axioms Square.Rlim_sched_indep
+#print axioms Square.improperIntegral1_sched
+#print axioms Square.half_lip
+#print axioms Square.half_fc
+-- WeilArchRegSplit: the regular-kernel family, uniform decay, far rate, and the split of ∫₁^∞ N⁺/(x+1) at 2.
+#print axioms Square.regInt_f
+#print axioms Square.archKernReg_le_inv
+#print axioms Square.archKernReg_le_one
+#print axioms Square.archKernReg_nonneg
+#print axioms Square.regDecay
+#print axioms Square.regFar
+#print axioms Square.reg_split_two
+-- WeilArchIdent: THE IDENTIFICATION ArchIntegral = ArchTailForm — per-k identity (strip partial fractions,
+-- far translation, regular chain, assembly) and the k → ∞ passage against the nearCN schedule.
+#print axioms Square.archKR_den
+#print axioms Square.archKR_num
+#print axioms Square.archKF_den
+#print axioms Square.archKF_num
+#print axioms Square.archKB_den
+#print axioms Square.archKB_num
+#print axioms Square.archKC_le_KB
+#print axioms Square.archKR_le_KB
+#print axioms Square.archKF_le_KB
+#print axioms Square.arch_assemble
+#print axioms Square.arch_limit_diff
+#print axioms Square.halfTest_f
+#print axioms Square.integralTerm_half
+#print axioms Square.integralTerm_addTest
+#print axioms Square.q_double_mul
+#print axioms Square.q_half_double
+#print axioms Square.decay_add
+#print axioms Square.decay_half
+#print axioms Square.nearIntC_f
+#print axioms Square.farTranslate_eq
+#print axioms Square.farTranslate_terms
+#print axioms Square.regZero_eq
+#print axioms Square.regZero_terms
+#print axioms Square.decay_farTranslate
+#print axioms Square.decay_farIntegrand
+#print axioms Square.decay_B
+#print axioms Square.decay_regIntegrand_KB
+#print axioms Square.decay_regIntegrand_KC
+#print axioms Square.archK2_den
+#print axioms Square.archK2_num
+#print axioms Square.archKB_le_K2
+#print axioms Square.archKC_le_K2
+#print axioms Square.decay_weaken_L
+#print axioms Square.strip_width_pos
+#print axioms Square.strip_width_le_one
+#print axioms Square.strip_width_eq_nearW
+#print axioms Square.fullInt_partial_pt
+#print axioms Square.strip_partial
+#print axioms Square.near_readback
+#print axioms Square.trunc_split_two
+#print axioms Square.strip_readback
+#print axioms Square.far_partial_pt
+#print axioms Square.decay_farA_KB
+#print axioms Square.decay_farB_KB
+#print axioms Square.farA_terms
+#print axioms Square.farB_f
+#print axioms Square.decay_farB_KC
+#print axioms Square.decay_farA_K2
+#print axioms Square.decay_farB_K2
+#print axioms Square.decay_farAB_K2
+#print axioms Square.decay_farH_K2
+#print axioms Square.far_half_sum
+#print axioms Square.farA_eq_Far
+#print axioms Square.far_window
+#print axioms Square.reg_window_split
+#print axioms Square.regZero_pt
+#print axioms Square.reg_chain
+#print axioms Square.archTrunc_ident
+#print axioms Square.archE_bound
+#print axioms Square.nearJ_limit_rate
+#print axioms Square.half_le_self
+#print axioms Square.dy_mul_le_cap
+#print axioms Square.q_add_same_den
+#print axioms Square.q_den_mono
+#print axioms Square.succ_le_two_pow_of_le
+#print axioms Square.ArchIntegral_eq_ArchTailForm
+-- WeilArchSemantic: the SUBSTANTIVE ArchTailForm_diag, the semantic slot (both hard fields independent),
+-- and closedWeilBilin_diag_semantic with NO component-level reflexivity for either hard field.
+#print axioms Square.ArchTailForm_diag
+#print axioms Square.closedWeilBilin_diag_semantic
 -- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
 -- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
 #print axioms Square.Hcross_recip_lip
