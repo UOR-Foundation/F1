@@ -9295,6 +9295,95 @@ open UOR.Bridge.F1Square
 #print axioms Square.canonC_le_ba
 #print axioms Square.FCanon_recip_Q
 #print axioms Square.FCanon_recip_real
+-- IntegralCell: the LEFT-endpoint Lipschitz cell estimate |∫_{[a,a+w]}φ − w·φ(a)| ≤ w·(L·w) and the
+-- iterated split of the certified integral along ANY rational partition (increasing and decreasing).
+#print axioms Square.Rsub_add_cancel_left
+#print axioms Square.affineMap_sub_lo
+#print axioms Square.unit_abs_le_one
+#print axioms Square.diffTest_f
+#print axioms Square.diffTest_integral
+#print axioms Square.cell_est_left
+#print axioms Square.Qle_of_Qlt_loc
+#print axioms Square.Qadd_Qsub_cancel
+#print axioms Square.Qsub_Qsub_Qsub
+#print axioms Square.partition_split
+#print axioms Square.partition_split_dec
+#print axioms Square.genSum_Rsub_cells
+#print axioms Square.genSum_Rabs_le
+#print axioms Square.genSum_const_eq
+#print axioms Square.genSum_le_const
+#print axioms Square.Qinv_lt_of_lt
+-- IntegralInversionGeom: the uniform partition y_i = 1 + i·h of [1,B] (h = (B−1)/(N+1)), its inverse
+-- image x_i = 1/y_i, and the KEY identity x_i − x_{i+1} = h·x_i·x_{i+1}.
+#print axioms Square.Qlt_of_Qsub_num_pos
+#print axioms Square.Qlt_self_add_pos
+#print axioms Square.Qsub_add_self_eq
+#print axioms Square.invH_den
+#print axioms Square.invH_num
+#print axioms Square.invY_den
+#print axioms Square.invY_ge_one
+#print axioms Square.invY_num
+#print axioms Square.invY_step_lt
+#print axioms Square.invY_step_sub
+#print axioms Square.invY_zero_lt_step
+#print axioms Square.invY_zero_lt
+#print axioms Square.invY_eq_zero_id
+#print axioms Square.invY_eq_step_id
+#print axioms Square.invY_eq
+#print axioms Square.invY_top
+#print axioms Square.invX_den
+#print axioms Square.invX_num
+#print axioms Square.invX_nonneg
+#print axioms Square.invX_le_one
+#print axioms Square.invX_zero_eq
+#print axioms Square.invX_step_lt
+#print axioms Square.invX_zero_lt
+#print axioms Square.invX_sub_eq
+#print axioms Square.invX_sub_nonneg
+#print axioms Square.invX_prod_le_one
+#print axioms Square.invX_sub_le_h
+-- IntegralInversion: INVERSION UNDER THE CERTIFIED INTEGRAL ∫_{1/B}^{1} φ = ∫_1^B φ(1/y)·y⁻² dy
+-- (riemannIntegralI_inversion) — both sides compared with the same rational non-uniform sum, cell by cell.
+#print axioms Square.invPullTest_f
+#print axioms Square.invPullTest_ofQ
+#print axioms Square.hxx_sub_id
+#print axioms Square.invC_eq
+#print axioms Square.invV_den
+#print axioms Square.invV_nonneg
+#print axioms Square.invV_le_h
+#print axioms Square.invC_den
+#print axioms Square.invC_rep_nonneg
+#print axioms Square.invC_rep_le
+#print axioms Square.hR_nonneg
+#print axioms Square.xR_nonneg
+#print axioms Square.xR_le_one
+#print axioms Square.vR_nonneg
+#print axioms Square.vR_le_hR
+#print axioms Square.xR_sub
+#print axioms Square.cell_T1
+#print axioms Square.cell_T3
+#print axioms Square.pR_nonneg
+#print axioms Square.pR_le_hR
+#print axioms Square.hpsi_eq
+#print axioms Square.pR_sub_vR
+#print axioms Square.pR_sub_vR_abs_le
+#print axioms Square.cell_T2
+#print axioms Square.invE_den
+#print axioms Square.invE_num
+#print axioms Square.cellBoundQ_eq
+#print axioms Square.cellBound_real
+#print axioms Square.cell_total
+#print axioms Square.psi_window_split
+#print axioms Square.phi_window_split
+#print axioms Square.sum_diff_le
+#print axioms Square.invG_den
+#print axioms Square.invG_num
+#print axioms Square.tail_eq
+#print axioms Square.tail_le
+#print axioms Square.B_num_pos
+#print axioms Square.psi_window_congr
+#print axioms Square.phi_window_congr
+#print axioms Square.riemannIntegralI_inversion
 -- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
 -- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
 #print axioms Square.Hcross_recip_lip

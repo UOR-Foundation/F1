@@ -519,6 +519,9 @@ import F1Square.Square.WeilDensity
 import F1Square.Square.WeilRecipQ
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.WeilRecipCanon
+import F1Square.Square.IntegralCell
+import F1Square.Square.IntegralInversionGeom
+import F1Square.Square.IntegralInversion
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
