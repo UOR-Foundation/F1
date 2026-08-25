@@ -9906,3 +9906,83 @@ open UOR.Bridge.F1Square
 #print axioms Square.half_double_pd
 #print axioms Square.gammaLimit_eq_neg_PrimeForm
 #print axioms Square.gammaLimit_diag
+-- AtlasPrimeDirect: the positive-measure direct-integral realization of the prime form with ONE weight-free field
+-- Φ_f(t) = negFiber(u(f)(t), v(f)(t)) (κ and the Haar density OUTSIDE Γ as the nonnegative measure κ·dt/max(t,a)):
+-- placeKappa_nonneg, primeMeasure_nonneg, atlasPrimeDirect_split (= cut − cycle), atlasPrimeCut_nonneg, atlasPrimeCycle_nonneg,
+-- primeCutDyadic_RReg / primeCycleDyadic_RReg (stages of the one field), atlasPrimeDirect_eq = −½(PF(f,g)+PF(g,f)),
+-- atlasPrimeDirect_eq_neg_PrimeForm = −PrimeForm on ClosedCore.  NO positivity / range / contraction claim.
+#print axioms Square.negFiber_readback
+#print axioms Square.posFiber_readback
+#print axioms Square.negFiber_split
+#print axioms Square.placeData_kappa
+#print axioms Square.normWeight_nonneg_pd
+#print axioms Square.placeKappa_nonneg
+#print axioms Square.primeMeasure_nonneg
+#print axioms Square.primePairInt_split
+#print axioms Square.pair_pt_alg_pd
+#print axioms Square.primePairInt_eq_gTerm
+#print axioms Square.lip_of_congr_pd
+#print axioms Square.fc_of_congr_pd
+#print axioms Square.primePairInt_lip
+#print axioms Square.primePairInt_fc
+#print axioms Square.prodIntL_den
+#print axioms Square.prodIntL_num
+#print axioms Square.prodInt_lip
+#print axioms Square.prodInt_fc
+#print axioms Square.cut_pt_alg_pd
+#print axioms Square.cyc_pt_alg_pd
+#print axioms Square.cutInt_eq
+#print axioms Square.cycInt_eq
+#print axioms Square.cutL_den
+#print axioms Square.cutL_num
+#print axioms Square.cutInt_lip
+#print axioms Square.cutInt_fc
+#print axioms Square.cycL_den
+#print axioms Square.cycL_num
+#print axioms Square.cycInt_lip
+#print axioms Square.cycInt_fc
+#print axioms Square.primeCutDyadic_field
+#print axioms Square.primeCutDyadic_RReg
+#print axioms Square.primeCycleDyadic_RReg
+#print axioms Square.primeCut_limit
+#print axioms Square.lip_neg_pd
+#print axioms Square.primeDirect_split
+#print axioms Square.atlasPrimeDirect_split
+#print axioms Square.atlasPrimeCut_nonneg
+#print axioms Square.atlasPrimeCycle_nonneg
+#print axioms Square.primeDirect_eq
+#print axioms Square.atlasPrimeDirect_eq
+#print axioms Square.atlasPrimeDirect_eq_neg_PrimeForm
+#print axioms Square.atlasPrime_diag
+-- AtlasArchCoords: the raw single-test archimedean coordinates U_x(f,t) = x^{-1/2} f(x/max(t,a)), V(f,t) = f(1/max(t,a)),
+-- D_x = U_x − (1/max(x,1))·V exactly as FCanon realizes F⁺; THE RAW ENDPOINT-DEFECT IDENTITY (endpoint_defect_pt /
+-- endpoint_defect_coords) and its lift to the numerator: archNumC_endpoint_defect N⁺(x) = w·∫[D_x(f)V(g)+V(f)D_x(g)]/max(t,a)
+-- for every real x (FCanon_f_eq definitional, FCanon_one_eq via FTwo_ofQ at q=1).  No fiber, measure or form is built.
+#print axioms Square.Rsub_mul_ac
+#print axioms Square.endpoint_defect_core
+#print axioms Square.endpoint_defect_pt
+#print axioms Square.endpoint_defect_coords
+#print axioms Square.crossL_den
+#print axioms Square.crossL_num
+#print axioms Square.crossInt_lip
+#print axioms Square.crossInt_fc
+#print axioms Square.FCanon_f_eq
+#print axioms Square.vvL_den
+#print axioms Square.vvL_num
+#print axioms Square.vvInt_lip
+#print axioms Square.vvInt_fc
+#print axioms Square.hInt_one_eq_vv
+#print axioms Square.FCanon_one_eq
+#print axioms Square.asmInt_eq_defInt
+#print axioms Square.asmL_den
+#print axioms Square.asmL_num
+#print axioms Square.p1_lip
+#print axioms Square.p3_lip
+#print axioms Square.asmInt_lip
+#print axioms Square.asmInt_fc
+#print axioms Square.defInt_lip
+#print axioms Square.defInt_fc
+#print axioms Square.integral_asm
+#print axioms Square.swap_w_ac
+#print axioms Square.two_w_ac
+#print axioms Square.archNumC_endpoint_defect

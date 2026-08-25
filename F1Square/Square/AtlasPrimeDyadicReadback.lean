@@ -1,22 +1,25 @@
 /-
 F1 square — **THE DYADIC ATLAS READBACK OF THE PRIME FORM** (`AtlasPrimeDyadicReadback.lean`).
 
-THE FIXED Γ FAMILY.  For a context `C` (window `[a, a+w]`, cutoff `X`), every place `m < X`, both
-scale sides (`q = m+1` and `q = 1/(m+1)`), and every dyadic point of the certified Haar integral,
-one ATOM is sourced from the raw `reflectTest`/`dilateTest` Haar evaluations
+THE COMPLETE-STAGE BLOCK-GROUPED SCALAR READBACK.  For a context `C` (window `[a, a+w]`, cutoff `X`),
+every place `m < X`, both scale sides (`q = m+1` and `q = 1/(m+1)`), and every dyadic point of the
+certified Haar integral, one ATOM is sourced from the raw `reflectTest`/`dilateTest` Haar evaluations
 
     `u(f) = (reflect_a (dilate_q f))(y) = f(q / max(y,a))`,   `v(g) = (reflect_a g)(y) = g(1 / max(y,a))`,
 
-at the dyadic point `y = a + w·i/2^k`, with the sourced coefficient
+at the dyadic point `y = a + w·i/2^k`, with the quadrature coefficient placed INSIDE the atom,
 `c = κ · 2^{-k} · (1/max(y,a))` (`κ = Λ(m+1)·q^{-1/2}·w`, resp. `Λ(m+1)·(m+1)^{-1}·q^{-1/2}·w`):
 
     `Γ_{s,m,side,t}(f) = p(A_f) + q(B_f)`   (`atomOf`, `atlasCoeff`),   `A_f = (c·u(f) − v(f))/4`,  `B_f = (c·u(f) + v(f))/4`.
 
-The family is graded by the STAGE `s`: stage `0` is the anchor (one atom per place/side at the
+The atoms are grouped by STAGE `s`: stage `0` is the anchor (one atom per place/side at the
 partition `2^0`), stage `s+1` carries the signed fine/coarse atoms of the telescoping increment
-`dyadicR(·, s+1) − dyadicR(·, s)` (fine atoms with `+κ`, coarse atoms with `−κ`).  No stage replaces
-an earlier one; the partial sums run over the lexicographic prefix `(stage, place, side, offset)`.
-
+`dyadicR(·, s+1) − dyadicR(·, s)` (fine atoms with `+κ`, coarse atoms with `−κ`).  The partial sums
+below are taken at COMPLETE-STAGE endpoints only: this is a prescribed block telescoping of scalar
+values, NOT convergence of an atom-by-atom series, and NOT a completed Atlas vector (the cut and
+cycle masses of the individual atoms are not summable — e.g. at `Λ(1) = 0` each atom has cut and
+cycle mass `1/16·(u+v)²` with zero net energy).  The positive-measure direct-integral realization
+of the prime form with a single weight-free field is `AtlasPrimeDirect.lean`.
 THE RESULTS.
  * `gammaPartial_readback` — THE EXACT ALL-PAIRS PARTIAL-SUM READBACK: for every pair of tests
    (no core hypothesis) the partial sum through stage `S` of `⟨Γf, MΓg⟩` equals the symmetrized
@@ -26,7 +29,7 @@ THE RESULTS.
  * `gammaLimit_eq` — THE BISHOP LIMIT: along the certified schedule the partial sums converge, and
    the limit is `−½·(PrimeForm_X(f,g) + PrimeForm_X(g,f))` for ALL tests.
  * `gammaLimit_eq_neg_PrimeForm` — on the fixed core `ClosedCore C` (where `PrimeForm` is symmetric)
-   the limit is exactly `−PrimeForm_X(f,g)`: THE FIXED Γ FAMILY IS IDENTIFIED WITH `−PrimeForm`.
+   the block-grouped limit is exactly `−PrimeForm_X(f,g)` (a scalar identification only).
 
 The negative prime contribution arises from the `−I` (cycle) term inside the ONE mixed expression
 `⟨BΓf, BΓg⟩ − ⟨Γf, Γg⟩ = ⟨Γf, MΓg⟩` (the atomic identity `gammaAtom_readback`), not as a separate stage.
@@ -213,9 +216,9 @@ def blockLen : Nat → Nat
   | 0 => 0 + 1
   | (s + 1) => (2 ^ (s + 1) - 1 + 1) + (2 ^ s - 1 + 1)
 
-/-- **THE FIXED Γ FAMILY** `atomOf C s m side t f` — the atom at stage `s`, place `m`, side `side`,
+/-- **The block-grouped atom family** `atomOf C s m side t f` — the atom at stage `s`, place `m`, side `side`,
     offset `t < blockLen s`, evaluated on the raw test `f`.  Stage `0` is the anchor; stage `s+1`
-    lists the fine atoms (`t < 2^{s+1}`) then the coarse atoms.  Nothing is ever replaced. -/
+    lists the fine atoms (`t < 2^{s+1}`) then the coarse atoms (signed copies, not a completed vector). -/
 def atomOf (C : NormCtx) : Nat → Nat → Nat → Nat → L2Test → Nat → Nat → Real
   | 0, m, side, t, f => atomAnchor C m side t f
   | (s + 1), m, side, t, f =>
@@ -520,7 +523,8 @@ theorem tailReg (C : NormCtx) (f g : L2Test) :
 theorem gammaSeq_RReg (C : NormCtx) (f g : L2Test) : RReg (gammaSeq C f g) :=
   RReg_congr_fl (gammaSeq_eq C f g) (RReg_add_const _ _ (tailReg C f g))
 
-/-- **THE Γ LIMIT** `lim_S Σ_{stages<S} Σ ⟨Γf, MΓg⟩` — a genuine constructive real. -/
+/-- **The block-grouped Γ limit** `lim_S Σ_{stages<S} Σ ⟨Γf, MΓg⟩` along complete-stage endpoints — a
+    genuine constructive real (a scalar; no completed Atlas vector is asserted). -/
 def gammaLimit (C : NormCtx) (f g : L2Test) : Real := Rlim (gammaSeq C f g) (gammaSeq_RReg C f g)
 
 /-- The Γ limit is the certified integral of the combined integrand. -/
@@ -653,7 +657,7 @@ theorem half_double_pd (x : Real) : Req (Rmul cH (Radd x x)) x := by
     (ofQ_congr _ (by decide) (by decide : Qeq (mul (⟨1, 2⟩ : Q) (⟨2, 1⟩ : Q)) (⟨1, 1⟩ : Q)))) (Req_refl x)) ?_
   exact Rone_mul x
 
-/-- **★ THE FIXED Γ FAMILY IS IDENTIFIED WITH `−PrimeForm` ON THE CORE**: for `f, g : ClosedCore C`,
+/-- **★ The block-grouped limit IS `−PrimeForm` ON THE CORE** (scalar identification): for `f, g : ClosedCore C`,
     `lim Σ ⟨Γf, MΓg⟩ = −PrimeForm_X(f,g)` (the prime form is symmetric on the core, `PrimeForm_symm`). -/
 theorem gammaLimit_eq_neg_PrimeForm (C : NormCtx) (f g : ClosedCore C) :
     Req (gammaLimit C f.1 g.1) (Rneg (PrimeForm C.X f.1 g.1 C.a C.han C.had C.w C.hw C.hwn)) := by
