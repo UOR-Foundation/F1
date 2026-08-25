@@ -15,13 +15,11 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
 import F1Square.Square.WeilCoupledForm
+import F1Square.Square.WeilGeom
 
 namespace UOR.Bridge.F1Square.Square
 
 open UOR.Bridge.F1Square.Analysis
-
-/-- **The fixed core**: tests with the context's support certificates. -/
-def ClosedCore (C : NormCtx) := { f : L2Test // CoreTest C.geom f }
 
 /-- **The dominance predicate** (DEFINED, not proved): the prime form is bounded by the archimedean
     form on every diagonal of the core. -/

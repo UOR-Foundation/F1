@@ -41,7 +41,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 
 import F1Square.Square.AtlasGammaAtom
 import F1Square.Square.IntegralFiniteLin
-import F1Square.Square.WeilDominance
+import F1Square.Square.WeilGeom
 import F1Square.Square.AtlasConservation
 
 namespace UOR.Bridge.F1Square.Square

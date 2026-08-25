@@ -536,6 +536,7 @@ import F1Square.Square.WeilArchSemantic
 import F1Square.Square.WeilFormLaws
 import F1Square.Square.WeilArchTailLaws
 import F1Square.Square.WeilCoupledForm
+import F1Square.Square.WeilGeom
 import F1Square.Square.WeilDominance
 import F1Square.Square.AtlasIncidence
 import F1Square.Square.WeilStageFalsify

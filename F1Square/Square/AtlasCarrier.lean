@@ -2,7 +2,7 @@
 F1 square — **finite weighted carriers with disjoint tags, and the transfer gate** (`AtlasCarrier.lean`).
 
 A STAGE `σ` fixes the quadrature: `Nt+1` Haar points `t_i = a + w·i/(Nt+1)` and `Nx+1` scale points
-`x_j = 1 + (B−1)·j/(Nx+1)` (so `x_0 = 1`), with the tail kernel floor `c`.  Every summand of the
+`x_j = 1 + (B−1)·j/(Nx+1)` (so `x_0 = 1`), with the SOURCE-EXACT tail kernel floor `dyQ k = 2^{-k}` of `archTrunc`.  Every summand of the
 coupled form gets its own DISJOINT tag (`Site`): `prime (m, side, i)`, `pole (j, i)`, `cst i`,
 `tail (j, i)`.  The 24 Atlas address is only an internal gauge of each fiber; the tags are external,
 so no cross terms between summands exist.  Each site carries
@@ -25,13 +25,17 @@ cycle coordinate needs beyond its own cut coordinate — so the transfer genuine
 column into the prime, constant and tail coordinates.  The NECESSARY KERNEL CONDITION follows
 (`atlasTransfer_kernel`): `cutStage σ f = 0 → cycleStage σ f = 0`.
 
-THE CONTRACTION TEST (honest, negative on the full carrier).  For the pulse `c₀` supported at the
-single site `pole 0 i₀` (`polePulse`), `cutMass σ c₀ = weight(pole 0 i₀)·4α²` while
-`cycleMass σ (K c₀)` contains the constant site `cst i₀` with the SAME coordinate `α`.  Hence, as soon as
-`4(B−1)/(Nx+1) ≤ log 4π + γ` (every fine enough scale quadrature), `cutMass σ c₀ ≤ cycleMass σ (K c₀)`
-(`atlasTransferStage_not_contract`): the transfer is NOT contractive on the full cut carrier.
-Contractivity restricted to the RANGE of `cutStage` is not established here — it is the coupling
-sign itself.  Nothing here asserts `CurrentArchDominatesPrime`.
+THE CONTRACTION TEST.  `atlasTransferStage_not_contract` is only a WEAK REVERSE MASS BOUND: for the pulse
+`c₀` at the single site `pole 0 i₀` and a fine enough scale quadrature, `cutMass σ c₀ ≤ cycleMass σ (K c₀)`.
+It is not a proof of `¬ Contractive`, and the pulse lies OUTSIDE `range cutStage` (no test has a
+single nonzero cut coordinate), so it only falsifies THIS endpoint-copying extension of the transfer
+off the range.  THE GENERIC NO-GO (`shear_no_go`, `shear_no_go_transfer`) retires the whole family: any
+transfer of shear form `(Tc)_p = c_p + L(c)` on a positive-weight prime site `p`, with `L` blind to the
+prime axis at `p` and injecting a nonzero anchor into `p`, is NOT contractive on the full disjoint
+carrier — the witness `c_M = Mβ·e_p + a` has `cycleMass(T c_M) ≥ cutMass(c_M) + 4·w_p·β²` for every
+`M` with `cutMass a ≤ 8M·w_p·β²` (excess strictly positive when `w_p·β² > 0`).  This covers replacing
+the `x = 1` anchor by any weighted pole–tail average.  Contractivity restricted to `range cutStage`
+is not addressed here — it is the coupling sign itself.  Nothing here asserts `CurrentArchDominatesPrime`.
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
@@ -47,13 +51,12 @@ attribute [local irreducible] RsumN
 -- (1) Stages, sites, points.
 -- ===========================================================================
 
-/-- A quadrature stage: `Nt+1` Haar points, `Nx+1` scale points, tail kernel floor `c`. -/
+/-- A quadrature stage: `Nt+1` Haar points, `Nx+1` scale points, and the tail truncation index `k`
+    (the SOURCE-EXACT kernel floor `dyQ k = 2^{-k}` of `archTrunc`: `K_k(x) = 1/max(x − 1/max(x,1), 2^{-k})`). -/
 structure Stage where
   Nt : Nat
   Nx : Nat
-  c : Q
-  hcn : 0 < c.num
-  hcd : 0 < c.den
+  k : Nat
 
 /-- The disjoint site tags. -/
 inductive Site
@@ -117,7 +120,7 @@ def siteU (C : NormCtx) (σ : Stage) (f : L2Test) : Site → Real
   | .prime m side i => uEv C (placeData C m side) f (tPt C σ i)
   | .pole j i => Uc C (xPt C σ j) f (tPt C σ i)
   | .cst i => Vc C f (tPt C σ i)
-  | .tail j i => Zc C σ.c σ.hcn σ.hcd (xPt C σ j) f (tPt C σ i)
+  | .tail j i => Zc C (dyQ σ.k) (dyQ_num σ.k) (dyQ_den σ.k) (xPt C σ j) f (tPt C σ i)
 def siteV (C : NormCtx) (σ : Stage) (f : L2Test) : Site → Real
   | .prime m side i => vEv C f (tPt C σ i)
   | .pole j i => Rneg (Vc C f (tPt C σ i))
@@ -145,7 +148,7 @@ theorem siteFiber_pole (C : NormCtx) (σ : Stage) (f : L2Test) (j i : Nat) :
 theorem siteFiber_cst (C : NormCtx) (σ : Stage) (f : L2Test) (i : Nat) :
     siteFiber C σ f (.cst i) = constFiber C f (tPt C σ i) := rfl
 theorem siteFiber_tail (C : NormCtx) (σ : Stage) (f : L2Test) (j i : Nat) :
-    siteFiber C σ f (.tail j i) = tailFiber C σ.c σ.hcn σ.hcd (xPt C σ j) f (tPt C σ i) := rfl
+    siteFiber C σ f (.tail j i) = tailFiber C (dyQ σ.k) (dyQ_num σ.k) (dyQ_den σ.k) (xPt C σ j) f (tPt C σ i) := rfl
 
 /-- **The CUT coordinate** `A = (u − v)/4` of the site fiber. -/
 def cutStage (C : NormCtx) (σ : Stage) (f : L2Test) (s : Site) : Real := aCoefGa one (siteU C σ f s) (siteV C σ f s)
@@ -311,7 +314,7 @@ theorem mixedCycleStage_factor (C : NormCtx) (σ : Stage) (f : L2Test) :
       refine Req_trans (Req_symm (Rmul_assoc cQ cTwo _)) (Rmul_congr ?_ (Req_refl _))
       exact Req_trans (Rmul_ofQ_ofQ (by decide) Nat.one_pos) (ofQ_congr _ (by decide) (by decide))
   | .tail j i => by
-      show Req (bCoefGa one (Zc C σ.c σ.hcn σ.hcd (xPt C σ j) f (tPt C σ i)) (Wc C (xPt C σ j) f (tPt C σ i)))
+      show Req (bCoefGa one (Zc C (dyQ σ.k) (dyQ_num σ.k) (dyQ_den σ.k) (xPt C σ j) f (tPt C σ i)) (Wc C (xPt C σ j) f (tPt C σ i)))
                (Radd (cutStage C σ f (.tail j i)) (Rmul (rOne (xPt C σ j)) (cutStage C σ f (.pole 0 i))))
       refine Req_trans (b_eq_a_add_half _ _) (Radd_congr (Req_refl _) ?_)
       -- ½·(rOne·V) ≈ rOne·(½V)
@@ -474,10 +477,9 @@ theorem poleWeight_le_cstWeight (C : NormCtx) (σ : Stage) (i₀ : Nat)
   refine Rle_trans Rlog4pic_ge ?_
   exact Rle_add_nonneg_right Rgamma_h_nonneg
 
-/-- **★ THE TRANSFER IS NOT CONTRACTIVE ON THE FULL CUT CARRIER**: for the `x = 1` pole pulse (any `α`,
-    any fine enough scale quadrature) `cutMass σ c₀ ≤ cycleMass σ (K c₀)` — the cycle mass dominates
-    the cut mass, the reverse of contraction.  (Strict domination holds whenever `α ≠ 0`, `w > 0`,
-    `r(t_{i₀}) > 0`; equality is the degenerate case.) -/
+/-- **The weak reverse mass bound for the `x = 1` pole pulse** (any `α`, any fine enough scale quadrature):
+    `cutMass σ c₀ ≤ cycleMass σ (K c₀)`.  This is NOT `¬ Contractive`; the pulse is outside `range cutStage`,
+    so it falsifies only this endpoint-copying extension off the range.  The generic statement is `shear_no_go`. -/
 theorem atlasTransferStage_not_contract (C : NormCtx) (σ : Stage) (i₀ : Nat) (hi : i₀ < σ.Nt + 1) (α : Real)
     (hNx : Qle (mul (⟨4, 1⟩ : Q) (mul (Qsub (canonB C) (⟨1, 1⟩ : Q)) (⟨1, σ.Nx + 1⟩ : Q))) (⟨253038, 100000⟩ : Q)) :
     Rle (cutMass C σ (polePulse i₀ α)) (cycleMass C σ (atlasTransferStage C σ (polePulse i₀ α))) := by
@@ -485,5 +487,274 @@ theorem atlasTransferStage_not_contract (C : NormCtx) (σ : Stage) (i₀ : Nat) 
   refine Rle_trans (Rmul_le_Rmul_right (Rnonneg_Rmul (Rnonneg_ofQ Nat.one_pos (by decide)) (Rnonneg_Rmul_self α))
     (poleWeight_le_cstWeight C σ i₀ hNx)) ?_
   exact cycleMass_transfer_pulse_ge C σ i₀ hi α
+
+-- ===========================================================================
+-- (6) ★ THE GENERIC SHEAR NO-GO.
+-- ===========================================================================
+
+/-- A term of a nonnegative family is at most the whole sum. -/
+theorem Rle_term_RsumN {F : Nat → Real} (hF : ∀ i, Rnonneg (F i)) (k : Nat) :
+    ∀ n, k < n → Rle (F k) (RsumN F n)
+  | 0, h => absurd h (Nat.not_lt_zero k)
+  | (n + 1), h => by
+      rw [RsumN_succ_fl]
+      rcases Nat.lt_or_ge k n with hk | hk
+      · exact Rle_trans (Rle_term_RsumN hF k n hk) (Rle_add_nonneg_right (hF n))
+      · have hkn : k = n := by omega
+        rw [hkn]
+        exact Rle_add_nonneg_left (Rnonneg_RsumN n (fun i _ => hF i))
+
+/-- The prime-site term of a nonnegative site family is at most the site sum. -/
+theorem Rle_prime_term_siteSum (C : NormCtx) (σ : Stage) {F : Site → Real} (hF : ∀ s, Rnonneg (F s))
+    (m₀ side₀ i₀ : Nat) (hm : m₀ < C.X) (hs : side₀ < 2) (hi : i₀ < σ.Nt + 1) :
+    Rle (F (.prime m₀ side₀ i₀)) (siteSum C σ F) := by
+  unfold siteSum
+  refine Rle_trans ?_ (Rle_add_nonneg_right (Rnonneg_Radd (Rnonneg_RsumN _ (fun j _ => Rnonneg_RsumN _ (fun i _ => hF (.pole j i))))
+    (Rnonneg_Radd (Rnonneg_RsumN _ (fun i _ => hF (.cst i))) (Rnonneg_RsumN _ (fun j _ => Rnonneg_RsumN _ (fun i _ => hF (.tail j i)))))))
+  refine Rle_trans (Rle_term_RsumN (fun i => hF (.prime m₀ side₀ i)) i₀ (σ.Nt + 1) hi) ?_
+  refine Rle_trans (Rle_term_RsumN (F := fun side => RsumN (fun i => F (.prime m₀ side i)) (σ.Nt + 1))
+    (fun side => Rnonneg_RsumN _ (fun i _ => hF _)) side₀ 2 hs) ?_
+  exact Rle_term_RsumN (F := fun m => RsumN (fun side => RsumN (fun i => F (.prime m side i)) (σ.Nt + 1)) 2)
+    (fun m => Rnonneg_RsumN _ (fun side _ => Rnonneg_RsumN _ (fun i _ => hF _))) m₀ C.X hm
+
+/-- The unit cut vector at the prime site `(m₀, side₀, i₀)`. -/
+def primeUnit (m₀ side₀ i₀ : Nat) : Site → Real
+  | .prime m side i => if m = m₀ then (if side = side₀ then (if i = i₀ then one else zero) else zero) else zero
+  | _ => zero
+
+theorem primeUnit_self (m₀ side₀ i₀ : Nat) : primeUnit m₀ side₀ i₀ (.prime m₀ side₀ i₀) = one := by
+  show (if m₀ = m₀ then (if side₀ = side₀ then (if i₀ = i₀ then one else zero) else zero) else zero) = one
+  rw [if_pos rfl, if_pos rfl, if_pos rfl]
+theorem primeUnit_pole (m₀ side₀ i₀ j i : Nat) : primeUnit m₀ side₀ i₀ (.pole j i) = zero := rfl
+theorem primeUnit_cst (m₀ side₀ i₀ i : Nat) : primeUnit m₀ side₀ i₀ (.cst i) = zero := rfl
+theorem primeUnit_tail (m₀ side₀ i₀ j i : Nat) : primeUnit m₀ side₀ i₀ (.tail j i) = zero := rfl
+
+/-- `Σ_i G i·[i = i₀]` over a nested triple indicator collapses to the `(m₀, side₀, i₀)` term. -/
+theorem ind3_sum (G : Nat → Nat → Nat → Real) (m₀ side₀ i₀ X n : Nat) (hm : m₀ < X) (hs : side₀ < 2) (hi : i₀ < n) :
+    Req (RsumN (fun m => RsumN (fun side => RsumN (fun i =>
+          if m = m₀ then (if side = side₀ then (if i = i₀ then G m side i else zero) else zero) else zero) n) 2) X)
+        (G m₀ side₀ i₀) := by
+  refine Req_trans (RsumN_congr (G := fun m => if m = m₀ then G m side₀ i₀ else zero) X (fun m _ => ?_))
+    (RsumN_indicator_ai (fun m => G m side₀ i₀) m₀ X hm)
+  show Req (RsumN (fun side => RsumN (fun i =>
+      if m = m₀ then (if side = side₀ then (if i = i₀ then G m side i else zero) else zero) else zero) n) 2)
+    (if m = m₀ then G m side₀ i₀ else zero)
+  by_cases hmm : m = m₀
+  · rw [if_pos hmm]
+    refine Req_trans (RsumN_congr (G := fun side => if side = side₀ then G m side i₀ else zero) 2 (fun side _ => ?_))
+      (RsumN_indicator_ai (fun side => G m side i₀) side₀ 2 hs)
+    show Req (RsumN (fun i => if m = m₀ then (if side = side₀ then (if i = i₀ then G m side i else zero) else zero) else zero) n)
+      (if side = side₀ then G m side i₀ else zero)
+    by_cases hss : side = side₀
+    · rw [if_pos hss]
+      refine Req_trans (RsumN_congr (G := fun i => if i = i₀ then G m side i else zero) n (fun i _ => ?_))
+        (RsumN_indicator_ai (G m side) i₀ n hi)
+      show Req (if m = m₀ then (if side = side₀ then (if i = i₀ then G m side i else zero) else zero) else zero)
+        (if i = i₀ then G m side i else zero)
+      rw [if_pos hmm, if_pos hss]; exact Req_refl _
+    · rw [if_neg hss]
+      refine RsumN_zero_terms n (fun i _ => ?_)
+      show Req (if m = m₀ then (if side = side₀ then (if i = i₀ then G m side i else zero) else zero) else zero) zero
+      rw [if_pos hmm, if_neg hss]; exact Req_refl _
+  · rw [if_neg hmm]
+    refine RsumN_zero_terms 2 (fun side _ => RsumN_zero_terms n (fun i _ => ?_))
+    show Req (if m = m₀ then (if side = side₀ then (if i = i₀ then G m side i else zero) else zero) else zero) zero
+    rw [if_neg hmm]; exact Req_refl _
+
+/-- The prime-part of the site sum, and the rest. -/
+def primePart (C : NormCtx) (σ : Stage) (F : Site → Real) : Real :=
+  RsumN (fun m => RsumN (fun side => RsumN (fun i => F (.prime m side i)) (σ.Nt + 1)) 2) C.X
+def restPart (C : NormCtx) (σ : Stage) (F : Site → Real) : Real :=
+  Radd (RsumN (fun j => RsumN (fun i => F (.pole j i)) (σ.Nt + 1)) (σ.Nx + 1))
+    (Radd (RsumN (fun i => F (.cst i)) (σ.Nt + 1))
+          (RsumN (fun j => RsumN (fun i => F (.tail j i)) (σ.Nt + 1)) (σ.Nx + 1)))
+theorem siteSum_eq_parts (C : NormCtx) (σ : Stage) (F : Site → Real) :
+    siteSum C σ F = Radd (primePart C σ F) (restPart C σ F) := rfl
+
+/-- The mass term `w·4·c²`. -/
+def massTerm (w c : Real) : Real := Rmul w (Rmul c4 (Rmul c c))
+
+/-- The witness vector `c_M = (Mβ)·e_p + a`. -/
+def shearWitness (m₀ side₀ i₀ : Nat) (M β : Real) (a : Site → Real) : Site → Real :=
+  fun s => Radd (Rmul (Rmul M β) (primeUnit m₀ side₀ i₀ s)) (a s)
+
+/-- `w·4·((M+1)β)² = w·4·(Mβ)² + M·(8wβ²) + 4wβ²`. -/
+theorem sq_succ_expand (w M β : Real) :
+    Req (massTerm w (Rmul (Radd M one) β))
+        (Radd (Radd (massTerm w (Rmul M β)) (Rmul M (Rmul c8 (Rmul w (Rmul β β))))) (Rmul c4 (Rmul w (Rmul β β)))) := by
+  unfold massTerm
+  -- ((M+1)β)² = (Mβ)² + (2M)β² + β²
+  have hsq : Req (Rmul (Rmul (Radd M one) β) (Rmul (Radd M one) β))
+      (Radd (Radd (Rmul (Rmul M β) (Rmul M β)) (Rmul (Rmul cTwo M) (Rmul β β))) (Rmul β β)) := by
+    have h1 : Req (Rmul (Radd M one) β) (Radd (Rmul M β) β) :=
+      Req_trans (Rmul_distrib_right _ _ _) (Radd_congr (Req_refl _) (Rone_mul β))
+    refine Req_trans (Rmul_congr h1 h1) ?_
+    refine Req_trans (add_mul_add_ga _ _ _ _) ?_
+    -- ((Mβ)(Mβ) + (Mβ)β) + (β(Mβ) + ββ) ≈ ((Mβ)(Mβ) + (2M)(ββ)) + ββ
+    refine Req_trans (Radd_assoc _ _ _) ?_
+    refine Req_trans (Radd_congr (Req_refl _) (Req_symm (Radd_assoc _ _ _))) ?_
+    refine Req_trans (Req_symm (Radd_assoc _ _ _)) (Radd_congr (Radd_congr (Req_refl _) ?_) (Req_refl _))
+    -- (Mβ)β + β(Mβ) ≈ (2M)(ββ)
+    have h2 : Req (Rmul (Rmul M β) β) (Rmul M (Rmul β β)) := Rmul_assoc _ _ _
+    have h3 : Req (Rmul β (Rmul M β)) (Rmul M (Rmul β β)) :=
+      Req_trans (Req_symm (Rmul_assoc _ _ _)) (Req_trans (Rmul_congr (Rmul_comm β M) (Req_refl _)) (Rmul_assoc _ _ _))
+    refine Req_trans (Radd_congr h2 h3) ?_
+    exact Req_trans (Req_symm (cTwo_mul _)) (Req_symm (Rmul_assoc _ _ _))
+  refine Req_trans (Rmul_congr (Req_refl w) (Rmul_congr (Req_refl c4) hsq)) ?_
+  refine Req_trans (Rmul_congr (Req_refl w) (Rmul_distrib c4 _ _)) ?_
+  refine Req_trans (Rmul_distrib w _ _) ?_
+  refine Radd_congr ?_ ?_
+  · refine Req_trans (Rmul_congr (Req_refl w) (Rmul_distrib c4 _ _)) (Req_trans (Rmul_distrib w _ _) (Radd_congr (Req_refl _) ?_))
+    -- w·(4·((2M)(ββ))) ≈ M·(8·(w·(ββ)))
+    refine Req_trans (Rmul_congr (Req_refl w) (Req_symm (Rmul_assoc c4 _ _))) ?_
+    refine Req_trans (Rmul_congr (Req_refl w) (Rmul_congr (Req_symm (Rmul_assoc c4 cTwo M)) (Req_refl _))) ?_
+    have h42 : Req (Rmul c4 cTwo) c8 :=
+      Req_trans (Rmul_ofQ_ofQ Nat.one_pos Nat.one_pos) (ofQ_congr _ Nat.one_pos (by decide))
+    refine Req_trans (Rmul_congr (Req_refl w) (Rmul_congr (Rmul_congr h42 (Req_refl M)) (Req_refl _))) ?_
+    -- w·((8M)(ββ)) ≈ M·(8·(w(ββ)))
+    refine Req_trans (Rmul_congr (Req_refl w) (Rmul_congr (Rmul_comm c8 M) (Req_refl _))) ?_
+    refine Req_trans (Rmul_congr (Req_refl w) (Rmul_assoc M c8 _)) ?_
+    refine Req_trans (Req_symm (Rmul_assoc w M _)) (Req_trans (Rmul_congr (Rmul_comm w M) (Req_refl _))
+      (Req_trans (Rmul_assoc M w _) (Rmul_congr (Req_refl M) ?_)))
+    exact Req_trans (Req_symm (Rmul_assoc w c8 _)) (Req_trans (Rmul_congr (Rmul_comm w c8) (Req_refl _)) (Rmul_assoc c8 w _))
+  · -- w·(4·(ββ)) ≈ 4·(w·(ββ))
+    exact Req_trans (Req_symm (Rmul_assoc w c4 _)) (Req_trans (Rmul_congr (Rmul_comm w c4) (Req_refl _)) (Rmul_assoc c4 w _))
+
+/-- The prime part of the witness's mass is the single term `w_p·4·(Mβ)²`. -/
+theorem primePart_mass_witness (C : NormCtx) (σ : Stage) (m₀ side₀ i₀ : Nat)
+    (hm : m₀ < C.X) (hs : side₀ < 2) (hi : i₀ < σ.Nt + 1) (M β : Real) (a : Site → Real)
+    (ha : ∀ m side i, Req (a (.prime m side i)) zero) :
+    Req (primePart C σ (fun s => massTerm (siteWeight C σ s) (shearWitness m₀ side₀ i₀ M β a s)))
+        (massTerm (siteWeight C σ (.prime m₀ side₀ i₀)) (Rmul M β)) := by
+  unfold primePart
+  refine Req_trans (RsumN_congr (G := fun m => RsumN (fun side => RsumN (fun i =>
+      if m = m₀ then (if side = side₀ then (if i = i₀ then massTerm (siteWeight C σ (.prime m side i)) (Rmul M β) else zero) else zero) else zero)
+      (σ.Nt + 1)) 2) C.X (fun m _ => RsumN_congr 2 (fun side _ => RsumN_congr (σ.Nt + 1) (fun i _ => ?_))))
+    (ind3_sum (fun m side i => massTerm (siteWeight C σ (.prime m side i)) (Rmul M β)) m₀ side₀ i₀ C.X (σ.Nt + 1) hm hs hi)
+  show Req (massTerm (siteWeight C σ (.prime m side i))
+      (Radd (Rmul (Rmul M β) (if m = m₀ then (if side = side₀ then (if i = i₀ then one else zero) else zero) else zero)) (a (.prime m side i))))
+    (if m = m₀ then (if side = side₀ then (if i = i₀ then massTerm (siteWeight C σ (.prime m side i)) (Rmul M β) else zero) else zero) else zero)
+  have hz : ∀ w : Real, Req (massTerm w (Radd (Rmul (Rmul M β) zero) (a (.prime m side i)))) zero := fun w => by
+    unfold massTerm
+    refine Req_trans (Rmul_congr (Req_refl w) (Rmul_congr (Req_refl c4) (Rmul_congr
+      (Req_trans (Radd_congr (Rmul_zero _) (ha m side i)) (Radd_zero zero))
+      (Req_trans (Radd_congr (Rmul_zero _) (ha m side i)) (Radd_zero zero))))) ?_
+    exact mass_zero_term w
+  by_cases hmm : m = m₀
+  · simp only [if_pos hmm]
+    by_cases hss : side = side₀
+    · simp only [if_pos hss]
+      by_cases hii : i = i₀
+      · simp only [if_pos hii]
+        unfold massTerm
+        have hc : Req (Radd (Rmul (Rmul M β) one) (a (.prime m side i))) (Rmul M β) :=
+          Req_trans (Radd_congr (Rmul_one _) (ha m side i)) (Radd_zero _)
+        exact Rmul_congr (Req_refl _) (Rmul_congr (Req_refl c4) (Rmul_congr hc hc))
+      · simp only [if_neg hii]; exact hz _
+    · simp only [if_neg hss]; exact hz _
+  · simp only [if_neg hmm]; exact hz _
+
+/-- The prime part of the anchor's mass vanishes (its prime coordinates are zero). -/
+theorem primePart_mass_anchor (C : NormCtx) (σ : Stage) (a : Site → Real)
+    (ha : ∀ m side i, Req (a (.prime m side i)) zero) :
+    Req (primePart C σ (fun s => massTerm (siteWeight C σ s) (a s))) zero := by
+  unfold primePart
+  refine RsumN_zero_terms _ (fun m _ => RsumN_zero_terms _ (fun side _ => RsumN_zero_terms _ (fun i _ => ?_)))
+  show Req (massTerm (siteWeight C σ (.prime m side i)) (a (.prime m side i))) zero
+  unfold massTerm
+  exact Req_trans (Rmul_congr (Req_refl _) (Rmul_congr (Req_refl c4) (Rmul_congr (ha m side i) (ha m side i)))) (mass_zero_term _)
+
+/-- Off the prime axis the witness IS the anchor, so the rest parts of the masses agree. -/
+theorem restPart_mass_witness (C : NormCtx) (σ : Stage) (m₀ side₀ i₀ : Nat) (M β : Real) (a : Site → Real) :
+    Req (restPart C σ (fun s => massTerm (siteWeight C σ s) (shearWitness m₀ side₀ i₀ M β a s)))
+        (restPart C σ (fun s => massTerm (siteWeight C σ s) (a s))) := by
+  have hpt : ∀ s, (∀ m side i, s ≠ .prime m side i) → Req (shearWitness m₀ side₀ i₀ M β a s) (a s) := by
+    intro s hs
+    unfold shearWitness
+    cases s with
+    | prime m side i => exact absurd rfl (hs m side i)
+    | pole j i => exact Req_trans (Radd_congr (Rmul_zero _) (Req_refl _)) (Req_trans (Radd_comm _ _) (Radd_zero _))
+    | cst i => exact Req_trans (Radd_congr (Rmul_zero _) (Req_refl _)) (Req_trans (Radd_comm _ _) (Radd_zero _))
+    | tail j i => exact Req_trans (Radd_congr (Rmul_zero _) (Req_refl _)) (Req_trans (Radd_comm _ _) (Radd_zero _))
+  have hm : ∀ s, (∀ m side i, s ≠ .prime m side i) →
+      Req (massTerm (siteWeight C σ s) (shearWitness m₀ side₀ i₀ M β a s)) (massTerm (siteWeight C σ s) (a s)) :=
+    fun s hs => Rmul_congr (Req_refl _) (Rmul_congr (Req_refl c4) (Rmul_congr (hpt s hs) (hpt s hs)))
+  unfold restPart
+  refine Radd_congr (RsumN_congr _ (fun j _ => RsumN_congr _ (fun i _ => hm _ (fun _ _ _ h => Site.noConfusion h))))
+    (Radd_congr (RsumN_congr _ (fun i _ => hm _ (fun _ _ _ h => Site.noConfusion h)))
+      (RsumN_congr _ (fun j _ => RsumN_congr _ (fun i _ => hm _ (fun _ _ _ h => Site.noConfusion h)))))
+
+/-- **★ THE GENERIC SHEAR NO-GO.**  Let `T` be any transfer of shear form at the prime site
+    `p = (m₀, side₀, i₀)`: `(Tc)_p = c_p + L(c)_p`, with `L` additive at `p`, blind to the prime axis at
+    `p`, and injecting the anchor `a` (zero on the prime axis) as `L(a)_p = β`.  Then for every `M` with
+    `cutMass a ≤ M·8·w_p·β²`, the witness `c_M = (Mβ)·e_p + a` satisfies
+    `cutMass c_M + 4·w_p·β² ≤ cycleMass (T c_M)` — `T` is not contractive on the full carrier (the excess is
+    strictly positive whenever `w_p·β² > 0`).  No property of `T` off the site `p` is used. -/
+theorem shear_no_go (C : NormCtx) (σ : Stage) (T L : (Site → Real) → Site → Real)
+    (m₀ side₀ i₀ : Nat) (hm : m₀ < C.X) (hs : side₀ < 2) (hi : i₀ < σ.Nt + 1)
+    (hT : ∀ c, Req (T c (.prime m₀ side₀ i₀)) (Radd (c (.prime m₀ side₀ i₀)) (L c (.prime m₀ side₀ i₀))))
+    (hLadd : ∀ c c', Req (L (fun s => Radd (c s) (c' s)) (.prime m₀ side₀ i₀))
+        (Radd (L c (.prime m₀ side₀ i₀)) (L c' (.prime m₀ side₀ i₀))))
+    (hLblind : ∀ M : Real, Req (L (fun s => Rmul M (primeUnit m₀ side₀ i₀ s)) (.prime m₀ side₀ i₀)) zero)
+    (a : Site → Real) (ha : ∀ m side i, Req (a (.prime m side i)) zero)
+    (β : Real) (hβ : Req (L a (.prime m₀ side₀ i₀)) β) (M : Real)
+    (hM : Rle (cutMass C σ a) (Rmul M (Rmul c8 (Rmul (siteWeight C σ (.prime m₀ side₀ i₀)) (Rmul β β))))) :
+    Rle (Radd (cutMass C σ (shearWitness m₀ side₀ i₀ M β a))
+              (Rmul c4 (Rmul (siteWeight C σ (.prime m₀ side₀ i₀)) (Rmul β β))))
+        (cycleMass C σ (T (shearWitness m₀ side₀ i₀ M β a))) := by
+  -- the transferred coordinate at `p` is `(M+1)β`
+  have hTp : Req (T (shearWitness m₀ side₀ i₀ M β a) (.prime m₀ side₀ i₀)) (Rmul (Radd M one) β) := by
+    refine Req_trans (hT _) ?_
+    have hc : Req (shearWitness m₀ side₀ i₀ M β a (.prime m₀ side₀ i₀)) (Rmul M β) := by
+      unfold shearWitness
+      rw [primeUnit_self]
+      exact Req_trans (Radd_congr (Rmul_one _) (ha _ _ _)) (Radd_zero _)
+    have hL : Req (L (shearWitness m₀ side₀ i₀ M β a) (.prime m₀ side₀ i₀)) β := by
+      unfold shearWitness
+      refine Req_trans (hLadd (fun s => Rmul (Rmul M β) (primeUnit m₀ side₀ i₀ s)) a) ?_
+      exact Req_trans (Radd_congr (hLblind (Rmul M β)) hβ) (Req_trans (Radd_comm _ _) (Radd_zero β))
+    refine Req_trans (Radd_congr hc hL) ?_
+    exact Req_symm (Req_trans (Rmul_distrib_right M one β) (Radd_congr (Req_refl _) (Rone_mul β)))
+  -- the cycle mass dominates its `p`-term
+  have hcyc : Rle (massTerm (siteWeight C σ (.prime m₀ side₀ i₀)) (Rmul (Radd M one) β))
+      (cycleMass C σ (T (shearWitness m₀ side₀ i₀ M β a))) := by
+    refine Rle_trans (Rle_of_Req (Rmul_congr (Req_refl _) (Rmul_congr (Req_refl c4)
+      (Rmul_congr (Req_symm hTp) (Req_symm hTp))))) ?_
+    exact Rle_prime_term_siteSum C σ (F := fun s => massTerm (siteWeight C σ s) (T (shearWitness m₀ side₀ i₀ M β a) s))
+      (fun s => Rnonneg_Rmul (siteWeight_nonneg C σ s) (Rnonneg_Rmul (Rnonneg_ofQ Nat.one_pos (by decide)) (Rnonneg_Rmul_self _)))
+      m₀ side₀ i₀ hm hs hi
+  -- the cut mass of the witness: prime term + the anchor's rest
+  have hcut : Req (cutMass C σ (shearWitness m₀ side₀ i₀ M β a))
+      (Radd (massTerm (siteWeight C σ (.prime m₀ side₀ i₀)) (Rmul M β)) (cutMass C σ a)) := by
+    show Req (Radd (primePart C σ (fun s => massTerm (siteWeight C σ s) (shearWitness m₀ side₀ i₀ M β a s)))
+                   (restPart C σ (fun s => massTerm (siteWeight C σ s) (shearWitness m₀ side₀ i₀ M β a s))))
+             (Radd _ (Radd (primePart C σ (fun s => massTerm (siteWeight C σ s) (a s)))
+                           (restPart C σ (fun s => massTerm (siteWeight C σ s) (a s)))))
+    refine Radd_congr (primePart_mass_witness C σ m₀ side₀ i₀ hm hs hi M β a ha) ?_
+    refine Req_trans (restPart_mass_witness C σ m₀ side₀ i₀ M β a) ?_
+    exact Req_symm (Req_trans (Radd_congr (primePart_mass_anchor C σ a ha) (Req_refl _)) (Req_trans (Radd_comm _ _) (Radd_zero _)))
+  refine Rle_trans (Rle_of_Req (Radd_congr hcut (Req_refl _))) ?_
+  refine Rle_trans (Radd_le_add (Radd_le_add (Rle_refl _) hM) (Rle_refl _)) ?_
+  exact Rle_trans (Rle_of_Req (Req_symm (sq_succ_expand _ M β))) hcyc
+
+/-- The pole-column injection of `atlasTransferStage` at prime sites. -/
+def poleColumn (c : Site → Real) : Site → Real
+  | .prime _ _ i => c (.pole 0 i)
+  | _ => zero
+
+/-- **★ The transfer of §4 is a shear at every prime site and falls under the no-go**: for the pole
+    pulse `a = polePulse i₀ α` and every `M` with `cutMass a ≤ M·8·w_p·α²`,
+    `cutMass c_M + 4·w_p·α² ≤ cycleMass (K c_M)`. -/
+theorem shear_no_go_transfer (C : NormCtx) (σ : Stage) (m₀ side₀ i₀ : Nat)
+    (hm : m₀ < C.X) (hs : side₀ < 2) (hi : i₀ < σ.Nt + 1) (α M : Real)
+    (hM : Rle (cutMass C σ (polePulse i₀ α)) (Rmul M (Rmul c8 (Rmul (siteWeight C σ (.prime m₀ side₀ i₀)) (Rmul α α))))) :
+    Rle (Radd (cutMass C σ (shearWitness m₀ side₀ i₀ M α (polePulse i₀ α)))
+              (Rmul c4 (Rmul (siteWeight C σ (.prime m₀ side₀ i₀)) (Rmul α α))))
+        (cycleMass C σ (atlasTransferStage C σ (shearWitness m₀ side₀ i₀ M α (polePulse i₀ α)))) :=
+  shear_no_go C σ (atlasTransferStage C σ) poleColumn m₀ side₀ i₀ hm hs hi
+    (fun _ => Req_refl _) (fun _ _ => Req_refl _)
+    (fun M => by show Req (Rmul M zero) zero; exact Rmul_zero M)
+    (polePulse i₀ α) (fun _ _ _ => Req_refl _) α
+    (by show Req (if i₀ = i₀ then α else zero) α; rw [if_pos rfl]; exact Req_refl _) M hM
 
 end UOR.Bridge.F1Square.Square

@@ -10074,3 +10074,30 @@ open UOR.Bridge.F1Square
 #print axioms Square.pole_w_rearr
 #print axioms Square.poleWeight_le_cstWeight
 #print axioms Square.atlasTransferStage_not_contract
+-- AtlasFibers (AC-20): the anchor identity (K(x + x·x⁻¹) + x⁻¹)·(V/2) = 2(xK·A_pole − A_tail) (raw and x ≥ 1 forms), posFiber V V is
+-- pure cut, and the omitted x ≥ B tail reads as posFiber V V against the nonnegative density 2·w·r·K/x (closed form not claimed).
+#print axioms Square.sub_regroup_af
+#print axioms Square.anchor_from_pole_tail
+#print axioms Square.anchor_from_pole_tail_ge_one
+#print axioms Square.posFiber_VV_cycle_zero
+#print axioms Square.posFiber_VV_cut
+#print axioms Square.posFiber_VV_readback
+#print axioms Square.tail_high_alg
+#print axioms Square.tailFiber_high_pure_cut
+-- AtlasCarrier (AC-20): source-exact tail floor dyQ k; the weak reverse bound reworded; THE GENERIC SHEAR NO-GO shear_no_go —
+-- any transfer (Tc)_p = c_p + L(c) at a positive-weight prime site with L prime-blind and injecting an anchor is not contractive
+-- on the full carrier (witness c_M = Mβ·e_p + a: cutMass c_M + 4w_pβ² ≤ cycleMass(T c_M)); shear_no_go_transfer instantiates it.
+#print axioms Square.Rle_term_RsumN
+#print axioms Square.Rle_prime_term_siteSum
+#print axioms Square.primeUnit_self
+#print axioms Square.primeUnit_pole
+#print axioms Square.primeUnit_cst
+#print axioms Square.primeUnit_tail
+#print axioms Square.ind3_sum
+#print axioms Square.siteSum_eq_parts
+#print axioms Square.sq_succ_expand
+#print axioms Square.primePart_mass_witness
+#print axioms Square.primePart_mass_anchor
+#print axioms Square.restPart_mass_witness
+#print axioms Square.shear_no_go
+#print axioms Square.shear_no_go_transfer
