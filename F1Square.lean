@@ -513,6 +513,8 @@ import F1Square.Square.WeilArchNum
 import F1Square.Square.WeilArchTailFar
 import F1Square.Square.WeilArchNear
 import F1Square.Square.ClosedWeilBilin
+import F1Square.Square.WeilInvSqrtTwo
+import F1Square.Square.WeilCrossFTwo
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
 import F1Square.Square.MomentSquare

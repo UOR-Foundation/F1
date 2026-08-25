@@ -387,6 +387,25 @@ theorem FTest_add_right (B : Q) (hBd : 0 < B.den) (hB1 : Qle (⟨1, 1⟩ : Q) B)
     (HcrossTest_add_right f g₁ g₂ S hSd hSn a han had w hw hwn x)) ?_
   exact Rmul_distrib _ _ _
 
+/-- The value of `FTest` unfolds (pre-seal equation lemma): weight times cross-correlation. -/
+theorem FTest_f (B : Q) (hBd : 0 < B.den) (hB1 : Qle (⟨1, 1⟩ : Q) B)
+    (N : Nat) (hN : 0 < N) (hBN : Qle B (⟨(N : Int), 1⟩ : Q))
+    (f g : L2Test) (S : Q) (hSd : 0 < S.den) (hSn : 0 ≤ S.num)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) (x : Real) :
+    (FTest B hBd hB1 N hN hBN f g S hSd hSn a han had w hw hwn).f x
+      = Rmul (invSqrtF B hBd hB1 N hN hBN x)
+          ((HcrossTest f g S hSd hSn a han had w hw hwn).f x) := rfl
+
+/-- The value of `HcrossTest` at a real point unfolds to the real-scale convolution at the clamped
+    scale (pre-seal equation lemma). -/
+theorem HcrossTest_f (f g : L2Test) (S : Q) (hSd : 0 < S.den) (hSn : 0 ≤ S.num)
+    (a : Q) (han : 0 < a.num) (had : 0 < a.den)
+    (w : Q) (hw : 0 < w.den) (hwn : 0 ≤ w.num) (x : Real) :
+    (HcrossTest f g S hSd hSn a han had w hw hwn).f x
+      = mulConvR f (reflectTest a han had g) (qBandQ (⟨0, 1⟩ : Q) S (by decide) hSd x) S hSd hSn
+          (clampS_absle S hSd hSn x) a han had a w had hw hwn := rfl
+
 -- Seal the deep definitional towers (elaborator whnf economy; in-file defeq uses are above).
 attribute [irreducible] HcrossTest FTest
 

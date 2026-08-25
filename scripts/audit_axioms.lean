@@ -9207,3 +9207,33 @@ open UOR.Bridge.F1Square
 -- constructed slot with NO free poles/archTail) and THE ACCEPTANCE THEOREM closedWeilBilin_diag.
 #print axioms Square.normCtx_core
 #print axioms Square.closedWeilBilin_diag
+-- WeilCrossF pre-seal equation lemmas.
+#print axioms Square.FTest_f
+#print axioms Square.HcrossTest_f
+-- WeilInvSqrtTwo: the TWO-SIDED x^{-1/2} weight on [c,B] (floor c, not 1) — radicand bounds, scale,
+-- (N/2)(1/c)^2-Lipschitz, unique-root congruence, two-sided rational readback to normWeight.
+#print axioms Square.twoRad_congr
+#print axioms Square.twoU_seq_le
+#print axioms Square.twoU_le_B
+#print axioms Square.twoRad_le_invc
+#print axioms Square.twoRad_ge_invB
+#print axioms Square.one_le_N_twoRad
+#print axioms Square.twoRad_scale
+#print axioms Square.invSqrtTwoF_sq
+#print axioms Square.invSqrtTwoF_nonneg
+#print axioms Square.invSqrtTwoF_le
+#print axioms Square.invSqrtTwoF_ge_invN
+#print axioms Square.invSqrtTwoF_congr
+#print axioms Square.invSqrtTwoF_lipschitz
+#print axioms Square.invSqrtTwoF_ofQ
+-- WeilCrossFTwo: the two-sided normalized correlation F⁺ = x^{-1/2}H on [c,B]: two-sided readback
+-- to BForm, agreement with the high-side FTest on [1,B], low-side compact support (x ≤ b·a), and the
+-- integer-scale reciprocal transpose (1/n)F⁺_{f,g}(1/n) = F⁺_{g,f}(n).
+#print axioms Square.FTwo_ofQ
+#print axioms Square.twoRad_eq_isqRad_high
+#print axioms Square.invSqrtTwoF_eq_high
+#print axioms Square.FTwo_eq_FTest_high
+#print axioms Square.crossIntegrand_low_pt_zero
+#print axioms Square.HcrossTest_low_vanish
+#print axioms Square.FTwo_low_vanish
+#print axioms Square.FTwo_recip_int
