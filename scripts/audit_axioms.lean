@@ -9655,6 +9655,73 @@ open UOR.Bridge.F1Square
 #print axioms Square.dominance_iff_coupled_nonneg
 #print axioms Square.CurrentArchDominatesPrime_iff
 #print axioms Square.CurrentArchDominatesPrime_iff_closed
+-- AtlasIncidence: the physical Atlas operator M = −I + J₃⊗I₈ + I₃⊗J₈ on the 3×8 fiber PROVED equal to the sourced
+-- block formula (O+2)I − T·Π_T − O·Π_O and to BᵀB − I for the genuine K_{3,8} incidence; cycle space = −1
+-- eigenspace; cut action; the square-root-free compression Q_M(a⊕b) = 56Σa² + 6Σb² + 3(Σb)² ≥ 0 (Σa = 0).
+#print axioms Square.RsumN_smul_ai
+#print axioms Square.RsumN_smul_right_ai
+#print axioms Square.RsumN_indicator_ai
+#print axioms Square.RsumN_add_block_ai
+#print axioms Square.RsumN_block38_ai
+#print axioms Square.RsumN_swap_ai
+#print axioms Square.Rsub_Rsub_eq
+#print axioms Square.three_piT
+#print axioms Square.eight_piO
+#print axioms Square.ten_sub_three_sub_eight
+#print axioms Square.atlasOp_sourced
+#print axioms Square.incBv_left
+#print axioms Square.incBv_right
+#print axioms Square.incBt_eq
+#print axioms Square.atlasOp_eq_BtB
+#print axioms Square.atlasOp_cycle
+#print axioms Square.rowSum_cut
+#print axioms Square.colSum_cut
+#print axioms Square.Radd_regroup
+#print axioms Square.eight_sub_one
+#print axioms Square.three_sub_one
+#print axioms Square.RofNat_eq
+#print axioms Square.cut_regroup
+#print axioms Square.atlasOp_cut
+#print axioms Square.x_mul_lin
+#print axioms Square.y_mul_lin
+#print axioms Square.two_add_seven
+#print axioms Square.cut_term_expand
+#print axioms Square.cut_inner_sum
+#print axioms Square.cut_outer_sum
+#print axioms Square.Qform_cut
+#print axioms Square.Qform_cut_nonneg
+-- WeilStageFalsify: the explicit tent core test, the explicit context C₀ (a=1/2, b=2/3, X=2), and the certified
+-- lower bound H₂(tent,tent) ≥ 1/176 on C₀ (window split + constant minorant on [12/11, 4/3]).
+#print axioms Square.qClampQ_eq_of_le
+#print axioms Square.tentRaw_le_one
+#print axioms Square.tentRaw_lip
+#print axioms Square.tentRaw_congr
+#print axioms Square.tentTest43_f
+#print axioms Square.tent_vanish_of_far
+#print axioms Square.tent_vanish_high
+#print axioms Square.tent_vanish_low
+#print axioms Square.tent_core
+#print axioms Square.tent_ge_of_close
+#print axioms Square.tent_ge_eighth
+#print axioms Square.tent_ge_quarter
+#print axioms Square.tent_nonneg
+#print axioms Square.HForm_tent_unfold
+#print axioms Square.tent_integrand_f
+#print axioms Square.tentG_nonneg
+#print axioms Square.tentG_ge
+#print axioms Square.tentInt_f
+#print axioms Square.HForm_tent_ge
+-- WeilStageReport: THE EXACT UNCANCELLED TERM — PrimeForm C₀.X tent tent > 0 (certified), hence no cut-space
+-- stage (Σa = 0) of a path-independent Atlas coefficient map can read back −PrimeForm on (C₀, tent).
+#print axioms Square.Pos_logN_two
+#print axioms Square.Pos_normWeight_two
+#print axioms Square.Pos_H2_tent
+#print axioms Square.Pos_B2_tent
+#print axioms Square.reflect_tent_nonneg
+#print axioms Square.Bhalf_tent_nonneg
+#print axioms Square.PForm_one_tent_pos
+#print axioms Square.prime_component_positive
+#print axioms Square.no_cut_stage_reads_prime
 -- WeilRecipReal: the REAL-scale law by density — H_{f,g}(x) ≈ H_{g,f}(1/x), the weight identity
 -- x⁻¹·w(1/x) = w(x) (unique root), and x⁻¹·F⁺_{f,g}(1/x) ≈ F⁺_{g,f}(x) on real 1 ≤ x ≤ hi (item 2).
 #print axioms Square.Hcross_recip_lip
