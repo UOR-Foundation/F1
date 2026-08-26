@@ -10190,18 +10190,28 @@ open UOR.Bridge.F1Square
 #print axioms Square.reyConstGram_zero
 #print axioms Square.reynolds_const_readback_gap
 #print axioms Square.fiberwise_psd_const_gap
--- AtlasOrbitAddress (F1-free): the coupling coordinate — prime-power sites (n,t), Archimedean sites (x,s), the orbit u, the division-free coincidence n·s = x·t ⟺ n/t = x/s, THE PULLBACK CouplingAddr with its universal property, and the anchor s = x·t/n (t = n·s/x): existence and uniqueness
+-- AtlasOrbitAddress (F1-free): prime-power sites (n,t), Archimedean sites (x,s), THE ORBIT QUOTIENT ScaleOrbitAddr = positive rationals mod Qeq (a genuine Quotient), n·s = x·t ⟺ equal orbit addresses, THE PULLBACK CouplingAddr over equality with its universal property, COMPLETENESS (equal orbit ⟺ unique positive scaling), channel-indexed dependent address types, and the anchor s = x·t/n (t = n·s/x): existence and uniqueness
 #print axioms Square.primePowerAddr_two_le
 #print axioms Square.primePowerAddr_q_num
 #print axioms Square.primePowerAddr_q_den
+#print axioms Square.posRat_eqv_refl
+#print axioms Square.posRat_eqv_symm
+#print axioms Square.posRat_eqv_trans
 #print axioms Square.Qmul_num_pos
+#print axioms Square.onOrbit_iff_orbitRat
 #print axioms Square.onOrbit_iff_orbit
-#print axioms Square.couplingAddr_onOrbit
 #print axioms Square.couplingAddr_orbit_eq
+#print axioms Square.couplingAddr_onOrbit
 #print axioms Square.couplingAddr_universal_fin
 #print axioms Square.couplingAddr_universal_arch
 #print axioms Square.couplingAddr_unique
 #print axioms Square.Qeq_mul_cancel_left
+#print axioms Square.Qinv_congr_pr
+#print axioms Square.Qdiv_eq_iff
+#print axioms Square.orbit_eq_iff_cross
+#print axioms Square.orbit_eq_imp_scale
+#print axioms Square.scale_imp_orbit_eq
+#print axioms Square.scale_unique
 #print axioms Square.anchor_exists
 #print axioms Square.anchor_unique
 #print axioms Square.anchor_exists_arch
@@ -10210,12 +10220,31 @@ open UOR.Bridge.F1Square
 #print axioms Square.decode_orbit_equivariance
 #print axioms Square.decode_anchor
 #print axioms Square.decode_zero_row
-#print axioms Square.primeMarginal_eq
-#print axioms Square.primeMarginal_nonneg
-#print axioms Square.poleMarginal_nonneg
-#print axioms Square.constMarginal_nonneg
-#print axioms Square.tailMarginal_nonneg
-#print axioms Square.farMarginal_nonneg
+#print axioms Square.primeDensityAt_eq
+#print axioms Square.primeDensityAt_nonneg
+#print axioms Square.poleDensityAt_nonneg
+#print axioms Square.constDensityAt_nonneg
+#print axioms Square.tailDensityAt_nonneg
+#print axioms Square.farDensityAt_nonneg
+-- AtlasPrimePowerFold: the canonical prime-power decomposition n = (spf n)^(ppExp n), Λ(n) = log(spf n) on prime-power addresses, Λ = 0 off them, and THE BOUNDED PRIME FOLD IS SUPPORTED ON THE PRIME-POWER ADDRESSES (primeFoldGram = primeFoldGramPP)
+#print axioms Square.isPow_spec
+#print axioms Square.ppExp_spec
+#print axioms Square.vonMangoldt_prime_pow_addr
+#print axioms Square.vonMangoldt_not_pp
+#print axioms Square.primeFoldDirect_vanish
+#print axioms Square.primeFoldGram_eq_pp
+-- AtlasOrbitHaar (F1-free): the action groupoid of positive scalings (composition/identity/inverse up to Qeq), Haar windows with floors, THE INVARIANT HAAR SYSTEM haar_invariance (∫_{s·W} φ dt/t = ∫_W φ(s·) dt/t), the regular representation regRep with composition/identity, UNITARITY and THE ADJOINT proved by change of variables (not stored)
+#print axioms Square.arrow_comp_tgt
+#print axioms Square.arrow_comp_assoc
+#print axioms Square.arrow_id_left
+#print axioms Square.arrow_id_right
+#print axioms Square.arrow_inv
+#print axioms Square.haar_invariance
+#print axioms Square.regRep_comp
+#print axioms Square.regRep_one
+#print axioms Square.regRep_unitary
+#print axioms Square.inv_scale_cancel
+#print axioms Square.regRep_adjoint
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg

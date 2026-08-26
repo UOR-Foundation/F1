@@ -12,9 +12,9 @@ and the AC-23 source laws become EQUIVARIANCE OF DECODING:
  * `decode_anchor` — the finite leg's anchor `V(f,t)` sits at `t = n·s/x` (`anchorT`), NOT at `s`: the
    coupling is nonlocal in the Haar coordinate;
  * `decode_zero_row` — support-forced zero rows of the finite leg (`Uc_zero_row`);
- * the actual marginals at decoded sites: the atomic prime weight `2Λ(n)·w·r(t)` IS `primeFoldDensity`, the
-   pole weight `2(1+1/x)·w·r(s)` IS `poleDensity`, and the constant, compact-tail, far weights are the
-   existing densities (all nonnegative).
+ * the POINTWISE DENSITIES at decoded sites (not marginals: no joint measure or pushforward law is proved
+   here): the atomic prime weight `2Λ(n)·w·r(t)` IS `primeFoldDensity`, the pole weight `2(1+1/x)·w·r(s)`
+   IS `poleDensity`, and the constant, compact-tail, far weights are the existing densities (all ≥ 0).
 
 HONEST SCOPE: decoding and its laws only.  No resolver, no colligation, no kernel, no readback identity,
 no positivity: the generator semantics of the Atlas calculus (`mark … evaluate`) are not in the repository,
@@ -66,7 +66,8 @@ theorem decode_orbit_equivariance (C : NormCtx) (f : L2Test) (c : CouplingAddr)
     and a prime power `n` has Haar coordinate `t = n·s/x` (`anchorT`), so its `V`-coordinate is `V(f, n·s/x)`. -/
 def coupleArch (q : ArchLocalAddr) (n : PrimePowerAddr) : CouplingAddr :=
   ⟨(⟨n, anchorT q n, Qmul_num_pos (Qmul_num_pos (primePowerAddr_q_num n) q.hsn) (Qinv_num_pos q.hxd),
-      Qmul_den_pos (Qmul_den_pos (primePowerAddr_q_den n) q.hsd) (Qinv_den_pos q.hxn)⟩, q), anchor_exists_arch q n⟩
+      Qmul_den_pos (Qmul_den_pos (primePowerAddr_q_den n) q.hsd) (Qinv_den_pos q.hxn)⟩, q),
+    (onOrbit_iff_orbit _ _).1 (anchor_exists_arch q n)⟩
 
 theorem decode_anchor (C : NormCtx) (f : L2Test) (q : ArchLocalAddr) (n : PrimePowerAddr) :
     (decodeFin C f (coupleArch q n).fin).2 = Vc C f (ofQ (anchorT q n) (Qmul_den_pos (Qmul_den_pos (primePowerAddr_q_den n) q.hsd) (Qinv_den_pos q.hxn))) := rfl
@@ -80,35 +81,35 @@ theorem decode_zero_row (C : NormCtx) (f : L2Test) (hf : CoreTest C.geom f) (p :
     have := (primePowerAddr_two_le p.n); push_cast; omega) hnS ht
 
 -- ===========================================================================
--- The actual marginals at decoded sites.
+-- The pointwise densities at decoded sites (NOT marginals: no joint measure / pushforward law is proved).
 -- ===========================================================================
 
 /-- The atomic prime weight at a finite site: `2·Λ(n)·w·r(t)`. -/
-def primeMarginal (C : NormCtx) (p : FiniteLocalAddr) : Real :=
+def primeDensityAt (C : NormCtx) (p : FiniteLocalAddr) : Real :=
   Rmul cTwo (Rmul (vonMangoldt p.n.1) (Rmul (ofQ C.w C.hw) (rEv C p.tr)))
 /-- It IS `primeFoldDensity` at `m = n − 1`. -/
-theorem primeMarginal_eq (C : NormCtx) (p : FiniteLocalAddr) :
-    primeMarginal C p = primeFoldDensity C (p.n.1 - 1) p.tr := by
-  unfold primeMarginal primeFoldDensity
+theorem primeDensityAt_eq (C : NormCtx) (p : FiniteLocalAddr) :
+    primeDensityAt C p = primeFoldDensity C (p.n.1 - 1) p.tr := by
+  unfold primeDensityAt primeFoldDensity
   have h : p.n.1 - 1 + 1 = p.n.1 := Nat.sub_add_cancel (Nat.le_trans (by decide) (primePowerAddr_two_le p.n))
   rw [h]
-theorem primeMarginal_nonneg (C : NormCtx) (p : FiniteLocalAddr) : Rnonneg (primeMarginal C p) := by
-  rw [primeMarginal_eq]; exact primeFoldDensity_nonneg C _ _
+theorem primeDensityAt_nonneg (C : NormCtx) (p : FiniteLocalAddr) : Rnonneg (primeDensityAt C p) := by
+  rw [primeDensityAt_eq]; exact primeFoldDensity_nonneg C _ _
 
 /-- The pole weight at an Archimedean site: `2(1 + 1/x)·w·r(s)` — `poleDensity`. -/
-def poleMarginal (C : NormCtx) (q : ArchLocalAddr) : Real := poleDensity C q.xr q.sr
-theorem poleMarginal_nonneg (C : NormCtx) (q : ArchLocalAddr) : Rnonneg (poleMarginal C q) := poleDensity_nonneg C _ _
+def poleDensityAt (C : NormCtx) (q : ArchLocalAddr) : Real := poleDensity C q.xr q.sr
+theorem poleDensityAt_nonneg (C : NormCtx) (q : ArchLocalAddr) : Rnonneg (poleDensityAt C q) := poleDensity_nonneg C _ _
 /-- The constant weight `(log 4π + γ)·w·r(s)` — `constDensity`. -/
-def constMarginal (C : NormCtx) (q : ArchLocalAddr) : Real := constDensity C q.sr
-theorem constMarginal_nonneg (C : NormCtx) (q : ArchLocalAddr) : Rnonneg (constMarginal C q) := constDensity_nonneg C _
+def constDensityAt (C : NormCtx) (q : ArchLocalAddr) : Real := constDensity C q.sr
+theorem constDensityAt_nonneg (C : NormCtx) (q : ArchLocalAddr) : Rnonneg (constDensityAt C q) := constDensity_nonneg C _
 /-- The compact-tail weight `2·w·r(s)` — `tailDensity` (the kernel sits inside the coordinate `Z`). -/
-def tailMarginal (C : NormCtx) (q : ArchLocalAddr) : Real := tailDensity C q.sr
-theorem tailMarginal_nonneg (C : NormCtx) (q : ArchLocalAddr) : Rnonneg (tailMarginal C q) := tailDensity_nonneg C _
+def tailDensityAt (C : NormCtx) (q : ArchLocalAddr) : Real := tailDensity C q.sr
+theorem tailDensityAt_nonneg (C : NormCtx) (q : ArchLocalAddr) : Rnonneg (tailDensityAt C q) := tailDensity_nonneg C _
 /-- The far weight `2·K_k(x)·(1/x)·w·r(s)`. -/
-def farMarginal (C : NormCtx) (k : Nat) (q : ArchLocalAddr) : Real :=
+def farDensityAt (C : NormCtx) (k : Nat) (q : ArchLocalAddr) : Real :=
   Rmul cTwo (Rmul (Rmul (Kfl (dyQ k) (dyQ_num k) (dyQ_den k) q.xr) (rOne q.xr)) (Rmul (ofQ C.w C.hw) (rEv C q.sr)))
-theorem farMarginal_nonneg (C : NormCtx) (k : Nat) (q : ArchLocalAddr) : Rnonneg (farMarginal C k q) := by
-  unfold farMarginal Kfl rOne
+theorem farDensityAt_nonneg (C : NormCtx) (k : Nat) (q : ArchLocalAddr) : Rnonneg (farDensityAt C k q) := by
+  unfold farDensityAt Kfl rOne
   exact Rnonneg_Rmul (Rnonneg_ofQ Nat.one_pos (by decide))
     (Rnonneg_Rmul (Rnonneg_Rmul (Rnonneg_clampedInv (dyQ k) (dyQ_num k) (dyQ_den k) _)
         (Rnonneg_clampedInv (⟨1, 1⟩ : Q) (by decide) (by decide) _))
