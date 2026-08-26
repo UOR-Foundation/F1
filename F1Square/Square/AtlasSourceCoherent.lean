@@ -141,7 +141,7 @@ theorem admissible_self (C : NormCtx) (k : Nat) (p : FiniteLocalAddr) (hnB : Qle
   hwin_hi := Qle_trans p.htd (Qeq_le (mateS_self p)) htw
 
 -- ===========================================================================
--- (3) THE DIVISION-FREE READING AND ITS STEP-DENSITY AVERAGES: every admissible reading IS `U(n,t)`.
+-- (3) THE DIVISION-FREE READING AND ITS FINITE AFFINE COMBINATIONS: every admissible reading IS `U(n,t)`.
 -- ===========================================================================
 
 /-- The band hypotheses of a coupling address for the weight law: both scales in `[c, B]`. -/
@@ -192,19 +192,18 @@ theorem readW_eq (C : NormCtx) {z : SourceField} (hz : SourceCoherent C z) (c : 
   refine Req_trans h2 ?_
   exact Req_trans (Rmul_congr hw (Req_refl _)) (Rone_mul _)
 
-/-- A finite step density on admissible scales: `N` coupling addresses `c i` with the same finite leg and
-    weights `θ i` summing to `1`. -/
-def stepAvgRead (C : NormCtx) (N : Nat) (c : Nat → CouplingAddr) (θ : Nat → Real) (z : SourceField) : Real :=
+/-- A FINITE AFFINE ORBIT READING: `N` point evaluations at coupling addresses `c i` with the same finite leg, with
+    weights `θ i` summing to `1` (no cells, no `dx/x` integration, no positivity, no norm — not a step density). -/
+def finiteAffineRead (C : NormCtx) (N : Nat) (c : Nat → CouplingAddr) (θ : Nat → Real) (z : SourceField) : Real :=
   RsumN (fun i => Rmul (θ i) (readW C (c i) z)) N
 
-/-- **★ EVERY STEP-DENSITY AVERAGE OF ADMISSIBLE READINGS REPRODUCES `U n t`** on a coherent field: the transport
-    weights are not semantic data. -/
-theorem stepAvgRead_reproduces (C : NormCtx) {z : SourceField} (hz : SourceCoherent C z) (N : Nat)
+/-- **★ Every finite affine combination of admissible readings reproduces `U n t`** on a coherent field. -/
+theorem finiteAffineRead_reproduces (C : NormCtx) {z : SourceField} (hz : SourceCoherent C z) (N : Nat)
     (c : Nat → CouplingAddr) (θ : Nat → Real) (p : FiniteLocalAddr)
     (hfin : ∀ i, i < N → (c i).fin = p) (hadm : ∀ i, i < N → AddrAdmissible C (c i)) (hband : ∀ i, i < N → AddrBand C (c i))
     (hθ : Req (RsumN θ N) one) :
-    Req (stepAvgRead C N c θ z) (z.U p.n.r p.tr) := by
-  unfold stepAvgRead
+    Req (finiteAffineRead C N c θ z) (z.U p.n.r p.tr) := by
+  unfold finiteAffineRead
   have h : ∀ i, i < N → Req (Rmul (θ i) (readW C (c i) z)) (Rmul (θ i) (z.U p.n.r p.tr)) := by
     intro i hi
     have e := readW_eq C hz (c i) (hadm i hi) (hband i hi)

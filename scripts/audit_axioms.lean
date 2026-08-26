@@ -10245,7 +10245,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.regRep_unitary
 #print axioms Square.inv_scale_cancel
 #print axioms Square.regRep_adjoint
--- AtlasOrbitModels (target-free): TWO EXPLICIT REPRODUCING MODELS — Model 1 (same-site recovery: prime cycle = pole cut, const cycle = far cut, pole cycle = pole cut − far cut, tail cycle = tail cut + (1/x)·far cut) and Model 2 (orbit-shifted recovery on a coupling address, invSq(x)·primeCycle(n,t) = invSq(n)(poleCut(x,s) − ½farCut(s)) + invSq(x)·½farCut(t)), and their mixtures (model2_mix): the reproduction equations do not determine the coefficients; the separating datum is the transport density ρ on the orbit
+-- AtlasOrbitModels (target-free): pointwise recovery presentations — same-site identities (prime cycle = pole cut, const cycle = far cut, pole cycle = pole cut − far cut, tail cycle = tail cut + (1/x)·far cut), one orbit-shifted weighted identity at a coupling address (model2_prime), and a generic affine-combination lemma (model2_mix); coordinate lemmas only, no operator, no density
 #print axioms Square.model1_prime
 #print axioms Square.model1_const
 #print axioms Square.aCoefGa_one
@@ -10263,11 +10263,25 @@ open UOR.Bridge.F1Square
 #print axioms Square.mateS_self
 #print axioms Square.tailFloor_le_two
 #print axioms Square.admissible_self
--- AtlasSourceCoherent (3): THE DIVISION-FREE READING readW c z = invSq(n)·invSq(x)·x·U(x,s), readW_eq (every admissible reading IS U(n,t) on a coherent field: orbit law + weight law), and stepAvgRead_reproduces (every step-density average of admissible readings reproduces U(n,t) — the transport weights are not semantic data)
+-- AtlasSourceCoherent (3): THE DIVISION-FREE READING readW c z = invSq(n)·invSq(x)·x·U(x,s), readW_eq (every admissible reading IS U(n,t) on a coherent field: orbit law + weight law), and finiteAffineRead_reproduces (every finite affine combination of admissible readings reproduces U(n,t))
 #print axioms Square.perm4_sc
 #print axioms Square.perm4b_sc
 #print axioms Square.readW_eq
-#print axioms Square.stepAvgRead_reproduces
+#print axioms Square.finiteAffineRead_reproduces
+-- AtlasCutRecovery (target-free): P_k = K(x+1) + r ≥ 1/B on [0,B] (explicit reciprocal witness, no choice), SOURCE RECOVERY FROM CUT COORDINATES ALONE — V = 4(q_k·A_pole − A_tail)/P_k and U_x = 4((K+r)·A_pole + A_tail)/P_k exactly on decoded core tests for 1 ≤ x ≤ B (recoverVFromCut_source, u_from_pole_tail_ge_one, recoverUFromCut_source), V = 2·A_far, the cut-only orbit reading readCut = U_n(t) (readCut_source), and couplingOfAdmissible: an admissible scale in J_{k,n,t} yields a coupling address with its band/window certificates
+#print axioms Square.Pk_ge_invB
+#print axioms Square.Pk_mul_PkInv
+#print axioms Square.zero_le_of_one_le
+#print axioms Square.c4_eq_two_two
+#print axioms Square.two_half_eq_one
+#print axioms Square.recoverVFromCut_source
+#print axioms Square.Pk_sub_qk
+#print axioms Square.u_from_pole_tail_ge_one
+#print axioms Square.recoverUFromCut_source
+#print axioms Square.recoverVFromFar_source
+#print axioms Square.readCut_source
+#print axioms Square.Rle_ofQ_of_Qle
+#print axioms Square.couplingOfAdmissible_adm
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg

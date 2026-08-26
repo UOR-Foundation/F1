@@ -561,6 +561,7 @@ import F1Square.Square.AtlasPrimePowerFold
 import F1Square.Square.AtlasOrbitHaar
 import F1Square.Square.AtlasOrbitModels
 import F1Square.Square.AtlasSourceCoherent
+import F1Square.Square.AtlasCutRecovery
 import F1Square.Square.AtlasArchCoords
 import F1Square.Square.AtlasFibers
 import F1Square.Square.AtlasCarrier
