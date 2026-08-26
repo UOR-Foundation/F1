@@ -10141,6 +10141,12 @@ open UOR.Bridge.F1Square
 #print axioms Square.riemannIntegral_abs_le_unit_real
 #print axioms Square.param_integral_lip
 #print axioms Square.param_integral_congr
+-- AtlasDefectGram (AC-22 follow-up): the source identities a positive stage would consume — pole cut = prime cycle, pole cycle = prime cut (at every scale, hence at the upper scale n), the constant channel is pure cycle
+#print axioms Square.pole_cut_eq_prime_cycle
+#print axioms Square.pole_cycle_eq_prime_cut
+#print axioms Square.poleFiber_cut_at_upR
+#print axioms Square.negFiber_VV_cut_zero
+#print axioms Square.negFiber_VV_cycle
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg
@@ -10300,4 +10306,5 @@ open UOR.Bridge.F1Square
 #print axioms Square.cmpSeq_RReg
 #print axioms Square.defectSeq_RReg
 #print axioms Square.CoupledForm_eq_lim_defect
+#print axioms Square.defectSeq_nonneg_imp_dominance
 #print axioms Square.atlasDefect_nonneg_imp_dominance

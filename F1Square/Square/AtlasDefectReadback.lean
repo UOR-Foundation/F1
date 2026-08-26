@@ -223,8 +223,20 @@ theorem CoupledForm_eq_lim_defect (C : NormCtx) (f g : ClosedCore C) :
   refine Req_trans (Radd_congr (Req_refl _) (Radd_congr (Req_refl _) (Rneg_congr hAT))) ?_
   exact Req_trans (Radd_congr (Req_refl _) (Radd_neg _)) (Radd_zero _)
 
-/-- **★ THE CRUX, LOCATED**: IF the source Gram were diagonally nonnegative on the core at every
-    truncation, THEN `CurrentArchDominatesPrime C`.  The hypothesis is NOT proved and NOT asserted. -/
+/-- **The exact sufficient condition**: IF `defectSeq(f,f)_j = atlasDefectGram_{j+c}(f,f) + farTailGram_{j+c}(f,f) ≥ 0`
+    for every core test and every `j`, THEN `CurrentArchDominatesPrime C`.  This is the limiting target itself
+    (`CoupledForm_eq_lim_defect`); the hypothesis is NOT proved and NOT asserted. -/
+theorem defectSeq_nonneg_imp_dominance (C : NormCtx)
+    (h : ∀ (f : ClosedCore C) (j : Nat), Rnonneg (defectSeq C f f j)) : CurrentArchDominatesPrime C := by
+  intro f
+  refine (dominance_iff_coupled_nonneg C f).2 ?_
+  refine Rnonneg_congr (Req_symm (CoupledForm_eq_lim_defect C f f)) ?_
+  exact Rnonneg_Rlim_seq _ (fun j => h f j)
+
+/-- A STRICTLY STRONGER sufficient condition (it omits the compensating positive `farTailGram`): IF the source
+    Gram alone were diagonally nonnegative at every truncation, THEN dominance.  Stronger than the limiting
+    target, possibly false, NOT to be taken as the goal; kept only as the special case of
+    `defectSeq_nonneg_imp_dominance`.  Its hypothesis is NOT proved and NOT asserted. -/
 theorem atlasDefect_nonneg_imp_dominance (C : NormCtx)
     (h : ∀ (f : ClosedCore C) (k : Nat) (hk : 1 ≤ k), Rnonneg (atlasDefectGram C k hk f.1 f.1)) :
     CurrentArchDominatesPrime C := by
