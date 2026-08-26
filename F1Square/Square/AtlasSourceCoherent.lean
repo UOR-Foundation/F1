@@ -140,4 +140,78 @@ theorem admissible_self (C : NormCtx) (k : Nat) (p : FiniteLocalAddr) (hnB : Qle
   hwin_lo := Qle_trans p.htd hta (Qeq_le (Qeq_symm (mateS_self p)))
   hwin_hi := Qle_trans p.htd (Qeq_le (mateS_self p)) htw
 
+-- ===========================================================================
+-- (3) THE DIVISION-FREE READING AND ITS STEP-DENSITY AVERAGES: every admissible reading IS `U(n,t)`.
+-- ===========================================================================
+
+/-- The band hypotheses of a coupling address for the weight law: both scales in `[c, B]`. -/
+structure AddrBand (C : NormCtx) (c : CouplingAddr) : Prop where
+  hnc : Rle (ofQ (canonC C) (canonC_den C)) c.fin.n.r
+  hnB : Rle c.fin.n.r (ofQ (canonB C) (canonB_den C))
+  hxc : Rle (ofQ (canonC C) (canonC_den C)) c.arch.xr
+  hxB : Rle c.arch.xr (ofQ (canonB C) (canonB_den C))
+
+/-- **The division-free reading** of the prime-scale value from the Archimedean leg:
+    `readW c z = invSq(n)·(invSq(x)·(x·U x s))` — the `1/invSq(x)` of the orbit law realized as `invSq(x)·x`. -/
+def readW (C : NormCtx) (c : CouplingAddr) (z : SourceField) : Real :=
+  Rmul (invSq C c.fin.n.r) (Rmul (invSq C c.arch.xr) (Rmul c.arch.xr (z.U c.arch.xr c.arch.sr)))
+
+/-- `a·(b·(x·u)) ≈ b·(x·(a·u))`. -/
+theorem perm4_sc (a b x u : Real) : Req (Rmul a (Rmul b (Rmul x u))) (Rmul b (Rmul x (Rmul a u))) :=
+  Req_trans (Req_symm (Rmul_assoc a b (Rmul x u)))
+    (Req_trans (Rmul_congr (Rmul_comm a b) (Req_refl (Rmul x u)))
+      (Req_trans (Rmul_assoc b a (Rmul x u))
+        (Rmul_congr (Req_refl b)
+          (Req_trans (Req_symm (Rmul_assoc a x u))
+            (Req_trans (Rmul_congr (Rmul_comm a x) (Req_refl u)) (Rmul_assoc x a u))))))
+
+/-- `b·(x·(b'·u)) ≈ ((b·b')·x)·u`. -/
+theorem perm4b_sc (b x b' u : Real) : Req (Rmul b (Rmul x (Rmul b' u))) (Rmul (Rmul (Rmul b b') x) u) :=
+  Req_trans (Rmul_congr (Req_refl b) (Req_symm (Rmul_assoc x b' u)))
+    (Req_trans (Req_symm (Rmul_assoc b (Rmul x b') u))
+      (Rmul_congr
+        (Req_trans (Req_symm (Rmul_assoc b x b'))
+          (Req_trans (Rmul_congr (Rmul_comm b x) (Req_refl b'))
+            (Req_trans (Rmul_assoc x b b') (Rmul_comm x (Rmul b b')))))
+        (Req_refl u)))
+
+/-- **★ EVERY ADMISSIBLE READING IS THE VALUE ITSELF**: for a coherent field, `readW c z = U n t` on every
+    admissible coupling address in the band (orbit law + weight law `(invSq x)²·x = 1`). -/
+theorem readW_eq (C : NormCtx) {z : SourceField} (hz : SourceCoherent C z) (c : CouplingAddr)
+    (hc : AddrAdmissible C c) (hb : AddrBand C c) :
+    Req (readW C c z) (z.U c.fin.n.r c.fin.tr) := by
+  obtain ⟨kx, hkx⟩ := Pos_of_Rle_ofQ (canonC_num C) (canonC_den C) hb.hxc
+  have horb : Req (Rmul (invSq C c.arch.xr) (z.U c.fin.n.r c.fin.tr)) (Rmul (invSq C c.fin.n.r) (z.U c.arch.xr c.arch.sr)) :=
+    coherent_orbit_addr C hz c hc
+  have hw : Req (Rmul (Rmul (invSq C c.arch.xr) (invSq C c.arch.xr)) c.arch.xr) one := invSq_sq_mul_self C hb.hxc hb.hxB hkx
+  have h1 := perm4_sc (invSq C c.fin.n.r) (invSq C c.arch.xr) c.arch.xr (z.U c.arch.xr c.arch.sr)
+  have h2 := perm4b_sc (invSq C c.arch.xr) c.arch.xr (invSq C c.arch.xr) (z.U c.fin.n.r c.fin.tr)
+  unfold readW
+  refine Req_trans h1 ?_
+  refine Req_trans (Rmul_congr (Req_refl (invSq C c.arch.xr)) (Rmul_congr (Req_refl c.arch.xr) (Req_symm horb))) ?_
+  refine Req_trans h2 ?_
+  exact Req_trans (Rmul_congr hw (Req_refl _)) (Rone_mul _)
+
+/-- A finite step density on admissible scales: `N` coupling addresses `c i` with the same finite leg and
+    weights `θ i` summing to `1`. -/
+def stepAvgRead (C : NormCtx) (N : Nat) (c : Nat → CouplingAddr) (θ : Nat → Real) (z : SourceField) : Real :=
+  RsumN (fun i => Rmul (θ i) (readW C (c i) z)) N
+
+/-- **★ EVERY STEP-DENSITY AVERAGE OF ADMISSIBLE READINGS REPRODUCES `U n t`** on a coherent field: the transport
+    weights are not semantic data. -/
+theorem stepAvgRead_reproduces (C : NormCtx) {z : SourceField} (hz : SourceCoherent C z) (N : Nat)
+    (c : Nat → CouplingAddr) (θ : Nat → Real) (p : FiniteLocalAddr)
+    (hfin : ∀ i, i < N → (c i).fin = p) (hadm : ∀ i, i < N → AddrAdmissible C (c i)) (hband : ∀ i, i < N → AddrBand C (c i))
+    (hθ : Req (RsumN θ N) one) :
+    Req (stepAvgRead C N c θ z) (z.U p.n.r p.tr) := by
+  unfold stepAvgRead
+  have h : ∀ i, i < N → Req (Rmul (θ i) (readW C (c i) z)) (Rmul (θ i) (z.U p.n.r p.tr)) := by
+    intro i hi
+    have e := readW_eq C hz (c i) (hadm i hi) (hband i hi)
+    rw [hfin i hi] at e
+    exact Rmul_congr (Req_refl _) e
+  refine Req_trans (RsumN_congr N h) ?_
+  refine Req_trans (RsumN_smul_right_ai _ _ N) ?_
+  exact Req_trans (Rmul_congr hθ (Req_refl _)) (Rone_mul _)
+
 end UOR.Bridge.F1Square.Square

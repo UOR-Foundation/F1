@@ -10263,6 +10263,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.mateS_self
 #print axioms Square.tailFloor_le_two
 #print axioms Square.admissible_self
+-- AtlasSourceCoherent (3): THE DIVISION-FREE READING readW c z = invSq(n)·invSq(x)·x·U(x,s), readW_eq (every admissible reading IS U(n,t) on a coherent field: orbit law + weight law), and stepAvgRead_reproduces (every step-density average of admissible readings reproduces U(n,t) — the transport weights are not semantic data)
+#print axioms Square.perm4_sc
+#print axioms Square.perm4b_sc
+#print axioms Square.readW_eq
+#print axioms Square.stepAvgRead_reproduces
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg
