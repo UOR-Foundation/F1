@@ -10162,6 +10162,34 @@ open UOR.Bridge.F1Square
 #print axioms Square.q_mul_inv_aq
 #print axioms Square.Uc_zero_row
 #print axioms Square.Uc_zero_row_upR
+-- AtlasReynolds: THE CANONICAL ATLAS REYNOLDS COMPRESSION (τ-average of the class action) — idempotent, self-adjoint, PSD compression 8(S²+7Σu²); on the source fibers it kills the cycle channel and reads back (5/3)·A_fA_g = 5/12 of the cut Gram; pointwise error (7/3)AA' − 4BB'; the constant-channel error is the whole channel −ArchConstForm (k-independent); no fiberwise PSD compression reads back the constant channel — THE FIRST EXPLICIT FAILED ATLAS IDENTITY
+#print axioms Square.RofNat8_eq
+#print axioms Square.RofNat3_eq
+#print axioms Square.rowSum_reyT
+#print axioms Square.reyT_idem
+#print axioms Square.pairF_reyT_left
+#print axioms Square.reyT_selfadj
+#print axioms Square.add_sub_cancel_ry
+#print axioms Square.seven_add_one_ry
+#print axioms Square.atlasOp_reyT
+#print axioms Square.pairF_reyT_M
+#print axioms Square.reyT_psd
+#print axioms Square.rowSum_pCh
+#print axioms Square.RsumN_sgCh
+#print axioms Square.rowSum_qCh
+#print axioms Square.rowSum_gamma
+#print axioms Square.reyT_gamma
+#print axioms Square.ry_const_alg
+#print axioms Square.reyT_gamma_pairing
+#print axioms Square.reynolds_gamma_gap
+#print axioms Square.reyT_constFiber_zero
+#print axioms Square.pairF_zero_left
+#print axioms Square.reyConstInt_zero
+#print axioms Square.reyConstInt_lip
+#print axioms Square.reyConstInt_fc
+#print axioms Square.reyConstGram_zero
+#print axioms Square.reynolds_const_readback_gap
+#print axioms Square.fiberwise_psd_const_gap
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg
