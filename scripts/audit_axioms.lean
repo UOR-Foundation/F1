@@ -10245,6 +10245,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.regRep_unitary
 #print axioms Square.inv_scale_cancel
 #print axioms Square.regRep_adjoint
+-- AtlasOrbitModels (target-free): TWO EXPLICIT REPRODUCING MODELS — Model 1 (same-site recovery: prime cycle = pole cut, const cycle = far cut, pole cycle = pole cut − far cut, tail cycle = tail cut + (1/x)·far cut) and Model 2 (orbit-shifted recovery on a coupling address, invSq(x)·primeCycle(n,t) = invSq(n)(poleCut(x,s) − ½farCut(s)) + invSq(x)·½farCut(t)), and their mixtures (model2_mix): the reproduction equations do not determine the coefficients; the separating datum is the transport density ρ on the orbit
+#print axioms Square.model1_prime
+#print axioms Square.model1_const
+#print axioms Square.aCoefGa_one
+#print axioms Square.bCoefGa_one
+#print axioms Square.model1_pole
+#print axioms Square.model1_tail
+#print axioms Square.model2_prime
+#print axioms Square.model2_mix
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg
