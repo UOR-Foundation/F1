@@ -20,6 +20,8 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
 import F1Square.Square.AtlasFibers
+import F1Square.Square.AtlasArchCoords
+import F1Square.Square.AtlasArchGram
 import F1Square.Square.WeilArchLimit
 import F1Square.Square.WeilArchReconcile
 
@@ -30,35 +32,8 @@ open UOR.Bridge.F1Square.Analysis
 attribute [local irreducible] RsumN
 
 -- ===========================================================================
--- (1) The compact tail domain `[1 + 2^{-k}, B]`.
+-- (1) The compact tail domain `[1 + 2^{-k}, B]`: `tailGap`, `tailGap_num_pos` now live in `AtlasArchGram`.
 -- ===========================================================================
-
-/-- The gap `B − (1 + 2^{-k})`. -/
-def tailGap (C : NormCtx) (k : Nat) : Q := Qsub (canonB C) (add (⟨1, 1⟩ : Q) (dyQ k))
-
-theorem tailGap_den (C : NormCtx) (k : Nat) : 0 < (tailGap C k).den :=
-  Qsub_den_pos (canonB_den C) (add_den_pos Nat.one_pos (dyQ_den k))
-
-/-- `2 ≤ 2^k` for `k ≥ 1`. -/
-theorem two_le_two_pow (k : Nat) (hk : 1 ≤ k) : 2 ≤ 2 ^ k := by
-  have := Nat.pow_le_pow_right (show 0 < 2 by decide) hk
-  simpa using this
-
-/-- `B − 1 − 2^{-k} > 0` for `k ≥ 1` (`X ≥ 1`). -/
-theorem tailGap_num_pos (C : NormCtx) (k : Nat) (hk : 1 ≤ k) : 0 < (tailGap C k).num := by
-  have hp : 2 ≤ 2 ^ k := two_le_two_pow k hk
-  have hXp : 2 ^ k ≤ C.X * 2 ^ k := Nat.le_mul_of_pos_left _ C.hX
-  show (0 : Int) < ((C.X + 1 : Nat) : Int) * ((1 * 2 ^ k : Nat) : Int)
-      + (-((1 * 2 ^ k + 1 * 1 : Nat) : Int)) * ((1 : Nat) : Int)
-  have hp' : ((2 : Nat) : Int) ≤ ((2 ^ k : Nat) : Int) := by exact_mod_cast hp
-  have hXp' : ((2 ^ k : Nat) : Int) ≤ ((C.X * 2 ^ k : Nat) : Int) := by exact_mod_cast hXp
-  push_cast at hp' hXp' ⊢
-  generalize hP : (2 : Int) ^ k = p at hp' hXp' ⊢
-  have e : ((C.X : Int) + 1) * (1 * p) + -(1 * p + 1) * 1 = ((C.X : Int) * p + p) - p - 1 := by ring_uor
-  omega
-
-theorem tailGap_num_nonneg (C : NormCtx) (k : Nat) (hk : 1 ≤ k) : 0 ≤ (tailGap C k).num :=
-  Int.le_of_lt (tailGap_num_pos C k hk)
 
 /-- **The compact tail** `∫_{1+2^{-k}}^{B} N⁺(x)·K_k(x) dx`. -/
 def compactTail (C : NormCtx) (f g : L2Test) (k : Nat) (hk : 1 ≤ k) : Real :=

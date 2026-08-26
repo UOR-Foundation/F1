@@ -2,7 +2,7 @@
 F1 square — **the pole, constant and tail fibers with their external positive densities**
 (`AtlasFibers.lean`).
 
-With the raw coordinates `U_x, V, D_x` (`AtlasArchCoords`) and the weight-free atoms `posFiber`/`negFiber`
+With the raw coordinates `U_x, V, D_x` (`AtlasScaleField`, target-free) and the weight-free atoms `posFiber`/`negFiber`
 (`AtlasPrimeDirect`), the remaining terms of the coupled form are realized POINTWISE by fibers of the
 Atlas `3 × 8` space paired against EXTERNAL NONNEGATIVE densities (all weights outside Γ):
 
@@ -21,8 +21,8 @@ masses `4A²`, `4B²` are the sites of the finite carriers (`AtlasCarrier`).  No
 a form value, or a sign claim.  Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
-import F1Square.Square.AtlasArchCoords
-import F1Square.Square.WeilMellinPole
+import F1Square.Square.AtlasScaleField
+import F1Square.Square.WeilArchKernCore
 import F1Square.Analysis.LogFourPiLower
 import F1Square.Analysis.LambdaThreePos
 

@@ -21,6 +21,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
 import F1Square.Square.ImproperFinite
+import F1Square.Square.WeilArchKernCore
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -154,12 +155,6 @@ theorem clampedInv_recip_eq (C : NormCtx) (y : Real) (hy1 : Rle one y)
   refine Req_trans (clampedInv_eq_of_ge (a := canonC C) (han := canonC_num C) (had := canonC_den C)
     hki hc_inv) ?_
   exact Rinv_Rinv_eq hky hki
-
-/-- `y·(1/y) = 1` with the clamped reciprocal, for `y ≥ 1`. -/
-theorem Rmul_clampedInv_one (y : Real) (hy1 : Rle one y) :
-    Req (Rmul y (clampedInv (⟨1, 1⟩ : Q) (by decide) (by decide) y)) one := by
-  obtain ⟨ky, hky⟩ := Pos_of_Rle_ofQ (by decide) (by decide) hy1
-  exact Req_trans (Rmul_congr (Req_refl _) (clampedInv_eq_of_ge hky hy1)) (Rmul_Rinv_self hky)
 
 -- ===========================================================================
 -- (4) THE POINTWISE FOLD IDENTITY on `[1, B]`:

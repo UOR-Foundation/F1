@@ -13,7 +13,7 @@ with EVERY component CONSTRUCTED (no free `Real` inputs anywhere):
       improper limit (`ArchNearPart`) and the `−2F(1)/(x²−1)` subtraction tail RETAINED in the
       improper regular/far parts.
 
-`NormCtx.geom` derives the closed geometry CANONICALLY from a `NormCtx` — `Bd := B := N := X+1`,
+`NormCtx.geom` (now in `WeilGeom.lean`) derives the closed geometry CANONICALLY from a `NormCtx` — `Bd := B := N := X+1`,
 `hband := hband_hi`, `hBdS := hTS` — no extra data, no arbitrary geometry; `normCtx_core` shows the
 context's own test is a core test (its support data, never vacuous by fiat).
 `normAutocorrSlotConstructed C` is a `WeilSlot` whose `poles` and `archTail` are the CONSTRUCTED
@@ -32,6 +32,7 @@ Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
 import F1Square.Square.WeilArchNear
+import F1Square.Square.WeilGeom
 
 namespace UOR.Bridge.F1Square.Square
 
@@ -50,53 +51,6 @@ def ArchTailForm (G : ClosedGeom) (f g : L2Test) (hf : CoreTest G f) (hg : CoreT
   Rmul (ofQ (⟨1, 2⟩ : Q) (Nat.succ_pos 1))
     (Radd (ArchRegPart G f g hf hg)
       (Radd (ArchNearPart G f g) (ArchFarPart G f g hf hg)))
-
--- ===========================================================================
--- (2) The closed geometry, derived CANONICALLY from a `NormCtx` (no extra data).
--- ===========================================================================
-
-/-- **The canonical closed geometry of a `NormCtx`** — every field derives from the context:
-    `Bd := X+1` (the support bound), `B := X+1` (the weight band cap), `N := X+1` (the scale witness),
-    `hband := hband_hi`, `hBdS := hTS`.  NO arbitrary geometry. -/
-def NormCtx.geom (C : NormCtx) : ClosedGeom where
-  S := C.S
-  hSd := C.hSd
-  hSn := C.hSn
-  hS1 := C.hS1
-  a := C.a
-  han := C.han
-  had := C.had
-  w := C.w
-  hw := C.hw
-  hwn := C.hwn
-  b := C.b
-  hbd := C.hbd
-  hbn := C.hbnpos
-  hfit := C.hfit
-  B := ⟨((C.X + 1 : Nat) : Int), 1⟩
-  hBd := Nat.one_pos
-  hB1 := by
-    show (1 : Int) * ((1 : Nat) : Int) ≤ ((C.X + 1 : Nat) : Int) * ((1 : Nat) : Int)
-    push_cast
-    omega
-  N := C.X + 1
-  hN := Nat.succ_pos C.X
-  hBN := Qle_refl _
-  Bd := ⟨((C.X + 1 : Nat) : Int), 1⟩
-  hBdd := Nat.one_pos
-  hBd1 := by
-    show (1 : Int) * ((1 : Nat) : Int) ≤ ((C.X + 1 : Nat) : Int) * ((1 : Nat) : Int)
-    push_cast
-    omega
-  hband := C.hband_hi
-  hBdS := C.hTS
-  hBdB := Qle_refl _
-
-/-- The context's own test is a core test for its canonical geometry (from `NormCtx.hgh/hgl` —
-    the test domain is exactly the context's support data, never vacuous by fiat). -/
-theorem normCtx_core (C : NormCtx) : CoreTest C.geom C.g where
-  hgh := C.hgh
-  hgl := C.hgl
 
 -- ===========================================================================
 -- (3) The complete closed Weil form.

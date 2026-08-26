@@ -39,16 +39,6 @@ theorem qinv_qinv {a : Q} (han : 0 < a.num) : Qeq (Qinv (Qinv a)) a := by
   show (Qinv (Qinv a)).num * (a.den : Int) = a.num * ((Qinv (Qinv a)).den : Int)
   rw [hn, hd]
 
-/-- `1 ≤ q ⟹ 1/q ≤ 1`. -/
-theorem qinv_le_one {q : Q} (hqd : 0 < q.den) (hq1 : Qle (⟨1, 1⟩ : Q) q) :
-    Qle (Qinv q) (⟨1, 1⟩ : Q) := by
-  have hqn : 0 < q.num := qnum_pos_of_one_le hqd hq1
-  have hqq := hq1
-  simp only [Qle] at hqq
-  show (q.den : Int) * ((1 : Nat) : Int) ≤ 1 * ((q.num.toNat : Nat) : Int)
-  push_cast [Int.toNat_of_nonneg (Int.le_of_lt hqn)] at hqq ⊢
-  omega
-
 /-- `(q·q)·(1/q) = 1/(1/q)` on the positive cone (rational identity behind the weight law). -/
 theorem qsq_mul_qinv {q : Q} (hqn : 0 < q.num) (hqd : 0 < q.den) :
     Qeq (mul (mul q q) (Qinv q)) (Qinv (Qinv q)) := by
@@ -154,65 +144,6 @@ theorem FTwo_recip_Q (c B : Q) (hcn : 0 < c.num) (hcd : 0 < c.den) (hBd : 0 < B.
       (ofQ_congr _ (by decide) (Qinv_mul hqd hqn))
   refine Req_trans (Rmul_congr hone (Req_refl _)) ?_
   exact Req_trans (Rone_mul _) (Req_symm hhi)
-
--- ===========================================================================
--- (5) The canonical band from `NormCtx`: `B = X+1`, `c = 1/B`, `c·B = 1`, `c ≤ b·a`.
--- ===========================================================================
-
-/-- The canonical band cap `B = C.X+1`. -/
-def canonB (C : NormCtx) : Q := ⟨((C.X + 1 : Nat) : Int), 1⟩
-
-/-- The canonical lower band edge `c = B⁻¹ = 1/(C.X+1)`. -/
-def canonC (C : NormCtx) : Q := Qinv (canonB C)
-
-theorem canonB_den (C : NormCtx) : 0 < (canonB C).den := Nat.one_pos
-
-theorem canonB_num (C : NormCtx) : 0 < (canonB C).num := by
-  show (0 : Int) < ((C.X + 1 : Nat) : Int); omega
-
-theorem canonB_one (C : NormCtx) : Qle (⟨1, 1⟩ : Q) (canonB C) := by
-  show (1 : Int) * ((1 : Nat) : Int) ≤ ((C.X + 1 : Nat) : Int) * ((1 : Nat) : Int)
-  push_cast; omega
-
-theorem canonC_num (C : NormCtx) : 0 < (canonC C).num := Qinv_num_pos (canonB_den C)
-
-theorem canonC_den (C : NormCtx) : 0 < (canonC C).den := Qinv_den_pos (canonB_num C)
-
-/-- **`c·B = 1` EXACTLY** for the canonical band. -/
-theorem canonC_mul_B (C : NormCtx) : Qeq (mul (canonC C) (canonB C)) (⟨1, 1⟩ : Q) :=
-  Qinv_mul (canonB_den C) (canonB_num C)
-
-theorem canonC_mul_B_le (C : NormCtx) : Qle (mul (canonC C) (canonB C)) (⟨1, 1⟩ : Q) := by
-  have h := canonC_mul_B C
-  simp only [Qeq] at h; simp only [Qle]; omega
-
-theorem canonC_le_one (C : NormCtx) : Qle (canonC C) (⟨1, 1⟩ : Q) :=
-  qinv_le_one (canonB_den C) (canonB_one C)
-
-theorem canonC_le_B (C : NormCtx) : Qle (canonC C) (canonB C) :=
-  Qle_trans (by decide) (canonC_le_one C) (canonB_one C)
-
-theorem canonB_le_N (C : NormCtx) : Qle (canonB C) (⟨((C.X + 1 : Nat) : Int), 1⟩ : Q) := Qle_refl _
-
-theorem canonB_le_S (C : NormCtx) : Qle (canonB C) C.S := C.hTS
-
-/-- **`c ≤ C.b·C.a` from `C.hband_lo`** (`1 ≤ ((X+1)·b)·a ⟺ 1/(X+1) ≤ b·a`): the canonical lower band
-    edge sits below the lower support edge of the reflected window — the two-sided weight's genuine
-    `x^{-1/2}` region covers the whole low side of the correlation. -/
-theorem canonC_le_ba (C : NormCtx) : Qle (canonC C) (mul C.b C.a) := by
-  have h := C.hband_lo
-  simp only [Qle, mul] at h
-  show (1 : Int) * ((mul C.b C.a).den : Int) ≤ (mul C.b C.a).num * (((C.X + 1 : Nat) : Int).toNat : Int)
-  simp only [mul]
-  push_cast at h ⊢
-  have ht : ((((C.X : Int) + 1).toNat : Nat) : Int) = (C.X : Int) + 1 :=
-    Int.toNat_of_nonneg (by omega)
-  rw [ht]
-  have e1 : C.b.num * C.a.num * ((C.X : Int) + 1)
-      = ((C.X : Int) + 1) * C.b.num * C.a.num := by ring_uor
-  have e2 : (1 : Int) * ((C.b.den : Int) * (C.a.den : Int)) = 1 * (C.b.den : Int) * (C.a.den : Int) := by
-    ring_uor
-  omega
 
 -- ===========================================================================
 -- (6) THE CANONICAL-BAND RECIPROCAL TRANSPOSE.

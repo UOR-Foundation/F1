@@ -523,6 +523,7 @@ import F1Square.Square.IntegralCell
 import F1Square.Square.IntegralInversionGeom
 import F1Square.Square.IntegralInversion
 import F1Square.Square.ImproperFinite
+import F1Square.Square.WeilArchKernCore
 import F1Square.Square.WeilMellinPole
 import F1Square.Square.WeilArchKern
 import F1Square.Square.WeilArchNumC
@@ -547,10 +548,16 @@ import F1Square.Square.AtlasGammaAtom
 import F1Square.Square.IntegralFiniteLin
 import F1Square.Square.AtlasPrimeDyadicReadback
 import F1Square.Square.AtlasPrimeDirect
+import F1Square.Square.AtlasParamIntegral
+import F1Square.Square.AtlasScaleField
+import F1Square.Square.AtlasPrimeFold
+import F1Square.Square.AtlasArchGram
+import F1Square.Square.AtlasDefectGram
 import F1Square.Square.AtlasArchCoords
 import F1Square.Square.AtlasFibers
 import F1Square.Square.AtlasCarrier
 import F1Square.Square.AtlasTailSplit
+import F1Square.Square.AtlasDefectReadback
 import F1Square.Square.WeilRecipReal
 import F1Square.Square.HatVanishes
 import F1Square.Square.MomentValue
