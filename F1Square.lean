@@ -551,6 +551,7 @@ import F1Square.Square.AtlasPrimeDirect
 import F1Square.Square.AtlasParamIntegral
 import F1Square.Square.AtlasScaleField
 import F1Square.Square.AtlasPrimeFold
+import F1Square.Square.AtlasSourceLaws
 import F1Square.Square.AtlasArchGram
 import F1Square.Square.AtlasDefectGram
 import F1Square.Square.AtlasArchCoords

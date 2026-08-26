@@ -10147,6 +10147,21 @@ open UOR.Bridge.F1Square
 #print axioms Square.poleFiber_cut_at_upR
 #print axioms Square.negFiber_VV_cut_zero
 #print axioms Square.negFiber_VV_cycle
+-- AtlasSourceLaws (AC-23 prerequisites, target-free): the orbit law x'·t = x·t' ⟹ x'^{-1/2}U_x(f,t) = x^{-1/2}U_{x'}(f,t'), the λ-orbit form, the weight law (invSq(λx))²·λ = (invSq x)², THE SOURCE-COHERENCE LAW U_x(f,t) = x^{-1/2}V(f,t/x) on t ≥ ax, and the support-forced zero rows U_q(f,t) = 0 for t ≤ aq (prime rows with a+w ≤ na vanish on the window); no measure coupling, no positivity
+#print axioms Square.dilRef_f
+#print axioms Square.xBand_inert
+#print axioms Square.Rnonneg_of_ge_a
+#print axioms Square.inv_cross_alg
+#print axioms Square.dilRef_orbit
+#print axioms Square.Uc_orbit
+#print axioms Square.Uc_orbit_scale
+#print axioms Square.invSq_sq_mul_self
+#print axioms Square.invSq_scale_sq
+#print axioms Square.Rle_a_of_ax
+#print axioms Square.Uc_eq_invSq_Vc_shift
+#print axioms Square.q_mul_inv_aq
+#print axioms Square.Uc_zero_row
+#print axioms Square.Uc_zero_row_upR
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg
