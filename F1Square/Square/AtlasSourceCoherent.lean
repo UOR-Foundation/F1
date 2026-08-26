@@ -54,8 +54,8 @@ def decodeField (C : NormCtx) (f : L2Test) : SourceField := ⟨fun x t => Uc C x
 /-- **Every core test decodes to a source-coherent field** (AC-23). -/
 theorem decodeField_coherent (C : NormCtx) (f : L2Test) (hf : CoreTest C.geom f) : SourceCoherent C (decodeField C f) where
   orbit := fun h0 hS h0' hS' ht ht' horb => Uc_orbit C f h0 hS h0' hS' ht ht' horb
-  shift := fun hx1 hS hkx hax => Uc_eq_invSq_Vc_shift C f hx1 hS hkx hax
-  zeroRow := fun q hqd hq1 hqS ht => Uc_zero_row C f hf q hqd hq1 hqS ht
+  shift := @fun x t hx1 hS kx hkx hax => Uc_eq_invSq_Vc_shift C f hx1 hS hkx hax
+  zeroRow := @fun q hqd hq1 hqS _t ht => Uc_zero_row C f hf q hqd hq1 hqS ht
 
 -- ===========================================================================
 -- (1) The orbit reading and its independence of the Archimedean leg.
@@ -120,16 +120,14 @@ theorem mateS_self (p : FiniteLocalAddr) : Qeq (mateS p p.n.q) p.t := by
   have hn' : ((p.n.q.num.toNat : Nat) : Int) = p.n.q.num := Int.toNat_of_nonneg (Int.le_of_lt (primePowerAddr_q_num p.n))
   simp only [Qeq, mul, Qinv]
   push_cast [hn']
-  have hd1 : (p.n.q.den : Int) = 1 := rfl
-  rw [hd1]
-  ring_uor
+  simp only [Int.toNat_ofNat, Int.mul_assoc, Int.mul_left_comm, Int.mul_comm, Int.one_mul, Int.mul_one]
 
 /-- `1 + 2^{-k} ≤ 2` for every `k`. -/
 theorem tailFloor_le_two (k : Nat) : Qle (tailFloor k) (⟨2, 1⟩ : Q) := by
   unfold tailFloor
   show (1 * ((2 ^ k : Nat) : Int) + 1 * ((1 : Nat) : Int)) * ((1 : Nat) : Int) ≤ 2 * ((1 * 2 ^ k : Nat) : Int)
   have hp : 1 ≤ 2 ^ k := Nat.one_le_two_pow
-  have hp' : (1 : Int) ≤ ((2 ^ k : Nat) : Int) := by exact_mod_cast hp
+  have hp' : (1 : Int) ≤ (2 : Int) ^ k := by exact_mod_cast hp
   push_cast; omega
 
 /-- **★ The self-scale is admissible**: for an active row `(n,t)` (`t ∈ [a, a+w]`, `n ≤ B`), `x = n ∈ J_{k,n,t}`. -/

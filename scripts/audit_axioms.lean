@@ -10254,6 +10254,15 @@ open UOR.Bridge.F1Square
 #print axioms Square.model1_tail
 #print axioms Square.model2_prime
 #print axioms Square.model2_mix
+-- AtlasSourceCoherent (target-free): the source-coherent carrier as PROPOSITIONS about a field (orbit law, shift law, zero rows), decodeField_coherent for every core test, THE ORBIT READING and orbitRead_independent (cross-multiplied: invSq(x₂)·orbitRead c₁ z = invSq(x₁)·orbitRead c₂ z for two admissible coupling addresses with the same finite leg), the admissible interval J_{k,n,t} and admissible_self (x = n is admissible for every active row)
+#print axioms Square.decodeField_coherent
+#print axioms Square.finN_nonneg
+#print axioms Square.archX_nonneg
+#print axioms Square.coherent_orbit_addr
+#print axioms Square.orbitRead_independent
+#print axioms Square.mateS_self
+#print axioms Square.tailFloor_le_two
+#print axioms Square.admissible_self
 -- AtlasPrimeFold (AC-22 item 2): THE FOLD P_m = Λ(n)(B_n(f,g)+B_n(g,f)) on the core, B_n(f,g) = w∫U_n(f)V(g)r, the folded negFiber(U_n,V) field with density 2Λ(n)wr, primeFoldDirect_m = −Λ(n)(B_n+B_n), primeFoldGram = −PrimeForm on the core
 #print axioms Square.PForm_fold
 #print axioms Square.primeFoldDensity_nonneg
