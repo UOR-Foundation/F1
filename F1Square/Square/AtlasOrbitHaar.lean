@@ -1,22 +1,20 @@
 /-
-F1 square — **THE POSITIVE-SCALING ACTION GROUPOID, ITS HAAR SYSTEM, AND THE REGULAR REPRESENTATION**
+F1 square — **positive scalings, the window change of variables, and the dilation representation**
 (`AtlasOrbitHaar.lean`).  Independent of F1: no test context, no form.
 
-  * `OrbitArrow` — the action groupoid of positive rational scalings on positions: an arrow `t ⟶ λ·t`
-    is a pair `(t, λ)`; composition multiplies the scalings (`arrow_comp`, associative and unital up to `Qeq`).
-  * `HaarWindow` — a window `[lo, lo+w]` with a floor `a ≤ lo` (the data on which the repository's certified
-    Haar integral `∫ φ(t) dt/max(t,a)` is exactly `∫ φ(t) dt/t`); `scaleWindow s W = [s·lo, s·(lo+w)]` with
-    floor `s·a`.
-  * **The invariant Haar system**: `haar_invariance` — `∫_{s·W} φ dt/t = ∫_W φ(s·t) dt/t` (the repository's
-    `haarIntegral_dilate`, restated on windows); this IS `dλ/λ`-invariance for rational scalings.
-  * **The regular representation** `regRep s φ = φ(s·)` (`dilateTest`): `regRep_comp`, `regRep_one`
-    (pointwise), and — PROVED BY CHANGE OF VARIABLES, not stored — `regRep_unitary`
-    `⟨R_s φ, R_s ψ⟩_W = ⟨φ, ψ⟩_{s·W}` and `regRep_adjoint` `⟨R_s φ, ψ⟩_W = ⟨φ, R_{1/s} ψ⟩_{s·W}`.
+  * `OrbitArrow` — raw scaling arrows `t ⟶ λ·t` with composition; associativity, units and inverses hold
+    up to `Qeq` (`arrow_*`).  This is NOT yet a typed Lean groupoid (no quotient of arrows, no categorical
+    interface); it is the raw data such a groupoid would be built on.
+  * `HaarWindow` — a window `[lo, lo+w]` with a floor `a ≤ lo`, on which the repository's certified Haar
+    integral `∫ φ(t) dt/max(t,a)` is exactly `∫ φ(t) dt/t`; `scaleWindow s W = [s·lo, s·(lo+w)]`.
+  * `haar_invariance` — the certified WINDOW change-of-variables theorem `∫_{s·W} φ dt/t = ∫_W φ(s·) dt/t`
+    (the repository's `haarIntegral_dilate` restated).  It is not a groupoid Haar-system object and no
+    uniqueness of the Haar system is proved.
+  * `regRep s φ = φ(s·)` (`dilateTest`), with `regRep_comp`, `regRep_one` pointwise; `regRep_unitary` and
+    `regRep_adjoint` compare the carrier on `W` with the carrier on `s·W` — they are change-of-variables
+    identities between two windows, NOT a unitary endomorphism of one completed Hilbert carrier.
 
-The weight `invSq` of the scale field is NOT part of this representation: the field's equivariance under the
-same scalings is `Uc_orbit_scale`/`invSq_scale_sq` (`AtlasSourceLaws`), and it is exactly the statement that
-`U` is `R`-covariant up to the certified weight ratio.  Nothing here is a kernel, a coefficient, or a sign.
-Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
+Nothing here is a kernel, a coefficient, or a sign.  Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
 import F1Square.Square.AtlasOrbitAddress
@@ -97,7 +95,7 @@ def scaleWindow (s : PosRat) (W : HaarWindow) : HaarWindow where
     refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ s.hd (Int.le_of_lt s.hn)) W.hfloor) ?_
     exact Rle_of_Req (Rmul_ofQ_ofQ s.hd W.hlo)
 
-/-- **★ THE INVARIANT HAAR SYSTEM**: `∫_{s·W} φ dt/t = ∫_W φ(s·t) dt/t`. -/
+/-- **The window change of variables**: `∫_{s·W} φ dt/t = ∫_W φ(s·t) dt/t` (`haarIntegral_dilate` on windows). -/
 theorem haar_invariance (s : PosRat) (W : HaarWindow) (φ : L2Test) :
     Req ((scaleWindow s W).integral φ) (W.integral (dilateTest s.q s.hn s.hd φ)) :=
   haarIntegral_dilate φ s.q s.hn s.hd W.a (mul s.q W.a) W.han W.had (Qmul_num_pos s.hn W.han) (Qmul_den_pos s.hd W.had)
@@ -118,7 +116,7 @@ theorem regRep_one (φ : L2Test) (t : Real) : Req ((regRep PosRat.pone φ).f t) 
 /-- The Haar inner product on a window: `⟨φ, ψ⟩_W = ∫_W φ·ψ dt/t`. -/
 def HaarWindow.inner (W : HaarWindow) (φ ψ : L2Test) : Real := W.integral (productTest φ ψ)
 
-/-- **★ UNITARITY** (change of variables, not a field): `⟨R_s φ, R_s ψ⟩_W = ⟨φ, ψ⟩_{s·W}`. -/
+/-- **Isometry between the two windows** (change of variables, not a field): `⟨R_s φ, R_s ψ⟩_W = ⟨φ, ψ⟩_{s·W}`. -/
 theorem regRep_unitary (s : PosRat) (W : HaarWindow) (φ ψ : L2Test) :
     Req (W.inner (regRep s φ) (regRep s ψ)) ((scaleWindow s W).inner φ ψ) := by
   refine Req_symm (Req_trans (haar_invariance s W (productTest φ ψ)) ?_)
@@ -134,7 +132,7 @@ theorem inv_scale_cancel (s : PosRat) (t : Real) :
     (ofQ_congr (Qmul_den_pos (Qinv_den_pos s.hn) s.hd) Nat.one_pos (Qinv_mul s.hd s.hn))) (Req_refl t)) ?_
   exact Rone_mul t
 
-/-- **★ THE ADJOINT** (change of variables, not a field): `⟨R_s φ, ψ⟩_W = ⟨φ, R_{1/s} ψ⟩_{s·W}`. -/
+/-- **The adjoint identity between the two windows** (change of variables, not a field): `⟨R_s φ, ψ⟩_W = ⟨φ, R_{1/s} ψ⟩_{s·W}`. -/
 theorem regRep_adjoint (s : PosRat) (W : HaarWindow) (φ ψ : L2Test) :
     Req (W.inner (regRep s φ) ψ) ((scaleWindow s W).inner φ (regRep s.pinv ψ)) := by
   refine Req_symm (Req_trans (haar_invariance s W (productTest φ (regRep s.pinv ψ))) ?_)

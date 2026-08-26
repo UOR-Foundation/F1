@@ -2,13 +2,14 @@
 F1 square — **THE CANONICAL ATLAS REYNOLDS COMPRESSION AND ITS FAILED READBACK** (`AtlasReynolds.lean`,
 target-free).
 
-The only concrete Atlas actions in the repository are the class permutations (`AtlasClasses` §3): the
-inner twist `τ` rotates the context index `ℓ mod 8`, the quarter-turn `σ` the scope, the mirror `μ`.
-On the `3 × 8` fiber the Reynolds projection of the `τ`-action (averaging over all eight twists) is
+The repository formalizes the class transforms `σ, τ, μ` only as rotation-order facts (`AtlasClasses` §3);
+no complete `σ/τ/μ` representation on the 96-class carrier exists, and the scope coordinate `h₂` is absent
+from `gammaAtom`.  `reyT` is the explicit row-average map on the `3 × 8` fiber,
 
     `(P_τ v)(i,j) = (1/8)·Σ_j v(i,j)`      (`reyT`),
 
-the projection onto `ℓ`-constant fibers.  PROVED here from the fiber algebra alone:
+the projection onto `ℓ`-constant fibers — the value a Reynolds average of a τ-rotation action would have,
+but it is NOT proved here to be the average of an implemented action.  PROVED here from the fiber algebra alone:
  * `reyT_idem`, `reyT_selfadj` — `P_τ` is an idempotent, `pairF`-self-adjoint projection (external proofs,
    not structure fields);
  * `reyT_psd` — its compression of the Atlas pairing is PSD: `⟨P_τ v, M P_τ v⟩ = 8·(S² + 7·Σᵢuᵢ²) ≥ 0`;
@@ -25,13 +26,12 @@ the projection onto `ℓ`-constant fibers.  PROVED here from the fiber algebra a
    constant-channel integrand is `≤ 0 ≤` its compression at every `t`: no fiberwise PSD compression
    reads the constant channel back.
 
-THE FIRST EXPLICIT FAILED ATLAS IDENTITY.  The canonical Reynolds projection of the Atlas class action is
-the cut projection up to the scalar `5/12`.  Its trace error against `D_k` contains the `k`-independent term
-`ArchConstForm(f,f)` and the entire cycle Gram; it cannot vanish along any refinement schedule.  Since every
-address-level Atlas operation acts fiberwise at each site `(x,t)` and the source readback is
-address-independent (`gammaAtom_readback`), no compression built from the Atlas class action alone can
-produce the signed nonlocal coupling; whatever couples the atomic prime measure to the continuous field
-must act on the scale/Haar site index, which the Atlas addressing does not carry.
+THE FAILED READBACK OF THE FIBERWISE ROW-AVERAGE.  `reyT` is the cut projection up to the scalar `5/12`; its
+constant-channel readback error is the whole channel.  This falsifies the fiberwise row-average candidate.
+It does NOT show that errors from all channels cannot cancel in a total trace, and `fiberwise_psd_const_gap`
+quantifies only over `Fiber → Fiber` maps — it says nothing about operators on a channel/place/scale/Haar
+address.  The correct conclusion is only: the current F1 encoding acts on the internal `3 × 8` fiber and
+therefore cannot express a nonlocal coupling; that coupling needs an action on the site index.
 Nothing here is a positivity or dominance claim.  Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 

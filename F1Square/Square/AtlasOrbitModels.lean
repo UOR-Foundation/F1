@@ -1,26 +1,21 @@
 /-
-F1 square — **TWO EXPLICIT REPRODUCING MODELS AND THE SEPARATING DATUM** (`AtlasOrbitModels.lean`, target-free).
+F1 square — **pointwise recovery presentations of the cycle coordinates** (`AtlasOrbitModels.lean`, target-free).
 
-The cycle coordinates `C_k f` of every channel are recovered EXACTLY from cut coordinates `A_k f` by linear
-identities with coefficients determined by the two-port fiber and the orbit law — but NOT uniquely.
+Coordinate lemmas only.  The cycle coordinates of each channel are expressed pointwise through cut coordinates:
 
-MODEL 1 (same site; the algebraic shear): at one Haar coordinate `s` and scale `x`,
-    prime cycle (n,t)  = pole cut (n,t)                           (`model1_prime`, the swap),
-    const cycle (s)    = far cut (·,s)                            (`model1_const`),
-    pole cycle (x,s)   = pole cut (x,s) − far cut (·,s)           (`model1_pole`),
-    tail cycle (x,s)   = tail cut (x,s) + (1/x)·far cut (·,s)     (`model1_tail`).
-MODEL 2 (orbit-shifted transport): on a coupling address `n·s = x·t` (band and window hypotheses),
-    invSq(x)·prime cycle (n,t) = invSq(n)·(pole cut (x,s) − ½·far cut (·,s)) + invSq(x)·½·far cut (·,t)
-                                                                    (`model2_prime`),
-reading the prime cycle at `(n,t)` from cut data at the orbit-mate `(x,s)` and the anchors `(·,s)`, `(·,t)`.
-MIXTURES: any convex combination of orbit-shifted readings reproduces (`model2_mix`), so the reproduction
-equations (orbit maps, source recovery, fiber coordinates) are satisfied by a whole family indexed by a
-transport density `ρ(x | n)` on the orbit.  THE SEPARATING DATUM IS `ρ`.  No Atlas law in the repository
-fixes it; the canonical choice `ρ = δ_{x=n}` is Model 1, which moves the continuous pole mass onto the
-prime atom (site-local, not bounded in the continuous carrier norm); any spread `ρ` incurs the
-window-edge error `s = x·t/n ∉ [a, a+w]`, which does not depend on the tail truncation `k`.
+PRESENTATION 1 (same site): prime cycle (n,t) = pole cut (n,t) (`model1_prime`, the swap); const cycle (s) =
+far cut (·,s) (`model1_const`); pole cycle (x,s) = pole cut (x,s) − far cut (·,s) (`model1_pole`);
+tail cycle (x,s) = tail cut (x,s) + (1/x)·far cut (·,s) (`model1_tail`).
+PRESENTATION 2 (one weighted identity at one coupling address `n·s = x·t`, band/window hypotheses):
+`invSq(x)·prime cycle (n,t) = invSq(n)·(pole cut (x,s) − ½·far cut (·,s)) + invSq(x)·½·far cut (·,t)`
+(`model2_prime`, from `decode_orbit_equivariance`).  `model2_mix` is a generic affine-combination lemma
+(`θ₁ + θ₂ = 1`, no sign condition); it is NOT instantiated with coupling addresses and contains no density,
+integral, measure, or operator.
 
-Nothing here is a sign, a norm bound, or a contraction: these are exact pointwise identities.
+HONEST SCOPE.  These are pointwise identities, not operators: no complete five-channel map `A_k → C_k` is
+constructed here, nothing shows the two presentations differ on source-coherent inputs (orbit equivariance
+indicates they are different readings of the same source-restricted functional), and no statement about
+transport densities, boundary error, boundedness, or uniqueness is made or proved.
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
@@ -44,7 +39,7 @@ def constCycTp (V : Real) : Real := bCoefGa one V V
 def tailCycTp (Z W : Real) : Real := bCoefGa one Z W
 
 -- ===========================================================================
--- (1) MODEL 1: the same-site recovery (the algebraic shear).
+-- (1) PRESENTATION 1: the same-site recovery identities.
 -- ===========================================================================
 
 theorem model1_prime (U V : Real) : Req (primeCycTp U V) (poleCutTp U V) := Req_symm (pole_cut_eq_prime_cycle U V)
@@ -87,10 +82,10 @@ theorem model1_tail (Z r V : Real) :
   exact Req_trans (Radd_congr (Req_trans (Radd_comm _ _) (Radd_neg _)) (Req_refl _)) (Req_trans (Radd_comm _ _) (Radd_zero _))
 
 -- ===========================================================================
--- (2) MODEL 2: the orbit-shifted recovery on a coupling address.
+-- (2) PRESENTATION 2: the orbit-shifted recovery identity on a coupling address.
 -- ===========================================================================
 
-/-- **★ MODEL 2**: on a coupling address `n·s = x·t` (band/window hypotheses as in `decode_orbit_equivariance`),
+/-- **Presentation 2**: on a coupling address `n·s = x·t` (band/window hypotheses as in `decode_orbit_equivariance`),
     `invSq(x)·primeCycTp(n,t) = invSq(n)·(poleCutTp(x,s) − ½·farCutTp(s)) + invSq(x)·(½·farCutTp(t))`. -/
 theorem model2_prime (C : NormCtx) (f : L2Test) (c : CouplingAddr)
     (hnS : Rle c.fin.n.r (ofQ C.S C.hSd)) (hxS : Rle c.arch.xr (ofQ C.S C.hSd))
@@ -130,12 +125,11 @@ theorem model2_prime (C : NormCtx) (f : L2Test) (c : CouplingAddr)
   exact Req_trans (Req_symm (Rmul_assoc _ _ _)) (Req_trans (Rmul_congr (Rmul_comm _ _) (Req_refl _)) (Rmul_assoc _ _ _))
 
 -- ===========================================================================
--- (3) MIXTURES: the reproduction equations are satisfied by a whole family (the separating datum is `ρ`).
+-- (3) An affine-combination lemma (generic; not an operator statement).
 -- ===========================================================================
 
-/-- **★ NON-UNIQUENESS**: two orbit-shifted readings of the same prime cycle, mixed with weights `θ₁ + θ₂ = 1`
-    (the `invSq` factors absorbed), still reproduce it: `θ₁·invSq(x₂)·R₁ + θ₂·invSq(x₁)·R₂ = invSq(x₁)·invSq(x₂)·primeCycTp`.
-    Every transport density on the orbit gives a reproducing coefficient system. -/
+/-- A generic affine-combination lemma: two readings `R₁ = w₁·P`, `R₂ = w₂·P` combined with `θ₁ + θ₂ = 1`
+    (no sign condition) satisfy `θ₁·w₂·R₁ + θ₂·w₁·R₂ = w₁·w₂·P`.  Not instantiated with coupling addresses. -/
 theorem model2_mix (w₁ w₂ P R₁ R₂ θ₁ θ₂ : Real) (hθ : Req (Radd θ₁ θ₂) one)
     (h₁ : Req (Rmul w₁ P) R₁) (h₂ : Req (Rmul w₂ P) R₂) :
     Req (Radd (Rmul θ₁ (Rmul w₂ R₁)) (Rmul θ₂ (Rmul w₁ R₂))) (Rmul (Rmul w₁ w₂) P) := by
