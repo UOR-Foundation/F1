@@ -170,16 +170,18 @@ theorem recoverVFromFar_source (C : NormCtx) (f : L2Test) (t : Real) :
   exact Req_trans (Req_symm (Rmul_assoc _ _ _)) (Req_trans (Rmul_congr two_half_eq_one (Req_refl _)) (Rone_mul _))
 
 -- ===========================================================================
--- (2) The cut fields of a test and the cut-only orbit reading.
+-- (2) The pole/tail/far cut projection of a test and the cut-only orbit reading.
 -- ===========================================================================
 
-/-- The cut coordinates of a decoded test: pole `(x,t)`, compact tail `(x,t)`, far `t` (the constant channel has cut `0`). -/
+/-- Three pointwise cut coordinates of a decoded test: pole `(x,t)`, compact tail `(x,t)`, far `t`.  NOT the
+    five-channel carrier: it omits the prime and constant channels, every channel measure, and the carrier norm. -/
 structure CutField where
   pole : Real → Real → Real
   tail : Real → Real → Real
   far : Real → Real
 
-/-- The decoded cut field `A_k f`. -/
+/-- **The pole/tail/far POINTWISE PROJECTION** of the decoded test `f` at truncation `k` — three of the five cut
+    coordinates of `A_k f`, as bare functions (no prime/constant channel, no measure, no norm). -/
 def cutOf (C : NormCtx) (k : Nat) (f : L2Test) : CutField where
   pole := fun x t => aCoefGa one (Uc C x f t) (Rneg (Vc C f t))
   tail := fun x t => aCoefGa one (Zc C (dyQ k) (dyQ_num k) (dyQ_den k) x f t) (Wc C x f t)
@@ -242,5 +244,12 @@ theorem couplingOfAdmissible_adm (C : NormCtx) (k : Nat) (p : FiniteLocalAddr) (
   · exact Rle_ofQ_of_Qle _ _ hnB
   · exact Rle_ofQ_of_Qle _ _ (Qle_trans (by decide) (canonC_le_one C) hx1)
   · exact Rle_ofQ_of_Qle _ _ hxB
+
+/-- **The upper-window certificate** of the admissible coupling address: its Haar coordinate `s = x·t/n` satisfies
+    `s ≤ a + w` (from `Admissible.hwin_hi`) — the complete window `[a, a+w]` is carried, not only the floor. -/
+theorem couplingOfAdmissible_win_hi (C : NormCtx) (k : Nat) (p : FiniteLocalAddr) (x : Q) (hxd : 0 < x.den) (hxn : 0 < x.num)
+    (h : Admissible C k p x) :
+    Rle (couplingOfAdmissible C k p x hxd hxn h).arch.sr (ofQ (add C.a C.w) (add_den_pos C.had C.hw)) :=
+  Rle_ofQ_of_Qle _ _ h.hwin_hi
 
 end UOR.Bridge.F1Square.Square
