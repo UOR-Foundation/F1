@@ -555,6 +555,8 @@ import F1Square.Square.AtlasSourceLaws
 import F1Square.Square.AtlasArchGram
 import F1Square.Square.AtlasDefectGram
 import F1Square.Square.AtlasReynolds
+import F1Square.Square.AtlasOrbitAddress
+import F1Square.Square.AtlasOrbitDecode
 import F1Square.Square.AtlasArchCoords
 import F1Square.Square.AtlasFibers
 import F1Square.Square.AtlasCarrier
