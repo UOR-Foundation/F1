@@ -10926,3 +10926,18 @@ open UOR.Bridge.F1Square
 #print axioms Square.anchorDual_eq_anchorOf
 #print axioms Square.primeUJ_eq_shiftUn
 #print axioms Square.crossForm5_eq_anchorKernel
+
+-- AtlasWindowZero (target side): THE DEGENERATE WINDOW w = 0 handled directly — every channel density carries the factor w, so the five-channel form vanishes identically (inner5_w_zero), the level-k defect vanishes on every pair of tests (defect_w_zero via source5_split_fixed), and currentArchDominatesPrime_of_w_zero: w = 0 ⟹ CurrentArchDominatesPrime C outright. Nothing is asserted for w > 0
+#print axioms Square.ofQ_num_zero_eq_zero
+#print axioms Square.wrF_zero
+#print axioms Square.poleDens5_zero
+#print axioms Square.primeDens5_zero
+#print axioms Square.constDens5_zero
+#print axioms Square.tailDens5_zero
+#print axioms Square.farDens5_zero
+#print axioms Square.gram_int_zero
+#print axioms Square.intX_zero_pt
+#print axioms Square.RsumN_zero_of
+#print axioms Square.inner5_w_zero
+#print axioms Square.defect_w_zero
+#print axioms Square.currentArchDominatesPrime_of_w_zero
