@@ -28,6 +28,50 @@ namespace UOR.Bridge.F1Square.Square
 open UOR.Bridge.F1Square.Analysis
 open CField
 
+theorem qClampQ_le_of_le {a : Q} {had : 0 < a.den} {t c : Real} (ht : Rle t c) (hac : Rle (ofQ a had) c) :
+    Rle (qClampQ a had t) c := fun n => Qmax_le (ht n) (hac n)
+
+/-- `max(t,a)·(1/max(t,a)) = 1`. -/
+theorem qClampQ_mul_clampedInv (a : Q) (han : 0 < a.num) (had : 0 < a.den) (t : Real) :
+    Req (Rmul (qClampQ a had t) (clampedInv a han had t)) one := by
+  unfold clampedInv
+  exact Rmul_Rinv_self _
+
+theorem ofQ_inv_mul_self_fc (q : Q) (hqd : 0 < q.den) (hqn : 0 < q.num) :
+    Req (Rmul (ofQ (Qinv q) (Qinv_den_pos hqn)) (ofQ q hqd)) one := by
+  refine Req_trans (Rmul_ofQ_ofQ (Qinv_den_pos hqn) hqd) (ofQ_congr _ _ ?_)
+  simp only [Qeq, mul, Qinv]
+  push_cast [Int.toNat_of_nonneg (Int.le_of_lt hqn)]
+  ring_uor
+
+/-- **★ THE REAL-SCALE ZERO LAW**: `U_x(f,t) = 0` for a core test at every real `1 ≤ x ≤ S` and `t ≤ a·x`
+    (the dilated argument `x/max(t,a) ≥ 1/a` lies beyond the support). -/
+theorem Uc_zero_real (C : NormCtx) (f : L2Test) (hf : CoreTest C.geom f) {x t : Real} (hx1 : Rle one x) (hxS : Rle x (ofQ C.S C.hSd))
+    (ht : Rle t (Rmul (ofQ C.a C.had) x)) : Req (Uc C x f t) zero := by
+  have hx0 : Rle zero x := Rle_trans (Rle_zero_of_Rnonneg Rnonneg_one) hx1
+  have hband : Req (xBand C x) x := xBand_inert C hx0 hxS
+  have hmax : Rle (qClampQ C.a C.had t) (Rmul (ofQ C.a C.had) x) :=
+    qClampQ_le_of_le ht (Rle_trans (Rle_of_Req (Req_symm (Rmul_one _))) (Rmul_le_Rmul_left (Rnonneg_ofQ C.had (Int.le_of_lt C.han)) hx1))
+  have h1 : Rle one (Rmul (Rmul (ofQ C.a C.had) x) (clampedInv C.a C.han C.had t)) :=
+    Rle_trans (Rle_of_Req (Req_symm (qClampQ_mul_clampedInv C.a C.han C.had t)))
+      (Rmul_le_Rmul_right (Rnonneg_clampedInv C.a C.han C.had t) hmax)
+  have harg : Rle (ofQ (Qinv C.a) (Qinv_den_pos C.han)) (Rmul (xBand C x) (clampedInv C.a C.han C.had t)) := by
+    refine Rle_trans ?_ (Rle_of_Req (Rmul_congr (Req_symm hband) (Req_refl _)))
+    refine Rle_trans (Rle_of_Req (Req_symm (Rmul_one _))) ?_
+    refine Rle_trans (Rmul_le_Rmul_left (Rnonneg_ofQ _ (Int.le_of_lt (Qinv_num_pos C.had))) h1) ?_
+    refine Rle_of_Req ?_
+    refine Req_trans (Rmul_congr (Req_refl _) (Rmul_assoc _ _ _)) ?_
+    refine Req_trans (Req_symm (Rmul_assoc _ _ _)) ?_
+    exact Req_trans (Rmul_congr (ofQ_inv_mul_self_fc C.a C.had C.han) (Req_refl _)) (Rone_mul _)
+  unfold Uc
+  rw [dilRef_f]
+  exact Req_trans (Rmul_congr (Req_refl _) (hf.hgh _ harg)) (Rmul_zero _)
+
+/-- **The anchor of a core test vanishes below the window floor**: `V(f,s) = 0` for `s ≤ a`. -/
+theorem Vc_zero_low (C : NormCtx) (f : L2Test) (hf : CoreTest C.geom f) {s : Real} (hs : Rle s (ofQ C.a C.had)) :
+    Req (Vc C f s) zero :=
+  hf.hgh _ (ofQ_inv_le_clampedInv C.han C.had C.had C.han hs (Qle_refl _))
+
 /-- **★ THE FULL SOURCE-COHERENT CARRIER.** -/
 structure FullSourceCoherent5 (C : NormCtx) (k : Nat) (z : Carrier5) : Prop where
   /-- (1a) pole resynthesis `A_pole = (U^{rec} + V^{far})/4` on `[1,B] × [a,a+w]`. -/
@@ -57,6 +101,11 @@ structure FullSourceCoherent5 (C : NormCtx) (k : Nat) (z : Carrier5) : Prop wher
   /-- (8) support-forced zero rows at rational scales. -/
   zero_row : ∀ (q : Q) (hqd : 0 < q.den), Qle (⟨1, 1⟩ : Q) q → Qle q (canonB C) → ∀ t,
     Rle t (ofQ (mul C.a q) (Qmul_den_pos C.had hqd)) → Req ((recUF C k z).F (ofQ q hqd) t) zero
+  /-- (9) the REAL-SCALE zero law: `U^{rec}_x(t) = 0` for `1 ≤ x ≤ B`, `t ≤ a·x`. -/
+  zero_real : ∀ x t, Rle one x → Rle x (ofQ (canonB C) (canonB_den C)) → Rle t (Rmul (ofQ C.a C.had) x) →
+    Req ((recUF C k z).F x t) zero
+  /-- (10) the anchor vanishes below the window floor: `V^{far}(x,s) = 0` for `s ≤ a`. -/
+  anchor_zero : ∀ x s, Rle s (ofQ C.a C.had) → Req ((recVFarF z).F x s) zero
 
 theorem xcl_inert_band (C : NormCtx) {x : Real} (h1 : Rle one x) (hB : Rle x (ofQ (canonB C) (canonB_den C))) :
     Req (xcl C x) x := xcl_eq_of_band C h1 hB
@@ -102,6 +151,9 @@ theorem cutAnalysis5_fullCoherent (C : NormCtx) (k : Nat) (f : L2Test) (hf : Cor
     have hB : Rle (ofQ q hqd) (ofQ (canonB C) (canonB_den C)) := Rle_ofQ_ofQ hqd (canonB_den C) hqB
     refine Req_trans (recUF_source_band C k f h1 hB t) ?_
     exact Uc_zero_row C f hf q hqd hq1 (Qle_trans (canonB_den C) hqB (canonB_le_S C)) ht
+  zero_real := fun x t h1 hB ht =>
+    Req_trans (recUF_source_band C k f h1 hB t) (Uc_zero_real C f hf h1 (Rle_trans hB (B_le_S_R C)) ht)
+  anchor_zero := fun x s hs => Req_trans (recVFarF_source C k f x s) (Vc_zero_low C f hf hs)
 
 /-- **The far `x`-port collapse**: for a fully coherent element every routed use of the far anchor at any scale
     equals its value at the scale `1` — the collapsed far Gram `farG` (evaluated at `x = 1`) loses nothing. -/

@@ -10687,7 +10687,7 @@ open UOR.Bridge.F1Square
 #print axioms Square.defectSeq_nonneg_imp_dominance
 #print axioms Square.atlasDefect_nonneg_imp_dominance
 
--- AtlasFullCoherent5 (target-free): FullSourceCoherent5 — the eight source/channel laws as PROPOSITIONS on the recovered fields (pole/tail resynthesis, prime-cut consistency with the orbit reading, constant cut = 0, far-port constancy, anchor agreement, multiplicative-orbit covariance, the piecewise law U_x(t) = x^{-1/2}V(t/x) on t ≥ a·x, support-forced zero rows), NOT defined as a range; cutAnalysis5_fullCoherent (every core analysis inhabits it), far_port_collapse. No bound, no sign
+-- AtlasFullCoherent5 (target-free): FullSourceCoherent5 — TEN source/channel laws as PROPOSITIONS on the recovered fields (pole/tail resynthesis, prime-cut consistency with the orbit reading, constant cut = 0, far-port constancy, anchor agreement, multiplicative-orbit covariance, the piecewise law U_x(t) = x^{-1/2}V(t/x) on t ≥ a·x, support-forced zero rows at rational scales, the REAL-SCALE zero law U_x(t) = 0 for t ≤ a·x, and the anchor vanishing below the window floor V̂(s) = 0 for s ≤ a), NOT defined as a range; cutAnalysis5_fullCoherent (every core analysis inhabits it: Uc_zero_real by the real-scale support argument, Vc_zero_low), far_port_collapse. No bound, no sign
 #print axioms Square.xcl_inert_band
 #print axioms Square.recUF_source_band
 #print axioms Square.B_le_S_R
@@ -10695,6 +10695,11 @@ open UOR.Bridge.F1Square
 #print axioms Square.cutAnalysis5_fullCoherent
 #print axioms Square.far_port_collapse
 #print axioms Square.fullCoherent_anchor
+#print axioms Square.qClampQ_le_of_le
+#print axioms Square.qClampQ_mul_clampedInv
+#print axioms Square.ofQ_inv_mul_self_fc
+#print axioms Square.Uc_zero_real
+#print axioms Square.Vc_zero_low
 
 -- AtlasOrbitFiber (target-free): THE MEASURED ORBIT FIBER J_{k,n,t} = [1+2^-k,B] ∩ [an/t,(a+w)n/t] realized as a certified integral over the fixed rational window against a Lipschitz two-edge mask maskF = ramp((x̄−λ(t))/η)·ramp((μ(t)−x̄)/η) with certified endpoint fields λ = band(a·n·r(t)), μ = band((a+w)·n·r(t)), η = w/(8(a+w)); the mask in [0,1]; MATE-IN-WINDOW mate_ge_a_of_lam; THE UNIFORM POSITIVE HAAR MASS massF_ge: ∫ χ_t/max(x̄,1) ≥ 2η/B on every active row (Bishop comparison t ≤ a+5w/8 / t ≥ a+3w/8, rational plateau windows [n+η,n+3η] / [n−3η,n−η], sub-window monotonicity intI_ge_middle from riemannIntegralI_split_at, xInt_ge_plateau); the reading identity on the fiber readF_source_fiber (orbit law needs only the mate ≥ a); the ε-argument mask_read_le_eps / mask_read_eq (exact where x̄ ≥ λ(t), mask ≤ (1/η)/(j+1) otherwise, collapsed by Rle_of_Rsub_le_eps); the numerator field, the Lipschitz reciprocal of the mass (clampInv, exact on active rows), and THE FIBER READING readFiber with readFiber_source = U_n(f,t) EXACTLY (1 ≤ m < X, w > 0, k ≥ 1, t in the Haar window). The cases w = 0 and n = 1 are excluded by hypotheses and carried by the callers. No bound, no sign
 #print axioms Square.two_num_nonneg_of
@@ -10876,3 +10881,48 @@ open UOR.Bridge.F1Square
 #print axioms Square.one_add_sq_slack
 #print axioms Square.slack_of_eps_bound
 #print axioms Square.jointMatrix_asymptotic_imp_dominance
+
+-- AtlasCoherentBridge (target-free): THE COHERENCE BRIDGE FullSourceCoherent5 ⟹ JointSyn5 — anchorDual_eq_far_of_fullCoherent (on the Haar window the metric-dual anchor of a fully coherent element is its far anchor 2·A_far), readHaar_eq_recU_of_fullCoherent and readFiber_eq_recU_of_fullCoherent (both orbit readings equal the recovered U_n(t): orbit covariance + weight law along the fiber, ε-argument for the masked average), recU_one_eq_far_of_fullCoherent (U_1 = V̂ from the piecewise law at x = 1), fullCoherent_jointSyn (the ten-law carrier satisfies the resynthesis law of the joint matrix, so energy5_joint_eq / joint_bound_iff apply to it), band_le_self_of_ge, mate_le_aw_of_mu (the upper mate fact: x̄ ≤ μ(t) ⟹ mate ≤ a+w — the mask is supported in the full fiber). No bound, no sign
+#print axioms Square.one_le_tailLo
+#print axioms Square.dualNumF_eq_recVF
+#print axioms Square.anchorDual_eq_far_of_fullCoherent
+#print axioms Square.one_le_upR_R
+#print axioms Square.upR_le_B_R
+#print axioms Square.readF_of_fullCoherent
+#print axioms Square.readHaar_eq_recU_of_fullCoherent
+#print axioms Square.diffBoundC_den
+#print axioms Square.diffBoundC_num
+#print axioms Square.diff_abs_bdC
+#print axioms Square.epsKC_den
+#print axioms Square.mask_read_le_epsC
+#print axioms Square.mask_read_eqC
+#print axioms Square.readFiber_eq_recU_of_fullCoherent
+#print axioms Square.recU_one_eq_far_of_fullCoherent
+#print axioms Square.fullCoherent_jointSyn
+#print axioms Square.band_le_self_of_ge
+#print axioms Square.mate_le_aw_of_mu
+
+-- AtlasAnchorKernel (target-free): THE ANCHOR KERNEL — the cross form in the anchor alone: shiftUF/shiftUnF/ZhF/WhF (x^{-1/2}h(t/x), n^{-1/2}h(t/n), the tail coordinates in h), anchorKernel5 h = the five cross terms in h (pole −¼∫∫8(1+1/x)wr·x^{-1/2}h(t/x)h(t), prime ¼Σ∫8Λ(n)wr·n^{-1/2}h(t/n)h(t) with the nonlocal mate t/n, constant, compact tail, far), rOne_upR, recU_shift_exact/recU_shift_zero/recU_shift_le_eps and THE SHIFT LAW AT EVERY REAL SCALE recU_shift_of_fullCoherent: U^rec_x(t) = x^{-1/2}·V̂(t/x) for every t (exact above t = a·x, both sides 0 below it, Lipschitz-collapsed in between), recU_eq_shiftU, anchorDual_eq_anchorOf, primeUJ_eq_shiftUn, and crossForm5_eq_anchorKernel: crossForm5 z = anchorKernel5 (anchorOf z) on every fully coherent z — readFiber, anchorDual and the recovered U eliminated. Its definition and proof mention no target object. The sign of anchorKernel5 is NOT proved: on the range it is −(D_k + far_k)
+#print axioms Square.shiftArgF_F
+#print axioms Square.shiftUF_F
+#print axioms Square.shiftUnF_F
+#print axioms Square.rOne_eq_Rinv_of_ge_one
+#print axioms Square.recU_shift_exact
+#print axioms Square.recU_shift_zero
+#print axioms Square.shiftDiffBound_den
+#print axioms Square.shiftLipQ_den
+#print axioms Square.shiftLipQ_num
+#print axioms Square.shift_lip_t
+#print axioms Square.shift_diff_lip
+#print axioms Square.recU_shift_le_eps
+#print axioms Square.recU_shift_of_fullCoherent
+#print axioms Square.rOne_upR
+#print axioms Square.invSq_congr_ak
+#print axioms Square.negF_F_ak
+#print axioms Square.mulF_crossF_F
+#print axioms Square.ZhF_F
+#print axioms Square.WhF_F
+#print axioms Square.recU_eq_shiftU
+#print axioms Square.anchorDual_eq_anchorOf
+#print axioms Square.primeUJ_eq_shiftUn
+#print axioms Square.crossForm5_eq_anchorKernel
