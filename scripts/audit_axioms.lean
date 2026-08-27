@@ -10941,3 +10941,26 @@ open UOR.Bridge.F1Square
 #print axioms Square.inner5_w_zero
 #print axioms Square.defect_w_zero
 #print axioms Square.currentArchDominatesPrime_of_w_zero
+
+-- AtlasUniformEnergy (target side): THE k-UNIFORM ENERGY BOUND OF THE CUT ANALYSES — farKer_term_zero_le and farCoef_le_two (farCoef_k ≤ 2 for every k: the first unit term ≤ 1 since K_k ≤ 1 beyond 2, the tail of the partial sums ≤ 1 by the decay bound and genSum_gap, Rlim_le_const), dist_one_le_innerXm and Kfl_mul_dist_le_one (K_k(x̄)·(x̄ − 1) ≤ 1 for every floor), Zc_abs_le_uniform (|Z_{k,x̄}| ≤ B·L_D uniformly in k, via Dc_abs_le_dist_one), the Gram bounds by width × pointwise sup (intT_abs_le_pt, intX_abs_le_pt, aCoefGa_abs_le, tail_cut_abs_le, far_cut_abs_le, tailDens5_abs_le, farDens5_abs_le, tailGap_le_B, tailG_le_bound, farG_le_bound) and energy5_cutAnalysis5_le: energy5_k(A_k f) ≤ E_f with E_f explicit and independent of k — the bounded-analysis hypothesis of the controlled-asymptotic readback, instantiated. No sign
+#print axioms Square.farKer_term_zero_le
+#print axioms Square.farCoef_le_two
+#print axioms Square.rOne_le_one_ue
+#print axioms Square.dist_one_le_innerXm
+#print axioms Square.Kfl_mul_dist_le_one
+#print axioms Square.zBoundQ_den
+#print axioms Square.zBoundQ_num
+#print axioms Square.Zc_abs_le_uniform
+#print axioms Square.intT_abs_le_pt
+#print axioms Square.intX_abs_le_pt
+#print axioms Square.aCoefGa_abs_le
+#print axioms Square.tail_cut_abs_le
+#print axioms Square.far_cut_abs_le
+#print axioms Square.densBoundQ_den
+#print axioms Square.densBoundQ_num
+#print axioms Square.tailDens5_abs_le
+#print axioms Square.farDens5_abs_le
+#print axioms Square.tailGap_le_B
+#print axioms Square.tailG_le_bound
+#print axioms Square.farG_le_bound
+#print axioms Square.energy5_cutAnalysis5_le
