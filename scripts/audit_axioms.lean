@@ -11058,3 +11058,26 @@ open UOR.Bridge.F1Square
 #print axioms Square.dyQ_le_one_fs
 #print axioms Square.farKer_agree
 #print axioms Square.farCoef_eq_of_pos
+
+-- AtlasAnchorLocalize (target side): THE LIMITING ANCHOR KERNEL OF A SOURCE ANCHOR IS MINUS THE COUPLED FORM (guardrail, not a sign) — fcInf := farCoef C 1 with farCoef_eq_fcInf, the congruences anchorKernel5_congr_fc/_h, the genuine source anchor sourceAnchor C f = anchorOf (cutAnalysis5 C 1 f) with sourceAnchor_eq_at_level, the SourceAnchorProfile (scale-constant, zero below a AND above 1/b via hgl: Vc_zero_high, sourceAnchor_profile), the comparisons source_NH_eq_FCanon_one, source_RH_eq_FCanon (band), source_primeAC_eq_FCanon, anchorKernel5_source_level (AK_k(fc_∞,H_f) = −(D_k + far_k)), edgeBound_mono, akSeq_close_sched, and anchorKernelLimit_source_eq_neg_CoupledForm: AK_∞(fc_∞, H_f) = −CoupledForm(f,f) for every core test (w > 0). The sign AK_∞ ≤ 0 is NOT proved
+#print axioms Square.farCoef_eq_fcInf
+#print axioms Square.anchorKernel5_congr_fc
+#print axioms Square.shiftUF_congr_al
+#print axioms Square.shiftUnF_congr_al
+#print axioms Square.ZhF_congr_al
+#print axioms Square.WhF_congr_al
+#print axioms Square.anchorKernel5_congr_h
+#print axioms Square.sourceAnchor_F
+#print axioms Square.sourceAnchor_eq_at_level
+#print axioms Square.Qinv_Qinv_al
+#print axioms Square.Vc_zero_high
+#print axioms Square.sourceAnchor_profile
+#print axioms Square.source_NH_eq_FCanon_one
+#print axioms Square.mul_pull_al
+#print axioms Square.source_RH_eq_FCanon
+#print axioms Square.source_primeAC_eq_FCanon
+#print axioms Square.anchorKernel5_source_level
+#print axioms Square.edgeBound_mono
+#print axioms Square.le_add_of_sub_le_al
+#print axioms Square.akSeq_close_sched
+#print axioms Square.anchorKernelLimit_source_eq_neg_CoupledForm

@@ -13,8 +13,10 @@ the executable five-channel kernel `anchorKernel5` equals (`anchorKernel5_autoco
 
 with `K_k(x̄) = 1/max(x̄ − 1/x̄, 2^{-k})` the floored archimedean kernel and `fc` the far mass parameter (on the
 range `fc = farCoef C k = ∫_B^∞ K_k(x)/x dx`).  `R_H(x) = 0` for `x ≥ B` (`RH_zero_beyond_B`: the mate
-`t/x ≤ (a+w)/B ≤ a` lies below the floor), so the far term is the continuation of the last integral to `[B, ∞)`
-with `R_H ≡ 0` there.  This is the signed nonlocal Mellin/Toeplitz form of the cross form; no sign is asserted.
+`t/x ≤ (a+w)/B ≤ a` lies below the floor).  The far term `−2·fc·N_H` with `fc = ∫_B^∞ K(x)/x dx` is therefore
+numerically `2∫_B^∞ K(x)·(R_H(x) − N_H/x) dx` with the UNCLAMPED `1/x`; that unclamped improper-integral identity is
+NOT proved here (`tailACF` uses the clamped `1/x̄`, inert only on `[1,B]`).  This is the signed nonlocal
+Mellin/Toeplitz form of the cross form; no sign is asserted.
 
 Also the precise support statement of the fiber mask: `maskF = 0` for `x̄ ≤ λ(t)` and for `x̄ ≥ μ(t)`
 (`maskF_zero_of_le_lam`, `maskF_zero_of_ge_mu`), so the mask is supported in `λ(t) ≤ x̄ ≤ μ(t)`, the region
@@ -84,14 +86,16 @@ theorem dens_cross_ac (A W H : Real) :
 def NHF (C : NormCtx) (h : CField) : CField := mulF (wrF C) (mulF h h)
 theorem NHF_F (C : NormCtx) (h : CField) (x t : Real) :
     (NHF C h).F x t = Rmul (Rmul (ofQ C.w C.hw) (rEv C t)) (Rmul (h.F x t) (h.F x t)) := rfl
-/-- **`N_H = ∫ H(t)² w·dt/t`** (the Haar integral at scale `1`). -/
+/-- **`N_H = ∫_a^{a+w} H(t)² dt/t`** — the Haar integral at scale `1`; the factor `w` in `wrF` is the Jacobian of the
+    unit-interval pullback `t = a + w·y`, so in physical coordinates there is no extra factor. -/
 def NH (C : NormCtx) (h : CField) : Real := intT C (NHF C h) one
 
 /-- `(x,t) ↦ w·r(t)·x̄^{-1/2}·h(1, t̄/x̄)·h(x,t)`. -/
 def RHF (C : NormCtx) (h : CField) : CField := mulF (wrF C) (mulF (shiftUF C h) h)
 theorem RHF_F (C : NormCtx) (h : CField) (x t : Real) :
     (RHF C h).F x t = Rmul (Rmul (ofQ C.w C.hw) (rEv C t)) (Rmul ((shiftUF C h).F x t) (h.F x t)) := rfl
-/-- **`R_H(x) = ∫ x̄^{-1/2}·H(t/x̄)·H(t) w·dt/t`** — the autocorrelation of the anchor at scale `x`. -/
+/-- **`R_H(x) = ∫_a^{a+w} x̄^{-1/2}·H(t/x̄)·H(t) dt/t`** — the autocorrelation of the anchor at scale `x` (clamped
+    scale `x̄ = band_{[1,B]}(x)`; on the band `x̄ = x`). -/
 def RH (C : NormCtx) (h : CField) (x : Real) : Real := intT C (RHF C h) x
 
 /-- `x ↦ R_H(x)` as a certified field (constant in `t`; modulus `Lx` of `RHF`, bound `M` of `RHF`). -/
@@ -663,7 +667,7 @@ theorem anchorKernel5_edge_abs (C : NormCtx) {k k' : Nat} (hk : 1 ≤ k) (hk' : 
 -- (8) The regularized limit `AK_∞` and the estimate to the limit.
 -- ===========================================================================
 
-/-- The integer ceiling of the regularity energy. -/
+/-- A coarse integer upper bound of the regularity energy (`Reg ≤ Reg.num`, not a ceiling). -/
 def regN (C : NormCtx) (h : CField) : Nat := (regQ C h).num.toNat
 
 /-- The schedule `N(j) = j + ⌈Reg⌉ + 1`, so that `2^{1−N(j)}·Reg ≤ 1/(j+1)`. -/
@@ -727,7 +731,9 @@ theorem akSeq_reg (C : NormCtx) (fc : Real) (h : CField) (hp : AnchorProfile C h
   RReg_of_real_bound (akSeq C fc h) (fun j i => add (⟨1, j + 1⟩ : Q) (⟨1, i + 1⟩ : Q))
     (fun j i => add_den_pos (Nat.succ_pos j) (Nat.succ_pos i)) (fun _ _ => Qle_refl _) (akSeq_close C fc h hp)
 
-/-- **★ THE REGULARIZED LIMITING KERNEL** `AK_∞(fc, H) = lim_j AK_{N(j)}(fc, H)` (the lower edge moved to `1`). -/
+/-- **★ THE REGULARIZED LIMITING KERNEL** `AK_∞(fc, H) = lim_j AK_{N(j)}(fc, H)` — defined as the `Rlim` of the scheduled
+    finite kernels (the lower edge of the tail window tends to `1`); NOT yet identified with an explicit integral with
+    lower endpoint `1`. -/
 def anchorKernelLimit (C : NormCtx) (fc : Real) (h : CField) (hp : AnchorProfile C h) : Real :=
   Rlim (akSeq C fc h) (akSeq_reg C fc h hp)
 
@@ -769,7 +775,7 @@ theorem crossForm5_limit_abs (C : NormCtx) (k : Nat) (hw0 : 0 < C.w.num) (hk : 1
 
 
 -- ===========================================================================
--- (9) Narrow windows: the prime term of `AK` vanishes identically when `w < a`.
+-- (9) Narrow windows: the prime term of `AK` vanishes identically when `w ≤ a`.
 -- ===========================================================================
 
 /-- `R_H(x) = 0` whenever `a·x̄ ≥ a + w` (the mate `t̄/x̄ ≤ (a+w)/x̄ ≤ a` is below the floor). -/
@@ -792,11 +798,11 @@ theorem RsumN_zero_ac (F : Nat → Real) : ∀ N, (∀ i, i < N → Req (F i) ze
   | (n + 1), h =>
     Req_trans (Radd_congr (RsumN_zero_ac F n (fun i hi => h i (Nat.lt_succ_of_lt hi))) (h n (Nat.lt_succ_self n))) (Radd_zero _)
 
-/-- `w < a` ⟹ `a + w ≤ a·n` for every place `n ≥ 2`. -/
-theorem aw_le_a_mul_n_of_narrow (C : NormCtx) (hw : Qlt C.w C.a) (m : Nat) :
+/-- `w ≤ a` ⟹ `a + w ≤ a·n` for every place `n ≥ 2`. -/
+theorem aw_le_a_mul_n_of_narrow (C : NormCtx) (hw : Qle C.w C.a) (m : Nat) :
     Qle (add C.a C.w) (mul C.a (upQ (m + 1))) := by
   have hw' := hw
-  simp only [Qlt] at hw'
+  simp only [Qle] at hw'
   simp only [Qle, add, mul, upQ]
   push_cast at hw' ⊢
   have hA : (0 : Int) ≤ C.a.num * (C.w.den : Int) := Int.mul_nonneg (Int.le_of_lt C.han) (Int.ofNat_nonneg _)
@@ -811,9 +817,10 @@ theorem aw_le_a_mul_n_of_narrow (C : NormCtx) (hw : Qlt C.w C.a) (m : Nat) :
   have h2 : C.a.num * (C.w.den : Int) + C.w.num * (C.a.den : Int) ≤ 2 * (C.a.num * (C.w.den : Int)) := by omega
   exact Int.le_trans h2 (Int.mul_le_mul_of_nonneg_right hm2 hA)
 
-/-- **Narrow window**: `w < a` ⟹ `R_H(n) = 0` for every place `n ≥ 2` (`Λ(1) = 0` at `n = 1`), so the prime term
-    of the anchor kernel vanishes identically — the kernel is then purely archimedean. -/
-theorem primeAC_zero_of_narrow (C : NormCtx) (h : CField) (hp : AnchorProfile C h) (hw : Qlt C.w C.a) :
+/-- **Narrow window**: `w ≤ a` ⟹ `R_H(n) = 0` for every place `n ≥ 2` (`Λ(1) = 0` at `n = 1`), so the prime term
+    of the anchor kernel vanishes identically — the kernel is then purely archimedean (the mate `t/n ≤ (a+w)/2 ≤ a`,
+    inclusive at `w = a`). -/
+theorem primeAC_zero_of_narrow (C : NormCtx) (h : CField) (hp : AnchorProfile C h) (hw : Qle C.w C.a) :
     Req (primeAC C h) zero := by
   unfold primeAC
   refine RsumN_zero_ac _ C.X (fun m hm => ?_)

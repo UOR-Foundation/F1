@@ -578,6 +578,7 @@ import F1Square.Square.AtlasWindowZero
 import F1Square.Square.AtlasUniformEnergy
 import F1Square.Square.AtlasAnchorAutocorr
 import F1Square.Square.AtlasFarCoefStable
+import F1Square.Square.AtlasAnchorLocalize
 import F1Square.Square.AtlasArchCoords
 import F1Square.Square.AtlasFibers
 import F1Square.Square.AtlasCarrier
