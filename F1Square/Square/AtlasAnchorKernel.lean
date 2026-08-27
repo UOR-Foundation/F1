@@ -8,10 +8,14 @@ with `h = V̂` (the far anchor, constant in the scale),
     `crossForm5 z = anchorKernel5 h`,
 
 where `anchorKernel5 h` transparently contains the five terms in `h` alone — pole `−¼∫∫ 8(1+1/x)wr·x^{-1/2}h(t/x)·h(t)`,
-prime `¼Σ_n∫ 8Λ(n)wr·n^{-1/2}h(t/n)·h(t)` (the nonlocal mate `t/n`), constant `¼∫ 8(log4π+γ)wr·h(t)²`,
+prime `¼Σ_n∫ 8Λ(n)wr·n^{-1/2}h(t/n)·h(t)` (the nonlocal mate `t/n`), constant `¼∫ 4(log4π+γ)wr·h(t)²`
+(`constDens5 = 4(log4π+γ)wr`, so the constant coefficient is `(log4π+γ)·N_h`),
 compact tail `¼∫∫ 8wr·Z_h·W_h` with `Z_h = x̄K(x̄)(x^{-1/2}h(t/x) − h(t)/x̄)`, `W_h = h(t)/x̄`, far `−¼∫ 8·fc·wr·h(t)²`.
 The identity uses the ε-argument at the threshold `t = a·x` (exact above it by the shift law, both sides `0`
 below it by the zero laws, Lipschitz in between).  No sign, no bound.
+`anchorKernel5` accepts any certified field; its one-variable reading (`h(x,t) = H(t)`) is the ANCHOR-PROFILE case
+`AnchorProfile C h` (scale-constant, vanishing below `a`; AtlasAnchorAutocorr), inhabited by `anchorOf z` for every
+fully coherent `z`, where it is the autocorrelation form `anchorKernel5_autocorr`.
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 

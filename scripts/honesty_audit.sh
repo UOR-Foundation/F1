@@ -40,7 +40,7 @@ fi
 echo "coverage: all $(echo "$declared" | wc -l | tr -d ' ') non-private proof-layer theorems are audited."
 
 # 2. Axiom audit over every proof-layer theorem.
-out="$(lake env lean scripts/audit_axioms.lean)"
+out="$(lake env lean --tstack=16000000 scripts/audit_axioms.lean)"  # same thread stack as the lakefile build (moreLeanArgs); the 7600-entry audit overflows the 8 MB default
 echo "$out"
 
 # 3. No forbidden axioms: sorryAx (sorry), Lean.ofReduceBool (native_decide), trustCompiler.

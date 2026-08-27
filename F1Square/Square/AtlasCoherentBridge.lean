@@ -3,7 +3,7 @@ F1 square — **THE COHERENCE BRIDGE: `FullSourceCoherent5 ⟹ JointSyn5`** (`At
 
 The operative hypothesis of the joint energy identity is the resynthesis law `JointSyn5` (agreement of `z` with
 the cut coordinates of the source recovered through the joint anchor and the fiber reading).  Here the
-eight-law carrier `FullSourceCoherent5` is shown to imply it:
+ten-law carrier `FullSourceCoherent5` is shown to imply it:
 
   * `anchorDual_eq_far_of_fullCoherent` — on the Haar window the metric-dual anchor of a fully coherent
     element IS its far anchor `2·A_far` (the dual average of `V^{rec} = V^{far}` on the band);
@@ -14,7 +14,9 @@ eight-law carrier `FullSourceCoherent5` is shown to imply it:
   * `fullCoherent_jointSyn`.
 
 Also: the REAL-SCALE ZERO LAW `Uc_zero_real` (`U_x(f,t) = 0` for `t ≤ a·x`, real `x ≥ 1`, core tests) and the
-UPPER MATE FACT `mate_le_aw_of_mu` (`x̄ ≤ μ(t)` ⟹ mate `≤ a + w`): the mask is supported in the full fiber.
+UPPER MATE FACT `mate_le_aw_of_mu` (`x̄ ≤ μ(t)` ⟹ mate `≤ a + w`), the conditional companion of `mate_ge_a_of_lam`
+(`λ(t) ≤ x̄` ⟹ mate `≥ a`); that the mask vanishes outside `λ(t) ≤ x̄ ≤ μ(t)` is `maskF_zero_of_le_lam` /
+`maskF_zero_of_ge_mu` (AtlasAnchorAutocorr), so on the support of the mask both mate bounds hold.
 Pure Lean 4 core, no Mathlib, no `sorry`/`native_decide`, choice-free.
 -/
 
@@ -260,8 +262,8 @@ theorem band_le_self_of_ge (lo hi : Q) (hlo : 0 < lo.den) (hhi : 0 < hi.den) {v 
   refine Qle_trans (Qmax_den_pos (v.den_pos n) hlo) (Qmin_le_left _ _) ?_
   exact Qmax_le (Qle_self_add (two_num_nonneg_of n)) h1
 
-/-- **The upper mate fact**: `x̄ ≤ μ(t)` on an active row ⟹ the mate `x̄·t/n ≤ a + w`: the mask is supported in the
-    full fiber `J_{k,n,t}` (both edges). -/
+/-- **The upper mate fact**: `x̄ ≤ μ(t)` on an active row ⟹ the mate `x̄·t/n ≤ a + w` (conditional on `x̄ ≤ μ(t)`;
+    the mask vanishes for `x̄ ≥ μ(t)`, `maskF_zero_of_ge_mu`, so this covers the support of the mask). -/
 theorem mate_le_aw_of_mu (C : NormCtx) (k m : Nat) (hm1 : 1 ≤ m) {x t : Real} (ht : InWin C t)
     (hxu : Rle (xcl C x) ((muF C k m).F x t)) :
     Rle (Rmul (xcl C x) (Rmul t (ofQ (invNQ m) (Nat.succ_pos m)))) (ofQ (add C.a C.w) (awQ_den C)) := by
