@@ -2,8 +2,13 @@
 F1 square — **THE BOUNDED ANCHOR EXTRACTOR BY GENUINE SCALE INTEGRATION** (`AtlasAnchorExtract.lean`, target-free).
 
 The anchor `V(t)` is read from the pole and compact-tail CUT ports of a five-channel carrier element `z` by ONE
-scale integral over the compact tail window `[1 + 2^{-k}, B]`, with the DUAL DENSITY `P_k(x̄)/4 = a_V(x̄)^{-1}`
-(the reciprocal of the coefficient `a_V = 4/P_k` of the pointwise recovery `V = a_V·(q_k·A_pole − A_tail)`):
+scale integral over the compact tail window `[1 + 2^{-k}, B]`, with the EXACT-RECOVERY WEIGHT `P_k(x̄)/4`
+(the reciprocal of the algebraic coefficient `4/P_k` of the pointwise recovery `V = 4·(q_k·A_pole − A_tail)/P_k`, i.e.
+`q_k·A_pole − A_tail = (P_k/4)·V`).  It is NOT the source-metric dual density: against the pole/tail metric with densities
+`8(1+r)wr` and `8wr`, the dual constant of the recovery functional is `a_V(x) = (2/P_k²)·(q_k²/(1+r) + 1)`, so the
+energy-optimal weight would be `∝ a_V(x)^{-1} = P_k²/(2(q_k²/(1+r) + 1))`; the weight used here is the algebraic one.
+The certified constant `c_k` below grows like `4^k` at fixed context: it supplies no uniform control and is not to be fed
+into the scheduled limit:
 
     `anchorAx z (t) = ( ∫_{[1+2^{-k},B]} (q_k(x̄)·A_pole(x̄,t) − A_tail(x̄,t)) dx ) / ( ∫_{[1+2^{-k},B]} P_k(x̄)/4 dx )`.
 
@@ -175,7 +180,7 @@ theorem intU_le_ax (hfd : 0 < Lf.den) (hfn : 0 ≤ Lf.num)
 end Plumbing
 
 -- ===========================================================================
--- (2) The dual density `P_k(x̄)/4`, the clamped ports, the numerator field.
+-- (2) The exact-recovery weight `P_k(x̄)/4`, the clamped ports, the numerator field.
 -- ===========================================================================
 
 /-- The constant field `1`. -/
@@ -189,7 +194,7 @@ def rOneClAx (C : NormCtx) : CField := compX rOneF (xcl C) Nat.one_pos (by decid
 def PkAx (C : NormCtx) (k : Nat) : CField := addF (mulF (KxF C k) (addF (xclF C) anchorOneF)) (rOneClAx C)
 theorem PkAx_F (C : NormCtx) (k : Nat) (x t : Real) : (PkAx C k).F x t = Pk k (xcl C x) := rfl
 
-/-- **The dual density** `P_k(x̄)/4`. -/
+/-- **The exact-recovery weight** `P_k(x̄)/4` (`q_k·A_pole − A_tail = (P_k/4)·V`; not the metric-dual density). -/
 def densAx (C : NormCtx) (k : Nat) : CField := smulQF (⟨1, 4⟩ : Q) (by decide) (by decide) (PkAx C k)
 theorem densAx_F (C : NormCtx) (k : Nat) (x t : Real) : (densAx C k).F x t = Rmul cQ (Pk k (xcl C x)) := rfl
 

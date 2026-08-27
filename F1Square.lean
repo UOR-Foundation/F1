@@ -568,6 +568,10 @@ import F1Square.Square.AtlasColligation5
 import F1Square.Square.AtlasCoherent5
 import F1Square.Square.AtlasFiveSplit
 import F1Square.Square.AtlasAnchorExtract
+import F1Square.Square.AtlasFullCoherent5
+import F1Square.Square.AtlasOrbitFiber
+import F1Square.Square.AtlasJoint5
+import F1Square.Square.AtlasJointReadback
 import F1Square.Square.AtlasArchCoords
 import F1Square.Square.AtlasFibers
 import F1Square.Square.AtlasCarrier
